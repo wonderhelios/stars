@@ -31,12 +31,28 @@ impl<T> Resp<T> {
 struct RawInstrument {
     inst_id: String,
     state: String,
-    #[allow(dead_code)]
-    #[serde(default)]
-    ct_val: Option<Decimal>,
 }
 
-/// REST 客户端：启动时拉一次全市场 SWAP 的 instId 列表
+#[derive(Debug, Clone, serde::Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct FundingHistoryItem {
+    pub funding_rate: Decimal,
+    pub funding_time: String,
+    #[serde(default)]
+    pub realized_rate: Option<Decimal>,
+}
+
+#[derive(Debug, Clone)]
+pub struct Candle1H {
+    pub open_time: i64,
+    pub open: Decimal,
+    pub high: Decimal,
+    pub low: Decimal,
+    pub close: Decimal,
+    pub volume: Decimal,
+}
+
+/// REST 客户端：启动时拉全市场 instId；研究模式下拉历史费率与 K线
 pub struct RestClient {
     http: Client,
     base: String,
@@ -80,10 +96,58 @@ impl RestClient {
             .unwrap_ok()?
             .into_iter()
             .filter(|r| r.state == "live")
-            // 只保留 U 本位（quote 为 USDT），避免币本位结算逻辑复杂
             .filter(|r| r.inst_id.ends_with("-USDT-SWAP"))
             .map(|r| r.inst_id)
             .collect())
+    }
+
+    /// 历史资金费率（最多 100 条）
+    pub async fn funding_rate_history(
+        &self,
+        inst_id: &str,
+        limit: u32,
+    ) -> Result<Vec<FundingHistoryItem>> {
+        let limit = limit.min(100).to_string();
+        let resp: Resp<FundingHistoryItem> = self
+            .get(
+                "/api/v5/public/funding-rate-history",
+                &[("instId", inst_id), ("limit", &limit)],
+            )
+            .await?;
+        resp.unwrap_ok()
+    }
+
+    /// 最近 1H K线（时间正序返回，最早在前）
+    pub async fn candles_1h(&self, inst_id: &str, limit: u32) -> Result<Vec<Candle1H>> {
+        let limit = limit.min(300).to_string();
+        let resp: Resp<Vec<String>> = self
+            .get(
+                "/api/v5/market/candles",
+                &[("instId", inst_id), ("bar", "1H"), ("limit", &limit)],
+            )
+            .await?;
+
+        let mut candles: Vec<Candle1H> = resp
+            .unwrap_ok()?
+            .into_iter()
+            .filter_map(|row| {
+                if row.len() < 6 {
+                    return None;
+                }
+                Some(Candle1H {
+                    open_time: row[0].parse().ok()?,
+                    open: Decimal::from_str(&row[1]).ok()?,
+                    high: Decimal::from_str(&row[2]).ok()?,
+                    low: Decimal::from_str(&row[3]).ok()?,
+                    close: Decimal::from_str(&row[4]).ok()?,
+                    volume: Decimal::from_str(&row[5]).ok()?,
+                })
+            })
+            .collect();
+
+        // OKX 返回：新 → 旧。反转成正序。
+        candles.reverse();
+        Ok(candles)
     }
 }
 

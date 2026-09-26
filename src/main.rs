@@ -1,5 +1,6 @@
 mod error;
 mod okx;
+mod research;
 mod state;
 mod types;
 mod web;
@@ -14,9 +15,15 @@ async fn main() -> anyhow::Result<()> {
         .with_env_filter(EnvFilter::try_from_default_env().unwrap_or_else(|_| "info".into()))
         .init();
 
+    // 子命令分发
+    let args: Vec<String> = std::env::args().collect();
+    if args.len() > 1 && args[1] == "research" {
+        return research::run(&args[2..]).await;
+    }
+
+    // 默认 serve 模式
     let state = AppState::new();
 
-    // 启动 WS 采集任务
     let ws_state = state.clone();
     tokio::spawn(async move {
         if let Err(e) = okx::ws::run_forever(ws_state).await {
@@ -24,12 +31,10 @@ async fn main() -> anyhow::Result<()> {
         }
     });
 
-    // 启动 HTTP 服务
     let app = web::api::router(state.clone());
     let addr = "0.0.0.0:3000";
     let listener = tokio::net::TcpListener::bind(addr).await?;
     info!("Web server listening on http://{}", addr);
-    info!("Open http://<server-ip>:3000 in your local browser");
 
     axum::serve(listener, app).await?;
     Ok(())
