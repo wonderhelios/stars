@@ -6,6 +6,9 @@ use std::time::Duration;
 use crate::error::{Error, Result};
 
 const BASE: &str = "https://www.okx.com";
+const CANDLE_BATCH: u32 = 300;
+const FUNDING_BATCH: u32 = 400;
+const BATCH_SLEEP_MS: u64 = 120;
 
 #[derive(serde::Deserialize)]
 struct Resp<T> {
@@ -33,6 +36,22 @@ struct RawInstrument {
     state: String,
 }
 
+#[derive(serde::Deserialize)]
+#[serde(rename_all = "camelCase")]
+struct RawTicker {
+    inst_id: String,
+    last: String,
+    open24h: String,
+    vol_ccy_24h: String,
+}
+
+#[derive(serde::Deserialize)]
+#[serde(rename_all = "camelCase")]
+struct RawFundingNow {
+    inst_id: String,
+    funding_rate: Decimal,
+}
+
 #[derive(Debug, Clone, serde::Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct FundingHistoryItem {
@@ -52,7 +71,25 @@ pub struct Candle1H {
     pub volume: Decimal,
 }
 
-/// REST 客户端：启动时拉全市场 instId；研究模式下拉历史费率与 K线
+#[derive(Debug, Clone)]
+pub struct TickerRow {
+    pub inst_id: String,
+    pub last: Decimal,
+    pub open_24h: Decimal,
+    pub vol_ccy_24h: Decimal,
+}
+
+impl TickerRow {
+    /// 前 24h 涨跌幅（%）
+    pub fn prior_24h_pct(&self) -> Decimal {
+        if self.open_24h.is_zero() {
+            Decimal::ZERO
+        } else {
+            (self.last - self.open_24h) / self.open_24h * Decimal::from(100)
+        }
+    }
+}
+
 pub struct RestClient {
     http: Client,
     base: String,
@@ -62,7 +99,7 @@ impl RestClient {
     pub fn new() -> Self {
         Self {
             http: Client::builder()
-                .timeout(Duration::from_secs(15))
+                .timeout(Duration::from_secs(30))
                 .build()
                 .expect("reqwest client init"),
             base: BASE.into(),
@@ -86,7 +123,8 @@ impl RestClient {
         Ok(resp)
     }
 
-    /// 拉取全部 live 状态的 USDT 本位 SWAP instId
+    // ========== 基础 ==========
+
     pub async fn all_swap_inst_ids(&self) -> Result<Vec<String>> {
         let resp: Resp<RawInstrument> = self
             .get("/api/v5/public/instruments", &[("instType", "SWAP")])
@@ -101,53 +139,205 @@ impl RestClient {
             .collect())
     }
 
-    /// 历史资金费率（最多 100 条）
-    pub async fn funding_rate_history(
-        &self,
-        inst_id: &str,
-        limit: u32,
-    ) -> Result<Vec<FundingHistoryItem>> {
-        let limit = limit.min(100).to_string();
-        let resp: Resp<FundingHistoryItem> = self
-            .get(
-                "/api/v5/public/funding-rate-history",
-                &[("instId", inst_id), ("limit", &limit)],
-            )
-            .await?;
-        resp.unwrap_ok()
-    }
-
-    /// 最近 1H K线（时间正序返回，最早在前）
-    pub async fn candles_1h(&self, inst_id: &str, limit: u32) -> Result<Vec<Candle1H>> {
-        let limit = limit.min(300).to_string();
-        let resp: Resp<Vec<String>> = self
-            .get(
-                "/api/v5/market/candles",
-                &[("instId", inst_id), ("bar", "1H"), ("limit", &limit)],
-            )
+    /// 拉全市场 ticker，只保留 USDT 本位 SWAP
+    pub async fn all_tickers_usdt_swap(&self) -> Result<Vec<TickerRow>> {
+        let resp: Resp<RawTicker> = self
+            .get("/api/v5/market/tickers", &[("instType", "SWAP")])
             .await?;
 
-        let mut candles: Vec<Candle1H> = resp
+        Ok(resp
             .unwrap_ok()?
             .into_iter()
-            .filter_map(|row| {
-                if row.len() < 6 {
-                    return None;
-                }
-                Some(Candle1H {
-                    open_time: row[0].parse().ok()?,
-                    open: Decimal::from_str(&row[1]).ok()?,
-                    high: Decimal::from_str(&row[2]).ok()?,
-                    low: Decimal::from_str(&row[3]).ok()?,
-                    close: Decimal::from_str(&row[4]).ok()?,
-                    volume: Decimal::from_str(&row[5]).ok()?,
+            .filter(|r| r.inst_id.ends_with("-USDT-SWAP"))
+            .filter_map(|r| {
+                Some(TickerRow {
+                    inst_id: r.inst_id,
+                    last: Decimal::from_str(&r.last).ok()?,
+                    open_24h: Decimal::from_str(&r.open24h).ok()?,
+                    vol_ccy_24h: Decimal::from_str(&r.vol_ccy_24h).ok()?,
                 })
             })
-            .collect();
+            .collect())
+    }
 
-        // OKX 返回：新 → 旧。反转成正序。
-        candles.reverse();
-        Ok(candles)
+    /// 按 24h 成交额排序取 Top N
+    pub async fn top_swap_by_volume(&self, top_n: usize) -> Result<Vec<String>> {
+        let mut list = self.all_tickers_usdt_swap().await?;
+        list.sort_by(|a, b| b.vol_ccy_24h.cmp(&a.vol_ccy_24h));
+        list.truncate(top_n);
+        Ok(list.into_iter().map(|r| r.inst_id).collect())
+    }
+
+    /// 单个币当前 funding rate
+    pub async fn funding_rate(&self, inst_id: &str) -> Result<Decimal> {
+        let resp: Resp<RawFundingNow> = self
+            .get("/api/v5/public/funding-rate", &[("instId", inst_id)])
+            .await?;
+
+        let rows = resp.unwrap_ok()?;
+        rows.into_iter()
+            .next()
+            .map(|r| r.funding_rate)
+            .ok_or_else(|| Error::Msg(format!("no funding rate for {}", inst_id)))
+    }
+
+    // ========== 分页历史 ==========
+
+    pub async fn candles_1h_history(
+        &self,
+        inst_id: &str,
+        target_days: u32,
+    ) -> Result<Vec<Candle1H>> {
+        let now_ms = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_millis() as i64;
+        let target_start_ms = now_ms - (target_days as i64) * 24 * 3_600_000;
+
+        let mut all: Vec<Candle1H> = Vec::new();
+        let mut after: Option<i64> = None;
+        let mut batch_count = 0u32;
+        let max_batches = ((target_days as f64 / 12.5).ceil() as u32 + 1) * 2;
+
+        loop {
+            if batch_count >= max_batches {
+                break;
+            }
+
+            let after_str = after.map(|v| v.to_string());
+            let mut params: Vec<(&str, &str)> =
+                vec![("instId", inst_id), ("bar", "1H"), ("limit", "300")];
+            if let Some(ref a) = after_str {
+                params.push(("after", a));
+            }
+
+            let resp: Resp<Vec<String>> =
+                self.get("/api/v5/market/history-candles", &params).await?;
+
+            let rows = match resp.unwrap_ok() {
+                Ok(r) => r,
+                Err(e) => {
+                    eprintln!("  [{}] candles batch {}: {}", inst_id, batch_count, e);
+                    break;
+                }
+            };
+
+            if rows.is_empty() {
+                break;
+            }
+
+            let mut batch: Vec<Candle1H> = rows
+                .into_iter()
+                .filter_map(|row| {
+                    if row.len() < 6 {
+                        return None;
+                    }
+                    Some(Candle1H {
+                        open_time: row[0].parse().ok()?,
+                        open: Decimal::from_str(&row[1]).ok()?,
+                        high: Decimal::from_str(&row[2]).ok()?,
+                        low: Decimal::from_str(&row[3]).ok()?,
+                        close: Decimal::from_str(&row[4]).ok()?,
+                        volume: Decimal::from_str(&row[5]).ok()?,
+                    })
+                })
+                .collect();
+
+            if batch.is_empty() {
+                break;
+            }
+
+            let batch_earliest = batch.iter().map(|c| c.open_time).min().unwrap();
+
+            all.append(&mut batch);
+            batch_count += 1;
+
+            if batch_earliest <= target_start_ms {
+                break;
+            }
+
+            if let Some(prev_after) = after {
+                if batch_earliest >= prev_after {
+                    break;
+                }
+            }
+
+            after = Some(batch_earliest);
+            tokio::time::sleep(Duration::from_millis(BATCH_SLEEP_MS)).await;
+        }
+
+        all.sort_by_key(|c| c.open_time);
+        all.dedup_by_key(|c| c.open_time);
+        Ok(all)
+    }
+
+    pub async fn funding_rate_history_paged(
+        &self,
+        inst_id: &str,
+    ) -> Result<Vec<FundingHistoryItem>> {
+        let mut all: Vec<FundingHistoryItem> = Vec::new();
+        let mut after: Option<i64> = None;
+        let mut batch_count = 0u32;
+        let max_batches = 5;
+
+        loop {
+            if batch_count >= max_batches {
+                break;
+            }
+
+            let after_str = after.map(|v| v.to_string());
+            let mut params: Vec<(&str, &str)> = vec![("instId", inst_id), ("limit", "400")];
+            if let Some(ref a) = after_str {
+                params.push(("after", a));
+            }
+
+            let resp: Resp<FundingHistoryItem> = self
+                .get("/api/v5/public/funding-rate-history", &params)
+                .await?;
+
+            let rows = match resp.unwrap_ok() {
+                Ok(r) => r,
+                Err(e) => {
+                    eprintln!("  [{}] funding batch {}: {}", inst_id, batch_count, e);
+                    break;
+                }
+            };
+
+            if rows.is_empty() {
+                break;
+            }
+
+            let batch_len = rows.len();
+            let batch_earliest = rows
+                .iter()
+                .filter_map(|r| r.funding_time.parse::<i64>().ok())
+                .min();
+
+            all.extend(rows);
+            batch_count += 1;
+
+            if batch_len < FUNDING_BATCH as usize {
+                break;
+            }
+
+            match batch_earliest {
+                Some(ts) => {
+                    if let Some(prev) = after {
+                        if ts >= prev {
+                            break;
+                        }
+                    }
+                    after = Some(ts);
+                }
+                None => break,
+            }
+
+            tokio::time::sleep(Duration::from_millis(BATCH_SLEEP_MS)).await;
+        }
+
+        all.sort_by_key(|r| r.funding_time.parse::<i64>().unwrap_or(0));
+        all.dedup_by_key(|r| r.funding_time.clone());
+        Ok(all)
     }
 }
 
@@ -157,7 +347,6 @@ impl Default for RestClient {
     }
 }
 
-/// 辅助：把 JSON 里的字符串字段解析为 Decimal
 pub fn parse_dec(v: &serde_json::Value, key: &str) -> Option<Decimal> {
     let s = v.get(key)?.as_str()?;
     if s.is_empty() {

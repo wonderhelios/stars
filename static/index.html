@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>OKX SWAP Monitor</title>
+<title>OKX Quant</title>
 <style>
   :root {
     --bg: #0d1117;
@@ -25,6 +25,29 @@
     color: var(--text);
     font-size: 13px;
   }
+
+  /* Tabs */
+  .tabs {
+    display: flex;
+    background: var(--panel);
+    border-bottom: 1px solid var(--border);
+    padding: 0 20px;
+  }
+  .tab {
+    padding: 12px 16px;
+    cursor: pointer;
+    color: var(--dim);
+    font-size: 13px;
+    border-bottom: 2px solid transparent;
+    user-select: none;
+  }
+  .tab:hover { color: var(--text); }
+  .tab.active {
+    color: var(--text);
+    border-bottom-color: var(--accent);
+  }
+
+  /* Header 区域 */
   header {
     display: flex;
     align-items: center;
@@ -66,6 +89,7 @@
   }
   header .toggle input { vertical-align: middle; margin-right: 4px; }
 
+  /* 表格 */
   table {
     width: 100%;
     border-collapse: collapse;
@@ -102,16 +126,12 @@
   }
   tbody tr:hover { background: #1c2128; }
   tbody tr.hot { background: rgba(210, 153, 34, 0.08); }
-  tbody tr.hot:hover { background: rgba(210, 153, 34, 0.15); }
 
   .sym { color: var(--text); font-weight: 500; }
   .sym .base { color: var(--accent); }
   .pos { color: var(--green); }
   .neg { color: var(--red); }
   .dim { color: var(--dim); }
-  .rate-pos { color: var(--red); }   /* 费率为正，多头付费 */
-  .rate-neg { color: var(--green); } /* 费率为负，空头付费 */
-  .rate-extreme { font-weight: 600; }
 
   #loading {
     text-align: center;
@@ -125,44 +145,144 @@
     text-align: center;
     border-top: 1px solid var(--border);
   }
+
+  /* Paper 页面 */
+  .paper-wrap { padding: 20px; }
+  .stat-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 16px;
+  }
+  .card h3 {
+    margin: 0 0 10px 0;
+    font-size: 13px;
+    color: var(--text);
+    display: flex;
+    justify-content: space-between;
+  }
+  .card h3 .n { color: var(--dim); font-weight: 400; font-size: 11px; }
+  .card .row {
+    display: flex;
+    justify-content: space-between;
+    padding: 4px 0;
+    font-size: 12px;
+    color: var(--dim);
+  }
+  .card .row .val { color: var(--text); }
+  .card .row .val.pos { color: var(--green); }
+  .card .row .val.neg { color: var(--red); }
+
+  .empty-tip {
+    text-align: center;
+    padding: 40px;
+    color: var(--dim);
+    font-size: 13px;
+  }
+
+  .badge {
+    display: inline-block;
+    padding: 1px 8px;
+    border-radius: 10px;
+    font-size: 11px;
+    color: #fff;
+  }
+  .badge.pump_pos_fund { background: #a22020; }
+  .badge.crash_pos_fund { background: #7a4a00; }
+  .badge.up_pos_fund { background: #1f6f43; }
+  .badge.down_pos_fund { background: #385a7a; }
 </style>
 </head>
 <body>
 
-<header>
-  <h1>OKX SWAP Monitor</h1>
-  <div class="stats">
-    <b id="count">0</b> instruments · 最后更新 <b id="updated">-</b>
+<div class="tabs">
+  <div class="tab active" data-page="market">实时行情</div>
+  <div class="tab" data-page="paper">纸上交易</div>
+</div>
+
+<!-- 实时行情页面 -->
+<div id="page-market">
+  <header>
+    <h1>OKX SWAP Monitor</h1>
+    <div class="stats">
+      <b id="count">0</b> instruments · 最后更新 <b id="updated">-</b>
+    </div>
+    <input id="search" type="text" placeholder="搜索 instId / BASE ...">
+    <label class="toggle">
+      <input id="onlyHot" type="checkbox"> 只看极端费率
+    </label>
+  </header>
+
+  <div id="loading">正在连接服务器...</div>
+
+  <table id="table" style="display:none">
+    <thead>
+      <tr>
+        <th data-key="inst_id">Symbol</th>
+        <th data-key="last">Last</th>
+        <th data-key="change">24h%</th>
+        <th data-key="volume_quote_24h">24h Vol (USDT)</th>
+        <th data-key="funding_rate">Funding</th>
+        <th data-key="next_funding_time">Next Fund</th>
+        <th data-key="ts">Updated</th>
+      </tr>
+    </thead>
+    <tbody id="tbody"></tbody>
+  </table>
+</div>
+
+<!-- 纸上交易页面 -->
+<div id="page-paper" style="display:none">
+  <div class="paper-wrap">
+    <div class="stat-cards" id="stat-cards"></div>
+    <div id="paper-loading" class="empty-tip">正在加载信号数据...</div>
+    <table id="paper-table" style="display:none">
+      <thead>
+        <tr>
+          <th>Symbol</th>
+          <th>信号类型</th>
+          <th>触发时间</th>
+          <th>入场价</th>
+          <th>Funding</th>
+          <th>前24h</th>
+          <th>T+1h 净%</th>
+          <th>T+4h 净%</th>
+          <th>T+8h 净%</th>
+          <th>T+24h 净%</th>
+        </tr>
+      </thead>
+      <tbody id="paper-tbody"></tbody>
+    </table>
   </div>
-  <input id="search" type="text" placeholder="搜索 instId / BASE ...">
-  <label class="toggle">
-    <input id="onlyHot" type="checkbox"> 只看极端费率
-  </label>
-</header>
-
-<div id="loading">正在连接服务器...</div>
-
-<table id="table" style="display:none">
-  <thead>
-    <tr>
-      <th data-key="inst_id">Symbol</th>
-      <th data-key="last">Last</th>
-      <th data-key="change">24h%</th>
-      <th data-key="volume_quote_24h">24h Vol (USDT)</th>
-      <th data-key="funding_rate">Funding</th>
-      <th data-key="next_funding_time">Next Fund</th>
-      <th data-key="ts">Updated</th>
-    </tr>
-  </thead>
-  <tbody id="tbody"></tbody>
-</table>
+</div>
 
 <footer>
-  极端费率 = |funding| &gt; 0.05% · 数据源 OKX v5 · 每 3s 刷新
+  数据源 OKX v5 · 信号阈值 funding &gt; 0.05% · 成本假设 0.15%
 </footer>
 
 <script>
-const API = "/api/snapshot";
+const COST = 0.15;
+
+// ===== Tab 切换 =====
+document.querySelectorAll(".tab").forEach((t) => {
+  t.addEventListener("click", () => {
+    document.querySelectorAll(".tab").forEach((x) => x.classList.remove("active"));
+    t.classList.add("active");
+    const page = t.dataset.page;
+    document.getElementById("page-market").style.display = page === "market" ? "" : "none";
+    document.getElementById("page-paper").style.display = page === "paper" ? "" : "none";
+    if (page === "paper") fetchPaper();
+  });
+});
+
+// ===== 实时行情 =====
+const API_SNAPSHOT = "/api/snapshot";
 const REFRESH_MS = 3000;
 const EXTREME = 0.0005;
 
@@ -250,7 +370,7 @@ function compare(a, b, key) {
   return va > vb ? 1 : -1;
 }
 
-function render() {
+function renderMarket() {
   const q = $search.value.trim().toUpperCase();
   const onlyHot = $onlyHot.checked;
 
@@ -279,9 +399,7 @@ function render() {
       <td>${fmtPrice(r.last)}</td>
       <td class="${chg >= 0 ? "pos" : "neg"}">${fmtPct(chg)}</td>
       <td>${fmtVol(r.volume_quote_24h)}</td>
-      <td class="${fr === null ? "dim"
-                    : fr >= 0 ? "rate-pos" : "rate-neg"}
-                 ${isHot ? "rate-extreme" : ""}">
+      <td class="${fr === null ? "dim" : fr >= 0 ? "neg" : "pos"}">
         ${fmtFunding(r.funding_rate)}
       </td>
       <td class="dim">${fmtNextFunding(r.next_funding_time)}</td>
@@ -299,26 +417,26 @@ function render() {
     `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
 }
 
-async function fetchData() {
+async function fetchMarket() {
   try {
-    const r = await fetch(API, { cache: "no-store" });
+    const r = await fetch(API_SNAPSHOT, { cache: "no-store" });
     if (!r.ok) throw new Error("HTTP " + r.status);
     rows = await r.json();
     $loading.style.display = "none";
     $table.style.display = "";
-    render();
+    renderMarket();
   } catch (e) {
-    console.error("fetch failed:", e);
-    $loading.textContent = "连接服务器失败，请检查服务是否运行 + CORS/网络：" + e.message;
+    console.error(e);
+    $loading.textContent = "连接失败: " + e.message;
     $loading.style.display = "block";
     $table.style.display = "none";
   }
 }
 
-// 表头排序
 document.querySelectorAll("thead th").forEach((th) => {
   th.addEventListener("click", () => {
     const key = th.dataset.key;
+    if (!key) return;
     if (sortKey === key) {
       sortAsc = !sortAsc;
     } else {
@@ -328,18 +446,163 @@ document.querySelectorAll("thead th").forEach((th) => {
     document.querySelectorAll("thead th").forEach((h) => h.classList.remove("sorted", "asc"));
     th.classList.add("sorted");
     if (sortAsc) th.classList.add("asc");
-    render();
+    renderMarket();
   });
 });
-
-// 初始排序标记
 document.querySelector(`thead th[data-key="${sortKey}"]`).classList.add("sorted");
 
-$search.addEventListener("input", render);
-$onlyHot.addEventListener("change", render);
+$search.addEventListener("input", renderMarket);
+$onlyHot.addEventListener("change", renderMarket);
 
-fetchData();
-setInterval(fetchData, REFRESH_MS);
+// ===== 纸上交易 =====
+const API_PAPER = "/api/paper/signals";
+const PAPER_REFRESH_MS = 5000;
+
+const kindLabels = {
+  crash_pos_fund: "暴跌+正费率",
+  down_pos_fund: "下跌+正费率",
+  up_pos_fund: "上涨+正费率",
+  pump_pos_fund: "暴涨+正费率",
+};
+
+function fmtAgo(ts) {
+  const diff = Date.now() - ts;
+  const h = Math.floor(diff / 3600000);
+  const m = Math.floor((diff % 3600000) / 60000);
+  if (h > 24) return `${Math.floor(h / 24)}d ${h % 24}h`;
+  if (h > 0) return `${h}h ${m}m`;
+  return `${m}m`;
+}
+
+function fmtDateTime(ts) {
+  const d = new Date(ts);
+  const pad = (n) => n.toString().padStart(2, "0");
+  return `${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
+// 计算某个信号的 T+h 净收益（做空）
+function netReturn(entry, price) {
+  if (!price || !entry) return null;
+  const e = parseFloat(entry);
+  const p = parseFloat(price);
+  if (!isFinite(e) || !isFinite(p) || e === 0) return null;
+  const raw = (p - e) / e * 100;
+  return -raw - COST;
+}
+
+function renderPaper(signals) {
+  const $cards = document.getElementById("stat-cards");
+  const $paperTbody = document.getElementById("paper-tbody");
+  const $paperTable = document.getElementById("paper-table");
+  const $paperLoading = document.getElementById("paper-loading");
+
+  if (!signals || signals.length === 0) {
+    $paperLoading.textContent = "暂无信号记录。系统每 5 分钟扫描一次，抓到信号会记录在这里。";
+    $paperLoading.style.display = "block";
+    $paperTable.style.display = "none";
+    $cards.innerHTML = "";
+    return;
+  }
+
+  $paperLoading.style.display = "none";
+  $paperTable.style.display = "";
+
+  // 按 kind 分组统计
+  const groups = {};
+  for (const s of signals) {
+    if (!groups[s.kind]) groups[s.kind] = [];
+    groups[s.kind].push(s);
+  }
+
+  const horizons = [
+    ["t1_price", "T+1h"],
+    ["t4_price", "T+4h"],
+    ["t8_price", "T+8h"],
+    ["t24_price", "T+24h"],
+  ];
+
+  let cardsHtml = "";
+  for (const kind of ["pump_pos_fund", "crash_pos_fund", "up_pos_fund", "down_pos_fund"]) {
+    const list = groups[kind];
+    if (!list || list.length === 0) continue;
+    cardsHtml += `<div class="card">
+      <h3>${kindLabels[kind] || kind} <span class="n">n=${list.length}</span></h3>`;
+
+    for (const [field, label] of horizons) {
+      const nets = [];
+      for (const s of list) {
+        const r = netReturn(s.entry_price, s[field]);
+        if (r !== null) nets.push(r);
+      }
+      if (nets.length === 0) {
+        cardsHtml += `<div class="row"><span>${label}</span><span class="val">—</span></div>`;
+        continue;
+      }
+      const avg = nets.reduce((a, b) => a + b, 0) / nets.length;
+      const wins = nets.filter((x) => x > 0).length;
+      const wr = wins / nets.length * 100;
+      const cls = avg >= 0 ? "pos" : "neg";
+      cardsHtml += `<div class="row">
+        <span>${label}</span>
+        <span class="val ${cls}">${avg >= 0 ? "+" : ""}${avg.toFixed(2)}% · ${wr.toFixed(0)}% · n=${nets.length}</span>
+      </div>`;
+    }
+    cardsHtml += "</div>";
+  }
+  $cards.innerHTML = cardsHtml || `<div class="empty-tip">还没有完成的信号</div>`;
+
+  // 信号表格（按时间倒序）
+  const sorted = [...signals].sort((a, b) => b.triggered_at - a.triggered_at);
+  const frag = document.createDocumentFragment();
+  for (const s of sorted) {
+    const tr = document.createElement("tr");
+    const fr = parseFloat(s.funding_rate);
+    const prior = parseFloat(s.prior_24h_return);
+
+    const cells = [];
+    cells.push(`<td class="sym">${s.inst_id.replace("-USDT-SWAP", "")}</td>`);
+    cells.push(`<td><span class="badge ${s.kind}">${kindLabels[s.kind] || s.kind}</span></td>`);
+    cells.push(`<td class="dim" title="${fmtDateTime(s.triggered_at)}">${fmtAgo(s.triggered_at)}前</td>`);
+    cells.push(`<td>${fmtPrice(s.entry_price)}</td>`);
+    cells.push(`<td class="${fr >= 0 ? "neg" : "pos"}">${(fr * 100).toFixed(4)}%</td>`);
+    cells.push(`<td class="${prior >= 0 ? "pos" : "neg"}">${prior >= 0 ? "+" : ""}${prior.toFixed(2)}%</td>`);
+
+    for (const [field] of horizons) {
+      const r = netReturn(s.entry_price, s[field]);
+      if (r === null) {
+        cells.push(`<td class="dim">—</td>`);
+      } else {
+        const cls = r >= 0 ? "pos" : "neg";
+        cells.push(`<td class="${cls}">${r >= 0 ? "+" : ""}${r.toFixed(2)}%</td>`);
+      }
+    }
+
+    tr.innerHTML = cells.join("");
+    frag.appendChild(tr);
+  }
+  $paperTbody.replaceChildren(frag);
+}
+
+async function fetchPaper() {
+  try {
+    const r = await fetch(API_PAPER, { cache: "no-store" });
+    if (!r.ok) throw new Error("HTTP " + r.status);
+    const signals = await r.json();
+    renderPaper(signals);
+  } catch (e) {
+    console.error(e);
+    document.getElementById("paper-loading").textContent = "连接失败: " + e.message;
+  }
+}
+
+// ===== 启动 =====
+fetchMarket();
+setInterval(fetchMarket, REFRESH_MS);
+setInterval(() => {
+  if (document.getElementById("page-paper").style.display !== "none") {
+    fetchPaper();
+  }
+}, PAPER_REFRESH_MS);
 </script>
 </body>
 </html>
