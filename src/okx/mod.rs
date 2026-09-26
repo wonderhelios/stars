@@ -1,5 +1,4 @@
-mod rest;
-mod ws;
+pub mod rest;
+pub mod ws;
 
 pub use rest::RestClient;
-pub use ws::{Channel, WsClient, WsEvent};

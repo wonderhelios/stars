@@ -1,149 +1,162 @@
 use futures_util::{SinkExt, StreamExt};
 use rust_decimal::Decimal;
-use std::str::FromStr;
 use std::time::Duration;
-use tokio::sync::mpsc;
 use tokio_tungstenite::{connect_async, tungstenite::Message};
 use tracing::{error, info, warn};
 
-use crate::error::Result;
-use crate::types::{FundingRate, Symbol, Ticker};
+use crate::error::{Error, Result};
+use crate::okx::rest::parse_dec;
+use crate::state::SharedState;
 
 const WS_URL: &str = "wss://ws.okx.com:8443/ws/v5/public";
-const PING_INTERVAL: Duration = Duration::from_secs(10);
+const PING_INTERVAL: Duration = Duration::from_secs(20);
 const BATCH_SIZE: usize = 50;
+const BATCH_INTERVAL: Duration = Duration::from_millis(200);
 
-#[derive(Debug, Clone)]
-pub enum WsEvent {
-    Ticker(Ticker),
-    Funding(FundingRate),
-    Subscribed(String, String), // (channel, inst_id)
-    Error(String, String),      // (code, msg)
-}
+/// 每个连接负责的 instId 数量。OKX 单连接订阅数有隐性上限，拆组更稳。
+const GROUP_SIZE: usize = 200;
 
-#[derive(Clone, Copy)]
-pub enum Channel {
-    Tickers,
-    FundingRate,
-}
-
-impl Channel {
-    fn as_str(&self) -> &'static str {
-        match self {
-            Self::Tickers => "tickers",
-            Self::FundingRate => "funding-rate",
-        }
-    }
-}
-
-pub struct WsClient {
-    inst_ids: Vec<String>,
-    channels: Vec<Channel>,
-}
-
-impl WsClient {
-    pub fn new(inst_ids: Vec<String>, channels: Vec<Channel>) -> Self {
-        Self { inst_ids, channels }
-    }
-
-    /// 连接、订阅、心跳、消费，一条龙。直到 receiver 被 drop 或连接断开。
-    pub async fn run(&self, tx: mpsc::UnboundedSender<WsEvent>) -> Result<()> {
-        info!("ws: HTTPS_PROXY = {:?}", std::env::var("HTTPS_PROXY").ok());
-
-        let (stream, _) = connect_async(WS_URL).await?;
-        let (mut write, mut read) = stream.split();
-
-        // ---- 订阅（分批） ----
-        let args: Vec<serde_json::Value> = self
-            .channels
-            .iter()
-            .flat_map(|c| {
-                self.inst_ids
-                    .iter()
-                    .map(move |id| serde_json::json!({"channel": c.as_str(), "instType":"SWAP","instId": id}))
-            })
-            .collect();
-
-        info!("ws: subscribing {} args", args.len());
-        for chunk in args.chunks(BATCH_SIZE) {
-            let msg = serde_json::json!({"op": "subscribe", "args": chunk});
-            write.send(Message::Text(msg.to_string().into())).await?;
-            tokio::time::sleep(Duration::from_millis(200)).await;
-        }
-
-        // ---- 心跳任务 ----
-        let ping_task = tokio::spawn(async move {
-            let mut tick = tokio::time::interval(PING_INTERVAL);
-            loop {
-                tick.tick().await;
-                if write.send(Message::Text("ping".into())).await.is_err() {
-                    break;
-                }
+/// 启动 WebSocket 采集：拉取全部 SWAP instId → 分组 → 每组一个独立连接（自动重连）
+pub async fn run_forever(state: SharedState) -> Result<()> {
+    // 1. 拉取全部 SWAP instId
+    let rest = crate::okx::RestClient::new();
+    let inst_ids = loop {
+        match rest.all_swap_inst_ids().await {
+            Ok(ids) if !ids.is_empty() => break ids,
+            Ok(_) => {
+                warn!("empty instrument list, retry in 5s");
             }
+            Err(e) => {
+                error!("fetch instruments failed: {}, retry in 5s", e);
+            }
+        }
+        tokio::time::sleep(Duration::from_secs(5)).await;
+    };
+
+    info!("loaded {} SWAP instruments", inst_ids.len());
+
+    // 2. 分组，每组一个常驻 task（内部自动重连）
+    let groups: Vec<Vec<String>> = inst_ids.chunks(GROUP_SIZE).map(|c| c.to_vec()).collect();
+
+    let mut handles = Vec::with_capacity(groups.len());
+    for (idx, group) in groups.into_iter().enumerate() {
+        let state = state.clone();
+        let handle = tokio::spawn(async move {
+            run_group_forever(state, group, idx).await;
         });
+        handles.push(handle);
+    }
 
-        // ---- 消费循环 ----
-        while let Some(msg) = read.next().await {
-            match msg {
-                Ok(Message::Text(text)) => {
-                    if text == "pong" {
-                        continue;
-                    }
-                    handle_message(&text, &tx);
-                }
-                Ok(Message::Close(_)) => {
-                    info!("ws: closed by server");
-                    break;
-                }
-                Err(e) => {
-                    error!("ws: {}", e);
-                    break;
-                }
-                _ => {}
-            }
-            if tx.is_closed() {
-                info!("ws: receiver dropped");
+    // 3. join 全部（实际上不会自然退出）
+    for h in handles {
+        let _ = h.await;
+    }
+    Ok(())
+}
+
+async fn run_group_forever(state: SharedState, inst_ids: Vec<String>, group_id: usize) {
+    loop {
+        info!(
+            "[group {}] connecting with {} instruments",
+            group_id,
+            inst_ids.len()
+        );
+        match run_group_once(state.clone(), &inst_ids).await {
+            Ok(()) => warn!("[group {}] closed, reconnecting in 3s", group_id),
+            Err(e) => error!("[group {}] error: {}, reconnecting in 3s", group_id, e),
+        }
+        tokio::time::sleep(Duration::from_secs(3)).await;
+    }
+}
+
+async fn run_group_once(state: SharedState, inst_ids: &[String]) -> Result<()> {
+    let (stream, _) = connect_async(WS_URL).await?;
+    let (mut write, mut read) = stream.split();
+
+    // 订阅 tickers + funding-rate
+    let args: Vec<serde_json::Value> = inst_ids
+        .iter()
+        .flat_map(|id| {
+            ["tickers", "funding-rate"].iter().map(move |ch| {
+                serde_json::json!({
+                    "channel": ch,
+                    "instType": "SWAP",
+                    "instId": id
+                })
+            })
+        })
+        .collect();
+
+    for chunk in args.chunks(BATCH_SIZE) {
+        let msg = serde_json::json!({"op": "subscribe", "args": chunk});
+        write
+            .send(Message::Text(msg.to_string()))
+            .await
+            .map_err(|e| Error::Msg(format!("ws send: {}", e)))?;
+        tokio::time::sleep(BATCH_INTERVAL).await;
+    }
+
+    // 心跳
+    let ping_task = tokio::spawn(async move {
+        let mut tick = tokio::time::interval(PING_INTERVAL);
+        tick.tick().await;
+        loop {
+            tick.tick().await;
+            if write.send(Message::Text("ping".into())).await.is_err() {
                 break;
             }
         }
+    });
 
-        ping_task.abort();
-        Ok(())
+    // 消费
+    while let Some(msg) = read.next().await {
+        match msg {
+            Ok(Message::Text(text)) => {
+                if text == "pong" {
+                    continue;
+                }
+                handle_text(&text, &state).await;
+            }
+            Ok(Message::Close(_)) => break,
+            Err(e) => {
+                ping_task.abort();
+                return Err(Error::Ws(e));
+            }
+            _ => {}
+        }
     }
+
+    ping_task.abort();
+    Ok(())
 }
 
-fn handle_message(text: &str, tx: &mpsc::UnboundedSender<WsEvent>) {
-    tracing::debug!("ws raw: {}", text);
+async fn handle_text(text: &str, state: &SharedState) {
     let v: serde_json::Value = match serde_json::from_str(text) {
         Ok(v) => v,
         Err(e) => {
-            warn!("ws: bad json: {}", e);
+            warn!("ws bad json: {}", e);
             return;
         }
     };
 
-    // 事件消息
-    if let Some(event) = v.get("event").and_then(|e| e.as_str()) {
-        match event {
-            "subscribe" => {
-                let ch = v["arg"]["channel"].as_str().unwrap_or("").to_string();
-                let id = v["arg"]["instId"].as_str().unwrap_or("").to_string();
-                let _ = tx.send(WsEvent::Subscribed(ch, id));
+    // 事件消息（订阅确认 / 错误）—— 忽略
+    if v.get("event").is_some() {
+        if let Some(err) = v.get("event").and_then(|e| e.as_str()) {
+            if err == "error" {
+                let code = v["code"].as_str().unwrap_or("");
+                let msg = v["msg"].as_str().unwrap_or("");
+                error!("okx ws error code={} msg={}", code, msg);
             }
-            "error" => {
-                let code = v["code"].as_str().unwrap_or("").to_string();
-                let msg = v["msg"].as_str().unwrap_or("").to_string();
-                error!("ws: okx error code={} msg={}", code, msg);
-                let _ = tx.send(WsEvent::Error(code, msg));
-            }
-            _ => {}
         }
         return;
     }
 
-    // 数据消息
     let channel = v["arg"]["channel"].as_str().unwrap_or("");
     let inst_id = v["arg"]["instId"].as_str().unwrap_or("");
+    if inst_id.is_empty() {
+        return;
+    }
+
     let Some(data) = v.get("data").and_then(|d| d.as_array()) else {
         return;
     };
@@ -151,53 +164,42 @@ fn handle_message(text: &str, tx: &mpsc::UnboundedSender<WsEvent>) {
     match channel {
         "tickers" => {
             for row in data {
-                if let Some(t) = parse_ticker(row, inst_id) {
-                    let _ = tx.send(WsEvent::Ticker(t));
-                }
+                apply_ticker(state, inst_id, row).await;
             }
         }
         "funding-rate" => {
             for row in data {
-                if let Some(f) = parse_funding(row, inst_id) {
-                    let _ = tx.send(WsEvent::Funding(f));
-                }
+                apply_funding(state, inst_id, row).await;
             }
         }
-        other => warn!("ws: unknown channel {}", other),
+        _ => {}
     }
 }
 
-fn parse_ticker(v: &serde_json::Value, inst_id: &str) -> Option<Ticker> {
-    let symbol = Symbol::from_swap_inst_id(inst_id)?;
-    Some(Ticker {
-        symbol,
-        last: dec(v, "last")?,
-        bid: dec(v, "bidPx")?,
-        ask: dec(v, "askPx")?,
-        open_24h: dec(v, "open24h")?,
-        high_24h: dec(v, "high24h")?,
-        low_24h: dec(v, "low24h")?,
-        volume_24h: dec(v, "vol24h")?,
-        volume_quote_24h: dec(v, "volCcy24h")?,
-        ts: v["ts"].as_str()?.parse().ok()?,
-    })
+async fn apply_ticker(state: &SharedState, inst_id: &str, v: &serde_json::Value) {
+    let Some(last) = parse_dec(v, "last") else {
+        return;
+    };
+    let bid = parse_dec(v, "bidPx").unwrap_or(last);
+    let ask = parse_dec(v, "askPx").unwrap_or(last);
+    let open_24h = parse_dec(v, "open24h").unwrap_or(Decimal::ZERO);
+    let high_24h = parse_dec(v, "high24h").unwrap_or(Decimal::ZERO);
+    let low_24h = parse_dec(v, "low24h").unwrap_or(Decimal::ZERO);
+    let vol_quote = parse_dec(v, "volCcy24h").unwrap_or(Decimal::ZERO);
+    let ts = v["ts"].as_str().and_then(|s| s.parse().ok()).unwrap_or(0);
+
+    state
+        .update_ticker(
+            inst_id, last, bid, ask, open_24h, high_24h, low_24h, vol_quote, ts,
+        )
+        .await;
 }
 
-fn parse_funding(v: &serde_json::Value, inst_id: &str) -> Option<FundingRate> {
-    let symbol = Symbol::from_swap_inst_id(inst_id)?;
-    Some(FundingRate {
-        symbol,
-        rate: dec(v, "fundingRate")?,
-        next_time: v["nextFundingTime"].as_str().and_then(|s| s.parse().ok()),
-        ts: v["ts"].as_str()?.parse().ok()?,
-    })
-}
+async fn apply_funding(state: &SharedState, inst_id: &str, v: &serde_json::Value) {
+    let Some(rate) = parse_dec(v, "fundingRate") else {
+        return;
+    };
+    let next_time = v["nextFundingTime"].as_str().and_then(|s| s.parse().ok());
 
-/// 从 JSON 里取字符串字段并解析为 Decimal；空字符串返回 None
-fn dec(v: &serde_json::Value, key: &str) -> Option<Decimal> {
-    let s = v.get(key)?.as_str()?;
-    if s.is_empty() {
-        return None;
-    }
-    Decimal::from_str(s).ok()
+    state.update_funding(inst_id, rate, next_time).await;
 }
