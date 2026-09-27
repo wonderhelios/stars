@@ -2,6 +2,7 @@ use axum::{extract::State, routing::get, Json, Router};
 use std::sync::Arc;
 use tower_http::{cors::CorsLayer, services::ServeDir};
 
+use crate::binance::paper::BinanceSignalRow;
 use crate::paper::{PaperDb, SignalRow};
 use crate::state::SharedState;
 use crate::types::MarketSnapshot;
@@ -9,13 +10,15 @@ use crate::types::MarketSnapshot;
 #[derive(Clone)]
 pub struct WebState {
     pub app: SharedState,
-    pub paper: Arc<PaperDb>,
+    pub okx_paper: Arc<PaperDb>,
+    pub binance_paper: Arc<crate::binance::paper::BinancePaperDb>,
 }
 
 pub fn router(state: WebState) -> Router {
     Router::new()
         .route("/api/snapshot", get(get_snapshot))
-        .route("/api/paper/signals", get(get_paper_signals))
+        .route("/api/paper/signals", get(get_okx_signals))
+        .route("/api/binance/signals", get(get_binance_signals))
         .route("/api/health", get(health))
         .fallback_service(ServeDir::new("static"))
         .layer(CorsLayer::permissive())
@@ -33,8 +36,15 @@ async fn get_snapshot(State(state): State<WebState>) -> Json<Vec<MarketSnapshot>
     Json(list)
 }
 
-async fn get_paper_signals(State(state): State<WebState>) -> Json<Vec<SignalRow>> {
-    match state.paper.all_signals().await {
+async fn get_okx_signals(State(state): State<WebState>) -> Json<Vec<SignalRow>> {
+    match state.okx_paper.all_signals().await {
+        Ok(rows) => Json(rows),
+        Err(_) => Json(vec![]),
+    }
+}
+
+async fn get_binance_signals(State(state): State<WebState>) -> Json<Vec<BinanceSignalRow>> {
+    match state.binance_paper.all_signals().await {
         Ok(rows) => Json(rows),
         Err(_) => Json(vec![]),
     }
