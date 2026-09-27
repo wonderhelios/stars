@@ -193,9 +193,12 @@ impl BinanceRestClient {
     }
 
     /// 获取指定时间点的收盘价（精确到 1H K线）
+    /// 获取指定时间点的收盘价（精确到 1H K线）
     pub async fn price_at_time(&self, symbol: &str, target_ts: i64) -> Result<Option<Decimal>> {
-        let start = target_ts - 3_600_000;
-        let end = target_ts + 3_600_000;
+        // 【关键修复】将目标时间戳向下取整到 1H 整点
+        let bar_time = (target_ts / 3_600_000) * 3_600_000;
+        let start = bar_time - 3_600_000;
+        let end = bar_time + 3_600_000;
 
         let resp: Vec<Vec<serde_json::Value>> = self
             .get(
@@ -215,7 +218,8 @@ impl BinanceRestClient {
                 continue;
             }
             if let Some(ts) = row[0].as_i64() {
-                if ts == target_ts {
+                // 【关键修复】和整点比较，而不是毫秒时间戳
+                if ts == bar_time {
                     return Ok(Decimal::from_str(row[4].as_str().unwrap_or("")).ok());
                 }
             }
