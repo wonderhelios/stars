@@ -93,7 +93,7 @@ async fn main() -> anyhow::Result<()> {
 
     let threshold = Decimal::from_str(signal::FUNDING_THRESHOLD_STR)?;
 
-    // ===== OKX 后台扫描 + 跟踪 =====
+    // ===== OKX 后台扫描 + 跟踪（t=0 立即启动）=====
     {
         let db = okx_paper_db.clone();
         let th = threshold;
@@ -118,11 +118,12 @@ async fn main() -> anyhow::Result<()> {
         });
     }
 
-    // ===== 币安后台扫描 + 跟踪 =====
+    // ===== 币安后台扫描 + 跟踪（t=100s 延迟启动）=====
     {
         let db = binance_paper_db.clone();
         let th = threshold;
         tokio::spawn(async move {
+            tokio::time::sleep(std::time::Duration::from_secs(100)).await;
             let client = Arc::new(binance::BinanceRestClient::new());
             let mut scan_ticker = tokio::time::interval(std::time::Duration::from_secs(300));
             let mut track_ticker = tokio::time::interval(std::time::Duration::from_secs(60));
@@ -143,11 +144,12 @@ async fn main() -> anyhow::Result<()> {
         });
     }
 
-    // ===== Hyperliquid 后台扫描 + 跟踪 =====
+    // ===== Hyperliquid 后台扫描 + 跟踪（t=200s 延迟启动）=====
     {
         let db = hl_paper_db.clone();
         let th = threshold;
         tokio::spawn(async move {
+            tokio::time::sleep(std::time::Duration::from_secs(200)).await;
             let client = Arc::new(hyperliquid::HyperliquidRestClient::new());
             let mut scan_ticker = tokio::time::interval(std::time::Duration::from_secs(300));
             let mut track_ticker = tokio::time::interval(std::time::Duration::from_secs(60));

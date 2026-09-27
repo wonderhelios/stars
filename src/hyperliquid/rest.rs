@@ -15,11 +15,11 @@ pub struct HlTicker {
     pub prev_day_px: Decimal,
     pub day_ntl_vlm: Decimal,
     pub funding: Decimal,
+    #[allow(dead_code)]
     pub open_interest: Decimal,
 }
 
 impl HlTicker {
-    /// 前 24h 涨跌幅（%）。用 markPx vs prevDayPx 计算
     pub fn prior_24h_pct(&self) -> Decimal {
         if self.prev_day_px.is_zero() {
             Decimal::ZERO
@@ -29,12 +29,6 @@ impl HlTicker {
     }
 }
 
-#[derive(Debug, Clone)]
-pub struct HlCandle {
-    pub open_time: i64,
-    pub close: Decimal,
-}
-
 pub struct HyperliquidRestClient {
     http: Client,
     base: String,
@@ -42,16 +36,20 @@ pub struct HyperliquidRestClient {
 
 impl HyperliquidRestClient {
     pub fn new() -> Self {
+        let http = Client::builder()
+            .timeout(Duration::from_secs(15))
+            .connect_timeout(Duration::from_secs(10))
+            .pool_max_idle_per_host(2)
+            .pool_idle_timeout(Duration::from_secs(30))
+            .tcp_nodelay(true)
+            .build()
+            .expect("reqwest client init");
         Self {
-            http: Client::builder()
-                .timeout(Duration::from_secs(30))
-                .build()
-                .expect("reqwest client init"),
+            http,
             base: BASE.into(),
         }
     }
 
-    /// Hyperliquid 所有请求都是 POST，body 里带 type 字段
     async fn post<T: serde::de::DeserializeOwned>(&self, body: serde_json::Value) -> Result<T> {
         let resp = self
             .http
@@ -66,12 +64,10 @@ impl HyperliquidRestClient {
     }
 
     /// 获取所有永续合约的实时状态（含资金费率、标记价、持仓量）
-    /// 接口类型：metaAndAssetCtxs
     pub async fn all_perp_ctxs(&self) -> Result<Vec<HlTicker>> {
         let body = json!({"type": "metaAndAssetCtxs"});
         let resp: serde_json::Value = self.post(body).await?;
 
-        // 返回格式：[universe数组, assetCtxs数组]
         let universe = resp
             .get(0)
             .and_then(|v| v.get("universe"))
@@ -87,7 +83,6 @@ impl HyperliquidRestClient {
             let Some(coin) = u.get("name").and_then(|v| v.as_str()) else {
                 continue;
             };
-            // 跳过已下架的
             if u.get("isDelisted")
                 .and_then(|v| v.as_bool())
                 .unwrap_or(false)
@@ -122,7 +117,7 @@ impl HyperliquidRestClient {
         Ok(result)
     }
 
-    /// 按 24h 成交额排序取 Top N
+    #[allow(dead_code)]
     pub async fn top_by_volume(&self, top_n: usize) -> Result<Vec<String>> {
         let mut list = self.all_perp_ctxs().await?;
         list.sort_by(|a, b| b.day_ntl_vlm.cmp(&a.day_ntl_vlm));
@@ -130,8 +125,7 @@ impl HyperliquidRestClient {
         Ok(list.into_iter().map(|r| r.coin).collect())
     }
 
-    /// 获取指定时间点的收盘价（精确到 1H K线）
-    /// Hyperliquid 的 K线时间戳是 1H 整点，直接用 target_ts 向下取整
+    /// 获取指定时间点的收盘价（精确到 1H K线，向下取整到整点）
     pub async fn price_at_time(&self, coin: &str, target_ts: i64) -> Result<Option<Decimal>> {
         let bar_time = (target_ts / 3_600_000) * 3_600_000;
         let start = bar_time - 3_600_000;
@@ -161,7 +155,7 @@ impl HyperliquidRestClient {
         Ok(None)
     }
 
-    /// 获取历史资金费率（1H 粒度）
+    #[allow(dead_code)]
     pub async fn funding_history(
         &self,
         coin: &str,

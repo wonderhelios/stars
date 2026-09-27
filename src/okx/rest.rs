@@ -80,7 +80,6 @@ pub struct TickerRow {
 }
 
 impl TickerRow {
-    /// 前 24h 涨跌幅（%）
     pub fn prior_24h_pct(&self) -> Decimal {
         if self.open_24h.is_zero() {
             Decimal::ZERO
@@ -97,11 +96,16 @@ pub struct RestClient {
 
 impl RestClient {
     pub fn new() -> Self {
+        let http = Client::builder()
+            .timeout(Duration::from_secs(15))
+            .connect_timeout(Duration::from_secs(10))
+            .pool_max_idle_per_host(2)
+            .pool_idle_timeout(Duration::from_secs(30))
+            .tcp_nodelay(true)
+            .build()
+            .expect("reqwest client init");
         Self {
-            http: Client::builder()
-                .timeout(Duration::from_secs(30))
-                .build()
-                .expect("reqwest client init"),
+            http,
             base: BASE.into(),
         }
     }
@@ -123,8 +127,6 @@ impl RestClient {
         Ok(resp)
     }
 
-    // ========== 基础 ==========
-
     pub async fn all_swap_inst_ids(&self) -> Result<Vec<String>> {
         let resp: Resp<RawInstrument> = self
             .get("/api/v5/public/instruments", &[("instType", "SWAP")])
@@ -139,7 +141,6 @@ impl RestClient {
             .collect())
     }
 
-    /// 拉全市场 ticker，只保留 USDT 本位 SWAP
     pub async fn all_tickers_usdt_swap(&self) -> Result<Vec<TickerRow>> {
         let resp: Resp<RawTicker> = self
             .get("/api/v5/market/tickers", &[("instType", "SWAP")])
@@ -160,7 +161,6 @@ impl RestClient {
             .collect())
     }
 
-    /// 按 24h 成交额排序取 Top N
     pub async fn top_swap_by_volume(&self, top_n: usize) -> Result<Vec<String>> {
         let mut list = self.all_tickers_usdt_swap().await?;
         list.sort_by(|a, b| b.vol_ccy_24h.cmp(&a.vol_ccy_24h));
@@ -168,7 +168,6 @@ impl RestClient {
         Ok(list.into_iter().map(|r| r.inst_id).collect())
     }
 
-    /// 单个币当前 funding rate
     pub async fn funding_rate(&self, inst_id: &str) -> Result<Decimal> {
         let resp: Resp<RawFundingNow> = self
             .get("/api/v5/public/funding-rate", &[("instId", inst_id)])
@@ -180,8 +179,6 @@ impl RestClient {
             .map(|r| r.funding_rate)
             .ok_or_else(|| Error::Msg(format!("no funding rate for {}", inst_id)))
     }
-
-    // ========== 分页历史 ==========
 
     pub async fn candles_1h_history(
         &self,
@@ -248,20 +245,17 @@ impl RestClient {
             }
 
             let batch_earliest = batch.iter().map(|c| c.open_time).min().unwrap();
-
             all.append(&mut batch);
             batch_count += 1;
 
             if batch_earliest <= target_start_ms {
                 break;
             }
-
             if let Some(prev_after) = after {
                 if batch_earliest >= prev_after {
                     break;
                 }
             }
-
             after = Some(batch_earliest);
             tokio::time::sleep(Duration::from_millis(BATCH_SLEEP_MS)).await;
         }
@@ -340,11 +334,9 @@ impl RestClient {
         Ok(all)
     }
 
-    /// 获取指定 inst_id 在指定时间戳的收盘价（精确到 1H K线）
+    /// 获取指定时间点的收盘价（精确到 1H K线）
     pub async fn price_at_time(&self, inst_id: &str, target_ts: i64) -> Result<Option<Decimal>> {
-        // 换算到当前小时整点
         let bar_time = (target_ts / 3_600_000) * 3_600_000;
-
         let params = [
             ("instId", inst_id),
             ("bar", "1H"),

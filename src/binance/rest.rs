@@ -43,6 +43,7 @@ struct Ticker24h {
 
 #[derive(serde::Deserialize)]
 struct PremiumIndex {
+    #[allow(dead_code)]
     symbol: String,
     #[serde(rename = "lastFundingRate")]
     last_funding_rate: Decimal,
@@ -69,6 +70,7 @@ impl BinanceTicker {
 #[derive(Debug, Clone)]
 pub struct BinanceCandle {
     pub open_time: i64,
+    #[allow(dead_code)]
     pub close: Decimal,
 }
 
@@ -79,11 +81,16 @@ pub struct BinanceRestClient {
 
 impl BinanceRestClient {
     pub fn new() -> Self {
+        let http = Client::builder()
+            .timeout(Duration::from_secs(15))
+            .connect_timeout(Duration::from_secs(10))
+            .pool_max_idle_per_host(2)
+            .pool_idle_timeout(Duration::from_secs(30))
+            .tcp_nodelay(true)
+            .build()
+            .expect("reqwest client init");
         Self {
-            http: Client::builder()
-                .timeout(Duration::from_secs(30))
-                .build()
-                .expect("reqwest client init"),
+            http,
             base: BASE.into(),
         }
     }
@@ -105,7 +112,6 @@ impl BinanceRestClient {
         Ok(resp)
     }
 
-    /// 获取全部 live 状态的 U 本位永续合约 symbol（如 BTCUSDT）
     pub async fn all_perp_symbols(&self) -> Result<Vec<String>> {
         let resp: ExchangeInfo = self.get("/fapi/v1/exchangeInfo", &[]).await?;
         Ok(resp
@@ -116,7 +122,6 @@ impl BinanceRestClient {
             .collect())
     }
 
-    /// 全市场 24h ticker
     pub async fn all_tickers(&self) -> Result<Vec<BinanceTicker>> {
         let resp: Vec<Ticker24h> = self.get("/fapi/v1/ticker/24hr", &[]).await?;
         Ok(resp
@@ -132,7 +137,6 @@ impl BinanceRestClient {
             .collect())
     }
 
-    /// 按成交额排序取 Top N
     pub async fn top_by_volume(&self, top_n: usize) -> Result<Vec<String>> {
         let mut list = self.all_tickers().await?;
         list.sort_by(|a, b| b.vol_quote.cmp(&a.vol_quote));
@@ -140,7 +144,6 @@ impl BinanceRestClient {
         Ok(list.into_iter().map(|r| r.symbol).collect())
     }
 
-    /// 单个 symbol 当前资金费率
     pub async fn funding_rate(&self, symbol: &str) -> Result<Decimal> {
         let resp: PremiumIndex = self
             .get("/fapi/v1/premiumIndex", &[("symbol", symbol)])
@@ -148,7 +151,7 @@ impl BinanceRestClient {
         Ok(resp.last_funding_rate)
     }
 
-    /// 历史资金费率（最多 1000 条）
+    #[allow(dead_code)]
     pub async fn funding_rate_history(
         &self,
         symbol: &str,
@@ -164,10 +167,9 @@ impl BinanceRestClient {
         Ok(resp)
     }
 
-    /// 拉取 1H K线历史（最多 1500 根，覆盖约 62 天）
+    #[allow(dead_code)]
     pub async fn candles_1h(&self, symbol: &str, limit: u32) -> Result<Vec<BinanceCandle>> {
         let limit = limit.min(KLINE_BATCH).to_string();
-        // Binance klines 返回格式: [open_time, open, high, low, close, volume, ...]
         let resp: Vec<Vec<serde_json::Value>> = self
             .get(
                 "/fapi/v1/klines",
@@ -192,10 +194,8 @@ impl BinanceRestClient {
         Ok(candles)
     }
 
-    /// 获取指定时间点的收盘价（精确到 1H K线）
-    /// 获取指定时间点的收盘价（精确到 1H K线）
+    /// 获取指定时间点的收盘价（精确到 1H K线，向下取整到整点）
     pub async fn price_at_time(&self, symbol: &str, target_ts: i64) -> Result<Option<Decimal>> {
-        // 【关键修复】将目标时间戳向下取整到 1H 整点
         let bar_time = (target_ts / 3_600_000) * 3_600_000;
         let start = bar_time - 3_600_000;
         let end = bar_time + 3_600_000;
@@ -218,7 +218,6 @@ impl BinanceRestClient {
                 continue;
             }
             if let Some(ts) = row[0].as_i64() {
-                // 【关键修复】和整点比较，而不是毫秒时间戳
                 if ts == bar_time {
                     return Ok(Decimal::from_str(row[4].as_str().unwrap_or("")).ok());
                 }
@@ -233,3 +232,8 @@ impl Default for BinanceRestClient {
         Self::new()
     }
 }
+
+const _: () = {
+    // 抑制 unused 警告
+    let _ = BATCH_SLEEP_MS;
+};

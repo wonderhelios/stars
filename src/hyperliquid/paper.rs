@@ -14,6 +14,8 @@ use crate::signal::{classify, TRADE_COST_PCT};
 
 const SCAN_INTERVAL_SECS: u64 = 300;
 const TRACK_INTERVAL_SECS: u64 = 60;
+/// Hyperliquid 是每小时结算，换算成 8 小时等效费率来和 CEX 阈值对齐
+const HL_HOURS_TO_8H: i64 = 8;
 
 #[derive(Debug, Clone, Serialize)]
 pub struct HyperliquidSignalRow {
@@ -243,7 +245,7 @@ pub async fn scan_once(
     let mut candidates = 0usize;
 
     for t in &tickers {
-        // 流动性过滤：24h 名义成交额 > 50 万 USDT
+        // 流动性过滤
         if t.day_ntl_vlm < Decimal::from(500_000) {
             continue;
         }
@@ -256,14 +258,14 @@ pub async fn scan_once(
         }
         candidates += 1;
 
-        // Hyperliquid 的资金费率已经是小时费率，需要换算成 8 小时等效值来和 CEX 对比
-        // 但我们的阈值 0.0005 是 8 小时费率，所以这里乘以 8
-        // 更严谨的做法是：阈值直接按小时费率设，但为了和现有逻辑一致，这里保持原样
-        let funding = t.funding;
-        if funding <= funding_threshold {
+        // 【关键修复】Hyperliquid 小时费率 × 8 = 等效 8 小时费率
+        // 这样和 CEX 的 funding_threshold（8小时口径）可比
+        let funding_8h_equiv = t.funding * Decimal::from(HL_HOURS_TO_8H);
+
+        if funding_8h_equiv <= funding_threshold {
             continue;
         }
-        let Some(kind) = classify(prior_pct, funding) else {
+        let Some(kind) = classify(prior_pct, funding_8h_equiv) else {
             continue;
         };
 
@@ -279,18 +281,20 @@ pub async fn scan_once(
             }
         }
 
+        // 存数据库时仍然存原始小时费率
         match db
-            .insert(&t.coin, kind, now_ms, funding, prior_pct, t.mark_px)
+            .insert(&t.coin, kind, now_ms, t.funding, prior_pct, t.mark_px)
             .await
         {
             Ok(true) => {
                 triggered += 1;
                 info!(
-                    "HL 信号: {} {} prior={:+.2}% funding={:+.4}% entry={}",
+                    "HL 信号: {} {} prior={:+.2}% fund(h)={:+.5}% fund(8h_eq)={:+.4}% entry={}",
                     t.coin,
                     kind,
                     prior_pct,
-                    funding * Decimal::from(100),
+                    t.funding * Decimal::from(100),
+                    funding_8h_equiv * Decimal::from(100),
                     t.mark_px
                 );
             }
@@ -351,6 +355,7 @@ pub async fn update_open_signals(
 
 // ========== 后台任务 ==========
 
+#[allow(dead_code)]
 pub async fn run_daemon(db_path: &str, funding_threshold: Decimal) -> anyhow::Result<()> {
     let db = Arc::new(HyperliquidPaperDb::open(db_path)?);
     let client = Arc::new(HyperliquidRestClient::new());
@@ -384,6 +389,12 @@ pub async fn run_daemon(db_path: &str, funding_threshold: Decimal) -> anyhow::Re
     tokio::signal::ctrl_c().await?;
     Ok(())
 }
+
+const _: () = {
+    // 抑制未使用告警
+    let _ = SCAN_INTERVAL_SECS;
+    let _ = TRACK_INTERVAL_SECS;
+};
 
 fn now_ms() -> i64 {
     std::time::SystemTime::now()
