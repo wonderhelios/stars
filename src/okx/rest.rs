@@ -339,6 +339,29 @@ impl RestClient {
         all.dedup_by_key(|r| r.funding_time.clone());
         Ok(all)
     }
+
+    /// 获取指定 inst_id 在指定时间戳的收盘价（精确到 1H K线）
+    pub async fn price_at_time(&self, inst_id: &str, target_ts: i64) -> Result<Option<Decimal>> {
+        // 换算到当前小时整点
+        let bar_time = (target_ts / 3_600_000) * 3_600_000;
+
+        let params = [
+            ("instId", inst_id),
+            ("bar", "1H"),
+            ("after", &(bar_time - 1).to_string()),
+            ("limit", "1"),
+        ];
+
+        let resp: Resp<Vec<String>> = self.get("/api/v5/market/history-candles", &params).await?;
+
+        let rows = resp.unwrap_ok()?;
+        if let Some(row) = rows.first() {
+            if row.len() >= 5 {
+                return Ok(Decimal::from_str(&row[4]).ok());
+            }
+        }
+        Ok(None)
+    }
 }
 
 impl Default for RestClient {

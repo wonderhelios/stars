@@ -319,19 +319,10 @@ pub async fn update_open_signals(client: &RestClient, db: &PaperDb) -> anyhow::R
         return Ok(0);
     }
 
-    let tickers = client.all_tickers_usdt_swap().await?;
-    let mut price_map: HashMap<String, Decimal> = HashMap::new();
-    for t in tickers {
-        price_map.insert(t.inst_id, t.last);
-    }
-
     let now = now_ms();
     let mut updated = 0usize;
 
     for row in &open {
-        let Some(&price) = price_map.get(&row.inst_id) else {
-            continue;
-        };
         let elapsed_h = (now - row.triggered_at) / 3_600_000;
 
         for (h, col, cur) in [
@@ -340,11 +331,25 @@ pub async fn update_open_signals(client: &RestClient, db: &PaperDb) -> anyhow::R
             (8, "t8_price", row.t8_price),
             (24, "t24_price", row.t24_price),
         ] {
+            // 如果该时间段已到，且还没有记录过价格
             if cur.is_none() && elapsed_h >= h {
-                if let Err(e) = db.update_price(row.id, col, price).await {
-                    error!("update {} {}: {}", row.id, col, e);
-                } else {
-                    updated += 1;
+                let target_ts = row.triggered_at + h * 3_600_000;
+
+                // 去 OKX 拉取精确的历史 K线收盘价
+                match client.price_at_time(&row.inst_id, target_ts).await {
+                    Ok(Some(price)) => {
+                        if let Err(e) = db.update_price(row.id, col, price).await {
+                            error!("update {} {}: {}", row.id, col, e);
+                        } else {
+                            updated += 1;
+                        }
+                    }
+                    Ok(None) => {
+                        error!("no price for {} at ts {}", row.inst_id, target_ts);
+                    }
+                    Err(e) => {
+                        error!("fetch {} price at {}: {}", row.inst_id, target_ts, e);
+                    }
                 }
             }
         }
