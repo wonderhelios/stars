@@ -6,14 +6,14 @@ use std::time::Duration;
 use crate::error::{Error, Result};
 
 const BASE: &str = "https://fapi.binance.com";
-const BATCH_SLEEP_MS: u64 = 120;
-const KLINE_BATCH: u32 = 1500;
 
 #[derive(serde::Deserialize)]
 struct FundingHistoryItem {
     #[serde(rename = "fundingTime")]
+    #[allow(dead_code)]
     funding_time: i64,
     #[serde(rename = "fundingRate")]
+    #[allow(dead_code)]
     funding_rate: Decimal,
 }
 
@@ -28,17 +28,6 @@ struct SymbolInfo {
     #[serde(rename = "contractType")]
     contract_type: String,
     status: String,
-}
-
-#[derive(serde::Deserialize)]
-struct Ticker24h {
-    symbol: String,
-    #[serde(rename = "lastPrice")]
-    last_price: String,
-    #[serde(rename = "openPrice")]
-    open_price: String,
-    #[serde(rename = "quoteVolume")]
-    quote_volume: String,
 }
 
 #[derive(serde::Deserialize)]
@@ -68,9 +57,9 @@ impl BinanceTicker {
 }
 
 #[derive(Debug, Clone)]
+#[allow(dead_code)]
 pub struct BinanceCandle {
     pub open_time: i64,
-    #[allow(dead_code)]
     pub close: Decimal,
 }
 
@@ -82,8 +71,8 @@ pub struct BinanceRestClient {
 impl BinanceRestClient {
     pub fn new() -> Self {
         let http = Client::builder()
-            .timeout(Duration::from_secs(15))
-            .connect_timeout(Duration::from_secs(10))
+            .timeout(Duration::from_secs(30))
+            .connect_timeout(Duration::from_secs(15))
             .pool_max_idle_per_host(2)
             .pool_idle_timeout(Duration::from_secs(30))
             .tcp_nodelay(true)
@@ -112,6 +101,20 @@ impl BinanceRestClient {
         Ok(resp)
     }
 
+    /// 获取原始文本响应，便于手动解析容忍个别字段异常
+    async fn get_text(&self, path: &str, params: &[(&str, &str)]) -> Result<String> {
+        let resp = self
+            .http
+            .get(format!("{}{}", self.base, path))
+            .query(params)
+            .send()
+            .await?
+            .error_for_status()?
+            .text()
+            .await?;
+        Ok(resp)
+    }
+
     pub async fn all_perp_symbols(&self) -> Result<Vec<String>> {
         let resp: ExchangeInfo = self.get("/fapi/v1/exchangeInfo", &[]).await?;
         Ok(resp
@@ -122,21 +125,45 @@ impl BinanceRestClient {
             .collect())
     }
 
+    /// 全市场 24h ticker（用 Value 手动解析，容忍个别字段缺失）
     pub async fn all_tickers(&self) -> Result<Vec<BinanceTicker>> {
-        let resp: Vec<Ticker24h> = self.get("/fapi/v1/ticker/24hr", &[]).await?;
-        Ok(resp
-            .into_iter()
-            .filter_map(|r| {
-                Some(BinanceTicker {
-                    symbol: r.symbol,
-                    last: Decimal::from_str(&r.last_price).ok()?,
-                    open_24h: Decimal::from_str(&r.open_price).ok()?,
-                    vol_quote: Decimal::from_str(&r.quote_volume).ok()?,
-                })
-            })
-            .collect())
+        let text = self.get_text("/fapi/v1/ticker/24hr", &[]).await?;
+
+        let arr: Vec<serde_json::Value> = serde_json::from_str(&text)
+            .map_err(|e| Error::Msg(format!("BN ticker json: {} (len={})", e, text.len())))?;
+
+        let mut result = Vec::with_capacity(arr.len());
+        for item in &arr {
+            let Some(symbol) = item.get("symbol").and_then(|v| v.as_str()) else {
+                continue;
+            };
+            let last_str = item.get("lastPrice").and_then(|v| v.as_str()).unwrap_or("");
+            let open_str = item.get("openPrice").and_then(|v| v.as_str()).unwrap_or("");
+            let vol_str = item
+                .get("quoteVolume")
+                .and_then(|v| v.as_str())
+                .unwrap_or("");
+
+            let last = Decimal::from_str(last_str).unwrap_or(Decimal::ZERO);
+            let open_24h = Decimal::from_str(open_str).unwrap_or(Decimal::ZERO);
+            let vol_quote = Decimal::from_str(vol_str).unwrap_or(Decimal::ZERO);
+
+            // 跳过明显无效的
+            if last.is_zero() || open_24h.is_zero() {
+                continue;
+            }
+
+            result.push(BinanceTicker {
+                symbol: symbol.to_string(),
+                last,
+                open_24h,
+                vol_quote,
+            });
+        }
+        Ok(result)
     }
 
+    #[allow(dead_code)]
     pub async fn top_by_volume(&self, top_n: usize) -> Result<Vec<String>> {
         let mut list = self.all_tickers().await?;
         list.sort_by(|a, b| b.vol_quote.cmp(&a.vol_quote));
@@ -169,7 +196,7 @@ impl BinanceRestClient {
 
     #[allow(dead_code)]
     pub async fn candles_1h(&self, symbol: &str, limit: u32) -> Result<Vec<BinanceCandle>> {
-        let limit = limit.min(KLINE_BATCH).to_string();
+        let limit = limit.min(1500).to_string();
         let resp: Vec<Vec<serde_json::Value>> = self
             .get(
                 "/fapi/v1/klines",
@@ -232,8 +259,3 @@ impl Default for BinanceRestClient {
         Self::new()
     }
 }
-
-const _: () = {
-    // 抑制 unused 警告
-    let _ = BATCH_SLEEP_MS;
-};
