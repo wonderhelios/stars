@@ -21,7 +21,13 @@ async fn main() -> anyhow::Result<()> {
         .init();
 
     let args: Vec<String> = std::env::args().collect();
-    let db_path = "paper.sqlite";
+    let db_path_owned = std::env::var("OKX_QUANT_DB")
+        .unwrap_or_else(|_| "/var/lib/okx-quant/paper.sqlite".to_string());
+    let db_path = db_path_owned.as_str();
+    // 确保目录存在
+    if let Some(parent) = std::path::Path::new(db_path).parent() {
+        let _ = std::fs::create_dir_all(parent);
+    }
 
     if args.len() > 1 {
         match args[1].as_str() {
