@@ -961,7 +961,9 @@
           </div>
           <div class="panel-foot">
             <span id="paper-count">等待数据</span
-            ><span id="paper-note">统计不含实际资金费收入、真实成交滑点及强平影响</span>
+            ><span id="paper-note"
+              >统计不含实际资金费收入、真实成交滑点及强平影响</span
+            >
           </div>
         </div>
       </section>
@@ -1157,18 +1159,23 @@
           (!source.data.length ||
             Math.max(...source.data.map((r) => number(r.ts))) <
               Date.now() - 90000);
-        const stale = !!source.error || !source.at || marketStale;
+        const stale =
+          !!source.error || !!source.checking || !source.at || marketStale;
         $("live-tag").classList.toggle("offline", stale);
-        $("live-text").textContent = stale
-          ? source.at
-            ? "数据已暂停"
-            : "正在连接"
-          : "实时同步";
-        const message = source.error
-          ? `<strong>连接暂时中断</strong> · ${escapeHtml(source.error)}，正在自动重试${source.at ? "；下方保留上次成功的数据" : ""}`
-          : marketStale && source.at
-            ? "<strong>行情更新已暂停</strong> · 市场数据超过 90 秒未更新，正在等待行情恢复"
-            : "";
+        $("live-text").textContent = source.checking
+          ? "正在同步"
+          : stale
+            ? source.at
+              ? "数据已暂停"
+              : "正在连接"
+            : "实时同步";
+        const message = source.checking
+          ? "<strong>正在读取最新数据</strong> · 下方显示上次成功的数据"
+          : source.error
+            ? `<strong>连接暂时中断</strong> · ${escapeHtml(source.error)}，正在自动重试${source.at ? "；下方保留上次成功的数据" : ""}`
+            : marketStale && source.at
+              ? "<strong>行情更新已暂停</strong> · 市场数据超过 90 秒未更新，正在等待行情恢复"
+              : "";
         $("notice").classList.toggle("show", !!message);
         $("notice-text").innerHTML = message;
         $("notice-time").textContent =
@@ -1305,10 +1312,17 @@
         try {
           const data = await getJson("/api/snapshot");
           const at = Date.now();
-          Object.assign(state.market, { data, at, error: null, failures: 0 });
+          Object.assign(state.market, {
+            data,
+            at,
+            error: null,
+            failures: 0,
+            checking: false,
+          });
           save("market", data, at);
           renderMarket();
         } catch (error) {
+          state.market.checking = false;
           state.market.error =
             error.name === "AbortError" ? "请求超时" : error.message;
           state.market.failures++;
@@ -1331,9 +1345,16 @@
         try {
           const data = await getJson(API[venue]);
           const at = Date.now();
-          Object.assign(source, { data, at, error: null, failures: 0 });
+          Object.assign(source, {
+            data,
+            at,
+            error: null,
+            failures: 0,
+            checking: false,
+          });
           save("paper:" + venue, data, at);
         } catch (error) {
+          source.checking = false;
           source.error =
             error.name === "AbortError" ? "请求超时" : error.message;
           source.failures++;
@@ -1354,9 +1375,18 @@
       })) {
         if (!value) continue;
         if (key === "market")
-          Object.assign(state.market, { ...value, error: "正在重新连接" });
+          Object.assign(state.market, {
+            ...value,
+            error: null,
+            checking: true,
+          });
         else
-          state.paper[key] = { ...value, error: "正在重新连接", failures: 0 };
+          state.paper[key] = {
+            ...value,
+            error: null,
+            checking: true,
+            failures: 0,
+          };
       }
       for (const button of document.querySelectorAll(".nav-item"))
         button.addEventListener("click", () => {
