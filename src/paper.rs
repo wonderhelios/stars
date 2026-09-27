@@ -1,4 +1,3 @@
-use serde::Serialize;
 use std::collections::HashMap;
 use std::str::FromStr;
 use std::sync::{Arc, Mutex};
@@ -7,18 +6,15 @@ use std::time::Duration;
 use anyhow::Context;
 use rusqlite::{params, Connection};
 use rust_decimal::Decimal;
+use serde::Serialize;
 use tokio::time::interval;
 use tracing::{error, info};
 
 use crate::okx::RestClient;
 use crate::signal::{classify, Signal, TRADE_COST_PCT};
 
-const SCAN_INTERVAL_SECS: u64 = 300; // 5 分钟扫描一次
-const TRACK_INTERVAL_SECS: u64 = 60; // 1 分钟跟踪一次
-
-pub struct PaperDb {
-    conn: Arc<Mutex<Connection>>,
-}
+const SCAN_INTERVAL_SECS: u64 = 300;
+const TRACK_INTERVAL_SECS: u64 = 60;
 
 #[derive(Debug, Clone, Serialize)]
 pub struct SignalRow {
@@ -26,11 +22,17 @@ pub struct SignalRow {
     pub inst_id: String,
     pub kind: String,
     pub triggered_at: i64,
+    pub funding_rate: Decimal,
+    pub prior_24h_return: Decimal,
     pub entry_price: Decimal,
     pub t1_price: Option<Decimal>,
     pub t4_price: Option<Decimal>,
     pub t8_price: Option<Decimal>,
     pub t24_price: Option<Decimal>,
+}
+
+pub struct PaperDb {
+    conn: Arc<Mutex<Connection>>,
 }
 
 impl PaperDb {
@@ -85,12 +87,38 @@ impl PaperDb {
         .await?
     }
 
+    /// 检查同一 inst_id + kind 在 window_ms 毫秒内是否已有信号
+    pub async fn has_recent_signal(
+        &self,
+        inst_id: &str,
+        kind: &str,
+        now_ms: i64,
+        window_ms: i64,
+    ) -> anyhow::Result<bool> {
+        let conn = self.conn.clone();
+        let inst_id = inst_id.to_string();
+        let kind = kind.to_string();
+        let cutoff = now_ms - window_ms;
+
+        tokio::task::spawn_blocking(move || -> anyhow::Result<bool> {
+            let c = conn.lock().unwrap();
+            let count: i64 = c.query_row(
+                "SELECT COUNT(*) FROM signals
+                 WHERE inst_id = ?1 AND kind = ?2 AND triggered_at >= ?3",
+                params![inst_id, kind, cutoff],
+                |row| row.get(0),
+            )?;
+            Ok(count > 0)
+        })
+        .await?
+    }
+
     pub async fn open_signals(&self) -> anyhow::Result<Vec<SignalRow>> {
         let conn = self.conn.clone();
         tokio::task::spawn_blocking(move || -> anyhow::Result<Vec<SignalRow>> {
             let c = conn.lock().unwrap();
             let mut stmt = c.prepare(
-                "SELECT id, inst_id, kind, triggered_at, entry_price,
+                "SELECT id, inst_id, kind, triggered_at, funding_rate, prior_24h_return, entry_price,
                         t1_price, t4_price, t8_price, t24_price
                  FROM signals
                  WHERE t24_price IS NULL
@@ -103,19 +131,23 @@ impl PaperDb {
                         inst_id: row.get(1)?,
                         kind: row.get(2)?,
                         triggered_at: row.get(3)?,
-                        entry_price: Decimal::from_str(&row.get::<_, String>(4)?)
+                        funding_rate: Decimal::from_str(&row.get::<_, String>(4)?)
+                            .unwrap_or(Decimal::ZERO),
+                        prior_24h_return: Decimal::from_str(&row.get::<_, String>(5)?)
+                            .unwrap_or(Decimal::ZERO),
+                        entry_price: Decimal::from_str(&row.get::<_, String>(6)?)
                             .unwrap_or(Decimal::ZERO),
                         t1_price: row
-                            .get::<_, Option<String>>(5)?
-                            .and_then(|s| Decimal::from_str(&s).ok()),
-                        t4_price: row
-                            .get::<_, Option<String>>(6)?
-                            .and_then(|s| Decimal::from_str(&s).ok()),
-                        t8_price: row
                             .get::<_, Option<String>>(7)?
                             .and_then(|s| Decimal::from_str(&s).ok()),
-                        t24_price: row
+                        t4_price: row
                             .get::<_, Option<String>>(8)?
+                            .and_then(|s| Decimal::from_str(&s).ok()),
+                        t8_price: row
+                            .get::<_, Option<String>>(9)?
+                            .and_then(|s| Decimal::from_str(&s).ok()),
+                        t24_price: row
+                            .get::<_, Option<String>>(10)?
                             .and_then(|s| Decimal::from_str(&s).ok()),
                     })
                 })?
@@ -130,7 +162,7 @@ impl PaperDb {
         tokio::task::spawn_blocking(move || -> anyhow::Result<Vec<SignalRow>> {
             let c = conn.lock().unwrap();
             let mut stmt = c.prepare(
-                "SELECT id, inst_id, kind, triggered_at, entry_price,
+                "SELECT id, inst_id, kind, triggered_at, funding_rate, prior_24h_return, entry_price,
                         t1_price, t4_price, t8_price, t24_price
                  FROM signals
                  ORDER BY triggered_at ASC",
@@ -142,19 +174,23 @@ impl PaperDb {
                         inst_id: row.get(1)?,
                         kind: row.get(2)?,
                         triggered_at: row.get(3)?,
-                        entry_price: Decimal::from_str(&row.get::<_, String>(4)?)
+                        funding_rate: Decimal::from_str(&row.get::<_, String>(4)?)
+                            .unwrap_or(Decimal::ZERO),
+                        prior_24h_return: Decimal::from_str(&row.get::<_, String>(5)?)
+                            .unwrap_or(Decimal::ZERO),
+                        entry_price: Decimal::from_str(&row.get::<_, String>(6)?)
                             .unwrap_or(Decimal::ZERO),
                         t1_price: row
-                            .get::<_, Option<String>>(5)?
-                            .and_then(|s| Decimal::from_str(&s).ok()),
-                        t4_price: row
-                            .get::<_, Option<String>>(6)?
-                            .and_then(|s| Decimal::from_str(&s).ok()),
-                        t8_price: row
                             .get::<_, Option<String>>(7)?
                             .and_then(|s| Decimal::from_str(&s).ok()),
-                        t24_price: row
+                        t4_price: row
                             .get::<_, Option<String>>(8)?
+                            .and_then(|s| Decimal::from_str(&s).ok()),
+                        t8_price: row
+                            .get::<_, Option<String>>(9)?
+                            .and_then(|s| Decimal::from_str(&s).ok()),
+                        t24_price: row
+                            .get::<_, Option<String>>(10)?
                             .and_then(|s| Decimal::from_str(&s).ok()),
                     })
                 })?
@@ -174,7 +210,6 @@ impl PaperDb {
         let price_s = price.to_string();
         tokio::task::spawn_blocking(move || -> anyhow::Result<()> {
             let c = conn.lock().unwrap();
-            // 白名单防止 SQL 注入
             let sql = match column {
                 "t1_price" => "UPDATE signals SET t1_price = ?1 WHERE id = ?2",
                 "t4_price" => "UPDATE signals SET t4_price = ?1 WHERE id = ?2",
@@ -191,7 +226,6 @@ impl PaperDb {
 
 // ========== 扫描任务 ==========
 
-/// 扫描全市场一次，检测信号
 pub async fn scan_once(
     client: &RestClient,
     db: &PaperDb,
@@ -204,7 +238,6 @@ pub async fn scan_once(
     let mut candidates = 0usize;
 
     for t in &tickers {
-        // 流动性过滤
         if t.vol_ccy_24h < Decimal::from(500_000) {
             continue;
         }
@@ -214,7 +247,6 @@ pub async fn scan_once(
 
         let prior_pct = t.prior_24h_pct();
 
-        // 只有动量极端才查 funding
         if prior_pct.abs() < Decimal::from(3) {
             continue;
         }
@@ -246,6 +278,18 @@ pub async fn scan_once(
             entry_price: t.last,
         };
 
+        match db
+            .has_recent_signal(&t.inst_id, kind, now_ms, 6 * 3_600_000)
+            .await
+        {
+            Ok(true) => continue,
+            Ok(false) => {}
+            Err(e) => {
+                error!("has_recent {}: {}", t.inst_id, e);
+                continue;
+            }
+        }
+
         match db.insert(&sig).await {
             Ok(true) => {
                 triggered += 1;
@@ -269,14 +313,12 @@ pub async fn scan_once(
 
 // ========== 跟踪任务 ==========
 
-/// 更新未完成信号的 T+h 价格
 pub async fn update_open_signals(client: &RestClient, db: &PaperDb) -> anyhow::Result<usize> {
     let open = db.open_signals().await?;
     if open.is_empty() {
         return Ok(0);
     }
 
-    // 拉一次全市场 ticker，建立 inst_id → price 的 map，避免 N 个请求
     let tickers = client.all_tickers_usdt_swap().await?;
     let mut price_map: HashMap<String, Decimal> = HashMap::new();
     for t in tickers {
@@ -332,7 +374,6 @@ pub async fn report(db: &PaperDb) -> anyhow::Result<()> {
     let pending = rows.len() - completed;
     println!("  已完成 T+24h: {}  未完成: {}", completed, pending);
 
-    // 按 kind 分组
     use std::collections::BTreeMap;
     let mut by_kind: BTreeMap<String, Vec<&SignalRow>> = BTreeMap::new();
     for r in &rows {
@@ -343,7 +384,6 @@ pub async fn report(db: &PaperDb) -> anyhow::Result<()> {
         println!("\n  【{}】共 {} 个信号", kind, group.len());
 
         for (h, label) in [(1i64, "T+ 1h"), (4, "T+ 4h"), (8, "T+ 8h"), (24, "T+24h")] {
-            // 做空净收益 = -(T+h 收益) - cost
             let mut nets: Vec<Decimal> = Vec::new();
             for r in group {
                 let p = match h {
@@ -387,7 +427,6 @@ pub async fn report(db: &PaperDb) -> anyhow::Result<()> {
 
 // ========== 运行入口 ==========
 
-/// 启动后台监控（阻塞直到 Ctrl+C）
 pub async fn run_daemon(db_path: &str, funding_threshold: Decimal) -> anyhow::Result<()> {
     let db = Arc::new(PaperDb::open(db_path)?);
     let client = Arc::new(RestClient::new());
@@ -401,7 +440,6 @@ pub async fn run_daemon(db_path: &str, funding_threshold: Decimal) -> anyhow::Re
         SCAN_INTERVAL_SECS, TRACK_INTERVAL_SECS
     );
 
-    // 扫描任务
     let db1 = db.clone();
     let client1 = client.clone();
     tokio::spawn(async move {
@@ -414,7 +452,6 @@ pub async fn run_daemon(db_path: &str, funding_threshold: Decimal) -> anyhow::Re
         }
     });
 
-    // 跟踪任务
     let db2 = db.clone();
     let client2 = client.clone();
     tokio::spawn(async move {
@@ -432,7 +469,6 @@ pub async fn run_daemon(db_path: &str, funding_threshold: Decimal) -> anyhow::Re
     Ok(())
 }
 
-/// 手动扫描一次（用于测试）
 pub async fn run_scan_once(db_path: &str, funding_threshold: Decimal) -> anyhow::Result<()> {
     let db = PaperDb::open(db_path)?;
     let client = RestClient::new();
