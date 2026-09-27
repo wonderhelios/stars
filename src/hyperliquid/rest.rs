@@ -5,6 +5,7 @@ use std::str::FromStr;
 use std::time::Duration;
 
 use crate::error::{Error, Result};
+use crate::signal::outcome_bar_open;
 
 const BASE: &str = "https://api.hyperliquid.xyz/info";
 const MAX_RETRY: u32 = 3;
@@ -86,8 +87,20 @@ impl HyperliquidRestClient {
         &self,
         body: serde_json::Value,
     ) -> Result<T> {
-        let text = self.post_text(&body).await?;
-        serde_json::from_str(&text).map_err(|e| Error::Json(e))
+        let mut last_error = None;
+        for attempt in 0..MAX_RETRY {
+            let text = self.post_text(&body).await?;
+            match serde_json::from_str(&text) {
+                Ok(value) => return Ok(value),
+                Err(error) => last_error = Some(error),
+            }
+            if attempt + 1 < MAX_RETRY {
+                tokio::time::sleep(Duration::from_millis(RETRY_SLEEP_MS)).await;
+            }
+        }
+        Err(Error::Json(
+            last_error.expect("at least one decode attempt"),
+        ))
     }
 
     /// 拉取指定 dex 的所有永续合约状态
@@ -167,15 +180,15 @@ impl HyperliquidRestClient {
 
     /// 获取指定时间点的收盘价。coin 用全名，例如 "BTC" 或 "para:TREAD"
     pub async fn price_at_time(&self, coin: &str, target_ts: i64) -> Result<Option<Decimal>> {
-        let bar_time = (target_ts / 3_600_000) * 3_600_000;
-        let start = bar_time - 3_600_000;
-        let end = bar_time + 3_600_000;
+        let bar_time = outcome_bar_open(target_ts);
+        let start = bar_time;
+        let end = bar_time + 60_000;
 
         let body = json!({
             "type": "candleSnapshot",
             "req": {
                 "coin": coin,
-                "interval": "1h",
+                "interval": "1m",
                 "startTime": start,
                 "endTime": end
             }
@@ -193,37 +206,6 @@ impl HyperliquidRestClient {
             }
         }
         Ok(None)
-    }
-
-    #[allow(dead_code)]
-    pub async fn funding_history(
-        &self,
-        coin: &str,
-        start_ts: i64,
-        end_ts: i64,
-    ) -> Result<Vec<(i64, Decimal)>> {
-        let body = json!({
-            "type": "fundingHistory",
-            "coin": coin,
-            "startTime": start_ts,
-            "endTime": end_ts
-        });
-
-        let resp: Vec<serde_json::Value> = self.post_json(body).await?;
-        let mut result = Vec::new();
-        for row in resp {
-            let Some(t) = row.get("time").and_then(|v| v.as_i64()) else {
-                continue;
-            };
-            let Some(rate_str) = row.get("fundingRate").and_then(|v| v.as_str()) else {
-                continue;
-            };
-            if let Ok(rate) = Decimal::from_str(rate_str) {
-                result.push((t, rate));
-            }
-        }
-        result.sort_by_key(|(t, _)| *t);
-        Ok(result)
     }
 }
 

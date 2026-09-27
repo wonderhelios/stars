@@ -7,12 +7,11 @@ use crate::okx::{
     rest::{Candle1H, FundingHistoryItem},
     RestClient,
 };
+use crate::signal::{FUNDING_THRESHOLD_STR, TRADE_COST_PCT};
 
-const THRESHOLD_STR: &str = "0.0005";
 const HORIZONS_HOURS: [i64; 4] = [1, 4, 8, 24];
-const CLUSTER_GAP_HOURS: i64 = 6;
+const CLUSTER_GAP_HOURS: i64 = 24;
 const HISTORY_DAYS: u32 = 60;
-const TRADE_COST_PCT: &str = "0.15";
 
 pub async fn run(inst_ids: &[String]) -> anyhow::Result<()> {
     if inst_ids.is_empty() {
@@ -20,8 +19,9 @@ pub async fn run(inst_ids: &[String]) -> anyhow::Result<()> {
         std::process::exit(1);
     }
 
-    let threshold = Decimal::from_str(THRESHOLD_STR)?;
+    let threshold = Decimal::from_str(FUNDING_THRESHOLD_STR)?;
     let client = RestClient::new();
+    println!("历史事件研究：结算后 1 小时开盘入场代理，优先使用实际结算费率；与实时扫描的预测费率信号并非同一策略。");
 
     let mut all_events: Vec<EventOutcome> = Vec::new();
     let mut benchmark_samples: Vec<BenchmarkSample> = Vec::new();
@@ -42,7 +42,7 @@ pub async fn run(inst_ids: &[String]) -> anyhow::Result<()> {
     print_summary("汇总统计（处理组）", &all_events);
     print_by_prior_momentum("按事件前 24h 动量分层", &all_events);
     print_by_strength("按费率强度分层", &all_events);
-    print_alpha_vs_inst(&all_events, &benchmark_samples);
+    print_short_excess_vs_inst(&all_events, &benchmark_samples);
     print_net_short(&all_events);
     print_out_of_sample(&all_events);
 
@@ -50,8 +50,9 @@ pub async fn run(inst_ids: &[String]) -> anyhow::Result<()> {
 }
 
 pub async fn run_scan(top_n: usize) -> anyhow::Result<()> {
-    let threshold = Decimal::from_str(THRESHOLD_STR)?;
+    let threshold = Decimal::from_str(FUNDING_THRESHOLD_STR)?;
     let client = RestClient::new();
+    println!("历史事件研究：结算后 1 小时开盘入场代理，优先使用实际结算费率；当前成交量前 N 币种存在历史币池偏差。");
 
     println!(
         "拉取全市场 ticker（按 24h 成交额排序取 Top {}），目标历史 {} 天...",
@@ -102,7 +103,7 @@ pub async fn run_scan(top_n: usize) -> anyhow::Result<()> {
     print_summary("汇总统计（处理组）", &all_events);
     print_by_prior_momentum("按事件前 24h 动量分层", &all_events);
     print_by_strength("按费率强度分层", &all_events);
-    print_alpha_vs_inst(&all_events, &benchmark_samples);
+    print_short_excess_vs_inst(&all_events, &benchmark_samples);
     print_net_short(&all_events);
     print_out_of_sample(&all_events);
 
@@ -155,7 +156,7 @@ async fn analyze_one(
 
     let raw_events: Vec<&FundingHistoryItem> = funding
         .iter()
-        .filter(|f| f.funding_rate.abs() > threshold)
+        .filter(|f| historical_rate(f).abs() > threshold)
         .filter(|f| {
             f.funding_time
                 .parse::<i64>()
@@ -182,27 +183,35 @@ async fn analyze_one(
             Err(_) => continue,
         };
 
-        let Some(base) = find_base_candle(&candles, ts) else {
+        // 历史结算费率只在结算后可确定。延迟一小时，以下一根 K 线开盘价作入场代理。
+        let entry_ts = ts + 3_600_000;
+        let Some(base) = find_candle_at(&candles, entry_ts) else {
             continue;
         };
-        let base_close = base.close;
+        let entry_price = base.open;
+        if entry_price <= Decimal::ZERO {
+            continue;
+        }
 
-        let prior_ts = ts - 24 * 3_600_000;
-        let prior_ret = find_candle_at(&candles, prior_ts)
-            .map(|c| (base_close - c.close) / c.close * Decimal::from(100));
+        let prior_close = find_candle_at(&candles, ts - 3_600_000).map(|c| c.close);
+        let prior_ret = prior_close.and_then(|price| {
+            find_candle_at(&candles, ts - 25 * 3_600_000)
+                .filter(|c| c.close > Decimal::ZERO)
+                .map(|c| (price - c.close) / c.close * Decimal::from(100))
+        });
 
         let mut returns = Vec::new();
         for h in HORIZONS_HOURS {
-            let target_ts = ts + h * 3_600_000;
+            let target_ts = entry_ts + (h - 1) * 3_600_000;
             let ret = find_candle_at(&candles, target_ts)
-                .map(|c| (c.close - base_close) / base_close * Decimal::from(100));
+                .map(|c| (c.close - entry_price) / entry_price * Decimal::from(100));
             returns.push((h, ret));
         }
 
         outcomes.push(EventOutcome {
             inst_id: inst_id.to_string(),
             event_ts: ts,
-            funding_rate: ev.funding_rate,
+            funding_rate: historical_rate(ev),
             prior_24h_return: prior_ret,
             returns,
             benchmark_mu: benchmark.mu.clone(),
@@ -219,9 +228,12 @@ fn compute_benchmark(inst_id: &str, candles: &[Candle1H]) -> BenchmarkSample {
     for &h in &HORIZONS_HOURS {
         let h = h as usize;
         let mut values: Vec<Decimal> = Vec::new();
-        for i in 0..candles.len().saturating_sub(h) {
-            let start = candles[i].close;
-            let end = candles[i + h].close;
+        for i in 0..candles.len().saturating_sub(h - 1) {
+            if candles[i + h - 1].open_time - candles[i].open_time != (h as i64 - 1) * 3_600_000 {
+                continue;
+            }
+            let start = candles[i].open;
+            let end = candles[i + h - 1].close;
             if start.is_zero() {
                 continue;
             }
@@ -284,44 +296,33 @@ fn dedup_events<'a>(
     events.sort_by_key(|e| e.funding_time.parse::<i64>().unwrap_or(0));
     let gap_ms = gap_hours * 3_600_000;
     let mut result: Vec<&FundingHistoryItem> = Vec::new();
-    let mut current_cluster: Vec<&FundingHistoryItem> = Vec::new();
-    let mut last_ts: i64 = i64::MIN;
+    let mut last_positive: Option<i64> = None;
+    let mut last_negative: Option<i64> = None;
 
     for e in events {
         let ts = e.funding_time.parse::<i64>().unwrap_or(0);
-        if ts - last_ts > gap_ms && !current_cluster.is_empty() {
-            result.push(pick_representative(&current_cluster));
-            current_cluster.clear();
+        let last_selected = if historical_rate(e) > Decimal::ZERO {
+            &mut last_positive
+        } else {
+            &mut last_negative
+        };
+        if last_selected.is_none_or(|last| ts - last >= gap_ms) {
+            result.push(e);
+            *last_selected = Some(ts);
         }
-        current_cluster.push(e);
-        last_ts = ts;
-    }
-    if !current_cluster.is_empty() {
-        result.push(pick_representative(&current_cluster));
     }
     result
 }
 
-fn pick_representative<'a>(cluster: &[&'a FundingHistoryItem]) -> &'a FundingHistoryItem {
-    cluster
-        .iter()
-        .max_by(|a, b| a.funding_rate.abs().cmp(&b.funding_rate.abs()))
-        .copied()
-        .expect("non-empty cluster")
-}
-
-fn find_base_candle(candles: &[Candle1H], ts: i64) -> Option<&Candle1H> {
-    candles
-        .iter()
-        .filter(|c| c.open_time <= ts)
-        .max_by_key(|c| c.open_time)
+fn historical_rate(event: &FundingHistoryItem) -> Decimal {
+    event.realized_rate.unwrap_or(event.funding_rate)
 }
 
 fn find_candle_at(candles: &[Candle1H], ts: i64) -> Option<&Candle1H> {
     candles
-        .iter()
-        .filter(|c| c.open_time >= ts)
-        .min_by_key(|c| c.open_time)
+        .binary_search_by_key(&ts, |c| c.open_time)
+        .ok()
+        .map(|index| &candles[index])
 }
 
 // ========== 统计输出 ==========
@@ -588,8 +589,9 @@ fn print_by_strength(title: &str, events: &[EventOutcome]) {
     }
 }
 
-fn print_alpha_vs_inst(events: &[EventOutcome], benchmarks: &[BenchmarkSample]) {
-    println!("\n\n========== Alpha 对比（事件收益 - 该币全时段平均） ==========");
+fn print_short_excess_vs_inst(events: &[EventOutcome], benchmarks: &[BenchmarkSample]) {
+    println!("\n\n========== 做空事件收益相对该币全时段做空均值（探索性） ==========");
+    println!("  使用当前可交易币种，未做历史币池重建；该差值不能视为已验证 alpha。");
 
     if events.is_empty() {
         println!("  无事件");
@@ -669,35 +671,28 @@ fn print_alpha_vs_inst(events: &[EventOutcome], benchmarks: &[BenchmarkSample]) 
             println!("\n  【{} · {}】n={}", label, dir_label, subset.len());
 
             for (idx, h) in HORIZONS_HOURS.iter().enumerate() {
-                let rets: Vec<Decimal> = subset
-                    .iter()
-                    .filter_map(|e| e.returns.get(idx).and_then(|(_, r)| *r))
-                    .collect();
-                if rets.is_empty() {
-                    continue;
-                }
-                let n_ret = rets.len();
-                let avg_ret = rets.iter().copied().sum::<Decimal>() / Decimal::from(n_ret as i64);
-
-                let mus: Vec<Decimal> = subset
+                let pairs: Vec<(Decimal, Decimal)> = subset
                     .iter()
                     .filter_map(|e| {
-                        e.benchmark_mu
-                            .iter()
-                            .find(|(hh, _)| hh == h)
-                            .map(|(_, v)| *v)
+                        let ret = e.returns.get(idx).and_then(|(_, r)| *r)?;
+                        let mu = e.benchmark_mu.iter().find(|(hh, _)| hh == h)?.1;
+                        Some((ret, mu))
                     })
                     .collect();
-                if mus.is_empty() {
+                if pairs.is_empty() {
                     continue;
                 }
-                let avg_mu = mus.iter().copied().sum::<Decimal>() / Decimal::from(mus.len() as i64);
+                let n_ret = pairs.len();
+                let avg_ret = pairs.iter().map(|(ret, _)| *ret).sum::<Decimal>()
+                    / Decimal::from(n_ret as i64);
+                let avg_mu =
+                    pairs.iter().map(|(_, mu)| *mu).sum::<Decimal>() / Decimal::from(n_ret as i64);
 
-                let alpha = avg_ret - avg_mu;
+                let short_excess = avg_mu - avg_ret;
 
                 println!(
-                    "      T+{:>2}h: 事件 {:+.2}%  基准 {:+.2}%  alpha {:+.2}%  n={}",
-                    h, avg_ret, avg_mu, alpha, n_ret
+                    "      T+{:>2}h: 事件做空 {:+.2}%  平时做空 {:+.2}%  超额 {:+.2}%  n={}",
+                    h, -avg_ret, -avg_mu, short_excess, n_ret
                 );
             }
         }
@@ -793,7 +788,7 @@ fn print_net_short(events: &[EventOutcome]) {
 }
 
 fn print_out_of_sample(events: &[EventOutcome]) {
-    println!("\n\n========== 分样本外验证（前 50% vs 后 50% 时间） ==========");
+    println!("\n\n========== 时间前后半段净做空收益（探索性） ==========");
     if events.len() < 20 {
         println!("  样本不足 20，跳过");
         return;
@@ -801,31 +796,34 @@ fn print_out_of_sample(events: &[EventOutcome]) {
 
     let mut sorted = events.to_vec();
     sorted.sort_by_key(|e| e.event_ts);
-    let mid = sorted.len() / 2;
+    let first_ts = sorted.first().map(|e| e.event_ts).unwrap_or(0);
+    let last_ts = sorted.last().map(|e| e.event_ts).unwrap_or(0);
+    let split_ts = first_ts + (last_ts - first_ts) / 2;
+    let mid = sorted.partition_point(|e| e.event_ts < split_ts);
     let first_half = &sorted[..mid];
     let second_half = &sorted[mid..];
-
-    let first_ts = sorted.first().map(|e| e.event_ts).unwrap_or(0);
-    let second_ts = sorted[mid].event_ts;
-    let last_ts = sorted.last().map(|e| e.event_ts).unwrap_or(0);
+    if first_half.is_empty() || second_half.is_empty() {
+        println!("  事件时间过于集中，无法按时间拆分");
+        return;
+    }
 
     println!(
         "  前段: {} 事件，{} → {}",
         first_half.len(),
         format_ts_cn(first_ts),
-        format_ts_cn(second_ts)
+        format_ts_cn(split_ts)
     );
     println!(
         "  后段: {} 事件，{} → {}",
         second_half.len(),
-        format_ts_cn(second_ts),
+        format_ts_cn(split_ts),
         format_ts_cn(last_ts)
     );
 
     println!("\n  -- 前段 --");
-    print_summary("前段", first_half);
+    print_net_short(first_half);
     println!("\n  -- 后段 --");
-    print_summary("后段", second_half);
+    print_net_short(second_half);
 }
 
 fn format_ts_cn(ms: i64) -> String {
@@ -850,4 +848,41 @@ fn days_to_ymd(days: i64) -> (i64, u32, u32) {
     let m = if mp < 10 { mp + 3 } else { mp - 9 } as u32;
     let y = if m <= 2 { y + 1 } else { y };
     (y, m, d)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn dedup_keeps_first_observable_event_per_direction() {
+        let make = |hour: i64, rate: &str| FundingHistoryItem {
+            funding_time: (hour * 3_600_000).to_string(),
+            funding_rate: Decimal::from_str(rate).unwrap(),
+            realized_rate: None,
+        };
+        let events = [
+            make(1, "0.0006"),
+            make(2, "0.002"),
+            make(3, "-0.001"),
+            make(24, "0.0007"),
+            make(25, "0.0008"),
+        ];
+        let selected = dedup_events(events.iter().collect(), CLUSTER_GAP_HOURS);
+        assert_eq!(selected.len(), 3);
+        assert_eq!(selected[0].funding_time, events[0].funding_time);
+        assert_eq!(selected[1].funding_time, events[2].funding_time);
+        assert_eq!(selected[2].funding_time, events[4].funding_time);
+    }
+
+    #[test]
+    fn missing_candle_is_not_replaced_with_future_candle() {
+        let candle = |hour: i64| Candle1H {
+            open_time: hour * 3_600_000,
+            open: Decimal::ONE,
+            close: Decimal::ONE,
+        };
+        let candles = [candle(1), candle(3)];
+        assert!(find_candle_at(&candles, 2 * 3_600_000).is_none());
+    }
 }

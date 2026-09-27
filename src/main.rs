@@ -3,6 +3,7 @@ mod error;
 mod hyperliquid;
 mod okx;
 mod paper;
+mod paper_store;
 mod research;
 mod signal;
 mod state;
@@ -37,8 +38,10 @@ async fn main() -> anyhow::Result<()> {
     let hl_db_path = std::env::var("OKX_QUANT_HL_DB")
         .unwrap_or_else(|_| "/var/lib/okx-quant/hyperliquid.sqlite".to_string());
 
-    if let Some(parent) = std::path::Path::new(&okx_db_path).parent() {
-        let _ = std::fs::create_dir_all(parent);
+    for path in [&okx_db_path, &binance_db_path, &hl_db_path] {
+        if let Some(parent) = std::path::Path::new(path).parent() {
+            std::fs::create_dir_all(parent)?;
+        }
     }
 
     if args.len() > 1 {

@@ -1,10 +1,8 @@
-use axum::{extract::State, routing::get, Json, Router};
+use axum::{extract::State, http::StatusCode, routing::get, Json, Router};
 use std::sync::Arc;
 use tower_http::{cors::CorsLayer, services::ServeDir};
 
-use crate::binance::paper::BinanceSignalRow;
-use crate::hyperliquid::paper::HyperliquidSignalRow;
-use crate::paper::{PaperDb, SignalRow};
+use crate::paper_store::{PaperDb, SignalRow};
 use crate::state::SharedState;
 use crate::types::MarketSnapshot;
 
@@ -12,8 +10,8 @@ use crate::types::MarketSnapshot;
 pub struct WebState {
     pub app: SharedState,
     pub okx_paper: Arc<PaperDb>,
-    pub binance_paper: Arc<crate::binance::paper::BinancePaperDb>,
-    pub hl_paper: Arc<crate::hyperliquid::paper::HyperliquidPaperDb>,
+    pub binance_paper: Arc<PaperDb>,
+    pub hl_paper: Arc<PaperDb>,
 }
 
 pub fn router(state: WebState) -> Router {
@@ -39,23 +37,25 @@ async fn get_snapshot(State(state): State<WebState>) -> Json<Vec<MarketSnapshot>
     Json(list)
 }
 
-async fn get_okx_signals(State(state): State<WebState>) -> Json<Vec<SignalRow>> {
-    match state.okx_paper.all_signals().await {
-        Ok(rows) => Json(rows),
-        Err(_) => Json(vec![]),
-    }
+async fn get_okx_signals(
+    State(state): State<WebState>,
+) -> Result<Json<Vec<SignalRow>>, StatusCode> {
+    read_signals(&state.okx_paper).await
 }
 
-async fn get_binance_signals(State(state): State<WebState>) -> Json<Vec<BinanceSignalRow>> {
-    match state.binance_paper.all_signals().await {
-        Ok(rows) => Json(rows),
-        Err(_) => Json(vec![]),
-    }
+async fn get_binance_signals(
+    State(state): State<WebState>,
+) -> Result<Json<Vec<SignalRow>>, StatusCode> {
+    read_signals(&state.binance_paper).await
 }
 
-async fn get_hl_signals(State(state): State<WebState>) -> Json<Vec<HyperliquidSignalRow>> {
-    match state.hl_paper.all_signals().await {
-        Ok(rows) => Json(rows),
-        Err(_) => Json(vec![]),
-    }
+async fn get_hl_signals(State(state): State<WebState>) -> Result<Json<Vec<SignalRow>>, StatusCode> {
+    read_signals(&state.hl_paper).await
+}
+
+async fn read_signals(db: &PaperDb) -> Result<Json<Vec<SignalRow>>, StatusCode> {
+    db.all_signals().await.map(Json).map_err(|error| {
+        tracing::error!("paper signals read failed: {}", error);
+        StatusCode::SERVICE_UNAVAILABLE
+    })
 }

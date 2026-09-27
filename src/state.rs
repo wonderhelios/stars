@@ -64,9 +64,4 @@ impl AppState {
             entry.next_funding_time = next_funding_time;
         }
     }
-
-    /// 返回当前快照总数。
-    pub async fn snapshot_count(&self) -> usize {
-        self.snapshots.read().await.len()
-    }
 }

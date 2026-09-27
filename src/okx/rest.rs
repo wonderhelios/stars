@@ -4,9 +4,9 @@ use std::str::FromStr;
 use std::time::Duration;
 
 use crate::error::{Error, Result};
+use crate::signal::outcome_bar_open;
 
 const BASE: &str = "https://www.okx.com";
-const CANDLE_BATCH: u32 = 300;
 const FUNDING_BATCH: u32 = 400;
 const BATCH_SLEEP_MS: u64 = 120;
 const MAX_RETRY: u32 = 3;
@@ -68,10 +68,7 @@ pub struct FundingHistoryItem {
 pub struct Candle1H {
     pub open_time: i64,
     pub open: Decimal,
-    pub high: Decimal,
-    pub low: Decimal,
     pub close: Decimal,
-    pub volume: Decimal,
 }
 
 #[derive(Debug, Clone)]
@@ -83,6 +80,10 @@ pub struct TickerRow {
 }
 
 impl TickerRow {
+    pub fn volume_quote_24h(&self) -> Decimal {
+        self.vol_ccy_24h * self.last
+    }
+
     pub fn prior_24h_pct(&self) -> Decimal {
         if self.open_24h.is_zero() {
             Decimal::ZERO
@@ -147,8 +148,20 @@ impl RestClient {
         path: &str,
         params: &[(&str, &str)],
     ) -> Result<T> {
-        let text = self.get_text(path, params).await?;
-        serde_json::from_str(&text).map_err(|e| Error::Json(e))
+        let mut last_error = None;
+        for attempt in 0..MAX_RETRY {
+            let text = self.get_text(path, params).await?;
+            match serde_json::from_str(&text) {
+                Ok(value) => return Ok(value),
+                Err(error) => last_error = Some(error),
+            }
+            if attempt + 1 < MAX_RETRY {
+                tokio::time::sleep(Duration::from_millis(RETRY_SLEEP_MS)).await;
+            }
+        }
+        Err(Error::Json(
+            last_error.expect("at least one decode attempt"),
+        ))
     }
 
     pub async fn all_swap_inst_ids(&self) -> Result<Vec<String>> {
@@ -187,7 +200,7 @@ impl RestClient {
 
     pub async fn top_swap_by_volume(&self, top_n: usize) -> Result<Vec<String>> {
         let mut list = self.all_tickers_usdt_swap().await?;
-        list.sort_by(|a, b| b.vol_ccy_24h.cmp(&a.vol_ccy_24h));
+        list.sort_by_key(|b| std::cmp::Reverse(b.volume_quote_24h()));
         list.truncate(top_n);
         Ok(list.into_iter().map(|r| r.inst_id).collect())
     }
@@ -202,6 +215,24 @@ impl RestClient {
             .next()
             .map(|r| r.funding_rate)
             .ok_or_else(|| Error::Msg(format!("no funding rate for {}", inst_id)))
+    }
+
+    pub async fn ticker(&self, inst_id: &str) -> Result<TickerRow> {
+        let resp: Resp<RawTicker> = self
+            .get_json("/api/v5/market/ticker", &[("instId", inst_id)])
+            .await?;
+        let row = resp
+            .unwrap_ok()?
+            .into_iter()
+            .next()
+            .ok_or_else(|| Error::Msg(format!("no ticker for {}", inst_id)))?;
+        Ok(TickerRow {
+            inst_id: row.inst_id,
+            last: Decimal::from_str(&row.last).map_err(|e| Error::Msg(e.to_string()))?,
+            open_24h: Decimal::from_str(&row.open24h).map_err(|e| Error::Msg(e.to_string()))?,
+            vol_ccy_24h: Decimal::from_str(&row.vol_ccy_24h)
+                .map_err(|e| Error::Msg(e.to_string()))?,
+        })
     }
 
     pub async fn candles_1h_history(
@@ -232,18 +263,10 @@ impl RestClient {
                 params.push(("after", a));
             }
 
-            let resp: Resp<Vec<String>> = match self
+            let resp: Resp<Vec<String>> = self
                 .get_json("/api/v5/market/history-candles", &params)
-                .await
-            {
-                Ok(r) => r,
-                Err(_) => break,
-            };
-
-            let rows = match resp.unwrap_ok() {
-                Ok(r) => r,
-                Err(_) => break,
-            };
+                .await?;
+            let rows = resp.unwrap_ok()?;
 
             if rows.is_empty() {
                 break;
@@ -252,16 +275,13 @@ impl RestClient {
             let mut batch: Vec<Candle1H> = rows
                 .into_iter()
                 .filter_map(|row| {
-                    if row.len() < 6 {
+                    if row.len() < 9 || row[8] != "1" {
                         return None;
                     }
                     Some(Candle1H {
                         open_time: row[0].parse().ok()?,
                         open: Decimal::from_str(&row[1]).ok()?,
-                        high: Decimal::from_str(&row[2]).ok()?,
-                        low: Decimal::from_str(&row[3]).ok()?,
                         close: Decimal::from_str(&row[4]).ok()?,
-                        volume: Decimal::from_str(&row[5]).ok()?,
                     })
                 })
                 .collect();
@@ -311,18 +331,10 @@ impl RestClient {
                 params.push(("after", a));
             }
 
-            let resp: Resp<FundingHistoryItem> = match self
+            let resp: Resp<FundingHistoryItem> = self
                 .get_json("/api/v5/public/funding-rate-history", &params)
-                .await
-            {
-                Ok(r) => r,
-                Err(_) => break,
-            };
-
-            let rows = match resp.unwrap_ok() {
-                Ok(r) => r,
-                Err(_) => break,
-            };
+                .await?;
+            let rows = resp.unwrap_ok()?;
 
             if rows.is_empty() {
                 break;
@@ -362,12 +374,12 @@ impl RestClient {
     }
 
     pub async fn price_at_time(&self, inst_id: &str, target_ts: i64) -> Result<Option<Decimal>> {
-        let bar_time = (target_ts / 3_600_000) * 3_600_000;
+        let bar_time = outcome_bar_open(target_ts);
         let params = [
             ("instId", inst_id),
-            ("bar", "1H"),
-            ("after", &(bar_time - 1).to_string()),
-            ("limit", "1"),
+            ("bar", "1m"),
+            ("after", &(bar_time + 60_000).to_string()),
+            ("limit", "2"),
         ];
 
         let resp: Resp<Vec<String>> = self
@@ -375,8 +387,8 @@ impl RestClient {
             .await?;
 
         let rows = resp.unwrap_ok()?;
-        if let Some(row) = rows.first() {
-            if row.len() >= 5 {
+        for row in rows {
+            if row.len() >= 9 && row[0].parse::<i64>().ok() == Some(bar_time) && row[8] == "1" {
                 return Ok(Decimal::from_str(&row[4]).ok());
             }
         }
@@ -396,4 +408,20 @@ pub fn parse_dec(v: &serde_json::Value, key: &str) -> Option<Decimal> {
         return None;
     }
     Decimal::from_str(s).ok()
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn swap_volume_is_compared_in_quote_currency() {
+        let ticker = TickerRow {
+            inst_id: "BTC-USDT-SWAP".to_string(),
+            last: Decimal::from(50_000),
+            open_24h: Decimal::from(49_000),
+            vol_ccy_24h: Decimal::from(20),
+        };
+        assert_eq!(ticker.volume_quote_24h(), Decimal::from(1_000_000));
+    }
 }

@@ -185,7 +185,7 @@ async fn apply_ticker(state: &SharedState, inst_id: &str, v: &serde_json::Value)
     let open_24h = parse_dec(v, "open24h").unwrap_or(Decimal::ZERO);
     let high_24h = parse_dec(v, "high24h").unwrap_or(Decimal::ZERO);
     let low_24h = parse_dec(v, "low24h").unwrap_or(Decimal::ZERO);
-    let vol_quote = parse_dec(v, "volCcy24h").unwrap_or(Decimal::ZERO);
+    let vol_quote = parse_dec(v, "volCcy24h").unwrap_or(Decimal::ZERO) * last;
     let ts = v["ts"].as_str().and_then(|s| s.parse().ok()).unwrap_or(0);
 
     state

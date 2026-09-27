@@ -4,33 +4,11 @@ use std::str::FromStr;
 use std::time::Duration;
 
 use crate::error::{Error, Result};
+use crate::signal::outcome_bar_open;
 
 const BASE: &str = "https://fapi.binance.com";
 const MAX_RETRY: u32 = 3;
 const RETRY_SLEEP_MS: u64 = 400;
-
-#[derive(serde::Deserialize)]
-struct FundingHistoryItem {
-    #[serde(rename = "fundingTime")]
-    #[allow(dead_code)]
-    funding_time: i64,
-    #[serde(rename = "fundingRate")]
-    #[allow(dead_code)]
-    funding_rate: Decimal,
-}
-
-#[derive(serde::Deserialize)]
-struct ExchangeInfo {
-    symbols: Vec<SymbolInfo>,
-}
-
-#[derive(serde::Deserialize)]
-struct SymbolInfo {
-    symbol: String,
-    #[serde(rename = "contractType")]
-    contract_type: String,
-    status: String,
-}
 
 #[derive(serde::Deserialize)]
 struct PremiumIndex {
@@ -56,13 +34,6 @@ impl BinanceTicker {
             (self.last - self.open_24h) / self.open_24h * Decimal::from(100)
         }
     }
-}
-
-#[derive(Debug, Clone)]
-#[allow(dead_code)]
-pub struct BinanceCandle {
-    pub open_time: i64,
-    pub close: Decimal,
 }
 
 pub struct BinanceRestClient {
@@ -122,32 +93,34 @@ impl BinanceRestClient {
         path: &str,
         params: &[(&str, &str)],
     ) -> Result<T> {
-        let text = self.get_text(path, params).await?;
-        serde_json::from_str(&text).map_err(|e| Error::Json(e))
-    }
-
-    pub async fn all_perp_symbols(&self) -> Result<Vec<String>> {
-        let resp: ExchangeInfo = self.get_json("/fapi/v1/exchangeInfo", &[]).await?;
-        Ok(resp
-            .symbols
-            .into_iter()
-            .filter(|s| s.contract_type == "PERPETUAL" && s.status == "TRADING")
-            .map(|s| s.symbol)
-            .collect())
+        let mut last_error = None;
+        for attempt in 0..MAX_RETRY {
+            let text = self.get_text(path, params).await?;
+            match serde_json::from_str(&text) {
+                Ok(value) => return Ok(value),
+                Err(error) => last_error = Some(error),
+            }
+            if attempt + 1 < MAX_RETRY {
+                tokio::time::sleep(Duration::from_millis(RETRY_SLEEP_MS)).await;
+            }
+        }
+        Err(Error::Json(
+            last_error.expect("at least one decode attempt"),
+        ))
     }
 
     /// 全市场 24h ticker：手动解析，容忍个别字段异常
     pub async fn all_tickers(&self) -> Result<Vec<BinanceTicker>> {
-        let text = self.get_text("/fapi/v1/ticker/24hr", &[]).await?;
-
-        let arr: Vec<serde_json::Value> = serde_json::from_str(&text)
-            .map_err(|e| Error::Msg(format!("BN ticker json: {}", e)))?;
+        let arr: Vec<serde_json::Value> = self.get_json("/fapi/v1/ticker/24hr", &[]).await?;
 
         let mut result = Vec::with_capacity(arr.len());
         for item in &arr {
             let Some(symbol) = item.get("symbol").and_then(|v| v.as_str()) else {
                 continue;
             };
+            if !symbol.ends_with("USDT") {
+                continue;
+            }
             let last_str = item.get("lastPrice").and_then(|v| v.as_str()).unwrap_or("");
             let open_str = item.get("openPrice").and_then(|v| v.as_str()).unwrap_or("");
             let vol_str = item
@@ -173,14 +146,6 @@ impl BinanceRestClient {
         Ok(result)
     }
 
-    #[allow(dead_code)]
-    pub async fn top_by_volume(&self, top_n: usize) -> Result<Vec<String>> {
-        let mut list = self.all_tickers().await?;
-        list.sort_by(|a, b| b.vol_quote.cmp(&a.vol_quote));
-        list.truncate(top_n);
-        Ok(list.into_iter().map(|r| r.symbol).collect())
-    }
-
     pub async fn funding_rate(&self, symbol: &str) -> Result<Decimal> {
         let resp: PremiumIndex = self
             .get_json("/fapi/v1/premiumIndex", &[("symbol", symbol)])
@@ -188,64 +153,37 @@ impl BinanceRestClient {
         Ok(resp.last_funding_rate)
     }
 
-    #[allow(dead_code)]
-    pub async fn funding_rate_history(
-        &self,
-        symbol: &str,
-        limit: u32,
-    ) -> Result<Vec<FundingHistoryItem>> {
-        let limit = limit.min(1000).to_string();
-        let resp: Vec<FundingHistoryItem> = self
-            .get_json(
-                "/fapi/v1/fundingRate",
-                &[("symbol", symbol), ("limit", &limit)],
-            )
+    pub async fn ticker(&self, symbol: &str) -> Result<BinanceTicker> {
+        let row: serde_json::Value = self
+            .get_json("/fapi/v1/ticker/24hr", &[("symbol", symbol)])
             .await?;
-        Ok(resp)
-    }
-
-    #[allow(dead_code)]
-    pub async fn candles_1h(&self, symbol: &str, limit: u32) -> Result<Vec<BinanceCandle>> {
-        let limit = limit.min(1500).to_string();
-        let resp: Vec<Vec<serde_json::Value>> = self
-            .get_json(
-                "/fapi/v1/klines",
-                &[("symbol", symbol), ("interval", "1h"), ("limit", &limit)],
-            )
-            .await?;
-
-        let mut candles: Vec<BinanceCandle> = resp
-            .into_iter()
-            .filter_map(|row| {
-                if row.len() < 5 {
-                    return None;
-                }
-                Some(BinanceCandle {
-                    open_time: row[0].as_i64()?,
-                    close: Decimal::from_str(row[4].as_str()?).ok()?,
-                })
-            })
-            .collect();
-
-        candles.sort_by_key(|c| c.open_time);
-        Ok(candles)
+        let parse = |key: &str| -> Result<Decimal> {
+            let raw = row.get(key).and_then(|v| v.as_str()).unwrap_or("");
+            Decimal::from_str(raw).map_err(|e| Error::Msg(format!("{} {}: {}", symbol, key, e)))
+        };
+        Ok(BinanceTicker {
+            symbol: symbol.to_string(),
+            last: parse("lastPrice")?,
+            open_24h: parse("openPrice")?,
+            vol_quote: parse("quoteVolume")?,
+        })
     }
 
     /// 获取指定时间点的收盘价
     pub async fn price_at_time(&self, symbol: &str, target_ts: i64) -> Result<Option<Decimal>> {
-        let bar_time = (target_ts / 3_600_000) * 3_600_000;
-        let start = bar_time - 3_600_000;
-        let end = bar_time + 3_600_000;
+        let bar_time = outcome_bar_open(target_ts);
+        let start = bar_time;
+        let end = bar_time + 60_000;
 
         let resp: Vec<Vec<serde_json::Value>> = self
             .get_json(
                 "/fapi/v1/klines",
                 &[
                     ("symbol", symbol),
-                    ("interval", "1h"),
+                    ("interval", "1m"),
                     ("startTime", &start.to_string()),
                     ("endTime", &end.to_string()),
-                    ("limit", "3"),
+                    ("limit", "1"),
                 ],
             )
             .await?;

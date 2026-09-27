@@ -6,6 +6,19 @@ pub const FUNDING_THRESHOLD_STR: &str = "0.0005";
 
 /// 单次交易成本估算（%）
 pub const TRADE_COST_PCT: &str = "0.15";
+pub const OBSERVATION_WINDOW_MS: i64 = 24 * 3_600_000;
+
+pub const MINUTE_MS: i64 = 60_000;
+
+/// 第一根在目标时刻或之后收完的 1 分钟 K 线开盘时间。
+pub fn outcome_bar_open(target_ts: i64) -> i64 {
+    (target_ts + MINUTE_MS - 1).div_euclid(MINUTE_MS) * MINUTE_MS - MINUTE_MS
+}
+
+/// 只读取已经收完并留出几秒供交易所发布的 K 线。
+pub fn outcome_bar_ready(target_ts: i64, now_ts: i64) -> bool {
+    now_ts >= outcome_bar_open(target_ts) + MINUTE_MS + 5_000
+}
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Signal {
@@ -42,13 +55,16 @@ pub fn classify(prior_24h_pct: Decimal, funding: Decimal) -> Option<&'static str
     }
 }
 
-/// 把 kind 转换为可读的中文标签
-pub fn kind_label(kind: &str) -> &'static str {
-    match kind {
-        "crash_pos_fund" => "暴跌+正费率",
-        "down_pos_fund" => "下跌+正费率",
-        "up_pos_fund" => "上涨+正费率",
-        "pump_pos_fund" => "暴涨+正费率",
-        _ => "未知",
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn outcome_uses_first_completed_minute_after_target() {
+        assert_eq!(outcome_bar_open(3_600_000), 3_540_000);
+        assert_eq!(outcome_bar_open(3_600_001), 3_600_000);
+        assert_eq!(outcome_bar_open(3_659_999), 3_600_000);
+        assert!(!outcome_bar_ready(3_600_001, 3_664_999));
+        assert!(outcome_bar_ready(3_600_001, 3_665_000));
     }
 }

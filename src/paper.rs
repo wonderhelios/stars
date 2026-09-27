@@ -1,228 +1,18 @@
-use std::collections::HashMap;
 use std::str::FromStr;
-use std::sync::{Arc, Mutex};
+use std::sync::Arc;
 use std::time::Duration;
 
-use anyhow::Context;
-use rusqlite::{params, Connection};
 use rust_decimal::Decimal;
-use serde::Serialize;
 use tokio::time::interval;
 use tracing::{error, info};
 
 use crate::okx::RestClient;
+pub use crate::paper_store::PaperDb;
+use crate::paper_store::{due_outcomes, SignalRow};
 use crate::signal::{classify, Signal, TRADE_COST_PCT};
 
 const SCAN_INTERVAL_SECS: u64 = 300;
 const TRACK_INTERVAL_SECS: u64 = 60;
-
-#[derive(Debug, Clone, Serialize)]
-pub struct SignalRow {
-    pub id: i64,
-    pub inst_id: String,
-    pub kind: String,
-    pub triggered_at: i64,
-    pub funding_rate: Decimal,
-    pub prior_24h_return: Decimal,
-    pub entry_price: Decimal,
-    pub t1_price: Option<Decimal>,
-    pub t4_price: Option<Decimal>,
-    pub t8_price: Option<Decimal>,
-    pub t24_price: Option<Decimal>,
-}
-
-pub struct PaperDb {
-    conn: Arc<Mutex<Connection>>,
-}
-
-impl PaperDb {
-    pub fn open(path: &str) -> anyhow::Result<Self> {
-        let conn = Connection::open(path).with_context(|| format!("open sqlite at {}", path))?;
-        conn.execute_batch(
-            "
-            PRAGMA journal_mode = WAL;
-            CREATE TABLE IF NOT EXISTS signals (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                inst_id TEXT NOT NULL,
-                kind TEXT NOT NULL,
-                triggered_at INTEGER NOT NULL,
-                funding_rate TEXT NOT NULL,
-                prior_24h_return TEXT NOT NULL,
-                entry_price TEXT NOT NULL,
-                t1_price TEXT,
-                t4_price TEXT,
-                t8_price TEXT,
-                t24_price TEXT,
-                UNIQUE(inst_id, triggered_at)
-            );
-            CREATE INDEX IF NOT EXISTS idx_signals_triggered
-                ON signals(triggered_at);
-            ",
-        )?;
-        Ok(Self {
-            conn: Arc::new(Mutex::new(conn)),
-        })
-    }
-
-    pub async fn insert(&self, sig: &Signal) -> anyhow::Result<bool> {
-        let conn = self.conn.clone();
-        let sig = sig.clone();
-        tokio::task::spawn_blocking(move || -> anyhow::Result<bool> {
-            let c = conn.lock().unwrap();
-            let rows = c.execute(
-                "INSERT OR IGNORE INTO signals
-                 (inst_id, kind, triggered_at, funding_rate, prior_24h_return, entry_price)
-                 VALUES (?1, ?2, ?3, ?4, ?5, ?6)",
-                params![
-                    sig.inst_id,
-                    sig.kind,
-                    sig.triggered_at,
-                    sig.funding_rate.to_string(),
-                    sig.prior_24h_return.to_string(),
-                    sig.entry_price.to_string(),
-                ],
-            )?;
-            Ok(rows > 0)
-        })
-        .await?
-    }
-
-    /// 检查同一 inst_id + kind 在 window_ms 毫秒内是否已有信号
-    pub async fn has_recent_signal(
-        &self,
-        inst_id: &str,
-        kind: &str,
-        now_ms: i64,
-        window_ms: i64,
-    ) -> anyhow::Result<bool> {
-        let conn = self.conn.clone();
-        let inst_id = inst_id.to_string();
-        let kind = kind.to_string();
-        let cutoff = now_ms - window_ms;
-
-        tokio::task::spawn_blocking(move || -> anyhow::Result<bool> {
-            let c = conn.lock().unwrap();
-            let count: i64 = c.query_row(
-                "SELECT COUNT(*) FROM signals
-                 WHERE inst_id = ?1 AND kind = ?2 AND triggered_at >= ?3",
-                params![inst_id, kind, cutoff],
-                |row| row.get(0),
-            )?;
-            Ok(count > 0)
-        })
-        .await?
-    }
-
-    pub async fn open_signals(&self) -> anyhow::Result<Vec<SignalRow>> {
-        let conn = self.conn.clone();
-        tokio::task::spawn_blocking(move || -> anyhow::Result<Vec<SignalRow>> {
-            let c = conn.lock().unwrap();
-            let mut stmt = c.prepare(
-                "SELECT id, inst_id, kind, triggered_at, funding_rate, prior_24h_return, entry_price,
-                        t1_price, t4_price, t8_price, t24_price
-                 FROM signals
-                 WHERE t24_price IS NULL
-                 ORDER BY triggered_at ASC",
-            )?;
-            let rows = stmt
-                .query_map([], |row| {
-                    Ok(SignalRow {
-                        id: row.get(0)?,
-                        inst_id: row.get(1)?,
-                        kind: row.get(2)?,
-                        triggered_at: row.get(3)?,
-                        funding_rate: Decimal::from_str(&row.get::<_, String>(4)?)
-                            .unwrap_or(Decimal::ZERO),
-                        prior_24h_return: Decimal::from_str(&row.get::<_, String>(5)?)
-                            .unwrap_or(Decimal::ZERO),
-                        entry_price: Decimal::from_str(&row.get::<_, String>(6)?)
-                            .unwrap_or(Decimal::ZERO),
-                        t1_price: row
-                            .get::<_, Option<String>>(7)?
-                            .and_then(|s| Decimal::from_str(&s).ok()),
-                        t4_price: row
-                            .get::<_, Option<String>>(8)?
-                            .and_then(|s| Decimal::from_str(&s).ok()),
-                        t8_price: row
-                            .get::<_, Option<String>>(9)?
-                            .and_then(|s| Decimal::from_str(&s).ok()),
-                        t24_price: row
-                            .get::<_, Option<String>>(10)?
-                            .and_then(|s| Decimal::from_str(&s).ok()),
-                    })
-                })?
-                .collect::<Result<Vec<_>, _>>()?;
-            Ok(rows)
-        })
-        .await?
-    }
-
-    pub async fn all_signals(&self) -> anyhow::Result<Vec<SignalRow>> {
-        let conn = self.conn.clone();
-        tokio::task::spawn_blocking(move || -> anyhow::Result<Vec<SignalRow>> {
-            let c = conn.lock().unwrap();
-            let mut stmt = c.prepare(
-                "SELECT id, inst_id, kind, triggered_at, funding_rate, prior_24h_return, entry_price,
-                        t1_price, t4_price, t8_price, t24_price
-                 FROM signals
-                 ORDER BY triggered_at ASC",
-            )?;
-            let rows = stmt
-                .query_map([], |row| {
-                    Ok(SignalRow {
-                        id: row.get(0)?,
-                        inst_id: row.get(1)?,
-                        kind: row.get(2)?,
-                        triggered_at: row.get(3)?,
-                        funding_rate: Decimal::from_str(&row.get::<_, String>(4)?)
-                            .unwrap_or(Decimal::ZERO),
-                        prior_24h_return: Decimal::from_str(&row.get::<_, String>(5)?)
-                            .unwrap_or(Decimal::ZERO),
-                        entry_price: Decimal::from_str(&row.get::<_, String>(6)?)
-                            .unwrap_or(Decimal::ZERO),
-                        t1_price: row
-                            .get::<_, Option<String>>(7)?
-                            .and_then(|s| Decimal::from_str(&s).ok()),
-                        t4_price: row
-                            .get::<_, Option<String>>(8)?
-                            .and_then(|s| Decimal::from_str(&s).ok()),
-                        t8_price: row
-                            .get::<_, Option<String>>(9)?
-                            .and_then(|s| Decimal::from_str(&s).ok()),
-                        t24_price: row
-                            .get::<_, Option<String>>(10)?
-                            .and_then(|s| Decimal::from_str(&s).ok()),
-                    })
-                })?
-                .collect::<Result<Vec<_>, _>>()?;
-            Ok(rows)
-        })
-        .await?
-    }
-
-    async fn update_price(
-        &self,
-        id: i64,
-        column: &'static str,
-        price: Decimal,
-    ) -> anyhow::Result<()> {
-        let conn = self.conn.clone();
-        let price_s = price.to_string();
-        tokio::task::spawn_blocking(move || -> anyhow::Result<()> {
-            let c = conn.lock().unwrap();
-            let sql = match column {
-                "t1_price" => "UPDATE signals SET t1_price = ?1 WHERE id = ?2",
-                "t4_price" => "UPDATE signals SET t4_price = ?1 WHERE id = ?2",
-                "t8_price" => "UPDATE signals SET t8_price = ?1 WHERE id = ?2",
-                "t24_price" => "UPDATE signals SET t24_price = ?1 WHERE id = ?2",
-                _ => return Err(anyhow::anyhow!("bad column: {}", column)),
-            };
-            c.execute(sql, params![price_s, id])?;
-            Ok(())
-        })
-        .await?
-    }
-}
 
 // ========== 扫描任务 ==========
 
@@ -232,13 +22,12 @@ pub async fn scan_once(
     funding_threshold: Decimal,
 ) -> anyhow::Result<usize> {
     let tickers = client.all_tickers_usdt_swap().await?;
-    let now_ms = now_ms();
 
     let mut triggered = 0usize;
     let mut candidates = 0usize;
 
     for t in &tickers {
-        if t.vol_ccy_24h < Decimal::from(500_000) {
+        if t.volume_quote_24h() < Decimal::from(500_000) {
             continue;
         }
         if t.open_24h.is_zero() {
@@ -265,30 +54,35 @@ pub async fn scan_once(
             continue;
         }
 
+        // 逐个请求资金费会耗时；重新读取此刻的价格和 24h 变化，避免旧快照充当入场价。
+        let fresh = match client.ticker(&t.inst_id).await {
+            Ok(row) => row,
+            Err(e) => {
+                error!("ticker {}: {}", t.inst_id, e);
+                continue;
+            }
+        };
+        if fresh.volume_quote_24h() < Decimal::from(500_000) || fresh.last <= Decimal::ZERO {
+            continue;
+        }
+        let prior_pct = fresh.prior_24h_pct();
+        if prior_pct.abs() < Decimal::from(3) {
+            continue;
+        }
         let Some(kind) = classify(prior_pct, funding) else {
             continue;
         };
 
+        let triggered_at = now_ms();
+
         let sig = Signal {
             inst_id: t.inst_id.clone(),
             kind: kind.to_string(),
-            triggered_at: now_ms,
+            triggered_at,
             funding_rate: funding,
             prior_24h_return: prior_pct,
-            entry_price: t.last,
+            entry_price: fresh.last,
         };
-
-        match db
-            .has_recent_signal(&t.inst_id, kind, now_ms, 6 * 3_600_000)
-            .await
-        {
-            Ok(true) => continue,
-            Ok(false) => {}
-            Err(e) => {
-                error!("has_recent {}: {}", t.inst_id, e);
-                continue;
-            }
-        }
 
         match db.insert(&sig).await {
             Ok(true) => {
@@ -323,34 +117,17 @@ pub async fn update_open_signals(client: &RestClient, db: &PaperDb) -> anyhow::R
     let mut updated = 0usize;
 
     for row in &open {
-        let elapsed_h = (now - row.triggered_at) / 3_600_000;
-
-        for (h, col, cur) in [
-            (1i64, "t1_price", row.t1_price),
-            (4, "t4_price", row.t4_price),
-            (8, "t8_price", row.t8_price),
-            (24, "t24_price", row.t24_price),
-        ] {
-            // 如果该时间段已到，且还没有记录过价格
-            if cur.is_none() && elapsed_h >= h {
-                let target_ts = row.triggered_at + h * 3_600_000;
-
-                // 去 OKX 拉取精确的历史 K线收盘价
-                match client.price_at_time(&row.inst_id, target_ts).await {
-                    Ok(Some(price)) => {
-                        if let Err(e) = db.update_price(row.id, col, price).await {
-                            error!("update {} {}: {}", row.id, col, e);
-                        } else {
-                            updated += 1;
-                        }
-                    }
-                    Ok(None) => {
-                        error!("no price for {} at ts {}", row.inst_id, target_ts);
-                    }
-                    Err(e) => {
-                        error!("fetch {} price at {}: {}", row.inst_id, target_ts, e);
+        for (_, col, target_ts) in due_outcomes(row, now) {
+            match client.price_at_time(&row.inst_id, target_ts).await {
+                Ok(Some(price)) => {
+                    if let Err(e) = db.update_price(row.id, col, price).await {
+                        error!("update {} {}: {}", row.id, col, e);
+                    } else {
+                        updated += 1;
                     }
                 }
+                Ok(None) => error!("no price for {} at ts {}", row.inst_id, target_ts),
+                Err(e) => error!("fetch {} price at {}: {}", row.inst_id, target_ts, e),
             }
         }
     }

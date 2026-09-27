@@ -1,712 +1,1418 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>OKX Quant</title>
-<style>
-  :root {
-    --bg: #0d1117;
-    --panel: #161b22;
-    --border: #30363d;
-    --text: #e6edf3;
-    --dim: #7d8590;
-    --green: #3fb950;
-    --red: #f85149;
-    --yellow: #d29922;
-    --accent: #58a6ff;
-  }
-  * { box-sizing: border-box; }
-  body {
-    margin: 0;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-                 "PingFang SC", "Microsoft YaHei", sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    font-size: 13px;
-  }
-
-  .tabs {
-    display: flex;
-    background: var(--panel);
-    border-bottom: 1px solid var(--border);
-    padding: 0 20px;
-  }
-  .tab {
-    padding: 12px 16px;
-    cursor: pointer;
-    color: var(--dim);
-    font-size: 13px;
-    border-bottom: 2px solid transparent;
-    user-select: none;
-  }
-  .tab:hover { color: var(--text); }
-  .tab.active {
-    color: var(--text);
-    border-bottom-color: var(--accent);
-  }
-
-  header {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    padding: 12px 20px;
-    border-bottom: 1px solid var(--border);
-    background: var(--panel);
-    position: sticky;
-    top: 0;
-    z-index: 10;
-  }
-  header h1 {
-    margin: 0;
-    font-size: 15px;
-    font-weight: 600;
-  }
-  header .stats {
-    color: var(--dim);
-    font-size: 12px;
-  }
-  header .stats b { color: var(--text); }
-  header input {
-    background: var(--bg);
-    border: 1px solid var(--border);
-    color: var(--text);
-    padding: 5px 10px;
-    border-radius: 6px;
-    font-size: 12px;
-    width: 200px;
-    outline: none;
-  }
-  header input:focus { border-color: var(--accent); }
-  header .toggle {
-    margin-left: auto;
-    color: var(--dim);
-    font-size: 12px;
-    cursor: pointer;
-    user-select: none;
-  }
-  header .toggle input { vertical-align: middle; margin-right: 4px; }
-
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    font-variant-numeric: tabular-nums;
-  }
-  thead th {
-    position: sticky;
-    top: 53px;
-    background: var(--panel);
-    text-align: right;
-    padding: 8px 12px;
-    font-weight: 500;
-    color: var(--dim);
-    font-size: 12px;
-    border-bottom: 1px solid var(--border);
-    cursor: pointer;
-    user-select: none;
-    white-space: nowrap;
-  }
-  thead th:first-child,
-  tbody td:first-child { text-align: left; }
-  thead th:hover { color: var(--text); }
-  thead th.sorted::after {
-    content: " ▾";
-    color: var(--accent);
-  }
-  thead th.sorted.asc::after { content: " ▴"; }
-
-  tbody td {
-    padding: 6px 12px;
-    text-align: right;
-    border-bottom: 1px solid #21262d;
-    white-space: nowrap;
-  }
-  tbody tr:hover { background: #1c2128; }
-  tbody tr.hot { background: rgba(210, 153, 34, 0.08); }
-
-  .sym { color: var(--text); font-weight: 500; }
-  .sym .base { color: var(--accent); }
-  .pos { color: var(--green); }
-  .neg { color: var(--red); }
-  .dim { color: var(--dim); }
-
-  #loading {
-    text-align: center;
-    padding: 60px;
-    color: var(--dim);
-  }
-  footer {
-    padding: 12px 20px;
-    color: var(--dim);
-    font-size: 11px;
-    text-align: center;
-    border-top: 1px solid var(--border);
-  }
-
-  .paper-wrap { padding: 20px; }
-  .stat-cards {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 12px;
-    margin-bottom: 20px;
-  }
-  .card {
-    background: var(--panel);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 14px 16px;
-  }
-  .card h3 {
-    margin: 0 0 10px 0;
-    font-size: 13px;
-    color: var(--text);
-    display: flex;
-    justify-content: space-between;
-  }
-  .card h3 .n { color: var(--dim); font-weight: 400; font-size: 11px; }
-  .card .row {
-    display: flex;
-    justify-content: space-between;
-    padding: 4px 0;
-    font-size: 12px;
-    color: var(--dim);
-  }
-  .card .row .val { color: var(--text); }
-  .card .row .val.pos { color: var(--green); }
-  .card .row .val.neg { color: var(--red); }
-
-  .empty-tip {
-    text-align: center;
-    padding: 40px;
-    color: var(--dim);
-    font-size: 13px;
-  }
-
-  .badge {
-    display: inline-block;
-    padding: 1px 8px;
-    border-radius: 10px;
-    font-size: 11px;
-    color: #fff;
-  }
-  .badge.pump_pos_fund { background: #a22020; }
-  .badge.crash_pos_fund { background: #7a4a00; }
-  .badge.up_pos_fund { background: #1f6f43; }
-  .badge.down_pos_fund { background: #385a7a; }
-
-  .exchange-tag {
-    display: inline-block;
-    padding: 1px 6px;
-    border-radius: 3px;
-    font-size: 10px;
-    margin-right: 6px;
-    vertical-align: middle;
-  }
-  .exchange-tag.okx { background: #1a3a5c; color: #93c5fd; }
-  .exchange-tag.binance { background: #3a2a00; color: #fcd34d; }
-</style>
-</head>
-<body>
-
-<div class="tabs">
-  <div class="tab active" data-page="market">实时行情</div>
-  <div class="tab" data-page="paper">OKX 纸上交易</div>
-  <div class="tab" data-page="binance">币安纸上交易</div>
-  <div class="tab" data-page="hyperliquid">Hyperliquid 纸上交易</div>
-</div>
-
-<!-- 实时行情 -->
-<div id="page-market">
-  <header>
-    <h1>OKX SWAP Monitor</h1>
-    <div class="stats">
-      <b id="count">0</b> instruments · 最后更新 <b id="updated">-</b>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#ffffff" />
+    <title>Edgeboard · 永续合约信号观察</title>
+    <style>
+      :root {
+        --blue: #2d6df6;
+        --blue-ink: #1749b8;
+        --blue-soft: #edf3ff;
+        --bg: #f7f9fc;
+        --surface: #fff;
+        --ink: #151d2d;
+        --muted: #768297;
+        --line: #e7ebf1;
+        --green: #149661;
+        --green-soft: #eaf8f1;
+        --red: #d85b65;
+        --red-soft: #fff0f1;
+        --amber: #ae7415;
+        --amber-soft: #fff7e8;
+        --shadow: 0 4px 24px rgba(24, 45, 84, 0.035);
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font:
+          14px/1.5 Inter,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          "PingFang SC",
+          "Microsoft YaHei",
+          sans-serif;
+        font-variant-numeric: tabular-nums;
+      }
+      button,
+      input {
+        font: inherit;
+      }
+      button {
+        cursor: pointer;
+      }
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+      .topbar {
+        background: #fff;
+        border-bottom: 1px solid var(--line);
+        position: sticky;
+        top: 0;
+        z-index: 20;
+      }
+      .topbar-inner {
+        max-width: 1480px;
+        margin: auto;
+        padding: 0 32px;
+        height: 70px;
+        display: flex;
+        align-items: center;
+        gap: 32px;
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 11px;
+        font-size: 21px;
+        font-weight: 800;
+        letter-spacing: -0.8px;
+        white-space: nowrap;
+      }
+      .brand-icon {
+        width: 33px;
+        height: 33px;
+        display: grid;
+        place-items: center;
+        border-radius: 9px;
+        background: var(--blue);
+        color: white;
+        box-shadow: 0 5px 12px #2d6df63d;
+      }
+      .brand-icon svg {
+        width: 22px;
+        height: 22px;
+      }
+      .brand em {
+        font-style: normal;
+        color: var(--blue);
+      }
+      .main-nav {
+        display: flex;
+        align-self: stretch;
+        gap: 8px;
+      }
+      .nav-item {
+        border: 0;
+        background: none;
+        color: #667285;
+        padding: 0 15px;
+        font-weight: 650;
+        position: relative;
+        white-space: nowrap;
+      }
+      .nav-item:hover {
+        color: var(--ink);
+      }
+      .nav-item.active {
+        color: var(--blue);
+      }
+      .nav-item.active:after {
+        content: "";
+        position: absolute;
+        left: 15px;
+        right: 15px;
+        bottom: 0;
+        height: 3px;
+        background: var(--blue);
+        border-radius: 3px 3px 0 0;
+      }
+      .topbar-side {
+        margin-left: auto;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .live-tag {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 12px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        color: #506078;
+        background: #fff;
+        font-size: 12px;
+        font-weight: 650;
+        white-space: nowrap;
+      }
+      .live-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: #25b779;
+        box-shadow: 0 0 0 4px #e5f8ee;
+      }
+      .live-tag.offline .live-dot {
+        background: #e0a13c;
+        box-shadow: 0 0 0 4px #fff4de;
+      }
+      .live-tag.offline {
+        color: #9a6b22;
+      }
+      main {
+        max-width: 1480px;
+        margin: 0 auto;
+        padding: 34px 32px 70px;
+      }
+      .eyebrow {
+        color: var(--blue);
+        text-transform: uppercase;
+        letter-spacing: 0.13em;
+        font-weight: 800;
+        font-size: 11px;
+      }
+      .intro {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 20px;
+        margin-bottom: 26px;
+      }
+      .intro h1 {
+        font-size: 32px;
+        line-height: 1.2;
+        letter-spacing: -1.1px;
+        margin: 7px 0 8px;
+        font-weight: 800;
+      }
+      .intro p {
+        color: var(--muted);
+        margin: 0;
+        font-size: 14px;
+      }
+      .intro .meta {
+        color: #8591a1;
+        font-size: 12px;
+        white-space: nowrap;
+      }
+      .summary-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 14px;
+        margin-bottom: 24px;
+      }
+      .metric {
+        background: #fff;
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 20px 22px;
+        box-shadow: var(--shadow);
+        min-height: 112px;
+      }
+      .metric-label {
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 600;
+      }
+      .metric-value {
+        font-size: 29px;
+        letter-spacing: -0.9px;
+        font-weight: 790;
+        margin-top: 8px;
+        line-height: 1.1;
+      }
+      .metric-note {
+        font-size: 11px;
+        color: #98a2af;
+        margin-top: 6px;
+      }
+      .metric-value.blue {
+        color: var(--blue);
+      }
+      .metric-value.green {
+        color: var(--green);
+      }
+      .metric-value.red {
+        color: var(--red);
+      }
+      .notice {
+        display: none;
+        align-items: center;
+        gap: 12px;
+        border: 1px solid #efdcae;
+        background: #fff9e8;
+        color: #8a641e;
+        border-radius: 11px;
+        padding: 12px 16px;
+        margin-bottom: 20px;
+        font-size: 12px;
+      }
+      .notice.show {
+        display: flex;
+      }
+      .notice-icon {
+        font-size: 17px;
+        line-height: 1;
+      }
+      .notice strong {
+        font-weight: 750;
+      }
+      .notice small {
+        color: #9a824f;
+        margin-left: auto;
+        white-space: nowrap;
+      }
+      .panel {
+        background: #fff;
+        border: 1px solid var(--line);
+        border-radius: 15px;
+        box-shadow: var(--shadow);
+        overflow: hidden;
+      }
+      .panel-head {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        min-height: 78px;
+        padding: 18px 23px;
+        border-bottom: 1px solid var(--line);
+      }
+      .panel-head h2 {
+        font-size: 17px;
+        margin: 0;
+        font-weight: 750;
+        letter-spacing: -0.3px;
+      }
+      .panel-head .sub {
+        color: var(--muted);
+        font-size: 12px;
+        margin: 3px 0 0;
+      }
+      .panel-actions {
+        margin-left: auto;
+        display: flex;
+        align-items: center;
+        gap: 11px;
+      }
+      .search-box {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        min-width: 240px;
+        border: 1px solid #dfe5ed;
+        background: #f9fbfe;
+        border-radius: 9px;
+        padding: 0 12px;
+        color: #9ba7b5;
+      }
+      .search-box:focus-within {
+        border-color: #8caefa;
+        box-shadow: 0 0 0 3px #2d6df61a;
+      }
+      .search-box svg {
+        width: 16px;
+        height: 16px;
+        flex: none;
+      }
+      .search-box input {
+        border: 0;
+        outline: 0;
+        background: transparent;
+        height: 38px;
+        width: 100%;
+        font-size: 13px;
+        color: var(--ink);
+      }
+      .search-box input::placeholder {
+        color: #a0abba;
+      }
+      .filter-button {
+        border: 1px solid #dfe5ed;
+        background: #fff;
+        color: #5c6b7f;
+        padding: 9px 13px;
+        border-radius: 9px;
+        font-size: 12px;
+        font-weight: 650;
+        white-space: nowrap;
+      }
+      .filter-button:hover,
+      .filter-button.active {
+        border-color: #bad0ff;
+        background: var(--blue-soft);
+        color: var(--blue-ink);
+      }
+      .filter-button .filter-dot {
+        display: inline-block;
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: #fdac49;
+        margin-right: 6px;
+      }
+      .table-scroll {
+        overflow: auto;
+      }
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        min-width: 850px;
+      }
+      thead th {
+        text-align: right;
+        color: #8792a3;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.035em;
+        font-weight: 700;
+        background: #fbfcfe;
+        padding: 13px 19px;
+        border-bottom: 1px solid var(--line);
+        white-space: nowrap;
+      }
+      thead th:first-child,
+      tbody td:first-child {
+        text-align: left;
+      }
+      thead th.sortable {
+        cursor: pointer;
+      }
+      thead th.sortable:hover,
+      thead th.sorted {
+        color: var(--blue);
+      }
+      thead th.sorted:after {
+        content: " ↓";
+      }
+      thead th.sorted.asc:after {
+        content: " ↑";
+      }
+      tbody tr {
+        transition: background 0.16s;
+      }
+      tbody tr:hover {
+        background: #f8fbff;
+      }
+      tbody td {
+        text-align: right;
+        border-bottom: 1px solid #eff2f6;
+        padding: 15px 19px;
+        white-space: nowrap;
+        font-size: 13px;
+      }
+      tbody tr:last-child td {
+        border-bottom: 0;
+      }
+      .asset {
+        display: flex;
+        align-items: center;
+        gap: 11px;
+        font-weight: 750;
+      }
+      .asset-avatar {
+        width: 31px;
+        height: 31px;
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        color: #335eb4;
+        background: #e9f0ff;
+        font-size: 11px;
+        font-weight: 800;
+        flex: none;
+      }
+      .asset-text {
+        display: flex;
+        flex-direction: column;
+        line-height: 1.25;
+      }
+      .asset-text small {
+        color: #9aa5b3;
+        font-size: 11px;
+        font-weight: 500;
+        margin-top: 4px;
+      }
+      .number {
+        font-weight: 670;
+      }
+      .pos {
+        color: var(--green);
+      }
+      .neg {
+        color: var(--red);
+      }
+      .muted {
+        color: #9aa5b4;
+      }
+      .hot-row .asset-avatar {
+        background: #fff1e9;
+        color: #bc6d29;
+      }
+      .rate-pill {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 5px 9px;
+        border-radius: 7px;
+        background: var(--blue-soft);
+        color: var(--blue-ink);
+        font-weight: 700;
+        font-size: 12px;
+      }
+      .rate-pill.hot {
+        background: var(--amber-soft);
+        color: var(--amber);
+      }
+      .outcome {
+        display: inline-flex;
+        min-width: 66px;
+        justify-content: center;
+        border-radius: 7px;
+        padding: 5px 7px;
+        background: #f4f6f9;
+        color: #8c98a8;
+        font-size: 12px;
+        font-weight: 700;
+      }
+      .outcome.pos {
+        background: var(--green-soft);
+        color: var(--green);
+      }
+      .outcome.neg {
+        background: var(--red-soft);
+        color: var(--red);
+      }
+      .kind {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        color: #4b5d73;
+        font-size: 12px;
+        font-weight: 650;
+      }
+      .kind-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: #7ba7f8;
+      }
+      .kind.pump_pos_fund .kind-dot {
+        background: #ed8b65;
+      }
+      .kind.crash_pos_fund .kind-dot {
+        background: #8f75d7;
+      }
+      .kind.up_pos_fund .kind-dot {
+        background: #45b999;
+      }
+      .kind.down_pos_fund .kind-dot {
+        background: #e6ad4d;
+      }
+      .empty {
+        padding: 65px 20px;
+        text-align: center;
+        color: var(--muted);
+      }
+      .empty-mark {
+        width: 46px;
+        height: 46px;
+        border-radius: 13px;
+        background: #f0f4fc;
+        color: var(--blue);
+        display: grid;
+        place-items: center;
+        margin: 0 auto 13px;
+        font-size: 22px;
+      }
+      .empty strong {
+        display: block;
+        color: #3d4d64;
+        font-size: 14px;
+        margin-bottom: 3px;
+      }
+      .empty small {
+        font-size: 12px;
+      }
+      .panel-foot {
+        padding: 13px 21px;
+        border-top: 1px solid var(--line);
+        display: flex;
+        justify-content: space-between;
+        gap: 15px;
+        color: #9aa5b4;
+        font-size: 11px;
+        background: #fff;
+      }
+      .segmented {
+        display: flex;
+        gap: 5px;
+        align-items: center;
+        background: #edf1f6;
+        padding: 4px;
+        border-radius: 10px;
+        width: max-content;
+        margin-bottom: 22px;
+      }
+      .segment {
+        border: 0;
+        background: transparent;
+        border-radius: 7px;
+        padding: 8px 15px;
+        color: #68788c;
+        font-size: 12px;
+        font-weight: 700;
+      }
+      .segment.active {
+        background: #fff;
+        color: var(--blue);
+        box-shadow: 0 1px 5px #1d376025;
+      }
+      .research-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 14px;
+        margin-bottom: 24px;
+      }
+      .bucket {
+        border: 1px solid var(--line);
+        border-radius: 13px;
+        background: #fff;
+        padding: 18px 20px;
+        box-shadow: var(--shadow);
+      }
+      .bucket-title {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-weight: 750;
+        font-size: 13px;
+      }
+      .bucket-title b {
+        font-size: 11px;
+        color: #98a4b1;
+        font-weight: 650;
+      }
+      .bucket-rows {
+        margin-top: 12px;
+        border-top: 1px solid #eef1f5;
+        padding-top: 8px;
+      }
+      .bucket-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 8px;
+        padding: 5px 0;
+        color: #8b97a6;
+        font-size: 11px;
+      }
+      .bucket-row strong {
+        font-size: 12px;
+      }
+      .bucket-row strong.pos {
+        color: var(--green);
+      }
+      .bucket-row strong.neg {
+        color: var(--red);
+      }
+      .bucket-row strong.muted {
+        color: #a1abb7;
+      }
+      footer {
+        max-width: 1480px;
+        margin: auto;
+        padding: 0 32px 34px;
+        color: #9aa5b4;
+        font-size: 11px;
+      }
+      .footer-inner {
+        padding-top: 16px;
+        border-top: 1px solid var(--line);
+        display: flex;
+        justify-content: space-between;
+        gap: 15px;
+      }
+      .hidden {
+        display: none !important;
+      }
+      @media (max-width: 960px) {
+        .topbar-inner {
+          padding: 0 18px;
+          gap: 14px;
+        }
+        .main-nav {
+          gap: 0;
+        }
+        .nav-item {
+          padding: 0 10px;
+        }
+        .intro h1 {
+          font-size: 27px;
+        }
+        .research-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .panel-head {
+          align-items: flex-start;
+          flex-direction: column;
+        }
+        .panel-actions {
+          margin-left: 0;
+          width: 100%;
+        }
+        .search-box {
+          flex: 1;
+        }
+      }
+      @media (max-width: 600px) {
+        .topbar-inner {
+          height: 62px;
+        }
+        .brand {
+          font-size: 17px;
+        }
+        .brand-icon {
+          width: 29px;
+          height: 29px;
+        }
+        .live-tag {
+          padding: 7px;
+        }
+        .live-tag span:last-child {
+          display: none;
+        }
+        .nav-item {
+          font-size: 12px;
+          padding: 0 8px;
+        }
+        main {
+          padding: 24px 15px 55px;
+        }
+        .intro {
+          align-items: flex-start;
+          flex-direction: column;
+          gap: 6px;
+          margin-bottom: 19px;
+        }
+        .intro h1 {
+          font-size: 25px;
+          margin: 4px 0 5px;
+        }
+        .intro .meta {
+          white-space: normal;
+        }
+        .summary-grid {
+          gap: 8px;
+        }
+        .metric {
+          padding: 14px 12px;
+          min-height: 96px;
+        }
+        .metric-label {
+          font-size: 10px;
+        }
+        .metric-value {
+          font-size: 21px;
+        }
+        .metric-note {
+          font-size: 10px;
+        }
+        .panel-head {
+          padding: 15px;
+        }
+        .panel-actions {
+          gap: 6px;
+        }
+        .search-box {
+          min-width: 0;
+        }
+        .filter-button {
+          padding: 9px;
+        }
+        .research-grid {
+          gap: 8px;
+        }
+        .bucket {
+          padding: 14px 12px;
+        }
+        .bucket-title {
+          font-size: 11px;
+        }
+        .segment {
+          padding: 8px 10px;
+        }
+        .panel-foot,
+        .footer-inner {
+          flex-direction: column;
+          gap: 4px;
+        }
+        footer {
+          padding: 0 15px 25px;
+        }
+        .notice small {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="topbar">
+      <div class="topbar-inner">
+        <div class="brand">
+          <div class="brand-icon">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path
+                d="m3 16 5-5 4 3 8-8"
+                stroke="currentColor"
+                stroke-width="2.4"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+              <path
+                d="M16 6h4v4"
+                stroke="currentColor"
+                stroke-width="2.4"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </div>
+          Edge<em>board</em>
+        </div>
+        <nav class="main-nav" aria-label="主导航">
+          <button class="nav-item active" data-view="market">实时市场</button
+          ><button class="nav-item" data-view="research">信号研究</button>
+        </nav>
+        <div class="topbar-side">
+          <div id="live-tag" class="live-tag offline">
+            <span class="live-dot"></span><span id="live-text">正在连接</span>
+          </div>
+        </div>
+      </div>
     </div>
-    <input id="search" type="text" placeholder="搜索 instId / BASE ...">
-    <label class="toggle">
-      <input id="onlyHot" type="checkbox"> 只看极端费率
-    </label>
-  </header>
-
-  <div id="loading">正在连接服务器...</div>
-
-  <table id="table" style="display:none">
-    <thead>
-      <tr>
-        <th data-key="inst_id">Symbol</th>
-        <th data-key="last">Last</th>
-        <th data-key="change">24h%</th>
-        <th data-key="volume_quote_24h">24h Vol (USDT)</th>
-        <th data-key="funding_rate">Funding</th>
-        <th data-key="next_funding_time">Next Fund</th>
-        <th data-key="ts">Updated</th>
-      </tr>
-    </thead>
-    <tbody id="tbody"></tbody>
-  </table>
-</div>
-
-<!-- OKX 纸上交易 -->
-<div id="page-paper" style="display:none">
-  <div class="paper-wrap">
-    <div class="stat-cards" id="stat-cards"></div>
-    <div id="paper-loading" class="empty-tip">正在加载 OKX 信号数据...</div>
-    <table id="paper-table" style="display:none">
-      <thead>
-        <tr>
-          <th>Symbol</th>
-          <th>信号类型</th>
-          <th>触发时间</th>
-          <th>入场价</th>
-          <th>Funding</th>
-          <th>前24h</th>
-          <th>T+1h 净%</th>
-          <th>T+4h 净%</th>
-          <th>T+8h 净%</th>
-          <th>T+24h 净%</th>
-        </tr>
-      </thead>
-      <tbody id="paper-tbody"></tbody>
-    </table>
-  </div>
-</div>
-
-<!-- 币安纸上交易 -->
-<div id="page-binance" style="display:none">
-  <div class="paper-wrap">
-    <div class="stat-cards" id="bn-stat-cards"></div>
-    <div id="bn-loading" class="empty-tip">正在加载币安信号数据...</div>
-    <table id="bn-table" style="display:none">
-      <thead>
-        <tr>
-          <th>Symbol</th>
-          <th>信号类型</th>
-          <th>触发时间</th>
-          <th>入场价</th>
-          <th>Funding</th>
-          <th>前24h</th>
-          <th>T+1h 净%</th>
-          <th>T+4h 净%</th>
-          <th>T+8h 净%</th>
-          <th>T+24h 净%</th>
-        </tr>
-      </thead>
-      <tbody id="bn-tbody"></tbody>
-    </table>
-  </div>
-</div>
-
-<!-- Hyperliquid 纸上交易 -->
-<div id="page-hyperliquid" style="display:none">
-  <div class="paper-wrap">
-    <div class="stat-cards" id="hl-stat-cards"></div>
-    <div id="hl-loading" class="empty-tip">正在加载 Hyperliquid 信号数据...</div>
-    <table id="hl-table" style="display:none">
-      <thead>
-        <tr>
-          <th>Coin</th>
-          <th>信号类型</th>
-          <th>触发时间</th>
-          <th>入场价</th>
-          <th>Funding</th>
-          <th>前24h</th>
-          <th>T+1h 净%</th>
-          <th>T+4h 净%</th>
-          <th>T+8h 净%</th>
-          <th>T+24h 净%</th>
-        </tr>
-      </thead>
-      <tbody id="hl-tbody"></tbody>
-    </table>
-  </div>
-</div>
-
-<footer>
-  信号阈值 funding &gt; 0.05% · 成本假设 0.15% · 每 5s 刷新
-</footer>
-
-<script>
-const COST = 0.15;
-
-// ===== Tab 切换 =====
-document.querySelectorAll(".tab").forEach((t) => {
-  t.addEventListener("click", () => {
-    document.querySelectorAll(".tab").forEach((x) => x.classList.remove("active"));
-    t.classList.add("active");
-    const page = t.dataset.page;
-    document.getElementById("page-market").style.display = page === "market" ? "" : "none";
-    document.getElementById("page-paper").style.display = page === "paper" ? "" : "none";
-    document.getElementById("page-binance").style.display = page === "binance" ? "" : "none";
-    document.getElementById("page-hyperliquid").style.display = page === "hyperliquid" ? "" : "none";
-    if (page === "paper") fetchPaperOKX();
-    if (page === "binance") fetchPaperBinance();
-    if (page === "hyperliquid") fetchPaperHL();
-  });
-});
-
-// ===== 实时行情 =====
-const API_SNAPSHOT = "/api/snapshot";
-const REFRESH_MS = 3000;
-const EXTREME = 0.0005;
-
-let sortKey = "volume_quote_24h";
-let sortAsc = false;
-let rows = [];
-
-const $tbody = document.getElementById("tbody");
-const $table = document.getElementById("table");
-const $loading = document.getElementById("loading");
-const $count = document.getElementById("count");
-const $updated = document.getElementById("updated");
-const $search = document.getElementById("search");
-const $onlyHot = document.getElementById("onlyHot");
-
-function fmtPrice(s) {
-  if (!s) return "-";
-  const n = parseFloat(s);
-  if (!isFinite(n) || n === 0) return "0";
-  const a = Math.abs(n);
-  if (a >= 1000) return n.toFixed(2);
-  if (a >= 1) return n.toFixed(4);
-  if (a >= 0.01) return n.toFixed(6);
-  if (a >= 0.0001) return n.toFixed(8);
-  return n.toFixed(12);
-}
-
-function fmtVol(s) {
-  const n = parseFloat(s);
-  if (!isFinite(n)) return "-";
-  if (n >= 1e9) return (n / 1e9).toFixed(2) + "B";
-  if (n >= 1e6) return (n / 1e6).toFixed(2) + "M";
-  if (n >= 1e3) return (n / 1e3).toFixed(2) + "K";
-  return n.toFixed(2);
-}
-
-function fmtPct(x) {
-  if (!isFinite(x)) return "-";
-  const s = x >= 0 ? "+" : "";
-  return s + x.toFixed(2) + "%";
-}
-
-function fmtFunding(s) {
-  if (s === null || s === undefined) return "-";
-  const n = parseFloat(s);
-  if (!isFinite(n)) return "-";
-  return (n * 100).toFixed(4) + "%";
-}
-
-function fmtNextFunding(ts) {
-  if (!ts) return "-";
-  const diff = ts - Date.now();
-  if (diff <= 0) return "结算中";
-  const h = Math.floor(diff / 3600000);
-  const m = Math.floor((diff % 3600000) / 60000);
-  return `${h}h ${m}m`;
-}
-
-function fmtTime(ts) {
-  if (!ts) return "-";
-  const d = new Date(ts);
-  const pad = (n) => n.toString().padStart(2, "0");
-  return `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
-}
-
-function changePct(last, open) {
-  const l = parseFloat(last);
-  const o = parseFloat(open);
-  if (!isFinite(l) || !isFinite(o) || o === 0) return 0;
-  return (l - o) / o * 100;
-}
-
-function compare(a, b, key) {
-  const getVal = (r) => {
-    if (key === "change") return changePct(r.last, r.open_24h);
-    if (key === "funding_rate") return r.funding_rate ? parseFloat(r.funding_rate) : -Infinity;
-    const v = r[key];
-    if (v === null || v === undefined) return -Infinity;
-    const n = parseFloat(v);
-    return isFinite(n) ? n : -Infinity;
-  };
-  const va = getVal(a);
-  const vb = getVal(b);
-  if (va === vb) return 0;
-  return va > vb ? 1 : -1;
-}
-
-function renderMarket() {
-  const q = $search.value.trim().toUpperCase();
-  const onlyHot = $onlyHot.checked;
-
-  let data = rows.filter((r) => {
-    if (q && !r.inst_id.toUpperCase().includes(q) &&
-        !r.base.toUpperCase().includes(q)) return false;
-    if (onlyHot) {
-      const fr = r.funding_rate ? Math.abs(parseFloat(r.funding_rate)) : 0;
-      if (fr < EXTREME) return false;
-    }
-    return true;
-  });
-
-  data.sort((a, b) => (sortAsc ? 1 : -1) * compare(a, b, sortKey));
-
-  const frag = document.createDocumentFragment();
-  for (const r of data) {
-    const tr = document.createElement("tr");
-    const chg = changePct(r.last, r.open_24h);
-    const fr = r.funding_rate ? parseFloat(r.funding_rate) : null;
-    const isHot = fr !== null && Math.abs(fr) >= EXTREME;
-    if (isHot) tr.classList.add("hot");
-
-    tr.innerHTML = `
-      <td class="sym"><span class="base">${r.base}</span>/${r.quote}</td>
-      <td>${fmtPrice(r.last)}</td>
-      <td class="${chg >= 0 ? "pos" : "neg"}">${fmtPct(chg)}</td>
-      <td>${fmtVol(r.volume_quote_24h)}</td>
-      <td class="${fr === null ? "dim" : fr >= 0 ? "neg" : "pos"}">
-        ${fmtFunding(r.funding_rate)}
-      </td>
-      <td class="dim">${fmtNextFunding(r.next_funding_time)}</td>
-      <td class="dim">${fmtTime(r.ts)}</td>
-    `;
-    frag.appendChild(tr);
-  }
-
-  $tbody.replaceChildren(frag);
-  $count.textContent = data.length;
-
-  const now = new Date();
-  const pad = (n) => n.toString().padStart(2, "0");
-  $updated.textContent =
-    `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
-}
-
-async function fetchMarket() {
-  try {
-    const r = await fetch(API_SNAPSHOT, { cache: "no-store" });
-    if (!r.ok) throw new Error("HTTP " + r.status);
-    rows = await r.json();
-    $loading.style.display = "none";
-    $table.style.display = "";
-    renderMarket();
-  } catch (e) {
-    $loading.textContent = "连接失败: " + e.message;
-    $loading.style.display = "block";
-    $table.style.display = "none";
-  }
-}
-
-document.querySelectorAll("#page-market thead th").forEach((th) => {
-  th.addEventListener("click", () => {
-    const key = th.dataset.key;
-    if (!key) return;
-    if (sortKey === key) sortAsc = !sortAsc;
-    else { sortKey = key; sortAsc = false; }
-    document.querySelectorAll("#page-market thead th").forEach((h) => h.classList.remove("sorted", "asc"));
-    th.classList.add("sorted");
-    if (sortAsc) th.classList.add("asc");
-    renderMarket();
-  });
-});
-document.querySelector(`#page-market thead th[data-key="${sortKey}"]`).classList.add("sorted");
-
-$search.addEventListener("input", renderMarket);
-$onlyHot.addEventListener("change", renderMarket);
-
-// ===== 纸上交易公共逻辑 =====
-const kindLabels = {
-  crash_pos_fund: "暴跌+正费率",
-  down_pos_fund: "下跌+正费率",
-  up_pos_fund: "上涨+正费率",
-  pump_pos_fund: "暴涨+正费率",
-};
-
-function fmtAgo(ts) {
-  const diff = Date.now() - ts;
-  const h = Math.floor(diff / 3600000);
-  const m = Math.floor((diff % 3600000) / 60000);
-  if (h > 24) return `${Math.floor(h / 24)}d ${h % 24}h`;
-  if (h > 0) return `${h}h ${m}m`;
-  return `${m}m`;
-}
-
-function netReturn(entry, price) {
-  if (!price || !entry) return null;
-  const e = parseFloat(entry);
-  const p = parseFloat(price);
-  if (!isFinite(e) || !isFinite(p) || e === 0) return null;
-  const raw = (p - e) / e * 100;
-  return -raw - COST;
-}
-
-// 通用渲染函数：可用于 OKX / 币安 / HL
-function renderPaperCommon(signals, options) {
-  const {
-    cardsId, tableId, tbodyId, loadingId,
-    displayName, emptyText,
-  } = options;
-
-  const $cards = document.getElementById(cardsId);
-  const $table = document.getElementById(tableId);
-  const $tbody = document.getElementById(tbodyId);
-  const $loading = document.getElementById(loadingId);
-
-  if (!signals || signals.length === 0) {
-    $loading.textContent = emptyText || "暂无信号记录";
-    $loading.style.display = "block";
-    $table.style.display = "none";
-    $cards.innerHTML = "";
-    return;
-  }
-
-  $loading.style.display = "none";
-  $table.style.display = "";
-
-  const groups = {};
-  for (const s of signals) {
-    if (!groups[s.kind]) groups[s.kind] = [];
-    groups[s.kind].push(s);
-  }
-
-  const horizons = [
-    ["t1_price", "T+1h"],
-    ["t4_price", "T+4h"],
-    ["t8_price", "T+8h"],
-    ["t24_price", "T+24h"],
-  ];
-
-  let cardsHtml = "";
-  for (const kind of ["pump_pos_fund", "crash_pos_fund", "up_pos_fund", "down_pos_fund"]) {
-    const list = groups[kind];
-    if (!list || list.length === 0) continue;
-    cardsHtml += `<div class="card">
-      <h3>${kindLabels[kind] || kind} <span class="n">n=${list.length}</span></h3>`;
-
-    for (const [field, label] of horizons) {
-      const nets = [];
-      for (const s of list) {
-        const r = netReturn(s.entry_price, s[field]);
-        if (r !== null) nets.push(r);
+    <main>
+      <div id="notice" class="notice" role="status">
+        <span class="notice-icon">◉</span><span id="notice-text"></span
+        ><small id="notice-time"></small>
+      </div>
+      <section id="view-market">
+        <div class="intro">
+          <div>
+            <div class="eyebrow">Live monitor / OKX perpetuals</div>
+            <h1>实时市场</h1>
+            <p>追踪永续合约价格、成交额与资金费率变化。</p>
+          </div>
+          <div class="meta" id="market-updated">等待首批行情</div>
+        </div>
+        <div class="summary-grid">
+          <div class="metric">
+            <div class="metric-label">追踪合约</div>
+            <div class="metric-value blue" id="m-total">—</div>
+            <div class="metric-note">OKX USDT 永续</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">高费率合约</div>
+            <div class="metric-value" id="m-hot">—</div>
+            <div class="metric-note">资金费率绝对值 ≥ 0.05%</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">24h 成交额</div>
+            <div class="metric-value" id="m-volume">—</div>
+            <div class="metric-note">当前追踪合约合计 · USDT</div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-head">
+            <div>
+              <h2>合约列表</h2>
+              <p class="sub">按列排序，快速查看异常费率</p>
+            </div>
+            <div class="panel-actions">
+              <label class="search-box"
+                ><svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  aria-hidden="true"
+                >
+                  <circle cx="10.5" cy="10.5" r="6.5" />
+                  <path d="m16 16 5 5" /></svg
+                ><input
+                  id="market-search"
+                  type="search"
+                  placeholder="搜索币种或合约"
+                  autocomplete="off" /></label
+              ><button id="hot-filter" class="filter-button">
+                <span class="filter-dot"></span>只看高费率
+              </button>
+            </div>
+          </div>
+          <div id="market-empty" class="empty">
+            <div class="empty-mark">⌁</div>
+            <strong>正在连接市场</strong><small>数据就绪后会自动显示</small>
+          </div>
+          <div id="market-table-wrap" class="table-scroll hidden">
+            <table id="market-table">
+              <thead>
+                <tr>
+                  <th class="sortable" data-sort="inst_id">合约</th>
+                  <th class="sortable" data-sort="last">最新价</th>
+                  <th class="sortable" data-sort="change">24h 变化</th>
+                  <th class="sortable sorted" data-sort="volume_quote_24h">
+                    24h 成交额
+                  </th>
+                  <th class="sortable" data-sort="funding_rate">资金费率</th>
+                  <th class="sortable" data-sort="next_funding_time">
+                    下次结算
+                  </th>
+                  <th class="sortable" data-sort="ts">行情时间</th>
+                </tr>
+              </thead>
+              <tbody id="market-body"></tbody>
+            </table>
+          </div>
+          <div class="panel-foot">
+            <span id="market-count">等待数据</span
+            ><span>行情每 3 秒刷新 · 资金费率为交易所展示值</span>
+          </div>
+        </div>
+      </section>
+      <section id="view-research" class="hidden">
+        <div class="intro">
+          <div>
+            <div class="eyebrow">Signal lab / paper observations</div>
+            <h1>信号研究</h1>
+            <p>高正资金费率与价格异动后的做空观察记录。</p>
+          </div>
+          <div class="meta" id="paper-updated">等待信号数据</div>
+        </div>
+        <div class="segmented" role="group" aria-label="交易所">
+          <button class="segment active" data-venue="okx">OKX</button
+          ><button class="segment" data-venue="binance">Binance</button
+          ><button class="segment" data-venue="hyperliquid">Hyperliquid</button>
+        </div>
+        <div class="summary-grid">
+          <div class="metric">
+            <div class="metric-label">独立信号</div>
+            <div class="metric-value blue" id="p-total">—</div>
+            <div class="metric-note">同合约 24 小时只记录首次</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">已观察 24h</div>
+            <div class="metric-value" id="p-complete">—</div>
+            <div class="metric-note">具备 T+24h 价格</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">T+24h 净均值</div>
+            <div class="metric-value" id="p-net">—</div>
+            <div class="metric-note">做空方向 · 扣固定 0.15% 成本</div>
+          </div>
+        </div>
+        <div class="research-grid" id="bucket-grid"></div>
+        <div class="panel">
+          <div class="panel-head">
+            <div>
+              <h2>信号明细</h2>
+              <p class="sub">按触发时间倒序，结果来自纸上价格观察</p>
+            </div>
+            <div class="panel-actions">
+              <label class="search-box"
+                ><svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  aria-hidden="true"
+                >
+                  <circle cx="10.5" cy="10.5" r="6.5" />
+                  <path d="m16 16 5 5" /></svg
+                ><input
+                  id="paper-search"
+                  type="search"
+                  placeholder="搜索币种"
+                  autocomplete="off"
+              /></label>
+            </div>
+          </div>
+          <div id="paper-empty" class="empty">
+            <div class="empty-mark">◇</div>
+            <strong>暂无信号</strong
+            ><small>符合条件的首次信号会出现在这里</small>
+          </div>
+          <div id="paper-table-wrap" class="table-scroll hidden">
+            <table>
+              <thead>
+                <tr>
+                  <th>合约</th>
+                  <th>信号</th>
+                  <th>触发时间</th>
+                  <th>入场参考价</th>
+                  <th>资金费率</th>
+                  <th>之前 24h</th>
+                  <th>T+1h 净值</th>
+                  <th>T+4h 净值</th>
+                  <th>T+8h 净值</th>
+                  <th>T+24h 净值</th>
+                </tr>
+              </thead>
+              <tbody id="paper-body"></tbody>
+            </table>
+          </div>
+          <div class="panel-foot">
+            <span id="paper-count">等待数据</span
+            ><span id="paper-note">统计不含实际资金费收入、真实成交滑点及强平影响</span>
+          </div>
+        </div>
+      </section>
+    </main>
+    <footer>
+      <div class="footer-inner">
+        <span>Edgeboard · 永续合约事件观察</span
+        ><span>仅供研究，页面收益为固定成本假设下的纸上估算</span>
+      </div>
+    </footer>
+    <script>
+      const COST = 0.15,
+        EXTREME = 0.0005,
+        API = {
+          okx: "/api/paper/signals",
+          binance: "/api/binance/signals",
+          hyperliquid: "/api/hyperliquid/signals",
+        };
+      const VENUE = {
+        okx: "OKX",
+        binance: "Binance",
+        hyperliquid: "Hyperliquid",
+      };
+      const KINDS = {
+        pump_pos_fund: "暴涨 + 正费率",
+        up_pos_fund: "上涨 + 正费率",
+        down_pos_fund: "下跌 + 正费率",
+        crash_pos_fund: "暴跌 + 正费率",
+      };
+      const HORIZONS = [
+        ["t1_price", "1h"],
+        ["t4_price", "4h"],
+        ["t8_price", "8h"],
+        ["t24_price", "24h"],
+      ];
+      const $ = (id) => document.getElementById(id);
+      const state = {
+        view: "market",
+        venue: "okx",
+        market: { data: [], at: 0, error: null, failures: 0 },
+        paper: {},
+        sort: "volume_quote_24h",
+        asc: false,
+        hot: false,
+      };
+      function escapeHtml(value) {
+        return String(value ?? "").replace(
+          /[&<>"']/g,
+          (c) =>
+            ({
+              "&": "&amp;",
+              "<": "&lt;",
+              ">": "&gt;",
+              '"': "&quot;",
+              "'": "&#39;",
+            })[c],
+        );
       }
-      if (nets.length === 0) {
-        cardsHtml += `<div class="row"><span>${label}</span><span class="val">—</span></div>`;
-        continue;
+      function number(value) {
+        const n = Number(value);
+        return Number.isFinite(n) ? n : 0;
       }
-      const avg = nets.reduce((a, b) => a + b, 0) / nets.length;
-      const wins = nets.filter((x) => x > 0).length;
-      const wr = wins / nets.length * 100;
-      const cls = avg >= 0 ? "pos" : "neg";
-      cardsHtml += `<div class="row">
-        <span>${label}</span>
-        <span class="val ${cls}">${avg >= 0 ? "+" : ""}${avg.toFixed(2)}% · ${wr.toFixed(0)}% · n=${nets.length}</span>
-      </div>`;
-    }
-    cardsHtml += "</div>";
-  }
-  $cards.innerHTML = cardsHtml || `<div class="empty-tip">还没有完成的信号</div>`;
-
-  const sorted = [...signals].sort((a, b) => b.triggered_at - a.triggered_at);
-  const frag = document.createDocumentFragment();
-  for (const s of sorted) {
-    const tr = document.createElement("tr");
-    const fr = parseFloat(s.funding_rate);
-    const prior = parseFloat(s.prior_24h_return);
-
-    const cells = [];
-    // 【修复】依次尝试 inst_id / symbol / coin 三种字段名
-    const idField = s.inst_id ?? s.symbol ?? s.coin ?? '';
-    cells.push(`<td class="sym">${displayName(idField)}</td>`);
-    cells.push(`<td><span class="badge ${s.kind}">${kindLabels[s.kind] || s.kind}</span></td>`);
-    cells.push(`<td class="dim">${fmtAgo(s.triggered_at)}前</td>`);
-    cells.push(`<td>${fmtPrice(s.entry_price)}</td>`);
-    cells.push(`<td class="${fr >= 0 ? "neg" : "pos"}">${(fr * 100).toFixed(4)}%</td>`);
-    cells.push(`<td class="${prior >= 0 ? "pos" : "neg"}">${prior >= 0 ? "+" : ""}${prior.toFixed(2)}%</td>`);
-
-    for (const [field] of horizons) {
-      const r = netReturn(s.entry_price, s[field]);
-      if (r === null) {
-        cells.push(`<td class="dim">—</td>`);
-      } else {
-        const cls = r >= 0 ? "pos" : "neg";
-        cells.push(`<td class="${cls}">${r >= 0 ? "+" : ""}${r.toFixed(2)}%</td>`);
+      function signed(value, digits = 2) {
+        if (!Number.isFinite(value)) return "—";
+        return `${value >= 0 ? "+" : ""}${value.toFixed(digits)}%`;
       }
-    }
-    tr.innerHTML = cells.join("");
-    frag.appendChild(tr);
-  }
-  $tbody.replaceChildren(frag);
-}
-
-// ===== OKX 纸上交易 =====
-const API_OKX_PAPER = "/api/paper/signals";
-
-async function fetchPaperOKX() {
-  try {
-    const r = await fetch(API_OKX_PAPER, { cache: "no-store" });
-    const signals = await r.json();
-    renderPaperCommon(signals, {
-      cardsId: "stat-cards",
-      tableId: "paper-table",
-      tbodyId: "paper-tbody",
-      loadingId: "paper-loading",
-      displayName: (id) => id.replace("-USDT-SWAP", ""),
-      emptyText: "暂无 OKX 信号记录。系统每 5 分钟扫描一次。",
-    });
-  } catch (e) {
-    document.getElementById("paper-loading").textContent = "连接失败: " + e.message;
-  }
-}
-
-// ===== 币安纸上交易 =====
-const API_BN_PAPER = "/api/binance/signals";
-
-async function fetchPaperBinance() {
-  try {
-    const r = await fetch(API_BN_PAPER, { cache: "no-store" });
-    const signals = await r.json();
-    renderPaperCommon(signals, {
-      cardsId: "bn-stat-cards",
-      tableId: "bn-table",
-      tbodyId: "bn-tbody",
-      loadingId: "bn-loading",
-      displayName: (sym) => sym.replace(/USDT$/, ""),
-      emptyText: "暂无币安信号记录。系统每 5 分钟扫描一次。",
-    });
-  } catch (e) {
-    document.getElementById("bn-loading").textContent = "连接失败: " + e.message;
-  }
-}
-
-// ===== Hyperliquid 纸上交易 =====
-const API_HL_PAPER = "/api/hyperliquid/signals";
-
-async function fetchPaperHL() {
-  try {
-    const r = await fetch(API_HL_PAPER, { cache: "no-store" });
-    const signals = await r.json();
-    renderPaperCommon(signals, {
-      cardsId: "hl-stat-cards",
-      tableId: "hl-table",
-      tbodyId: "hl-tbody",
-      loadingId: "hl-loading",
-      displayName: (coin) => coin,
-      emptyText: "暂无 Hyperliquid 信号记录。系统每 5 分钟扫描一次。",
-    });
-  } catch (e) {
-    document.getElementById("hl-loading").textContent = "连接失败: " + e.message;
-  }
-}
-
-// ===== 启动 =====
-fetchMarket();
-setInterval(fetchMarket, REFRESH_MS);
-setInterval(() => {
-  const mp = document.getElementById("page-paper").style.display;
-  const bp = document.getElementById("page-binance").style.display;
-  const hp = document.getElementById("page-hyperliquid").style.display;
-  if (mp !== "none") fetchPaperOKX();
-  if (bp !== "none") fetchPaperBinance();
-  if (hp !== "none") fetchPaperHL();
-}, 5000);
-</script>
-</body>
+      function price(value) {
+        const n = Number(value);
+        if (!Number.isFinite(n) || n <= 0) return "—";
+        const a = Math.abs(n);
+        return n.toFixed(
+          a >= 1000 ? 2 : a >= 1 ? 4 : a >= 0.01 ? 6 : a >= 0.0001 ? 8 : 12,
+        );
+      }
+      function compact(value) {
+        const n = Number(value);
+        if (!Number.isFinite(n)) return "—";
+        return n >= 1e9
+          ? (n / 1e9).toFixed(2) + "B"
+          : n >= 1e6
+            ? (n / 1e6).toFixed(2) + "M"
+            : n >= 1e3
+              ? (n / 1e3).toFixed(1) + "K"
+              : n.toFixed(0);
+      }
+      function time(ts) {
+        return ts
+          ? new Date(ts).toLocaleTimeString("zh-CN", {
+              hour: "2-digit",
+              minute: "2-digit",
+              second: "2-digit",
+              hour12: false,
+            })
+          : "—";
+      }
+      function dateTime(ts) {
+        return ts
+          ? new Date(ts).toLocaleString("zh-CN", {
+              month: "2-digit",
+              day: "2-digit",
+              hour: "2-digit",
+              minute: "2-digit",
+              hour12: false,
+            })
+          : "—";
+      }
+      function ago(ts) {
+        if (!ts) return "—";
+        const m = Math.max(0, Math.floor((Date.now() - ts) / 60000));
+        return m < 1
+          ? "刚刚"
+          : m < 60
+            ? `${m} 分钟前`
+            : m < 1440
+              ? `${Math.floor(m / 60)} 小时前`
+              : `${Math.floor(m / 1440)} 天前`;
+      }
+      function change(row) {
+        const open = number(row.open_24h);
+        return open ? ((number(row.last) - open) / open) * 100 : 0;
+      }
+      function net(row, field) {
+        const e = number(row.entry_price),
+          p = number(row[field]);
+        return e > 0 && p > 0 ? (-(p - e) / e) * 100 - COST : null;
+      }
+      function funding(value) {
+        if (value === null || value === undefined || value === "") return "—";
+        const n = Number(value);
+        return Number.isFinite(n) ? `${(n * 100).toFixed(4)}%` : "—";
+      }
+      function nextFunding(ts) {
+        const m = Math.ceil((Number(ts) - Date.now()) / 60000);
+        return !ts
+          ? "—"
+          : m <= 0
+            ? "结算中"
+            : m < 60
+              ? `${m} 分钟`
+              : `${Math.floor(m / 60)} 小时 ${m % 60} 分钟`;
+      }
+      function assetHtml(name, sub = "USDT") {
+        const safe = escapeHtml(name),
+          initial = escapeHtml(
+            String(name)
+              .replace(/^[^:]*:/, "")
+              .slice(0, 2)
+              .toUpperCase(),
+          );
+        return `<div class="asset"><span class="asset-avatar">${initial}</span><span class="asset-text">${safe}<small>${escapeHtml(sub)}</small></span></div>`;
+      }
+      function restore(key) {
+        try {
+          const item = JSON.parse(localStorage.getItem("edgeboard:" + key));
+          return item && Array.isArray(item.data) ? item : null;
+        } catch {
+          return null;
+        }
+      }
+      function save(key, data, at) {
+        try {
+          localStorage.setItem(
+            "edgeboard:" + key,
+            JSON.stringify({ data, at }),
+          );
+        } catch {}
+      }
+      async function getJson(url) {
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), 8000);
+        try {
+          const response = await fetch(url, {
+            cache: "no-store",
+            signal: controller.signal,
+          });
+          if (!response.ok) throw new Error(`HTTP ${response.status}`);
+          const data = await response.json();
+          if (!Array.isArray(data)) throw new Error("数据格式错误");
+          return data;
+        } finally {
+          clearTimeout(timer);
+        }
+      }
+      function currentSource() {
+        return state.view === "market"
+          ? state.market
+          : state.paper[state.venue] || { data: [], at: 0, error: "正在连接" };
+      }
+      function updateConnection() {
+        const source = currentSource();
+        const marketStale =
+          state.view === "market" &&
+          (!source.data.length ||
+            Math.max(...source.data.map((r) => number(r.ts))) <
+              Date.now() - 90000);
+        const stale = !!source.error || !source.at || marketStale;
+        $("live-tag").classList.toggle("offline", stale);
+        $("live-text").textContent = stale
+          ? source.at
+            ? "数据已暂停"
+            : "正在连接"
+          : "实时同步";
+        const message = source.error
+          ? `<strong>连接暂时中断</strong> · ${escapeHtml(source.error)}，正在自动重试${source.at ? "；下方保留上次成功的数据" : ""}`
+          : marketStale && source.at
+            ? "<strong>行情更新已暂停</strong> · 市场数据超过 90 秒未更新，正在等待行情恢复"
+            : "";
+        $("notice").classList.toggle("show", !!message);
+        $("notice-text").innerHTML = message;
+        $("notice-time").textContent =
+          message && source.at ? `上次成功 ${dateTime(source.at)}` : "";
+      }
+      function marketSortValue(row, key) {
+        if (key === "change") return change(row);
+        if (key === "inst_id") return String(row.inst_id || "");
+        return Number(row[key]) || 0;
+      }
+      function renderMarket() {
+        const source = state.market,
+          data = source.data,
+          q = $("market-search").value.trim().toUpperCase();
+        const filtered = data.filter(
+          (r) =>
+            (!q ||
+              String(r.inst_id).toUpperCase().includes(q) ||
+              String(r.base).toUpperCase().includes(q)) &&
+            (!state.hot || Math.abs(number(r.funding_rate)) >= EXTREME),
+        );
+        filtered.sort((a, b) => {
+          const va = marketSortValue(a, state.sort),
+            vb = marketSortValue(b, state.sort);
+          const delta = typeof va === "string" ? va.localeCompare(vb) : va - vb;
+          return state.asc ? delta : -delta;
+        });
+        $("m-total").textContent = data.length || "—";
+        $("m-hot").textContent = data.length
+          ? data.filter((r) => Math.abs(number(r.funding_rate)) >= EXTREME)
+              .length
+          : "—";
+        $("m-volume").textContent = data.length
+          ? compact(
+              data.reduce((sum, r) => sum + number(r.volume_quote_24h), 0),
+            )
+          : "—";
+        $("market-updated").textContent = source.at
+          ? `上次成功获取 ${dateTime(source.at)}${source.error ? " · 已暂停" : ""}`
+          : "等待首批行情";
+        $("market-count").textContent =
+          `显示 ${filtered.length} / ${data.length} 个合约`;
+        const body = $("market-body");
+        body.innerHTML = filtered
+          .map((r) => {
+            const ch = change(r),
+              rate = number(r.funding_rate),
+              hot = Math.abs(rate) >= EXTREME;
+            return `<tr class="${hot ? "hot-row" : ""}"><td>${assetHtml(r.base || r.inst_id, r.quote || "USDT")}</td><td class="number">${price(r.last)}</td><td class="number ${ch >= 0 ? "pos" : "neg"}">${signed(ch)}</td><td class="number">${compact(r.volume_quote_24h)}</td><td><span class="rate-pill ${hot ? "hot" : ""}">${funding(r.funding_rate)}</span></td><td class="muted">${nextFunding(r.next_funding_time)}</td><td class="muted">${time(r.ts)}</td></tr>`;
+          })
+          .join("");
+        const has = filtered.length > 0;
+        $("market-table-wrap").classList.toggle("hidden", !has);
+        $("market-empty").classList.toggle("hidden", has);
+        $("market-empty").innerHTML =
+          `<div class="empty-mark">⌁</div><strong>${data.length ? "没有匹配的合约" : source.error ? "行情暂不可用" : "正在连接市场"}</strong><small>${data.length ? "调整搜索或筛选条件" : source.at ? "展示上次成功数据；正在自动重试" : "数据就绪后会自动显示"}</small>`;
+        updateConnection();
+      }
+      function paperName(row) {
+        const id = String(row.inst_id || row.symbol || row.coin || "");
+        return state.venue === "okx"
+          ? id.replace(/-USDT-SWAP$/, "")
+          : state.venue === "binance"
+            ? id.replace(/USDT$/, "")
+            : id;
+      }
+      function renderPaper() {
+        const source = state.paper[state.venue] || {
+            data: [],
+            at: 0,
+            error: null,
+          },
+          data = source.data,
+          q = $("paper-search").value.trim().toUpperCase();
+        const complete = data.filter(
+            (r) => r.t24_price && net(r, "t24_price") !== null,
+          ),
+          avg = complete.length
+            ? complete.reduce((sum, r) => sum + net(r, "t24_price"), 0) /
+              complete.length
+            : null;
+        $("p-total").textContent = data.length || "—";
+        $("p-complete").textContent = complete.length || "—";
+        $("p-net").textContent = avg === null ? "—" : signed(avg);
+        $("p-net").className =
+          "metric-value " + (avg === null ? "" : avg >= 0 ? "green" : "red");
+        $("paper-updated").textContent = source.at
+          ? `${VENUE[state.venue]} · 上次成功获取 ${dateTime(source.at)}${source.error ? " · 已暂停" : ""}`
+          : `${VENUE[state.venue]} · 等待信号数据`;
+        $("paper-note").textContent =
+          state.venue === "hyperliquid"
+            ? "Hyperliquid 显示每小时费率，触发阈值按 8 小时等效；收益不含实际资金费与真实滑点"
+            : "统计不含实际资金费收入、真实成交滑点及强平影响";
+        $("bucket-grid").innerHTML = Object.entries(KINDS)
+          .map(([kind, label]) => {
+            const list = data.filter((r) => r.kind === kind);
+            return `<div class="bucket"><div class="bucket-title"><span class="kind ${kind}"><span class="kind-dot"></span>${label}</span><b>n=${list.length}</b></div><div class="bucket-rows">${HORIZONS.map(
+              ([field, h]) => {
+                const values = list
+                  .map((r) => net(r, field))
+                  .filter((v) => v !== null);
+                const mean = values.length
+                  ? values.reduce((a, b) => a + b, 0) / values.length
+                  : null;
+                return `<div class="bucket-row"><span>T+${h}</span><strong class="${mean === null ? "muted" : mean >= 0 ? "pos" : "neg"}">${mean === null ? "—" : signed(mean)} <span class="muted">${values.length ? `· ${values.length}` : ""}</span></strong></div>`;
+              },
+            ).join("")}</div></div>`;
+          })
+          .join("");
+        const visible = data
+          .filter((r) => !q || paperName(r).toUpperCase().includes(q))
+          .sort((a, b) => b.triggered_at - a.triggered_at);
+        $("paper-body").innerHTML = visible
+          .map((r) => {
+            const name = paperName(r),
+              prior = number(r.prior_24h_return);
+            return `<tr><td>${assetHtml(name, VENUE[state.venue])}</td><td><span class="kind ${escapeHtml(r.kind)}"><span class="kind-dot"></span>${escapeHtml(KINDS[r.kind] || r.kind)}</span></td><td class="muted" title="${escapeHtml(dateTime(r.triggered_at))}">${ago(r.triggered_at)}</td><td class="number">${price(r.entry_price)}</td><td><span class="rate-pill">${funding(r.funding_rate)}</span></td><td class="number ${prior >= 0 ? "pos" : "neg"}">${signed(prior)}</td>${HORIZONS.map(
+              ([field]) => {
+                const value = net(r, field);
+                return `<td><span class="outcome ${value === null ? "" : value >= 0 ? "pos" : "neg"}">${value === null ? "—" : signed(value)}</span></td>`;
+              },
+            ).join("")}</tr>`;
+          })
+          .join("");
+        $("paper-count").textContent =
+          `显示 ${visible.length} / ${data.length} 条信号`;
+        $("paper-table-wrap").classList.toggle("hidden", !visible.length);
+        $("paper-empty").classList.toggle("hidden", !!visible.length);
+        $("paper-empty").innerHTML =
+          `<div class="empty-mark">◇</div><strong>${data.length ? "没有匹配的信号" : source.error ? "信号暂不可用" : "暂无信号"}</strong><small>${data.length ? "试试其他币种" : source.error ? "连接恢复后会自动更新" : "满足条件的首次信号会出现在这里"}</small>`;
+        updateConnection();
+      }
+      async function pollMarket() {
+        try {
+          const data = await getJson("/api/snapshot");
+          const at = Date.now();
+          Object.assign(state.market, { data, at, error: null, failures: 0 });
+          save("market", data, at);
+          renderMarket();
+        } catch (error) {
+          state.market.error =
+            error.name === "AbortError" ? "请求超时" : error.message;
+          state.market.failures++;
+          renderMarket();
+        } finally {
+          setTimeout(
+            pollMarket,
+            state.market.error
+              ? Math.min(30000, 3000 * 2 ** Math.min(4, state.market.failures))
+              : 3000,
+          );
+        }
+      }
+      async function loadPaper(venue) {
+        const source =
+          state.paper[venue] ||
+          (state.paper[venue] = { data: [], at: 0, error: null, failures: 0 });
+        if (source.loading) return;
+        source.loading = true;
+        try {
+          const data = await getJson(API[venue]);
+          const at = Date.now();
+          Object.assign(source, { data, at, error: null, failures: 0 });
+          save("paper:" + venue, data, at);
+        } catch (error) {
+          source.error =
+            error.name === "AbortError" ? "请求超时" : error.message;
+          source.failures++;
+        } finally {
+          source.loading = false;
+          if (state.view === "research" && state.venue === venue) renderPaper();
+        }
+      }
+      async function pollPaper() {
+        if (state.view === "research") await loadPaper(state.venue);
+        setTimeout(pollPaper, 5000);
+      }
+      for (const [key, value] of Object.entries({
+        market: restore("market"),
+        okx: restore("paper:okx"),
+        binance: restore("paper:binance"),
+        hyperliquid: restore("paper:hyperliquid"),
+      })) {
+        if (!value) continue;
+        if (key === "market")
+          Object.assign(state.market, { ...value, error: "正在重新连接" });
+        else
+          state.paper[key] = { ...value, error: "正在重新连接", failures: 0 };
+      }
+      for (const button of document.querySelectorAll(".nav-item"))
+        button.addEventListener("click", () => {
+          state.view = button.dataset.view;
+          document
+            .querySelectorAll(".nav-item")
+            .forEach((el) => el.classList.toggle("active", el === button));
+          $("view-market").classList.toggle("hidden", state.view !== "market");
+          $("view-research").classList.toggle(
+            "hidden",
+            state.view !== "research",
+          );
+          if (state.view === "research") {
+            renderPaper();
+            loadPaper(state.venue);
+          } else renderMarket();
+        });
+      for (const button of document.querySelectorAll(".segment"))
+        button.addEventListener("click", () => {
+          state.venue = button.dataset.venue;
+          document
+            .querySelectorAll(".segment")
+            .forEach((el) => el.classList.toggle("active", el === button));
+          renderPaper();
+          loadPaper(state.venue);
+        });
+      for (const th of document.querySelectorAll("#market-table th.sortable"))
+        th.addEventListener("click", () => {
+          const key = th.dataset.sort;
+          if (state.sort === key) state.asc = !state.asc;
+          else {
+            state.sort = key;
+            state.asc = false;
+          }
+          document
+            .querySelectorAll("#market-table th.sortable")
+            .forEach((el) => {
+              el.classList.toggle("sorted", el === th);
+              el.classList.toggle("asc", el === th && state.asc);
+            });
+          renderMarket();
+        });
+      $("market-search").addEventListener("input", renderMarket);
+      $("paper-search").addEventListener("input", renderPaper);
+      $("hot-filter").addEventListener("click", () => {
+        state.hot = !state.hot;
+        $("hot-filter").classList.toggle("active", state.hot);
+        renderMarket();
+      });
+      renderMarket();
+      pollMarket();
+      pollPaper();
+      setInterval(() => {
+        if (state.view === "market") renderMarket();
+        else renderPaper();
+      }, 30000);
+    </script>
+  </body>
 </html>
