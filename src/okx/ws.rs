@@ -1,6 +1,6 @@
 use futures_util::{SinkExt, StreamExt};
 use rust_decimal::Decimal;
-use std::time::Duration;
+use std::time::{Duration, Instant};
 use tokio_tungstenite::{connect_async, tungstenite::Message};
 use tracing::{error, info, warn};
 
@@ -10,6 +10,8 @@ use crate::state::SharedState;
 
 const WS_URL: &str = "wss://ws.okx.com:8443/ws/v5/public";
 const PING_INTERVAL: Duration = Duration::from_secs(20);
+const READ_TIMEOUT: Duration = Duration::from_secs(35);
+const TICKER_STALE_TIMEOUT: Duration = Duration::from_secs(90);
 const BATCH_SIZE: usize = 50;
 const BATCH_INTERVAL: Duration = Duration::from_millis(200);
 
@@ -108,14 +110,22 @@ async fn run_group_once(state: SharedState, inst_ids: &[String]) -> Result<()> {
         }
     });
 
-    // 消费
-    while let Some(msg) = read.next().await {
+    // 收到 pong 只能说明连接还在；若行情订阅长期没有推送，也必须重连。
+    let mut last_ticker = Instant::now();
+    loop {
+        let msg = match tokio::time::timeout(READ_TIMEOUT, read.next()).await {
+            Ok(Some(msg)) => msg,
+            Ok(None) => break,
+            Err(_) => {
+                ping_task.abort();
+                return Err(Error::Msg("okx ws read timeout".into()));
+            }
+        };
         match msg {
             Ok(Message::Text(text)) => {
-                if text == "pong" {
-                    continue;
+                if text != "pong" && handle_text(&text, &state).await {
+                    last_ticker = Instant::now();
                 }
-                handle_text(&text, &state).await;
             }
             Ok(Message::Close(_)) => break,
             Err(e) => {
@@ -124,18 +134,22 @@ async fn run_group_once(state: SharedState, inst_ids: &[String]) -> Result<()> {
             }
             _ => {}
         }
+        if last_ticker.elapsed() > TICKER_STALE_TIMEOUT {
+            ping_task.abort();
+            return Err(Error::Msg("okx ws ticker feed stale".into()));
+        }
     }
 
     ping_task.abort();
     Ok(())
 }
 
-async fn handle_text(text: &str, state: &SharedState) {
+async fn handle_text(text: &str, state: &SharedState) -> bool {
     let v: serde_json::Value = match serde_json::from_str(text) {
         Ok(v) => v,
         Err(e) => {
             warn!("ws bad json: {}", e);
-            return;
+            return false;
         }
     };
 
@@ -148,37 +162,40 @@ async fn handle_text(text: &str, state: &SharedState) {
                 error!("okx ws error code={} msg={}", code, msg);
             }
         }
-        return;
+        return false;
     }
 
     let channel = v["arg"]["channel"].as_str().unwrap_or("");
     let inst_id = v["arg"]["instId"].as_str().unwrap_or("");
     if inst_id.is_empty() {
-        return;
+        return false;
     }
 
     let Some(data) = v.get("data").and_then(|d| d.as_array()) else {
-        return;
+        return false;
     };
 
     match channel {
         "tickers" => {
+            let mut updated = false;
             for row in data {
-                apply_ticker(state, inst_id, row).await;
+                updated |= apply_ticker(state, inst_id, row).await;
             }
+            updated
         }
         "funding-rate" => {
             for row in data {
                 apply_funding(state, inst_id, row).await;
             }
+            false
         }
-        _ => {}
+        _ => false,
     }
 }
 
-async fn apply_ticker(state: &SharedState, inst_id: &str, v: &serde_json::Value) {
+async fn apply_ticker(state: &SharedState, inst_id: &str, v: &serde_json::Value) -> bool {
     let Some(last) = parse_dec(v, "last") else {
-        return;
+        return false;
     };
     let bid = parse_dec(v, "bidPx").unwrap_or(last);
     let ask = parse_dec(v, "askPx").unwrap_or(last);
@@ -193,6 +210,7 @@ async fn apply_ticker(state: &SharedState, inst_id: &str, v: &serde_json::Value)
             inst_id, last, bid, ask, open_24h, high_24h, low_24h, vol_quote, ts,
         )
         .await;
+    true
 }
 
 async fn apply_funding(state: &SharedState, inst_id: &str, v: &serde_json::Value) {
