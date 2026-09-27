@@ -1,6 +1,6 @@
 use axum::{extract::State, http::StatusCode, routing::get, Json, Router};
 use std::sync::Arc;
-use tower_http::{cors::CorsLayer, services::ServeDir};
+use tower_http::{compression::CompressionLayer, cors::CorsLayer, services::ServeDir};
 
 use crate::paper_store::{PaperDb, SignalRow};
 use crate::state::SharedState;
@@ -22,6 +22,7 @@ pub fn router(state: WebState) -> Router {
         .route("/api/hyperliquid/signals", get(get_hl_signals))
         .route("/api/health", get(health))
         .fallback_service(ServeDir::new("static"))
+        .layer(CompressionLayer::new())
         .layer(CorsLayer::permissive())
         .with_state(state)
 }

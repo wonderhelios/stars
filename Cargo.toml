@@ -16,5 +16,5 @@ tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 anyhow = "1"
 axum = "0.7"
-tower-http = { version = "0.5", features = ["fs", "cors"] }
+tower-http = { version = "0.5", features = ["fs", "cors", "compression-gzip"] }
 rusqlite = { version = "0.32", features = ["bundled"] }
