@@ -9,6 +9,8 @@ const BASE: &str = "https://www.okx.com";
 const CANDLE_BATCH: u32 = 300;
 const FUNDING_BATCH: u32 = 400;
 const BATCH_SLEEP_MS: u64 = 120;
+const MAX_RETRY: u32 = 3;
+const RETRY_SLEEP_MS: u64 = 400;
 
 #[derive(serde::Deserialize)]
 struct Resp<T> {
@@ -48,6 +50,7 @@ struct RawTicker {
 #[derive(serde::Deserialize)]
 #[serde(rename_all = "camelCase")]
 struct RawFundingNow {
+    #[allow(dead_code)]
     inst_id: String,
     funding_rate: Decimal,
 }
@@ -97,10 +100,11 @@ pub struct RestClient {
 impl RestClient {
     pub fn new() -> Self {
         let http = Client::builder()
-            .timeout(Duration::from_secs(15))
+            .timeout(Duration::from_secs(30))
             .connect_timeout(Duration::from_secs(10))
-            .pool_max_idle_per_host(2)
-            .pool_idle_timeout(Duration::from_secs(30))
+            .pool_max_idle_per_host(10)
+            .pool_idle_timeout(Duration::from_secs(90))
+            .tcp_keepalive(Duration::from_secs(30))
             .tcp_nodelay(true)
             .build()
             .expect("reqwest client init");
@@ -110,26 +114,46 @@ impl RestClient {
         }
     }
 
-    async fn get<T: serde::de::DeserializeOwned>(
+    async fn get_text(&self, path: &str, params: &[(&str, &str)]) -> Result<String> {
+        let url = format!("{}{}", self.base, path);
+        let mut last_err: Option<Error> = None;
+
+        for attempt in 0..MAX_RETRY {
+            let r = self
+                .http
+                .get(&url)
+                .query(params)
+                .send()
+                .await
+                .and_then(|resp| resp.error_for_status());
+
+            match r {
+                Ok(resp) => match resp.text().await {
+                    Ok(t) => return Ok(t),
+                    Err(e) => last_err = Some(Error::Http(e)),
+                },
+                Err(e) => last_err = Some(Error::Http(e)),
+            }
+
+            if attempt < MAX_RETRY - 1 {
+                tokio::time::sleep(Duration::from_millis(RETRY_SLEEP_MS)).await;
+            }
+        }
+        Err(last_err.unwrap_or_else(|| Error::Msg("OKX get_text failed".into())))
+    }
+
+    async fn get_json<T: serde::de::DeserializeOwned>(
         &self,
         path: &str,
         params: &[(&str, &str)],
     ) -> Result<T> {
-        let resp = self
-            .http
-            .get(format!("{}{}", self.base, path))
-            .query(params)
-            .send()
-            .await?
-            .error_for_status()?
-            .json::<T>()
-            .await?;
-        Ok(resp)
+        let text = self.get_text(path, params).await?;
+        serde_json::from_str(&text).map_err(|e| Error::Json(e))
     }
 
     pub async fn all_swap_inst_ids(&self) -> Result<Vec<String>> {
         let resp: Resp<RawInstrument> = self
-            .get("/api/v5/public/instruments", &[("instType", "SWAP")])
+            .get_json("/api/v5/public/instruments", &[("instType", "SWAP")])
             .await?;
 
         Ok(resp
@@ -143,7 +167,7 @@ impl RestClient {
 
     pub async fn all_tickers_usdt_swap(&self) -> Result<Vec<TickerRow>> {
         let resp: Resp<RawTicker> = self
-            .get("/api/v5/market/tickers", &[("instType", "SWAP")])
+            .get_json("/api/v5/market/tickers", &[("instType", "SWAP")])
             .await?;
 
         Ok(resp
@@ -170,7 +194,7 @@ impl RestClient {
 
     pub async fn funding_rate(&self, inst_id: &str) -> Result<Decimal> {
         let resp: Resp<RawFundingNow> = self
-            .get("/api/v5/public/funding-rate", &[("instId", inst_id)])
+            .get_json("/api/v5/public/funding-rate", &[("instId", inst_id)])
             .await?;
 
         let rows = resp.unwrap_ok()?;
@@ -208,15 +232,17 @@ impl RestClient {
                 params.push(("after", a));
             }
 
-            let resp: Resp<Vec<String>> =
-                self.get("/api/v5/market/history-candles", &params).await?;
+            let resp: Resp<Vec<String>> = match self
+                .get_json("/api/v5/market/history-candles", &params)
+                .await
+            {
+                Ok(r) => r,
+                Err(_) => break,
+            };
 
             let rows = match resp.unwrap_ok() {
                 Ok(r) => r,
-                Err(e) => {
-                    eprintln!("  [{}] candles batch {}: {}", inst_id, batch_count, e);
-                    break;
-                }
+                Err(_) => break,
             };
 
             if rows.is_empty() {
@@ -285,16 +311,17 @@ impl RestClient {
                 params.push(("after", a));
             }
 
-            let resp: Resp<FundingHistoryItem> = self
-                .get("/api/v5/public/funding-rate-history", &params)
-                .await?;
+            let resp: Resp<FundingHistoryItem> = match self
+                .get_json("/api/v5/public/funding-rate-history", &params)
+                .await
+            {
+                Ok(r) => r,
+                Err(_) => break,
+            };
 
             let rows = match resp.unwrap_ok() {
                 Ok(r) => r,
-                Err(e) => {
-                    eprintln!("  [{}] funding batch {}: {}", inst_id, batch_count, e);
-                    break;
-                }
+                Err(_) => break,
             };
 
             if rows.is_empty() {
@@ -334,7 +361,6 @@ impl RestClient {
         Ok(all)
     }
 
-    /// 获取指定时间点的收盘价（精确到 1H K线）
     pub async fn price_at_time(&self, inst_id: &str, target_ts: i64) -> Result<Option<Decimal>> {
         let bar_time = (target_ts / 3_600_000) * 3_600_000;
         let params = [
@@ -344,7 +370,9 @@ impl RestClient {
             ("limit", "1"),
         ];
 
-        let resp: Resp<Vec<String>> = self.get("/api/v5/market/history-candles", &params).await?;
+        let resp: Resp<Vec<String>> = self
+            .get_json("/api/v5/market/history-candles", &params)
+            .await?;
 
         let rows = resp.unwrap_ok()?;
         if let Some(row) = rows.first() {

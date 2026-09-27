@@ -6,6 +6,8 @@ use std::time::Duration;
 use crate::error::{Error, Result};
 
 const BASE: &str = "https://fapi.binance.com";
+const MAX_RETRY: u32 = 3;
+const RETRY_SLEEP_MS: u64 = 400;
 
 #[derive(serde::Deserialize)]
 struct FundingHistoryItem {
@@ -72,9 +74,11 @@ impl BinanceRestClient {
     pub fn new() -> Self {
         let http = Client::builder()
             .timeout(Duration::from_secs(30))
-            .connect_timeout(Duration::from_secs(15))
-            .pool_max_idle_per_host(2)
-            .pool_idle_timeout(Duration::from_secs(30))
+            .connect_timeout(Duration::from_secs(10))
+            // 恢复一个健康的连接池大小，不再激进限制
+            .pool_max_idle_per_host(10)
+            .pool_idle_timeout(Duration::from_secs(90))
+            .tcp_keepalive(Duration::from_secs(30))
             .tcp_nodelay(true)
             .build()
             .expect("reqwest client init");
@@ -84,39 +88,46 @@ impl BinanceRestClient {
         }
     }
 
-    async fn get<T: serde::de::DeserializeOwned>(
+    /// GET 文本，带 3 次自动重试（处理连接被服务端提前关闭的情况）
+    async fn get_text(&self, path: &str, params: &[(&str, &str)]) -> Result<String> {
+        let url = format!("{}{}", self.base, path);
+        let mut last_err: Option<Error> = None;
+
+        for attempt in 0..MAX_RETRY {
+            let r = self
+                .http
+                .get(&url)
+                .query(params)
+                .send()
+                .await
+                .and_then(|resp| resp.error_for_status());
+
+            match r {
+                Ok(resp) => match resp.text().await {
+                    Ok(t) => return Ok(t),
+                    Err(e) => last_err = Some(Error::Http(e)),
+                },
+                Err(e) => last_err = Some(Error::Http(e)),
+            }
+
+            if attempt < MAX_RETRY - 1 {
+                tokio::time::sleep(Duration::from_millis(RETRY_SLEEP_MS)).await;
+            }
+        }
+        Err(last_err.unwrap_or_else(|| Error::Msg("BN get_text failed".into())))
+    }
+
+    async fn get_json<T: serde::de::DeserializeOwned>(
         &self,
         path: &str,
         params: &[(&str, &str)],
     ) -> Result<T> {
-        let resp = self
-            .http
-            .get(format!("{}{}", self.base, path))
-            .query(params)
-            .send()
-            .await?
-            .error_for_status()?
-            .json::<T>()
-            .await?;
-        Ok(resp)
-    }
-
-    /// 获取原始文本响应，便于手动解析容忍个别字段异常
-    async fn get_text(&self, path: &str, params: &[(&str, &str)]) -> Result<String> {
-        let resp = self
-            .http
-            .get(format!("{}{}", self.base, path))
-            .query(params)
-            .send()
-            .await?
-            .error_for_status()?
-            .text()
-            .await?;
-        Ok(resp)
+        let text = self.get_text(path, params).await?;
+        serde_json::from_str(&text).map_err(|e| Error::Json(e))
     }
 
     pub async fn all_perp_symbols(&self) -> Result<Vec<String>> {
-        let resp: ExchangeInfo = self.get("/fapi/v1/exchangeInfo", &[]).await?;
+        let resp: ExchangeInfo = self.get_json("/fapi/v1/exchangeInfo", &[]).await?;
         Ok(resp
             .symbols
             .into_iter()
@@ -125,12 +136,12 @@ impl BinanceRestClient {
             .collect())
     }
 
-    /// 全市场 24h ticker（用 Value 手动解析，容忍个别字段缺失）
+    /// 全市场 24h ticker：手动解析，容忍个别字段异常
     pub async fn all_tickers(&self) -> Result<Vec<BinanceTicker>> {
         let text = self.get_text("/fapi/v1/ticker/24hr", &[]).await?;
 
         let arr: Vec<serde_json::Value> = serde_json::from_str(&text)
-            .map_err(|e| Error::Msg(format!("BN ticker json: {} (len={})", e, text.len())))?;
+            .map_err(|e| Error::Msg(format!("BN ticker json: {}", e)))?;
 
         let mut result = Vec::with_capacity(arr.len());
         for item in &arr {
@@ -148,7 +159,6 @@ impl BinanceRestClient {
             let open_24h = Decimal::from_str(open_str).unwrap_or(Decimal::ZERO);
             let vol_quote = Decimal::from_str(vol_str).unwrap_or(Decimal::ZERO);
 
-            // 跳过明显无效的
             if last.is_zero() || open_24h.is_zero() {
                 continue;
             }
@@ -173,7 +183,7 @@ impl BinanceRestClient {
 
     pub async fn funding_rate(&self, symbol: &str) -> Result<Decimal> {
         let resp: PremiumIndex = self
-            .get("/fapi/v1/premiumIndex", &[("symbol", symbol)])
+            .get_json("/fapi/v1/premiumIndex", &[("symbol", symbol)])
             .await?;
         Ok(resp.last_funding_rate)
     }
@@ -186,7 +196,7 @@ impl BinanceRestClient {
     ) -> Result<Vec<FundingHistoryItem>> {
         let limit = limit.min(1000).to_string();
         let resp: Vec<FundingHistoryItem> = self
-            .get(
+            .get_json(
                 "/fapi/v1/fundingRate",
                 &[("symbol", symbol), ("limit", &limit)],
             )
@@ -198,7 +208,7 @@ impl BinanceRestClient {
     pub async fn candles_1h(&self, symbol: &str, limit: u32) -> Result<Vec<BinanceCandle>> {
         let limit = limit.min(1500).to_string();
         let resp: Vec<Vec<serde_json::Value>> = self
-            .get(
+            .get_json(
                 "/fapi/v1/klines",
                 &[("symbol", symbol), ("interval", "1h"), ("limit", &limit)],
             )
@@ -221,14 +231,14 @@ impl BinanceRestClient {
         Ok(candles)
     }
 
-    /// 获取指定时间点的收盘价（精确到 1H K线，向下取整到整点）
+    /// 获取指定时间点的收盘价
     pub async fn price_at_time(&self, symbol: &str, target_ts: i64) -> Result<Option<Decimal>> {
         let bar_time = (target_ts / 3_600_000) * 3_600_000;
         let start = bar_time - 3_600_000;
         let end = bar_time + 3_600_000;
 
         let resp: Vec<Vec<serde_json::Value>> = self
-            .get(
+            .get_json(
                 "/fapi/v1/klines",
                 &[
                     ("symbol", symbol),

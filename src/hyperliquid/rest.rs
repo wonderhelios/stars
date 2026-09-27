@@ -7,6 +7,8 @@ use std::time::Duration;
 use crate::error::{Error, Result};
 
 const BASE: &str = "https://api.hyperliquid.xyz/info";
+const MAX_RETRY: u32 = 3;
+const RETRY_SLEEP_MS: u64 = 400;
 
 #[derive(Debug, Clone)]
 pub struct HlTicker {
@@ -37,10 +39,11 @@ pub struct HyperliquidRestClient {
 impl HyperliquidRestClient {
     pub fn new() -> Self {
         let http = Client::builder()
-            .timeout(Duration::from_secs(15))
+            .timeout(Duration::from_secs(30))
             .connect_timeout(Duration::from_secs(10))
-            .pool_max_idle_per_host(2)
-            .pool_idle_timeout(Duration::from_secs(30))
+            .pool_max_idle_per_host(10)
+            .pool_idle_timeout(Duration::from_secs(90))
+            .tcp_keepalive(Duration::from_secs(30))
             .tcp_nodelay(true)
             .build()
             .expect("reqwest client init");
@@ -50,23 +53,44 @@ impl HyperliquidRestClient {
         }
     }
 
-    async fn post<T: serde::de::DeserializeOwned>(&self, body: serde_json::Value) -> Result<T> {
-        let resp = self
-            .http
-            .post(&self.base)
-            .json(&body)
-            .send()
-            .await?
-            .error_for_status()?
-            .json::<T>()
-            .await?;
-        Ok(resp)
+    /// POST 文本，带 3 次自动重试
+    async fn post_text(&self, body: &serde_json::Value) -> Result<String> {
+        let mut last_err: Option<Error> = None;
+        for attempt in 0..MAX_RETRY {
+            let r = self
+                .http
+                .post(&self.base)
+                .json(body)
+                .send()
+                .await
+                .and_then(|resp| resp.error_for_status());
+
+            match r {
+                Ok(resp) => match resp.text().await {
+                    Ok(t) => return Ok(t),
+                    Err(e) => last_err = Some(Error::Http(e)),
+                },
+                Err(e) => last_err = Some(Error::Http(e)),
+            }
+
+            if attempt < MAX_RETRY - 1 {
+                tokio::time::sleep(Duration::from_millis(RETRY_SLEEP_MS)).await;
+            }
+        }
+        Err(last_err.unwrap_or_else(|| Error::Msg("HL post_text failed".into())))
     }
 
-    /// 获取所有永续合约的实时状态（含资金费率、标记价、持仓量）
+    async fn post_json<T: serde::de::DeserializeOwned>(
+        &self,
+        body: serde_json::Value,
+    ) -> Result<T> {
+        let text = self.post_text(&body).await?;
+        serde_json::from_str(&text).map_err(|e| Error::Json(e))
+    }
+
     pub async fn all_perp_ctxs(&self) -> Result<Vec<HlTicker>> {
         let body = json!({"type": "metaAndAssetCtxs"});
-        let resp: serde_json::Value = self.post(body).await?;
+        let resp: serde_json::Value = self.post_json(body).await?;
 
         let universe = resp
             .get(0)
@@ -125,7 +149,6 @@ impl HyperliquidRestClient {
         Ok(list.into_iter().map(|r| r.coin).collect())
     }
 
-    /// 获取指定时间点的收盘价（精确到 1H K线，向下取整到整点）
     pub async fn price_at_time(&self, coin: &str, target_ts: i64) -> Result<Option<Decimal>> {
         let bar_time = (target_ts / 3_600_000) * 3_600_000;
         let start = bar_time - 3_600_000;
@@ -141,7 +164,7 @@ impl HyperliquidRestClient {
             }
         });
 
-        let resp: Vec<serde_json::Value> = self.post(body).await?;
+        let resp: Vec<serde_json::Value> = self.post_json(body).await?;
 
         for row in resp {
             let Some(t) = row.get("t").and_then(|v| v.as_i64()) else {
@@ -169,7 +192,7 @@ impl HyperliquidRestClient {
             "endTime": end_ts
         });
 
-        let resp: Vec<serde_json::Value> = self.post(body).await?;
+        let resp: Vec<serde_json::Value> = self.post_json(body).await?;
         let mut result = Vec::new();
         for row in resp {
             let Some(t) = row.get("time").and_then(|v| v.as_i64()) else {
