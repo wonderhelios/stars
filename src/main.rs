@@ -109,11 +109,9 @@ async fn main() -> anyhow::Result<()> {
         let th = threshold;
         tokio::spawn(async move {
             let client = Arc::new(okx::RestClient::new());
+            // interval 的首个 tick 会立即完成，启动后立刻扫描并补齐到期价格。
             let mut scan_ticker = tokio::time::interval(Duration::from_secs(300));
             let mut track_ticker = tokio::time::interval(Duration::from_secs(60));
-            // 首次立即触发
-            scan_ticker.tick().await;
-            track_ticker.tick().await;
             loop {
                 tokio::select! {
                     _ = scan_ticker.tick() => {
