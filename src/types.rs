@@ -21,8 +21,6 @@ pub struct MarketSnapshot {
     pub funding_rate: Option<Decimal>,
     /// 下次结算时间（毫秒）
     pub next_funding_time: Option<i64>,
-    /// 最近一次收到资金费率的时间（毫秒）
-    pub funding_ts: i64,
 
     /// 最近更新时间（毫秒）
     pub ts: i64,
@@ -47,7 +45,6 @@ impl MarketSnapshot {
             volume_quote_24h: Decimal::ZERO,
             funding_rate: None,
             next_funding_time: None,
-            funding_ts: 0,
             ts: 0,
         }
     }
