@@ -1,3 +1,4 @@
+use futures_util::{stream, StreamExt};
 use reqwest::Client;
 use rust_decimal::Decimal;
 use serde_json::json;
@@ -11,8 +12,10 @@ const BASE: &str = "https://api.hyperliquid.xyz/info";
 const MAX_RETRY: u32 = 3;
 const RETRY_SLEEP_MS: u64 = 400;
 
-/// HIP-3 的第三方部署者命名空间。空字符串 = 主 DEX
-pub const HIP3_DEXES: &[&str] = &["", "para", "xyz", "mkts", "io"];
+#[derive(serde::Deserialize)]
+struct PerpDex {
+    name: String,
+}
 
 #[derive(Debug, Clone)]
 pub struct HlTicker {
@@ -103,6 +106,12 @@ impl HyperliquidRestClient {
         ))
     }
 
+    /// 从交易所发现主 DEX 和全部 HIP-3 DEX，避免新部署者被静态名单漏掉。
+    pub async fn perp_dex_names(&self) -> Result<Vec<String>> {
+        let dexes: Vec<Option<PerpDex>> = self.post_json(json!({"type": "perpDexs"})).await?;
+        Ok(dex_names(dexes))
+    }
+
     /// 拉取指定 dex 的所有永续合约状态
     pub async fn perp_ctxs_by_dex(&self, dex: &str) -> Result<Vec<HlTicker>> {
         let body = if dex.is_empty() {
@@ -165,16 +174,43 @@ impl HyperliquidRestClient {
 
     /// 遍历所有 dex（主 + HIP-3），合并返回
     pub async fn all_perp_ctxs_all_dexes(&self) -> Result<Vec<HlTicker>> {
+        let dexes = tokio::time::timeout(Duration::from_secs(15), self.perp_dex_names())
+            .await
+            .map_err(|_| Error::Msg("Hyperliquid perpDexs timeout".into()))??;
         let mut all = Vec::new();
-        for dex in HIP3_DEXES {
-            match self.perp_ctxs_by_dex(dex).await {
-                Ok(mut tickers) => all.append(&mut tickers),
-                Err(e) => {
+        let mut loaded = 0usize;
+        let mut queries = stream::iter(dexes.iter().cloned())
+            .map(|dex| async move {
+                let result =
+                    tokio::time::timeout(Duration::from_secs(20), self.perp_ctxs_by_dex(&dex))
+                        .await;
+                (dex, result)
+            })
+            .buffer_unordered(5);
+        while let Some((dex, result)) = queries.next().await {
+            match result {
+                Ok(Ok(mut tickers)) => {
+                    all.append(&mut tickers);
+                    loaded += 1;
+                }
+                Ok(Err(e)) => {
                     tracing::warn!("HL dex={} failed: {}", dex, e);
                 }
+                Err(_) => tracing::warn!("HL dex={} timeout", dex),
             }
-            tokio::time::sleep(Duration::from_millis(100)).await;
         }
+        if all.is_empty() {
+            return Err(Error::Msg("no Hyperliquid perp contexts loaded".into()));
+        }
+        if loaded < dexes.len() {
+            tracing::warn!("HL loaded {}/{} perp DEXes", loaded, dexes.len());
+        }
+        tracing::info!(
+            "HL DEX coverage: {}/{} DEXes, {} perps",
+            loaded,
+            dexes.len(),
+            all.len()
+        );
         Ok(all)
     }
 
@@ -206,6 +242,28 @@ impl HyperliquidRestClient {
             }
         }
         Ok(None)
+    }
+}
+
+fn dex_names(dexes: Vec<Option<PerpDex>>) -> Vec<String> {
+    let mut names = vec![String::new()];
+    for dex in dexes.into_iter().flatten() {
+        if !dex.name.is_empty() && !names.contains(&dex.name) {
+            names.push(dex.name);
+        }
+    }
+    names
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn discovers_new_hip3_dexes_after_main_market() {
+        let response: Vec<Option<PerpDex>> =
+            serde_json::from_str(r#"[null,{"name":"xyz"},{"name":"cash"}]"#).unwrap();
+        assert_eq!(dex_names(response), vec!["", "xyz", "cash"]);
     }
 }
 
