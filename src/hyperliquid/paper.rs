@@ -14,8 +14,10 @@ use crate::signal::{classify, TRADE_COST_PCT};
 
 const SCAN_INTERVAL_SECS: u64 = 300;
 const TRACK_INTERVAL_SECS: u64 = 60;
-/// Hyperliquid 是每小时结算，换算成 8 小时等效费率来和 CEX 阈值对齐
-const HL_HOURS_TO_8H: i64 = 8;
+
+/// Hyperliquid 是每小时结算一次；CEX 的费率是每 8 小时结算。
+/// 为了和 CEX 的 0.05% 阈值可比，把 HL 的小时费率乘以 8 换算成等效 8h 费率。
+const HL_HOURS_PER_8H: i64 = 8;
 
 #[derive(Debug, Clone, Serialize)]
 pub struct HyperliquidSignalRow {
@@ -245,7 +247,6 @@ pub async fn scan_once(
     let mut candidates = 0usize;
 
     for t in &tickers {
-        // 流动性过滤
         if t.day_ntl_vlm < Decimal::from(500_000) {
             continue;
         }
@@ -258,9 +259,8 @@ pub async fn scan_once(
         }
         candidates += 1;
 
-        // 【关键修复】Hyperliquid 小时费率 × 8 = 等效 8 小时费率
-        // 这样和 CEX 的 funding_threshold（8小时口径）可比
-        let funding_8h_equiv = t.funding * Decimal::from(HL_HOURS_TO_8H);
+        // 【关键修复】小时费率 × 8 = 等效 8 小时费率，和 CEX 阈值对齐
+        let funding_8h_equiv = t.funding * Decimal::from(HL_HOURS_PER_8H);
 
         if funding_8h_equiv <= funding_threshold {
             continue;
@@ -281,7 +281,7 @@ pub async fn scan_once(
             }
         }
 
-        // 存数据库时仍然存原始小时费率
+        // 存库时保留原始小时费率
         match db
             .insert(&t.coin, kind, now_ms, t.funding, prior_pct, t.mark_px)
             .await
@@ -389,12 +389,6 @@ pub async fn run_daemon(db_path: &str, funding_threshold: Decimal) -> anyhow::Re
     tokio::signal::ctrl_c().await?;
     Ok(())
 }
-
-const _: () = {
-    // 抑制未使用告警
-    let _ = SCAN_INTERVAL_SECS;
-    let _ = TRACK_INTERVAL_SECS;
-};
 
 fn now_ms() -> i64 {
     std::time::SystemTime::now()
