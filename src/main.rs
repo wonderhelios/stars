@@ -1,5 +1,6 @@
 mod binance;
 mod error;
+mod hyperliquid;
 mod okx;
 mod paper;
 mod research;
@@ -26,6 +27,8 @@ async fn main() -> anyhow::Result<()> {
         .unwrap_or_else(|_| "/var/lib/okx-quant/paper.sqlite".to_string());
     let binance_db_path = std::env::var("OKX_QUANT_BINANCE_DB")
         .unwrap_or_else(|_| "/var/lib/okx-quant/binance.sqlite".to_string());
+    let hl_db_path = std::env::var("OKX_QUANT_HL_DB")
+        .unwrap_or_else(|_| "/var/lib/okx-quant/hyperliquid.sqlite".to_string());
 
     if let Some(parent) = std::path::Path::new(&okx_db_path).parent() {
         let _ = std::fs::create_dir_all(parent);
@@ -67,6 +70,17 @@ async fn main() -> anyhow::Result<()> {
                     }
                 };
             }
+            "hyperliquid" => {
+                let threshold = Decimal::from_str(signal::FUNDING_THRESHOLD_STR)?;
+                let sub = args.get(2).map(|s| s.as_str()).unwrap_or("run");
+                return match sub {
+                    "run" => hyperliquid::paper::run_daemon(&hl_db_path, threshold).await,
+                    other => {
+                        eprintln!("未知子命令: hyperliquid {}", other);
+                        Ok(())
+                    }
+                };
+            }
             _ => {}
         }
     }
@@ -75,6 +89,7 @@ async fn main() -> anyhow::Result<()> {
     let state = AppState::new();
     let okx_paper_db = Arc::new(paper::PaperDb::open(&okx_db_path)?);
     let binance_paper_db = Arc::new(binance::paper::BinancePaperDb::open(&binance_db_path)?);
+    let hl_paper_db = Arc::new(hyperliquid::paper::HyperliquidPaperDb::open(&hl_db_path)?);
 
     let threshold = Decimal::from_str(signal::FUNDING_THRESHOLD_STR)?;
 
@@ -128,6 +143,31 @@ async fn main() -> anyhow::Result<()> {
         });
     }
 
+    // ===== Hyperliquid 后台扫描 + 跟踪 =====
+    {
+        let db = hl_paper_db.clone();
+        let th = threshold;
+        tokio::spawn(async move {
+            let client = Arc::new(hyperliquid::HyperliquidRestClient::new());
+            let mut scan_ticker = tokio::time::interval(std::time::Duration::from_secs(300));
+            let mut track_ticker = tokio::time::interval(std::time::Duration::from_secs(60));
+            loop {
+                tokio::select! {
+                    _ = scan_ticker.tick() => {
+                        if let Err(e) = hyperliquid::paper::scan_once(&client, &db, th).await {
+                            tracing::error!("HL scan_once: {}", e);
+                        }
+                    }
+                    _ = track_ticker.tick() => {
+                        if let Err(e) = hyperliquid::paper::update_open_signals(&client, &db).await {
+                            tracing::error!("HL update: {}", e);
+                        }
+                    }
+                }
+            }
+        });
+    }
+
     // ===== OKX 实时行情 WS =====
     let ws_state = state.clone();
     tokio::spawn(async move {
@@ -141,6 +181,7 @@ async fn main() -> anyhow::Result<()> {
         app: state.clone(),
         okx_paper: okx_paper_db,
         binance_paper: binance_paper_db,
+        hl_paper: hl_paper_db,
     };
     let app = web::api::router(web_state);
     let addr = "0.0.0.0:3000";
@@ -148,6 +189,7 @@ async fn main() -> anyhow::Result<()> {
     info!("Web server listening on http://{}", addr);
     info!("OKX DB: {}", okx_db_path);
     info!("Binance DB: {}", binance_db_path);
+    info!("Hyperliquid DB: {}", hl_db_path);
 
     axum::serve(listener, app).await?;
     Ok(())

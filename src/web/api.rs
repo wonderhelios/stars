@@ -3,6 +3,7 @@ use std::sync::Arc;
 use tower_http::{cors::CorsLayer, services::ServeDir};
 
 use crate::binance::paper::BinanceSignalRow;
+use crate::hyperliquid::paper::HyperliquidSignalRow;
 use crate::paper::{PaperDb, SignalRow};
 use crate::state::SharedState;
 use crate::types::MarketSnapshot;
@@ -12,6 +13,7 @@ pub struct WebState {
     pub app: SharedState,
     pub okx_paper: Arc<PaperDb>,
     pub binance_paper: Arc<crate::binance::paper::BinancePaperDb>,
+    pub hl_paper: Arc<crate::hyperliquid::paper::HyperliquidPaperDb>,
 }
 
 pub fn router(state: WebState) -> Router {
@@ -19,6 +21,7 @@ pub fn router(state: WebState) -> Router {
         .route("/api/snapshot", get(get_snapshot))
         .route("/api/paper/signals", get(get_okx_signals))
         .route("/api/binance/signals", get(get_binance_signals))
+        .route("/api/hyperliquid/signals", get(get_hl_signals))
         .route("/api/health", get(health))
         .fallback_service(ServeDir::new("static"))
         .layer(CorsLayer::permissive())
@@ -45,6 +48,13 @@ async fn get_okx_signals(State(state): State<WebState>) -> Json<Vec<SignalRow>> 
 
 async fn get_binance_signals(State(state): State<WebState>) -> Json<Vec<BinanceSignalRow>> {
     match state.binance_paper.all_signals().await {
+        Ok(rows) => Json(rows),
+        Err(_) => Json(vec![]),
+    }
+}
+
+async fn get_hl_signals(State(state): State<WebState>) -> Json<Vec<HyperliquidSignalRow>> {
+    match state.hl_paper.all_signals().await {
         Ok(rows) => Json(rows),
         Err(_) => Json(vec![]),
     }

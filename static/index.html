@@ -212,6 +212,7 @@
   <div class="tab active" data-page="market">实时行情</div>
   <div class="tab" data-page="paper">OKX 纸上交易</div>
   <div class="tab" data-page="binance">币安纸上交易</div>
+  <div class="tab" data-page="hyperliquid">Hyperliquid 纸上交易</div>
 </div>
 
 <!-- 实时行情 -->
@@ -295,6 +296,31 @@
   </div>
 </div>
 
+<!-- Hyperliquid 纸上交易 -->
+<div id="page-hyperliquid" style="display:none">
+  <div class="paper-wrap">
+    <div class="stat-cards" id="hl-stat-cards"></div>
+    <div id="hl-loading" class="empty-tip">正在加载 Hyperliquid 信号数据...</div>
+    <table id="hl-table" style="display:none">
+      <thead>
+        <tr>
+          <th>Coin</th>
+          <th>信号类型</th>
+          <th>触发时间</th>
+          <th>入场价</th>
+          <th>Funding</th>
+          <th>前24h</th>
+          <th>T+1h 净%</th>
+          <th>T+4h 净%</th>
+          <th>T+8h 净%</th>
+          <th>T+24h 净%</th>
+        </tr>
+      </thead>
+      <tbody id="hl-tbody"></tbody>
+    </table>
+  </div>
+</div>
+
 <footer>
   信号阈值 funding &gt; 0.05% · 成本假设 0.15% · 每 5s 刷新
 </footer>
@@ -311,8 +337,10 @@ document.querySelectorAll(".tab").forEach((t) => {
     document.getElementById("page-market").style.display = page === "market" ? "" : "none";
     document.getElementById("page-paper").style.display = page === "paper" ? "" : "none";
     document.getElementById("page-binance").style.display = page === "binance" ? "" : "none";
+    document.getElementById("page-hyperliquid").style.display = page === "hyperliquid" ? "" : "none";
     if (page === "paper") fetchPaperOKX();
     if (page === "binance") fetchPaperBinance();
+    if (page === "hyperliquid") fetchPaperHL();
   });
 });
 
@@ -649,14 +677,36 @@ async function fetchPaperBinance() {
   }
 }
 
+// ===== Hyperliquid 纸上交易 =====
+const API_HL_PAPER = "/api/hyperliquid/signals";
+
+async function fetchPaperHL() {
+  try {
+    const r = await fetch(API_HL_PAPER, { cache: "no-store" });
+    const signals = await r.json();
+    renderPaperCommon(signals, {
+      cardsId: "hl-stat-cards",
+      tableId: "hl-table",
+      tbodyId: "hl-tbody",
+      loadingId: "hl-loading",
+      displayName: (coin) => coin,
+      emptyText: "暂无 Hyperliquid 信号记录。系统每 5 分钟扫描一次。",
+    });
+  } catch (e) {
+    document.getElementById("hl-loading").textContent = "连接失败: " + e.message;
+  }
+}
+
 // ===== 启动 =====
 fetchMarket();
 setInterval(fetchMarket, REFRESH_MS);
 setInterval(() => {
   const mp = document.getElementById("page-paper").style.display;
   const bp = document.getElementById("page-binance").style.display;
+  const hp = document.getElementById("page-hyperliquid").style.display;
   if (mp !== "none") fetchPaperOKX();
   if (bp !== "none") fetchPaperBinance();
+  if (hp !== "none") fetchPaperHL();
 }, 5000);
 </script>
 </body>
