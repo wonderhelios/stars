@@ -19,6 +19,16 @@ impl AppState {
         })
     }
 
+    pub async fn latest_ticker_ts(&self) -> i64 {
+        self.snapshots
+            .read()
+            .await
+            .values()
+            .map(|row| row.ts)
+            .max()
+            .unwrap_or(0)
+    }
+
     /// 更新 ticker 数据。若 inst_id 尚不存在则创建。
     pub async fn update_ticker(
         &self,
@@ -36,6 +46,10 @@ impl AppState {
         let entry = map
             .entry(inst_id.to_string())
             .or_insert_with(|| MarketSnapshot::empty_for(inst_id));
+
+        if ts <= entry.ts {
+            return;
+        }
 
         entry.last = last;
         entry.bid = bid;
@@ -60,8 +74,52 @@ impl AppState {
             .or_insert_with(|| MarketSnapshot::empty_for(inst_id));
 
         entry.funding_rate = Some(rate);
+        entry.funding_ts = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap_or_default()
+            .as_millis() as i64;
         if next_funding_time.is_some() {
             entry.next_funding_time = next_funding_time;
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[tokio::test]
+    async fn older_rest_snapshot_cannot_replace_newer_ws_price() {
+        let state = AppState::new();
+        let price = Decimal::from(100);
+        state
+            .update_ticker(
+                "BTC-USDT-SWAP",
+                price,
+                price,
+                price,
+                price,
+                price,
+                price,
+                price,
+                200,
+            )
+            .await;
+        state
+            .update_ticker(
+                "BTC-USDT-SWAP",
+                Decimal::from(90),
+                price,
+                price,
+                price,
+                price,
+                price,
+                price,
+                100,
+            )
+            .await;
+        let rows = state.snapshots.read().await;
+        assert_eq!(rows["BTC-USDT-SWAP"].last, price);
+        assert_eq!(rows["BTC-USDT-SWAP"].ts, 200);
     }
 }

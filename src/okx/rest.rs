@@ -45,6 +45,16 @@ struct RawTicker {
     last: String,
     open24h: String,
     vol_ccy_24h: String,
+    #[serde(default)]
+    bid_px: String,
+    #[serde(default)]
+    ask_px: String,
+    #[serde(default)]
+    high24h: String,
+    #[serde(default)]
+    low24h: String,
+    #[serde(default)]
+    ts: String,
 }
 
 #[derive(serde::Deserialize)]
@@ -77,6 +87,42 @@ pub struct TickerRow {
     pub last: Decimal,
     pub open_24h: Decimal,
     pub vol_ccy_24h: Decimal,
+}
+
+#[derive(Debug, Clone)]
+pub struct LiveTickerRow {
+    pub inst_id: String,
+    pub last: Decimal,
+    pub bid: Decimal,
+    pub ask: Decimal,
+    pub open_24h: Decimal,
+    pub high_24h: Decimal,
+    pub low_24h: Decimal,
+    pub volume_quote_24h: Decimal,
+    pub ts: i64,
+}
+
+impl RawTicker {
+    fn into_live(self) -> Option<LiveTickerRow> {
+        let last = Decimal::from_str(&self.last).ok()?;
+        let open_24h = Decimal::from_str(&self.open24h).ok()?;
+        let volume_base = Decimal::from_str(&self.vol_ccy_24h).ok()?;
+        let ts = self.ts.parse::<i64>().ok()?;
+        if last <= Decimal::ZERO || ts <= 0 {
+            return None;
+        }
+        Some(LiveTickerRow {
+            inst_id: self.inst_id,
+            last,
+            bid: Decimal::from_str(&self.bid_px).unwrap_or(last),
+            ask: Decimal::from_str(&self.ask_px).unwrap_or(last),
+            open_24h,
+            high_24h: Decimal::from_str(&self.high24h).unwrap_or(Decimal::ZERO),
+            low_24h: Decimal::from_str(&self.low24h).unwrap_or(Decimal::ZERO),
+            volume_quote_24h: volume_base * last,
+            ts,
+        })
+    }
 }
 
 impl TickerRow {
@@ -195,6 +241,20 @@ impl RestClient {
                     vol_ccy_24h: Decimal::from_str(&r.vol_ccy_24h).ok()?,
                 })
             })
+            .collect())
+    }
+
+    /// WebSocket 停止推送时，一次 REST 请求回补全部合约的最新价格。
+    pub async fn all_live_tickers_usdt_swap(&self) -> Result<Vec<LiveTickerRow>> {
+        let resp: Resp<RawTicker> = self
+            .get_json("/api/v5/market/tickers", &[("instType", "SWAP")])
+            .await?;
+
+        Ok(resp
+            .unwrap_ok()?
+            .into_iter()
+            .filter(|r| r.inst_id.ends_with("-USDT-SWAP"))
+            .filter_map(RawTicker::into_live)
             .collect())
     }
 
@@ -423,5 +483,18 @@ mod tests {
             vol_ccy_24h: Decimal::from(20),
         };
         assert_eq!(ticker.volume_quote_24h(), Decimal::from(1_000_000));
+    }
+
+    #[test]
+    fn bulk_rest_ticker_can_refresh_dashboard_snapshot() {
+        let raw: RawTicker = serde_json::from_str(
+            r#"{"instId":"BTC-USDT-SWAP","last":"50000","open24h":"49000","volCcy24h":"20","bidPx":"49999","askPx":"50001","high24h":"51000","low24h":"48000","ts":"1790527000000"}"#,
+        )
+        .unwrap();
+        let row = raw.into_live().unwrap();
+        assert_eq!(row.bid, Decimal::from(49_999));
+        assert_eq!(row.ask, Decimal::from(50_001));
+        assert_eq!(row.volume_quote_24h, Decimal::from(1_000_000));
+        assert_eq!(row.ts, 1_790_527_000_000);
     }
 }

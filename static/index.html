@@ -1095,6 +1095,11 @@
         const n = Number(value);
         return Number.isFinite(n) ? `${(n * 100).toFixed(4)}%` : "—";
       }
+      function liveFunding(row) {
+        return number(row.funding_ts) > Date.now() - 5 * 60_000
+          ? row.funding_rate
+          : null;
+      }
       function nextFunding(ts) {
         const m = Math.ceil((Number(ts) - Date.now()) / 60000);
         return !ts
@@ -1159,23 +1164,39 @@
           (!source.data.length ||
             Math.max(...source.data.map((r) => number(r.ts))) <
               Date.now() - 90000);
+        const funded =
+          state.view === "market"
+            ? source.data.filter((r) => r.funding_rate != null)
+            : [];
+        const fundingStale =
+          funded.length > 0 &&
+          funded.filter((r) => liveFunding(r) === null).length >=
+            funded.length * 0.8;
         const stale =
-          !!source.error || !!source.checking || !source.at || marketStale;
+          !!source.error ||
+          !!source.checking ||
+          !source.at ||
+          marketStale ||
+          fundingStale;
         $("live-tag").classList.toggle("offline", stale);
         $("live-text").textContent = source.checking
           ? "正在同步"
-          : stale
-            ? source.at
-              ? "数据已暂停"
-              : "正在连接"
-            : "实时同步";
+          : fundingStale && !source.error && !marketStale
+            ? "费率待更新"
+            : stale
+              ? source.at
+                ? "数据已暂停"
+                : "正在连接"
+              : "实时同步";
         const message = source.checking
           ? "<strong>正在读取最新数据</strong> · 下方显示上次成功的数据"
           : source.error
             ? `<strong>连接暂时中断</strong> · ${escapeHtml(source.error)}，正在自动重试${source.at ? "；下方保留上次成功的数据" : ""}`
             : marketStale && source.at
               ? "<strong>行情更新已暂停</strong> · 市场数据超过 90 秒未更新，正在等待行情恢复"
-              : "";
+              : fundingStale
+                ? "<strong>资金费率更新已暂停</strong> · 价格仍可刷新；过期费率暂不显示"
+                : "";
         $("notice").classList.toggle("show", !!message);
         $("notice-text").innerHTML = message;
         $("notice-time").textContent =
@@ -1184,6 +1205,7 @@
       function marketSortValue(row, key) {
         if (key === "change") return change(row);
         if (key === "inst_id") return String(row.inst_id || "");
+        if (key === "funding_rate") return number(liveFunding(row));
         return Number(row[key]) || 0;
       }
       function renderMarket() {
@@ -1195,7 +1217,7 @@
             (!q ||
               String(r.inst_id).toUpperCase().includes(q) ||
               String(r.base).toUpperCase().includes(q)) &&
-            (!state.hot || Math.abs(number(r.funding_rate)) >= EXTREME),
+            (!state.hot || Math.abs(number(liveFunding(r))) >= EXTREME),
         );
         filtered.sort((a, b) => {
           const va = marketSortValue(a, state.sort),
@@ -1205,7 +1227,7 @@
         });
         $("m-total").textContent = data.length || "—";
         $("m-hot").textContent = data.length
-          ? data.filter((r) => Math.abs(number(r.funding_rate)) >= EXTREME)
+          ? data.filter((r) => Math.abs(number(liveFunding(r))) >= EXTREME)
               .length
           : "—";
         $("m-volume").textContent = data.length
@@ -1222,9 +1244,9 @@
         body.innerHTML = filtered
           .map((r) => {
             const ch = change(r),
-              rate = number(r.funding_rate),
+              rate = number(liveFunding(r)),
               hot = Math.abs(rate) >= EXTREME;
-            return `<tr class="${hot ? "hot-row" : ""}"><td>${assetHtml(r.base || r.inst_id, r.quote || "USDT")}</td><td class="number">${price(r.last)}</td><td class="number ${ch >= 0 ? "pos" : "neg"}">${signed(ch)}</td><td class="number">${compact(r.volume_quote_24h)}</td><td><span class="rate-pill ${hot ? "hot" : ""}">${funding(r.funding_rate)}</span></td><td class="muted">${nextFunding(r.next_funding_time)}</td><td class="muted">${time(r.ts)}</td></tr>`;
+            return `<tr class="${hot ? "hot-row" : ""}"><td>${assetHtml(r.base || r.inst_id, r.quote || "USDT")}</td><td class="number">${price(r.last)}</td><td class="number ${ch >= 0 ? "pos" : "neg"}">${signed(ch)}</td><td class="number">${compact(r.volume_quote_24h)}</td><td><span class="rate-pill ${hot ? "hot" : ""}">${funding(liveFunding(r))}</span></td><td class="muted">${nextFunding(liveFunding(r) === null ? null : r.next_funding_time)}</td><td class="muted">${time(r.ts)}</td></tr>`;
           })
           .join("");
         const has = filtered.length > 0;

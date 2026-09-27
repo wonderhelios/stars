@@ -16,7 +16,7 @@ use std::str::FromStr;
 use std::sync::Arc;
 use std::time::Duration;
 use tokio::time::timeout;
-use tracing::{error, info};
+use tracing::{error, info, warn};
 use tracing_subscriber::EnvFilter;
 
 /// 单次扫描的整体超时，超过就放弃本轮
@@ -200,6 +200,49 @@ async fn main() -> anyhow::Result<()> {
     tokio::spawn(async move {
         if let Err(e) = okx::ws::run_forever(ws_state).await {
             error!("ws task exited: {}", e);
+        }
+    });
+
+    // 每 30 秒用单次批量 REST 请求校正价格，也覆盖仅部分 WebSocket 分组失效的情况。
+    // 资金费率不在这里回填；页面会隐藏超过有效期的旧费率。
+    let fallback_state = state.clone();
+    tokio::spawn(async move {
+        let client = okx::RestClient::new();
+        let mut ticker = tokio::time::interval(Duration::from_secs(30));
+        ticker.tick().await;
+        loop {
+            ticker.tick().await;
+            let now = std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap_or_default()
+                .as_millis() as i64;
+            let ws_stale = fallback_state.latest_ticker_ts().await < now - 45_000;
+            match timeout(Duration::from_secs(25), client.all_live_tickers_usdt_swap()).await {
+                Ok(Ok(rows)) if !rows.is_empty() => {
+                    let count = rows.len();
+                    for row in rows {
+                        fallback_state
+                            .update_ticker(
+                                &row.inst_id,
+                                row.last,
+                                row.bid,
+                                row.ask,
+                                row.open_24h,
+                                row.high_24h,
+                                row.low_24h,
+                                row.volume_quote_24h,
+                                row.ts,
+                            )
+                            .await;
+                    }
+                    if ws_stale {
+                        warn!("OKX WebSocket 行情过期，REST 回补 {} 条", count);
+                    }
+                }
+                Ok(Ok(_)) => warn!("OKX REST 行情回补为空"),
+                Ok(Err(error)) => error!("OKX REST 行情回补失败: {}", error),
+                Err(_) => error!("OKX REST 行情回补超时"),
+            }
         }
     });
 
