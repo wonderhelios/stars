@@ -10,6 +10,9 @@ const BASE: &str = "https://api.hyperliquid.xyz/info";
 const MAX_RETRY: u32 = 3;
 const RETRY_SLEEP_MS: u64 = 400;
 
+/// HIP-3 的第三方部署者命名空间。空字符串 = 主 DEX
+pub const HIP3_DEXES: &[&str] = &["", "para", "xyz", "mkts", "io"];
+
 #[derive(Debug, Clone)]
 pub struct HlTicker {
     pub coin: String,
@@ -39,7 +42,7 @@ pub struct HyperliquidRestClient {
 impl HyperliquidRestClient {
     pub fn new() -> Self {
         let http = Client::builder()
-            .timeout(Duration::from_secs(30))
+            .timeout(Duration::from_secs(20))
             .connect_timeout(Duration::from_secs(10))
             .pool_max_idle_per_host(10)
             .pool_idle_timeout(Duration::from_secs(90))
@@ -53,7 +56,6 @@ impl HyperliquidRestClient {
         }
     }
 
-    /// POST 文本，带 3 次自动重试
     async fn post_text(&self, body: &serde_json::Value) -> Result<String> {
         let mut last_err: Option<Error> = None;
         for attempt in 0..MAX_RETRY {
@@ -88,19 +90,25 @@ impl HyperliquidRestClient {
         serde_json::from_str(&text).map_err(|e| Error::Json(e))
     }
 
-    pub async fn all_perp_ctxs(&self) -> Result<Vec<HlTicker>> {
-        let body = json!({"type": "metaAndAssetCtxs"});
+    /// 拉取指定 dex 的所有永续合约状态
+    pub async fn perp_ctxs_by_dex(&self, dex: &str) -> Result<Vec<HlTicker>> {
+        let body = if dex.is_empty() {
+            json!({"type": "metaAndAssetCtxs"})
+        } else {
+            json!({"type": "metaAndAssetCtxs", "dex": dex})
+        };
+
         let resp: serde_json::Value = self.post_json(body).await?;
 
         let universe = resp
             .get(0)
             .and_then(|v| v.get("universe"))
             .and_then(|v| v.as_array())
-            .ok_or_else(|| Error::Msg("bad metaAndAssetCtxs response".into()))?;
+            .ok_or_else(|| Error::Msg(format!("bad universe for dex={}", dex)))?;
         let ctxs = resp
             .get(1)
             .and_then(|v| v.as_array())
-            .ok_or_else(|| Error::Msg("missing assetCtxs".into()))?;
+            .ok_or_else(|| Error::Msg(format!("missing ctxs for dex={}", dex)))?;
 
         let mut result = Vec::new();
         for (u, ctx) in universe.iter().zip(ctxs.iter()) {
@@ -125,9 +133,10 @@ impl HyperliquidRestClient {
             let Some(vol_str) = ctx.get("dayNtlVlm").and_then(|v| v.as_str()) else {
                 continue;
             };
-            let Some(oi_str) = ctx.get("openInterest").and_then(|v| v.as_str()) else {
-                continue;
-            };
+            let oi_str = ctx
+                .get("openInterest")
+                .and_then(|v| v.as_str())
+                .unwrap_or("0");
 
             result.push(HlTicker {
                 coin: coin.to_string(),
@@ -141,14 +150,22 @@ impl HyperliquidRestClient {
         Ok(result)
     }
 
-    #[allow(dead_code)]
-    pub async fn top_by_volume(&self, top_n: usize) -> Result<Vec<String>> {
-        let mut list = self.all_perp_ctxs().await?;
-        list.sort_by(|a, b| b.day_ntl_vlm.cmp(&a.day_ntl_vlm));
-        list.truncate(top_n);
-        Ok(list.into_iter().map(|r| r.coin).collect())
+    /// 遍历所有 dex（主 + HIP-3），合并返回
+    pub async fn all_perp_ctxs_all_dexes(&self) -> Result<Vec<HlTicker>> {
+        let mut all = Vec::new();
+        for dex in HIP3_DEXES {
+            match self.perp_ctxs_by_dex(dex).await {
+                Ok(mut tickers) => all.append(&mut tickers),
+                Err(e) => {
+                    tracing::warn!("HL dex={} failed: {}", dex, e);
+                }
+            }
+            tokio::time::sleep(Duration::from_millis(100)).await;
+        }
+        Ok(all)
     }
 
+    /// 获取指定时间点的收盘价。coin 用全名，例如 "BTC" 或 "para:TREAD"
     pub async fn price_at_time(&self, coin: &str, target_ts: i64) -> Result<Option<Decimal>> {
         let bar_time = (target_ts / 3_600_000) * 3_600_000;
         let start = bar_time - 3_600_000;

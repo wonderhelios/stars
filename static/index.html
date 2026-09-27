@@ -538,8 +538,7 @@ function netReturn(entry, price) {
   return -raw - COST;
 }
 
-// 通用渲染函数：可用于 OKX 和币安
-// displayName: 从原始 symbol 提取展示名
+// 通用渲染函数：可用于 OKX / 币安 / HL
 function renderPaperCommon(signals, options) {
   const {
     cardsId, tableId, tbodyId, loadingId,
@@ -613,7 +612,8 @@ function renderPaperCommon(signals, options) {
     const prior = parseFloat(s.prior_24h_return);
 
     const cells = [];
-    const idField = s.inst_id !== undefined ? s.inst_id : s.symbol;
+    // 【修复】依次尝试 inst_id / symbol / coin 三种字段名
+    const idField = s.inst_id ?? s.symbol ?? s.coin ?? '';
     cells.push(`<td class="sym">${displayName(idField)}</td>`);
     cells.push(`<td><span class="badge ${s.kind}">${kindLabels[s.kind] || s.kind}</span></td>`);
     cells.push(`<td class="dim">${fmtAgo(s.triggered_at)}前</td>`);
@@ -668,7 +668,6 @@ async function fetchPaperBinance() {
       tableId: "bn-table",
       tbodyId: "bn-tbody",
       loadingId: "bn-loading",
-      // BTCUSDT → BTC
       displayName: (sym) => sym.replace(/USDT$/, ""),
       emptyText: "暂无币安信号记录。系统每 5 分钟扫描一次。",
     });

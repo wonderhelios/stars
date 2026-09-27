@@ -14,9 +14,7 @@ use crate::signal::{classify, TRADE_COST_PCT};
 
 const SCAN_INTERVAL_SECS: u64 = 300;
 const TRACK_INTERVAL_SECS: u64 = 60;
-
-/// Hyperliquid 是每小时结算一次；CEX 的费率是每 8 小时结算。
-/// 为了和 CEX 的 0.05% 阈值可比，把 HL 的小时费率乘以 8 换算成等效 8h 费率。
+/// HL 小时费率 × 8 = 等效 8h 费率
 const HL_HOURS_PER_8H: i64 = 8;
 
 #[derive(Debug, Clone, Serialize)]
@@ -44,6 +42,7 @@ impl HyperliquidPaperDb {
         conn.execute_batch(
             "
             PRAGMA journal_mode = WAL;
+            PRAGMA busy_timeout = 5000;
             CREATE TABLE IF NOT EXISTS hyperliquid_signals (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 coin TEXT NOT NULL,
@@ -241,7 +240,7 @@ pub async fn scan_once(
     db: &HyperliquidPaperDb,
     funding_threshold: Decimal,
 ) -> anyhow::Result<usize> {
-    let tickers = client.all_perp_ctxs().await?;
+    let tickers = client.all_perp_ctxs_all_dexes().await?;
     let now_ms = now_ms();
     let mut triggered = 0usize;
     let mut candidates = 0usize;
@@ -259,9 +258,7 @@ pub async fn scan_once(
         }
         candidates += 1;
 
-        // 【关键修复】小时费率 × 8 = 等效 8 小时费率，和 CEX 阈值对齐
         let funding_8h_equiv = t.funding * Decimal::from(HL_HOURS_PER_8H);
-
         if funding_8h_equiv <= funding_threshold {
             continue;
         }
@@ -281,7 +278,6 @@ pub async fn scan_once(
             }
         }
 
-        // 存库时保留原始小时费率
         match db
             .insert(&t.coin, kind, now_ms, t.funding, prior_pct, t.mark_px)
             .await
@@ -344,6 +340,8 @@ pub async fn update_open_signals(
                         error!("HL fetch {} price: {}", row.coin, e);
                     }
                 }
+                // 稍微错开，避免拉取过密
+                tokio::time::sleep(Duration::from_millis(150)).await;
             }
         }
     }

@@ -13,8 +13,15 @@ use rust_decimal::Decimal;
 use state::AppState;
 use std::str::FromStr;
 use std::sync::Arc;
-use tracing::info;
+use std::time::Duration;
+use tokio::time::timeout;
+use tracing::{error, info};
 use tracing_subscriber::EnvFilter;
+
+/// 单次扫描的整体超时，超过就放弃本轮
+const SCAN_TIMEOUT: Duration = Duration::from_secs(120);
+/// 单次跟踪的超时
+const TRACK_TIMEOUT: Duration = Duration::from_secs(60);
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
@@ -85,7 +92,7 @@ async fn main() -> anyhow::Result<()> {
         }
     }
 
-    // 默认 serve 模式
+    // ===== 默认 serve 模式 =====
     let state = AppState::new();
     let okx_paper_db = Arc::new(paper::PaperDb::open(&okx_db_path)?);
     let binance_paper_db = Arc::new(binance::paper::BinancePaperDb::open(&binance_db_path)?);
@@ -93,24 +100,31 @@ async fn main() -> anyhow::Result<()> {
 
     let threshold = Decimal::from_str(signal::FUNDING_THRESHOLD_STR)?;
 
-    // ===== OKX 后台扫描 + 跟踪（t=0 立即启动）=====
+    // ===== OKX（t=0s 启动）=====
     {
         let db = okx_paper_db.clone();
         let th = threshold;
         tokio::spawn(async move {
             let client = Arc::new(okx::RestClient::new());
-            let mut scan_ticker = tokio::time::interval(std::time::Duration::from_secs(300));
-            let mut track_ticker = tokio::time::interval(std::time::Duration::from_secs(60));
+            let mut scan_ticker = tokio::time::interval(Duration::from_secs(300));
+            let mut track_ticker = tokio::time::interval(Duration::from_secs(60));
+            // 首次立即触发
+            scan_ticker.tick().await;
+            track_ticker.tick().await;
             loop {
                 tokio::select! {
                     _ = scan_ticker.tick() => {
-                        if let Err(e) = paper::scan_once(&client, &db, th).await {
-                            tracing::error!("OKX scan_once: {}", e);
+                        match timeout(SCAN_TIMEOUT, paper::scan_once(&client, &db, th)).await {
+                            Ok(Ok(n)) => info!("OKX 扫描: {} 触发", n),
+                            Ok(Err(e)) => error!("OKX scan: {}", e),
+                            Err(_) => error!("OKX scan timeout"),
                         }
                     }
                     _ = track_ticker.tick() => {
-                        if let Err(e) = paper::update_open_signals(&client, &db).await {
-                            tracing::error!("OKX update: {}", e);
+                        match timeout(TRACK_TIMEOUT, paper::update_open_signals(&client, &db)).await {
+                            Ok(Ok(_)) => {}
+                            Ok(Err(e)) => error!("OKX track: {}", e),
+                            Err(_) => error!("OKX track timeout"),
                         }
                     }
                 }
@@ -118,25 +132,29 @@ async fn main() -> anyhow::Result<()> {
         });
     }
 
-    // ===== 币安后台扫描 + 跟踪（t=100s 延迟启动）=====
+    // ===== 币安（t=100s 启动）=====
     {
         let db = binance_paper_db.clone();
         let th = threshold;
         tokio::spawn(async move {
-            tokio::time::sleep(std::time::Duration::from_secs(100)).await;
+            tokio::time::sleep(Duration::from_secs(100)).await;
             let client = Arc::new(binance::BinanceRestClient::new());
-            let mut scan_ticker = tokio::time::interval(std::time::Duration::from_secs(300));
-            let mut track_ticker = tokio::time::interval(std::time::Duration::from_secs(60));
+            let mut scan_ticker = tokio::time::interval(Duration::from_secs(300));
+            let mut track_ticker = tokio::time::interval(Duration::from_secs(60));
             loop {
                 tokio::select! {
                     _ = scan_ticker.tick() => {
-                        if let Err(e) = binance::paper::scan_once(&client, &db, th).await {
-                            tracing::error!("BN scan_once: {}", e);
+                        match timeout(SCAN_TIMEOUT, binance::paper::scan_once(&client, &db, th)).await {
+                            Ok(Ok(n)) => info!("BN 扫描: {} 触发", n),
+                            Ok(Err(e)) => error!("BN scan: {}", e),
+                            Err(_) => error!("BN scan timeout"),
                         }
                     }
                     _ = track_ticker.tick() => {
-                        if let Err(e) = binance::paper::update_open_signals(&client, &db).await {
-                            tracing::error!("BN update: {}", e);
+                        match timeout(TRACK_TIMEOUT, binance::paper::update_open_signals(&client, &db)).await {
+                            Ok(Ok(_)) => {}
+                            Ok(Err(e)) => error!("BN track: {}", e),
+                            Err(_) => error!("BN track timeout"),
                         }
                     }
                 }
@@ -144,25 +162,29 @@ async fn main() -> anyhow::Result<()> {
         });
     }
 
-    // ===== Hyperliquid 后台扫描 + 跟踪（t=200s 延迟启动）=====
+    // ===== Hyperliquid（t=200s 启动）=====
     {
         let db = hl_paper_db.clone();
         let th = threshold;
         tokio::spawn(async move {
-            tokio::time::sleep(std::time::Duration::from_secs(200)).await;
+            tokio::time::sleep(Duration::from_secs(200)).await;
             let client = Arc::new(hyperliquid::HyperliquidRestClient::new());
-            let mut scan_ticker = tokio::time::interval(std::time::Duration::from_secs(300));
-            let mut track_ticker = tokio::time::interval(std::time::Duration::from_secs(60));
+            let mut scan_ticker = tokio::time::interval(Duration::from_secs(300));
+            let mut track_ticker = tokio::time::interval(Duration::from_secs(60));
             loop {
                 tokio::select! {
                     _ = scan_ticker.tick() => {
-                        if let Err(e) = hyperliquid::paper::scan_once(&client, &db, th).await {
-                            tracing::error!("HL scan_once: {}", e);
+                        match timeout(SCAN_TIMEOUT, hyperliquid::paper::scan_once(&client, &db, th)).await {
+                            Ok(Ok(n)) => info!("HL 扫描: {} 触发", n),
+                            Ok(Err(e)) => error!("HL scan: {}", e),
+                            Err(_) => error!("HL scan timeout"),
                         }
                     }
                     _ = track_ticker.tick() => {
-                        if let Err(e) = hyperliquid::paper::update_open_signals(&client, &db).await {
-                            tracing::error!("HL update: {}", e);
+                        match timeout(TRACK_TIMEOUT, hyperliquid::paper::update_open_signals(&client, &db)).await {
+                            Ok(Ok(_)) => {}
+                            Ok(Err(e)) => error!("HL track: {}", e),
+                            Err(_) => error!("HL track timeout"),
                         }
                     }
                 }
@@ -170,11 +192,11 @@ async fn main() -> anyhow::Result<()> {
         });
     }
 
-    // ===== OKX 实时行情 WS =====
+    // ===== OKX WebSocket 实时行情 =====
     let ws_state = state.clone();
     tokio::spawn(async move {
         if let Err(e) = okx::ws::run_forever(ws_state).await {
-            tracing::error!("ws task exited: {}", e);
+            error!("ws task exited: {}", e);
         }
     });
 
