@@ -29,6 +29,16 @@ OKX WebSocket 若超过 90 秒没有收到任何有效行情，会主动断开�
 
 ## 历史研究
 
+查看最近 24 小时在至少两个交易所触发的同名信号：
+
+```bash
+python3 scripts/cross_venue_signals.py
+# 数据库放在其他目录或需要不同时间窗口时：
+python3 scripts/cross_venue_signals.py --db-dir /var/lib/okx-quant --hours 48
+```
+
+脚本只读三个数据库的 `signals_v3` 表。输出原始合约名、UTC 触发时间和信号当时的资金费率；Hyperliquid 另显示每小时费率的 8 小时简单换算。同名仅表示窗口内各平台都出现过，不能据此断定是同一资产、同一时刻的信号或可套利机会。
+
 ```bash
 cargo run --release -- research BTC-USDT-SWAP ETH-USDT-SWAP
 cargo run --release -- research scan 200
