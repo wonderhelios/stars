@@ -8,7 +8,7 @@ use tracing::{error, info};
 
 use crate::okx::RestClient;
 pub use crate::paper_store::PaperDb;
-use crate::paper_store::{due_outcomes, SignalRow};
+use crate::paper_store::{due_outcomes, CandidateSnapshot, SignalRow};
 use crate::signal::{classify, Signal, TRADE_COST_PCT};
 
 const SCAN_INTERVAL_SECS: u64 = 300;
@@ -21,10 +21,13 @@ pub async fn scan_once(
     db: &PaperDb,
     funding_threshold: Decimal,
 ) -> anyhow::Result<usize> {
+    let scan_started_at = now_ms();
     let tickers = client.all_tickers_usdt_swap().await?;
 
     let mut triggered = 0usize;
     let mut candidates = 0usize;
+    let mut recorded = 0usize;
+    let mut failed = 0usize;
 
     for t in &tickers {
         if t.volume_quote_24h() < Decimal::from(500_000) {
@@ -42,13 +45,15 @@ pub async fn scan_once(
 
         candidates += 1;
 
-        let funding = match client.funding_rate(&t.inst_id).await {
+        let funding_now = match client.funding_now(&t.inst_id).await {
             Ok(f) => f,
             Err(e) => {
                 error!("funding {}: {}", t.inst_id, e);
+                failed += 1;
                 continue;
             }
         };
+        let funding = funding_now.rate;
 
         if funding <= funding_threshold {
             continue;
@@ -59,6 +64,7 @@ pub async fn scan_once(
             Ok(row) => row,
             Err(e) => {
                 error!("ticker {}: {}", t.inst_id, e);
+                failed += 1;
                 continue;
             }
         };
@@ -74,6 +80,30 @@ pub async fn scan_once(
         };
 
         let triggered_at = now_ms();
+
+        let snapshot = CandidateSnapshot {
+            scan_started_at,
+            observed_at: triggered_at,
+            inst_id: t.inst_id.clone(),
+            kind: kind.to_string(),
+            funding_rate: funding,
+            funding_period_hours: funding_now.period_hours,
+            next_funding_at: funding_now.next_funding_at,
+            prior_24h_return: prior_pct,
+            reference_price: fresh.last,
+            bid_price: fresh.bid,
+            ask_price: fresh.ask,
+            quote_kind: Some("top"),
+            quote_observed_at: (fresh.bid.is_some() && fresh.ask.is_some()).then_some(triggered_at),
+            volume_quote_24h: fresh.volume_quote_24h(),
+            open_interest_base: None,
+        };
+        if let Err(e) = db.record_candidate(snapshot).await {
+            error!("candidate {}: {}", t.inst_id, e);
+            failed += 1;
+        } else {
+            recorded += 1;
+        }
 
         let sig = Signal {
             inst_id: t.inst_id.clone(),
@@ -101,7 +131,19 @@ pub async fn scan_once(
         }
     }
 
-    info!("扫描完成: 候选 {} 触发 {}", candidates, triggered);
+    db.finish_scan(
+        scan_started_at,
+        now_ms(),
+        tickers.len(),
+        candidates,
+        recorded,
+        failed,
+    )
+    .await?;
+    info!(
+        "扫描完成: 候选 {} 快照 {} 失败 {} 触发 {}",
+        candidates, recorded, failed, triggered
+    );
     Ok(triggered)
 }
 

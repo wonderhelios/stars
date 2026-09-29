@@ -6,7 +6,7 @@ use tokio::time::interval;
 use tracing::{error, info};
 
 use super::rest::BinanceRestClient;
-use crate::paper_store::{due_outcomes, PaperDb};
+use crate::paper_store::{due_outcomes, CandidateSnapshot, PaperDb};
 use crate::signal::{classify, Signal};
 
 pub type BinancePaperDb = PaperDb;
@@ -21,9 +21,37 @@ pub async fn scan_once(
     db: &BinancePaperDb,
     funding_threshold: Decimal,
 ) -> anyhow::Result<usize> {
+    let scan_started_at = now_ms();
     let tickers = client.all_tickers().await?;
+    let (intervals_result, (quotes_result, quote_at)) =
+        tokio::join!(client.funding_intervals(), async {
+            let result = client.best_quotes().await;
+            (result, now_ms())
+        });
+    let intervals = match intervals_result {
+        Ok(value) => Some(value),
+        Err(e) => {
+            error!("binance funding intervals: {}", e);
+            None
+        }
+    };
+    let quotes = match quotes_result {
+        Ok(value) => Some(value),
+        Err(e) => {
+            error!("binance book quotes: {}", e);
+            None
+        }
+    };
     let mut triggered = 0usize;
     let mut candidates = 0usize;
+    let mut recorded = 0usize;
+    let mut failed = 0usize;
+    if intervals.is_none() {
+        failed += 1;
+    }
+    if quotes.is_none() {
+        failed += 1;
+    }
 
     for t in &tickers {
         if t.vol_quote < Decimal::from(500_000) {
@@ -38,13 +66,15 @@ pub async fn scan_once(
         }
         candidates += 1;
 
-        let funding = match client.funding_rate(&t.symbol).await {
+        let funding_now = match client.funding_now(&t.symbol).await {
             Ok(f) => f,
             Err(e) => {
                 error!("binance funding {}: {}", t.symbol, e);
+                failed += 1;
                 continue;
             }
         };
+        let funding = funding_now.rate;
         if funding <= funding_threshold {
             continue;
         }
@@ -52,6 +82,7 @@ pub async fn scan_once(
             Ok(row) => row,
             Err(e) => {
                 error!("binance ticker {}: {}", t.symbol, e);
+                failed += 1;
                 continue;
             }
         };
@@ -66,6 +97,35 @@ pub async fn scan_once(
             continue;
         };
         let triggered_at = now_ms();
+        let quote = quotes
+            .as_ref()
+            .and_then(|rows| rows.get(&t.symbol))
+            .copied();
+        let snapshot = CandidateSnapshot {
+            scan_started_at,
+            observed_at: triggered_at,
+            inst_id: t.symbol.clone(),
+            kind: kind.to_string(),
+            funding_rate: funding,
+            funding_period_hours: intervals
+                .as_ref()
+                .map(|rows| *rows.get(&t.symbol).unwrap_or(&8)),
+            next_funding_at: funding_now.next_funding_at,
+            prior_24h_return: prior_pct,
+            reference_price: fresh.last,
+            bid_price: quote.map(|(bid, _)| bid),
+            ask_price: quote.map(|(_, ask)| ask),
+            quote_kind: Some("top"),
+            quote_observed_at: quote.map(|_| quote_at),
+            volume_quote_24h: fresh.vol_quote,
+            open_interest_base: None,
+        };
+        if let Err(e) = db.record_candidate(snapshot).await {
+            error!("BN candidate {}: {}", t.symbol, e);
+            failed += 1;
+        } else {
+            recorded += 1;
+        }
 
         let sig = Signal {
             inst_id: t.symbol.clone(),
@@ -91,7 +151,19 @@ pub async fn scan_once(
             Err(e) => error!("binance insert {}: {}", t.symbol, e),
         }
     }
-    info!("BN 扫描完成: 候选 {} 触发 {}", candidates, triggered);
+    db.finish_scan(
+        scan_started_at,
+        now_ms(),
+        tickers.len(),
+        candidates,
+        recorded,
+        failed,
+    )
+    .await?;
+    info!(
+        "BN 扫描完成: 候选 {} 快照 {} 失败 {} 触发 {}",
+        candidates, recorded, failed, triggered
+    );
     Ok(triggered)
 }
 

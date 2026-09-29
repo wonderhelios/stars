@@ -6,7 +6,7 @@ use tokio::time::interval;
 use tracing::{error, info};
 
 use super::rest::HyperliquidRestClient;
-use crate::paper_store::{due_outcomes, PaperDb};
+use crate::paper_store::{due_outcomes, CandidateSnapshot, PaperDb};
 use crate::signal::{classify, Signal};
 
 pub type HyperliquidPaperDb = PaperDb;
@@ -23,15 +23,19 @@ pub async fn scan_once(
     db: &HyperliquidPaperDb,
     funding_threshold: Decimal,
 ) -> anyhow::Result<usize> {
-    let tickers = client.all_perp_ctxs_all_dexes().await?;
+    let scan_started_at = now_ms();
+    let (tickers, coverage_complete) = client.all_perp_ctxs_all_dexes().await?;
+    let quote_at = now_ms();
     let mut triggered = 0usize;
     let mut candidates = 0usize;
+    let mut recorded = 0usize;
+    let mut failed = usize::from(!coverage_complete);
 
     for t in &tickers {
         if t.day_ntl_vlm < Decimal::from(500_000) {
             continue;
         }
-        if t.prev_day_px.is_zero() {
+        if t.prev_day_px <= Decimal::ZERO || t.mark_px <= Decimal::ZERO {
             continue;
         }
         let prior_pct = t.prior_24h_pct();
@@ -48,6 +52,31 @@ pub async fn scan_once(
             continue;
         };
         let triggered_at = now_ms();
+
+        let snapshot = CandidateSnapshot {
+            scan_started_at,
+            observed_at: triggered_at,
+            inst_id: t.coin.clone(),
+            kind: kind.to_string(),
+            funding_rate: t.funding,
+            funding_period_hours: Some(1),
+            next_funding_at: Some(((triggered_at / 3_600_000) + 1) * 3_600_000),
+            prior_24h_return: prior_pct,
+            reference_price: t.mark_px,
+            bid_price: t.impact_bid,
+            ask_price: t.impact_ask,
+            quote_kind: Some("impact"),
+            quote_observed_at: (t.impact_bid.is_some() && t.impact_ask.is_some())
+                .then_some(quote_at),
+            volume_quote_24h: t.day_ntl_vlm,
+            open_interest_base: Some(t.open_interest),
+        };
+        if let Err(e) = db.record_candidate(snapshot).await {
+            error!("HL candidate {}: {}", t.coin, e);
+            failed += 1;
+        } else {
+            recorded += 1;
+        }
 
         let sig = Signal {
             inst_id: t.coin.clone(),
@@ -74,7 +103,19 @@ pub async fn scan_once(
             Err(e) => error!("HL insert {}: {}", t.coin, e),
         }
     }
-    info!("HL 扫描完成: 候选 {} 触发 {}", candidates, triggered);
+    db.finish_scan(
+        scan_started_at,
+        now_ms(),
+        tickers.len(),
+        candidates,
+        recorded,
+        failed,
+    )
+    .await?;
+    info!(
+        "HL 扫描完成: 候选 {} 快照 {} 失败 {} 触发 {}",
+        candidates, recorded, failed, triggered
+    );
     Ok(triggered)
 }
 

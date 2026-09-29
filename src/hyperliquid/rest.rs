@@ -26,6 +26,9 @@ pub struct HlTicker {
     pub funding: Decimal,
     #[allow(dead_code)]
     pub open_interest: Decimal,
+    /// Exchange-provided impact bid/ask, not the best top-of-book quote.
+    pub impact_bid: Option<Decimal>,
+    pub impact_ask: Option<Decimal>,
 }
 
 impl HlTicker {
@@ -159,6 +162,15 @@ impl HyperliquidRestClient {
                 .get("openInterest")
                 .and_then(|v| v.as_str())
                 .unwrap_or("0");
+            let impact = ctx.get("impactPxs").and_then(|v| v.as_array());
+            let impact_bid = impact
+                .and_then(|v| v.first())
+                .and_then(|v| v.as_str())
+                .and_then(|v| Decimal::from_str(v).ok());
+            let impact_ask = impact
+                .and_then(|v| v.get(1))
+                .and_then(|v| v.as_str())
+                .and_then(|v| Decimal::from_str(v).ok());
 
             result.push(HlTicker {
                 coin: coin.to_string(),
@@ -167,13 +179,15 @@ impl HyperliquidRestClient {
                 day_ntl_vlm: Decimal::from_str(vol_str).unwrap_or(Decimal::ZERO),
                 funding: Decimal::from_str(funding_str).unwrap_or(Decimal::ZERO),
                 open_interest: Decimal::from_str(oi_str).unwrap_or(Decimal::ZERO),
+                impact_bid,
+                impact_ask,
             });
         }
         Ok(result)
     }
 
     /// 遍历所有 dex（主 + HIP-3），合并返回
-    pub async fn all_perp_ctxs_all_dexes(&self) -> Result<Vec<HlTicker>> {
+    pub async fn all_perp_ctxs_all_dexes(&self) -> Result<(Vec<HlTicker>, bool)> {
         let dexes = tokio::time::timeout(Duration::from_secs(15), self.perp_dex_names())
             .await
             .map_err(|_| Error::Msg("Hyperliquid perpDexs timeout".into()))??;
@@ -211,7 +225,7 @@ impl HyperliquidRestClient {
             dexes.len(),
             all.len()
         );
-        Ok(all)
+        Ok((all, loaded == dexes.len()))
     }
 
     /// 获取指定时间点的收盘价。coin 用全名，例如 "BTC" 或 "para:TREAD"

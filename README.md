@@ -4,6 +4,21 @@
 
 Hyperliquid 扫描每轮通过 `perpDexs` 发现主 DEX 和全部 HIP-3 DEX，不依赖静态部署者名单；若某个 DEX 请求失败，日志会记录失败和成功覆盖数。
 
+## 五仓研究的数据采集
+
+每轮扫描会把满足现有信号条件的**所有**候选写进各平台数据库的 `candidate_snapshots`，包括因 24 小时去重而没有新增到 `signals_v3` 的候选。`scan_runs` 只在本轮扫描正常结束时写入；做跨平台研究时应连接这张表，并优先使用 `failed_count = 0` 的轮次。两张表会随现有服务自动创建，不改变网页信号统计。
+
+快照记录扫描开始时间、该候选实际观察时间、信号类别、参考价、费率及结算周期、下次结算时间、24 小时成交额、买卖盘价格和报价时间。OKX、Binance 的报价为最优买卖价；Hyperliquid 的 `quote_kind = impact` 是交易所提供的冲击买卖价，不能当成最优盘口，也不能直接视为 500 美元的可成交价。缺失的字段保持 `NULL`，不要用零填充。三个数据库仍分别使用 `OKX_QUANT_DB`、`OKX_QUANT_BINANCE_DB`、`OKX_QUANT_HL_DB` 指定的文件。
+
+例如检查最近已完成的扫描及其快照数量：
+
+```bash
+sqlite3 -header -column /var/lib/okx-quant/hyperliquid.sqlite \
+  'SELECT datetime(r.scan_started_at/1000,"unixepoch") AS scan_utc, r.market_count, r.prefiltered_count, r.recorded_count, r.failed_count, COUNT(c.inst_id) AS stored FROM scan_runs r LEFT JOIN candidate_snapshots c USING (scan_started_at) GROUP BY r.scan_started_at ORDER BY r.scan_started_at DESC LIMIT 5;'
+```
+
+三平台的扫描仍错开启动，因此复盘时须按候选的 `observed_at` 和报价时间对齐，并限制快照年龄；不能再按旧信号触发时间简单地“先到先得”。候选快照目前只记录决策时可见的信息，尚未记录所有候选的未来退出价格或实际资金费流水。
+
 ## 重新部署
 
 ```bash

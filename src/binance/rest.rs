@@ -1,5 +1,6 @@
 use reqwest::Client;
 use rust_decimal::Decimal;
+use std::collections::HashMap;
 use std::str::FromStr;
 use std::time::Duration;
 
@@ -16,6 +17,14 @@ struct PremiumIndex {
     symbol: String,
     #[serde(rename = "lastFundingRate")]
     last_funding_rate: Decimal,
+    #[serde(rename = "nextFundingTime")]
+    next_funding_time: Option<i64>,
+}
+
+#[derive(Debug, Clone)]
+pub struct FundingNow {
+    pub rate: Decimal,
+    pub next_funding_at: Option<i64>,
 }
 
 #[derive(Debug, Clone)]
@@ -146,11 +155,41 @@ impl BinanceRestClient {
         Ok(result)
     }
 
-    pub async fn funding_rate(&self, symbol: &str) -> Result<Decimal> {
+    pub async fn funding_now(&self, symbol: &str) -> Result<FundingNow> {
         let resp: PremiumIndex = self
             .get_json("/fapi/v1/premiumIndex", &[("symbol", symbol)])
             .await?;
-        Ok(resp.last_funding_rate)
+        Ok(FundingNow {
+            rate: resp.last_funding_rate,
+            next_funding_at: resp.next_funding_time,
+        })
+    }
+
+    /// Symbols absent from fundingInfo use the exchange's normal eight-hour interval.
+    pub async fn funding_intervals(&self) -> Result<HashMap<String, i64>> {
+        let rows: Vec<serde_json::Value> = self.get_json("/fapi/v1/fundingInfo", &[]).await?;
+        Ok(rows
+            .into_iter()
+            .filter_map(|row| {
+                Some((
+                    row.get("symbol")?.as_str()?.to_string(),
+                    row.get("fundingIntervalHours")?.as_i64()?,
+                ))
+            })
+            .collect())
+    }
+
+    pub async fn best_quotes(&self) -> Result<HashMap<String, (Decimal, Decimal)>> {
+        let rows: Vec<serde_json::Value> = self.get_json("/fapi/v1/ticker/bookTicker", &[]).await?;
+        Ok(rows
+            .into_iter()
+            .filter_map(|row| {
+                let symbol = row.get("symbol")?.as_str()?.to_string();
+                let bid = Decimal::from_str(row.get("bidPrice")?.as_str()?).ok()?;
+                let ask = Decimal::from_str(row.get("askPrice")?.as_str()?).ok()?;
+                (bid > Decimal::ZERO && ask >= bid).then_some((symbol, (bid, ask)))
+            })
+            .collect())
     }
 
     pub async fn ticker(&self, symbol: &str) -> Result<BinanceTicker> {

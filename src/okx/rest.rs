@@ -45,14 +45,27 @@ struct RawTicker {
     last: String,
     open24h: String,
     vol_ccy_24h: String,
+    #[serde(default)]
+    bid_px: Option<String>,
+    #[serde(default)]
+    ask_px: Option<String>,
 }
 
 #[derive(serde::Deserialize)]
 #[serde(rename_all = "camelCase")]
 struct RawFundingNow {
-    #[allow(dead_code)]
-    inst_id: String,
     funding_rate: Decimal,
+    #[serde(default)]
+    funding_time: Option<String>,
+    #[serde(default)]
+    next_funding_time: Option<String>,
+}
+
+#[derive(Debug, Clone)]
+pub struct FundingNow {
+    pub rate: Decimal,
+    pub next_funding_at: Option<i64>,
+    pub period_hours: Option<i64>,
 }
 
 #[derive(Debug, Clone, serde::Deserialize)]
@@ -77,6 +90,8 @@ pub struct TickerRow {
     pub last: Decimal,
     pub open_24h: Decimal,
     pub vol_ccy_24h: Decimal,
+    pub bid: Option<Decimal>,
+    pub ask: Option<Decimal>,
 }
 
 impl TickerRow {
@@ -193,6 +208,8 @@ impl RestClient {
                     last: Decimal::from_str(&r.last).ok()?,
                     open_24h: Decimal::from_str(&r.open24h).ok()?,
                     vol_ccy_24h: Decimal::from_str(&r.vol_ccy_24h).ok()?,
+                    bid: r.bid_px.as_deref().and_then(|v| Decimal::from_str(v).ok()),
+                    ask: r.ask_px.as_deref().and_then(|v| Decimal::from_str(v).ok()),
                 })
             })
             .collect())
@@ -205,7 +222,7 @@ impl RestClient {
         Ok(list.into_iter().map(|r| r.inst_id).collect())
     }
 
-    pub async fn funding_rate(&self, inst_id: &str) -> Result<Decimal> {
+    pub async fn funding_now(&self, inst_id: &str) -> Result<FundingNow> {
         let resp: Resp<RawFundingNow> = self
             .get_json("/api/v5/public/funding-rate", &[("instId", inst_id)])
             .await?;
@@ -213,7 +230,22 @@ impl RestClient {
         let rows = resp.unwrap_ok()?;
         rows.into_iter()
             .next()
-            .map(|r| r.funding_rate)
+            .map(|r| {
+                let next_funding_at = r.funding_time.as_deref().and_then(|v| v.parse().ok());
+                let following = r
+                    .next_funding_time
+                    .as_deref()
+                    .and_then(|v| v.parse::<i64>().ok());
+                let period_hours = next_funding_at
+                    .zip(following)
+                    .and_then(|(next, after)| (after > next).then_some((after - next) / 3_600_000))
+                    .filter(|hours| *hours > 0);
+                FundingNow {
+                    rate: r.funding_rate,
+                    next_funding_at,
+                    period_hours,
+                }
+            })
             .ok_or_else(|| Error::Msg(format!("no funding rate for {}", inst_id)))
     }
 
@@ -232,6 +264,14 @@ impl RestClient {
             open_24h: Decimal::from_str(&row.open24h).map_err(|e| Error::Msg(e.to_string()))?,
             vol_ccy_24h: Decimal::from_str(&row.vol_ccy_24h)
                 .map_err(|e| Error::Msg(e.to_string()))?,
+            bid: row
+                .bid_px
+                .as_deref()
+                .and_then(|v| Decimal::from_str(v).ok()),
+            ask: row
+                .ask_px
+                .as_deref()
+                .and_then(|v| Decimal::from_str(v).ok()),
         })
     }
 
@@ -421,6 +461,8 @@ mod tests {
             last: Decimal::from(50_000),
             open_24h: Decimal::from(49_000),
             vol_ccy_24h: Decimal::from(20),
+            bid: None,
+            ask: None,
         };
         assert_eq!(ticker.volume_quote_24h(), Decimal::from(1_000_000));
     }

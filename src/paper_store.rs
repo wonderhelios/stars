@@ -28,6 +28,26 @@ pub struct SignalRow {
     pub t24_price: Option<Decimal>,
 }
 
+/// A qualifying observation from a scan, recorded even when the signal is in cooldown.
+#[derive(Debug, Clone)]
+pub struct CandidateSnapshot {
+    pub scan_started_at: i64,
+    pub observed_at: i64,
+    pub inst_id: String,
+    pub kind: String,
+    pub funding_rate: Decimal,
+    pub funding_period_hours: Option<i64>,
+    pub next_funding_at: Option<i64>,
+    pub prior_24h_return: Decimal,
+    pub reference_price: Decimal,
+    pub bid_price: Option<Decimal>,
+    pub ask_price: Option<Decimal>,
+    pub quote_kind: Option<&'static str>,
+    pub quote_observed_at: Option<i64>,
+    pub volume_quote_24h: Decimal,
+    pub open_interest_base: Option<Decimal>,
+}
+
 impl PaperDb {
     pub fn open(path: &str) -> anyhow::Result<Self> {
         let conn = Connection::open(path).with_context(|| format!("open sqlite at {}", path))?;
@@ -49,7 +69,35 @@ impl PaperDb {
                  UNIQUE(inst_id, triggered_at)
              );
              CREATE INDEX IF NOT EXISTS idx_signals_v3_inst_time
-                 ON signals_v3(inst_id, triggered_at);",
+                 ON signals_v3(inst_id, triggered_at);
+             CREATE TABLE IF NOT EXISTS candidate_snapshots (
+                 scan_started_at INTEGER NOT NULL,
+                 observed_at INTEGER NOT NULL,
+                 inst_id TEXT NOT NULL,
+                 kind TEXT NOT NULL,
+                 funding_rate TEXT NOT NULL,
+                 funding_period_hours INTEGER,
+                 next_funding_at INTEGER,
+                 prior_24h_return TEXT NOT NULL,
+                 reference_price TEXT NOT NULL,
+                 bid_price TEXT,
+                 ask_price TEXT,
+                 quote_kind TEXT,
+                 quote_observed_at INTEGER,
+                 volume_quote_24h TEXT NOT NULL,
+                 open_interest_base TEXT,
+                 PRIMARY KEY(scan_started_at, inst_id)
+             );
+             CREATE INDEX IF NOT EXISTS idx_candidate_observed
+                 ON candidate_snapshots(observed_at);
+             CREATE TABLE IF NOT EXISTS scan_runs (
+                 scan_started_at INTEGER PRIMARY KEY,
+                 completed_at INTEGER NOT NULL,
+                 market_count INTEGER NOT NULL,
+                 prefiltered_count INTEGER NOT NULL,
+                 recorded_count INTEGER NOT NULL,
+                 failed_count INTEGER NOT NULL
+             );",
         )?;
         Ok(Self {
             conn: Arc::new(Mutex::new(conn)),
@@ -83,6 +131,71 @@ impl PaperDb {
                 ],
             )?;
             Ok(rows == 1)
+        })
+        .await?
+    }
+
+    pub async fn record_candidate(&self, snapshot: CandidateSnapshot) -> anyhow::Result<()> {
+        let conn = self.conn.clone();
+        tokio::task::spawn_blocking(move || -> anyhow::Result<()> {
+            let c = conn.lock().unwrap();
+            c.execute(
+                "INSERT OR REPLACE INTO candidate_snapshots
+                 (scan_started_at, observed_at, inst_id, kind, funding_rate,
+                  funding_period_hours, next_funding_at, prior_24h_return,
+                  reference_price, bid_price, ask_price, quote_kind, quote_observed_at,
+                  volume_quote_24h, open_interest_base)
+                 VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14, ?15)",
+                params![
+                    snapshot.scan_started_at,
+                    snapshot.observed_at,
+                    snapshot.inst_id,
+                    snapshot.kind,
+                    snapshot.funding_rate.to_string(),
+                    snapshot.funding_period_hours,
+                    snapshot.next_funding_at,
+                    snapshot.prior_24h_return.to_string(),
+                    snapshot.reference_price.to_string(),
+                    snapshot.bid_price.map(|value| value.to_string()),
+                    snapshot.ask_price.map(|value| value.to_string()),
+                    snapshot.quote_kind,
+                    snapshot.quote_observed_at,
+                    snapshot.volume_quote_24h.to_string(),
+                    snapshot.open_interest_base.map(|value| value.to_string()),
+                ],
+            )?;
+            Ok(())
+        })
+        .await?
+    }
+
+    /// Only rows linked to a finished scan should be used for portfolio research.
+    pub async fn finish_scan(
+        &self,
+        started_at: i64,
+        completed_at: i64,
+        market_count: usize,
+        prefiltered_count: usize,
+        recorded_count: usize,
+        failed_count: usize,
+    ) -> anyhow::Result<()> {
+        let conn = self.conn.clone();
+        tokio::task::spawn_blocking(move || -> anyhow::Result<()> {
+            let c = conn.lock().unwrap();
+            c.execute(
+                "INSERT OR REPLACE INTO scan_runs
+                 (scan_started_at, completed_at, market_count, prefiltered_count,
+                  recorded_count, failed_count) VALUES (?1, ?2, ?3, ?4, ?5, ?6)",
+                params![
+                    started_at,
+                    completed_at,
+                    market_count as i64,
+                    prefiltered_count as i64,
+                    recorded_count as i64,
+                    failed_count as i64,
+                ],
+            )?;
+            Ok(())
         })
         .await?
     }
@@ -256,5 +369,43 @@ mod tests {
         let _ = std::fs::remove_file(&path);
         let _ = std::fs::remove_file(path.with_extension("sqlite-wal"));
         let _ = std::fs::remove_file(path.with_extension("sqlite-shm"));
+    }
+
+    #[tokio::test]
+    async fn cooldown_does_not_hide_repeated_candidate_observations() {
+        let db = PaperDb::open(":memory:").unwrap();
+        let first = signal("up_pos_fund", 1_000_000);
+        assert!(db.insert(&first).await.unwrap());
+        let snapshot = |scan_started_at| CandidateSnapshot {
+            scan_started_at,
+            observed_at: scan_started_at + 100,
+            inst_id: first.inst_id.clone(),
+            kind: first.kind.clone(),
+            funding_rate: first.funding_rate,
+            funding_period_hours: Some(1),
+            next_funding_at: Some(3_600_000),
+            prior_24h_return: first.prior_24h_return,
+            reference_price: Decimal::ONE,
+            bid_price: Some(Decimal::new(99, 2)),
+            ask_price: Some(Decimal::new(101, 2)),
+            quote_kind: Some("impact"),
+            quote_observed_at: Some(scan_started_at),
+            volume_quote_24h: Decimal::from(1_000_000),
+            open_interest_base: Some(Decimal::from(20)),
+        };
+        db.record_candidate(snapshot(1_000_000)).await.unwrap();
+        db.record_candidate(snapshot(1_300_000)).await.unwrap();
+        db.finish_scan(1_000_000, 1_000_200, 100, 1, 1, 0)
+            .await
+            .unwrap();
+        assert!(!db.insert(&signal("up_pos_fund", 1_300_100)).await.unwrap());
+        let c = db.conn.lock().unwrap();
+        let observed: i64 = c
+            .query_row("SELECT COUNT(*) FROM candidate_snapshots", [], |r| r.get(0))
+            .unwrap();
+        let finished: i64 = c
+            .query_row("SELECT COUNT(*) FROM scan_runs", [], |r| r.get(0))
+            .unwrap();
+        assert_eq!((observed, finished), (2, 1));
     }
 }
