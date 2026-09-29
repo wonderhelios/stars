@@ -13,8 +13,6 @@ const RETRY_SLEEP_MS: u64 = 400;
 
 #[derive(serde::Deserialize)]
 struct PremiumIndex {
-    #[allow(dead_code)]
-    symbol: String,
     #[serde(rename = "lastFundingRate")]
     last_funding_rate: Decimal,
     #[serde(rename = "nextFundingTime")]
@@ -94,7 +92,11 @@ impl BinanceRestClient {
                 tokio::time::sleep(Duration::from_millis(RETRY_SLEEP_MS)).await;
             }
         }
-        Err(last_err.unwrap_or_else(|| Error::Msg("BN get_text failed".into())))
+        Err(Error::Msg(format!(
+            "BN GET {} failed: {}",
+            path,
+            last_err.unwrap_or_else(|| Error::Msg("unknown response error".into()))
+        )))
     }
 
     async fn get_json<T: serde::de::DeserializeOwned>(
@@ -163,6 +165,26 @@ impl BinanceRestClient {
             rate: resp.last_funding_rate,
             next_funding_at: resp.next_funding_time,
         })
+    }
+
+    /// One response for the whole USD-M market; avoids hundreds of serial requests per scan.
+    pub async fn all_funding_now(&self) -> Result<HashMap<String, FundingNow>> {
+        let rows: Vec<serde_json::Value> = self.get_json("/fapi/v1/premiumIndex", &[]).await?;
+        Ok(rows
+            .into_iter()
+            .filter_map(|row| {
+                let symbol = row.get("symbol")?.as_str()?.to_string();
+                let rate = Decimal::from_str(row.get("lastFundingRate")?.as_str()?).ok()?;
+                let next_funding_at = row.get("nextFundingTime").and_then(|v| v.as_i64());
+                Some((
+                    symbol,
+                    FundingNow {
+                        rate,
+                        next_funding_at,
+                    },
+                ))
+            })
+            .collect())
     }
 
     /// Symbols absent from fundingInfo use the exchange's normal eight-hour interval.

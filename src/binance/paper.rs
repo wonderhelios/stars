@@ -1,6 +1,7 @@
 use std::sync::Arc;
 use std::time::Duration;
 
+use futures_util::{stream, StreamExt};
 use rust_decimal::Decimal;
 use tokio::time::interval;
 use tracing::{error, info};
@@ -23,21 +24,66 @@ pub async fn scan_once(
 ) -> anyhow::Result<usize> {
     let scan_started_at = now_ms();
     let tickers = client.all_tickers().await?;
-    let (intervals_result, (quotes_result, quote_at)) =
-        tokio::join!(client.funding_intervals(), async {
-            let result = client.best_quotes().await;
+    let (funding_result, intervals_result, (quotes_result, quote_at)) = tokio::join!(
+        tokio::time::timeout(Duration::from_secs(18), client.all_funding_now()),
+        tokio::time::timeout(Duration::from_secs(12), client.funding_intervals()),
+        async {
+            let result = tokio::time::timeout(Duration::from_secs(12), client.best_quotes()).await;
             (result, now_ms())
-        });
+        }
+    );
+    let funding = match funding_result {
+        Ok(Ok(rows)) => rows,
+        other => {
+            error!(
+                "binance bulk funding unavailable ({:?}); trying limited parallel requests",
+                other
+            );
+            let symbols: Vec<String> = tickers
+                .iter()
+                .filter(|t| {
+                    t.vol_quote >= Decimal::from(500_000)
+                        && !t.open_24h.is_zero()
+                        && t.prior_24h_pct().abs() >= Decimal::from(3)
+                })
+                .map(|t| t.symbol.clone())
+                .collect();
+            stream::iter(symbols)
+                .map(|symbol| async move {
+                    let result =
+                        tokio::time::timeout(Duration::from_secs(8), client.funding_now(&symbol))
+                            .await;
+                    (symbol, result)
+                })
+                .buffer_unordered(16)
+                .filter_map(|(symbol, result)| async move {
+                    match result {
+                        Ok(Ok(row)) => Some((symbol, row)),
+                        _ => None,
+                    }
+                })
+                .collect()
+                .await
+        }
+    };
     let intervals = match intervals_result {
-        Ok(value) => Some(value),
+        Ok(Ok(value)) => Some(value),
         Err(e) => {
+            error!("binance funding intervals: {}", e);
+            None
+        }
+        Ok(Err(e)) => {
             error!("binance funding intervals: {}", e);
             None
         }
     };
     let quotes = match quotes_result {
-        Ok(value) => Some(value),
+        Ok(Ok(value)) => Some(value),
         Err(e) => {
+            error!("binance book quotes: {}", e);
+            None
+        }
+        Ok(Err(e)) => {
             error!("binance book quotes: {}", e);
             None
         }
@@ -66,10 +112,10 @@ pub async fn scan_once(
         }
         candidates += 1;
 
-        let funding_now = match client.funding_now(&t.symbol).await {
-            Ok(f) => f,
-            Err(e) => {
-                error!("binance funding {}: {}", t.symbol, e);
+        let funding_now = match funding.get(&t.symbol) {
+            Some(f) => f,
+            None => {
+                error!("binance missing funding {}", t.symbol);
                 failed += 1;
                 continue;
             }
