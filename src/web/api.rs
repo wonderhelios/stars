@@ -1,4 +1,10 @@
-use axum::{extract::State, http::StatusCode, routing::get, Json, Router};
+use axum::{
+    extract::State,
+    http::StatusCode,
+    response::{IntoResponse, Response},
+    routing::{get, post},
+    Json, Router,
+};
 use std::sync::Arc;
 use tower_http::{compression::CompressionLayer, cors::CorsLayer, services::ServeDir};
 
@@ -12,6 +18,8 @@ pub struct WebState {
     pub okx_paper: Arc<PaperDb>,
     pub binance_paper: Arc<PaperDb>,
     pub hl_paper: Arc<PaperDb>,
+    pub http: reqwest::Client,
+    pub strategy_library_url: String,
 }
 
 pub fn router(state: WebState) -> Router {
@@ -21,11 +29,44 @@ pub fn router(state: WebState) -> Router {
         .route("/api/binance/signals", get(get_binance_signals))
         .route("/api/hyperliquid/signals", get(get_hl_signals))
         .route("/api/research/funding/latest", get(get_latest_funding))
+        .route("/api/research/strategies", post(publish_strategy))
         .route("/api/health", get(health))
         .fallback_service(ServeDir::new("static"))
         .layer(CompressionLayer::new())
         .layer(CorsLayer::permissive())
         .with_state(state)
+}
+
+async fn publish_strategy(
+    State(state): State<WebState>,
+    Json(strategy): Json<serde_json::Value>,
+) -> Response {
+    let response = match state
+        .http
+        .post(&state.strategy_library_url)
+        .json(&strategy)
+        .send()
+        .await
+    {
+        Ok(response) => response,
+        Err(error) => {
+            tracing::error!("strategy library write failed: {}", error);
+            return (
+                StatusCode::BAD_GATEWAY,
+                Json(serde_json::json!({
+                    "error":"无法连接 Hyper Fly 策略库，请确认看板服务正在运行"
+                })),
+            )
+                .into_response();
+        }
+    };
+    let status =
+        StatusCode::from_u16(response.status().as_u16()).unwrap_or(StatusCode::BAD_GATEWAY);
+    let body = response
+        .json::<serde_json::Value>()
+        .await
+        .unwrap_or_else(|_| serde_json::json!({"error":"Hyper Fly 策略库返回了无法识别的响应"}));
+    (status, Json(body)).into_response()
 }
 
 async fn health() -> &'static str {

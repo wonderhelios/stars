@@ -207,6 +207,11 @@ async fn main() -> anyhow::Result<()> {
         okx_paper: okx_paper_db,
         binance_paper: binance_paper_db,
         hl_paper: hl_paper_db,
+        http: reqwest::Client::builder()
+            .timeout(Duration::from_secs(10))
+            .build()?,
+        strategy_library_url: std::env::var("HYPER_FLY_STRATEGY_LIBRARY_URL")
+            .unwrap_or_else(|_| "http://127.0.0.1:19527/internal/strategy-library".to_string()),
     };
     let app = web::api::router(web_state);
     let addr = "0.0.0.0:3000";

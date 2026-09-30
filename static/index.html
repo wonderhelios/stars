@@ -1194,7 +1194,7 @@
               <tbody id="strategy-lab-body"></tbody>
             </table>
           </div>
-          <div class="panel-foot"><span>稳健分取训练段与验证段单笔均值的较低者；极端价格断层不参与排名</span><span>Hyperliquid 主 DEX 候选可导出给 Hyper Fly，部署前仍需人工复核</span></div>
+          <div class="panel-foot"><span>稳健分取训练段与验证段单笔均值的较低者；极端价格断层不参与排名</span><span>Hyperliquid 主 DEX 候选可直接保存到同服务器的 Hyper Fly 策略库</span></div>
         </section>
         <section class="panel lab-panel" aria-label="跨平台同币种信号">
           <div class="panel-head">
@@ -1813,10 +1813,10 @@
         $("strategy-lab-body").innerHTML = shown.map((candidate, index) => {
           const tone = candidate.robust >= 0 ? "pos" : "neg";
           const exportable = candidate.venue === "hyperliquid" && candidate.dexScope === "main" && candidate.stopPct != null;
-          return `<tr><td><span class="candidate-rank">${index + 1}</span></td><td>${escapeHtml(VENUE[candidate.venue])}</td><td>${escapeHtml(candidate.dexLabel)}</td><td>${escapeHtml(candidate.kindLabel)}</td><td>${candidate.holdHours}h</td><td>${candidate.stopPct == null ? "不设" : `${candidate.stopPct}%`}</td><td>${candidate.maxOpen}</td><td class="${candidate.trainMean >= 0 ? "pos" : "neg"}">${signed(candidate.trainMean)} · n=${candidate.trainN}</td><td class="${candidate.validationMean >= 0 ? "pos" : "neg"}">${signed(candidate.validationMean)} · n=${candidate.validationN}</td><td>${candidate.trainN + candidate.validationN}</td><td class="${tone}">${signed(candidate.robust)}</td><td>${exportable ? `<button class="strategy-export" data-strategy-index="${index}" type="button">下载给 Hyper Fly</button>` : "—"}</td></tr>`;
+          return `<tr><td><span class="candidate-rank">${index + 1}</span></td><td>${escapeHtml(VENUE[candidate.venue])}</td><td>${escapeHtml(candidate.dexLabel)}</td><td>${escapeHtml(candidate.kindLabel)}</td><td>${candidate.holdHours}h</td><td>${candidate.stopPct == null ? "不设" : `${candidate.stopPct}%`}</td><td>${candidate.maxOpen}</td><td class="${candidate.trainMean >= 0 ? "pos" : "neg"}">${signed(candidate.trainMean)} · n=${candidate.trainN}</td><td class="${candidate.validationMean >= 0 ? "pos" : "neg"}">${signed(candidate.validationMean)} · n=${candidate.validationN}</td><td>${candidate.trainN + candidate.validationN}</td><td class="${tone}">${signed(candidate.robust)}</td><td>${exportable ? `<button class="strategy-export" data-strategy-index="${index}" type="button">保存到策略库</button>` : "—"}</td></tr>`;
         }).join("");
       }
-      function exportStrategy(candidate) {
+      function strategyManifest(candidate) {
         const allKinds = Object.keys(KINDS);
         const idKind = candidate.kind || "all";
         const manifest = {
@@ -1845,12 +1845,28 @@
             warning: "采样研究结果；部署实盘前仍需人工复核",
           },
         };
-        const blob = new Blob([JSON.stringify(manifest, null, 2) + "\n"], { type: "application/json" });
-        const link = document.createElement("a");
-        link.href = URL.createObjectURL(blob);
-        link.download = `${manifest.strategy_id}.json`;
-        link.click();
-        URL.revokeObjectURL(link.href);
+        return manifest;
+      }
+      async function saveStrategy(candidate, button) {
+        const previous = button.textContent;
+        button.disabled = true;
+        button.textContent = "保存中…";
+        try {
+          const response = await fetch("/api/research/strategies", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(strategyManifest(candidate)),
+          });
+          const result = await response.json();
+          if (!response.ok) throw new Error(result.error || `HTTP ${response.status}`);
+          button.textContent = "已保存";
+          $("strategy-lab-status").textContent = "已保存到 Hyper Fly 策略库，可直接前往实盘看板选择应用";
+          setTimeout(() => { button.textContent = previous; button.disabled = false; }, 2500);
+        } catch (error) {
+          button.textContent = "保存失败";
+          $("strategy-lab-status").textContent = error.message;
+          setTimeout(() => { button.textContent = previous; button.disabled = false; }, 3000);
+        }
       }
       function nearestSignalMatches(leftRows, rightRows, toleranceMs) {
         const rightByCoin = new Map();
@@ -2178,7 +2194,7 @@
         const button = event.target.closest(".strategy-export");
         if (!button) return;
         const candidate = strategyExportCandidates[Number(button.dataset.strategyIndex)];
-        if (candidate) exportStrategy(candidate);
+        if (candidate) saveStrategy(candidate, button);
       });
       for (const th of document.querySelectorAll("#market-table th.sortable"))
         th.addEventListener("click", () => {
