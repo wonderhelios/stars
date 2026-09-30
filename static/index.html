@@ -687,6 +687,17 @@
         color: #33465f;
         font-weight: 750;
       }
+      .capacity-cell {
+        line-height: 1.55;
+      }
+      .capacity-cell strong {
+        display: block;
+        font-size: 12px;
+      }
+      .capacity-cell small {
+        color: #8b97a6;
+        font-size: 10px;
+      }
       .simulation-detail {
         display: grid;
         grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
@@ -1097,6 +1108,23 @@
               <tbody id="stop-comparison-body"></tbody>
             </table>
           </div>
+          <div class="stop-comparison">
+            <div class="stop-comparison-head">
+              <h3>同时持仓容量对比</h3>
+              <span>按信号时间先到先得 · 等额仓位</span>
+            </div>
+            <table aria-label="1、3、5 仓与不同止损阈值的容量实验对比">
+              <thead>
+                <tr>
+                  <th>最多同时持仓</th>
+                  <th>2% 止损</th>
+                  <th>3% 止损</th>
+                  <th>5% 止损</th>
+                </tr>
+              </thead>
+              <tbody id="capacity-comparison-body"></tbody>
+            </table>
+          </div>
           <div class="simulation-detail">
             <div class="simulation-box">
               <h3>按信号时间累计的单笔均值</h3>
@@ -1443,17 +1471,18 @@
             : id;
       }
       const STOP_LEVELS = [2, 3, 5];
+      const POSITION_LIMITS = [1, 3, 5];
       function sampledOutcome(row, stopPct = 2) {
         const entry = Number(row.entry_price);
         const close24 = Number(row.t24_price);
         if (!(entry > 0) || !(close24 > 0)) return null;
-        for (const field of ["t1_price", "t4_price", "t8_price", "t24_price"]) {
+        for (const [field, exitHours] of [["t1_price", 1], ["t4_price", 4], ["t8_price", 8], ["t24_price", 24]]) {
           const observed = Number(row[field]);
           if (observed > 0 && observed >= entry * (1 + stopPct / 100)) {
-            return { row, stopped: true, net: (entry - observed) / entry * 100 - COST };
+            return { row, stopped: true, exitHours, net: (entry - observed) / entry * 100 - COST };
           }
         }
-        return { row, stopped: false, net: (entry - close24) / entry * 100 - COST };
+        return { row, stopped: false, exitHours: 24, net: (entry - close24) / entry * 100 - COST };
       }
       function stopScenario(rows, stopPct) {
         const outcomes = rows.map((row) => sampledOutcome(row, stopPct)).filter(Boolean);
@@ -1470,6 +1499,42 @@
           total,
           avg: count ? total / count : null,
           median: count ? (returns[(count - 1) >> 1] + returns[count >> 1]) / 2 : null,
+        };
+      }
+      function capacityScenario(outcomes, maxOpen) {
+        const ordered = [...outcomes].sort((a, b) =>
+          Number(a.row.triggered_at) - Number(b.row.triggered_at) || Number(a.row.id || 0) - Number(b.row.id || 0)
+        );
+        const active = [];
+        const selected = [];
+        let skippedCapacity = 0;
+        let skippedContract = 0;
+        for (const outcome of ordered) {
+          const enteredAt = Number(outcome.row.triggered_at);
+          for (let i = active.length - 1; i >= 0; i--) {
+            if (active[i].exitAt <= enteredAt) active.splice(i, 1);
+          }
+          const contract = String(outcome.row.inst_id || outcome.row.symbol || outcome.row.coin || "");
+          if (active.some((position) => position.contract === contract)) {
+            skippedContract++;
+            continue;
+          }
+          if (active.length >= maxOpen) {
+            skippedCapacity++;
+            continue;
+          }
+          selected.push(outcome);
+          active.push({ contract, exitAt: enteredAt + outcome.exitHours * 60 * 60 * 1000 });
+        }
+        const total = selected.reduce((sum, outcome) => sum + outcome.net, 0);
+        const wins = selected.filter((outcome) => outcome.net > 0).length;
+        return {
+          count: selected.length,
+          total,
+          avg: selected.length ? total / selected.length : null,
+          winRate: selected.length ? wins / selected.length * 100 : null,
+          skippedCapacity,
+          skippedContract,
         };
       }
       function renderExecution() {
@@ -1512,6 +1577,14 @@
           const tone = (value) => value == null ? "" : value >= 0 ? "pos" : "neg";
           return `<tr><td>${scenario.stopPct}%</td><td>${scenario.count ? `${scenario.stopped} / ${scenario.count}` : "—"}</td><td>${winRate == null ? "—" : `${winRate.toFixed(1)}%`}</td><td class="${tone(scenario.avg)}">${signedPct(scenario.avg)}</td><td class="${tone(scenario.median)}">${signedPct(scenario.median)}</td><td class="${tone(scenario.total)}">${signedPct(scenario.count ? scenario.total : null)}</td></tr>`;
         }).join("");
+        $("capacity-comparison-body").innerHTML = POSITION_LIMITS.map((maxOpen) => {
+          const cells = scenarios.map((scenario) => {
+            const result = capacityScenario(scenario.outcomes, maxOpen);
+            const tone = result.total >= 0 ? "pos" : "neg";
+            return `<td class="capacity-cell"><strong class="${tone}">${signedPct(result.count ? result.total : null)}</strong><small>入选 ${result.count} · 均值 ${signedPct(result.avg)} · 胜率 ${result.winRate == null ? "—" : `${result.winRate.toFixed(1)}%`}</small></td>`;
+          }).join("");
+          return `<tr><td>${maxOpen} 仓</td>${cells}</tr>`;
+        }).join("");
         const chart = $("simulation-chart");
         chart.replaceChildren();
         let total = 0;
@@ -1548,7 +1621,7 @@
           row.append(coin, reason, pnl);
           tradeBox.append(row);
         }
-        $("execution-note").textContent = "覆盖本页所有已记录的信号，含 Hyperliquid HIP-3；每个币对独立计算，不限制本金、同时仓位数或杠杆，也不设单仓美元止盈。2%、3%、5% 使用完全相同的信号样本。止损仅在 T+1/4/8/24 小时价格上检测，并按首次触线采样价退出；两次采样之间的触发和回落无法识别。每笔扣固定 0.15% 成本，不含真实滑点、资金费或强平。因此它是探索性信号实验，不是实盘回测。";
+        $("execution-note").textContent = "全样本统计覆盖本页所有已记录的信号，含 Hyperliquid HIP-3。容量实验按触发时间先到先得，限制同时持仓为 1、3、5 仓，每仓等额；止损采样触发后释放仓位，未触发则持有至 24 小时。2%、3%、5% 使用完全相同的信号样本。止损仅在 T+1/4/8/24 小时价格上检测，并按首次触线采样价退出；两次采样之间的触发和回落无法识别。每笔扣固定 0.15% 成本，不含真实滑点、资金费、强平和复利。因此它是探索性容量实验，不是实盘回测。";
       }
       function renderPaper() {
         const source = state.paper[state.venue] || {
