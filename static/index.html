@@ -1010,33 +1010,33 @@
           </div>
         </div>
         <div class="research-grid" id="bucket-grid"></div>
-        <section id="execution-panel" class="panel execution-panel hidden" aria-label="Hyper Fly 同规则纸上组合">
+        <section id="execution-panel" class="panel execution-panel" aria-label="全市场独立信号实验">
           <div class="execution-head">
             <div>
-              <h2>同规则纸上组合</h2>
-              <p>独立运行 Hyper Fly 的模拟模式：使用相同的筛选、仓位上限、止盈和持仓时间，统计实际可进入的纸上仓位。</p>
+              <h2>全市场独立信号实验</h2>
+              <p>当前交易所所有已记录的信号逐笔独立观察；不限制本金、仓位数或杠杆档位，也不设单仓美元止盈。</p>
             </div>
-            <span id="execution-status" class="execution-status">等待模拟数据</span>
+            <span id="execution-status" class="execution-status">等待信号数据</span>
           </div>
           <div class="execution-metrics">
-            <div class="execution-metric"><span>模拟已平仓盈利</span><strong id="execution-profit">—</strong></div>
-            <div class="execution-metric"><span>模拟已平仓亏损</span><strong id="execution-loss">—</strong></div>
-            <div class="execution-metric"><span>模拟净额</span><strong id="execution-net">—</strong></div>
-            <div class="execution-metric"><span>模拟持仓</span><strong id="execution-positions">—</strong></div>
+            <div class="execution-metric"><span>可完整观察</span><strong id="execution-profit">—</strong></div>
+            <div class="execution-metric"><span>采样触及 2% 止损</span><strong id="execution-loss">—</strong></div>
+            <div class="execution-metric"><span>单笔净收益均值</span><strong id="execution-net">—</strong></div>
+            <div class="execution-metric"><span>单笔净收益中位数</span><strong id="execution-positions">—</strong></div>
           </div>
           <div id="execution-funnel" class="execution-funnel"></div>
           <div class="simulation-detail">
             <div class="simulation-box">
-              <h3>模拟净值曲线</h3>
-              <svg id="simulation-chart" class="simulation-chart" viewBox="0 0 100 35" preserveAspectRatio="none" role="img" aria-label="纸上组合净值曲线"></svg>
-              <p id="simulation-equity" class="execution-note">等待模拟记录</p>
+              <h3>按信号时间累计的单笔均值</h3>
+              <svg id="simulation-chart" class="simulation-chart" viewBox="0 0 100 35" preserveAspectRatio="none" role="img" aria-label="信号单笔收益均值走势"></svg>
+              <p id="simulation-equity" class="execution-note">等待信号结果</p>
             </div>
             <div class="simulation-box">
-              <h3>最近纸上交易</h3>
-              <div id="simulation-trades" class="execution-note">等待模拟记录</div>
+              <h3>最近已观察信号</h3>
+              <div id="simulation-trades" class="execution-note">等待信号结果</div>
             </div>
           </div>
-          <p id="execution-note" class="execution-note">模拟从启动后独立累积，不能补算旧信号；模拟成交与止损仍有误差，不代表实盘收益。</p>
+          <p id="execution-note" class="execution-note">止损仅按 T+1/4/8/24 小时价格采样估算；不含真实成交、资金费或强平，不是可交易组合收益。</p>
         </section>
         <div class="panel">
           <div class="panel-head">
@@ -1099,7 +1099,7 @@
     <footer>
       <div class="footer-inner">
         <span>Edgeboard · 永续合约事件观察</span
-        ><span>信号收益为价格观察；纸上组合独立模拟，均非实盘收益</span>
+        ><span>信号收益为价格观察和采样实验，均非实盘收益</span>
       </div>
     </footer>
     <script>
@@ -1133,7 +1133,6 @@
         venue: "okx",
         market: { data: [], at: 0, error: null, failures: 0 },
         paper: {},
-        execution: { data: null, error: null, loading: false, requestedAt: 0 },
         sort: "volume_quote_24h",
         asc: false,
         hot: false,
@@ -1276,23 +1275,6 @@
           clearTimeout(timer);
         }
       }
-      async function getObject(url) {
-        const controller = new AbortController();
-        const timer = setTimeout(() => controller.abort(), 8000);
-        try {
-          const response = await fetch(url, {
-            cache: "no-store",
-            signal: controller.signal,
-          });
-          if (!response.ok) throw new Error(`HTTP ${response.status}`);
-          const value = await response.json();
-          if (!value || typeof value !== "object" || Array.isArray(value))
-            throw new Error("数据格式错误");
-          return value;
-        } finally {
-          clearTimeout(timer);
-        }
-      }
       function currentSource() {
         return state.view === "market"
           ? state.market
@@ -1388,99 +1370,89 @@
             ? id.replace(/USDT$/, "")
             : id;
       }
-      function renderExecution() {
-        $("execution-panel").classList.toggle("hidden", state.venue !== "hyperliquid");
-        if (state.venue !== "hyperliquid") return;
-        const source = state.execution;
-        const data = source.data;
-        let status = "等待模拟数据";
-        if (source.error) status = `模拟数据暂不可用 · ${source.error}`;
-        else if (data && !data.configured) status = "尚未启动纸上机器人";
-        else if (data && !data.available) status = data.error || "纸上机器人暂不可用";
-        else if (data) {
-          const stateLabel = data.exchange_stale
-            ? "模拟行情暂不可核验"
-            : data.halted
-            ? "系统暂停开仓"
-            : data.paused
-              ? "手动暂停开仓"
-              : data.risk_limit === "daily"
-                ? "每日亏损门槛已触发"
-                : data.risk_limit === "total"
-                  ? "总亏损门槛已触发"
-                  : "运行中";
-          status = `${stateLabel} · ${dateTime(data.as_of_ms)}`;
+      function sampledOutcome(row) {
+        const entry = Number(row.entry_price);
+        const close24 = Number(row.t24_price);
+        if (!(entry > 0) || !(close24 > 0)) return null;
+        for (const field of ["t1_price", "t4_price", "t8_price", "t24_price"]) {
+          const observed = Number(row[field]);
+          if (observed > 0 && observed >= entry * 1.02) {
+            return { row, stopped: true, net: (entry - observed) / entry * 100 - COST };
+          }
         }
-        $("execution-status").textContent = status;
-        const ready = data && data.available && !source.error;
-        const profit = ready ? Number(data.realized_profit) : NaN;
-        const loss = ready ? Number(data.realized_loss) : NaN;
-        const money = (value) =>
-          Number.isFinite(value) ? `${value >= 0 ? "+" : ""}${value.toFixed(2)} USDC` : "—";
-        $("execution-profit").textContent = money(profit);
-        $("execution-loss").textContent = money(loss);
-        $("execution-net").textContent = money(profit + loss);
-        $("execution-net").className =
-          Number.isFinite(profit + loss) ? (profit + loss >= 0 ? "pos" : "neg") : "";
-        $("execution-positions").textContent =
-          ready && Number.isInteger(data.active_positions)
-            ? `${data.active_positions} / ${Number.isInteger(data.max_positions) ? data.max_positions : "—"}`
-            : "—";
-        const filters = ready ? data.scan_filters : null;
-        const stages = [
-          ["扫描合约", "total"], ["无效行情", "invalid_market"],
-          ["杠杆不足", "leverage"], ["涨幅不符", "rise"],
-          ["费率不符", "funding"], ["成交量不足", "volume"],
-          ["最终合格", "eligible"],
+        return { row, stopped: false, net: (entry - close24) / entry * 100 - COST };
+      }
+      function renderExecution() {
+        const source = state.paper[state.venue];
+        const rows = source && Array.isArray(source.data) ? source.data : [];
+        const outcomes = rows.map(sampledOutcome).filter(Boolean);
+        const sorted = [...outcomes].sort((a, b) => a.row.triggered_at - b.row.triggered_at);
+        const returns = outcomes.map((o) => o.net).sort((a, b) => a - b);
+        const count = returns.length;
+        const stopped = outcomes.filter((o) => o.stopped).length;
+        const avg = count ? returns.reduce((a, b) => a + b, 0) / count : null;
+        const median = count ? (returns[(count - 1) >> 1] + returns[count >> 1]) / 2 : null;
+        const signedPct = (value) => value == null ? "—" : `${value >= 0 ? "+" : ""}${value.toFixed(2)}%`;
+        $("execution-status").textContent = source && source.at
+          ? `${VENUE[state.venue]} · ${dateTime(source.at)}${source.error ? " · 使用上次数据" : ""}`
+          : `${VENUE[state.venue]} · 等待信号数据`;
+        $("execution-profit").textContent = `${count} / ${rows.length}`;
+        $("execution-loss").textContent = count ? `${stopped} / ${count}` : "—";
+        $("execution-net").textContent = signedPct(avg);
+        $("execution-net").className = avg == null ? "" : avg >= 0 ? "pos" : "neg";
+        $("execution-positions").textContent = signedPct(median);
+        $("execution-positions").className = median == null ? "" : median >= 0 ? "pos" : "neg";
+        const wins = outcomes.filter((o) => o.net > 0).length;
+        const hip3 = rows.filter((r) => String(r.inst_id || "").includes(":")).length;
+        const funnel = $("execution-funnel");
+        funnel.replaceChildren();
+        const tags = [
+          `信号 ${rows.length}`, `完整观察 ${count}`, `净胜 ${count ? (wins / count * 100).toFixed(1) : "—"}%`,
+          `采样触线 ${stopped}`,
         ];
-        $("execution-funnel").innerHTML = filters
-          ? stages.map(([label, key]) => `<span>${label} ${Number.isInteger(filters[key]) ? filters[key] : "—"}</span>`).join("")
-          : "";
+        if (state.venue === "hyperliquid") tags.push(`HIP-3 信号 ${hip3}`);
+        for (const tag of tags) {
+          const span = document.createElement("span");
+          span.textContent = tag;
+          funnel.append(span);
+        }
         const chart = $("simulation-chart");
         chart.replaceChildren();
-        const points = ready && Array.isArray(data.curve)
-          ? data.curve.filter((p) => Number.isFinite(p.ts) && Number.isFinite(p.equity))
-          : [];
-        if (points.length) {
-          const values = points.map((p) => p.equity);
-          const low = Math.min(...values);
-          const high = Math.max(...values);
-          const spread = Math.max(high - low, 1);
-          const coords = points.map((p, i) =>
-            `${points.length === 1 ? 50 : i * 100 / (points.length - 1)},${32 - (p.equity - low) / spread * 28}`
+        let total = 0;
+        const means = sorted.map((o, i) => (total += o.net) / (i + 1));
+        if (means.length) {
+          const low = Math.min(...means), high = Math.max(...means);
+          const spread = Math.max(high - low, 0.1);
+          const coords = means.map((value, i) =>
+            `${means.length === 1 ? 50 : i * 100 / (means.length - 1)},${32 - (value - low) / spread * 28}`
           ).join(" ");
           const line = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
           line.setAttribute("points", coords);
           line.setAttribute("fill", "none");
-          line.setAttribute("stroke", values.at(-1) >= 500 ? "#139e70" : "#e45e6a");
+          line.setAttribute("stroke", avg >= 0 ? "#139e70" : "#e45e6a");
           line.setAttribute("stroke-width", "1.1");
           line.setAttribute("vector-effect", "non-scaling-stroke");
           chart.append(line);
         }
-        $("simulation-equity").textContent = points.length
-          ? `起始 500.00 USDC · 最近 ${Number(points.at(-1).equity).toFixed(2)} USDC · ${dateTime(points.at(-1).ts)}`
-          : "纸上机器人开始运行后生成净值曲线";
+        $("simulation-equity").textContent = count
+          ? `${count} 个独立信号 · 净胜率 ${(wins / count * 100).toFixed(1)}% · 不代表组合净值`
+          : "尚无具备完整 24 小时观察的信号";
         const tradeBox = $("simulation-trades");
         tradeBox.replaceChildren();
-        const trades = ready && Array.isArray(data.trades) ? data.trades.slice(0, 6) : [];
-        if (!trades.length) tradeBox.textContent = "暂无纸上交易";
-        for (const trade of trades) {
+        if (!count) tradeBox.textContent = "暂无完整结果";
+        for (const outcome of sorted.slice(-6).reverse()) {
           const row = document.createElement("div");
           row.className = "simulation-row";
           const coin = document.createElement("span");
-          coin.textContent = `${trade.coin} · ${trade.entry_leverage}×`;
+          coin.textContent = outcome.row.inst_id;
           const reason = document.createElement("span");
-          reason.textContent = trade.exit_at ? ({ stop: "止损", "24h": "24 小时", "take profit": "止盈" }[trade.note] || "已平仓") : "持仓中";
+          reason.textContent = outcome.stopped ? "采样触线" : "24 小时";
           const pnl = document.createElement("span");
-          pnl.textContent = trade.exit_at && trade.pnl != null ? money(Number(trade.pnl)) : "—";
+          pnl.textContent = signedPct(outcome.net);
           row.append(coin, reason, pnl);
           tradeBox.append(row);
         }
-        const unknown = ready ? Number(data.unknown_realized_count) : 0;
-        const gaps = ready ? Number(data.mark_gaps) : 0;
-        $("execution-note").textContent = ready
-          ? `最近扫描：${dateTime(data.last_scan_ms)}。纸上组合按每仓净值 20%、最多 5 仓计算；不含资金费${unknown > 0 ? `；另有 ${unknown} 笔平仓缺少可用模拟盈亏` : ""}${gaps > 0 ? `；标记价格采样间断 ${gaps} 次` : ""}${data.exchange_stale ? "；当前行情暂不可用" : ""}。止损只在采样时检查，可能漏掉盘中触发；上方 T+24h 信号均值不能视为组合收益。`
-          : "纸上机器人启动后从新信号开始模拟；历史数据缺少盘中路径，无法补算。";
+        $("execution-note").textContent = "覆盖本页所有已记录的信号，含 Hyperliquid HIP-3；每个币对独立计算，不限制本金、同时仓位数或杠杆，也不设单仓美元止盈。原采集条件仍要求价格异动、正资金费率和最低成交量。止损仅在 T+1/4/8/24 小时价格上检测，盘中触发可能漏记；按采样价计算并扣固定 0.15% 成本，不含真实滑点、资金费或强平。因此它是探索性信号实验，不是实盘回测。";
       }
       function renderPaper() {
         const source = state.paper[state.venue] || {
@@ -1604,26 +1576,8 @@
           if (state.view === "research" && state.venue === venue) renderPaper();
         }
       }
-      async function loadExecution() {
-        if (state.venue !== "hyperliquid" || state.execution.loading) return;
-        if (Date.now() - state.execution.requestedAt < 15000) return;
-        const source = state.execution;
-        source.loading = true;
-        source.requestedAt = Date.now();
-        try {
-          source.data = await getObject("/api/hyperliquid/simulation");
-          source.error = null;
-        } catch (error) {
-          source.error = error.name === "AbortError" ? "请求超时" : error.message;
-          source.data = null;
-        } finally {
-          source.loading = false;
-          if (state.view === "research" && state.venue === "hyperliquid") renderExecution();
-        }
-      }
       async function pollPaper() {
         if (state.view === "research") {
-          loadExecution();
           await loadPaper(state.venue);
         }
         setTimeout(pollPaper, 5000);
@@ -1663,7 +1617,6 @@
           if (state.view === "research") {
             renderPaper();
             loadPaper(state.venue);
-            loadExecution();
           } else renderMarket();
         });
       for (const button of document.querySelectorAll(".segment"))
@@ -1674,7 +1627,6 @@
             .forEach((el) => el.classList.toggle("active", el === button));
           renderPaper();
           loadPaper(state.venue);
-          loadExecution();
         });
       for (const th of document.querySelectorAll("#market-table th.sortable"))
         th.addEventListener("click", () => {

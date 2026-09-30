@@ -207,11 +207,6 @@ async fn main() -> anyhow::Result<()> {
         okx_paper: okx_paper_db,
         binance_paper: binance_paper_db,
         hl_paper: hl_paper_db,
-        hyper_fly_research_port: std::env::var("HYPER_FLY_PAPER_RESEARCH_PORT")
-            .ok()
-            .map(|value| value.parse::<u16>())
-            .transpose()?
-            .or(Some(19528)),
     };
     let app = web::api::router(web_state);
     let addr = "0.0.0.0:3000";
