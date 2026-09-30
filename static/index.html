@@ -728,6 +728,17 @@
         background: #edf3ff;
         font-size: 10px;
       }
+      .strategy-export {
+        border: 1px solid #cbdcff;
+        border-radius: 7px;
+        background: #edf3ff;
+        color: var(--blue);
+        padding: 5px 9px;
+        font: inherit;
+        font-weight: 700;
+        cursor: pointer;
+      }
+      .strategy-export:hover { background: #dfeaff; }
       .simulation-detail {
         display: grid;
         grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
@@ -1179,11 +1190,11 @@
           <div id="strategy-lab-empty" class="empty hidden"></div>
           <div id="strategy-lab-table-wrap" class="table-scroll hidden">
             <table class="lab-table">
-              <thead><tr><th>排名</th><th>交易所</th><th>形态</th><th>持有</th><th>止损</th><th>仓位</th><th>前 70%</th><th>后 30%</th><th>样本</th><th>稳健分</th></tr></thead>
+              <thead><tr><th>排名</th><th>交易所</th><th>范围</th><th>形态</th><th>持有</th><th>止损</th><th>仓位</th><th>前 70%</th><th>后 30%</th><th>样本</th><th>稳健分</th><th>交接</th></tr></thead>
               <tbody id="strategy-lab-body"></tbody>
             </table>
           </div>
-          <div class="panel-foot"><span>稳健分取训练段与验证段单笔均值的较低者</span><span>候选排名存在多重测试偏差，需继续用新数据验证</span></div>
+          <div class="panel-foot"><span>稳健分取训练段与验证段单笔均值的较低者；极端价格断层不参与排名</span><span>Hyperliquid 主 DEX 候选可导出给 Hyper Fly，部署前仍需人工复核</span></div>
         </section>
         <section class="panel lab-panel" aria-label="跨平台同币种信号">
           <div class="panel-head">
@@ -1556,6 +1567,17 @@
       const STOP_LEVELS = [2, 3, 5];
       const POSITION_LIMITS = [1, 3, 5];
       const OUTCOME_SAMPLES = [["t1_price", 1], ["t4_price", 4], ["t8_price", 8], ["t24_price", 24]];
+      let strategyExportCandidates = [];
+      function hasPriceDiscontinuity(row) {
+        const prices = [row.entry_price, ...OUTCOME_SAMPLES.map(([field]) => row[field])]
+          .map(Number).filter((value) => value > 0);
+        for (let i = 1; i < prices.length; i++) {
+          const ratio = prices[i] / prices[i - 1];
+          const commonScaleChanges = [0.25, 1 / 3, 0.5, 2, 3, 4];
+          if (ratio <= 0.4 || ratio >= 2.5 || commonScaleChanges.some((scale) => Math.abs(ratio - scale) / scale <= 0.06)) return true;
+        }
+        return false;
+      }
       function sampledOutcomeAt(row, stopPct, holdHours) {
         const entry = Number(row.entry_price);
         const target = OUTCOME_SAMPLES.find(([, hours]) => hours === holdHours);
@@ -1629,7 +1651,9 @@
       }
       function renderExecution() {
         const source = state.paper[state.venue];
-        const rows = source && Array.isArray(source.data) ? source.data : [];
+        const rawRows = source && Array.isArray(source.data) ? source.data : [];
+        const rows = rawRows.filter((row) => !hasPriceDiscontinuity(row));
+        const excludedQuality = rawRows.length - rows.length;
         const scenarios = STOP_LEVELS.map((level) => stopScenario(rows, level));
         const baseline = scenarios[0];
         const outcomes = baseline.outcomes;
@@ -1657,6 +1681,7 @@
           `采样触线 ${stopped}`,
         ];
         if (state.venue === "hyperliquid") tags.push(`HIP-3 信号 ${hip3}`);
+        if (excludedQuality) tags.push(`价格异常排除 ${excludedQuality}`);
         for (const tag of tags) {
           const span = document.createElement("span");
           span.textContent = tag;
@@ -1731,8 +1756,13 @@
         for (const venue of Object.keys(API)) {
           const source = state.paper[venue];
           if (!source || !Array.isArray(source.data)) continue;
+          const cleanRows = source.data.filter((row) => !hasPriceDiscontinuity(row));
+          const scopes = venue === "hyperliquid"
+            ? [["main", "主 DEX", cleanRows.filter((row) => !String(row.inst_id || "").includes(":"))], ["all", "全部 DEX", cleanRows]]
+            : [["main", "全市场", cleanRows]];
+          for (const [dexScope, dexLabel, scopeRows] of scopes) {
           for (const [kind, kindLabel] of kinds) {
-            const rows = kind ? source.data.filter((row) => row.kind === kind) : source.data;
+            const rows = kind ? scopeRows.filter((row) => row.kind === kind) : scopeRows;
             for (const holdHours of holdLevels) {
               for (const stopPct of stopLevels) {
                 const outcomes = rows
@@ -1749,6 +1779,9 @@
                   const validationMean = mean(validation);
                   candidates.push({
                     venue,
+                    dexScope,
+                    dexLabel,
+                    kind,
                     kindLabel,
                     holdHours,
                     stopPct,
@@ -1763,10 +1796,12 @@
               }
             }
           }
+          }
         }
         candidates.sort((a, b) => b.robust - a.robust || b.validationN - a.validationN);
         const robust = candidates.filter((candidate) => candidate.trainMean > 0 && candidate.validationMean > 0);
         const shown = (robust.length ? robust : candidates).slice(0, 12);
+        strategyExportCandidates = shown;
         $("strategy-lab-status").textContent = tested
           ? `已测试 ${tested} 组参数 · ${robust.length} 组训练段和验证段同时为正`
           : "等待三平台信号数据";
@@ -1777,8 +1812,45 @@
         }
         $("strategy-lab-body").innerHTML = shown.map((candidate, index) => {
           const tone = candidate.robust >= 0 ? "pos" : "neg";
-          return `<tr><td><span class="candidate-rank">${index + 1}</span></td><td>${escapeHtml(VENUE[candidate.venue])}</td><td>${escapeHtml(candidate.kindLabel)}</td><td>${candidate.holdHours}h</td><td>${candidate.stopPct == null ? "不设" : `${candidate.stopPct}%`}</td><td>${candidate.maxOpen}</td><td class="${candidate.trainMean >= 0 ? "pos" : "neg"}">${signed(candidate.trainMean)} · n=${candidate.trainN}</td><td class="${candidate.validationMean >= 0 ? "pos" : "neg"}">${signed(candidate.validationMean)} · n=${candidate.validationN}</td><td>${candidate.trainN + candidate.validationN}</td><td class="${tone}">${signed(candidate.robust)}</td></tr>`;
+          const exportable = candidate.venue === "hyperliquid" && candidate.dexScope === "main" && candidate.stopPct != null;
+          return `<tr><td><span class="candidate-rank">${index + 1}</span></td><td>${escapeHtml(VENUE[candidate.venue])}</td><td>${escapeHtml(candidate.dexLabel)}</td><td>${escapeHtml(candidate.kindLabel)}</td><td>${candidate.holdHours}h</td><td>${candidate.stopPct == null ? "不设" : `${candidate.stopPct}%`}</td><td>${candidate.maxOpen}</td><td class="${candidate.trainMean >= 0 ? "pos" : "neg"}">${signed(candidate.trainMean)} · n=${candidate.trainN}</td><td class="${candidate.validationMean >= 0 ? "pos" : "neg"}">${signed(candidate.validationMean)} · n=${candidate.validationN}</td><td>${candidate.trainN + candidate.validationN}</td><td class="${tone}">${signed(candidate.robust)}</td><td>${exportable ? `<button class="strategy-export" data-strategy-index="${index}" type="button">导出</button>` : "—"}</td></tr>`;
         }).join("");
+      }
+      function exportStrategy(candidate) {
+        const allKinds = Object.keys(KINDS);
+        const idKind = candidate.kind || "all";
+        const manifest = {
+          schema_version: 1,
+          strategy_id: `research-hl-${idKind}-${candidate.holdHours}h-stop${candidate.stopPct}-${candidate.maxOpen}p-v1`,
+          name: `研究候选 · ${candidate.kindLabel} · ${candidate.holdHours}h`,
+          venue: "hyperliquid",
+          dex_scope: "main",
+          signal_kinds: candidate.kind ? [candidate.kind] : allKinds,
+          min_funding_8h: EXTREME,
+          min_volume_usd: 500000,
+          hold_hours: candidate.holdHours,
+          stop_loss_pct: candidate.stopPct,
+          max_positions: candidate.maxOpen,
+          cooldown_hours: 24,
+          margin_fraction: 0.20,
+          allowed_leverages: [10, 5, 3],
+          max_five_x_positions: 1,
+          max_three_x_positions: 1,
+          research_evidence: {
+            generated_at: new Date().toISOString(),
+            train_mean_pct: candidate.trainMean,
+            validation_mean_pct: candidate.validationMean,
+            train_n: candidate.trainN,
+            validation_n: candidate.validationN,
+            warning: "采样研究结果；部署实盘前仍需人工复核",
+          },
+        };
+        const blob = new Blob([JSON.stringify(manifest, null, 2) + "\n"], { type: "application/json" });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = `${manifest.strategy_id}.json`;
+        link.click();
+        URL.revokeObjectURL(link.href);
       }
       function nearestSignalMatches(leftRows, rightRows, toleranceMs) {
         const rightByCoin = new Map();
@@ -2102,6 +2174,12 @@
           renderPaper();
           Promise.all([...Object.keys(API).map(loadPaper), loadFundingResearch()]);
         });
+      $("strategy-lab-body").addEventListener("click", (event) => {
+        const button = event.target.closest(".strategy-export");
+        if (!button) return;
+        const candidate = strategyExportCandidates[Number(button.dataset.strategyIndex)];
+        if (candidate) exportStrategy(candidate);
+      });
       for (const th of document.querySelectorAll("#market-table th.sortable"))
         th.addEventListener("click", () => {
           const key = th.dataset.sort;
