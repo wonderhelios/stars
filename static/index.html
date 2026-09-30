@@ -636,6 +636,57 @@
         color: #607188;
         font-size: 11px;
       }
+      .stop-comparison {
+        border: 1px solid #e6ebf2;
+        border-radius: 10px;
+        margin: 0 0 14px;
+        overflow: hidden;
+      }
+      .stop-comparison-head {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 12px 14px;
+        background: #f7f9fc;
+        border-bottom: 1px solid #e6ebf2;
+      }
+      .stop-comparison-head h3 {
+        margin: 0;
+        font-size: 13px;
+      }
+      .stop-comparison-head span {
+        color: #8b97a6;
+        font-size: 11px;
+      }
+      .stop-comparison table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      .stop-comparison th,
+      .stop-comparison td {
+        padding: 10px 14px;
+        border-bottom: 1px solid #edf1f6;
+        text-align: right;
+        font-size: 12px;
+      }
+      .stop-comparison th {
+        color: #8795a5;
+        font-size: 10px;
+        font-weight: 650;
+        background: #fff;
+      }
+      .stop-comparison th:first-child,
+      .stop-comparison td:first-child {
+        text-align: left;
+      }
+      .stop-comparison tbody tr:last-child td {
+        border-bottom: 0;
+      }
+      .stop-comparison td:first-child {
+        color: #33465f;
+        font-weight: 750;
+      }
       .simulation-detail {
         display: grid;
         grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
@@ -744,6 +795,8 @@
           grid-template-columns: repeat(2, 1fr);
         }
         .simulation-detail { grid-template-columns: 1fr; }
+        .stop-comparison { overflow-x: auto; }
+        .stop-comparison table { min-width: 620px; }
         .panel-head {
           align-items: flex-start;
           flex-direction: column;
@@ -1025,6 +1078,25 @@
             <div class="execution-metric"><span>单笔净收益中位数</span><strong id="execution-positions">—</strong></div>
           </div>
           <div id="execution-funnel" class="execution-funnel"></div>
+          <div class="stop-comparison">
+            <div class="stop-comparison-head">
+              <h3>止损阈值对比</h3>
+              <span>相同信号 · 相同采样点 · 相同成本</span>
+            </div>
+            <table aria-label="2%、3% 和 5% 止损实验对比">
+              <thead>
+                <tr>
+                  <th>价格逆向止损</th>
+                  <th>采样触线</th>
+                  <th>净胜率</th>
+                  <th>单笔均值</th>
+                  <th>单笔中位数</th>
+                  <th>等权收益合计</th>
+                </tr>
+              </thead>
+              <tbody id="stop-comparison-body"></tbody>
+            </table>
+          </div>
           <div class="simulation-detail">
             <div class="simulation-box">
               <h3>按信号时间累计的单笔均值</h3>
@@ -1370,28 +1442,47 @@
             ? id.replace(/USDT$/, "")
             : id;
       }
-      function sampledOutcome(row) {
+      const STOP_LEVELS = [2, 3, 5];
+      function sampledOutcome(row, stopPct = 2) {
         const entry = Number(row.entry_price);
         const close24 = Number(row.t24_price);
         if (!(entry > 0) || !(close24 > 0)) return null;
         for (const field of ["t1_price", "t4_price", "t8_price", "t24_price"]) {
           const observed = Number(row[field]);
-          if (observed > 0 && observed >= entry * 1.02) {
+          if (observed > 0 && observed >= entry * (1 + stopPct / 100)) {
             return { row, stopped: true, net: (entry - observed) / entry * 100 - COST };
           }
         }
         return { row, stopped: false, net: (entry - close24) / entry * 100 - COST };
       }
+      function stopScenario(rows, stopPct) {
+        const outcomes = rows.map((row) => sampledOutcome(row, stopPct)).filter(Boolean);
+        const returns = outcomes.map((outcome) => outcome.net).sort((a, b) => a - b);
+        const count = returns.length;
+        const total = returns.reduce((sum, value) => sum + value, 0);
+        return {
+          stopPct,
+          outcomes,
+          returns,
+          count,
+          stopped: outcomes.filter((outcome) => outcome.stopped).length,
+          wins: outcomes.filter((outcome) => outcome.net > 0).length,
+          total,
+          avg: count ? total / count : null,
+          median: count ? (returns[(count - 1) >> 1] + returns[count >> 1]) / 2 : null,
+        };
+      }
       function renderExecution() {
         const source = state.paper[state.venue];
         const rows = source && Array.isArray(source.data) ? source.data : [];
-        const outcomes = rows.map(sampledOutcome).filter(Boolean);
+        const scenarios = STOP_LEVELS.map((level) => stopScenario(rows, level));
+        const baseline = scenarios[0];
+        const outcomes = baseline.outcomes;
         const sorted = [...outcomes].sort((a, b) => a.row.triggered_at - b.row.triggered_at);
-        const returns = outcomes.map((o) => o.net).sort((a, b) => a - b);
-        const count = returns.length;
-        const stopped = outcomes.filter((o) => o.stopped).length;
-        const avg = count ? returns.reduce((a, b) => a + b, 0) / count : null;
-        const median = count ? (returns[(count - 1) >> 1] + returns[count >> 1]) / 2 : null;
+        const count = baseline.count;
+        const stopped = baseline.stopped;
+        const avg = baseline.avg;
+        const median = baseline.median;
         const signedPct = (value) => value == null ? "—" : `${value >= 0 ? "+" : ""}${value.toFixed(2)}%`;
         $("execution-status").textContent = source && source.at
           ? `${VENUE[state.venue]} · ${dateTime(source.at)}${source.error ? " · 使用上次数据" : ""}`
@@ -1402,7 +1493,7 @@
         $("execution-net").className = avg == null ? "" : avg >= 0 ? "pos" : "neg";
         $("execution-positions").textContent = signedPct(median);
         $("execution-positions").className = median == null ? "" : median >= 0 ? "pos" : "neg";
-        const wins = outcomes.filter((o) => o.net > 0).length;
+        const wins = baseline.wins;
         const hip3 = rows.filter((r) => String(r.inst_id || "").includes(":")).length;
         const funnel = $("execution-funnel");
         funnel.replaceChildren();
@@ -1416,6 +1507,11 @@
           span.textContent = tag;
           funnel.append(span);
         }
+        $("stop-comparison-body").innerHTML = scenarios.map((scenario) => {
+          const winRate = scenario.count ? scenario.wins / scenario.count * 100 : null;
+          const tone = (value) => value == null ? "" : value >= 0 ? "pos" : "neg";
+          return `<tr><td>${scenario.stopPct}%</td><td>${scenario.count ? `${scenario.stopped} / ${scenario.count}` : "—"}</td><td>${winRate == null ? "—" : `${winRate.toFixed(1)}%`}</td><td class="${tone(scenario.avg)}">${signedPct(scenario.avg)}</td><td class="${tone(scenario.median)}">${signedPct(scenario.median)}</td><td class="${tone(scenario.total)}">${signedPct(scenario.count ? scenario.total : null)}</td></tr>`;
+        }).join("");
         const chart = $("simulation-chart");
         chart.replaceChildren();
         let total = 0;
@@ -1452,7 +1548,7 @@
           row.append(coin, reason, pnl);
           tradeBox.append(row);
         }
-        $("execution-note").textContent = "覆盖本页所有已记录的信号，含 Hyperliquid HIP-3；每个币对独立计算，不限制本金、同时仓位数或杠杆，也不设单仓美元止盈。原采集条件仍要求价格异动、正资金费率和最低成交量。止损仅在 T+1/4/8/24 小时价格上检测，盘中触发可能漏记；按采样价计算并扣固定 0.15% 成本，不含真实滑点、资金费或强平。因此它是探索性信号实验，不是实盘回测。";
+        $("execution-note").textContent = "覆盖本页所有已记录的信号，含 Hyperliquid HIP-3；每个币对独立计算，不限制本金、同时仓位数或杠杆，也不设单仓美元止盈。2%、3%、5% 使用完全相同的信号样本。止损仅在 T+1/4/8/24 小时价格上检测，并按首次触线采样价退出；两次采样之间的触发和回落无法识别。每笔扣固定 0.15% 成本，不含真实滑点、资金费或强平。因此它是探索性信号实验，不是实盘回测。";
       }
       function renderPaper() {
         const source = state.paper[state.venue] || {
