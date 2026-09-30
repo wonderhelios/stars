@@ -20,7 +20,7 @@ pub struct WebState {
     pub okx_paper: Arc<PaperDb>,
     pub binance_paper: Arc<PaperDb>,
     pub hl_paper: Arc<PaperDb>,
-    /// Optional, loopback-only Hyper Fly dashboard port. Only safe aggregates are exposed.
+    /// Loopback-only Hyper Fly paper dashboard port. No live account is read.
     pub hyper_fly_research_port: Option<u16>,
 }
 
@@ -40,7 +40,27 @@ struct ExecutionSummary {
     realized_loss: Option<f64>,
     unknown_realized_count: Option<u64>,
     exchange_stale: bool,
+    mark_gaps: Option<u64>,
+    equity: Option<f64>,
+    curve: Vec<ResearchEquityPoint>,
+    trades: Vec<ResearchTrade>,
     error: Option<&'static str>,
+}
+
+#[derive(Serialize)]
+struct ResearchEquityPoint {
+    ts: i64,
+    equity: f64,
+}
+
+#[derive(Serialize)]
+struct ResearchTrade {
+    coin: String,
+    entry_at: Option<i64>,
+    exit_at: Option<i64>,
+    pnl: Option<f64>,
+    note: Option<String>,
+    entry_leverage: u64,
 }
 
 #[derive(Serialize)]
@@ -71,6 +91,10 @@ impl ExecutionSummary {
             realized_loss: None,
             unknown_realized_count: None,
             exchange_stale: false,
+            mark_gaps: None,
+            equity: None,
+            curve: Vec::new(),
+            trades: Vec::new(),
             error,
         }
     }
@@ -82,7 +106,7 @@ pub fn router(state: WebState) -> Router {
         .route("/api/paper/signals", get(get_okx_signals))
         .route("/api/binance/signals", get(get_binance_signals))
         .route("/api/hyperliquid/signals", get(get_hl_signals))
-        .route("/api/hyperliquid/execution", get(get_hl_execution))
+        .route("/api/hyperliquid/simulation", get(get_hl_execution))
         .route("/api/health", get(health))
         .fallback_service(ServeDir::new("static"))
         .layer(CompressionLayer::new())
@@ -136,21 +160,21 @@ async fn read_hl_execution(state: &WebState) -> ExecutionSummary {
         Ok(client) => client,
         Err(_) => return ExecutionSummary::unavailable(true, Some("读取服务初始化失败")),
     };
-    let url = format!("http://127.0.0.1:{port}/api/state");
+    let url = format!("http://127.0.0.1:{port}/api/research");
     let result = client.get(url).send().await;
     let data: Value = match result {
         Ok(response) if response.status().is_success() => match response.json().await {
             Ok(value) => value,
-            Err(_) => return ExecutionSummary::unavailable(true, Some("执行数据解析失败")),
+            Err(_) => return ExecutionSummary::unavailable(true, Some("模拟数据解析失败")),
         },
-        _ => return ExecutionSummary::unavailable(true, Some("本机执行服务暂时不可用")),
+        _ => return ExecutionSummary::unavailable(true, Some("本机模拟服务暂时不可用")),
     };
     execution_summary(&data)
-        .unwrap_or_else(|| ExecutionSummary::unavailable(true, Some("执行服务返回的数据不完整")))
+        .unwrap_or_else(|| ExecutionSummary::unavailable(true, Some("模拟服务返回的数据不完整")))
 }
 
 fn execution_summary(data: &Value) -> Option<ExecutionSummary> {
-    if data.get("mode")?.as_str()? != "live" {
+    if data.get("mode")?.as_str()? != "paper" {
         return None;
     }
     let profit = data.get("realized_profit")?.as_f64()?;
@@ -182,15 +206,30 @@ fn execution_summary(data: &Value) -> Option<ExecutionSummary> {
             .and_then(Value::as_str)
             .filter(|v| *v == "daily" || *v == "total")
             .map(str::to_owned),
-        active_positions: data.get("positions")?.as_array().map(Vec::len),
-        max_positions: data
-            .get("limits")
-            .and_then(|v| v.get("max_positions"))
-            .and_then(Value::as_u64),
+        active_positions: data.get("active_positions").and_then(Value::as_u64).map(|n| n as usize),
+        max_positions: data.get("max_positions").and_then(Value::as_u64),
         realized_profit: Some(profit),
         realized_loss: Some(loss),
         unknown_realized_count: data.get("unknown_realized_count").and_then(Value::as_u64),
-        exchange_stale: data.get("exchange_error").is_some_and(|v| !v.is_null()),
+        exchange_stale: data.get("exchange_stale").and_then(Value::as_bool).unwrap_or(true),
+        mark_gaps: data.get("paper_mark_gaps").and_then(Value::as_u64),
+        equity: data.get("equity").and_then(Value::as_f64).filter(|v| v.is_finite()),
+        curve: data.get("curve").and_then(Value::as_array).map(|rows| {
+            rows.iter().filter_map(|row| Some(ResearchEquityPoint {
+                ts: row.get("ts")?.as_i64()?,
+                equity: row.get("equity")?.as_f64().filter(|v| v.is_finite())?,
+            })).collect()
+        }).unwrap_or_default(),
+        trades: data.get("trades").and_then(Value::as_array).map(|rows| {
+            rows.iter().filter_map(|row| Some(ResearchTrade {
+                coin: row.get("coin")?.as_str()?.to_owned(),
+                entry_at: row.get("entry_at").and_then(Value::as_i64),
+                exit_at: row.get("exit_at").and_then(Value::as_i64),
+                pnl: row.get("pnl").and_then(Value::as_f64).filter(|v| v.is_finite()),
+                note: row.get("note").and_then(Value::as_str).map(str::to_owned),
+                entry_leverage: row.get("entry_leverage")?.as_u64()?,
+            })).take(100).collect()
+        }).unwrap_or_default(),
         error: None,
     })
 }
@@ -210,11 +249,13 @@ mod tests {
     #[test]
     fn execution_summary_exposes_aggregates_without_account_or_trades() {
         let raw = json!({
-            "mode":"live", "account":"private-address", "as_of_ms":123,
+            "mode":"paper", "account":"private-address", "as_of_ms":123,
             "last_scan_ms":100, "scan_filters":{"total":234,"eligible":2},
             "paused":false, "halted":null, "risk_limit":{"kind":"daily"},
-            "positions":[{"coin":"PRIVATE"}], "trades":[{"coin":"PRIVATE"}],
-            "limits":{"max_positions":5},
+            "active_positions":1,
+            "trades":[{"coin":"TEST","entry_at":100,"exit_at":200,"pnl":2.5,"note":"24h","entry_leverage":3}],
+            "curve":[{"ts":100,"equity":500.0}], "equity":500.0,
+            "max_positions":5,
             "realized_profit":12.0, "realized_loss":-3.0,
             "unknown_realized_count":1
         });
@@ -223,8 +264,10 @@ mod tests {
         assert_eq!(output["risk_limit"], "daily");
         assert_eq!(output["active_positions"], 1);
         assert_eq!(output["max_positions"], 5);
+        assert_eq!(output["trades"][0]["coin"], "TEST");
+        assert_eq!(output["curve"][0]["equity"], 500.0);
         assert!(output.get("account").is_none());
         assert!(!output.to_string().contains("PRIVATE"));
-        assert!(execution_summary(&json!({"mode":"paper"})).is_none());
+        assert!(execution_summary(&json!({"mode":"live"})).is_none());
     }
 }
