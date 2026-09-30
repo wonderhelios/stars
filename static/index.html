@@ -698,6 +698,36 @@
         color: #8b97a6;
         font-size: 10px;
       }
+      .lab-panel {
+        margin-bottom: 24px;
+      }
+      .lab-panel .panel-head {
+        align-items: flex-start;
+      }
+      .lab-status {
+        color: #8795a5;
+        font-size: 11px;
+        line-height: 1.55;
+        text-align: right;
+        max-width: 460px;
+      }
+      .lab-table td,
+      .lab-table th {
+        white-space: nowrap;
+      }
+      .lab-table td:first-child {
+        font-weight: 700;
+      }
+      .candidate-rank {
+        display: inline-grid;
+        place-items: center;
+        width: 23px;
+        height: 23px;
+        border-radius: 7px;
+        color: var(--blue);
+        background: #edf3ff;
+        font-size: 10px;
+      }
       .simulation-detail {
         display: grid;
         grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
@@ -1138,6 +1168,57 @@
           </div>
           <p id="execution-note" class="execution-note">止损仅按 T+1/4/8/24 小时价格采样估算；不含真实成交、资金费或强平，不是可交易组合收益。</p>
         </section>
+        <section class="panel lab-panel" aria-label="策略候选发现">
+          <div class="panel-head">
+            <div>
+              <h2>策略候选发现</h2>
+              <p class="sub">自动组合交易所、信号形态、持仓时间、止损和仓位上限，并按时间切分样本</p>
+            </div>
+            <div id="strategy-lab-status" class="lab-status">等待三平台信号数据</div>
+          </div>
+          <div id="strategy-lab-empty" class="empty hidden"></div>
+          <div id="strategy-lab-table-wrap" class="table-scroll hidden">
+            <table class="lab-table">
+              <thead><tr><th>排名</th><th>交易所</th><th>形态</th><th>持有</th><th>止损</th><th>仓位</th><th>前 70%</th><th>后 30%</th><th>样本</th><th>稳健分</th></tr></thead>
+              <tbody id="strategy-lab-body"></tbody>
+            </table>
+          </div>
+          <div class="panel-foot"><span>稳健分取训练段与验证段单笔均值的较低者</span><span>候选排名存在多重测试偏差，需继续用新数据验证</span></div>
+        </section>
+        <section class="panel lab-panel" aria-label="跨平台同币种信号">
+          <div class="panel-head">
+            <div>
+              <h2>跨平台同币种信号</h2>
+              <p class="sub">匹配 15 分钟内在不同交易所出现的相同底层币种，检验信号是否跨平台成立</p>
+            </div>
+            <div id="cross-signal-status" class="lab-status">等待三平台信号数据</div>
+          </div>
+          <div id="cross-signal-empty" class="empty hidden"></div>
+          <div id="cross-signal-table-wrap" class="table-scroll hidden">
+            <table class="lab-table">
+              <thead><tr><th>平台组合</th><th>匹配组</th><th>币种数</th><th>双边做空都盈利</th><th>单腿平均</th><th>收益差均值</th></tr></thead>
+              <tbody id="cross-signal-body"></tbody>
+            </table>
+          </div>
+          <div class="panel-foot"><span>使用两边均具备 T+24h 的信号，均扣 0.15% 成本</span><span>用于验证跨平台一致性，不等同于市场中性对冲收益</span></div>
+        </section>
+        <section class="panel lab-panel" aria-label="跨平台资金费率机会">
+          <div class="panel-head">
+            <div>
+              <h2>跨平台资金费率中性候选</h2>
+              <p class="sub">同币种做空高费率平台、做多低费率平台，费率按各自结算周期统一换算</p>
+            </div>
+            <div id="funding-lab-status" class="lab-status">部署新版后开始积累全市场小时快照</div>
+          </div>
+          <div id="funding-lab-empty" class="empty hidden"></div>
+          <div id="funding-lab-table-wrap" class="table-scroll hidden">
+            <table class="lab-table">
+              <thead><tr><th>币种</th><th>做空 / 收高费率</th><th>做多 / 付低费率</th><th>费率差 APR</th><th>日毛收益</th><th>价格偏离</th><th>成本回收估算</th><th>最低成交额</th></tr></thead>
+              <tbody id="funding-lab-body"></tbody>
+            </table>
+          </div>
+          <div class="panel-foot"><span>固定双腿往返成本估算 0.30%，另计当前报价摩擦</span><span>当前为候选扫描；历史实际费率到账、基差与成交回放需等待快照积累</span></div>
+        </section>
         <div class="panel">
           <div class="panel-head">
             <div>
@@ -1209,7 +1290,8 @@
           okx: "/api/paper/signals",
           binance: "/api/binance/signals",
           hyperliquid: "/api/hyperliquid/signals",
-        };
+        },
+        FUNDING_API = "/api/research/funding/latest";
       const VENUE = {
         okx: "OKX",
         binance: "Binance",
@@ -1233,6 +1315,7 @@
         venue: "okx",
         market: { data: [], at: 0, error: null, failures: 0 },
         paper: {},
+        fundingResearch: { data: [], at: 0, error: null, loading: false },
         sort: "volume_quote_24h",
         asc: false,
         hot: false,
@@ -1472,17 +1555,23 @@
       }
       const STOP_LEVELS = [2, 3, 5];
       const POSITION_LIMITS = [1, 3, 5];
-      function sampledOutcome(row, stopPct = 2) {
+      const OUTCOME_SAMPLES = [["t1_price", 1], ["t4_price", 4], ["t8_price", 8], ["t24_price", 24]];
+      function sampledOutcomeAt(row, stopPct, holdHours) {
         const entry = Number(row.entry_price);
-        const close24 = Number(row.t24_price);
-        if (!(entry > 0) || !(close24 > 0)) return null;
-        for (const [field, exitHours] of [["t1_price", 1], ["t4_price", 4], ["t8_price", 8], ["t24_price", 24]]) {
+        const target = OUTCOME_SAMPLES.find(([, hours]) => hours === holdHours);
+        const close = target ? Number(row[target[0]]) : 0;
+        if (!(entry > 0) || !(close > 0)) return null;
+        for (const [field, exitHours] of OUTCOME_SAMPLES) {
+          if (exitHours > holdHours) break;
           const observed = Number(row[field]);
-          if (observed > 0 && observed >= entry * (1 + stopPct / 100)) {
+          if (stopPct != null && observed > 0 && observed >= entry * (1 + stopPct / 100)) {
             return { row, stopped: true, exitHours, net: (entry - observed) / entry * 100 - COST };
           }
         }
-        return { row, stopped: false, exitHours: 24, net: (entry - close24) / entry * 100 - COST };
+        return { row, stopped: false, exitHours: holdHours, net: (entry - close) / entry * 100 - COST };
+      }
+      function sampledOutcome(row, stopPct = 2) {
+        return sampledOutcomeAt(row, stopPct, 24);
       }
       function stopScenario(rows, stopPct) {
         const outcomes = rows.map((row) => sampledOutcome(row, stopPct)).filter(Boolean);
@@ -1535,6 +1624,7 @@
           winRate: selected.length ? wins / selected.length * 100 : null,
           skippedCapacity,
           skippedContract,
+          selected,
         };
       }
       function renderExecution() {
@@ -1623,6 +1713,194 @@
         }
         $("execution-note").textContent = "全样本统计覆盖本页所有已记录的信号，含 Hyperliquid HIP-3。容量实验按触发时间先到先得，限制同时持仓为 1、3、5 仓，每仓等额；止损采样触发后释放仓位，未触发则持有至 24 小时。2%、3%、5% 使用完全相同的信号样本。止损仅在 T+1/4/8/24 小时价格上检测，并按首次触线采样价退出；两次采样之间的触发和回落无法识别。每笔扣固定 0.15% 成本，不含真实滑点、资金费、强平和复利。因此它是探索性容量实验，不是实盘回测。";
       }
+      function mean(values) {
+        return values.length ? values.reduce((sum, value) => sum + value, 0) / values.length : null;
+      }
+      function normalizeCoin(venue, instId) {
+        let value = String(instId || "");
+        if (venue === "okx") return value.replace(/-USDT-SWAP$/, "");
+        if (venue === "binance") return value.replace(/USDT$/, "");
+        return value.replace(/^[^:]+:/, "");
+      }
+      function renderStrategyLab() {
+        const kinds = [["", "全部形态"], ...Object.entries(KINDS)];
+        const holdLevels = [1, 4, 8, 24];
+        const stopLevels = [null, 2, 3, 5];
+        const candidates = [];
+        let tested = 0;
+        for (const venue of Object.keys(API)) {
+          const source = state.paper[venue];
+          if (!source || !Array.isArray(source.data)) continue;
+          for (const [kind, kindLabel] of kinds) {
+            const rows = kind ? source.data.filter((row) => row.kind === kind) : source.data;
+            for (const holdHours of holdLevels) {
+              for (const stopPct of stopLevels) {
+                const outcomes = rows
+                  .map((row) => sampledOutcomeAt(row, stopPct, holdHours))
+                  .filter(Boolean);
+                for (const maxOpen of POSITION_LIMITS) {
+                  tested++;
+                  const selected = capacityScenario(outcomes, maxOpen).selected;
+                  if (selected.length < 6) continue;
+                  const split = Math.max(2, Math.min(selected.length - 2, Math.floor(selected.length * 0.7)));
+                  const training = selected.slice(0, split).map((outcome) => outcome.net);
+                  const validation = selected.slice(split).map((outcome) => outcome.net);
+                  const trainMean = mean(training);
+                  const validationMean = mean(validation);
+                  candidates.push({
+                    venue,
+                    kindLabel,
+                    holdHours,
+                    stopPct,
+                    maxOpen,
+                    trainMean,
+                    validationMean,
+                    trainN: training.length,
+                    validationN: validation.length,
+                    robust: Math.min(trainMean, validationMean),
+                  });
+                }
+              }
+            }
+          }
+        }
+        candidates.sort((a, b) => b.robust - a.robust || b.validationN - a.validationN);
+        const robust = candidates.filter((candidate) => candidate.trainMean > 0 && candidate.validationMean > 0);
+        const shown = (robust.length ? robust : candidates).slice(0, 12);
+        $("strategy-lab-status").textContent = tested
+          ? `已测试 ${tested} 组参数 · ${robust.length} 组训练段和验证段同时为正`
+          : "等待三平台信号数据";
+        $("strategy-lab-table-wrap").classList.toggle("hidden", !shown.length);
+        $("strategy-lab-empty").classList.toggle("hidden", !!shown.length);
+        if (!shown.length) {
+          $("strategy-lab-empty").innerHTML = '<div class="empty-mark">◇</div><strong>样本还不足</strong><small>每组至少需要 6 笔，并为后 30% 保留验证样本</small>';
+        }
+        $("strategy-lab-body").innerHTML = shown.map((candidate, index) => {
+          const tone = candidate.robust >= 0 ? "pos" : "neg";
+          return `<tr><td><span class="candidate-rank">${index + 1}</span></td><td>${escapeHtml(VENUE[candidate.venue])}</td><td>${escapeHtml(candidate.kindLabel)}</td><td>${candidate.holdHours}h</td><td>${candidate.stopPct == null ? "不设" : `${candidate.stopPct}%`}</td><td>${candidate.maxOpen}</td><td class="${candidate.trainMean >= 0 ? "pos" : "neg"}">${signed(candidate.trainMean)} · n=${candidate.trainN}</td><td class="${candidate.validationMean >= 0 ? "pos" : "neg"}">${signed(candidate.validationMean)} · n=${candidate.validationN}</td><td>${candidate.trainN + candidate.validationN}</td><td class="${tone}">${signed(candidate.robust)}</td></tr>`;
+        }).join("");
+      }
+      function nearestSignalMatches(leftRows, rightRows, toleranceMs) {
+        const rightByCoin = new Map();
+        for (const item of rightRows) {
+          const coin = normalizeCoin(item.venue, item.row.inst_id);
+          if (!rightByCoin.has(coin)) rightByCoin.set(coin, []);
+          rightByCoin.get(coin).push(item);
+        }
+        const used = new Set();
+        const matches = [];
+        for (const left of leftRows) {
+          const coin = normalizeCoin(left.venue, left.row.inst_id);
+          let best = null;
+          let bestGap = toleranceMs + 1;
+          for (const right of rightByCoin.get(coin) || []) {
+            const key = `${right.venue}:${right.row.id}`;
+            const gap = Math.abs(Number(left.row.triggered_at) - Number(right.row.triggered_at));
+            if (!used.has(key) && gap <= toleranceMs && gap < bestGap) {
+              best = right;
+              bestGap = gap;
+            }
+          }
+          if (best) {
+            used.add(`${best.venue}:${best.row.id}`);
+            matches.push({ coin, left, right: best });
+          }
+        }
+        return matches;
+      }
+      function renderCrossSignals() {
+        const venueRows = {};
+        for (const venue of Object.keys(API)) {
+          const source = state.paper[venue];
+          venueRows[venue] = (source && Array.isArray(source.data) ? source.data : [])
+            .filter((row) => net(row, "t24_price") != null)
+            .map((row) => ({ venue, row }));
+        }
+        const pairs = [["okx", "binance"], ["okx", "hyperliquid"], ["binance", "hyperliquid"]];
+        const summaries = pairs.map(([leftVenue, rightVenue]) => {
+          const matches = nearestSignalMatches(venueRows[leftVenue], venueRows[rightVenue], 15 * 60 * 1000);
+          const completed = matches.map((match) => ({
+            ...match,
+            leftNet: net(match.left.row, "t24_price"),
+            rightNet: net(match.right.row, "t24_price"),
+          }));
+          const legs = completed.flatMap((match) => [match.leftNet, match.rightNet]);
+          return {
+            label: `${VENUE[leftVenue]} / ${VENUE[rightVenue]}`,
+            count: completed.length,
+            coins: new Set(completed.map((match) => match.coin)).size,
+            bothWin: completed.length ? completed.filter((match) => match.leftNet > 0 && match.rightNet > 0).length / completed.length * 100 : null,
+            legMean: mean(legs),
+            divergence: mean(completed.map((match) => Math.abs(match.leftNet - match.rightNet))),
+          };
+        }).filter((summary) => summary.count);
+        const total = summaries.reduce((sum, summary) => sum + summary.count, 0);
+        $("cross-signal-status").textContent = total
+          ? `找到 ${total} 组 15 分钟内的跨平台同币信号`
+          : "尚无两边均完成 24 小时观察的匹配信号";
+        $("cross-signal-table-wrap").classList.toggle("hidden", !summaries.length);
+        $("cross-signal-empty").classList.toggle("hidden", !!summaries.length);
+        if (!summaries.length) {
+          $("cross-signal-empty").innerHTML = '<div class="empty-mark">◇</div><strong>暂无可比较样本</strong><small>三平台扫描错开，匹配窗口为 15 分钟</small>';
+        }
+        $("cross-signal-body").innerHTML = summaries.map((summary) => `<tr><td>${escapeHtml(summary.label)}</td><td>${summary.count}</td><td>${summary.coins}</td><td>${summary.bothWin.toFixed(1)}%</td><td class="${summary.legMean >= 0 ? "pos" : "neg"}">${signed(summary.legMean)}</td><td>${signed(summary.divergence)}</td></tr>`).join("");
+      }
+      function quoteSpreadPct(row) {
+        const bid = Number(row.bid_price), ask = Number(row.ask_price);
+        const mid = (bid + ask) / 2;
+        return bid > 0 && ask >= bid && mid > 0 ? (ask - bid) / mid * 100 : 0;
+      }
+      function renderFundingLab() {
+        const source = state.fundingResearch;
+        const rows = Array.isArray(source.data) ? source.data : [];
+        const fresh = rows.filter((row) => Date.now() - Number(row.observed_at) < 3 * 60 * 60 * 1000 && Number(row.volume_quote_24h) >= 500000 && Number(row.funding_period_hours) > 0);
+        const grouped = new Map();
+        for (const row of fresh) {
+          const venueKey = row.venue === "OKX" ? "okx" : row.venue === "Binance" ? "binance" : "hyperliquid";
+          const coin = normalizeCoin(venueKey, row.inst_id);
+          row._apr = Number(row.funding_rate) / Number(row.funding_period_hours) * 24 * 365 * 100;
+          if (!grouped.has(coin)) grouped.set(coin, []);
+          grouped.get(coin).push(row);
+        }
+        const opportunities = [];
+        for (const [coin, markets] of grouped) {
+          let best = null;
+          for (const short of markets) for (const long of markets) {
+            if (short.venue === long.venue || short._apr <= long._apr) continue;
+            const diffApr = short._apr - long._apr;
+            if (!best || diffApr > best.diffApr) best = { coin, short, long, diffApr };
+          }
+          if (!best) continue;
+          best.daily = best.diffApr / 365;
+          best.cost = 0.30 + quoteSpreadPct(best.short) + quoteSpreadPct(best.long);
+          best.breakEvenDays = best.daily > 0 ? best.cost / best.daily : null;
+          const shortPrice = Number(best.short.reference_price), longPrice = Number(best.long.reference_price);
+          const ratio = shortPrice / longPrice;
+          best.basis = ratio >= 0.5 && ratio <= 2 ? Math.abs(ratio - 1) * 100 : null;
+          best.minVolume = Math.min(Number(best.short.volume_quote_24h), Number(best.long.volume_quote_24h));
+          opportunities.push(best);
+        }
+        opportunities.sort((a, b) => b.diffApr - a.diffApr);
+        const shown = opportunities.slice(0, 15);
+        const latest = fresh.length ? Math.max(...fresh.map((row) => Number(row.observed_at))) : 0;
+        $("funding-lab-status").textContent = source.error
+          ? `费率快照暂不可用 · ${source.error}`
+          : shown.length
+            ? `${fresh.length} 个新鲜市场 · 更新于 ${dateTime(latest)}`
+            : "部署新版并完成三平台扫描后开始显示";
+        $("funding-lab-table-wrap").classList.toggle("hidden", !shown.length);
+        $("funding-lab-empty").classList.toggle("hidden", !!shown.length);
+        if (!shown.length) {
+          $("funding-lab-empty").innerHTML = '<div class="empty-mark">◇</div><strong>正在积累全市场费率快照</strong><small>只展示两边 24h 成交额均不低于 50 万美元的同币种</small>';
+        }
+        const leg = (row) => `${escapeHtml(row.venue)}<br><span class="muted">${(Number(row.funding_rate) * 100).toFixed(4)}% / ${row.funding_period_hours}h</span>`;
+        $("funding-lab-body").innerHTML = shown.map((item) => `<tr><td>${escapeHtml(item.coin)}</td><td>${leg(item.short)}</td><td>${leg(item.long)}</td><td class="pos">+${item.diffApr.toFixed(2)}%</td><td class="pos">+${item.daily.toFixed(3)}%</td><td>${item.basis == null ? "单位不可比" : `${item.basis.toFixed(2)}%`}</td><td>${item.breakEvenDays == null ? "—" : `${item.breakEvenDays.toFixed(1)} 天`}</td><td>${compact(item.minVolume)}</td></tr>`).join("");
+      }
+      function renderResearchLabs() {
+        renderStrategyLab();
+        renderCrossSignals();
+        renderFundingLab();
+      }
       function renderPaper() {
         const source = state.paper[state.venue] || {
             data: [],
@@ -1688,6 +1966,7 @@
         $("paper-empty").innerHTML =
           `<div class="empty-mark">◇</div><strong>${data.length ? "没有匹配的信号" : source.error ? "信号暂不可用" : "暂无信号"}</strong><small>${data.length ? "试试其他币种" : source.error ? "连接恢复后会自动更新" : "满足条件的首次信号会出现在这里"}</small>`;
         renderExecution();
+        renderResearchLabs();
         updateConnection();
       }
       async function pollMarket() {
@@ -1742,20 +2021,39 @@
           source.failures++;
         } finally {
           source.loading = false;
-          if (state.view === "research" && state.venue === venue) renderPaper();
+          if (state.view === "research") {
+            if (state.venue === venue) renderPaper();
+            else renderResearchLabs();
+          }
+        }
+      }
+      async function loadFundingResearch() {
+        const source = state.fundingResearch;
+        if (source.loading) return;
+        source.loading = true;
+        try {
+          const data = await getJson(FUNDING_API);
+          Object.assign(source, { data, at: Date.now(), error: null });
+          save("funding-research", data, source.at);
+        } catch (error) {
+          source.error = error.name === "AbortError" ? "请求超时" : error.message;
+        } finally {
+          source.loading = false;
+          if (state.view === "research") renderFundingLab();
         }
       }
       async function pollPaper() {
         if (state.view === "research") {
-          await loadPaper(state.venue);
+          await Promise.all([...Object.keys(API).map(loadPaper), loadFundingResearch()]);
         }
-        setTimeout(pollPaper, 5000);
+        setTimeout(pollPaper, 30000);
       }
       for (const [key, value] of Object.entries({
         market: restore("market"),
         okx: restore("paper:okx"),
         binance: restore("paper:binance"),
         hyperliquid: restore("paper:hyperliquid"),
+        fundingResearch: restore("funding-research"),
       })) {
         if (!value) continue;
         if (key === "market")
@@ -1764,6 +2062,13 @@
             error: null,
             checking: true,
           });
+        else if (key === "fundingResearch")
+          state.fundingResearch = {
+            ...state.fundingResearch,
+            ...value,
+            error: null,
+            loading: false,
+          };
         else
           state.paper[key] = {
             ...value,
@@ -1785,7 +2090,7 @@
           );
           if (state.view === "research") {
             renderPaper();
-            loadPaper(state.venue);
+            Promise.all([...Object.keys(API).map(loadPaper), loadFundingResearch()]);
           } else renderMarket();
         });
       for (const button of document.querySelectorAll(".segment"))
@@ -1795,7 +2100,7 @@
             .querySelectorAll(".segment")
             .forEach((el) => el.classList.toggle("active", el === button));
           renderPaper();
-          loadPaper(state.venue);
+          Promise.all([...Object.keys(API).map(loadPaper), loadFundingResearch()]);
         });
       for (const th of document.querySelectorAll("#market-table th.sortable"))
         th.addEventListener("click", () => {

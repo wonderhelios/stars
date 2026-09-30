@@ -6,7 +6,7 @@ use tokio::time::interval;
 use tracing::{error, info};
 
 use super::rest::HyperliquidRestClient;
-use crate::paper_store::{due_outcomes, CandidateSnapshot, PaperDb};
+use crate::paper_store::{due_outcomes, CandidateSnapshot, FundingSnapshot, PaperDb};
 use crate::signal::{classify, Signal};
 
 pub type HyperliquidPaperDb = PaperDb;
@@ -26,6 +26,30 @@ pub async fn scan_once(
     let scan_started_at = now_ms();
     let (tickers, coverage_complete) = client.all_perp_ctxs_all_dexes().await?;
     let quote_at = now_ms();
+    let funding_snapshots = tickers
+        .iter()
+        .filter(|ticker| ticker.day_ntl_vlm >= Decimal::from(100_000))
+        .map(|ticker| FundingSnapshot {
+            observed_at: scan_started_at,
+            inst_id: ticker.coin.clone(),
+            funding_rate: ticker.funding,
+            funding_period_hours: 1,
+            next_funding_at: Some(((scan_started_at / 3_600_000) + 1) * 3_600_000),
+            prior_24h_return: ticker.prior_24h_pct(),
+            reference_price: ticker.mark_px,
+            bid_price: ticker.impact_bid,
+            ask_price: ticker.impact_ask,
+            quote_kind: Some("impact"),
+            quote_observed_at: (ticker.impact_bid.is_some() && ticker.impact_ask.is_some())
+                .then_some(quote_at),
+            volume_quote_24h: ticker.day_ntl_vlm,
+            open_interest_base: Some(ticker.open_interest),
+        })
+        .collect();
+    match db.record_funding_snapshots(funding_snapshots).await {
+        Ok(count) => info!("HL funding research snapshot: {} markets", count),
+        Err(error) => error!("HL funding research snapshot: {}", error),
+    }
     let mut triggered = 0usize;
     let mut candidates = 0usize;
     let mut recorded = 0usize;

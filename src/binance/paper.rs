@@ -7,7 +7,7 @@ use tokio::time::interval;
 use tracing::{error, info};
 
 use super::rest::BinanceRestClient;
-use crate::paper_store::{due_outcomes, CandidateSnapshot, PaperDb};
+use crate::paper_store::{due_outcomes, CandidateSnapshot, FundingSnapshot, PaperDb};
 use crate::signal::{classify, Signal};
 
 pub type BinancePaperDb = PaperDb;
@@ -88,6 +88,39 @@ pub async fn scan_once(
             None
         }
     };
+    let funding_snapshots = tickers
+        .iter()
+        .filter(|ticker| ticker.vol_quote >= Decimal::from(100_000))
+        .filter_map(|ticker| {
+            let rate = funding.get(&ticker.symbol)?;
+            let quote = quotes
+                .as_ref()
+                .and_then(|rows| rows.get(&ticker.symbol))
+                .copied();
+            Some(FundingSnapshot {
+                observed_at: scan_started_at,
+                inst_id: ticker.symbol.clone(),
+                funding_rate: rate.rate,
+                funding_period_hours: intervals
+                    .as_ref()
+                    .map(|rows| *rows.get(&ticker.symbol).unwrap_or(&8))
+                    .unwrap_or(8),
+                next_funding_at: rate.next_funding_at,
+                prior_24h_return: ticker.prior_24h_pct(),
+                reference_price: ticker.last,
+                bid_price: quote.map(|(bid, _)| bid),
+                ask_price: quote.map(|(_, ask)| ask),
+                quote_kind: Some("top"),
+                quote_observed_at: quote.map(|_| quote_at),
+                volume_quote_24h: ticker.vol_quote,
+                open_interest_base: None,
+            })
+        })
+        .collect();
+    match db.record_funding_snapshots(funding_snapshots).await {
+        Ok(count) => info!("BN funding research snapshot: {} markets", count),
+        Err(error) => error!("BN funding research snapshot: {}", error),
+    }
     let mut triggered = 0usize;
     let mut candidates = 0usize;
     let mut recorded = 0usize;

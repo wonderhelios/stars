@@ -8,7 +8,7 @@ use tracing::{error, info};
 
 use crate::okx::RestClient;
 pub use crate::paper_store::PaperDb;
-use crate::paper_store::{due_outcomes, CandidateSnapshot, SignalRow};
+use crate::paper_store::{due_outcomes, CandidateSnapshot, FundingSnapshot, SignalRow};
 use crate::signal::{classify, Signal, TRADE_COST_PCT};
 
 const SCAN_INTERVAL_SECS: u64 = 300;
@@ -23,6 +23,43 @@ pub async fn scan_once(
 ) -> anyhow::Result<usize> {
     let scan_started_at = now_ms();
     let tickers = client.all_tickers_usdt_swap().await?;
+    let all_funding = match client.all_funding_now().await {
+        Ok(rows) => Some(rows),
+        Err(error) => {
+            error!("OKX whole-market funding snapshot unavailable: {}", error);
+            None
+        }
+    };
+
+    if let Some(funding) = &all_funding {
+        let snapshots = tickers
+            .iter()
+            .filter(|ticker| ticker.volume_quote_24h() >= Decimal::from(100_000))
+            .filter_map(|ticker| {
+                let rate = funding.get(&ticker.inst_id)?;
+                Some(FundingSnapshot {
+                    observed_at: scan_started_at,
+                    inst_id: ticker.inst_id.clone(),
+                    funding_rate: rate.rate,
+                    funding_period_hours: rate.period_hours?,
+                    next_funding_at: rate.next_funding_at,
+                    prior_24h_return: ticker.prior_24h_pct(),
+                    reference_price: ticker.last,
+                    bid_price: ticker.bid,
+                    ask_price: ticker.ask,
+                    quote_kind: Some("top"),
+                    quote_observed_at: (ticker.bid.is_some() && ticker.ask.is_some())
+                        .then_some(scan_started_at),
+                    volume_quote_24h: ticker.volume_quote_24h(),
+                    open_interest_base: None,
+                })
+            })
+            .collect();
+        match db.record_funding_snapshots(snapshots).await {
+            Ok(count) => info!("OKX funding research snapshot: {} markets", count),
+            Err(error) => error!("OKX funding research snapshot: {}", error),
+        }
+    }
 
     let mut triggered = 0usize;
     let mut candidates = 0usize;
@@ -45,12 +82,20 @@ pub async fn scan_once(
 
         candidates += 1;
 
-        let funding_now = match client.funding_now(&t.inst_id).await {
-            Ok(f) => f,
-            Err(e) => {
-                error!("funding {}: {}", t.inst_id, e);
-                failed += 1;
-                continue;
+        let funding_now = if let Some(row) = all_funding
+            .as_ref()
+            .and_then(|rows| rows.get(&t.inst_id))
+            .cloned()
+        {
+            row
+        } else {
+            match client.funding_now(&t.inst_id).await {
+                Ok(row) => row,
+                Err(error) => {
+                    error!("funding {}: {}", t.inst_id, error);
+                    failed += 1;
+                    continue;
+                }
             }
         };
         let funding = funding_now.rate;

@@ -1,13 +1,8 @@
-use axum::{
-    extract::State,
-    http::StatusCode,
-    routing::get,
-    Json, Router,
-};
+use axum::{extract::State, http::StatusCode, routing::get, Json, Router};
 use std::sync::Arc;
 use tower_http::{compression::CompressionLayer, cors::CorsLayer, services::ServeDir};
 
-use crate::paper_store::{PaperDb, SignalRow};
+use crate::paper_store::{FundingSnapshotRow, PaperDb, SignalRow};
 use crate::state::SharedState;
 use crate::types::MarketSnapshot;
 
@@ -25,6 +20,7 @@ pub fn router(state: WebState) -> Router {
         .route("/api/paper/signals", get(get_okx_signals))
         .route("/api/binance/signals", get(get_binance_signals))
         .route("/api/hyperliquid/signals", get(get_hl_signals))
+        .route("/api/research/funding/latest", get(get_latest_funding))
         .route("/api/health", get(health))
         .fallback_service(ServeDir::new("static"))
         .layer(CompressionLayer::new())
@@ -64,4 +60,44 @@ async fn read_signals(db: &PaperDb) -> Result<Json<Vec<SignalRow>>, StatusCode> 
         tracing::error!("paper signals read failed: {}", error);
         StatusCode::SERVICE_UNAVAILABLE
     })
+}
+
+#[derive(serde::Serialize)]
+struct VenueFundingSnapshot {
+    venue: &'static str,
+    #[serde(flatten)]
+    snapshot: FundingSnapshotRow,
+}
+
+async fn get_latest_funding(
+    State(state): State<WebState>,
+) -> Result<Json<Vec<VenueFundingSnapshot>>, StatusCode> {
+    let (okx, binance, hyperliquid) = tokio::join!(
+        state.okx_paper.latest_funding_snapshots(),
+        state.binance_paper.latest_funding_snapshots(),
+        state.hl_paper.latest_funding_snapshots(),
+    );
+    let mut result = Vec::new();
+    let mut succeeded = 0usize;
+    for (venue, rows) in [
+        ("OKX", okx),
+        ("Binance", binance),
+        ("Hyperliquid", hyperliquid),
+    ] {
+        match rows {
+            Ok(rows) => {
+                succeeded += 1;
+                result.extend(
+                    rows.into_iter()
+                        .map(|snapshot| VenueFundingSnapshot { venue, snapshot }),
+                );
+            }
+            Err(error) => tracing::error!("{} funding research read failed: {}", venue, error),
+        }
+    }
+    if succeeded == 0 {
+        Err(StatusCode::SERVICE_UNAVAILABLE)
+    } else {
+        Ok(Json(result))
+    }
 }

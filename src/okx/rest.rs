@@ -1,5 +1,6 @@
 use reqwest::Client;
 use rust_decimal::Decimal;
+use std::collections::HashMap;
 use std::str::FromStr;
 use std::time::Duration;
 
@@ -54,6 +55,7 @@ struct RawTicker {
 #[derive(serde::Deserialize)]
 #[serde(rename_all = "camelCase")]
 struct RawFundingNow {
+    inst_id: String,
     funding_rate: Decimal,
     #[serde(default)]
     funding_time: Option<String>,
@@ -247,6 +249,39 @@ impl RestClient {
                 }
             })
             .ok_or_else(|| Error::Msg(format!("no funding rate for {}", inst_id)))
+    }
+
+    pub async fn all_funding_now(&self) -> Result<HashMap<String, FundingNow>> {
+        let resp: Resp<RawFundingNow> = self
+            .get_json("/api/v5/public/funding-rate", &[("instId", "ANY")])
+            .await?;
+        Ok(resp
+            .unwrap_ok()?
+            .into_iter()
+            .filter(|row| row.inst_id.ends_with("-USDT-SWAP"))
+            .map(|row| {
+                let next_funding_at = row
+                    .funding_time
+                    .as_deref()
+                    .and_then(|value| value.parse().ok());
+                let following = row
+                    .next_funding_time
+                    .as_deref()
+                    .and_then(|value| value.parse::<i64>().ok());
+                let period_hours = next_funding_at
+                    .zip(following)
+                    .and_then(|(next, after)| (after > next).then_some((after - next) / 3_600_000))
+                    .filter(|hours| *hours > 0);
+                (
+                    row.inst_id,
+                    FundingNow {
+                        rate: row.funding_rate,
+                        next_funding_at,
+                        period_hours,
+                    },
+                )
+            })
+            .collect())
     }
 
     pub async fn ticker(&self, inst_id: &str) -> Result<TickerRow> {

@@ -50,6 +50,42 @@ pub struct CandidateSnapshot {
     pub size_decimals: Option<u32>,
 }
 
+/// Hourly whole-market observation used for cross-venue funding research.
+#[derive(Debug, Clone)]
+pub struct FundingSnapshot {
+    pub observed_at: i64,
+    pub inst_id: String,
+    pub funding_rate: Decimal,
+    pub funding_period_hours: i64,
+    pub next_funding_at: Option<i64>,
+    pub prior_24h_return: Decimal,
+    pub reference_price: Decimal,
+    pub bid_price: Option<Decimal>,
+    pub ask_price: Option<Decimal>,
+    pub quote_kind: Option<&'static str>,
+    pub quote_observed_at: Option<i64>,
+    pub volume_quote_24h: Decimal,
+    pub open_interest_base: Option<Decimal>,
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub struct FundingSnapshotRow {
+    pub snapshot_hour: i64,
+    pub observed_at: i64,
+    pub inst_id: String,
+    pub funding_rate: Decimal,
+    pub funding_period_hours: i64,
+    pub next_funding_at: Option<i64>,
+    pub prior_24h_return: Decimal,
+    pub reference_price: Decimal,
+    pub bid_price: Option<Decimal>,
+    pub ask_price: Option<Decimal>,
+    pub quote_kind: Option<String>,
+    pub quote_observed_at: Option<i64>,
+    pub volume_quote_24h: Decimal,
+    pub open_interest_base: Option<Decimal>,
+}
+
 impl PaperDb {
     pub fn open(path: &str) -> anyhow::Result<Self> {
         let conn = Connection::open(path).with_context(|| format!("open sqlite at {}", path))?;
@@ -101,7 +137,26 @@ impl PaperDb {
                  prefiltered_count INTEGER NOT NULL,
                  recorded_count INTEGER NOT NULL,
                  failed_count INTEGER NOT NULL
-             );",
+             );
+             CREATE TABLE IF NOT EXISTS funding_snapshots (
+                 snapshot_hour INTEGER NOT NULL,
+                 observed_at INTEGER NOT NULL,
+                 inst_id TEXT NOT NULL,
+                 funding_rate TEXT NOT NULL,
+                 funding_period_hours INTEGER NOT NULL,
+                 next_funding_at INTEGER,
+                 prior_24h_return TEXT NOT NULL,
+                 reference_price TEXT NOT NULL,
+                 bid_price TEXT,
+                 ask_price TEXT,
+                 quote_kind TEXT,
+                 quote_observed_at INTEGER,
+                 volume_quote_24h TEXT NOT NULL,
+                 open_interest_base TEXT,
+                 PRIMARY KEY(snapshot_hour, inst_id)
+             );
+             CREATE INDEX IF NOT EXISTS idx_funding_snapshot_time
+                 ON funding_snapshots(snapshot_hour);",
         )?;
         for name in ["max_leverage", "size_decimals"] {
             let exists: i64 = conn.query_row(
@@ -184,6 +239,88 @@ impl PaperDb {
                 ],
             )?;
             Ok(())
+        })
+        .await?
+    }
+
+    /// Keep the newest observation in each UTC hour. Hourly data is enough for
+    /// funding studies and avoids growing the SQLite files every five minutes.
+    pub async fn record_funding_snapshots(
+        &self,
+        snapshots: Vec<FundingSnapshot>,
+    ) -> anyhow::Result<usize> {
+        if snapshots.is_empty() {
+            return Ok(0);
+        }
+        let conn = self.conn.clone();
+        tokio::task::spawn_blocking(move || -> anyhow::Result<usize> {
+            let mut c = conn.lock().unwrap();
+            let tx = c.transaction()?;
+            let mut written = 0usize;
+            let newest = snapshots
+                .iter()
+                .map(|snapshot| snapshot.observed_at)
+                .max()
+                .unwrap_or(0);
+            for snapshot in snapshots {
+                if snapshot.funding_period_hours <= 0 || snapshot.reference_price <= Decimal::ZERO {
+                    continue;
+                }
+                let snapshot_hour = snapshot.observed_at.div_euclid(3_600_000) * 3_600_000;
+                tx.execute(
+                    "INSERT OR REPLACE INTO funding_snapshots
+                     (snapshot_hour, observed_at, inst_id, funding_rate,
+                      funding_period_hours, next_funding_at, prior_24h_return,
+                      reference_price, bid_price, ask_price, quote_kind,
+                      quote_observed_at, volume_quote_24h, open_interest_base)
+                     VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14)",
+                    params![
+                        snapshot_hour,
+                        snapshot.observed_at,
+                        snapshot.inst_id,
+                        snapshot.funding_rate.to_string(),
+                        snapshot.funding_period_hours,
+                        snapshot.next_funding_at,
+                        snapshot.prior_24h_return.to_string(),
+                        snapshot.reference_price.to_string(),
+                        snapshot.bid_price.map(|value| value.to_string()),
+                        snapshot.ask_price.map(|value| value.to_string()),
+                        snapshot.quote_kind,
+                        snapshot.quote_observed_at,
+                        snapshot.volume_quote_24h.to_string(),
+                        snapshot.open_interest_base.map(|value| value.to_string()),
+                    ],
+                )?;
+                written += 1;
+            }
+            // Bound storage while retaining enough history for rolling research.
+            tx.execute(
+                "DELETE FROM funding_snapshots WHERE snapshot_hour < ?1",
+                [newest - 90 * 24 * 3_600_000],
+            )?;
+            tx.commit()?;
+            Ok(written)
+        })
+        .await?
+    }
+
+    pub async fn latest_funding_snapshots(&self) -> anyhow::Result<Vec<FundingSnapshotRow>> {
+        let conn = self.conn.clone();
+        tokio::task::spawn_blocking(move || -> anyhow::Result<Vec<FundingSnapshotRow>> {
+            let c = conn.lock().unwrap();
+            let mut stmt = c.prepare(
+                "SELECT snapshot_hour, observed_at, inst_id, funding_rate,
+                        funding_period_hours, next_funding_at, prior_24h_return,
+                        reference_price, bid_price, ask_price, quote_kind,
+                        quote_observed_at, volume_quote_24h, open_interest_base
+                 FROM funding_snapshots
+                 WHERE snapshot_hour = (SELECT MAX(snapshot_hour) FROM funding_snapshots)
+                 ORDER BY inst_id",
+            )?;
+            let rows = stmt
+                .query_map([], parse_funding_snapshot_row)?
+                .collect::<Result<Vec<_>, _>>()?;
+            Ok(rows)
         })
         .await?
     }
@@ -310,6 +447,48 @@ fn parse_row(row: &Row<'_>) -> rusqlite::Result<SignalRow> {
         t4_price: optional(8)?,
         t8_price: optional(9)?,
         t24_price: optional(10)?,
+    })
+}
+
+fn parse_funding_snapshot_row(row: &Row<'_>) -> rusqlite::Result<FundingSnapshotRow> {
+    let decimal = |index| -> rusqlite::Result<Decimal> {
+        let raw: String = row.get(index)?;
+        Decimal::from_str(&raw).map_err(|error| {
+            rusqlite::Error::FromSqlConversionFailure(
+                index,
+                rusqlite::types::Type::Text,
+                Box::new(error),
+            )
+        })
+    };
+    let optional_decimal = |index| -> rusqlite::Result<Option<Decimal>> {
+        let raw: Option<String> = row.get(index)?;
+        raw.map(|value| {
+            Decimal::from_str(&value).map_err(|error| {
+                rusqlite::Error::FromSqlConversionFailure(
+                    index,
+                    rusqlite::types::Type::Text,
+                    Box::new(error),
+                )
+            })
+        })
+        .transpose()
+    };
+    Ok(FundingSnapshotRow {
+        snapshot_hour: row.get(0)?,
+        observed_at: row.get(1)?,
+        inst_id: row.get(2)?,
+        funding_rate: decimal(3)?,
+        funding_period_hours: row.get(4)?,
+        next_funding_at: row.get(5)?,
+        prior_24h_return: decimal(6)?,
+        reference_price: decimal(7)?,
+        bid_price: optional_decimal(8)?,
+        ask_price: optional_decimal(9)?,
+        quote_kind: row.get(10)?,
+        quote_observed_at: row.get(11)?,
+        volume_quote_24h: decimal(12)?,
+        open_interest_base: optional_decimal(13)?,
     })
 }
 
@@ -475,5 +654,39 @@ mod tests {
             .query_row("SELECT COUNT(*) FROM scan_runs", [], |r| r.get(0))
             .unwrap();
         assert_eq!((observed, finished), (2, 1));
+    }
+
+    fn funding_snapshot(observed_at: i64, rate: Decimal) -> FundingSnapshot {
+        FundingSnapshot {
+            observed_at,
+            inst_id: "BTC-USDT-SWAP".into(),
+            funding_rate: rate,
+            funding_period_hours: 8,
+            next_funding_at: Some(observed_at + 3_600_000),
+            prior_24h_return: Decimal::ONE,
+            reference_price: Decimal::from(100),
+            bid_price: Some(Decimal::from(99)),
+            ask_price: Some(Decimal::from(101)),
+            quote_kind: Some("top"),
+            quote_observed_at: Some(observed_at),
+            volume_quote_24h: Decimal::from(1_000_000),
+            open_interest_base: None,
+        }
+    }
+
+    #[tokio::test]
+    async fn funding_research_keeps_latest_value_per_hour() {
+        let db = PaperDb::open(":memory:").unwrap();
+        db.record_funding_snapshots(vec![funding_snapshot(3_600_000, Decimal::new(1, 4))])
+            .await
+            .unwrap();
+        db.record_funding_snapshots(vec![funding_snapshot(3_900_000, Decimal::new(2, 4))])
+            .await
+            .unwrap();
+        let rows = db.latest_funding_snapshots().await.unwrap();
+        assert_eq!(rows.len(), 1);
+        assert_eq!(rows[0].snapshot_hour, 3_600_000);
+        assert_eq!(rows[0].observed_at, 3_900_000);
+        assert_eq!(rows[0].funding_rate, Decimal::new(2, 4));
     }
 }
