@@ -165,6 +165,8 @@ pub async fn scan_once(
             quote_observed_at: quote.map(|_| quote_at),
             volume_quote_24h: fresh.vol_quote,
             open_interest_base: None,
+            max_leverage: None,
+            size_decimals: None,
         };
         if let Err(e) = db.record_candidate(snapshot).await {
             error!("BN candidate {}: {}", t.symbol, e);

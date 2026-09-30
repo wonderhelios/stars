@@ -24,6 +24,8 @@ pub struct HlTicker {
     pub prev_day_px: Decimal,
     pub day_ntl_vlm: Decimal,
     pub funding: Decimal,
+    pub max_leverage: Option<u32>,
+    pub size_decimals: Option<u32>,
     #[allow(dead_code)]
     pub open_interest: Decimal,
     /// Exchange-provided impact bid/ask, not the best top-of-book quote.
@@ -178,6 +180,14 @@ impl HyperliquidRestClient {
                 prev_day_px: Decimal::from_str(prev_str).unwrap_or(Decimal::ZERO),
                 day_ntl_vlm: Decimal::from_str(vol_str).unwrap_or(Decimal::ZERO),
                 funding: Decimal::from_str(funding_str).unwrap_or(Decimal::ZERO),
+                max_leverage: u
+                    .get("maxLeverage")
+                    .and_then(|v| v.as_u64())
+                    .and_then(|v| u32::try_from(v).ok()),
+                size_decimals: u
+                    .get("szDecimals")
+                    .and_then(|v| v.as_u64())
+                    .and_then(|v| u32::try_from(v).ok()),
                 open_interest: Decimal::from_str(oi_str).unwrap_or(Decimal::ZERO),
                 impact_bid,
                 impact_ask,

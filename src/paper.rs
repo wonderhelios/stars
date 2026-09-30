@@ -97,6 +97,8 @@ pub async fn scan_once(
             quote_observed_at: (fresh.bid.is_some() && fresh.ask.is_some()).then_some(triggered_at),
             volume_quote_24h: fresh.volume_quote_24h(),
             open_interest_base: None,
+            max_leverage: None,
+            size_decimals: None,
         };
         if let Err(e) = db.record_candidate(snapshot).await {
             error!("candidate {}: {}", t.inst_id, e);

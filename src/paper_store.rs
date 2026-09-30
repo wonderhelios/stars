@@ -46,6 +46,8 @@ pub struct CandidateSnapshot {
     pub quote_observed_at: Option<i64>,
     pub volume_quote_24h: Decimal,
     pub open_interest_base: Option<Decimal>,
+    pub max_leverage: Option<u32>,
+    pub size_decimals: Option<u32>,
 }
 
 impl PaperDb {
@@ -86,6 +88,8 @@ impl PaperDb {
                  quote_observed_at INTEGER,
                  volume_quote_24h TEXT NOT NULL,
                  open_interest_base TEXT,
+                 max_leverage INTEGER,
+                 size_decimals INTEGER,
                  PRIMARY KEY(scan_started_at, inst_id)
              );
              CREATE INDEX IF NOT EXISTS idx_candidate_observed
@@ -99,6 +103,19 @@ impl PaperDb {
                  failed_count INTEGER NOT NULL
              );",
         )?;
+        for name in ["max_leverage", "size_decimals"] {
+            let exists: i64 = conn.query_row(
+                "SELECT COUNT(*) FROM pragma_table_info('candidate_snapshots') WHERE name=?1",
+                [name],
+                |row| row.get(0),
+            )?;
+            if exists == 0 {
+                conn.execute(
+                    &format!("ALTER TABLE candidate_snapshots ADD COLUMN {name} INTEGER"),
+                    [],
+                )?;
+            }
+        }
         Ok(Self {
             conn: Arc::new(Mutex::new(conn)),
         })
@@ -144,8 +161,8 @@ impl PaperDb {
                  (scan_started_at, observed_at, inst_id, kind, funding_rate,
                   funding_period_hours, next_funding_at, prior_24h_return,
                   reference_price, bid_price, ask_price, quote_kind, quote_observed_at,
-                  volume_quote_24h, open_interest_base)
-                 VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14, ?15)",
+                  volume_quote_24h, open_interest_base, max_leverage, size_decimals)
+                 VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14, ?15, ?16, ?17)",
                 params![
                     snapshot.scan_started_at,
                     snapshot.observed_at,
@@ -162,6 +179,8 @@ impl PaperDb {
                     snapshot.quote_observed_at,
                     snapshot.volume_quote_24h.to_string(),
                     snapshot.open_interest_base.map(|value| value.to_string()),
+                    snapshot.max_leverage,
+                    snapshot.size_decimals,
                 ],
             )?;
             Ok(())
@@ -313,6 +332,45 @@ pub fn due_outcomes(row: &SignalRow, now: i64) -> Vec<(i64, &'static str, i64)> 
 mod tests {
     use super::*;
 
+    #[test]
+    fn existing_candidate_table_gets_leverage_columns() {
+        let name = format!(
+            "edgeboard-migration-{}-{}.sqlite",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        );
+        let path = std::env::temp_dir().join(name);
+        let conn = Connection::open(&path).unwrap();
+        conn.execute_batch(
+            "CREATE TABLE candidate_snapshots (
+                scan_started_at INTEGER NOT NULL, observed_at INTEGER NOT NULL,
+                inst_id TEXT NOT NULL, PRIMARY KEY(scan_started_at,inst_id)
+            );",
+        )
+        .unwrap();
+        drop(conn);
+        let db = PaperDb::open(path.to_str().unwrap()).unwrap();
+        let conn = db.conn.lock().unwrap();
+        for name in ["max_leverage", "size_decimals"] {
+            let count: i64 = conn
+                .query_row(
+                    "SELECT COUNT(*) FROM pragma_table_info('candidate_snapshots') WHERE name=?1",
+                    [name],
+                    |row| row.get(0),
+                )
+                .unwrap();
+            assert_eq!(count, 1);
+        }
+        drop(conn);
+        drop(db);
+        let _ = std::fs::remove_file(&path);
+        let _ = std::fs::remove_file(path.with_extension("sqlite-wal"));
+        let _ = std::fs::remove_file(path.with_extension("sqlite-shm"));
+    }
+
     fn signal(kind: &str, triggered_at: i64) -> Signal {
         Signal {
             inst_id: "GRAM".into(),
@@ -392,6 +450,8 @@ mod tests {
             quote_observed_at: Some(scan_started_at),
             volume_quote_24h: Decimal::from(1_000_000),
             open_interest_base: Some(Decimal::from(20)),
+            max_leverage: Some(3),
+            size_decimals: Some(2),
         };
         db.record_candidate(snapshot(1_000_000)).await.unwrap();
         db.record_candidate(snapshot(1_300_000)).await.unwrap();
@@ -403,6 +463,14 @@ mod tests {
         let observed: i64 = c
             .query_row("SELECT COUNT(*) FROM candidate_snapshots", [], |r| r.get(0))
             .unwrap();
+        let (leverage, decimals): (i64, i64) = c
+            .query_row(
+                "SELECT max_leverage,size_decimals FROM candidate_snapshots LIMIT 1",
+                [],
+                |r| Ok((r.get(0)?, r.get(1)?)),
+            )
+            .unwrap();
+        assert_eq!((leverage, decimals), (3, 2));
         let finished: i64 = c
             .query_row("SELECT COUNT(*) FROM scan_runs", [], |r| r.get(0))
             .unwrap();

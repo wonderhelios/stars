@@ -70,6 +70,8 @@ pub async fn scan_once(
                 .then_some(quote_at),
             volume_quote_24h: t.day_ntl_vlm,
             open_interest_base: Some(t.open_interest),
+            max_leverage: t.max_leverage,
+            size_decimals: t.size_decimals,
         };
         if let Err(e) = db.record_candidate(snapshot).await {
             error!("HL candidate {}: {}", t.coin, e);

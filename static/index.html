@@ -574,6 +574,68 @@
         gap: 14px;
         margin-bottom: 24px;
       }
+      .execution-panel {
+        margin-bottom: 24px;
+        padding: 22px 23px;
+      }
+      .execution-head {
+        display: flex;
+        justify-content: space-between;
+        gap: 18px;
+        align-items: flex-start;
+        margin-bottom: 18px;
+      }
+      .execution-head h2 {
+        margin: 0 0 6px;
+      }
+      .execution-head p,
+      .execution-note {
+        color: #8795a5;
+        font-size: 12px;
+        line-height: 1.6;
+        margin: 0;
+      }
+      .execution-status {
+        font-size: 12px;
+        font-weight: 700;
+        white-space: nowrap;
+        color: #65758a;
+      }
+      .execution-metrics {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 12px;
+        margin-bottom: 16px;
+      }
+      .execution-metric {
+        background: #f7f9fc;
+        border: 1px solid #e6ebf2;
+        border-radius: 10px;
+        padding: 14px;
+      }
+      .execution-metric span {
+        display: block;
+        color: #8593a5;
+        font-size: 11px;
+        margin-bottom: 7px;
+      }
+      .execution-metric strong {
+        font-size: 20px;
+        font-weight: 750;
+      }
+      .execution-funnel {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 12px;
+      }
+      .execution-funnel span {
+        padding: 6px 9px;
+        border-radius: 7px;
+        background: #edf2f8;
+        color: #607188;
+        font-size: 11px;
+      }
       .bucket {
         border: 1px solid var(--line);
         border-radius: 13px;
@@ -652,6 +714,9 @@
         .research-grid {
           grid-template-columns: repeat(2, 1fr);
         }
+        .execution-metrics {
+          grid-template-columns: repeat(2, 1fr);
+        }
         .panel-head {
           align-items: flex-start;
           flex-direction: column;
@@ -665,6 +730,14 @@
         }
       }
       @media (max-width: 600px) {
+        .execution-head {
+          display: block;
+        }
+        .execution-status {
+          display: block;
+          margin-top: 10px;
+          white-space: normal;
+        }
         .topbar-inner {
           height: 62px;
         }
@@ -904,12 +977,29 @@
             <div class="metric-note">具备 T+24h 价格</div>
           </div>
           <div class="metric">
-            <div class="metric-label">T+24h 净均值</div>
+            <div class="metric-label">T+24h 价格观察均值</div>
             <div class="metric-value" id="p-net">—</div>
             <div class="metric-note">做空方向 · 扣固定 0.15% 成本</div>
           </div>
         </div>
         <div class="research-grid" id="bucket-grid"></div>
+        <section id="execution-panel" class="panel execution-panel hidden" aria-label="Hyper Fly 实盘规则执行结果">
+          <div class="execution-head">
+            <div>
+              <h2>实盘规则执行结果</h2>
+              <p>读取同服务器 Hyper Fly 的实际交易与最近一轮筛选，和上方信号观察分开统计。</p>
+            </div>
+            <span id="execution-status" class="execution-status">等待执行数据</span>
+          </div>
+          <div class="execution-metrics">
+            <div class="execution-metric"><span>已实现盈利</span><strong id="execution-profit">—</strong></div>
+            <div class="execution-metric"><span>已实现亏损</span><strong id="execution-loss">—</strong></div>
+            <div class="execution-metric"><span>已实现净额</span><strong id="execution-net">—</strong></div>
+            <div class="execution-metric"><span>当前持仓</span><strong id="execution-positions">—</strong></div>
+          </div>
+          <div id="execution-funnel" class="execution-funnel"></div>
+          <p id="execution-note" class="execution-note">历史信号缺少盘中标记价格与完整盘口，不能重算为实盘收益；这里展示实际执行结果。</p>
+        </section>
         <div class="panel">
           <div class="panel-head">
             <div>
@@ -971,7 +1061,7 @@
     <footer>
       <div class="footer-inner">
         <span>Edgeboard · 永续合约事件观察</span
-        ><span>仅供研究，页面收益为固定成本假设下的纸上估算</span>
+        ><span>信号收益为纸上价格观察；实盘汇总单独标注</span>
       </div>
     </footer>
     <script>
@@ -1005,6 +1095,7 @@
         venue: "okx",
         market: { data: [], at: 0, error: null, failures: 0 },
         paper: {},
+        execution: { data: null, error: null, loading: false, requestedAt: 0 },
         sort: "volume_quote_24h",
         asc: false,
         hot: false,
@@ -1147,6 +1238,23 @@
           clearTimeout(timer);
         }
       }
+      async function getObject(url) {
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), 8000);
+        try {
+          const response = await fetch(url, {
+            cache: "no-store",
+            signal: controller.signal,
+          });
+          if (!response.ok) throw new Error(`HTTP ${response.status}`);
+          const value = await response.json();
+          if (!value || typeof value !== "object" || Array.isArray(value))
+            throw new Error("数据格式错误");
+          return value;
+        } finally {
+          clearTimeout(timer);
+        }
+      }
       function currentSource() {
         return state.view === "market"
           ? state.market
@@ -1242,6 +1350,59 @@
             ? id.replace(/USDT$/, "")
             : id;
       }
+      function renderExecution() {
+        $("execution-panel").classList.toggle("hidden", state.venue !== "hyperliquid");
+        if (state.venue !== "hyperliquid") return;
+        const source = state.execution;
+        const data = source.data;
+        let status = "等待执行数据";
+        if (source.error) status = `执行数据暂不可用 · ${source.error}`;
+        else if (data && !data.configured) status = "尚未连接 Hyper Fly";
+        else if (data && !data.available) status = data.error || "执行服务暂不可用";
+        else if (data) {
+          const stateLabel = data.exchange_stale
+            ? "交易所状态暂不可核验"
+            : data.halted
+            ? "系统暂停开仓"
+            : data.paused
+              ? "手动暂停开仓"
+              : data.risk_limit === "daily"
+                ? "每日亏损门槛已触发"
+                : data.risk_limit === "total"
+                  ? "总亏损门槛已触发"
+                  : "运行中";
+          status = `${stateLabel} · ${dateTime(data.as_of_ms)}`;
+        }
+        $("execution-status").textContent = status;
+        const ready = data && data.available && !source.error;
+        const profit = ready ? Number(data.realized_profit) : NaN;
+        const loss = ready ? Number(data.realized_loss) : NaN;
+        const money = (value) =>
+          Number.isFinite(value) ? `${value >= 0 ? "+" : ""}${value.toFixed(2)} USDC` : "—";
+        $("execution-profit").textContent = money(profit);
+        $("execution-loss").textContent = money(loss);
+        $("execution-net").textContent = money(profit + loss);
+        $("execution-net").className =
+          Number.isFinite(profit + loss) ? (profit + loss >= 0 ? "pos" : "neg") : "";
+        $("execution-positions").textContent =
+          ready && Number.isInteger(data.active_positions)
+            ? `${data.active_positions} / ${Number.isInteger(data.max_positions) ? data.max_positions : "—"}`
+            : "—";
+        const filters = ready ? data.scan_filters : null;
+        const stages = [
+          ["扫描合约", "total"], ["无效行情", "invalid_market"],
+          ["杠杆不足", "leverage"], ["涨幅不符", "rise"],
+          ["费率不符", "funding"], ["成交量不足", "volume"],
+          ["最终合格", "eligible"],
+        ];
+        $("execution-funnel").innerHTML = filters
+          ? stages.map(([label, key]) => `<span>${label} ${Number.isInteger(filters[key]) ? filters[key] : "—"}</span>`).join("")
+          : "";
+        const unknown = ready ? Number(data.unknown_realized_count) : 0;
+        $("execution-note").textContent = ready
+          ? `最近扫描：${dateTime(data.last_scan_ms)}。已实现盈亏来自实盘成交记录，不含资金费${unknown > 0 ? `；另有 ${unknown} 笔平仓缺少可靠成交盈亏` : ""}${data.exchange_stale ? "；当前交易所状态不可用" : ""}。上方 T+24h 数字仅为价格观察，不能与这里的美元盈亏直接比较。`
+          : "历史信号缺少盘中标记价格与完整盘口，不能重算为实盘收益；连接同服务器的 Hyper Fly 后显示实际执行结果。";
+      }
       function renderPaper() {
         const source = state.paper[state.venue] || {
             data: [],
@@ -1306,6 +1467,7 @@
         $("paper-empty").classList.toggle("hidden", !!visible.length);
         $("paper-empty").innerHTML =
           `<div class="empty-mark">◇</div><strong>${data.length ? "没有匹配的信号" : source.error ? "信号暂不可用" : "暂无信号"}</strong><small>${data.length ? "试试其他币种" : source.error ? "连接恢复后会自动更新" : "满足条件的首次信号会出现在这里"}</small>`;
+        renderExecution();
         updateConnection();
       }
       async function pollMarket() {
@@ -1363,8 +1525,28 @@
           if (state.view === "research" && state.venue === venue) renderPaper();
         }
       }
+      async function loadExecution() {
+        if (state.venue !== "hyperliquid" || state.execution.loading) return;
+        if (Date.now() - state.execution.requestedAt < 15000) return;
+        const source = state.execution;
+        source.loading = true;
+        source.requestedAt = Date.now();
+        try {
+          source.data = await getObject("/api/hyperliquid/execution");
+          source.error = null;
+        } catch (error) {
+          source.error = error.name === "AbortError" ? "请求超时" : error.message;
+          source.data = null;
+        } finally {
+          source.loading = false;
+          if (state.view === "research" && state.venue === "hyperliquid") renderExecution();
+        }
+      }
       async function pollPaper() {
-        if (state.view === "research") await loadPaper(state.venue);
+        if (state.view === "research") {
+          loadExecution();
+          await loadPaper(state.venue);
+        }
         setTimeout(pollPaper, 5000);
       }
       for (const [key, value] of Object.entries({
@@ -1402,6 +1584,7 @@
           if (state.view === "research") {
             renderPaper();
             loadPaper(state.venue);
+            loadExecution();
           } else renderMarket();
         });
       for (const button of document.querySelectorAll(".segment"))
@@ -1412,6 +1595,7 @@
             .forEach((el) => el.classList.toggle("active", el === button));
           renderPaper();
           loadPaper(state.venue);
+          loadExecution();
         });
       for (const th of document.querySelectorAll("#market-table th.sortable"))
         th.addEventListener("click", () => {
