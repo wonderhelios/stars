@@ -29,6 +29,8 @@ pub fn router(state: WebState) -> Router {
         .route("/api/binance/signals", get(get_binance_signals))
         .route("/api/hyperliquid/signals", get(get_hl_signals))
         .route("/api/research/funding/latest", get(get_latest_funding))
+        .route("/api/research/evidence", get(get_research_evidence))
+        .route("/api/research/handoff", get(get_handoff_status))
         .route("/api/research/strategies", post(publish_strategy))
         .route("/api/research/execution", post(execution_replay))
         .route("/api/health", get(health))
@@ -191,5 +193,77 @@ async fn get_latest_funding(
         Err(StatusCode::SERVICE_UNAVAILABLE)
     } else {
         Ok(Json(result))
+    }
+}
+
+// One cached analysis per process: simultaneous browser polls never duplicate a large historical read.
+async fn get_research_evidence(State(state): State<WebState>) -> Response {
+    static CACHE: std::sync::OnceLock<
+        tokio::sync::Mutex<Option<(std::time::Instant, serde_json::Value)>>,
+    > = std::sync::OnceLock::new();
+    let mut cached = CACHE
+        .get_or_init(|| tokio::sync::Mutex::new(None))
+        .lock()
+        .await;
+    if let Some((at, value)) = cached.as_ref() {
+        if at.elapsed() < std::time::Duration::from_secs(120) {
+            return Json(value.clone()).into_response();
+        }
+    }
+    let (okx, binance, hl) = tokio::join!(
+        state.okx_paper.research_history(),
+        state.binance_paper.research_history(),
+        state.hl_paper.research_history()
+    );
+    let mut inputs = Vec::new();
+    let mut errors = Vec::new();
+    for (venue, result) in [("OKX", okx), ("Binance", binance), ("Hyperliquid", hl)] {
+        match result {
+            Ok((at, rows)) => inputs.push((venue, at, rows)),
+            Err(e) => errors.push(format!("{venue}: {e}")),
+        }
+    }
+    let execution = state.hl_paper.execution_coverage().await;
+    match tokio::task::spawn_blocking(move || crate::research_lab::analyze(inputs, errors)).await {
+        Ok(report) => {
+            let mut value = serde_json::to_value(report).expect("serializable research report");
+            value["execution_coverage"] = match execution {
+                Ok(v) => v,
+                Err(e) => serde_json::json!({"error":e.to_string()}),
+            };
+            *cached = Some((std::time::Instant::now(), value.clone()));
+            Json(value).into_response()
+        }
+        Err(e) => (
+            StatusCode::SERVICE_UNAVAILABLE,
+            Json(serde_json::json!({"error":e.to_string()})),
+        )
+            .into_response(),
+    }
+}
+
+async fn get_handoff_status(State(state): State<WebState>) -> Response {
+    let result = async {
+        let response = state
+            .http
+            .get(&state.strategy_library_url)
+            .timeout(std::time::Duration::from_secs(8))
+            .send()
+            .await?;
+        anyhow::ensure!(
+            response.status().is_success(),
+            "Hyper Fly 策略状态读取失败：{}",
+            response.status()
+        );
+        Ok::<_, anyhow::Error>(response.json::<serde_json::Value>().await?)
+    }
+    .await;
+    match result {
+        Ok(value) => Json(value).into_response(),
+        Err(error) => (
+            StatusCode::BAD_GATEWAY,
+            Json(serde_json::json!({"error":error.to_string()})),
+        )
+            .into_response(),
     }
 }

@@ -175,8 +175,15 @@ impl PaperDb {
                  open_interest_base TEXT,
                  PRIMARY KEY(snapshot_hour, inst_id)
              );
+             CREATE TABLE IF NOT EXISTS research_freezes (
+                 version TEXT PRIMARY KEY, frozen_at INTEGER NOT NULL
+             );
              CREATE INDEX IF NOT EXISTS idx_funding_snapshot_time
                  ON funding_snapshots(snapshot_hour);",
+        )?;
+        conn.execute(
+            "INSERT OR IGNORE INTO research_freezes VALUES ('parallel-v1', ?1)",
+            [crate::paper::now_ms()],
         )?;
         for name in ["max_leverage", "size_decimals"] {
             let exists: i64 = conn.query_row(
@@ -366,6 +373,55 @@ impl PaperDb {
                 .query_map([], parse_funding_snapshot_row)?
                 .collect::<Result<Vec<_>, _>>()?;
             Ok(rows)
+        })
+        .await?
+    }
+
+    pub async fn execution_coverage(&self) -> anyhow::Result<serde_json::Value> {
+        let conn = self.conn.clone();
+        tokio::task::spawn_blocking(move || -> anyhow::Result<_> {
+            let c=conn.lock().unwrap();
+            let since=crate::paper::now_ms()-24*3_600_000;
+            let (count,complete,first,last,gaps):(i64,i64,Option<i64>,Option<i64>,i64)=c.query_row(
+                "SELECT COUNT(*),COALESCE(SUM(json_extract(frame_json,'$.complete')=1),0),MIN(at),MAX(at),
+                 COALESCE(SUM(previous IS NOT NULL AND at-previous>90000),0) FROM
+                 (SELECT at,frame_json,LAG(at) OVER(ORDER BY at) AS previous FROM execution_frames WHERE at>=?1)",
+                [since],|r|Ok((r.get(0)?,r.get(1)?,r.get(2)?,r.get(3)?,r.get(4)?)))?;
+            Ok(serde_json::json!({"frames":count,"complete_frames":complete,"first_at":first,"last_at":last,"gaps":gaps}))
+        }).await?
+    }
+
+    /// Immutable completed-hour observations, read without holding the writer mutex.
+    pub async fn research_history(&self) -> anyhow::Result<(i64, Vec<crate::research_lab::Point>)> {
+        let path = self
+            .conn
+            .lock()
+            .unwrap()
+            .path()
+            .context("missing database path")?
+            .to_string();
+        tokio::task::spawn_blocking(move || -> anyhow::Result<_> {
+            let c = Connection::open_with_flags(path, rusqlite::OpenFlags::SQLITE_OPEN_READ_ONLY)?;
+            c.busy_timeout(std::time::Duration::from_secs(5))?;
+            let frozen = c.query_row(
+                "SELECT frozen_at FROM research_freezes WHERE version='parallel-v1'",
+                [],
+                |r| r.get(0),
+            )?;
+            let end = crate::paper::now_ms().div_euclid(3_600_000) * 3_600_000;
+            let mut stmt = c.prepare(
+                "SELECT observed_at, inst_id, reference_price, prior_24h_return,
+                        funding_rate, funding_period_hours, volume_quote_24h
+                 FROM funding_snapshots WHERE snapshot_hour>=?1 AND snapshot_hour<?2 AND funding_period_hours>0
+                 ORDER BY observed_at, inst_id",
+            )?;
+            let rows = stmt
+                .query_map(
+                    params![end - 30 * 24 * 3_600_000, end],
+                    crate::research_lab::Point::read_sql,
+                )?
+                .collect::<Result<Vec<_>, _>>()?;
+            Ok((frozen, rows))
         })
         .await?
     }
@@ -997,6 +1053,51 @@ mod tests {
             .unwrap()
             .is_empty());
         drop(db);
+        let _ = std::fs::remove_file(&path);
+        let _ = std::fs::remove_file(path.with_extension("sqlite-wal"));
+        let _ = std::fs::remove_file(path.with_extension("sqlite-shm"));
+    }
+    #[tokio::test]
+    async fn fixed_experiments_keep_cutoff_and_exclude_unfinished_hours() {
+        let path = std::env::temp_dir().join(format!(
+            "research-history-{}.sqlite",
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        ));
+        let db = PaperDb::open(path.to_str().unwrap()).unwrap();
+        let hour = crate::paper::now_ms().div_euclid(3_600_000) * 3_600_000;
+        db.record_funding_snapshots(vec![
+            funding_snapshot(hour - 3_600_000, Decimal::new(1, 4)),
+            funding_snapshot(hour, Decimal::new(2, 4)),
+        ])
+        .await
+        .unwrap();
+        let (cutoff, rows) = db.research_history().await.unwrap();
+        assert_eq!(rows.len(), 1);
+        db.conn
+            .lock()
+            .unwrap()
+            .execute(
+                "UPDATE research_freezes SET frozen_at=123 WHERE version='parallel-v1'",
+                [],
+            )
+            .unwrap();
+        drop(db);
+        let reopened = PaperDb::open(path.to_str().unwrap()).unwrap();
+        assert!(cutoff > 123);
+        assert_eq!(reopened.research_history().await.unwrap().0, 123);
+        let frame = trading_core::replay::Frame {
+            at: crate::paper::now_ms() - 120_000,
+            complete: true,
+            complete_scopes: std::collections::HashSet::new(),
+            markets: std::collections::HashMap::new(),
+            books: std::collections::HashMap::new(),
+        };
+        reopened.record_execution_frame(&frame).await.unwrap();
+        assert_eq!(reopened.execution_coverage().await.unwrap()["frames"], 1);
+        drop(reopened);
         let _ = std::fs::remove_file(&path);
         let _ = std::fs::remove_file(path.with_extension("sqlite-wal"));
         let _ = std::fs::remove_file(path.with_extension("sqlite-shm"));

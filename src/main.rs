@@ -6,6 +6,7 @@ mod okx;
 mod paper;
 mod paper_store;
 mod research;
+mod research_lab;
 mod signal;
 mod state;
 mod types;

@@ -965,6 +965,29 @@
           display: none;
         }
       }
+      .study-expand { margin-bottom: 20px; }
+      .study-expand > summary { padding: 18px 24px; background: #fff; border: 1px solid #e1e7f0; border-radius: 12px; cursor: pointer; color: #425570; font-weight: 700; }
+      .study-expand[open] > summary { margin-bottom: 12px; }
+      .study-cards { display: grid; grid-template-columns: repeat(auto-fit,minmax(230px,1fr)); gap: 14px; margin-bottom: 24px; }
+      #handoff-cards { padding: 0 24px; }
+      .study-card { text-align: left; border: 1px solid #e1e7f0; background: white; padding: 18px; border-radius: 12px; color: #22344c; line-height: 1.7; }
+      button.study-card { cursor: pointer; font: inherit; }
+      .study-card strong { display: block; font-size: 15px; }
+      .study-card small { display: block; color: #7e8ba0; font-size: 12px; }
+      .study-card.selected { border-color: #2d6df6; background: #f5f8ff; }
+      .study-stage { display: inline-block; border-radius: 6px; padding: 3px 8px; background: #eef2f7; color: #66758c; font-size: 11px; margin: 8px 0; }
+      .study-stage.ready { color: #087c52; background: #e7f7ee; }
+      .study-stage.wait { color: #a06918; background: #fff5df; }
+      .research-note { padding: 18px 28px; color: #77879b; line-height: 1.7; font-size: 12px; overflow-wrap: anywhere; }
+      .research-controls { display: flex; gap: 8px; flex-wrap: wrap; }
+      .research-controls select, .research-controls button, #fee-evidence-search { padding: 9px 12px; border: 1px solid #dce4ef; border-radius: 8px; background: #f8faff; color: #425570; }
+      #parallel-panel th, #parallel-panel td { white-space: normal; vertical-align: top; text-align: left; padding: 14px; }
+      #parallel-panel th:first-child, #parallel-panel td:first-child { min-width: 140px; }
+      #parallel-panel td:nth-child(2) { max-width: 240px; }
+      .evidence-detail { min-width: 230px; max-width: 330px; white-space: normal; line-height: 1.7; font-size: 12px; }
+      .evidence-detail summary { cursor: pointer; color: #2d6df6; }
+      .evidence-detail p { margin: 8px 0; }
+      @media (max-width: 700px) { .research-note { padding: 18px; } }
     </style>
   </head>
   <body>
@@ -993,7 +1016,8 @@
         </div>
         <nav class="main-nav" aria-label="主导航">
           <button class="nav-item active" data-view="market">实时市场</button
-          ><button class="nav-item" data-view="research">信号研究</button>
+          ><button class="nav-item" data-view="research">信号观察</button>
+          <button class="nav-item" data-view="strategies">策略实验室</button>
         </nav>
         <div class="topbar-side">
           <div id="live-tag" class="live-tag offline">
@@ -1094,7 +1118,7 @@
         <div class="intro">
           <div>
             <div class="eyebrow">Signal lab / paper observations</div>
-            <h1>信号研究</h1>
+            <h1>信号观察</h1>
             <p>高正资金费率与价格异动后的做空观察记录。</p>
           </div>
           <div class="meta" id="paper-updated">等待信号数据</div>
@@ -1186,61 +1210,10 @@
           </div>
           <p id="execution-note" class="execution-note">止损仅按 T+1/4/8/24 小时价格采样估算；不含真实成交、资金费或强平，不是可交易组合收益。</p>
         </section>
-        <section class="panel lab-panel" aria-label="策略候选发现">
-          <div class="panel-head">
-            <div>
-              <h2>策略候选发现</h2>
-              <p class="sub">自动组合交易所、信号形态、持仓时间、止损和仓位上限，并按时间切分样本</p>
-            </div>
-            <div id="strategy-lab-status" class="lab-status">等待三平台信号数据</div>
-          </div>
-          <div id="strategy-lab-empty" class="empty hidden"></div>
-          <div id="strategy-lab-table-wrap" class="table-scroll hidden">
-            <table class="lab-table">
-              <thead><tr><th>排名</th><th>交易所</th><th>范围</th><th>形态</th><th>持有</th><th>止损</th><th>仓位</th><th>前 70%</th><th>后 30%</th><th>样本</th><th>稳健分</th><th>交接</th></tr></thead>
-              <tbody id="strategy-lab-body"></tbody>
-            </table>
-          </div>
-          <div class="panel-foot"><span>稳健分取训练段与验证段单笔均值的较低者；极端价格断层不参与排名</span><span>Hyperliquid 候选先执行回放，再保存到同服务器策略库并独立模拟</span></div>
-        </section>
-        <section class="panel lab-panel replay-panel" aria-label="共享规则执行回放">
-          <div class="panel-head"><div><h2>实盘规则执行回放</h2><p class="sub">使用与 Hyper Fly 相同的穿越入场、杠杆排序、保证金、数量精度、盘口、冷却和账户风控</p></div></div>
-          <p id="execution-replay-result" class="execution-note">点击候选中的“执行回放”。从新版部署开始采集完整分钟扫描与L2盘口；旧信号排行榜仍用于探索。当前支持交接 Hyperliquid 单腿做空（含 USDC 抵押的 HIP-3）；跨平台对冲及 OKX / Binance 尚不可交接实盘。</p>
-          <div class="panel-foot"><span>初始本金500 USDC · 每仓净值20%保证金 · 收益按美元账户净值计算</span><span>价格回放完成后仍需真实资金费与独立影子验证</span></div>
-        </section>
-        <section class="panel lab-panel" aria-label="跨平台同币种信号">
-          <div class="panel-head">
-            <div>
-              <h2>跨平台同币种信号</h2>
-              <p class="sub">严格匹配不同交易所的相同底层币种、相同信号形态与相近触发时间</p>
-            </div>
-            <div id="cross-signal-status" class="lab-status">等待三平台信号数据</div>
-          </div>
-          <div id="cross-signal-empty" class="empty hidden"></div>
-          <div id="cross-signal-table-wrap" class="table-scroll hidden">
-            <table class="lab-table">
-              <thead><tr><th>平台组合</th><th>严格15分钟</th><th>1小时参考</th><th>币种数</th><th>双边做空都盈利</th><th>单腿平均</th><th>收益差均值</th></tr></thead>
-              <tbody id="cross-signal-body"></tbody>
-            </table>
-          </div>
-          <div class="panel-foot"><span>严格结果使用15分钟窗口；1小时列只用于观察触发错位。两边均须具备 T+24h，单腿各扣 0.15% 成本</span><span>用于验证方向信号的跨平台一致性，不等同于市场中性对冲收益</span></div>
-        </section>
-        <section class="panel lab-panel" aria-label="跨平台资金费率机会">
-          <div class="panel-head">
-            <div>
-              <h2>跨平台资金费率中性候选</h2>
-              <p class="sub">同币种做空高费率平台、做多低费率平台，费率按各自结算周期统一换算</p>
-            </div>
-            <div id="funding-lab-status" class="lab-status">部署新版后开始积累全市场小时快照</div>
-          </div>
-          <div id="funding-lab-empty" class="empty hidden"></div>
-          <div id="funding-lab-table-wrap" class="table-scroll hidden">
-            <table class="lab-table">
-              <thead><tr><th>币种</th><th>做空 / 收高费率</th><th>做多 / 付低费率</th><th>费率差 APR</th><th>日毛收益</th><th>价格偏离</th><th>成本回收估算</th><th>最低成交额</th></tr></thead>
-              <tbody id="funding-lab-body"></tbody>
-            </table>
-          </div>
-          <div class="panel-foot"><span>固定双腿往返成本估算 0.30%，另计当前报价摩擦</span><span>当前为候选扫描；历史实际费率到账、基差与成交回放需等待快照积累</span></div>
+        <section class="panel lab-panel" id="evidence-panel" aria-label="信号证据审计">
+          <div class="panel-head"><div><h2>信号证据审计</h2><p class="sub">检查漂亮均值是否依赖少数交易或同一波行情</p></div><span class="lab-status">三平台 · 全部形态</span></div>
+          <div class="table-scroll"><table class="lab-table"><thead><tr><th>平台 / 形态</th><th>到期 / 总信号</th><th>日期 / 币种</th><th>均值 / 中位数</th><th>最好 / 最差</th><th>去掉最好一笔</th><th>去掉最好三笔</th><th>前三笔盈利占比</th><th>最大单日样本占比</th></tr></thead><tbody id="signal-evidence-body"></tbody></table></div>
+          <div class="panel-foot"><span>24h 做空价格收益 · 扣固定0.15%成本 · 不模拟止损和仓位；包括极端变动，不静默删掉亏损</span><span>盈利贡献占比的分母是所有正收益之和；日期数不等于独立样本数</span></div>
         </section>
         <div class="panel">
           <div class="panel-head">
@@ -1298,6 +1271,85 @@
             >
           </div>
         </div>
+      </section>
+      <section id="view-strategies" class="hidden">
+        <div class="intro"><div><div class="eyebrow">Strategy lab / evidence to execution</div><h1>策略实验室</h1><p>并行研究不同假设，先检验证据，再回放和独立模拟，最后交接实盘。</p></div></div>
+        <section class="panel lab-panel" aria-label="策略交接状态">
+          <div class="panel-head"><div><h2>哪些策略可以进入实盘？</h2><p class="sub">历史回放和独立模拟均通过后才显示可申请切换；实际启用仍在 Hyper Fly 完成。</p></div><a id="hyper-fly-link" class="strategy-export" target="_blank" rel="noopener">打开 Hyper Fly</a></div>
+          <div id="handoff-summary" class="research-note">正在读取同服务器策略库的验证状态…</div>
+          <div id="handoff-cards" class="study-cards"></div>
+          <div class="panel-foot"><span>证据不足 → 历史回放 → 独立模拟 → 申请切换</span><span>保存、回放和切换不会自动恢复开仓；盈利数字不等于已证实alpha。</span></div>
+        </section>
+        <div id="study-line-cards" class="study-cards" aria-label="并行研究方向"></div>
+        <section class="panel lab-panel" id="parallel-panel" aria-label="并行假设验证">
+          <div class="panel-head"><div><h2>并行假设验证</h2><p class="sub">反转、动量、费率、跨平台确认同时研究；固定规则后，单独检验未来数据</p></div>
+            <div class="research-controls"><select id="parallel-family" aria-label="研究方向"><option value="positive-reversal">正费率反转做空</option><option value="negative-reversal">负费率反转做多</option><option value="momentum-long">纯动量做多</option><option value="momentum-short">纯动量做空</option><option value="funding-only">纯正费率做空</option><option value="confirmed-reversal">跨平台确认反转</option><option value="opposite-control">反向对照</option><option value="">全部研究线</option></select><select id="parallel-venue" aria-label="研究交易所"><option value="">全部平台</option><option>OKX</option><option>Binance</option><option>Hyperliquid</option></select><select id="parallel-hold" aria-label="观察时间"><option value="24">24h</option><option value="4">4h</option></select><button id="evidence-refresh" type="button">刷新证据</button></div></div>
+          <div id="evidence-health" class="research-note">正在读取小时快照和分钟采集健康度…</div>
+          <div class="table-scroll"><table class="lab-table"><thead><tr><th>平台 / 固定研究线</th><th>方向 / 规则</th><th>部署前历史</th><th>部署后新样本</th><th>新样本 BTC 超额</th><th>新样本市场超额</th><th>证据详情</th></tr></thead><tbody id="parallel-body"></tbody></table></div>
+          <div class="panel-foot"><span>固定版本 parallel-v1 · 最近30天 · 每币不重叠观察 · 成交额≥50万美元 · 完整小时快照 · 固定0.15%成本</span><span>价格假设实验，不是账户收益；不含杠杆、止损、实际成交和资金费。新增做多/动量尚不可交接实盘。</span></div>
+        </section>
+        <details class="study-expand" id="fee-history-wrapper"><summary>费率差持续性 · 检查固定方向的历史表现</summary><section class="panel lab-panel" aria-label="费率差持续性">
+          <div class="panel-head"><div><h2>费率差持续性研究</h2><p class="sub">固定最早快照的多空方向，观察费差反转、持续时间和价格基差波动</p></div><input id="fee-evidence-search" type="search" placeholder="搜索币种或平台" aria-label="搜索费差历史" /></div>
+          <div class="table-scroll"><table class="lab-table"><thead><tr><th>币种 / 平台</th><th>固定方向</th><th>快照 / 日期</th><th>平均日费差</th><th>费差为正占比</th><th>最长正费差跨度</th><th>基差变动范围</th><th>采样断档</th></tr></thead><tbody id="fee-evidence-body"></tbody></table></div>
+          <div id="fee-evidence-status" class="research-note">等待历史费率快照</div>
+          <div class="panel-foot"><span>仅匹配原生同名币种，不自动合并HIP-3或不同数量单位；双边快照相差≤30分钟</span><span>日费差为费率快照推算，不是已到账收益；未计手续费、两腿滑点、基差盈亏和强平风险</span></div>
+        </section></details>
+        <details class="study-expand"><summary>历史参数探索 · 从这里选择候选并执行回放</summary><section class="panel lab-panel" aria-label="策略候选发现">
+          <div class="panel-head">
+            <div>
+              <h2>策略候选发现</h2>
+              <p class="sub">自动组合交易所、信号形态、持仓时间、止损和仓位上限，并按时间切分样本</p>
+            </div>
+            <div id="strategy-lab-status" class="lab-status">等待三平台信号数据</div>
+          </div>
+          <div id="strategy-lab-empty" class="empty hidden"></div>
+          <div id="strategy-lab-table-wrap" class="table-scroll hidden">
+            <table class="lab-table">
+              <thead><tr><th>排名</th><th>交易所</th><th>范围</th><th>形态</th><th>持有</th><th>止损</th><th>仓位</th><th>前 70%</th><th>后 30%（参与筛选）</th><th>样本</th><th>探索分</th><th>交接</th></tr></thead>
+              <tbody id="strategy-lab-body"></tbody>
+            </table>
+          </div>
+          <div class="panel-foot"><span>探索分取两段单笔均值的较低者，仅用于发现候选，未校正多重筛选；极端价格断层不参与旧榜排名</span><span>Hyperliquid 候选先执行回放，再保存到同服务器策略库并独立模拟</span></div>
+        </section></details>
+        <section class="panel lab-panel replay-panel" aria-label="共享规则执行回放">
+          <div class="panel-head"><div><h2>实盘规则执行回放</h2><p class="sub">使用与 Hyper Fly 相同的穿越入场、杠杆排序、保证金、数量精度、盘口、冷却和账户风控</p></div></div>
+          <p id="execution-replay-result" class="execution-note">点击候选中的“执行回放”。从新版部署开始采集完整分钟扫描与L2盘口；旧信号排行榜仍用于探索。当前支持交接 Hyperliquid 单腿做空（含 USDC 抵押的 HIP-3）；跨平台对冲及 OKX / Binance 尚不可交接实盘。</p>
+          <div class="panel-foot"><span>初始本金500 USDC · 每仓净值20%保证金 · 收益按美元账户净值计算</span><span>价格回放完成后仍需真实资金费与独立影子验证</span></div>
+        </section>
+        <details class="study-expand"><summary>跨平台同币种对照 · 检查信号一致性</summary><section class="panel lab-panel" aria-label="跨平台同币种信号">
+          <div class="panel-head">
+            <div>
+              <h2>跨平台同币种信号</h2>
+              <p class="sub">严格匹配不同交易所的相同底层币种、相同信号形态与相近触发时间</p>
+            </div>
+            <div id="cross-signal-status" class="lab-status">等待三平台信号数据</div>
+          </div>
+          <div id="cross-signal-empty" class="empty hidden"></div>
+          <div id="cross-signal-table-wrap" class="table-scroll hidden">
+            <table class="lab-table">
+              <thead><tr><th>平台组合</th><th>严格15分钟</th><th>1小时参考</th><th>币种数</th><th>双边做空都盈利</th><th>单腿平均</th><th>收益差均值</th></tr></thead>
+              <tbody id="cross-signal-body"></tbody>
+            </table>
+          </div>
+          <div class="panel-foot"><span>严格结果使用15分钟窗口；1小时列只用于观察触发错位。两边均须具备 T+24h，单腿各扣 0.15% 成本</span><span>用于验证方向信号的跨平台一致性，不等同于市场中性对冲收益</span></div>
+        </section></details>
+        <details class="study-expand"><summary>当前费率差候选 · 查看最新机会快照</summary><section class="panel lab-panel" aria-label="跨平台资金费率机会">
+          <div class="panel-head">
+            <div>
+              <h2>跨平台资金费率中性候选</h2>
+              <p class="sub">同币种做空高费率平台、做多低费率平台，费率按各自结算周期统一换算</p>
+            </div>
+            <div id="funding-lab-status" class="lab-status">部署新版后开始积累全市场小时快照</div>
+          </div>
+          <div id="funding-lab-empty" class="empty hidden"></div>
+          <div id="funding-lab-table-wrap" class="table-scroll hidden">
+            <table class="lab-table">
+              <thead><tr><th>币种</th><th>做空 / 收高费率</th><th>做多 / 付低费率</th><th>费率差 APR</th><th>日毛收益</th><th>价格偏离</th><th>成本回收估算</th><th>最低成交额</th></tr></thead>
+              <tbody id="funding-lab-body"></tbody>
+            </table>
+          </div>
+          <div class="panel-foot"><span>固定双腿往返成本估算 0.30%，另计当前报价摩擦</span><span>当前为候选扫描；历史实际费率到账、基差与成交回放需等待快照积累</span></div>
+        </section></details>
       </section>
     </main>
     <footer>
@@ -1942,6 +1994,7 @@
           const result = await response.json();
           if (!response.ok) throw new Error(result.error || `HTTP ${response.status}`);
           button.textContent = "已保存";
+          window.researchEvidence?.loadHandoff();
           $("strategy-lab-status").textContent = "已保存到同服务器策略库，请在 Hyper Fly 启动影子验证；不会自动开启实盘";
           setTimeout(() => { button.textContent = previous; button.disabled = false; }, 2500);
         } catch (error) {
@@ -2073,6 +2126,7 @@
         renderStrategyLab();
         renderCrossSignals();
         renderFundingLab();
+        window.researchEvidence?.renderSignals();
       }
       function renderPaper() {
         const source = state.paper[state.venue] || {
@@ -2194,7 +2248,7 @@
           source.failures++;
         } finally {
           source.loading = false;
-          if (state.view === "research") {
+          if (state.view !== "market") {
             if (state.venue === venue) renderPaper();
             else renderResearchLabs();
           }
@@ -2212,11 +2266,11 @@
           source.error = error.name === "AbortError" ? "请求超时" : error.message;
         } finally {
           source.loading = false;
-          if (state.view === "research") renderFundingLab();
+          if (state.view !== "market") renderFundingLab();
         }
       }
       async function pollPaper() {
-        if (state.view === "research") {
+        if (state.view !== "market") {
           await Promise.all([...Object.keys(API).map(loadPaper), loadFundingResearch()]);
         }
         setTimeout(pollPaper, 30000);
@@ -2253,6 +2307,7 @@
       for (const button of document.querySelectorAll(".nav-item"))
         button.addEventListener("click", () => {
           state.view = button.dataset.view;
+          history.replaceState(null, "", `#${state.view}`);
           document
             .querySelectorAll(".nav-item")
             .forEach((el) => el.classList.toggle("active", el === button));
@@ -2261,7 +2316,8 @@
             "hidden",
             state.view !== "research",
           );
-          if (state.view === "research") {
+          $("view-strategies").classList.toggle("hidden", state.view !== "strategies");
+          if (state.view !== "market") {
             renderPaper();
             Promise.all([...Object.keys(API).map(loadPaper), loadFundingResearch()]);
           } else renderMarket();
@@ -2305,6 +2361,8 @@
         renderMarket();
       });
       renderMarket();
+      const initialTab = location.hash.slice(1);
+      if (["research", "strategies"].includes(initialTab)) document.querySelector(`.nav-item[data-view="${initialTab}"]`).click();
       pollMarket();
       pollPaper();
       setInterval(() => {
@@ -2312,5 +2370,6 @@
         else renderPaper();
       }, 30000);
     </script>
+    <script src="/research-evidence.js" defer></script>
   </body>
 </html>
