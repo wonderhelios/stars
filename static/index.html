@@ -1200,18 +1200,18 @@
           <div class="panel-head">
             <div>
               <h2>跨平台同币种信号</h2>
-              <p class="sub">匹配 15 分钟内在不同交易所出现的相同底层币种，检验信号是否跨平台成立</p>
+              <p class="sub">严格匹配不同交易所的相同底层币种、相同信号形态与相近触发时间</p>
             </div>
             <div id="cross-signal-status" class="lab-status">等待三平台信号数据</div>
           </div>
           <div id="cross-signal-empty" class="empty hidden"></div>
           <div id="cross-signal-table-wrap" class="table-scroll hidden">
             <table class="lab-table">
-              <thead><tr><th>平台组合</th><th>匹配组</th><th>币种数</th><th>双边做空都盈利</th><th>单腿平均</th><th>收益差均值</th></tr></thead>
+              <thead><tr><th>平台组合</th><th>严格15分钟</th><th>1小时参考</th><th>币种数</th><th>双边做空都盈利</th><th>单腿平均</th><th>收益差均值</th></tr></thead>
               <tbody id="cross-signal-body"></tbody>
             </table>
           </div>
-          <div class="panel-foot"><span>使用两边均具备 T+24h 的信号，均扣 0.15% 成本</span><span>用于验证跨平台一致性，不等同于市场中性对冲收益</span></div>
+          <div class="panel-foot"><span>严格结果使用15分钟窗口；1小时列只用于观察触发错位。两边均须具备 T+24h，单腿各扣 0.15% 成本</span><span>用于验证方向信号的跨平台一致性，不等同于市场中性对冲收益</span></div>
         </section>
         <section class="panel lab-panel" aria-label="跨平台资金费率机会">
           <div class="panel-head">
@@ -1919,16 +1919,18 @@
         const rightByCoin = new Map();
         for (const item of rightRows) {
           const coin = normalizeCoin(item.venue, item.row.inst_id);
-          if (!rightByCoin.has(coin)) rightByCoin.set(coin, []);
-          rightByCoin.get(coin).push(item);
+          const signalKey = `${coin}|${item.row.kind || ""}`;
+          if (!rightByCoin.has(signalKey)) rightByCoin.set(signalKey, []);
+          rightByCoin.get(signalKey).push(item);
         }
         const used = new Set();
         const matches = [];
         for (const left of leftRows) {
           const coin = normalizeCoin(left.venue, left.row.inst_id);
+          const signalKey = `${coin}|${left.row.kind || ""}`;
           let best = null;
           let bestGap = toleranceMs + 1;
-          for (const right of rightByCoin.get(coin) || []) {
+          for (const right of rightByCoin.get(signalKey) || []) {
             const key = `${right.venue}:${right.row.id}`;
             const gap = Math.abs(Number(left.row.triggered_at) - Number(right.row.triggered_at));
             if (!used.has(key) && gap <= toleranceMs && gap < bestGap) {
@@ -1954,6 +1956,7 @@
         const pairs = [["okx", "binance"], ["okx", "hyperliquid"], ["binance", "hyperliquid"]];
         const summaries = pairs.map(([leftVenue, rightVenue]) => {
           const matches = nearestSignalMatches(venueRows[leftVenue], venueRows[rightVenue], 15 * 60 * 1000);
+          const hourlyMatches = nearestSignalMatches(venueRows[leftVenue], venueRows[rightVenue], 60 * 60 * 1000);
           const completed = matches.map((match) => ({
             ...match,
             leftNet: net(match.left.row, "t24_price"),
@@ -1963,22 +1966,22 @@
           return {
             label: `${VENUE[leftVenue]} / ${VENUE[rightVenue]}`,
             count: completed.length,
+            hourlyCount: hourlyMatches.length,
             coins: new Set(completed.map((match) => match.coin)).size,
             bothWin: completed.length ? completed.filter((match) => match.leftNet > 0 && match.rightNet > 0).length / completed.length * 100 : null,
             legMean: mean(legs),
             divergence: mean(completed.map((match) => Math.abs(match.leftNet - match.rightNet))),
           };
-        }).filter((summary) => summary.count);
+        });
         const total = summaries.reduce((sum, summary) => sum + summary.count, 0);
-        $("cross-signal-status").textContent = total
-          ? `找到 ${total} 组 15 分钟内的跨平台同币信号`
-          : "尚无两边均完成 24 小时观察的匹配信号";
-        $("cross-signal-table-wrap").classList.toggle("hidden", !summaries.length);
-        $("cross-signal-empty").classList.toggle("hidden", !!summaries.length);
-        if (!summaries.length) {
-          $("cross-signal-empty").innerHTML = '<div class="empty-mark">◇</div><strong>暂无可比较样本</strong><small>三平台扫描错开，匹配窗口为 15 分钟</small>';
-        }
-        $("cross-signal-body").innerHTML = summaries.map((summary) => `<tr><td>${escapeHtml(summary.label)}</td><td>${summary.count}</td><td>${summary.coins}</td><td>${summary.bothWin.toFixed(1)}%</td><td class="${summary.legMean >= 0 ? "pos" : "neg"}">${signed(summary.legMean)}</td><td>${signed(summary.divergence)}</td></tr>`).join("");
+        const hourlyTotal = summaries.reduce((sum, summary) => sum + summary.hourlyCount, 0);
+        $("cross-signal-status").textContent = `严格匹配 ${total} 组 · 1小时参考 ${hourlyTotal} 组`;
+        $("cross-signal-table-wrap").classList.remove("hidden");
+        $("cross-signal-empty").classList.add("hidden");
+        $("cross-signal-body").innerHTML = summaries.map((summary) => {
+          const metric = (value, formatter = signed) => value == null ? "—" : formatter(value);
+          return `<tr><td>${escapeHtml(summary.label)}</td><td>${summary.count}</td><td>${summary.hourlyCount}</td><td>${summary.coins}</td><td>${metric(summary.bothWin, (value) => `${value.toFixed(1)}%`)}</td><td class="${summary.legMean == null ? "" : summary.legMean >= 0 ? "pos" : "neg"}">${metric(summary.legMean)}</td><td>${metric(summary.divergence)}</td></tr>`;
+        }).join("");
       }
       function quoteSpreadPct(row) {
         const bid = Number(row.bid_price), ask = Number(row.ask_price);
