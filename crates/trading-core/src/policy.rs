@@ -45,6 +45,9 @@ pub fn risk_allows_equity(
         && equity > initial - TOTAL_LOSS_LIMIT
         && equity > daily_loss_floor(day_start)
 }
+pub fn stop_execution_limit(trigger: f64, size_decimals: u32) -> f64 {
+    order_price(trigger * 1.05, size_decimals, true)
+}
 pub fn stop_price(entry: f64, size_decimals: u32, strategy: &StrategyConfig) -> f64 {
     order_price(
         entry * (1.0 + strategy.stop_loss_pct / 100.0),

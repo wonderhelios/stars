@@ -189,9 +189,17 @@ where
                 out.missing_books += 1;
                 continue;
             };
-            let Some(exit) =
-                book.buy_vwap(trade.size, book.mid() * if stopped { 1.10 } else { 1.01 })
-            else {
+            let Some(exit) = book.buy_vwap(
+                trade.size,
+                if stopped {
+                    policy::stop_execution_limit(
+                        policy::stop_price(trade.entry, market.size_decimals, strategy),
+                        market.size_decimals,
+                    )
+                } else {
+                    book.mid() * 1.01
+                },
+            ) else {
                 out.missing_books += 1;
                 continue;
             };

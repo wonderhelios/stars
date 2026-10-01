@@ -483,7 +483,11 @@ impl PaperDb {
             });
             let report = trading_core::replay::run_iter(frames, &strategy, capital, boundary)?;
             let evidence = serde_json::to_value(report)?;
-            strategy.research_evidence = Some(evidence.clone());
+            let mut proof = evidence.clone();
+            if let Some(fields) = proof.as_object_mut() {
+                fields.remove("trades");
+            }
+            strategy.research_evidence = Some(proof);
             Ok(serde_json::json!({"report":evidence,"strategy":strategy}))
         })
         .await?
