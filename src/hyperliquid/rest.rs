@@ -19,6 +19,7 @@ struct PerpDex {
 
 #[derive(Debug, Clone)]
 pub struct HlTicker {
+    pub collateral_usdc: bool,
     pub coin: String,
     pub mark_px: Decimal,
     pub prev_day_px: Decimal,
@@ -137,6 +138,9 @@ impl HyperliquidRestClient {
             .and_then(|v| v.as_array())
             .ok_or_else(|| Error::Msg(format!("missing ctxs for dex={}", dex)))?;
 
+        if universe.len() != ctxs.len() {
+            return Err(Error::Msg(format!("incomplete market response dex={dex}")));
+        }
         let mut result = Vec::new();
         for (u, ctx) in universe.iter().zip(ctxs.iter()) {
             let Some(coin) = u.get("name").and_then(|v| v.as_str()) else {
@@ -175,6 +179,7 @@ impl HyperliquidRestClient {
                 .and_then(|v| Decimal::from_str(v).ok());
 
             result.push(HlTicker {
+                collateral_usdc: dex.is_empty() || resp[0]["collateralToken"].as_u64() == Some(0),
                 coin: coin.to_string(),
                 mark_px: Decimal::from_str(mark_str).unwrap_or(Decimal::ZERO),
                 prev_day_px: Decimal::from_str(prev_str).unwrap_or(Decimal::ZERO),
@@ -198,11 +203,18 @@ impl HyperliquidRestClient {
 
     /// 遍历所有 dex（主 + HIP-3），合并返回
     pub async fn all_perp_ctxs_all_dexes(&self) -> Result<(Vec<HlTicker>, bool)> {
+        let (tickers, complete, _) = self.perp_ctxs_with_coverage().await?;
+        Ok((tickers, complete))
+    }
+    pub async fn perp_ctxs_with_coverage(
+        &self,
+    ) -> Result<(Vec<HlTicker>, bool, std::collections::HashSet<String>)> {
         let dexes = tokio::time::timeout(Duration::from_secs(15), self.perp_dex_names())
             .await
             .map_err(|_| Error::Msg("Hyperliquid perpDexs timeout".into()))??;
         let mut all = Vec::new();
         let mut loaded = 0usize;
+        let mut scopes = std::collections::HashSet::new();
         let mut queries = stream::iter(dexes.iter().cloned())
             .map(|dex| async move {
                 let result =
@@ -216,6 +228,7 @@ impl HyperliquidRestClient {
                 Ok(Ok(mut tickers)) => {
                     all.append(&mut tickers);
                     loaded += 1;
+                    scopes.insert(if dex.is_empty() { "main".into() } else { dex });
                 }
                 Ok(Err(e)) => {
                     tracing::warn!("HL dex={} failed: {}", dex, e);
@@ -235,7 +248,12 @@ impl HyperliquidRestClient {
             dexes.len(),
             all.len()
         );
-        Ok((all, loaded == dexes.len()))
+        Ok((all, loaded == dexes.len(), scopes))
+    }
+
+    pub async fn l2_book(&self, coin: &str) -> anyhow::Result<trading_core::replay::Quote> {
+        let raw = self.post_json(json!({"type":"l2Book","coin":coin})).await?;
+        crate::execution_research::parse_book(raw)
     }
 
     /// 获取指定时间点的收盘价。coin 用全名，例如 "BTC" 或 "para:TREAD"

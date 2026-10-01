@@ -154,6 +154,10 @@ impl PaperDb {
                  recorded_count INTEGER NOT NULL,
                  failed_count INTEGER NOT NULL
              );
+             CREATE TABLE IF NOT EXISTS execution_watch (coin TEXT PRIMARY KEY, expires_at INTEGER NOT NULL);
+             CREATE TABLE IF NOT EXISTS execution_frames (
+                 at INTEGER PRIMARY KEY, frame_json TEXT NOT NULL
+             );
              CREATE TABLE IF NOT EXISTS funding_snapshots (
                  snapshot_hour INTEGER NOT NULL,
                  observed_at INTEGER NOT NULL,
@@ -393,6 +397,94 @@ impl PaperDb {
                 ],
             )?;
             Ok(())
+        })
+        .await?
+    }
+
+    pub async fn execution_watch(
+        &self,
+        coins: Vec<String>,
+        now: i64,
+    ) -> anyhow::Result<Vec<String>> {
+        let conn = self.conn.clone();
+        tokio::task::spawn_blocking(move || -> anyhow::Result<_> {
+            let mut c = conn.lock().unwrap();
+            let tx = c.transaction()?;
+            for coin in coins {
+                tx.execute(
+                    "INSERT OR REPLACE INTO execution_watch VALUES (?1,?2)",
+                    params![coin, now + 24 * 3_600_000],
+                )?;
+            }
+            tx.execute("DELETE FROM execution_watch WHERE expires_at<?1", [now])?;
+            tx.commit()?;
+            let mut stmt = c.prepare("SELECT coin FROM execution_watch ORDER BY coin")?;
+            let rows = stmt
+                .query_map([], |r| r.get::<_, String>(0))?
+                .collect::<Result<Vec<_>, _>>()?;
+            Ok(rows)
+        })
+        .await?
+    }
+
+    pub async fn record_execution_frame(
+        &self,
+        frame: &trading_core::replay::Frame,
+    ) -> anyhow::Result<()> {
+        let at = frame.at;
+        let raw = serde_json::to_string(frame)?;
+        let conn = self.conn.clone();
+        tokio::task::spawn_blocking(move || -> anyhow::Result<()> {
+            let c = conn.lock().unwrap();
+            c.execute(
+                "INSERT OR REPLACE INTO execution_frames VALUES (?1,?2)",
+                params![at, raw],
+            )?;
+            c.execute(
+                "DELETE FROM execution_frames WHERE at < ?1",
+                [at - 30 * 86_400_000],
+            )?;
+            Ok(())
+        })
+        .await?
+    }
+
+    pub async fn execution_candidate(
+        &self,
+        mut strategy: trading_core::strategy::StrategyConfig,
+        capital: f64,
+    ) -> anyhow::Result<serde_json::Value> {
+        // Use a separate WAL reader so a long replay cannot block market writers.
+        let path = self
+            .conn
+            .lock()
+            .unwrap()
+            .path()
+            .context("missing database path")?
+            .to_string();
+        tokio::task::spawn_blocking(move || -> anyhow::Result<_> {
+            let c = Connection::open_with_flags(path, rusqlite::OpenFlags::SQLITE_OPEN_READ_ONLY)?;
+            c.execute_batch("BEGIN")?;
+            let (start, end): (Option<i64>, Option<i64>) =
+                c.query_row("SELECT MIN(at),MAX(at) FROM execution_frames", [], |r| {
+                    Ok((r.get(0)?, r.get(1)?))
+                })?;
+            let boundary = start
+                .zip(end)
+                .map(|(a, b)| a + (b - a) * 7 / 10)
+                .unwrap_or(0);
+            let mut stmt = c.prepare("SELECT frame_json FROM execution_frames ORDER BY at")?;
+            let rows = stmt.query_map([], |r| r.get::<_, String>(0))?;
+            let frames = rows.map(|r| -> anyhow::Result<_> {
+                let mut frame: trading_core::replay::Frame = serde_json::from_str(&r?)?;
+                frame.markets.retain(|coin, _| strategy.includes_coin(coin));
+                frame.books.retain(|coin, _| strategy.includes_coin(coin));
+                Ok(frame)
+            });
+            let report = trading_core::replay::run_iter(frames, &strategy, capital, boundary)?;
+            let evidence = serde_json::to_value(report)?;
+            strategy.research_evidence = Some(evidence.clone());
+            Ok(serde_json::json!({"report":evidence,"strategy":strategy}))
         })
         .await?
     }
@@ -864,5 +956,45 @@ mod tests {
         assert_eq!(rows[0].snapshot_hour, 3_600_000);
         assert_eq!(rows[0].observed_at, 3_900_000);
         assert_eq!(rows[0].funding_rate, Decimal::new(2, 4));
+    }
+    #[tokio::test]
+    async fn execution_evidence_is_recomputed_from_persisted_frames() {
+        let path = std::env::temp_dir().join(format!(
+            "execution-replay-{}-{}.sqlite",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        ));
+        let db = PaperDb::open(path.to_str().unwrap()).unwrap();
+        let frame = trading_core::replay::Frame {
+            at: 1_000_000,
+            complete: true,
+            complete_scopes: std::collections::HashSet::from(["main".into()]),
+            markets: std::collections::HashMap::new(),
+            books: std::collections::HashMap::new(),
+        };
+        db.record_execution_frame(&frame).await.unwrap();
+        let mut s = trading_core::strategy::StrategyConfig::default();
+        s.research_evidence = Some(serde_json::json!({"deployable":true,"equity":99999}));
+        let result = db.execution_candidate(s, 500.0).await.unwrap();
+        assert_eq!(result["report"]["equity"], 500.0);
+        assert_eq!(result["strategy"]["research_evidence"]["deployable"], false);
+        assert_eq!(result["report"]["rule_hash"], trading_core::rule_hash());
+        let watched = db
+            .execution_watch(vec!["AAA".into()], 1_000_000)
+            .await
+            .unwrap();
+        assert_eq!(watched, ["AAA"]);
+        assert!(db
+            .execution_watch(vec![], 1_000_000 + 25 * 3_600_000)
+            .await
+            .unwrap()
+            .is_empty());
+        drop(db);
+        let _ = std::fs::remove_file(&path);
+        let _ = std::fs::remove_file(path.with_extension("sqlite-wal"));
+        let _ = std::fs::remove_file(path.with_extension("sqlite-shm"));
     }
 }

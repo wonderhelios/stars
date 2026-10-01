@@ -1,5 +1,6 @@
 mod binance;
 mod error;
+mod execution_research;
 mod hyperliquid;
 mod okx;
 mod paper;
@@ -188,6 +189,28 @@ async fn main() -> anyhow::Result<()> {
                             Err(_) => error!("HL track timeout"),
                         }
                     }
+                }
+            }
+        });
+    }
+
+    {
+        let db = hl_paper_db.clone();
+        tokio::spawn(async move {
+            let client = hyperliquid::HyperliquidRestClient::new();
+            let mut ticker = tokio::time::interval(Duration::from_secs(60));
+            ticker.set_missed_tick_behavior(tokio::time::MissedTickBehavior::Skip);
+            loop {
+                ticker.tick().await;
+                match timeout(
+                    Duration::from_secs(55),
+                    execution_research::collect(&client, &db),
+                )
+                .await
+                {
+                    Ok(Ok(())) => info!("HL execution research frame recorded"),
+                    Ok(Err(e)) => error!("HL execution research: {}", e),
+                    Err(_) => error!("HL execution research frame timeout; gap recorded by replay"),
                 }
             }
         });

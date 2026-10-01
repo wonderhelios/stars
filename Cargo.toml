@@ -4,6 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+trading-core = { path = "crates/trading-core" }
 tokio = { version = "1", features = ["full"] }
 reqwest = { version = "0.12", features = ["json", "rustls-tls", "gzip"], default-features = false }
 tokio-tungstenite = { version = "0.24", features = ["rustls-tls-native-roots"] }

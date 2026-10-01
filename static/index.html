@@ -1194,7 +1194,12 @@
               <tbody id="strategy-lab-body"></tbody>
             </table>
           </div>
-          <div class="panel-foot"><span>稳健分取训练段与验证段单笔均值的较低者；极端价格断层不参与排名</span><span>Hyperliquid 主 DEX 候选可直接保存到同服务器的 Hyper Fly 策略库</span></div>
+          <div class="panel-foot"><span>稳健分取训练段与验证段单笔均值的较低者；极端价格断层不参与排名</span><span>Hyperliquid 候选先执行回放，再保存到同服务器策略库并独立模拟</span></div>
+        </section>
+        <section class="panel lab-panel" aria-label="共享规则执行回放">
+          <div class="panel-head"><div><h2>实盘规则执行回放</h2><p class="sub">使用与 Hyper Fly 相同的穿越入场、杠杆排序、保证金、数量精度、盘口、冷却和账户风控</p></div></div>
+          <p id="execution-replay-result" class="execution-note">点击候选中的“执行回放”。从新版部署开始采集完整分钟扫描与L2盘口；旧信号排行榜仍用于探索。当前支持交接 Hyperliquid 单腿做空（含 USDC 抵押的 HIP-3）；跨平台对冲及 OKX / Binance 尚不可交接实盘。</p>
+          <div class="panel-foot"><span>初始本金500 USDC · 每仓净值20%保证金 · 收益按美元账户净值计算</span><span>价格回放完成后仍需真实资金费与独立影子验证</span></div>
         </section>
         <section class="panel lab-panel" aria-label="跨平台同币种信号">
           <div class="panel-head">
@@ -1568,6 +1573,7 @@
       const POSITION_LIMITS = [1, 3, 5];
       const OUTCOME_SAMPLES = [["t1_price", 1], ["t4_price", 4], ["t8_price", 8], ["t24_price", 24]];
       let strategyExportCandidates = [];
+      const executionManifests = new Map();
       function hasPriceDiscontinuity(row) {
         const prices = [row.entry_price, ...OUTCOME_SAMPLES.map(([field]) => row[field])]
           .map(Number).filter((value) => value > 0);
@@ -1844,18 +1850,15 @@
         }
         $("strategy-lab-body").innerHTML = shown.map((candidate, index) => {
           const tone = candidate.robust >= 0 ? "pos" : "neg";
-          const compatible = candidate.venue === "hyperliquid" && candidate.dexScope === "main" && candidate.stopPct != null;
-          const liveEligible = compatible
-            && candidate.trainN + candidate.validationN >= 30
-            && candidate.validationN >= 10
-            && candidate.days >= 5
-            && candidate.validationMedian > 0
-            && candidate.pathCoverage >= 0.8;
+          const compatible = candidate.venue === "hyperliquid" && candidate.stopPct != null;
+          // Sparse signal observations cannot authorize a live strategy.
+          const liveEligible = false;
           candidate.liveEligible = liveEligible;
+          candidate.executionManifest=executionManifests.get(strategyManifest(candidate).strategy_id);
           const sample = `${candidate.trainN + candidate.validationN} · ${candidate.days}日 · 路径${Math.round(candidate.pathCoverage * 100)}%`;
-          const handoff = liveEligible
+          const handoff = !!candidate.executionManifest
             ? `<button class="strategy-export" data-strategy-index="${index}" type="button">保存到策略库</button>`
-            : compatible ? '<span class="muted">继续观察</span>' : "—";
+            : compatible ? `<button class="strategy-replay" data-strategy-index="${index}" type="button">执行回放</button>` : candidate.venue !== "hyperliquid" ? "缺少实盘适配器" : "需定义止损";
           return `<tr><td><span class="candidate-rank">${index + 1}</span></td><td>${escapeHtml(VENUE[candidate.venue])}</td><td>${escapeHtml(candidate.dexLabel)}</td><td>${escapeHtml(candidate.kindLabel)}</td><td>${candidate.holdHours}h</td><td>${candidate.stopPct == null ? "不设" : `${candidate.stopPct}%`}</td><td>${candidate.maxOpen}</td><td class="${candidate.trainMean >= 0 ? "pos" : "neg"}">${signed(candidate.trainMean)} · n=${candidate.trainN}</td><td class="${candidate.validationMean >= 0 ? "pos" : "neg"}">${signed(candidate.validationMean)} · n=${candidate.validationN} · 中位${signed(candidate.validationMedian)}</td><td>${sample}</td><td class="${tone}">${signed(candidate.robust)}</td><td>${handoff}</td></tr>`;
         }).join("");
       }
@@ -1864,10 +1867,10 @@
         const idKind = candidate.kind || "all";
         const manifest = {
           schema_version: 1,
-          strategy_id: `research-hl-${idKind}-${candidate.holdHours}h-stop${candidate.stopPct}-${candidate.maxOpen}p-v1`,
+          strategy_id: `research-hl-${candidate.dexScope}-${idKind}-${candidate.holdHours}h-stop${candidate.stopPct}-${candidate.maxOpen}p-v1`,
           name: `研究候选 · ${candidate.kindLabel} · ${candidate.holdHours}h`,
           venue: "hyperliquid",
-          dex_scope: "main",
+          dex_scope: candidate.dexScope,
           signal_kinds: candidate.kind ? [candidate.kind] : allKinds,
           min_funding_8h: EXTREME,
           min_volume_usd: 500000,
@@ -1889,11 +1892,36 @@
             distinct_utc_days: candidate.days,
             path_coverage: candidate.pathCoverage,
             live_eligible: candidate.liveEligible,
-            warning: "已通过研究页最低样本门槛；启用实盘前仍需人工复核",
+            warning: "探索统计，必须执行共享规则回放与独立影子验证",
           },
         };
         return manifest;
       }
+      async function replayStrategy(candidate, button) {
+        button.disabled = true;
+        const box = $("execution-replay-result");
+        box.textContent = "正在回放完整扫描和盘口…";
+        try {
+          const response = await fetch("/api/research/execution", {method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({strategy:strategyManifest(candidate),capital:500})});
+          const result = await response.json();
+          if (!response.ok) throw new Error(result.error || `HTTP ${response.status}`);
+          const report=result.report;
+          candidate.executionManifest=result.strategy;
+          executionManifests.set(result.strategy.strategy_id,result.strategy);
+          const closed = report.trades.filter((trade) => trade.exit_at != null);
+          const open = report.trades.length - closed.length;
+          box.textContent = `模型 ${report.execution_model} · 期末净值 ${report.equity.toFixed(2)} USDC · 账户收益 ${report.return_pct.toFixed(2)}% · 最大回撤 ${report.max_drawdown_pct.toFixed(2)}% · 已平 ${closed.length} / 持仓 ${open} · 验证 ${report.validation_n} 笔 · 路径缺口 ${report.data_gaps} / 缺盘口 ${report.missing_books} / 不完整轮次 ${report.incomplete_frames}。${report.blockers.join("；")}。资金费模型：负费率预留成本，不计正费率收入；尚非实际结算。`;
+          button.textContent="保存候选到策略库";
+          button.classList.remove("strategy-replay");
+          button.classList.add("strategy-export");
+          renderStrategyLab();
+        } catch(error) {box.textContent = `回放失败：${error.message}`;}
+        finally {button.disabled = false;}
+      }
+      document.addEventListener("click", (event) => {
+        const button = event.target.closest(".strategy-replay");
+        if (button) replayStrategy(strategyExportCandidates[Number(button.dataset.strategyIndex)], button);
+      });
       async function saveStrategy(candidate, button) {
         const previous = button.textContent;
         button.disabled = true;
@@ -1902,12 +1930,12 @@
           const response = await fetch("/api/research/strategies", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(strategyManifest(candidate)),
+            body: JSON.stringify(candidate.executionManifest || strategyManifest(candidate)),
           });
           const result = await response.json();
           if (!response.ok) throw new Error(result.error || `HTTP ${response.status}`);
           button.textContent = "已保存";
-          $("strategy-lab-status").textContent = "已保存到 Hyper Fly 策略库，可直接前往实盘看板选择应用";
+          $("strategy-lab-status").textContent = "已保存到同服务器策略库，请在 Hyper Fly 启动影子验证；不会自动开启实盘";
           setTimeout(() => { button.textContent = previous; button.disabled = false; }, 2500);
         } catch (error) {
           button.textContent = "保存失败";

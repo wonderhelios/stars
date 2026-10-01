@@ -30,6 +30,7 @@ pub fn router(state: WebState) -> Router {
         .route("/api/hyperliquid/signals", get(get_hl_signals))
         .route("/api/research/funding/latest", get(get_latest_funding))
         .route("/api/research/strategies", post(publish_strategy))
+        .route("/api/research/execution", post(execution_replay))
         .route("/api/health", get(health))
         .fallback_service(ServeDir::new("static"))
         .layer(CompressionLayer::new())
@@ -37,10 +38,60 @@ pub fn router(state: WebState) -> Router {
         .with_state(state)
 }
 
+#[derive(serde::Deserialize)]
+struct ReplayRequest {
+    strategy: trading_core::strategy::StrategyConfig,
+    #[serde(default = "default_capital")]
+    capital: f64,
+}
+fn default_capital() -> f64 {
+    500.0
+}
+
+async fn execution_replay(
+    State(state): State<WebState>,
+    Json(input): Json<ReplayRequest>,
+) -> Response {
+    match state
+        .hl_paper
+        .execution_candidate(input.strategy, input.capital)
+        .await
+    {
+        Ok(result) => Json(result).into_response(),
+        Err(error) => (
+            StatusCode::BAD_REQUEST,
+            Json(serde_json::json!({"error":error.to_string()})),
+        )
+            .into_response(),
+    }
+}
+
 async fn publish_strategy(
     State(state): State<WebState>,
     Json(strategy): Json<serde_json::Value>,
 ) -> Response {
+    let input = match serde_json::from_value::<trading_core::strategy::StrategyConfig>(strategy) {
+        Ok(input) => input,
+        Err(e) => {
+            return (
+                StatusCode::BAD_REQUEST,
+                Json(serde_json::json!({"error":e.to_string()})),
+            )
+                .into_response()
+        }
+    };
+    // Recompute evidence on the server. The browser cannot promote a sampled result.
+    let candidate = match state.hl_paper.execution_candidate(input, 500.0).await {
+        Ok(result) => result,
+        Err(error) => {
+            return (
+                StatusCode::CONFLICT,
+                Json(serde_json::json!({"error":error.to_string()})),
+            )
+                .into_response()
+        }
+    };
+    let strategy = &candidate["strategy"];
     let response = match state
         .http
         .post(&state.strategy_library_url)
