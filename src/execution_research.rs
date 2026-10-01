@@ -10,6 +10,7 @@ use trading_core::{
 /// Collect full eligibility snapshots, including non-candidates, to reconstruct crossings.
 /// Books are fetched for liquid signal markets and still-observed contracts.
 pub async fn collect(client: &HyperliquidRestClient, db: &PaperDb) -> Result<()> {
+    let deadline = tokio::time::Instant::now() + std::time::Duration::from_secs(50);
     let (tickers, mut complete, mut complete_scopes) = client.perp_ctxs_with_coverage().await?;
     let started = std::time::SystemTime::now()
         .duration_since(std::time::UNIX_EPOCH)?
@@ -61,7 +62,20 @@ pub async fn collect(client: &HyperliquidRestClient, db: &PaperDb) -> Result<()>
             (coin, raw)
         })
         .buffer_unordered(5);
-    while let Some((coin, result)) = requests.next().await {
+    // Retain the market frame even when some books stall. Missing books remain
+    // missing and replay rejects fills without a fresh, sufficient quote.
+    loop {
+        let next = tokio::time::timeout_at(deadline, requests.next()).await;
+        let (coin, result) = match next {
+            Ok(Some(next)) => next,
+            Ok(None) => break,
+            Err(_) => {
+                tracing::warn!(
+                    "HL execution research book budget exhausted; partial books retained"
+                );
+                break;
+            }
+        };
         match result {
             Ok(q) => {
                 books.insert(coin, q);
@@ -72,6 +86,13 @@ pub async fn collect(client: &HyperliquidRestClient, db: &PaperDb) -> Result<()>
     let at = std::time::SystemTime::now()
         .duration_since(std::time::UNIX_EPOCH)?
         .as_millis() as i64;
+    tracing::info!(
+        "HL execution research coverage: complete={} markets={} scopes={} books={}",
+        complete,
+        markets.len(),
+        complete_scopes.len(),
+        books.len()
+    );
     db.record_execution_frame(&Frame {
         at,
         complete,

@@ -3,7 +3,8 @@ use reqwest::Client;
 use rust_decimal::Decimal;
 use serde_json::json;
 use std::str::FromStr;
-use std::time::Duration;
+use std::time::{Duration, Instant};
+use tokio::sync::Mutex;
 
 use crate::error::{Error, Result};
 use crate::signal::outcome_bar_open;
@@ -47,12 +48,15 @@ impl HlTicker {
 pub struct HyperliquidRestClient {
     http: Client,
     base: String,
+    dex_cache: Mutex<Option<(Instant, Vec<String>)>>,
 }
 
 impl HyperliquidRestClient {
     pub fn new() -> Self {
         let http = Client::builder()
-            .timeout(Duration::from_secs(20))
+            .timeout(Duration::from_secs(30))
+            .http1_only()
+            .no_gzip()
             .connect_timeout(Duration::from_secs(10))
             .pool_max_idle_per_host(10)
             .pool_idle_timeout(Duration::from_secs(90))
@@ -63,6 +67,7 @@ impl HyperliquidRestClient {
         Self {
             http,
             base: BASE.into(),
+            dex_cache: Mutex::new(None),
         }
     }
 
@@ -72,6 +77,7 @@ impl HyperliquidRestClient {
             let r = self
                 .http
                 .post(&self.base)
+                .header("Accept-Encoding", "identity")
                 .json(body)
                 .send()
                 .await
@@ -114,8 +120,18 @@ impl HyperliquidRestClient {
 
     /// 从交易所发现主 DEX 和全部 HIP-3 DEX，避免新部署者被静态名单漏掉。
     pub async fn perp_dex_names(&self) -> Result<Vec<String>> {
+        // Cache only market identities. Prices and funding are always fetched anew.
+        // Failed refreshes do not extend the cache lifetime or claim full coverage.
+        let mut cache = self.dex_cache.lock().await;
+        if let Some((at, names)) = cache.as_ref() {
+            if at.elapsed() < Duration::from_secs(600) {
+                return Ok(names.clone());
+            }
+        }
         let dexes: Vec<Option<PerpDex>> = self.post_json(json!({"type": "perpDexs"})).await?;
-        Ok(dex_names(dexes))
+        let names = dex_names(dexes);
+        *cache = Some((Instant::now(), names.clone()));
+        Ok(names)
     }
 
     /// 拉取指定 dex 的所有永续合约状态
@@ -218,12 +234,23 @@ impl HyperliquidRestClient {
         let mut queries = stream::iter(dexes.iter().cloned())
             .map(|dex| async move {
                 let result =
-                    tokio::time::timeout(Duration::from_secs(20), self.perp_ctxs_by_dex(&dex))
+                    tokio::time::timeout(Duration::from_secs(35), self.perp_ctxs_by_dex(&dex))
                         .await;
                 (dex, result)
             })
-            .buffer_unordered(5);
-        while let Some((dex, result)) = queries.next().await {
+            .buffer_unordered(12);
+        let deadline = tokio::time::Instant::now() + Duration::from_secs(35);
+        loop {
+            let (dex, result) = match tokio::time::timeout_at(deadline, queries.next()).await {
+                Ok(Some(next)) => next,
+                Ok(None) => break,
+                Err(_) => {
+                    tracing::warn!(
+                        "HL market fetch budget exhausted; only fresh successful DEXes retained"
+                    );
+                    break;
+                }
+            };
             match result {
                 Ok(Ok(mut tickers)) => {
                     all.append(&mut tickers);
@@ -231,9 +258,16 @@ impl HyperliquidRestClient {
                     scopes.insert(if dex.is_empty() { "main".into() } else { dex });
                 }
                 Ok(Err(e)) => {
-                    tracing::warn!("HL dex={} failed: {}", dex, e);
+                    tracing::warn!(
+                        "HL dex={} failed: {}",
+                        if dex.is_empty() { "main" } else { &dex },
+                        e
+                    );
                 }
-                Err(_) => tracing::warn!("HL dex={} timeout", dex),
+                Err(_) => tracing::warn!(
+                    "HL dex={} timeout",
+                    if dex.is_empty() { "main" } else { &dex }
+                ),
             }
         }
         if all.is_empty() {
@@ -300,6 +334,45 @@ fn dex_names(dexes: Vec<Option<PerpDex>>) -> Vec<String> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[tokio::test]
+    async fn dex_discovery_cache_expires_and_never_masks_failed_refresh() {
+        use std::sync::{
+            atomic::{AtomicUsize, Ordering},
+            Arc,
+        };
+        let calls = Arc::new(AtomicUsize::new(0));
+        let observed = calls.clone();
+        let app = axum::Router::new().route(
+            "/info",
+            axum::routing::post(move || {
+                let observed = observed.clone();
+                async move {
+                    let n = observed.fetch_add(1, Ordering::SeqCst);
+                    if n == 0 {
+                        axum::Json(json!([null, {"name":"xyz"}]))
+                    } else {
+                        axum::Json(json!({"unexpected":"response"}))
+                    }
+                }
+            }),
+        );
+        let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+        let addr = listener.local_addr().unwrap();
+        let server = tokio::spawn(async move {
+            axum::serve(listener, app).await.unwrap();
+        });
+        let mut client = HyperliquidRestClient::new();
+        client.base = format!("http://{addr}/info");
+        assert_eq!(client.perp_dex_names().await.unwrap(), vec!["", "xyz"]);
+        assert_eq!(client.perp_dex_names().await.unwrap(), vec!["", "xyz"]);
+        assert_eq!(calls.load(Ordering::SeqCst), 1);
+        client.dex_cache.lock().await.as_mut().unwrap().0 =
+            Instant::now() - Duration::from_secs(601);
+        assert!(client.perp_dex_names().await.is_err());
+        assert_eq!(calls.load(Ordering::SeqCst), 4);
+        server.abort();
+    }
 
     #[test]
     fn discovers_new_hip3_dexes_after_main_market() {
