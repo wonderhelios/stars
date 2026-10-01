@@ -1608,6 +1608,11 @@
       function sampledOutcome(row, stopPct = 2) {
         return sampledOutcomeAt(row, stopPct, 24);
       }
+      function hasAdequatePath(row, holdHours, venue) {
+        const samples = Number(row.path_samples) || 0;
+        const samplesPerHour = venue === "hyperliquid" ? 12 : 60;
+        return samples >= Math.ceil(holdHours * samplesPerHour * 0.8);
+      }
       function stopScenario(rows, stopPct) {
         const outcomes = rows.map((row) => sampledOutcome(row, stopPct)).filter(Boolean);
         const returns = outcomes.map((outcome) => outcome.net).sort((a, b) => a - b);
@@ -1798,7 +1803,7 @@
                   const days = new Set(selected.map((outcome) =>
                     new Date(Number(outcome.row.triggered_at)).toISOString().slice(0, 10)
                   )).size;
-                  const pathN = selected.filter((outcome) => Number(outcome.row.path_samples) > 0).length;
+                  const pathN = selected.filter((outcome) => hasAdequatePath(outcome.row, holdHours, venue)).length;
                   const pathCoverage = selected.length ? pathN / selected.length : 0;
                   candidates.push({
                     venue,

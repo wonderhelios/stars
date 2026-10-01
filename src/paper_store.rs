@@ -224,8 +224,9 @@ impl PaperDb {
             let c = conn.lock().unwrap();
             let rows = c.execute(
                 "INSERT OR IGNORE INTO signals_v3
-                 (inst_id, kind, triggered_at, funding_rate, prior_24h_return, entry_price)
-                 SELECT ?1, ?2, ?3, ?4, ?5, ?6
+                 (inst_id, kind, triggered_at, funding_rate, prior_24h_return, entry_price,
+                  path_high, path_high_at, path_low, path_low_at, path_samples)
+                 SELECT ?1, ?2, ?3, ?4, ?5, ?6, ?6, ?3, ?6, ?3, 1
                  WHERE NOT EXISTS (
                      SELECT 1 FROM signals_v3
                      WHERE inst_id = ?1 AND kind = ?2
@@ -825,7 +826,7 @@ mod tests {
         let row = db.all_signals().await.unwrap().remove(0);
         assert_eq!(row.path_low, Some(Decimal::new(99, 2)));
         assert_eq!(row.path_high, Some(Decimal::new(106, 2)));
-        assert_eq!(row.path_samples, 3);
+        assert_eq!(row.path_samples, 4);
         assert_eq!(row.stop_2_at, Some(entered_at + 120_000));
         assert_eq!(row.stop_3_at, Some(entered_at + 180_000));
         assert_eq!(row.stop_5_at, Some(entered_at + 180_000));
