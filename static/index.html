@@ -595,6 +595,10 @@
         line-height: 1.6;
         margin: 0;
       }
+      .replay-panel > .execution-note {
+        padding: 22px 28px;
+        overflow-wrap: anywhere;
+      }
       .execution-status {
         font-size: 12px;
         font-weight: 700;
@@ -864,6 +868,9 @@
       @media (max-width: 600px) {
         .execution-head {
           display: block;
+        }
+        .replay-panel > .execution-note {
+          padding: 18px;
         }
         .execution-status {
           display: block;
@@ -1196,7 +1203,7 @@
           </div>
           <div class="panel-foot"><span>稳健分取训练段与验证段单笔均值的较低者；极端价格断层不参与排名</span><span>Hyperliquid 候选先执行回放，再保存到同服务器策略库并独立模拟</span></div>
         </section>
-        <section class="panel lab-panel" aria-label="共享规则执行回放">
+        <section class="panel lab-panel replay-panel" aria-label="共享规则执行回放">
           <div class="panel-head"><div><h2>实盘规则执行回放</h2><p class="sub">使用与 Hyper Fly 相同的穿越入场、杠杆排序、保证金、数量精度、盘口、冷却和账户风控</p></div></div>
           <p id="execution-replay-result" class="execution-note">点击候选中的“执行回放”。从新版部署开始采集完整分钟扫描与L2盘口；旧信号排行榜仍用于探索。当前支持交接 Hyperliquid 单腿做空（含 USDC 抵押的 HIP-3）；跨平台对冲及 OKX / Binance 尚不可交接实盘。</p>
           <div class="panel-foot"><span>初始本金500 USDC · 每仓净值20%保证金 · 收益按美元账户净值计算</span><span>价格回放完成后仍需真实资金费与独立影子验证</span></div>
