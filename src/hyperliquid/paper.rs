@@ -26,6 +26,18 @@ pub async fn scan_once(
     let scan_started_at = now_ms();
     let (tickers, coverage_complete) = client.all_perp_ctxs_all_dexes().await?;
     let quote_at = now_ms();
+    if let Err(error) = db
+        .update_path_extremes(
+            quote_at,
+            tickers
+                .iter()
+                .map(|ticker| (ticker.coin.clone(), ticker.mark_px))
+                .collect(),
+        )
+        .await
+    {
+        error!("HL path update: {}", error);
+    }
     let funding_snapshots = tickers
         .iter()
         .filter(|ticker| ticker.day_ntl_vlm >= Decimal::from(100_000))

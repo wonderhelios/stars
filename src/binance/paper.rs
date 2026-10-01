@@ -261,6 +261,19 @@ pub async fn update_open_signals(
     let now = now_ms();
     let mut updated = 0usize;
 
+    match client.all_tickers().await {
+        Ok(tickers) => {
+            let prices = tickers
+                .into_iter()
+                .map(|ticker| (ticker.symbol, ticker.last))
+                .collect();
+            if let Err(error) = db.update_path_extremes(now, prices).await {
+                error!("BN path update: {}", error);
+            }
+        }
+        Err(error) => error!("BN path snapshot: {}", error),
+    }
+
     for row in &open {
         for (_, col, target_ts) in due_outcomes(row, now) {
             match client.price_at_time(&row.inst_id, target_ts).await {

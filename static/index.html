@@ -1583,14 +1583,27 @@
         const target = OUTCOME_SAMPLES.find(([, hours]) => hours === holdHours);
         const close = target ? Number(row[target[0]]) : 0;
         if (!(entry > 0) || !(close > 0)) return null;
+        const stopField = stopPct == null ? null : `stop_${stopPct}_at`;
+        const pathStopAt = stopField ? Number(row[stopField]) : 0;
+        const enteredAt = Number(row.triggered_at);
+        const holdEndsAt = enteredAt + holdHours * 60 * 60 * 1000;
+        if (pathStopAt > 0 && pathStopAt <= holdEndsAt) {
+          return {
+            row,
+            stopped: true,
+            pathBased: true,
+            exitHours: Math.max((pathStopAt - enteredAt) / 3600000, 1 / 60),
+            net: -stopPct - COST,
+          };
+        }
         for (const [field, exitHours] of OUTCOME_SAMPLES) {
           if (exitHours > holdHours) break;
           const observed = Number(row[field]);
           if (stopPct != null && observed > 0 && observed >= entry * (1 + stopPct / 100)) {
-            return { row, stopped: true, exitHours, net: (entry - observed) / entry * 100 - COST };
+            return { row, stopped: true, pathBased: false, exitHours, net: -stopPct - COST };
           }
         }
-        return { row, stopped: false, exitHours: holdHours, net: (entry - close) / entry * 100 - COST };
+        return { row, stopped: false, pathBased: Number(row.path_samples) > 0, exitHours: holdHours, net: (entry - close) / entry * 100 - COST };
       }
       function sampledOutcome(row, stopPct = 2) {
         return sampledOutcomeAt(row, stopPct, 24);
@@ -1730,13 +1743,14 @@
           const coin = document.createElement("span");
           coin.textContent = outcome.row.inst_id;
           const reason = document.createElement("span");
-          reason.textContent = outcome.stopped ? "采样触线" : "24 小时";
+          reason.textContent = outcome.stopped ? (outcome.pathBased ? "路径触线" : "定点触线") : "24 小时";
           const pnl = document.createElement("span");
           pnl.textContent = signedPct(outcome.net);
           row.append(coin, reason, pnl);
           tradeBox.append(row);
         }
-        $("execution-note").textContent = "全样本统计覆盖本页所有已记录的信号，含 Hyperliquid HIP-3。容量实验按触发时间先到先得，限制同时持仓为 1、3、5 仓，每仓等额；止损采样触发后释放仓位，未触发则持有至 24 小时。2%、3%、5% 使用完全相同的信号样本。止损仅在 T+1/4/8/24 小时价格上检测，并按首次触线采样价退出；两次采样之间的触发和回落无法识别。每笔扣固定 0.15% 成本，不含真实滑点、资金费、强平和复利。因此它是探索性容量实验，不是实盘回测。";
+        const pathRows = rows.filter((row) => Number(row.path_samples) > 0).length;
+        $("execution-note").textContent = `全样本统计覆盖本页所有已记录的信号，含 Hyperliquid HIP-3。容量实验按触发时间先到先得，限制同时持仓为 1、3、5 仓，每仓等额；止损后释放仓位，未触发则持有至目标时间。新版数据每分钟记录价格路径（Hyperliquid 每轮扫描记录），当前 ${pathRows}/${rows.length} 笔具备路径样本；旧数据仍回退到 T+1/4/8/24 定点检测。止损按阈值成交并扣固定 0.15% 成本，不含真实滑点、资金费、强平和复利。`;
       }
       function mean(values) {
         return values.length ? values.reduce((sum, value) => sum + value, 0) / values.length : null;
@@ -1777,6 +1791,15 @@
                   const validation = selected.slice(split).map((outcome) => outcome.net);
                   const trainMean = mean(training);
                   const validationMean = mean(validation);
+                  const validationSorted = [...validation].sort((a, b) => a - b);
+                  const validationMedian = validationSorted.length
+                    ? (validationSorted[(validationSorted.length - 1) >> 1] + validationSorted[validationSorted.length >> 1]) / 2
+                    : null;
+                  const days = new Set(selected.map((outcome) =>
+                    new Date(Number(outcome.row.triggered_at)).toISOString().slice(0, 10)
+                  )).size;
+                  const pathN = selected.filter((outcome) => Number(outcome.row.path_samples) > 0).length;
+                  const pathCoverage = selected.length ? pathN / selected.length : 0;
                   candidates.push({
                     venue,
                     dexScope,
@@ -1790,6 +1813,10 @@
                     validationMean,
                     trainN: training.length,
                     validationN: validation.length,
+                    validationMedian,
+                    days,
+                    pathN,
+                    pathCoverage,
                     robust: Math.min(trainMean, validationMean),
                   });
                 }
@@ -1812,8 +1839,19 @@
         }
         $("strategy-lab-body").innerHTML = shown.map((candidate, index) => {
           const tone = candidate.robust >= 0 ? "pos" : "neg";
-          const exportable = candidate.venue === "hyperliquid" && candidate.dexScope === "main" && candidate.stopPct != null;
-          return `<tr><td><span class="candidate-rank">${index + 1}</span></td><td>${escapeHtml(VENUE[candidate.venue])}</td><td>${escapeHtml(candidate.dexLabel)}</td><td>${escapeHtml(candidate.kindLabel)}</td><td>${candidate.holdHours}h</td><td>${candidate.stopPct == null ? "不设" : `${candidate.stopPct}%`}</td><td>${candidate.maxOpen}</td><td class="${candidate.trainMean >= 0 ? "pos" : "neg"}">${signed(candidate.trainMean)} · n=${candidate.trainN}</td><td class="${candidate.validationMean >= 0 ? "pos" : "neg"}">${signed(candidate.validationMean)} · n=${candidate.validationN}</td><td>${candidate.trainN + candidate.validationN}</td><td class="${tone}">${signed(candidate.robust)}</td><td>${exportable ? `<button class="strategy-export" data-strategy-index="${index}" type="button">保存到策略库</button>` : "—"}</td></tr>`;
+          const compatible = candidate.venue === "hyperliquid" && candidate.dexScope === "main" && candidate.stopPct != null;
+          const liveEligible = compatible
+            && candidate.trainN + candidate.validationN >= 30
+            && candidate.validationN >= 10
+            && candidate.days >= 5
+            && candidate.validationMedian > 0
+            && candidate.pathCoverage >= 0.8;
+          candidate.liveEligible = liveEligible;
+          const sample = `${candidate.trainN + candidate.validationN} · ${candidate.days}日 · 路径${Math.round(candidate.pathCoverage * 100)}%`;
+          const handoff = liveEligible
+            ? `<button class="strategy-export" data-strategy-index="${index}" type="button">保存到策略库</button>`
+            : compatible ? '<span class="muted">继续观察</span>' : "—";
+          return `<tr><td><span class="candidate-rank">${index + 1}</span></td><td>${escapeHtml(VENUE[candidate.venue])}</td><td>${escapeHtml(candidate.dexLabel)}</td><td>${escapeHtml(candidate.kindLabel)}</td><td>${candidate.holdHours}h</td><td>${candidate.stopPct == null ? "不设" : `${candidate.stopPct}%`}</td><td>${candidate.maxOpen}</td><td class="${candidate.trainMean >= 0 ? "pos" : "neg"}">${signed(candidate.trainMean)} · n=${candidate.trainN}</td><td class="${candidate.validationMean >= 0 ? "pos" : "neg"}">${signed(candidate.validationMean)} · n=${candidate.validationN} · 中位${signed(candidate.validationMedian)}</td><td>${sample}</td><td class="${tone}">${signed(candidate.robust)}</td><td>${handoff}</td></tr>`;
         }).join("");
       }
       function strategyManifest(candidate) {
@@ -1842,7 +1880,11 @@
             validation_mean_pct: candidate.validationMean,
             train_n: candidate.trainN,
             validation_n: candidate.validationN,
-            warning: "采样研究结果；部署实盘前仍需人工复核",
+            validation_median_pct: candidate.validationMedian,
+            distinct_utc_days: candidate.days,
+            path_coverage: candidate.pathCoverage,
+            live_eligible: candidate.liveEligible,
+            warning: "已通过研究页最低样本门槛；启用实盘前仍需人工复核",
           },
         };
         return manifest;

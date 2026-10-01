@@ -205,6 +205,19 @@ pub async fn update_open_signals(client: &RestClient, db: &PaperDb) -> anyhow::R
     let now = now_ms();
     let mut updated = 0usize;
 
+    match client.all_tickers_usdt_swap().await {
+        Ok(tickers) => {
+            let prices = tickers
+                .into_iter()
+                .map(|ticker| (ticker.inst_id, ticker.last))
+                .collect();
+            if let Err(error) = db.update_path_extremes(now, prices).await {
+                error!("OKX path update: {}", error);
+            }
+        }
+        Err(error) => error!("OKX path snapshot: {}", error),
+    }
+
     for row in &open {
         for (_, col, target_ts) in due_outcomes(row, now) {
             match client.price_at_time(&row.inst_id, target_ts).await {

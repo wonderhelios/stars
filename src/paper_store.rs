@@ -26,6 +26,14 @@ pub struct SignalRow {
     pub t4_price: Option<Decimal>,
     pub t8_price: Option<Decimal>,
     pub t24_price: Option<Decimal>,
+    pub path_high: Option<Decimal>,
+    pub path_high_at: Option<i64>,
+    pub path_low: Option<Decimal>,
+    pub path_low_at: Option<i64>,
+    pub path_samples: i64,
+    pub stop_2_at: Option<i64>,
+    pub stop_3_at: Option<i64>,
+    pub stop_5_at: Option<i64>,
 }
 
 /// A qualifying observation from a scan, recorded even when the signal is in cooldown.
@@ -104,6 +112,14 @@ impl PaperDb {
                  t4_price TEXT,
                  t8_price TEXT,
                  t24_price TEXT,
+                 path_high TEXT,
+                 path_high_at INTEGER,
+                 path_low TEXT,
+                 path_low_at INTEGER,
+                 path_samples INTEGER NOT NULL DEFAULT 0,
+                 stop_2_at INTEGER,
+                 stop_3_at INTEGER,
+                 stop_5_at INTEGER,
                  UNIQUE(inst_id, triggered_at)
              );
              CREATE INDEX IF NOT EXISTS idx_signals_v3_inst_time
@@ -171,12 +187,35 @@ impl PaperDb {
                 )?;
             }
         }
+        for (name, definition) in [
+            ("path_high", "TEXT"),
+            ("path_high_at", "INTEGER"),
+            ("path_low", "TEXT"),
+            ("path_low_at", "INTEGER"),
+            ("path_samples", "INTEGER NOT NULL DEFAULT 0"),
+            ("stop_2_at", "INTEGER"),
+            ("stop_3_at", "INTEGER"),
+            ("stop_5_at", "INTEGER"),
+        ] {
+            let exists: i64 = conn.query_row(
+                "SELECT COUNT(*) FROM pragma_table_info('signals_v3') WHERE name=?1",
+                [name],
+                |row| row.get(0),
+            )?;
+            if exists == 0 {
+                conn.execute(
+                    &format!("ALTER TABLE signals_v3 ADD COLUMN {name} {definition}"),
+                    [],
+                )?;
+            }
+        }
         Ok(Self {
             conn: Arc::new(Mutex::new(conn)),
         })
     }
 
-    /// 同一合约在 24 小时观察期内只允许首个信号，类别变化也不能重复入场。
+    /// 同一合约、同一形态在 24 小时观察期内只记录首个信号。
+    /// 形态发生变化时保留新的研究样本，避免某一形态抢先触发后遮住另一形态。
     /// 单条 SQL 完成检查和插入，避免并发扫描绕过去重。
     pub async fn insert(&self, sig: &Signal) -> anyhow::Result<bool> {
         let conn = self.conn.clone();
@@ -189,7 +228,8 @@ impl PaperDb {
                  SELECT ?1, ?2, ?3, ?4, ?5, ?6
                  WHERE NOT EXISTS (
                      SELECT 1 FROM signals_v3
-                     WHERE inst_id = ?1 AND triggered_at > ?7 AND triggered_at < ?8
+                     WHERE inst_id = ?1 AND kind = ?2
+                       AND triggered_at > ?7 AND triggered_at < ?8
                  )",
                 params![
                     sig.inst_id,
@@ -370,13 +410,17 @@ impl PaperDb {
             let c = conn.lock().unwrap();
             let sql = if only_open {
                 "SELECT id, inst_id, kind, triggered_at, funding_rate, prior_24h_return,
-                        entry_price, t1_price, t4_price, t8_price, t24_price
+                        entry_price, t1_price, t4_price, t8_price, t24_price,
+                        path_high, path_high_at, path_low, path_low_at, path_samples,
+                        stop_2_at, stop_3_at, stop_5_at
                  FROM signals_v3
                  WHERE t1_price IS NULL OR t4_price IS NULL OR t8_price IS NULL OR t24_price IS NULL
                  ORDER BY triggered_at ASC"
             } else {
                 "SELECT id, inst_id, kind, triggered_at, funding_rate, prior_24h_return,
-                        entry_price, t1_price, t4_price, t8_price, t24_price
+                        entry_price, t1_price, t4_price, t8_price, t24_price,
+                        path_high, path_high_at, path_low, path_low_at, path_samples,
+                        stop_2_at, stop_3_at, stop_5_at
                  FROM signals_v3 ORDER BY triggered_at ASC"
             };
             let mut stmt = c.prepare(sql)?;
@@ -406,6 +450,50 @@ impl PaperDb {
             };
             c.execute(sql, params![price.to_string(), id])?;
             Ok(())
+        })
+        .await?
+    }
+
+    /// Record the best observed path information for every still-open signal.
+    /// Callers can pass a whole-market price map, so this adds no per-signal HTTP requests.
+    pub async fn update_path_extremes(
+        &self,
+        observed_at: i64,
+        prices: std::collections::HashMap<String, Decimal>,
+    ) -> anyhow::Result<usize> {
+        if prices.is_empty() {
+            return Ok(0);
+        }
+        let conn = self.conn.clone();
+        tokio::task::spawn_blocking(move || -> anyhow::Result<usize> {
+            let mut c = conn.lock().unwrap();
+            let tx = c.transaction()?;
+            let mut updated = 0usize;
+            for (inst_id, price) in prices {
+                if price <= Decimal::ZERO {
+                    continue;
+                }
+                updated += tx.execute(
+                    "UPDATE signals_v3 SET
+                         path_high_at = CASE WHEN path_high IS NULL OR CAST(path_high AS REAL) < CAST(?1 AS REAL) THEN ?2 ELSE path_high_at END,
+                         path_high = CASE WHEN path_high IS NULL OR CAST(path_high AS REAL) < CAST(?1 AS REAL) THEN ?1 ELSE path_high END,
+                         path_low_at = CASE WHEN path_low IS NULL OR CAST(path_low AS REAL) > CAST(?1 AS REAL) THEN ?2 ELSE path_low_at END,
+                         path_low = CASE WHEN path_low IS NULL OR CAST(path_low AS REAL) > CAST(?1 AS REAL) THEN ?1 ELSE path_low END,
+                         path_samples = path_samples + 1,
+                         stop_2_at = CASE WHEN stop_2_at IS NULL AND CAST(?1 AS REAL) >= CAST(entry_price AS REAL) * 1.02 THEN ?2 ELSE stop_2_at END,
+                         stop_3_at = CASE WHEN stop_3_at IS NULL AND CAST(?1 AS REAL) >= CAST(entry_price AS REAL) * 1.03 THEN ?2 ELSE stop_3_at END,
+                         stop_5_at = CASE WHEN stop_5_at IS NULL AND CAST(?1 AS REAL) >= CAST(entry_price AS REAL) * 1.05 THEN ?2 ELSE stop_5_at END
+                     WHERE inst_id = ?3 AND triggered_at <= ?2 AND triggered_at > ?4",
+                    params![
+                        price.to_string(),
+                        observed_at,
+                        inst_id,
+                        observed_at - OBSERVATION_WINDOW_MS,
+                    ],
+                )?;
+            }
+            tx.commit()?;
+            Ok(updated)
         })
         .await?
     }
@@ -447,6 +535,14 @@ fn parse_row(row: &Row<'_>) -> rusqlite::Result<SignalRow> {
         t4_price: optional(8)?,
         t8_price: optional(9)?,
         t24_price: optional(10)?,
+        path_high: optional(11)?,
+        path_high_at: row.get(12)?,
+        path_low: optional(13)?,
+        path_low_at: row.get(14)?,
+        path_samples: row.get(15)?,
+        stop_2_at: row.get(16)?,
+        stop_3_at: row.get(17)?,
+        stop_5_at: row.get(18)?,
     })
 }
 
@@ -550,6 +646,57 @@ mod tests {
         let _ = std::fs::remove_file(path.with_extension("sqlite-shm"));
     }
 
+    #[test]
+    fn existing_signal_table_gets_path_columns() {
+        let name = format!(
+            "edgeboard-signal-migration-{}-{}.sqlite",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        );
+        let path = std::env::temp_dir().join(name);
+        let conn = Connection::open(&path).unwrap();
+        conn.execute_batch(
+            "CREATE TABLE signals_v3 (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                inst_id TEXT NOT NULL, kind TEXT NOT NULL, triggered_at INTEGER NOT NULL,
+                funding_rate TEXT NOT NULL, prior_24h_return TEXT NOT NULL,
+                entry_price TEXT NOT NULL, t1_price TEXT, t4_price TEXT,
+                t8_price TEXT, t24_price TEXT, UNIQUE(inst_id, triggered_at)
+            );",
+        )
+        .unwrap();
+        drop(conn);
+        let db = PaperDb::open(path.to_str().unwrap()).unwrap();
+        let conn = db.conn.lock().unwrap();
+        for name in [
+            "path_high",
+            "path_high_at",
+            "path_low",
+            "path_low_at",
+            "path_samples",
+            "stop_2_at",
+            "stop_3_at",
+            "stop_5_at",
+        ] {
+            let count: i64 = conn
+                .query_row(
+                    "SELECT COUNT(*) FROM pragma_table_info('signals_v3') WHERE name=?1",
+                    [name],
+                    |row| row.get(0),
+                )
+                .unwrap();
+            assert_eq!(count, 1, "missing migrated column {name}");
+        }
+        drop(conn);
+        drop(db);
+        let _ = std::fs::remove_file(&path);
+        let _ = std::fs::remove_file(path.with_extension("sqlite-wal"));
+        let _ = std::fs::remove_file(path.with_extension("sqlite-shm"));
+    }
+
     fn signal(kind: &str, triggered_at: i64) -> Signal {
         Signal {
             inst_id: "GRAM".into(),
@@ -562,25 +709,25 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn one_entry_per_instrument_across_kinds_for_24_hours() {
+    async fn one_entry_per_instrument_and_kind_for_24_hours() {
         let db = PaperDb::open(":memory:").unwrap();
         assert!(db.insert(&signal("up_pos_fund", 1_000_000)).await.unwrap());
-        assert!(!db
+        assert!(db
             .insert(&signal("pump_pos_fund", 1_000_000 + 30 * 60_000))
             .await
             .unwrap());
         assert!(!db
             .insert(&signal(
-                "pump_pos_fund",
+                "up_pos_fund",
                 1_000_000 + OBSERVATION_WINDOW_MS - 1
             ))
             .await
             .unwrap());
         assert!(db
-            .insert(&signal("pump_pos_fund", 1_000_000 + OBSERVATION_WINDOW_MS))
+            .insert(&signal("up_pos_fund", 1_000_000 + OBSERVATION_WINDOW_MS))
             .await
             .unwrap());
-        assert_eq!(db.all_signals().await.unwrap().len(), 2);
+        assert_eq!(db.all_signals().await.unwrap().len(), 3);
     }
 
     #[tokio::test]
@@ -597,7 +744,7 @@ mod tests {
         let db1 = PaperDb::open(path.to_str().unwrap()).unwrap();
         let db2 = PaperDb::open(path.to_str().unwrap()).unwrap();
         let first_signal = signal("up_pos_fund", 1_000_000);
-        let second_signal = signal("pump_pos_fund", 1_000_000 + 30 * 60_000);
+        let second_signal = signal("up_pos_fund", 1_000_000 + 30 * 60_000);
         let (first, second) = tokio::join!(db1.insert(&first_signal), db2.insert(&second_signal));
         assert_eq!(first.unwrap() as u8 + second.unwrap() as u8, 1);
         assert_eq!(db1.all_signals().await.unwrap().len(), 1);
@@ -654,6 +801,34 @@ mod tests {
             .query_row("SELECT COUNT(*) FROM scan_runs", [], |r| r.get(0))
             .unwrap();
         assert_eq!((observed, finished), (2, 1));
+    }
+
+    #[tokio::test]
+    async fn path_tracking_records_extremes_and_first_stop_times() {
+        let db = PaperDb::open(":memory:").unwrap();
+        let entered_at = 1_000_000;
+        assert!(db.insert(&signal("up_pos_fund", entered_at)).await.unwrap());
+
+        for (offset, price) in [
+            (60_000, Decimal::new(99, 2)),
+            (120_000, Decimal::new(1021, 3)),
+            (180_000, Decimal::new(106, 2)),
+        ] {
+            db.update_path_extremes(
+                entered_at + offset,
+                [("GRAM".to_string(), price)].into_iter().collect(),
+            )
+            .await
+            .unwrap();
+        }
+
+        let row = db.all_signals().await.unwrap().remove(0);
+        assert_eq!(row.path_low, Some(Decimal::new(99, 2)));
+        assert_eq!(row.path_high, Some(Decimal::new(106, 2)));
+        assert_eq!(row.path_samples, 3);
+        assert_eq!(row.stop_2_at, Some(entered_at + 120_000));
+        assert_eq!(row.stop_3_at, Some(entered_at + 180_000));
+        assert_eq!(row.stop_5_at, Some(entered_at + 180_000));
     }
 
     fn funding_snapshot(observed_at: i64, rate: Decimal) -> FundingSnapshot {
