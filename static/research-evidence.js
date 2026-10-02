@@ -35,7 +35,7 @@
     const e=s.forward;
     const regimes=e.regimes.map(r=>`${esc(r.regime)}：${pct(r.mean)} / n=${r.n}`).join('<br>') || '尚无未来样本';
     const dates=e.dates.map(r=>`${new Date(r.day*86400000).toISOString().slice(0,10)}：${pct(r.mean)} / n=${r.n}`).join('<br>') || '尚无未来样本';
-    return `<details class="evidence-detail"><summary>收益贡献 / 行情 / 日期</summary><p>冻结于 ${esc(dateTime(s.frozen_at))}。规则及成本固定，新样本按入场时间判定。</p><p>最好 ${pct(e.best)}；最差 ${pct(e.worst)}<br>去掉最好一笔 ${pct(e.without_best)}<br>去掉最好三笔 ${pct(e.without_top3)}<br>前三笔占正收益 ${e.top3_profit_share==null?'—':e.top3_profit_share.toFixed(1)+'%'}<br>最大单日样本占比 ${e.largest_day_share==null?'—':e.largest_day_share.toFixed(1)+'%'}</p><p>按UTC日期整组重采样的95%均值区间：${e.day_bootstrap_95?e.day_bootstrap_95.map(pct).join(" ～ "):"至少5个日期后显示"}。此区间未校正多重筛选，日期之间也可能相关，不代表已经证实alpha。</p><p>${regimes}</p><p>${dates}</p><p>全窗口未到期 ${s.pending_exit||0}；到期但缺退出 ${s.missing_exit}；绝对价格变动超过50% ${s.extreme_moves}（仍保留在收益中）。缺失退出可能造成幸存偏差。</p></details>`;
+    return `<details class="evidence-detail"><summary>收益贡献 / 行情 / 日期</summary><p>冻结于 ${esc(dateTime(s.frozen_at))}。入场条件及成本固定，新样本按入场时间判定。退出按目标小时的真实快照重算（target-hour-v2），不是精确持有时长回放。</p><p>最好 ${pct(e.best)}；最差 ${pct(e.worst)}<br>去掉最好一笔 ${pct(e.without_best)}<br>去掉最好三笔 ${pct(e.without_top3)}<br>前三笔占正收益 ${e.top3_profit_share==null?'—':e.top3_profit_share.toFixed(1)+'%'}<br>最大单日样本占比 ${e.largest_day_share==null?'—':e.largest_day_share.toFixed(1)+'%'}</p><p>按UTC日期整组重采样的95%均值区间：${e.day_bootstrap_95?e.day_bootstrap_95.map(pct).join(" ～ "):"至少5个日期后显示"}。此区间未校正多重筛选，日期之间也可能相关，不代表已经证实alpha。</p><p>${regimes}</p><p>${dates}</p><p>全窗口未到期 ${s.pending_exit||0}；历史缺目标小时 ${s.historical_missing_exit ?? "—"}；新增缺目标小时 ${s.forward_missing_exit ?? "—"}（合计 ${s.missing_exit}）；实际观察时长 ${s.actual_hold_min_hours==null?"—":s.actual_hold_min_hours.toFixed(2)+"～"+s.actual_hold_max_hours.toFixed(2)+"h"}；绝对价格变动超过50% ${s.extreme_moves}（仍保留在收益中）。缺失退出可能造成幸存偏差。</p></details>`;
   }
   function renderReport() {
     if (!report) return;
@@ -47,7 +47,7 @@
     const c=report.execution_coverage || {};
     const last=c.last_at ? `${dateTime(c.last_at)}（${Math.max(0,Math.floor((Date.now()-c.last_at)/60000))}分钟前）` : '尚无分钟帧';
     const coverage=report.coverage.map(v=>`${v.venue}：${v.observations}条小时快照 / ${v.markets}个合约，最新 ${v.latest?dateTime(v.latest):'无数据'}`).join('；');
-    el('evidence-health').textContent=`HL 最近24h执行采集：${c.frames||0}帧，全DEX完整${c.complete_frames||0}帧，超过90秒断档${c.gaps||0}段，最新${last}。${c.error||''} ${coverage}。${report.errors.join('；')} 数据仅含完整小时，缓存最多2分钟。BTC和市场超额按同方向、同持仓区间比较，非扣除β后的alpha；市场基准需至少10个原生币种，HIP-3暂缺可比基准。`;
+    el('evidence-health').textContent=`${esc(report.version)} · HL 最近24h执行采集：${c.frames||0}帧，全DEX完整${c.complete_frames||0}帧，超过90秒断档${c.gaps||0}段，最新${last}。${c.error||''} ${coverage}。${report.errors.join('；')} 数据仅含完整小时，缓存最多2分钟。价格研究按目标小时快照退出，名义4h/24h对应的实际时长可能有约1小时偏差；详情展示实际时长范围，不能代替分钟执行回放。BTC和市场超额按同方向、同持仓区间比较，非扣除β后的alpha；市场基准需至少10个原生币种，HIP-3暂缺可比基准。`;
     renderFees();
   }
   function renderLineCards() {
@@ -56,7 +56,7 @@
     el('study-line-cards').innerHTML=families.map(([id,name])=>{
       const lines=(report?.studies||[]).filter(s=>s.id.includes(`-${id}-`)&&s.hold_hours===hold);
       const n=lines.reduce((a,s)=>a+s.forward.n,0);
-      const promising=lines.filter(s=>s.forward.n>=30 && s.forward.days>=5 && s.forward.mean>0 && s.forward.median>0 && s.forward.without_top3>0 && s.forward.market_matched>=s.forward.n*0.8 && s.forward.market_excess>0 && s.forward.day_bootstrap_95?.[0]>0 && s.missing_exit===0);
+      const promising=lines.filter(s=>s.forward.n>=30 && s.forward.days>=5 && s.forward.mean>0 && s.forward.median>0 && s.forward.without_top3>0 && s.forward.market_matched>=s.forward.n*0.8 && s.forward.market_excess>0 && s.forward.day_bootstrap_95?.[0]>0 && (s.forward_missing_exit ?? s.missing_exit)===0);
       const stage=!lines.length?'数据未就绪':promising.length?'值得执行回放':n?'未来观察中':'积累新样本';
       return `<button type="button" class="study-card ${el('parallel-family').value===id?'selected':''}" data-family="${id}"><strong>${name}</strong><span class="study-stage ${promising.length?'wait':''}">${stage}</span><small>${lines.length}平台 · ${hold}h · 新观察${n}笔（平台间可能重复）</small><small>${promising.length?'初步证据为正，仍未通过实盘验证':'未通过完整执行验证，不能直接实盘'}</small></button>`;
     }).join('')+`<button type="button" class="study-card" data-family="fees"><strong>跨平台费率差</strong><span class="study-stage">持续性研究</span><small>${report?.fee_studies?.length||0}组原生币种对照</small><small>缺少双腿成交与实际结算，不能实盘交接</small></button>`;

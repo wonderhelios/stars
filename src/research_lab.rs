@@ -10,11 +10,12 @@ use std::collections::{BTreeMap, HashMap};
 const HOUR: i64 = 3_600_000;
 const COST: f64 = 0.15;
 const MIN_VOLUME: f64 = 500_000.0;
-const VERSION: &str = "parallel-v1";
+const VERSION: &str = "parallel-v2";
 
 #[derive(Clone, Debug)]
 pub(crate) struct Point {
     at: i64,
+    hour: i64,
     coin: String,
     price: f64,
     prior: f64,
@@ -35,6 +36,7 @@ impl Point {
         };
         Ok(Self {
             at: row.get(0)?,
+            hour: row.get(7)?,
             coin: row.get(1)?,
             price: number(2)?,
             prior: number(3)?,
@@ -46,6 +48,7 @@ impl Point {
     fn from(row: FundingSnapshotRow) -> Option<Self> {
         let p = Self {
             at: row.observed_at,
+            hour: row.snapshot_hour,
             coin: row.inst_id,
             price: row.reference_price.to_f64()?,
             prior: row.prior_24h_return.to_f64()?,
@@ -145,10 +148,13 @@ fn before(points: &[Point], at: i64, tolerance: i64) -> Option<&Point> {
         .get(n.checked_sub(1)?)
         .filter(|p| at - p.at <= tolerance)
 }
-fn after(points: &[Point], at: i64) -> Option<&Point> {
+// Each hour stores its last real snapshot. Match the target bucket rather than
+// discarding a valid bucket when its collection minute precedes the entry minute.
+// This is a coarse hourly study, not an exact holding-time execution replay.
+fn at_hour(points: &[Point], hour: i64) -> Option<&Point> {
     points
-        .get(points.partition_point(|p| p.at < at))
-        .filter(|p| p.at - at <= HOUR / 2)
+        .get(points.partition_point(|p| p.hour < hour))
+        .filter(|p| p.hour == hour)
 }
 fn mean(v: &[f64]) -> Option<f64> {
     (!v.is_empty()).then(|| v.iter().sum::<f64>() / v.len() as f64)
@@ -307,6 +313,10 @@ pub struct Study {
     frozen_at: i64,
     missing_exit: usize,
     pending_exit: usize,
+    historical_missing_exit: usize,
+    forward_missing_exit: usize,
+    actual_hold_min_hours: Option<f64>,
+    actual_hold_max_hours: Option<f64>,
     extreme_moves: usize,
     historical: Evidence,
     forward: Evidence,
@@ -332,6 +342,7 @@ pub struct Report {
     pub version: &'static str,
     pub generated_at: i64,
     pub window_days: usize,
+    pub exit_method: &'static str,
     pub studies: Vec<Study>,
     pub fee_studies: Vec<FeeStudy>,
     pub coverage: Vec<serde_json::Value>,
@@ -366,7 +377,10 @@ pub fn analyze(inputs: Vec<(&str, i64, Vec<Point>)>, errors: Vec<String>) -> Rep
                 let mut outcomes = Vec::new();
                 let mut missing_exit = 0;
                 let mut pending_exit = 0;
+                let mut historical_missing_exit = 0;
+                let mut forward_missing_exit = 0;
                 let mut bad = 0;
+                let mut actual_holds = Vec::new();
                 for (coin, points) in markets {
                     let mut available_at = i64::MIN;
                     for p in points {
@@ -388,18 +402,23 @@ pub fn analyze(inputs: Vec<(&str, i64, Vec<Point>)>, errors: Vec<String>) -> Rep
                             }
                         }
                         // Reserve the whole observation interval even if its exit is missing.
-                        available_at = p.at + hold * HOUR;
-                        let Some(exit) = after(points, available_at) else {
-                            if available_at + HOUR / 2
-                                > crate::paper::now_ms().div_euclid(HOUR) * HOUR
-                            {
+                        let target_hour = p.hour + hold * HOUR;
+                        available_at = target_hour;
+                        let Some(exit) = at_hour(points, target_hour) else {
+                            if target_hour >= crate::paper::now_ms().div_euclid(HOUR) * HOUR {
                                 pending_exit += 1;
                             } else {
                                 missing_exit += 1;
+                                if p.at < frozen[venue] {
+                                    historical_missing_exit += 1;
+                                } else {
+                                    forward_missing_exit += 1;
+                                }
                             }
                             continue;
                         };
                         available_at = exit.at;
+                        actual_holds.push((exit.at - p.at) as f64 / HOUR as f64);
                         let ret = (exit.price / p.price - 1.0) * 100.0;
                         if !ret.is_finite() {
                             continue;
@@ -473,6 +492,10 @@ pub fn analyze(inputs: Vec<(&str, i64, Vec<Point>)>, errors: Vec<String>) -> Rep
                     frozen_at: cutoff,
                     missing_exit,
                     pending_exit,
+                    historical_missing_exit,
+                    forward_missing_exit,
+                    actual_hold_min_hours: actual_holds.iter().copied().reduce(f64::min),
+                    actual_hold_max_hours: actual_holds.iter().copied().reduce(f64::max),
                     extreme_moves: bad,
                     historical: evidence(&old),
                     forward: evidence(&new),
@@ -484,6 +507,7 @@ pub fn analyze(inputs: Vec<(&str, i64, Vec<Point>)>, errors: Vec<String>) -> Rep
         version: VERSION,
         generated_at: crate::paper::now_ms(),
         window_days: 30,
+        exit_method: "target-hour-v2",
         fee_studies: fee_evidence(&data),
         studies,
         coverage,
@@ -617,6 +641,7 @@ mod tests {
     fn benchmark_cannot_use_future_observations() {
         let p = Point {
             at: 100,
+            hour: 0,
             coin: "BTC".into(),
             price: 1.0,
             prior: 0.0,
@@ -630,6 +655,7 @@ mod tests {
     fn negative_funding_and_momentum_are_distinct() {
         let p = Point {
             at: 0,
+            hour: 0,
             coin: "X".into(),
             price: 1.0,
             prior: -4.0,
@@ -646,6 +672,7 @@ mod tests {
     fn fixed_funding_legs_can_become_negative() {
         let make = |at, rate8| Point {
             at,
+            hour: at.div_euclid(HOUR) * HOUR,
             coin: "BTC".into(),
             price: 100.0,
             prior: 0.0,
@@ -705,6 +732,62 @@ mod tests {
         assert_eq!(s.missing_exit, 1);
         assert_eq!(s.forward.btc_matched, 0);
     }
+    #[test]
+    fn hourly_exit_uses_real_target_bucket_despite_collection_minute_drift() {
+        let minute = HOUR / 60;
+        let mut entry = row(0, 100);
+        entry.observed_at = 50 * minute;
+        let mut exit = row(4 * HOUR, 90);
+        exit.observed_at = 4 * HOUR + 10 * minute;
+        // The target snapshot precedes entry+4h by 40 minutes; it is present,
+        // and its actual 3h20 observation duration must be disclosed.
+        let r = analyze(
+            vec![(
+                "OKX",
+                HOUR,
+                vec![entry, exit]
+                    .into_iter()
+                    .filter_map(Point::from)
+                    .collect(),
+            )],
+            vec![],
+        );
+        let s = r
+            .studies
+            .iter()
+            .find(|s| s.id.ends_with("positive-reversal-4h"))
+            .unwrap();
+        assert_eq!(s.historical.n, 1);
+        assert!((s.historical.mean.unwrap() - 9.85).abs() < 1e-9);
+        assert!((s.actual_hold_min_hours.unwrap() - 10.0 / 3.0).abs() < 1e-9);
+        assert_eq!(s.historical_missing_exit, 0);
+        assert_eq!(s.forward_missing_exit, 1);
+    }
+
+    #[test]
+    fn missing_target_hour_is_not_filled_with_a_later_price() {
+        let r = analyze(
+            vec![(
+                "OKX",
+                HOUR,
+                vec![row(0, 100), row(5 * HOUR, 90)]
+                    .into_iter()
+                    .filter_map(Point::from)
+                    .collect(),
+            )],
+            vec![],
+        );
+        let s = r
+            .studies
+            .iter()
+            .find(|s| s.id.ends_with("positive-reversal-4h"))
+            .unwrap();
+        assert_eq!(s.historical.n, 0);
+        assert_eq!(s.historical_missing_exit, 1);
+        assert_eq!(s.forward_missing_exit, 1);
+        assert_eq!(s.actual_hold_min_hours, None);
+    }
+
     #[test]
     fn uncertainty_needs_multiple_dates() {
         assert!(day_interval(&BTreeMap::from([(0, vec![1.0; 100])])).is_none());

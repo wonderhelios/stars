@@ -182,7 +182,7 @@ impl PaperDb {
                  ON funding_snapshots(snapshot_hour);",
         )?;
         conn.execute(
-            "INSERT OR IGNORE INTO research_freezes VALUES ('parallel-v1', ?1)",
+            "INSERT OR IGNORE INTO research_freezes VALUES ('parallel-v2', ?1)",
             [crate::paper::now_ms()],
         )?;
         for name in ["max_leverage", "size_decimals"] {
@@ -404,14 +404,14 @@ impl PaperDb {
             let c = Connection::open_with_flags(path, rusqlite::OpenFlags::SQLITE_OPEN_READ_ONLY)?;
             c.busy_timeout(std::time::Duration::from_secs(5))?;
             let frozen = c.query_row(
-                "SELECT frozen_at FROM research_freezes WHERE version='parallel-v1'",
+                "SELECT frozen_at FROM research_freezes WHERE version='parallel-v2'",
                 [],
                 |r| r.get(0),
             )?;
             let end = crate::paper::now_ms().div_euclid(3_600_000) * 3_600_000;
             let mut stmt = c.prepare(
                 "SELECT observed_at, inst_id, reference_price, prior_24h_return,
-                        funding_rate, funding_period_hours, volume_quote_24h
+                        funding_rate, funding_period_hours, volume_quote_24h, snapshot_hour
                  FROM funding_snapshots WHERE snapshot_hour>=?1 AND snapshot_hour<?2 AND funding_period_hours>0
                  ORDER BY observed_at, inst_id",
             )?;
@@ -1080,7 +1080,7 @@ mod tests {
             .lock()
             .unwrap()
             .execute(
-                "UPDATE research_freezes SET frozen_at=123 WHERE version='parallel-v1'",
+                "UPDATE research_freezes SET frozen_at=123 WHERE version='parallel-v2'",
                 [],
             )
             .unwrap();
