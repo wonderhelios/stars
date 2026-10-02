@@ -12,7 +12,7 @@
   function renderSignals() {
     const lines=[];
     for (const [venue, label] of Object.entries(VENUE)) {
-      const rows=state.paper[venue]?.data || [];
+      const rows=researchRows(state.paper[venue]?.data);
       for (const [kind,name] of [['','全部形态'],...Object.entries(KINDS)]) {
         const cohort=rows.filter(r=>!kind || r.kind===kind);
         const complete=cohort.filter(r=>Number(r.entry_price)>0 && Number(r.t24_price)>0);
@@ -44,10 +44,10 @@
     const rows=report.studies.filter(s=>(!venue || s.venue===venue) && s.hold_hours===hold && (!family || s.id.includes(`-${family}-`)));
     renderLineCards();
     el('parallel-body').innerHTML=rows.map(s=>`<tr><td>${esc(s.venue)}<br><strong>${esc(s.name)}</strong></td><td>${esc(s.direction)} · ${s.hold_hours}h<br><span class="muted">${esc(s.rule)}</span></td><td>${summary(s.historical)}</td><td>${summary(s.forward)}</td><td class="${tone(s.forward.btc_excess)}">${pct(s.forward.btc_excess)}<br><span class="muted">匹配${s.forward.btc_matched}</span></td><td class="${tone(s.forward.market_excess)}">${pct(s.forward.market_excess)}<br><span class="muted">匹配${s.forward.market_matched}</span></td><td>${detail(s)}</td></tr>`).join('') || '<tr><td colspan="7">该平台暂无完整小时数据</td></tr>';
-    const c=report.execution_coverage || {};
+    const c=(report.collection_cycle!=="all"?report.execution_coverage?.current_cycle:report.execution_coverage) || {};
     const last=c.last_at ? `${dateTime(c.last_at)}（${Math.max(0,Math.floor((Date.now()-c.last_at)/60000))}分钟前）` : '尚无分钟帧';
     const coverage=report.coverage.map(v=>`${v.venue}：${v.observations}条小时快照 / ${v.markets}个合约，最新 ${v.latest?dateTime(v.latest):'无数据'}`).join('；');
-    el('evidence-health').textContent=`${esc(report.version)} · HL 最近24h执行采集：${c.frames||0}帧，全DEX完整${c.complete_frames||0}帧，超过90秒断档${c.gaps||0}段，最新${last}。${c.error||''} ${coverage}。${report.errors.join('；')} 数据仅含完整小时，缓存最多2分钟。价格研究按目标小时快照退出，名义4h/24h对应的实际时长可能有约1小时偏差；详情展示实际时长范围，不能代替分钟执行回放。BTC和市场超额按同方向、同持仓区间比较，非扣除β后的alpha；市场基准需至少10个原生币种，HIP-3暂缺可比基准。`;
+    el('evidence-health').textContent=`${esc(report.version)} · 研究周期 ${esc(report.collection_cycle)} · 起点 ${report.cycle_started_at?dateTime(report.cycle_started_at):"全部历史"} · HL ${report.collection_cycle==="all"?"最近24h":"本周期"}执行采集：${c.frames||0}帧，全DEX完整${c.complete_frames||0}帧，超过90秒断档${c.gaps||0}段，最新${last}。${c.error||''} ${coverage}。${report.errors.join('；')} 数据仅含完整小时，缓存最多2分钟。价格研究按目标小时快照退出，名义4h/24h对应的实际时长可能有约1小时偏差；详情展示实际时长范围，不能代替分钟执行回放。BTC和市场超额按同方向、同持仓区间比较，非扣除β后的alpha；市场基准需至少10个原生币种，HIP-3暂缺可比基准。`;
     renderFees();
   }
   function renderLineCards() {
@@ -87,19 +87,28 @@
   }
   async function load(force=false) {
     renderSignals();
-    if (busy || (!force && Date.now()-lastLoad<120000)) return;
+    if (!researchCycle.id || busy || (!force && Date.now()-lastLoad<120000)) return;
+    const requestedCycle=researchCycle.id;
     busy=true; el('evidence-refresh').disabled=true;
     const controller=new AbortController(), timer=setTimeout(()=>controller.abort(),60000);
     try {
-      const response=await fetch('/api/research/evidence',{cache:'no-store',signal:controller.signal});
+      const cycle=researchCycle.id;
+      const response=await fetch('/api/research/evidence?cycle='+encodeURIComponent(cycle),{cache:'no-store',signal:controller.signal});
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       const next=await response.json();
       if (!Array.isArray(next.studies) || !Array.isArray(next.fee_studies)) throw new Error('证据格式不正确');
+      if(cycle!==researchCycle.id)return;
       report=next;lastLoad=Date.now();renderReport();
     } catch(e) {el('evidence-health').textContent=`证据读取失败：${e.name==='AbortError'?'请求超时':e.message}。${report?'下方保留上次结果；当前未更新。':'尚无证据，不能据此判断策略。'}`;}
-    finally {clearTimeout(timer);busy=false;el('evidence-refresh').disabled=false;}
+    finally {clearTimeout(timer);busy=false;el('evidence-refresh').disabled=false;if(researchCycle.id && requestedCycle!==researchCycle.id)load(true);}
   }
-  window.researchEvidence={renderSignals,loadHandoff};
+  window.researchEvidence={renderSignals,loadHandoff,resetCycle:()=>{
+    report=null;lastLoad=0;renderSignals();renderLineCards();
+    el('evidence-health').textContent='正在读取所选周期的证据，旧周期结果已隐藏…';
+    el('parallel-body').innerHTML='<tr><td colspan="7">正在读取所选周期，成熟样本不足时不会展示旧收益。</td></tr>';
+    el('fee-evidence-body').innerHTML='';el('fee-evidence-status').textContent='正在读取所选周期费率快照…';
+    load(true);
+  }};
   el("parallel-family").addEventListener("change",renderReport);
   el("study-line-cards").addEventListener("click",event=>{
     const card=event.target.closest("[data-family]");if(!card)return;

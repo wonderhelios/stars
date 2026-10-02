@@ -1280,8 +1280,15 @@
       </section>
       <section id="view-strategies" class="hidden">
         <div class="intro"><div><div class="eyebrow">Strategy lab / evidence to execution</div><h1>策略实验室</h1><p>并行研究不同假设，先检验证据，再回放和独立模拟，最后交接实盘。</p></div></div>
+          <div class="replay-editor">
+            <label for="replay-cycle">研究数据周期（全研究页共用）</label>
+            <select id="replay-cycle"><option value="">新版验证周期（默认）</option><option value="all">全部历史（含修复前缺口）</option></select>
+            <p id="replay-cycle-note" class="execution-note">正在读取新周期起点…</p>
+            <div id="replay-quality" class="execution-funnel"></div>
+            <p class="execution-note">保留所有历史数据。新周期统一筛选信号、价格假设、跨平台费差和执行回放，不删除或跳过周期内的失败采样。交接区另列策略库既有记录，不作为本周期收益。断档只计相邻帧超过90秒；窗口头尾的停采还要结合采样分钟数和最新样本年龄判断。完整性门槛保持不变。</p>
+          </div>
         <section class="panel lab-panel" aria-label="策略交接状态">
-          <div class="panel-head"><div><h2>哪些策略可以进入实盘？</h2><p class="sub">历史回放和独立模拟均通过后才显示可申请切换；实际启用仍在 Hyper Fly 完成。</p></div><a id="hyper-fly-link" class="strategy-export" target="_blank" rel="noopener">打开 Hyper Fly</a></div>
+          <div class="panel-head"><div><h2>哪些策略可以进入实盘？</h2><p class="sub">此处是既有策略库记录，不是所选周期的新收益；历史回放和独立模拟均通过后才可申请切换。</p></div><a id="hyper-fly-link" class="strategy-export" target="_blank" rel="noopener">打开 Hyper Fly</a></div>
           <div id="handoff-summary" class="research-note">正在读取同服务器策略库的验证状态…</div>
           <div id="handoff-cards" class="study-cards"></div>
           <div class="panel-foot"><span>证据不足 → 历史回放 → 独立模拟 → 申请切换</span><span>保存、回放和切换不会自动恢复开仓；盈利数字不等于已证实alpha。</span></div>
@@ -1291,8 +1298,8 @@
           <div class="panel-head"><div><h2>并行假设验证</h2><p class="sub">反转、动量、费率、跨平台确认同时研究；固定规则后，单独检验未来数据</p></div>
             <div class="research-controls"><select id="parallel-family" aria-label="研究方向"><option value="positive-reversal">正费率反转做空</option><option value="negative-reversal">负费率反转做多</option><option value="momentum-long">纯动量做多</option><option value="momentum-short">纯动量做空</option><option value="funding-only">纯正费率做空</option><option value="confirmed-reversal">跨平台确认反转</option><option value="opposite-control">反向对照</option><option value="">全部研究线</option></select><select id="parallel-venue" aria-label="研究交易所"><option value="">全部平台</option><option>OKX</option><option>Binance</option><option>Hyperliquid</option></select><select id="parallel-hold" aria-label="观察时间"><option value="24">24h</option><option value="4">4h</option></select><button id="evidence-refresh" type="button">刷新证据</button></div></div>
           <div id="evidence-health" class="research-note">正在读取小时快照和分钟采集健康度…</div>
-          <div class="table-scroll"><table class="lab-table"><thead><tr><th>平台 / 固定研究线</th><th>方向 / 规则</th><th>部署前历史</th><th>部署后新样本</th><th>新样本 BTC 超额</th><th>新样本市场超额</th><th>证据详情</th></tr></thead><tbody id="parallel-body"></tbody></table></div>
-          <div class="panel-foot"><span>固定版本 parallel-v1 · 最近30天 · 每币不重叠观察 · 成交额≥50万美元 · 完整小时快照 · 固定0.15%成本</span><span>价格假设实验，不是账户收益；不含杠杆、止损、实际成交和资金费。新增做多/动量尚不可交接实盘。</span></div>
+          <div class="table-scroll"><table class="lab-table"><thead><tr><th>平台 / 固定研究线</th><th>方向 / 规则</th><th>周期内冻结前样本</th><th>周期内冻结后样本</th><th>新样本 BTC 超额</th><th>新样本市场超额</th><th>证据详情</th></tr></thead><tbody id="parallel-body"></tbody></table></div>
+          <div class="panel-foot"><span>固定版本 parallel-v2 · 所选周期内（最多最近30天） · 每币不重叠观察 · 成交额≥50万美元 · 完整小时快照 · 固定0.15%成本</span><span>价格假设实验，不是账户收益；不含杠杆、止损、实际成交和资金费。新增做多/动量尚不可交接实盘。</span></div>
         </section>
         <details class="study-expand" id="fee-history-wrapper"><summary>费率差持续性 · 检查固定方向的历史表现</summary><section class="panel lab-panel" aria-label="费率差持续性">
           <div class="panel-head"><div><h2>费率差持续性研究</h2><p class="sub">固定最早快照的多空方向，观察费差反转、持续时间和价格基差波动</p></div><input id="fee-evidence-search" type="search" placeholder="搜索币种或平台" aria-label="搜索费差历史" /></div>
@@ -1300,7 +1307,7 @@
           <div id="fee-evidence-status" class="research-note">等待历史费率快照</div>
           <div class="panel-foot"><span>仅匹配原生同名币种，不自动合并HIP-3或不同数量单位；双边快照相差≤30分钟</span><span>日费差为费率快照推算，不是已到账收益；未计手续费、两腿滑点、基差盈亏和强平风险</span></div>
         </section></details>
-        <details class="study-expand"><summary>历史参数探索 · 从这里选择候选并执行回放</summary><section class="panel lab-panel" aria-label="策略候选发现">
+        <details class="study-expand"><summary>所选周期参数探索 · 选择候选并执行回放</summary><section class="panel lab-panel" aria-label="策略候选发现">
           <div class="panel-head">
             <div>
               <h2>策略候选发现</h2>
@@ -1315,17 +1322,10 @@
               <tbody id="strategy-lab-body"></tbody>
             </table>
           </div>
-          <div class="panel-foot"><span>探索分仅用于发现候选，未校正多重筛选。路径点数达标不等于连续覆盖；旧信号到期后不会自动补齐，止损结论须经完整执行回放验证</span><span>Hyperliquid 候选先执行回放，再保存到同服务器策略库并独立模拟</span></div>
+          <div class="panel-foot"><span>探索分仅用于发现候选，未校正多重筛选。路径点数达标不等于连续覆盖；到期信号不会自动补齐，止损结论须经完整执行回放验证</span><span>Hyperliquid 候选先执行回放，再保存到同服务器策略库并独立模拟</span></div>
         </section></details>
         <section class="panel lab-panel replay-panel" aria-label="共享规则执行回放">
           <div class="panel-head"><div><h2>实盘规则执行回放</h2><p class="sub">使用与 Hyper Fly 相同的穿越入场、杠杆排序、保证金、数量精度、盘口、冷却和账户风控</p></div></div>
-          <div class="replay-editor">
-            <label for="replay-cycle">执行数据范围</label>
-            <select id="replay-cycle"><option value="">新版验证周期（默认）</option><option value="all">全部历史（含修复前缺口）</option></select>
-            <p id="replay-cycle-note" class="execution-note">正在读取新周期起点…</p>
-            <div id="replay-quality" class="execution-funnel"></div>
-            <p class="execution-note">保留所有历史数据。新周期仅改变回放起点，不删除或跳过周期内的失败采样。断档只计相邻帧超过90秒；窗口头尾的停采还要结合采样分钟数和最新样本年龄判断。完整性门槛保持不变。</p>
-          </div>
           <div id="replay-editor" class="replay-editor hidden">
             <strong id="replay-candidate-title"></strong>
             <div class="replay-controls">
@@ -1658,6 +1658,20 @@
       const executionManifests = new Map();
       let replayEditorCandidate = null, replaySavedCandidate = null, replayBusy = false;
       let cycleLoadBusy=false;
+      let researchCycle = {id:null, since:Infinity};
+      function researchRows(rows, field='triggered_at') {
+        return (Array.isArray(rows)?rows:[]).filter(row=>Number(row[field])>=researchCycle.since);
+      }
+      function applyResearchCycle(id,since) {
+        if(researchCycle.id===id && researchCycle.since===since)return;
+        researchCycle={id,since};
+        replaySavedCandidate=null;replayEditorCandidate=null;
+        $("replay-editor").classList.add('hidden');$("replay-save").disabled=true;
+        executionManifests.clear();renderResearchLabs();
+        if(state.view!=='market')renderPaper();
+        window.researchEvidence?.resetCycle();
+        $("execution-replay-result").textContent='研究范围已改变，请选择本周期候选重新回放。';
+      }
       function hasPriceDiscontinuity(row) {
         const prices = [row.entry_price, ...OUTCOME_SAMPLES.map(([field]) => row[field])]
           .map(Number).filter((value) => value > 0);
@@ -1759,7 +1773,7 @@
       }
       function renderExecution() {
         const source = state.paper[state.venue];
-        const rawRows = source && Array.isArray(source.data) ? source.data : [];
+        const rawRows = researchRows(source?.data);
         const rows = rawRows.filter((row) => !hasPriceDiscontinuity(row));
         const excludedQuality = rawRows.length - rows.length;
         const scenarios = STOP_LEVELS.map((level) => stopScenario(rows, level));
@@ -1865,7 +1879,7 @@
         for (const venue of Object.keys(API)) {
           const source = state.paper[venue];
           if (!source || !Array.isArray(source.data)) continue;
-          const cleanRows = source.data.filter((row) => !hasPriceDiscontinuity(row));
+          const cleanRows = researchRows(source.data).filter((row) => !hasPriceDiscontinuity(row));
           const scopes = venue === "hyperliquid"
             ? [["main", "主 DEX", cleanRows.filter((row) => !String(row.inst_id || "").includes(":"))], ["all", "全部 DEX", cleanRows]]
             : [["main", "全市场", cleanRows]];
@@ -1930,7 +1944,7 @@
         $("strategy-lab-table-wrap").classList.toggle("hidden", !shown.length);
         $("strategy-lab-empty").classList.toggle("hidden", !!shown.length);
         if (!shown.length) {
-          $("strategy-lab-empty").innerHTML = '<div class="empty-mark">◇</div><strong>样本还不足</strong><small>每组至少需要 6 笔，并为后 30% 保留验证样本</small>';
+          $("strategy-lab-empty").innerHTML = '<div class="empty-mark">◇</div><strong>样本还不足</strong><small>所选周期内每组至少需要 6 笔已到期样本，并为后 30% 保留验证样本；不借用周期前的收益</small>';
         }
         $("strategy-lab-body").innerHTML = shown.map((candidate, index) => {
           const tone = candidate.robust >= 0 ? "pos" : "neg";
@@ -1943,7 +1957,7 @@
           const handoff = !!candidate.executionManifest
             ? `<button class="strategy-export" data-strategy-index="${index}" type="button">保存到策略库</button>`
             : candidate.venue === "hyperliquid" ? `<button class="strategy-replay" data-strategy-index="${index}" type="button">${candidate.stopPct == null ? "设置止损并回放" : "调整 / 执行回放"}</button>` : "缺少实盘适配器";
-          return `<tr><td><span class="candidate-rank">${index + 1}</span></td><td>${escapeHtml(VENUE[candidate.venue])}</td><td>${escapeHtml(candidate.dexLabel)}</td><td>${escapeHtml(candidate.kindLabel)}</td><td>${candidate.holdHours}h</td><td>${candidate.stopPct == null ? "不设" : `${candidate.stopPct}%`}</td><td>${candidate.maxOpen}</td><td class="${candidate.trainMean >= 0 ? "pos" : "neg"}">${signed(candidate.trainMean)} · n=${candidate.trainN}</td><td class="${candidate.validationMean >= 0 ? "pos" : "neg"}">${signed(candidate.validationMean)} · n=${candidate.validationN} · 中位${signed(candidate.validationMedian)}</td><td title="按该候选持仓时长，路径点数达到预期的80%；点数达标仍不代表时间连续。旧信号到期后不会自动补齐。">${sample}</td><td class="${tone}">${signed(candidate.robust)}</td><td>${handoff}</td></tr>`;
+          return `<tr><td><span class="candidate-rank">${index + 1}</span></td><td>${escapeHtml(VENUE[candidate.venue])}</td><td>${escapeHtml(candidate.dexLabel)}</td><td>${escapeHtml(candidate.kindLabel)}</td><td>${candidate.holdHours}h</td><td>${candidate.stopPct == null ? "不设" : `${candidate.stopPct}%`}</td><td>${candidate.maxOpen}</td><td class="${candidate.trainMean >= 0 ? "pos" : "neg"}">${signed(candidate.trainMean)} · n=${candidate.trainN}</td><td class="${candidate.validationMean >= 0 ? "pos" : "neg"}">${signed(candidate.validationMean)} · n=${candidate.validationN} · 中位${signed(candidate.validationMedian)}</td><td title="按该候选持仓时长，路径点数达到预期的80%；点数达标仍不代表时间连续。到期信号不会自动补齐。">${sample}</td><td class="${tone}">${signed(candidate.robust)}</td><td>${handoff}</td></tr>`;
         }).join("");
       }
       function strategyManifest(candidate) {
@@ -1967,6 +1981,8 @@
           max_five_x_positions: 1,
           max_three_x_positions: 1,
           research_evidence: {
+            collection_cycle: researchCycle.id,
+            cycle_started_at: researchCycle.since,
             generated_at: new Date().toISOString(),
             train_mean_pct: candidate.trainMean,
             validation_mean_pct: candidate.validationMean,
@@ -2050,15 +2066,16 @@
           selector.innerHTML=d.cycles.map(c=>`<option value="${escapeHtml(c.id)}">${escapeHtml(c.label)} · ${escapeHtml(dateTime(c.started_at))}</option>`).join('')+'<option value="all">全部历史（含修复前缺口）</option>';
           selector.value=selected;
           const current=d.cycles.find(c=>c.id===selected);
-          $("replay-cycle-note").textContent=current?`本次回放只读取 ${dateTime(current.started_at)} 之后的数据。重启服务不会重新设定起点。`:'已选择全部历史，旧缺口仍会参与回放。';
+          if(!current && selected!=="all")throw new Error("所选周期不存在");
+          applyResearchCycle(selected,current?.started_at ?? 0);
+          $("replay-cycle-note").textContent=current?`本页所有研究只读取 ${dateTime(current.started_at)} 之后的数据。重启服务不会重新设定起点。`:'已选择全部历史：各研究线包含旧样本，旧缺口仍会参与回放。';
           const describe=(name,q)=>`<span>${name}：${q.frames}帧 · 采到${q.observed_minutes}分钟/约${q.expected_minutes}分钟 · 全DEX完整${q.complete_frames}帧 · 超90秒断档${q.gaps}段 · 主DEX完整${q.scopes?.main||0}帧 · 最新${q.latest_age_seconds==null?'暂无':q.latest_age_seconds+'秒前'}</span>`;
           $("replay-quality").innerHTML=describe('最近1小时',d.quality.last_hour)+describe('最近24小时',d.quality.last_day)+describe('新版验证周期',d.quality.current_cycle);
         }catch(error){$("replay-cycle-note").textContent=`周期读取失败：${error.message}。不得据此判断采集正常。`;}
         finally{cycleLoadBusy=false;}
       }
       $("replay-cycle").addEventListener('change',()=>{
-        replaySavedCandidate=null;$("replay-save").disabled=true;executionManifests.clear();renderStrategyLab();
-        $("execution-replay-result").textContent='回放范围已改变，请重新执行回放；原范围的结果不能用于保存当前候选。';
+        applyResearchCycle(null,Infinity);
         loadReplayCycles();
       });
       loadReplayCycles();
@@ -2140,7 +2157,7 @@
         const venueRows = {};
         for (const venue of Object.keys(API)) {
           const source = state.paper[venue];
-          venueRows[venue] = (source && Array.isArray(source.data) ? source.data : [])
+          venueRows[venue] = researchRows(source?.data)
             .filter((row) => net(row, "t24_price") != null)
             .map((row) => ({ venue, row }));
         }
@@ -2181,7 +2198,7 @@
       }
       function renderFundingLab() {
         const source = state.fundingResearch;
-        const rows = Array.isArray(source.data) ? source.data : [];
+        const rows = researchRows(source.data,"observed_at");
         const fresh = rows.filter((row) => Date.now() - Number(row.observed_at) < 3 * 60 * 60 * 1000 && Number(row.volume_quote_24h) >= 500000 && Number(row.funding_period_hours) > 0);
         const grouped = new Map();
         for (const row of fresh) {
@@ -2237,7 +2254,7 @@
             at: 0,
             error: null,
           },
-          data = source.data,
+          data = researchRows(source.data),
           q = $("paper-search").value.trim().toUpperCase();
         const complete = data.filter(
             (r) => r.t24_price && net(r, "t24_price") !== null,

@@ -1,5 +1,5 @@
 use axum::{
-    extract::State,
+    extract::{Query, State},
     http::StatusCode,
     response::{IntoResponse, Response},
     routing::{get, post},
@@ -211,16 +211,54 @@ async fn get_latest_funding(
 }
 
 // One cached analysis per process: simultaneous browser polls never duplicate a large historical read.
-async fn get_research_evidence(State(state): State<WebState>) -> Response {
+#[derive(serde::Deserialize)]
+struct ResearchRange {
+    cycle: Option<String>,
+}
+async fn get_research_evidence(
+    State(state): State<WebState>,
+    Query(range): Query<ResearchRange>,
+) -> Response {
+    let periods = match state.hl_paper.execution_cycles().await {
+        Ok(value) => value,
+        Err(e) => {
+            return (
+                StatusCode::SERVICE_UNAVAILABLE,
+                Json(serde_json::json!({"error":e.to_string()})),
+            )
+                .into_response()
+        }
+    };
+    let cycle = range
+        .cycle
+        .unwrap_or_else(|| periods["active_cycle"].as_str().unwrap_or("").to_owned());
+    let since = if cycle == "all" {
+        0
+    } else {
+        match periods["cycles"]
+            .as_array()
+            .and_then(|rows| rows.iter().find(|c| c["id"].as_str() == Some(&cycle)))
+            .and_then(|c| c["started_at"].as_i64())
+        {
+            Some(at) => at,
+            None => {
+                return (
+                    StatusCode::BAD_REQUEST,
+                    Json(serde_json::json!({"error":"unknown research cycle"})),
+                )
+                    .into_response()
+            }
+        }
+    };
     static CACHE: std::sync::OnceLock<
-        tokio::sync::Mutex<Option<(std::time::Instant, serde_json::Value)>>,
+        tokio::sync::Mutex<Option<(std::time::Instant, String, serde_json::Value)>>,
     > = std::sync::OnceLock::new();
     let mut cached = CACHE
         .get_or_init(|| tokio::sync::Mutex::new(None))
         .lock()
         .await;
-    if let Some((at, value)) = cached.as_ref() {
-        if at.elapsed() < std::time::Duration::from_secs(120) {
+    if let Some((at, cached_cycle, value)) = cached.as_ref() {
+        if cached_cycle == &cycle && at.elapsed() < std::time::Duration::from_secs(120) {
             return Json(value.clone()).into_response();
         }
     }
@@ -233,7 +271,11 @@ async fn get_research_evidence(State(state): State<WebState>) -> Response {
     let mut errors = Vec::new();
     for (venue, result) in [("OKX", okx), ("Binance", binance), ("Hyperliquid", hl)] {
         match result {
-            Ok((at, rows)) => inputs.push((venue, at, rows)),
+            Ok((at, rows)) => inputs.push((
+                venue,
+                at.max(since),
+                crate::research_lab::cycle_points(rows, since),
+            )),
             Err(e) => errors.push(format!("{venue}: {e}")),
         }
     }
@@ -241,11 +283,13 @@ async fn get_research_evidence(State(state): State<WebState>) -> Response {
     match tokio::task::spawn_blocking(move || crate::research_lab::analyze(inputs, errors)).await {
         Ok(report) => {
             let mut value = serde_json::to_value(report).expect("serializable research report");
+            value["collection_cycle"] = serde_json::json!(cycle);
+            value["cycle_started_at"] = serde_json::json!(since);
             value["execution_coverage"] = match execution {
                 Ok(v) => v,
                 Err(e) => serde_json::json!({"error":e.to_string()}),
             };
-            *cached = Some((std::time::Instant::now(), value.clone()));
+            *cached = Some((std::time::Instant::now(), cycle.clone(), value.clone()));
             Json(value).into_response()
         }
         Err(e) => (

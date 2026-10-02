@@ -121,3 +121,5 @@ sqlite3 -header -column /var/lib/okx-quant/hyperliquid.sqlite \
 部署：`git pull --ff-only`、`cargo build --release --locked`、重启 `okx-quant.service`。无需清库、无需重启或恢复 Hyper Fly。观察 `HL execution research coverage` 日志的 `missing_books`、`stale_books`、`stale_markets`、`elapsed_ms`，而非仅看“frame recorded”。
 
 执行采集专用行情阶段最多8秒（名单3秒），普通信号扫描仍保留35秒；盘口单请求最多4秒、并发12，阶段最多10秒并受最早有效行情请求开始后的15秒新鲜度动态约束。慢DEX不再阻塞35秒导致快DEX过期。活动合约缺关键字段不再静默跳过并声称完整。信号扫描与到期补价独立运行，错过的tick跳过，避免补价阻塞扫描。严查新鲜度可能让部分旧版误报“完整”的数据现在正确显示为不完整；新周期质量仍需部署后观察。
+
+研究页统一周期：策略实验室顶部的周期选择同时用于三平台信号、止损/仓位实验、候选探索、跨平台同币种信号、小时价格假设、费差持续性、最新费差候选及执行回放。默认使用已存在的 collector-v3 起点，本版部署不重置该起点。证据 API `/api/research/evidence?cycle=collector-v3` 按相同起点过滤真实小时快照；`cycle=all` 查看全部保留历史。缓存按周期隔离，切换后清空旧回放和待保存候选。成熟样本不足显示等待，不借用周期前收益；交接区明确展示既有策略库记录，不代表本周期新验证。旧数据继续保留。

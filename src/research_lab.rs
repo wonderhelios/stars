@@ -349,6 +349,11 @@ pub struct Report {
     pub errors: Vec<String>,
 }
 
+/// Every research line uses actual observations from the selected collection period.
+pub fn cycle_points(rows: Vec<Point>, since: i64) -> Vec<Point> {
+    rows.into_iter().filter(|p| p.at >= since).collect()
+}
+
 pub fn analyze(inputs: Vec<(&str, i64, Vec<Point>)>, errors: Vec<String>) -> Report {
     let mut data: BTreeMap<String, Market> = BTreeMap::new();
     let mut frozen = HashMap::new();
@@ -636,6 +641,30 @@ mod tests {
         assert_eq!(e.without_best, Some(1.5));
         assert_eq!(e.without_top3, Some(1.0));
         assert_eq!(e.days, 5);
+    }
+    #[test]
+    fn cycle_filters_old_prices_and_fee_snapshots_at_exact_boundary() {
+        let points = [99, 100, 101]
+            .into_iter()
+            .map(|at| Point {
+                at,
+                hour: 0,
+                coin: "BTC".into(),
+                price: 1.0,
+                prior: 0.0,
+                rate8: 0.01,
+                volume: 1e6,
+            })
+            .collect::<Vec<_>>();
+        assert_eq!(
+            cycle_points(points.clone(), 100)
+                .iter()
+                .map(|p| p.at)
+                .collect::<Vec<_>>(),
+            vec![100, 101]
+        );
+        assert_eq!(cycle_points(points.clone(), 0).len(), 3);
+        assert!(cycle_points(points, 102).is_empty());
     }
     #[test]
     fn benchmark_cannot_use_future_observations() {
