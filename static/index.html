@@ -1319,6 +1319,13 @@
         </section></details>
         <section class="panel lab-panel replay-panel" aria-label="共享规则执行回放">
           <div class="panel-head"><div><h2>实盘规则执行回放</h2><p class="sub">使用与 Hyper Fly 相同的穿越入场、杠杆排序、保证金、数量精度、盘口、冷却和账户风控</p></div></div>
+          <div class="replay-editor">
+            <label for="replay-cycle">执行数据范围</label>
+            <select id="replay-cycle"><option value="">新版验证周期（默认）</option><option value="all">全部历史（含修复前缺口）</option></select>
+            <p id="replay-cycle-note" class="execution-note">正在读取新周期起点…</p>
+            <div id="replay-quality" class="execution-funnel"></div>
+            <p class="execution-note">保留所有历史数据。新周期仅改变回放起点，不删除或跳过周期内的失败采样。断档只计相邻帧超过90秒；窗口头尾的停采还要结合采样分钟数和最新样本年龄判断。完整性门槛保持不变。</p>
+          </div>
           <div id="replay-editor" class="replay-editor hidden">
             <strong id="replay-candidate-title"></strong>
             <div class="replay-controls">
@@ -1650,6 +1657,7 @@
       let strategyExportCandidates = [];
       const executionManifests = new Map();
       let replayEditorCandidate = null, replaySavedCandidate = null, replayBusy = false;
+      let cycleLoadBusy=false;
       function hasPriceDiscontinuity(row) {
         const prices = [row.entry_price, ...OUTCOME_SAMPLES.map(([field]) => row[field])]
           .map(Number).filter((value) => value > 0);
@@ -1995,6 +2003,7 @@
         const closedPnl = closed.reduce((n,t)=>n+(Number(t.pnl)||0),0);
         $("execution-replay-result").innerHTML = `<div class="replay-summary">
           <strong>${report.deployable ? "历史回放门槛通过，仍需独立模拟" : "未通过历史回放验证，不能启用实盘"}</strong>
+          <p>采集周期 ${escapeHtml(report.collection_cycle || "旧版全历史")} · 实际数据 ${report.range_start ? escapeHtml(dateTime(report.range_start)) : "尚无"} ～ ${report.range_end ? escapeHtml(dateTime(report.range_end)) : "尚无"}。</p>
           <p>这是已采集数据上的模拟结果，不是预期收益承诺。初始本金 ${report.initial_equity.toFixed(2)} USDC；总盈亏包含未平仓头寸的估值。</p>
           <div class="execution-metrics">${metric("模拟总盈亏",usd(pnl),pnl>=0?"pos":"neg")}${metric("模拟账户收益",signed(report.return_pct))}${metric("期末净值",report.equity.toFixed(2)+" USDC")}${metric("最大回撤",report.max_drawdown_pct.toFixed(2)+"%")}</div>
           <div class="execution-funnel"><span>已平 ${closed.length} 笔 · 盈亏 ${usd(closedPnl)}</span><span>未平 ${report.trades.length-closed.length} 仓</span><span>后30%验证 ${report.validation_n} 笔</span><span>验证单笔均值 ${report.validation_mean_usd==null?"暂无":usd(report.validation_mean_usd)}</span></div>
@@ -2009,12 +2018,13 @@
         replayBusy = true;
         button.disabled = true;
         $("replay-stop").disabled = true;
+        $("replay-cycle").disabled = true;
         $("replay-save").disabled = true;
         replaySavedCandidate = null;
         const box = $("execution-replay-result");
         box.textContent = "正在回放完整扫描和盘口…";
         try {
-          const response = await fetch("/api/research/execution", {method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({strategy:strategyManifest(candidate),capital:500})});
+          const response = await fetch("/api/research/execution", {method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({strategy:strategyManifest(candidate),capital:500,cycle:$("replay-cycle").value || null})});
           const result = await response.json();
           if (!response.ok) throw new Error(result.error || `HTTP ${response.status}`);
           candidate.executionManifest = result.strategy;
@@ -2024,12 +2034,35 @@
           $("replay-save").disabled = false;
           renderStrategyLab();
         } catch(error) {box.textContent = `回放失败：${error.message}`;}
-        finally {replayBusy = false;button.disabled = false;$("replay-stop").disabled = false;}
+        finally {replayBusy = false;button.disabled = false;$("replay-stop").disabled = false;$("replay-cycle").disabled = false;}
       }
       document.addEventListener("click", event => {
         const button = event.target.closest(".strategy-replay");
         if (button) openReplayEditor(strategyExportCandidates[Number(button.dataset.strategyIndex)]);
       });
+      async function loadReplayCycles() {
+        if(cycleLoadBusy || replayBusy)return;
+        cycleLoadBusy=true;
+        try {
+          const response=await fetch('/api/research/cycles',{cache:'no-store',signal:AbortSignal.timeout(15000)});
+          const d=await response.json();if(!response.ok)throw new Error(d.error||`HTTP ${response.status}`);
+          const selector=$("replay-cycle");const selected=selector.value || d.active_cycle;
+          selector.innerHTML=d.cycles.map(c=>`<option value="${escapeHtml(c.id)}">${escapeHtml(c.label)} · ${escapeHtml(dateTime(c.started_at))}</option>`).join('')+'<option value="all">全部历史（含修复前缺口）</option>';
+          selector.value=selected;
+          const current=d.cycles.find(c=>c.id===selected);
+          $("replay-cycle-note").textContent=current?`本次回放只读取 ${dateTime(current.started_at)} 之后的数据。重启服务不会重新设定起点。`:'已选择全部历史，旧缺口仍会参与回放。';
+          const describe=(name,q)=>`<span>${name}：${q.frames}帧 · 采到${q.observed_minutes}分钟/约${q.expected_minutes}分钟 · 全DEX完整${q.complete_frames}帧 · 超90秒断档${q.gaps}段 · 主DEX完整${q.scopes?.main||0}帧 · 最新${q.latest_age_seconds==null?'暂无':q.latest_age_seconds+'秒前'}</span>`;
+          $("replay-quality").innerHTML=describe('最近1小时',d.quality.last_hour)+describe('最近24小时',d.quality.last_day)+describe('新版验证周期',d.quality.current_cycle);
+        }catch(error){$("replay-cycle-note").textContent=`周期读取失败：${error.message}。不得据此判断采集正常。`;}
+        finally{cycleLoadBusy=false;}
+      }
+      $("replay-cycle").addEventListener('change',()=>{
+        replaySavedCandidate=null;$("replay-save").disabled=true;executionManifests.clear();renderStrategyLab();
+        $("execution-replay-result").textContent='回放范围已改变，请重新执行回放；原范围的结果不能用于保存当前候选。';
+        loadReplayCycles();
+      });
+      loadReplayCycles();
+      setInterval(()=>{if(state.view==='strategies')loadReplayCycles();},30000);
       $("replay-stop").addEventListener("input",()=>{
         replaySavedCandidate = null;
         $("replay-save").disabled = true;

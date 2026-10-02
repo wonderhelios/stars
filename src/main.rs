@@ -172,24 +172,40 @@ async fn main() -> anyhow::Result<()> {
         tokio::spawn(async move {
             tokio::time::sleep(Duration::from_secs(200)).await;
             let client = Arc::new(hyperliquid::HyperliquidRestClient::new());
-            let mut scan_ticker = tokio::time::interval(Duration::from_secs(300));
-            let mut track_ticker = tokio::time::interval(Duration::from_secs(60));
+            // Outcome requests can take minutes on a slow upstream. Keep them
+            // independent from signal/path scanning so neither task starves the other.
+            let tracking_client = client.clone();
+            let tracking_db = db.clone();
+            tokio::spawn(async move {
+                let mut ticker = tokio::time::interval(Duration::from_secs(60));
+                ticker.set_missed_tick_behavior(tokio::time::MissedTickBehavior::Skip);
+                loop {
+                    ticker.tick().await;
+                    match timeout(
+                        TRACK_TIMEOUT,
+                        hyperliquid::paper::update_open_signals(&tracking_client, &tracking_db),
+                    )
+                    .await
+                    {
+                        Ok(Ok(_)) => {}
+                        Ok(Err(e)) => error!("HL track: {}", e),
+                        Err(_) => error!("HL track timeout"),
+                    }
+                }
+            });
+            let mut ticker = tokio::time::interval(Duration::from_secs(300));
+            ticker.set_missed_tick_behavior(tokio::time::MissedTickBehavior::Skip);
             loop {
-                tokio::select! {
-                    _ = scan_ticker.tick() => {
-                        match timeout(SCAN_TIMEOUT, hyperliquid::paper::scan_once(&client, &db, th)).await {
-                            Ok(Ok(n)) => info!("HL 扫描: {} 触发", n),
-                            Ok(Err(e)) => error!("HL scan: {}", e),
-                            Err(_) => error!("HL scan timeout"),
-                        }
-                    }
-                    _ = track_ticker.tick() => {
-                        match timeout(TRACK_TIMEOUT, hyperliquid::paper::update_open_signals(&client, &db)).await {
-                            Ok(Ok(_)) => {}
-                            Ok(Err(e)) => error!("HL track: {}", e),
-                            Err(_) => error!("HL track timeout"),
-                        }
-                    }
+                ticker.tick().await;
+                match timeout(
+                    SCAN_TIMEOUT,
+                    hyperliquid::paper::scan_once(&client, &db, th),
+                )
+                .await
+                {
+                    Ok(Ok(n)) => info!("HL 扫描: {} 触发", n),
+                    Ok(Err(e)) => error!("HL scan: {}", e),
+                    Err(_) => error!("HL scan timeout"),
                 }
             }
         });

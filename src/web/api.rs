@@ -33,6 +33,7 @@ pub fn router(state: WebState) -> Router {
         .route("/api/research/handoff", get(get_handoff_status))
         .route("/api/research/strategies", post(publish_strategy))
         .route("/api/research/execution", post(execution_replay))
+        .route("/api/research/cycles", get(get_execution_cycles))
         .route("/api/health", get(health))
         .fallback_service(ServeDir::new("static"))
         .layer(CompressionLayer::new())
@@ -45,9 +46,22 @@ struct ReplayRequest {
     strategy: trading_core::strategy::StrategyConfig,
     #[serde(default = "default_capital")]
     capital: f64,
+    #[serde(default)]
+    cycle: Option<String>,
 }
 fn default_capital() -> f64 {
     500.0
+}
+
+async fn get_execution_cycles(State(state): State<WebState>) -> Response {
+    match state.hl_paper.execution_cycles().await {
+        Ok(value) => Json(value).into_response(),
+        Err(error) => (
+            StatusCode::SERVICE_UNAVAILABLE,
+            Json(serde_json::json!({"error":error.to_string()})),
+        )
+            .into_response(),
+    }
 }
 
 async fn execution_replay(
@@ -56,7 +70,7 @@ async fn execution_replay(
 ) -> Response {
     match state
         .hl_paper
-        .execution_candidate(input.strategy, input.capital)
+        .execution_candidate_for_cycle(input.strategy, input.capital, input.cycle)
         .await
     {
         Ok(result) => Json(result).into_response(),

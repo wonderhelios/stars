@@ -155,6 +155,8 @@ impl PaperDb {
                  failed_count INTEGER NOT NULL
              );
              CREATE TABLE IF NOT EXISTS execution_watch (coin TEXT PRIMARY KEY, expires_at INTEGER NOT NULL);
+             CREATE TABLE IF NOT EXISTS execution_frame_quality (at INTEGER PRIMARY KEY, complete INTEGER NOT NULL, main INTEGER NOT NULL, xyz INTEGER NOT NULL, para INTEGER NOT NULL);
+             CREATE TABLE IF NOT EXISTS execution_cycles (id TEXT PRIMARY KEY, started_at INTEGER NOT NULL, label TEXT NOT NULL);
              CREATE TABLE IF NOT EXISTS execution_frames (
                  at INTEGER PRIMARY KEY, frame_json TEXT NOT NULL
              );
@@ -184,6 +186,20 @@ impl PaperDb {
         conn.execute(
             "INSERT OR IGNORE INTO research_freezes VALUES ('parallel-v2', ?1)",
             [crate::paper::now_ms()],
+        )?;
+        // A deployment marker creates this cycle once; subsequent restarts preserve it.
+        conn.execute(
+            "INSERT OR IGNORE INTO execution_cycles VALUES ('collector-v3', ?1, '采集可靠性修复后验证周期')",
+            [crate::paper::now_ms()],
+        )?;
+        conn.execute(
+            "INSERT OR IGNORE INTO execution_frame_quality SELECT at,
+             COALESCE(json_extract(frame_json,'$.complete'),0),
+             EXISTS(SELECT 1 FROM json_each(frame_json,'$.complete_scopes') WHERE value='main'),
+             EXISTS(SELECT 1 FROM json_each(frame_json,'$.complete_scopes') WHERE value='xyz'),
+             EXISTS(SELECT 1 FROM json_each(frame_json,'$.complete_scopes') WHERE value='para')
+             FROM execution_frames WHERE at>=?1 AND at NOT IN (SELECT at FROM execution_frame_quality)",
+            [crate::paper::now_ms()-24*3_600_000],
         )?;
         for name in ["max_leverage", "size_decimals"] {
             let exists: i64 = conn.query_row(
@@ -377,18 +393,49 @@ impl PaperDb {
         .await?
     }
 
-    pub async fn execution_coverage(&self) -> anyhow::Result<serde_json::Value> {
-        let conn = self.conn.clone();
+    /// Independent WAL reader: JSON quality scans must not hold up frame writers.
+    pub async fn execution_cycles(&self) -> anyhow::Result<serde_json::Value> {
+        let path = self
+            .conn
+            .lock()
+            .unwrap()
+            .path()
+            .context("missing database path")?
+            .to_string();
         tokio::task::spawn_blocking(move || -> anyhow::Result<_> {
-            let c=conn.lock().unwrap();
-            let since=crate::paper::now_ms()-24*3_600_000;
-            let (count,complete,first,last,gaps):(i64,i64,Option<i64>,Option<i64>,i64)=c.query_row(
-                "SELECT COUNT(*),COALESCE(SUM(json_extract(frame_json,'$.complete')=1),0),MIN(at),MAX(at),
-                 COALESCE(SUM(previous IS NOT NULL AND at-previous>90000),0) FROM
-                 (SELECT at,frame_json,LAG(at) OVER(ORDER BY at) AS previous FROM execution_frames WHERE at>=?1)",
-                [since],|r|Ok((r.get(0)?,r.get(1)?,r.get(2)?,r.get(3)?,r.get(4)?)))?;
-            Ok(serde_json::json!({"frames":count,"complete_frames":complete,"first_at":first,"last_at":last,"gaps":gaps}))
+            let c = Connection::open_with_flags(path, rusqlite::OpenFlags::SQLITE_OPEN_READ_ONLY)?;
+            c.busy_timeout(std::time::Duration::from_secs(5))?;
+            c.execute_batch("BEGIN")?;
+            let now = crate::paper::now_ms();
+            let mut stmt = c.prepare("SELECT id,started_at,label FROM execution_cycles ORDER BY started_at DESC,id DESC")?;
+            let cycles = stmt.query_map([],|r|Ok(serde_json::json!({"id":r.get::<_,String>(0)?,"started_at":r.get::<_,i64>(1)?,"label":r.get::<_,String>(2)?})))?.collect::<Result<Vec<_>,_>>()?;
+            let current = cycles.first().context("no research cycle")?;
+            let cycle_start = current["started_at"].as_i64().context("invalid cycle start")?;
+            let quality = |since: i64| -> anyhow::Result<serde_json::Value> {
+                let (frames,complete,first,last,gaps,minutes):(i64,i64,Option<i64>,Option<i64>,i64,i64)=c.query_row(
+                    "SELECT COUNT(*),COALESCE(SUM(complete=1),0),MIN(at),MAX(at),
+                     COALESCE(SUM(previous IS NOT NULL AND at-previous>90000),0),COUNT(DISTINCT at/60000) FROM
+                     (SELECT at,complete,LAG(at) OVER(ORDER BY at) AS previous FROM execution_frame_quality WHERE at>=?1 AND at<=?2)",
+                    params![since,now],|r|Ok((r.get(0)?,r.get(1)?,r.get(2)?,r.get(3)?,r.get(4)?,r.get(5)?)))?;
+                let mut scopes=serde_json::Map::new();
+                for scope in ["main","xyz","para"] {
+                    let sql=format!("SELECT COALESCE(SUM({scope}),0) FROM execution_frame_quality WHERE at>=?1 AND at<=?2");
+                    let n:i64=c.query_row(&sql,params![since,now],|r|r.get(0))?;
+                    scopes.insert(scope.into(),serde_json::json!(n));
+                }
+                Ok(serde_json::json!({"since":since,"as_of":now,"frames":frames,"complete_frames":complete,"first_at":first,"last_at":last,"gaps":gaps,"observed_minutes":minutes,"expected_minutes":((now-since).max(0)/60000),"scopes":scopes,"latest_age_seconds":last.map(|at|(now-at)/1000)}))
+            };
+            Ok(serde_json::json!({"active_cycle":current["id"],"cycles":cycles,
+                "quality":{"last_hour":quality(now-3_600_000)?,"last_day":quality(now-24*3_600_000)?,"current_cycle":quality(cycle_start)?}}))
         }).await?
+    }
+    pub async fn execution_coverage(&self) -> anyhow::Result<serde_json::Value> {
+        let cycles = self.execution_cycles().await?;
+        let mut day = cycles["quality"]["last_day"].clone();
+        day["active_cycle"] = cycles["active_cycle"].clone();
+        day["current_cycle"] = cycles["quality"]["current_cycle"].clone();
+        day["last_hour"] = cycles["quality"]["last_hour"].clone();
+        Ok(day)
     }
 
     /// Immutable completed-hour observations, read without holding the writer mutex.
@@ -489,17 +536,33 @@ impl PaperDb {
     ) -> anyhow::Result<()> {
         let at = frame.at;
         let raw = serde_json::to_string(frame)?;
+        let quality = (
+            frame.complete,
+            frame.complete_scopes.contains("main"),
+            frame.complete_scopes.contains("xyz"),
+            frame.complete_scopes.contains("para"),
+        );
         let conn = self.conn.clone();
         tokio::task::spawn_blocking(move || -> anyhow::Result<()> {
-            let c = conn.lock().unwrap();
-            c.execute(
+            let mut c = conn.lock().unwrap();
+            let tx = c.transaction()?;
+            tx.execute(
                 "INSERT OR REPLACE INTO execution_frames VALUES (?1,?2)",
                 params![at, raw],
             )?;
-            c.execute(
+            tx.execute(
+                "INSERT OR REPLACE INTO execution_frame_quality VALUES (?1,?2,?3,?4,?5)",
+                params![at, quality.0, quality.1, quality.2, quality.3],
+            )?;
+            tx.execute(
+                "DELETE FROM execution_frame_quality WHERE at < ?1",
+                [at - 30 * 86_400_000],
+            )?;
+            tx.execute(
                 "DELETE FROM execution_frames WHERE at < ?1",
                 [at - 30 * 86_400_000],
             )?;
+            tx.commit()?;
             Ok(())
         })
         .await?
@@ -507,9 +570,28 @@ impl PaperDb {
 
     pub async fn execution_candidate(
         &self,
-        mut strategy: trading_core::strategy::StrategyConfig,
+        strategy: trading_core::strategy::StrategyConfig,
         capital: f64,
     ) -> anyhow::Result<serde_json::Value> {
+        self.execution_candidate_for_cycle(strategy, capital, None)
+            .await
+    }
+
+    pub async fn execution_candidate_for_cycle(
+        &self,
+        mut strategy: trading_core::strategy::StrategyConfig,
+        capital: f64,
+        cycle: Option<String>,
+    ) -> anyhow::Result<serde_json::Value> {
+        // Re-publishing replays the same selected cycle, never silently mixes periods.
+        let cycle = cycle.or_else(|| {
+            strategy
+                .research_evidence
+                .as_ref()
+                .and_then(|v| v.get("collection_cycle"))
+                .and_then(|v| v.as_str())
+                .map(str::to_owned)
+        });
         // Use a separate WAL reader so a long replay cannot block market writers.
         let path = self
             .conn
@@ -521,24 +603,58 @@ impl PaperDb {
         tokio::task::spawn_blocking(move || -> anyhow::Result<_> {
             let c = Connection::open_with_flags(path, rusqlite::OpenFlags::SQLITE_OPEN_READ_ONLY)?;
             c.execute_batch("BEGIN")?;
-            let (start, end): (Option<i64>, Option<i64>) =
-                c.query_row("SELECT MIN(at),MAX(at) FROM execution_frames", [], |r| {
-                    Ok((r.get(0)?, r.get(1)?))
-                })?;
+            let cycle = match cycle {
+                Some(id) => id,
+                None => c.query_row(
+                    "SELECT id FROM execution_cycles ORDER BY started_at DESC,id DESC LIMIT 1",
+                    [],
+                    |r| r.get::<_, String>(0),
+                )?,
+            };
+            let since: i64 = if cycle == "all" {
+                0
+            } else {
+                c.query_row(
+                    "SELECT started_at FROM execution_cycles WHERE id=?1",
+                    [&cycle],
+                    |r| r.get(0),
+                )
+                .context("unknown execution cycle")?
+            };
+            let now = crate::paper::now_ms();
+            let (start, end): (Option<i64>, Option<i64>) = c.query_row(
+                "SELECT MIN(at),MAX(at) FROM execution_frames WHERE at>=?1 AND at<=?2",
+                params![since, now],
+                |r| Ok((r.get(0)?, r.get(1)?)),
+            )?;
             let boundary = start
                 .zip(end)
                 .map(|(a, b)| a + (b - a) * 7 / 10)
                 .unwrap_or(0);
-            let mut stmt = c.prepare("SELECT frame_json FROM execution_frames ORDER BY at")?;
-            let rows = stmt.query_map([], |r| r.get::<_, String>(0))?;
+            let mut stmt = c.prepare(
+                "SELECT frame_json FROM execution_frames WHERE at>=?1 AND at<=?2 ORDER BY at",
+            )?;
+            let rows = stmt.query_map(params![since, now], |r| r.get::<_, String>(0))?;
             let frames = rows.map(|r| -> anyhow::Result<_> {
                 let mut frame: trading_core::replay::Frame = serde_json::from_str(&r?)?;
                 frame.markets.retain(|coin, _| strategy.includes_coin(coin));
                 frame.books.retain(|coin, _| strategy.includes_coin(coin));
                 Ok(frame)
             });
-            let report = trading_core::replay::run_iter(frames, &strategy, capital, boundary)?;
-            let evidence = serde_json::to_value(report)?;
+            let mut report = trading_core::replay::run_iter(frames, &strategy, capital, boundary)?;
+            if end.is_none() {
+                report.blockers.push("所选周期尚无采样数据".into());
+            } else if now - end.unwrap() > 180_000 {
+                report
+                    .blockers
+                    .push("最新采样已超过180秒，采集尚未连续恢复".into());
+            }
+            report.deployable = report.blockers.is_empty();
+            let mut evidence = serde_json::to_value(report)?;
+            evidence["collection_cycle"] = serde_json::json!(cycle);
+            evidence["cycle_started_at"] = serde_json::json!(since);
+            evidence["range_start"] = serde_json::json!(start);
+            evidence["range_end"] = serde_json::json!(end);
             let mut proof = evidence.clone();
             if let Some(fields) = proof.as_object_mut() {
                 fields.remove("trades");
@@ -1057,6 +1173,69 @@ mod tests {
         let _ = std::fs::remove_file(path.with_extension("sqlite-wal"));
         let _ = std::fs::remove_file(path.with_extension("sqlite-shm"));
     }
+    #[tokio::test]
+    async fn new_cycle_is_persistent_excludes_old_frames_and_publish_keeps_range() {
+        let path =
+            std::env::temp_dir().join(format!("execution-cycle-{}.sqlite", crate::paper::now_ms()));
+        let db = PaperDb::open(path.to_str().unwrap()).unwrap();
+        let now = crate::paper::now_ms();
+        db.conn
+            .lock()
+            .unwrap()
+            .execute(
+                "UPDATE execution_cycles SET started_at=?1 WHERE id='collector-v3'",
+                [now - 60_000],
+            )
+            .unwrap();
+        let mut frame = trading_core::replay::Frame {
+            at: now - 120_000,
+            complete: false,
+            complete_scopes: std::collections::HashSet::new(),
+            markets: std::collections::HashMap::new(),
+            books: std::collections::HashMap::new(),
+        };
+        db.record_execution_frame(&frame).await.unwrap();
+        frame.at = now - 30_000;
+        frame.complete = true;
+        frame.complete_scopes.insert("main".into());
+        db.record_execution_frame(&frame).await.unwrap();
+        let strategy = trading_core::strategy::StrategyConfig::default();
+        let current = db
+            .execution_candidate(strategy.clone(), 500.0)
+            .await
+            .unwrap();
+        assert_eq!(current["report"]["range_start"], now - 30_000);
+        assert_eq!(current["report"]["incomplete_frames"], 0);
+        assert_eq!(current["report"]["collection_cycle"], "collector-v3");
+        let all = db
+            .execution_candidate_for_cycle(strategy.clone(), 500.0, Some("all".into()))
+            .await
+            .unwrap();
+        assert_eq!(all["report"]["incomplete_frames"], 1);
+        assert_eq!(all["report"]["range_start"], now - 120_000);
+        let saved = serde_json::from_value(all["strategy"].clone()).unwrap();
+        assert_eq!(
+            db.execution_candidate(saved, 500.0).await.unwrap()["report"]["collection_cycle"],
+            "all"
+        );
+        assert!(db
+            .execution_candidate_for_cycle(strategy, 500.0, Some("unknown".into()))
+            .await
+            .is_err());
+        let quality = db.execution_cycles().await.unwrap();
+        assert_eq!(quality["quality"]["current_cycle"]["frames"], 1);
+        assert_eq!(quality["quality"]["last_hour"]["frames"], 2);
+        assert_eq!(quality["quality"]["current_cycle"]["scopes"]["main"], 1);
+        drop(db);
+        let reopened = PaperDb::open(path.to_str().unwrap()).unwrap();
+        assert_eq!(
+            reopened.execution_cycles().await.unwrap()["cycles"][0]["started_at"],
+            now - 60_000
+        );
+        drop(reopened);
+        let _ = std::fs::remove_file(&path);
+    }
+
     #[tokio::test]
     async fn fixed_experiments_keep_cutoff_and_exclude_unfinished_hours() {
         let path = std::env::temp_dir().join(format!(

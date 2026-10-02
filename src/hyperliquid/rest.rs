@@ -20,6 +20,8 @@ struct PerpDex {
 
 #[derive(Debug, Clone)]
 pub struct HlTicker {
+    /// Conservative acquisition start: never label a slow response as a fresh mark.
+    pub acquisition_started_at: i64,
     pub collateral_usdc: bool,
     pub coin: String,
     pub mark_px: Decimal,
@@ -142,6 +144,10 @@ impl HyperliquidRestClient {
             json!({"type": "metaAndAssetCtxs", "dex": dex})
         };
 
+        let acquisition_started_at = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .map_err(|e| Error::Msg(e.to_string()))?
+            .as_millis() as i64;
         let resp: serde_json::Value = self.post_json(body).await?;
 
         let universe = resp
@@ -159,27 +165,30 @@ impl HyperliquidRestClient {
         }
         let mut result = Vec::new();
         for (u, ctx) in universe.iter().zip(ctxs.iter()) {
-            let Some(coin) = u.get("name").and_then(|v| v.as_str()) else {
-                continue;
-            };
+            let coin = u
+                .get("name")
+                .and_then(|v| v.as_str())
+                .ok_or_else(|| Error::Msg(format!("missing market identity dex={dex}")))?;
             if u.get("isDelisted")
                 .and_then(|v| v.as_bool())
                 .unwrap_or(false)
             {
                 continue;
             }
-            let Some(funding_str) = ctx.get("funding").and_then(|v| v.as_str()) else {
-                continue;
+            // Missing/invalid active-market fields make this DEX incomplete.
+            // Silently skipping a row would incorrectly certify full coverage.
+            let required = |key: &str| -> Result<Decimal> {
+                let value = ctx
+                    .get(key)
+                    .and_then(|v| v.as_str())
+                    .ok_or_else(|| Error::Msg(format!("missing {key} for {coin}")))?;
+                Decimal::from_str(value)
+                    .map_err(|e| Error::Msg(format!("invalid {key} for {coin}: {e}")))
             };
-            let Some(mark_str) = ctx.get("markPx").and_then(|v| v.as_str()) else {
-                continue;
-            };
-            let Some(prev_str) = ctx.get("prevDayPx").and_then(|v| v.as_str()) else {
-                continue;
-            };
-            let Some(vol_str) = ctx.get("dayNtlVlm").and_then(|v| v.as_str()) else {
-                continue;
-            };
+            let funding = required("funding")?;
+            let mark_px = required("markPx")?;
+            let prev_day_px = required("prevDayPx")?;
+            let day_ntl_vlm = required("dayNtlVlm")?;
             let oi_str = ctx
                 .get("openInterest")
                 .and_then(|v| v.as_str())
@@ -195,12 +204,13 @@ impl HyperliquidRestClient {
                 .and_then(|v| Decimal::from_str(v).ok());
 
             result.push(HlTicker {
+                acquisition_started_at,
                 collateral_usdc: dex.is_empty() || resp[0]["collateralToken"].as_u64() == Some(0),
                 coin: coin.to_string(),
-                mark_px: Decimal::from_str(mark_str).unwrap_or(Decimal::ZERO),
-                prev_day_px: Decimal::from_str(prev_str).unwrap_or(Decimal::ZERO),
-                day_ntl_vlm: Decimal::from_str(vol_str).unwrap_or(Decimal::ZERO),
-                funding: Decimal::from_str(funding_str).unwrap_or(Decimal::ZERO),
+                mark_px,
+                prev_day_px,
+                day_ntl_vlm,
+                funding,
                 max_leverage: u
                     .get("maxLeverage")
                     .and_then(|v| v.as_u64())
@@ -225,7 +235,27 @@ impl HyperliquidRestClient {
     pub async fn perp_ctxs_with_coverage(
         &self,
     ) -> Result<(Vec<HlTicker>, bool, std::collections::HashSet<String>)> {
-        let dexes = tokio::time::timeout(Duration::from_secs(15), self.perp_dex_names())
+        self.perp_ctxs_with_budget(Duration::from_secs(35), Duration::from_secs(8))
+            .await
+    }
+
+    /// Execution frames must leave room for fresh books; slow scopes remain missing.
+    pub async fn execution_perp_ctxs_with_coverage(
+        &self,
+    ) -> Result<(Vec<HlTicker>, bool, std::collections::HashSet<String>)> {
+        self.perp_ctxs_with_budget(Duration::from_secs(8), Duration::from_secs(3))
+            .await
+    }
+
+    async fn perp_ctxs_with_budget(
+        &self,
+        market_budget: Duration,
+        discovery_budget: Duration,
+    ) -> Result<(Vec<HlTicker>, bool, std::collections::HashSet<String>)> {
+        // One budget includes discovery. Never wait for a stalled scope until
+        // successful scopes have already aged beyond the execution freshness window.
+        let deadline = tokio::time::Instant::now() + market_budget;
+        let dexes = tokio::time::timeout(discovery_budget, self.perp_dex_names())
             .await
             .map_err(|_| Error::Msg("Hyperliquid perpDexs timeout".into()))??;
         let mut all = Vec::new();
@@ -233,13 +263,10 @@ impl HyperliquidRestClient {
         let mut scopes = std::collections::HashSet::new();
         let mut queries = stream::iter(dexes.iter().cloned())
             .map(|dex| async move {
-                let result =
-                    tokio::time::timeout(Duration::from_secs(35), self.perp_ctxs_by_dex(&dex))
-                        .await;
+                let result = tokio::time::timeout_at(deadline, self.perp_ctxs_by_dex(&dex)).await;
                 (dex, result)
             })
             .buffer_unordered(12);
-        let deadline = tokio::time::Instant::now() + Duration::from_secs(35);
         loop {
             let (dex, result) = match tokio::time::timeout_at(deadline, queries.next()).await {
                 Ok(Some(next)) => next,
@@ -371,6 +398,67 @@ mod tests {
             Instant::now() - Duration::from_secs(601);
         assert!(client.perp_dex_names().await.is_err());
         assert_eq!(calls.load(Ordering::SeqCst), 4);
+        server.abort();
+    }
+
+    #[tokio::test]
+    async fn fast_scope_is_retained_without_waiting_for_stalled_scope() {
+        let app = axum::Router::new().route(
+            "/info",
+            axum::routing::post(
+                |axum::Json(body): axum::Json<serde_json::Value>| async move {
+                    if body["dex"] == "slow" {
+                        std::future::pending::<()>().await;
+                    }
+                    axum::Json(json!([
+                        {"universe":[{"name":"AAA","maxLeverage":10,"szDecimals":2}]},
+                        [{"funding":"0.0001","markPx":"11","prevDayPx":"10","dayNtlVlm":"1000000"}]
+                    ]))
+                },
+            ),
+        );
+        let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+        let addr = listener.local_addr().unwrap();
+        let server = tokio::spawn(async move {
+            axum::serve(listener, app).await.unwrap();
+        });
+        let mut client = HyperliquidRestClient::new();
+        client.base = format!("http://{addr}/info");
+        *client.dex_cache.lock().await = Some((Instant::now(), vec!["".into(), "slow".into()]));
+        let started = Instant::now();
+        let (tickers, complete, scopes) = client
+            .perp_ctxs_with_budget(Duration::from_millis(150), Duration::from_millis(50))
+            .await
+            .unwrap();
+        assert!(started.elapsed() < Duration::from_secs(1));
+        assert_eq!(tickers.len(), 1);
+        assert!(!complete);
+        assert!(scopes.contains("main"));
+        assert!(!scopes.contains("slow"));
+        assert!(crate::paper::now_ms() - tickers[0].acquisition_started_at < 1_000);
+        server.abort();
+    }
+
+    #[tokio::test]
+    async fn missing_active_market_fields_cannot_claim_full_dex_coverage() {
+        let app = axum::Router::new().route(
+            "/info",
+            axum::routing::post(|| async {
+                axum::Json(json!([
+                    {"universe":[{"name":"AAA","maxLeverage":10,"szDecimals":2}]},
+                    [{"funding":"0.0001","prevDayPx":"10","dayNtlVlm":"1000000"}]
+                ]))
+            }),
+        );
+        let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+        let addr = listener.local_addr().unwrap();
+        let server = tokio::spawn(async move {
+            axum::serve(listener, app).await.unwrap();
+        });
+        let mut client = HyperliquidRestClient::new();
+        client.base = format!("http://{addr}/info");
+        let error = client.perp_ctxs_by_dex("").await.unwrap_err();
+        assert!(error.to_string().contains("missing markPx"));
         server.abort();
     }
 

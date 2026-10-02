@@ -10,8 +10,9 @@ use trading_core::{
 /// Collect full eligibility snapshots, including non-candidates, to reconstruct crossings.
 /// Books are fetched for liquid signal markets and still-observed contracts.
 pub async fn collect(client: &HyperliquidRestClient, db: &PaperDb) -> Result<()> {
-    let deadline = tokio::time::Instant::now() + std::time::Duration::from_secs(50);
-    let (tickers, mut complete, mut complete_scopes) = client.perp_ctxs_with_coverage().await?;
+    let collection_start = tokio::time::Instant::now();
+    let (tickers, mut complete, mut complete_scopes) =
+        client.execution_perp_ctxs_with_coverage().await?;
     let started = std::time::SystemTime::now()
         .duration_since(std::time::UNIX_EPOCH)?
         .as_millis() as i64;
@@ -21,6 +22,10 @@ pub async fn collect(client: &HyperliquidRestClient, db: &PaperDb) -> Result<()>
         .into_iter()
         .filter(|r| started - r.triggered_at < 24 * 3_600_000)
         .map(|r| r.inst_id)
+        .collect();
+    let acquisition_times: HashMap<String, i64> = tickers
+        .iter()
+        .map(|t| (t.coin.clone(), t.acquisition_started_at))
         .collect();
     let count = tickers.len();
     let markets: HashMap<String, Market> = tickers
@@ -56,12 +61,31 @@ pub async fn collect(client: &HyperliquidRestClient, db: &PaperDb) -> Result<()>
             .await?,
     );
     let mut books = HashMap::new();
+    let wanted_count = wanted.len();
+    // Bound the book phase below the replay freshness window (15 seconds).
+    // A stalled request must release its slot instead of occupying it for 3×30s.
+    let book_start_ms = std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)?
+        .as_millis() as i64;
+    let oldest_market_start = markets
+        .keys()
+        .filter_map(|coin| acquisition_times.get(coin))
+        .min()
+        .copied()
+        .unwrap_or(book_start_ms);
+    let budget_ms = book_budget_ms(book_start_ms, oldest_market_start);
+    let deadline = tokio::time::Instant::now() + std::time::Duration::from_millis(budget_ms);
+    let mut wanted: Vec<_> = wanted.into_iter().collect();
+    wanted.sort();
     let mut requests = stream::iter(wanted)
         .map(|coin| async move {
-            let raw = client.l2_book(&coin).await;
+            let raw =
+                tokio::time::timeout(std::time::Duration::from_secs(4), client.l2_book(&coin))
+                    .await
+                    .unwrap_or_else(|_| Err(anyhow::anyhow!("book request exceeded 4s budget")));
             (coin, raw)
         })
-        .buffer_unordered(5);
+        .buffer_unordered(12);
     // Retain the market frame even when some books stall. Missing books remain
     // missing and replay rejects fills without a fresh, sufficient quote.
     loop {
@@ -86,12 +110,34 @@ pub async fn collect(client: &HyperliquidRestClient, db: &PaperDb) -> Result<()>
     let at = std::time::SystemTime::now()
         .duration_since(std::time::UNIX_EPOCH)?
         .as_millis() as i64;
+    // The upstream context response has no exchange timestamp. Use request start
+    // as a conservative age bound; never advance old marks to the frame end.
+    let stale_markets: Vec<_> = markets
+        .keys()
+        .filter(|coin| {
+            !acquisition_times
+                .get(*coin)
+                .is_some_and(|at_start| fresh_at(at, *at_start))
+        })
+        .cloned()
+        .collect();
+    for coin in &stale_markets {
+        complete_scopes.remove(coin.split_once(':').map(|(d, _)| d).unwrap_or("main"));
+    }
+    complete &= stale_markets.is_empty();
+    let received_books = books.len();
+    books.retain(|_, q| fresh_at(at, q.observed_at));
     tracing::info!(
-        "HL execution research coverage: complete={} markets={} scopes={} books={}",
+        "HL execution research coverage: complete={} markets={} scopes={} books={} wanted_books={} missing_books={} stale_books={} stale_markets={} elapsed_ms={}",
         complete,
         markets.len(),
         complete_scopes.len(),
-        books.len()
+        books.len(),
+        wanted_count,
+        wanted_count.saturating_sub(books.len()),
+        received_books - books.len(),
+        stale_markets.len(),
+        collection_start.elapsed().as_millis()
     );
     db.record_execution_frame(&Frame {
         at,
@@ -132,4 +178,39 @@ pub fn parse_book(raw: serde_json::Value) -> Result<Quote> {
             ask_depth: asks,
         },
     })
+}
+
+// Reserve 100ms for frame assembly/recording without overstating mark freshness.
+fn book_budget_ms(now_ms: i64, oldest_market_start: i64) -> u64 {
+    (oldest_market_start
+        .saturating_add(14_900)
+        .saturating_sub(now_ms))
+    .clamp(0, 10_000) as u64
+}
+
+/// Same 15s window as execution replay, including rejection of future quotes.
+fn fresh_at(frame_at: i64, acquired_at: i64) -> bool {
+    (0..=15_000).contains(&(frame_at - acquired_at))
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn book_budget_never_waits_beyond_oldest_mark_freshness() {
+        assert_eq!(book_budget_ms(10_000, 10_000), 10_000);
+        assert_eq!(book_budget_ms(18_000, 10_000), 6_900);
+        assert_eq!(book_budget_ms(25_000, 10_000), 0);
+    }
+
+    #[test]
+    fn slow_mark_fetch_and_stale_or_future_books_are_not_fresh() {
+        assert!(fresh_at(100_000, 85_000));
+        assert!(fresh_at(100_000, 100_000));
+        assert!(!fresh_at(100_000, 84_999));
+        assert!(!fresh_at(100_000, 100_001));
+        // A mark requested 20 seconds ago cannot inherit a new frame timestamp.
+        assert!(!fresh_at(100_000, 80_000));
+    }
 }
