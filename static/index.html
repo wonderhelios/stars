@@ -599,6 +599,12 @@
         padding: 22px 28px;
         overflow-wrap: anywhere;
       }
+      .replay-editor { padding: 18px 28px; border-bottom: 1px solid #e6ebf2; }
+      .replay-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 12px; }
+      .replay-controls input { width: 90px; padding: 8px; border: 1px solid #dce4ef; border-radius: 6px; }
+      .replay-controls button, .strategy-replay, .strategy-export { padding: 8px 12px; border: 1px solid #dce4ef; border-radius: 6px; background: #f5f8ff; color: #3869d5; cursor: pointer; }
+      .replay-controls button:disabled { opacity: .5; cursor: default; }
+      .replay-summary { padding: 0; }
       .execution-status {
         font-size: 12px;
         font-weight: 700;
@@ -1313,7 +1319,17 @@
         </section></details>
         <section class="panel lab-panel replay-panel" aria-label="共享规则执行回放">
           <div class="panel-head"><div><h2>实盘规则执行回放</h2><p class="sub">使用与 Hyper Fly 相同的穿越入场、杠杆排序、保证金、数量精度、盘口、冷却和账户风控</p></div></div>
-          <p id="execution-replay-result" class="execution-note">点击候选中的“执行回放”。从新版部署开始采集完整分钟扫描与L2盘口；旧信号排行榜仍用于探索。当前支持交接 Hyperliquid 单腿做空（含 USDC 抵押的 HIP-3）；跨平台对冲及 OKX / Binance 尚不可交接实盘。</p>
+          <div id="replay-editor" class="replay-editor hidden">
+            <strong id="replay-candidate-title"></strong>
+            <div class="replay-controls">
+              <label for="replay-stop">价格逆向止损 %</label>
+              <input id="replay-stop" type="number" min="0.1" max="20" step="0.01" value="2">
+              <button id="replay-run" type="button">按以上止损执行回放</button>
+              <button id="replay-save" type="button" disabled>保存此次回放的候选到策略库</button>
+            </div>
+            <p id="replay-editor-note" class="execution-note"></p>
+          </div>
+          <div id="execution-replay-result" class="execution-note">点击候选中的“执行回放”。从新版部署开始采集完整分钟扫描与L2盘口；旧信号排行榜仍用于探索。当前支持交接 Hyperliquid 单腿做空（含 USDC 抵押的 HIP-3）；跨平台对冲及 OKX / Binance 尚不可交接实盘。</div>
           <div class="panel-foot"><span>初始本金500 USDC · 每仓净值20%保证金 · 收益按美元账户净值计算</span><span>价格回放完成后仍需真实资金费与独立影子验证</span></div>
         </section>
         <details class="study-expand"><summary>跨平台同币种对照 · 检查信号一致性</summary><section class="panel lab-panel" aria-label="跨平台同币种信号">
@@ -1633,6 +1649,7 @@
       const OUTCOME_SAMPLES = [["t1_price", 1], ["t4_price", 4], ["t8_price", 8], ["t24_price", 24]];
       let strategyExportCandidates = [];
       const executionManifests = new Map();
+      let replayEditorCandidate = null, replaySavedCandidate = null, replayBusy = false;
       function hasPriceDiscontinuity(row) {
         const prices = [row.entry_price, ...OUTCOME_SAMPLES.map(([field]) => row[field])]
           .map(Number).filter((value) => value > 0);
@@ -1909,7 +1926,6 @@
         }
         $("strategy-lab-body").innerHTML = shown.map((candidate, index) => {
           const tone = candidate.robust >= 0 ? "pos" : "neg";
-          const compatible = candidate.venue === "hyperliquid" && candidate.stopPct != null;
           // Sparse signal observations cannot authorize a live strategy.
           const liveEligible = false;
           candidate.liveEligible = liveEligible;
@@ -1918,7 +1934,7 @@
           const sample = `${sampleN} · ${candidate.days}日 · 路径点数达标 ${candidate.pathN}/${sampleN}`;
           const handoff = !!candidate.executionManifest
             ? `<button class="strategy-export" data-strategy-index="${index}" type="button">保存到策略库</button>`
-            : compatible ? `<button class="strategy-replay" data-strategy-index="${index}" type="button">执行回放</button>` : candidate.venue !== "hyperliquid" ? "缺少实盘适配器" : "需定义止损";
+            : candidate.venue === "hyperliquid" ? `<button class="strategy-replay" data-strategy-index="${index}" type="button">${candidate.stopPct == null ? "设置止损并回放" : "调整 / 执行回放"}</button>` : "缺少实盘适配器";
           return `<tr><td><span class="candidate-rank">${index + 1}</span></td><td>${escapeHtml(VENUE[candidate.venue])}</td><td>${escapeHtml(candidate.dexLabel)}</td><td>${escapeHtml(candidate.kindLabel)}</td><td>${candidate.holdHours}h</td><td>${candidate.stopPct == null ? "不设" : `${candidate.stopPct}%`}</td><td>${candidate.maxOpen}</td><td class="${candidate.trainMean >= 0 ? "pos" : "neg"}">${signed(candidate.trainMean)} · n=${candidate.trainN}</td><td class="${candidate.validationMean >= 0 ? "pos" : "neg"}">${signed(candidate.validationMean)} · n=${candidate.validationN} · 中位${signed(candidate.validationMedian)}</td><td title="按该候选持仓时长，路径点数达到预期的80%；点数达标仍不代表时间连续。旧信号到期后不会自动补齐。">${sample}</td><td class="${tone}">${signed(candidate.robust)}</td><td>${handoff}</td></tr>`;
         }).join("");
       }
@@ -1928,7 +1944,7 @@
         const manifest = {
           schema_version: 1,
           strategy_id: `research-hl-${candidate.dexScope}-${idKind}-${candidate.holdHours}h-stop${candidate.stopPct}-${candidate.maxOpen}p-v1`,
-          name: `研究候选 · ${candidate.kindLabel} · ${candidate.holdHours}h`,
+          name: `研究候选 · ${candidate.kindLabel} · ${candidate.holdHours}h · 止损${candidate.stopPct}% · ${candidate.maxOpen}仓`,
           venue: "hyperliquid",
           dex_scope: candidate.dexScope,
           signal_kinds: candidate.kind ? [candidate.kind] : allKinds,
@@ -1957,30 +1973,83 @@
         };
         return manifest;
       }
+      function openReplayEditor(candidate) {
+        if (replayBusy || !candidate) return;
+        replayEditorCandidate = {...candidate};
+        replaySavedCandidate = null;
+        $("replay-save").disabled = true;
+        $("replay-editor").classList.remove("hidden");
+        $("replay-candidate-title").textContent = `${candidate.dexLabel} · ${candidate.kindLabel} · 持有${candidate.holdHours}h · 最多${candidate.maxOpen}仓`;
+        $("replay-stop").value = candidate.stopPct ?? 2;
+        $("replay-editor-note").textContent = candidate.stopPct == null
+          ? "原候选不设止损。此处预填2%，请确认或修改后再回放；榜单收益不能沿用为加止损后的收益。止损按价格逆向变动计算，不是保证金亏损比例。"
+          : "可修改止损（0.1%～20%），修改后须重新回放。保存只写入策略库，不会切换或恢复实盘。";
+        $("execution-replay-result").textContent = "已选择候选，请确认止损并执行回放。";
+        $("replay-editor").scrollIntoView({behavior:"smooth",block:"center"});
+      }
+      function renderReplayResult(report) {
+        const closed = report.trades.filter(t => t.exit_at != null);
+        const pnl = report.equity - report.initial_equity;
+        const metric = (label,value,tone="") => `<div class="execution-metric"><span>${escapeHtml(label)}</span><strong class="${tone}">${escapeHtml(value)}</strong></div>`;
+        const usd = n => `${n>=0?"+":""}${n.toFixed(2)} USDC`;
+        const closedPnl = closed.reduce((n,t)=>n+(Number(t.pnl)||0),0);
+        $("execution-replay-result").innerHTML = `<div class="replay-summary">
+          <strong>${report.deployable ? "历史回放门槛通过，仍需独立模拟" : "未通过历史回放验证，不能启用实盘"}</strong>
+          <p>这是已采集数据上的模拟结果，不是预期收益承诺。初始本金 ${report.initial_equity.toFixed(2)} USDC；总盈亏包含未平仓头寸的估值。</p>
+          <div class="execution-metrics">${metric("模拟总盈亏",usd(pnl),pnl>=0?"pos":"neg")}${metric("模拟账户收益",signed(report.return_pct))}${metric("期末净值",report.equity.toFixed(2)+" USDC")}${metric("最大回撤",report.max_drawdown_pct.toFixed(2)+"%")}</div>
+          <div class="execution-funnel"><span>已平 ${closed.length} 笔 · 盈亏 ${usd(closedPnl)}</span><span>未平 ${report.trades.length-closed.length} 仓</span><span>后30%验证 ${report.validation_n} 笔</span><span>验证单笔均值 ${report.validation_mean_usd==null?"暂无":usd(report.validation_mean_usd)}</span></div>
+          <p>数据质量：路径缺口 ${report.data_gaps} 处 · 缺盘口 ${report.missing_books} 次 · 不完整轮次 ${report.incomplete_frames} 轮。统计对象不同，不能相加成“漏了多少笔交易”；全DEX不完整也可能发生在本策略范围以外。缺失数据会使结果不可靠。</p>
+          ${report.blockers.length?`<strong>尚未通过的原因</strong><ul>${report.blockers.map(v=>`<li>${escapeHtml(v)}</li>`).join("")}</ul>`:""}
+          <details><summary>逐笔模拟交易（${report.trades.length}笔）</summary><div class="table-scroll"><table class="lab-table"><thead><tr><th>合约</th><th>入场</th><th>退出</th><th>杠杆</th><th>平仓盈亏 USDC</th><th>退出原因</th></tr></thead><tbody>${report.trades.map(t=>`<tr><td>${escapeHtml(t.coin)}</td><td>${escapeHtml(dateTime(t.entry_at))}</td><td>${t.exit_at==null?"未平仓":escapeHtml(dateTime(t.exit_at))}</td><td>${t.leverage}×</td><td>${t.pnl==null?"—":Number(t.pnl).toFixed(2)}</td><td>${escapeHtml(t.reason||"持仓中")}</td></tr>`).join("")}</tbody></table></div></details>
+          <p>资金费仅对负费率预留成本，不计正费率收入；未使用真实结算流水。模型 ${escapeHtml(report.execution_model)}。保存未通过的候选仅用于后续模拟，不授予实盘资格。</p>
+        </div>`;
+      }
       async function replayStrategy(candidate, button) {
+        if (replayBusy) return;
+        replayBusy = true;
         button.disabled = true;
+        $("replay-stop").disabled = true;
+        $("replay-save").disabled = true;
+        replaySavedCandidate = null;
         const box = $("execution-replay-result");
         box.textContent = "正在回放完整扫描和盘口…";
         try {
           const response = await fetch("/api/research/execution", {method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({strategy:strategyManifest(candidate),capital:500})});
           const result = await response.json();
           if (!response.ok) throw new Error(result.error || `HTTP ${response.status}`);
-          const report=result.report;
-          candidate.executionManifest=result.strategy;
+          candidate.executionManifest = result.strategy;
           executionManifests.set(result.strategy.strategy_id,result.strategy);
-          const closed = report.trades.filter((trade) => trade.exit_at != null);
-          const open = report.trades.length - closed.length;
-          box.textContent = `模型 ${report.execution_model} · 期末净值 ${report.equity.toFixed(2)} USDC · 账户收益 ${report.return_pct.toFixed(2)}% · 最大回撤 ${report.max_drawdown_pct.toFixed(2)}% · 已平 ${closed.length} / 持仓 ${open} · 验证 ${report.validation_n} 笔 · 路径缺口 ${report.data_gaps} / 缺盘口 ${report.missing_books} / 不完整轮次 ${report.incomplete_frames}。${report.blockers.join("；")}。资金费模型：负费率预留成本，不计正费率收入；尚非实际结算。`;
-          button.textContent="保存候选到策略库";
-          button.classList.remove("strategy-replay");
-          button.classList.add("strategy-export");
+          replaySavedCandidate = candidate;
+          renderReplayResult(result.report);
+          $("replay-save").disabled = false;
           renderStrategyLab();
         } catch(error) {box.textContent = `回放失败：${error.message}`;}
-        finally {button.disabled = false;}
+        finally {replayBusy = false;button.disabled = false;$("replay-stop").disabled = false;}
       }
-      document.addEventListener("click", (event) => {
+      document.addEventListener("click", event => {
         const button = event.target.closest(".strategy-replay");
-        if (button) replayStrategy(strategyExportCandidates[Number(button.dataset.strategyIndex)], button);
+        if (button) openReplayEditor(strategyExportCandidates[Number(button.dataset.strategyIndex)]);
+      });
+      $("replay-stop").addEventListener("input",()=>{
+        replaySavedCandidate = null;
+        $("replay-save").disabled = true;
+        $("execution-replay-result").textContent = "止损已修改，请重新回放；之前的结果不能用于保存当前参数。";
+      });
+      $("replay-run").addEventListener("click",()=>{
+        if (!replayEditorCandidate || replayBusy) return;
+        const stop = Number($("replay-stop").value);
+        if (!Number.isFinite(stop) || stop<0.1 || stop>20) {
+          $("execution-replay-result").textContent = "止损请输入0.1%～20%的数值。"; return;
+        }
+        const candidate = {...replayEditorCandidate,stopPct:stop,executionManifest:null};
+        if (stop !== replayEditorCandidate.stopPct) {
+          candidate.trainMean=null;candidate.validationMean=null;candidate.validationMedian=null;
+          candidate.liveEligible=false;
+        }
+        replayStrategy(candidate,$("replay-run"));
+      });
+      $("replay-save").addEventListener("click",()=>{
+        if (replaySavedCandidate && !replayBusy) saveStrategy(replaySavedCandidate,$("replay-save"));
       });
       async function saveStrategy(candidate, button) {
         const previous = button.textContent;
@@ -1997,11 +2066,11 @@
           button.textContent = "已保存";
           window.researchEvidence?.loadHandoff();
           $("strategy-lab-status").textContent = "已保存到同服务器策略库，请在 Hyper Fly 启动影子验证；不会自动开启实盘";
-          setTimeout(() => { button.textContent = previous; button.disabled = false; }, 2500);
+          setTimeout(() => { button.textContent = previous; button.disabled = button.id === "replay-save" && (!replaySavedCandidate || replaySavedCandidate.stopPct !== Number($("replay-stop").value)); }, 2500);
         } catch (error) {
           button.textContent = "保存失败";
           $("strategy-lab-status").textContent = error.message;
-          setTimeout(() => { button.textContent = previous; button.disabled = false; }, 3000);
+          setTimeout(() => { button.textContent = previous; button.disabled = button.id === "replay-save" && (!replaySavedCandidate || replaySavedCandidate.stopPct !== Number($("replay-stop").value)); }, 3000);
         }
       }
       function nearestSignalMatches(leftRows, rightRows, toleranceMs) {
