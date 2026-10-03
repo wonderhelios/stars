@@ -1317,7 +1317,7 @@
             <div id="strategy-lab-status" class="lab-status">等待三平台信号数据</div>
           </div>
           <div id="strategy-lab-empty" class="empty hidden"></div>
-          <div class="research-controls"><label for="candidate-hold">持仓时长</label><select id="candidate-hold"><option value="">全部时长</option><option value="1">1h</option><option value="2">2h</option><option value="4">4h</option><option value="8">8h</option><option value="12">12h</option><option value="24">24h</option></select></div>
+          <div class="research-controls"><select id="candidate-venue" aria-label="候选平台"><option value="">全部平台</option><option value="hyperliquid">Hyperliquid</option><option value="okx">OKX</option><option value="binance">Binance</option></select><select id="candidate-scope" aria-label="候选市场范围"><option value="">全部范围对比</option><option value="main">主 DEX / 原生全市场</option><option value="all">全部 DEX（含HIP-3）</option><option value="xyz">仅 xyz</option><option value="para">仅 para</option></select><select id="candidate-kind" aria-label="候选形态"><option value="*">全部形态对比</option><option value="">合并全部形态</option><option value="pump_pos_fund">暴涨＋正费率</option><option value="up_pos_fund">上涨＋正费率</option><option value="down_pos_fund">下跌＋正费率</option><option value="crash_pos_fund">暴跌＋正费率</option></select><label for="candidate-hold">持仓时长</label><select id="candidate-hold"><option value="">全部时长</option><option value="1">1h</option><option value="2">2h</option><option value="4">4h</option><option value="8">8h</option><option value="12">12h</option><option value="24">24h</option></select></div>
           <div id="candidate-maturity" class="research-note"></div>
           <div id="strategy-lab-table-wrap" class="table-scroll hidden">
             <table class="lab-table">
@@ -1890,7 +1890,7 @@
           if (!source || !Array.isArray(source.data)) continue;
           const cleanRows = researchRows(source.data).filter((row) => !hasPriceDiscontinuity(row));
           const scopes = venue === "hyperliquid"
-            ? [["main", "主 DEX", cleanRows.filter((row) => !String(row.inst_id || "").includes(":"))], ["all", "全部 DEX", cleanRows]]
+            ? [["main", "主 DEX（排除全部HIP-3）", cleanRows.filter((row) => !String(row.inst_id || "").includes(":"))], ["all", "全部 DEX", cleanRows], ["xyz", "仅 xyz", cleanRows.filter(row=>String(row.inst_id||"").startsWith("xyz:"))], ["para", "仅 para", cleanRows.filter(row=>String(row.inst_id||"").startsWith("para:"))]]
             : [["main", "全市场", cleanRows]];
           for (const [dexScope, dexLabel, scopeRows] of scopes) {
           for (const [kind, kindLabel] of kinds) {
@@ -1945,13 +1945,18 @@
         }
         candidates.sort((a, b) => b.robust - a.robust || b.validationN - a.validationN);
         const hold=Number($("candidate-hold").value);
-        const filtered=candidates.filter(c=>!hold||c.holdHours===hold);
+        const venueFilter=$("candidate-venue").value, scopeFilter=$("candidate-scope").value, kindFilter=$("candidate-kind").value;
+        const filtered=candidates.filter(c=>(!hold||c.holdHours===hold)&&(!venueFilter||c.venue===venueFilter)
+          &&(!scopeFilter||c.dexScope===scopeFilter)&&(kindFilter==='*'||c.kind===kindFilter));
         const robust = filtered.filter((candidate) => candidate.trainMean > 0 && candidate.validationMean > 0);
         const shown = (robust.length ? robust : filtered).slice(0, 12);
-        $("candidate-maturity").textContent='所选周期各平台已具备退出价格的信号数（不等于仓位筛选后入选数）：'+Object.entries(VENUE).map(([venue,label])=>{
-          const rows=researchRows(state.paper[venue]?.data);
+        $("candidate-maturity").textContent='所选周期、当前范围及形态的到期信号数（不等于仓位筛选后入选数）：'+Object.entries(VENUE).filter(([venue])=>!venueFilter||venue===venueFilter).map(([venue,label])=>{
+          const rows=researchRows(state.paper[venue]?.data).filter(row=>
+            (kindFilter==='*'||kindFilter===''||row.kind===kindFilter)&&(!scopeFilter||
+            (scopeFilter==='main'? !String(row.inst_id||'').includes(':'):
+            scopeFilter==='all'?venue==='hyperliquid':venue==='hyperliquid'&&String(row.inst_id||'').startsWith(scopeFilter+':'))));
           return label+' '+OUTCOME_SAMPLES.map(([field,h])=>h+'h '+rows.filter(r=>Number(r[field])>0).length+'笔').join(' / ');
-        }).join('；')+'。每个参数组合至少6笔才入榜；有样本也可能未进入全时长前12名，可按时长查看。';
+        }).join('；')+'。每个参数组合至少6笔才入榜；主DEX排除所有HIP-3，包括xyz和para。已达样本门槛的候选仍可能被仓位容量或排序筛掉，可按平台、范围、形态、时长单独查看。';
         strategyExportCandidates = shown;
         $("strategy-lab-status").textContent = tested
           ? `已测试 ${tested} 组参数 · ${robust.length} 组训练段和验证段同时为正`
@@ -1975,7 +1980,7 @@
           return `<tr><td><span class="candidate-rank">${index + 1}</span></td><td>${escapeHtml(VENUE[candidate.venue])}</td><td>${escapeHtml(candidate.dexLabel)}</td><td>${escapeHtml(candidate.kindLabel)}</td><td>${candidate.holdHours}h</td><td>${candidate.stopPct == null ? "不设" : `${candidate.stopPct}%`}</td><td>${candidate.maxOpen}</td><td class="${candidate.trainMean >= 0 ? "pos" : "neg"}">${signed(candidate.trainMean)} · n=${candidate.trainN}</td><td class="${candidate.validationMean >= 0 ? "pos" : "neg"}">${signed(candidate.validationMean)} · n=${candidate.validationN} · 中位${signed(candidate.validationMedian)}</td><td title="按该候选持仓时长，路径点数达到预期的80%；点数达标仍不代表时间连续。到期信号不会自动补齐。">${sample}</td><td class="${tone}">${signed(candidate.robust)}</td><td>${handoff}</td></tr>`;
         }).join("");
       }
-      $("candidate-hold").addEventListener("change",renderStrategyLab);
+      for(const id of ["candidate-hold","candidate-venue","candidate-scope","candidate-kind"])$(id).addEventListener("change",renderStrategyLab);
       function strategyManifest(candidate) {
         const allKinds = Object.keys(KINDS);
         const idKind = candidate.kind || "all";
