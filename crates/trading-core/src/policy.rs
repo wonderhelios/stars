@@ -48,6 +48,37 @@ pub fn risk_allows_equity(
 pub fn stop_execution_limit(trigger: f64, size_decimals: u32) -> f64 {
     order_price(trigger * 1.05, size_decimals, true)
 }
+/// Strategy targets override the legacy dashboard amount. Percent is an unlevered
+/// favorable price move at the full executable ask VWAP, not margin ROI.
+pub fn take_profit_enabled(strategy: &StrategyConfig, legacy_usd: Option<f64>) -> bool {
+    strategy.take_profit_usd.is_some()
+        || strategy.take_profit_price_pct.is_some()
+        || legacy_usd.is_some()
+}
+pub fn take_profit_net(
+    book: &Book,
+    entry: f64,
+    size: f64,
+    coin: &str,
+    strategy: &StrategyConfig,
+    legacy_usd: Option<f64>,
+) -> Option<f64> {
+    if !entry.is_finite() || entry <= 0.0 || !size.is_finite() || size <= 0.0 {
+        return None;
+    }
+    let exit = book.buy_vwap(size, book.mid() * 1.01)?;
+    let net = (entry - exit) * size - (entry + exit) * size * estimated_fee(coin);
+    let hit = if let Some(pct) = strategy.take_profit_price_pct {
+        (entry - exit) / entry * 100.0 >= pct
+    } else {
+        strategy
+            .take_profit_usd
+            .or(legacy_usd)
+            .is_some_and(|target| net >= target)
+    };
+    hit.then_some(net)
+}
+
 pub fn stop_price(entry: f64, size_decimals: u32, strategy: &StrategyConfig) -> f64 {
     order_price(
         entry * (1.0 + strategy.stop_loss_pct / 100.0),
@@ -385,6 +416,32 @@ mod tests {
         assert_eq!(order_price(0.01234567, 3, true), 0.013);
     }
 
+    #[test]
+    fn strategy_take_profit_uses_unlevered_vwap_and_fee_adjusted_amount() {
+        let book = Book {
+            bid: 94.9,
+            ask: 95.0,
+            bid_depth: vec![(94.9, 10.0)],
+            ask_depth: vec![(95.0, 10.0)],
+        };
+        let amount = StrategyConfig {
+            take_profit_usd: Some(49.9),
+            ..Default::default()
+        };
+        // Gross profit is $50 but fees keep this below the $49.90 target.
+        assert!(take_profit_net(&book, 100.0, 10.0, "AAA", &amount, None).is_none());
+        let pct = StrategyConfig {
+            take_profit_price_pct: Some(5.0),
+            ..Default::default()
+        };
+        assert!(take_profit_net(&book, 100.0, 10.0, "AAA", &pct, Some(1000.0)).is_some());
+        assert!(take_profit_net(&book, 100.0, 11.0, "AAA", &pct, None).is_none());
+        let strict = StrategyConfig {
+            take_profit_price_pct: Some(5.01),
+            ..Default::default()
+        };
+        assert!(take_profit_net(&book, 100.0, 10.0, "AAA", &strict, Some(1.0)).is_none());
+    }
     #[test]
     fn take_profit_requires_full_executable_size_and_fees() {
         let book = Book {

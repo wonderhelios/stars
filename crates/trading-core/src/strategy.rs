@@ -30,6 +30,10 @@ pub struct StrategyConfig {
     pub min_volume_usd: f64,
     pub hold_hours: u32,
     pub stop_loss_pct: f64,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub take_profit_usd: Option<f64>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub take_profit_price_pct: Option<f64>,
     pub max_positions: usize,
     pub cooldown_hours: u32,
     pub margin_fraction: f64,
@@ -53,6 +57,8 @@ impl Default for StrategyConfig {
             min_volume_usd: 500_000.0,
             hold_hours: 24,
             stop_loss_pct: 2.0,
+            take_profit_usd: None,
+            take_profit_price_pct: None,
             max_positions: 5,
             cooldown_hours: 24,
             margin_fraction: 0.20,
@@ -170,6 +176,23 @@ impl StrategyConfig {
             "stop_loss_pct must be 0.1..=20"
         );
         anyhow::ensure!(
+            self.take_profit_usd.is_none() || self.take_profit_price_pct.is_none(),
+            "choose amount or price percentage take profit, not both"
+        );
+        for (value, max, name) in [
+            (self.take_profit_usd, 1_000_000.0, "take_profit_usd"),
+            (self.take_profit_price_pct, 50.0, "take_profit_price_pct"),
+        ] {
+            if let Some(v) = value {
+                anyhow::ensure!(
+                    v.is_finite()
+                        && (0.01..=max).contains(&v)
+                        && (v * 100.0 - (v * 100.0).round()).abs() < 1e-6,
+                    "{name} must be positive, at most {max}, and use at most 2 decimals"
+                );
+            }
+        }
+        anyhow::ensure!(
             (1..=20).contains(&self.max_positions),
             "max_positions must be 1..=20"
         );
@@ -277,6 +300,28 @@ impl StrategyLibrary {
 mod tests {
     use super::*;
 
+    #[test]
+    fn take_profit_validation_and_hash_bind_both_modes() {
+        let base = StrategyConfig::default();
+        let legacy = base.canonical_json().unwrap();
+        assert!(!legacy.contains("take_profit"));
+        assert_eq!(StrategyConfig::from_json(&legacy).unwrap(), base);
+        let mut s = base.clone();
+        s.take_profit_usd = Some(40.0);
+        s.validate().unwrap();
+        assert_ne!(
+            crate::strategy_hash(&base).unwrap(),
+            crate::strategy_hash(&s).unwrap()
+        );
+        s.take_profit_price_pct = Some(3.0);
+        assert!(s.validate().is_err());
+        s.take_profit_usd = None;
+        s.validate().unwrap();
+        for value in [0.0, -1.0, f64::NAN, 50.01, 1.001] {
+            s.take_profit_price_pct = Some(value);
+            assert!(s.validate().is_err());
+        }
+    }
     #[test]
     fn default_matches_current_live_signal() {
         let config = StrategyConfig::default();

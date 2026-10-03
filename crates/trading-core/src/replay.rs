@@ -182,13 +182,19 @@ where
             }
             let due = frame.at >= trade.entry_at + strategy.hold_hours as i64 * 3_600_000;
             let stopped = stop_hits.contains(&i);
-            if !due && !stopped {
+            if !due && !stopped && !policy::take_profit_enabled(strategy, None) {
                 continue;
             }
             let Some(book) = fresh_book(frame, &trade.coin) else {
                 out.missing_books += 1;
                 continue;
             };
+            let profit =
+                policy::take_profit_net(book, trade.entry, trade.size, &trade.coin, strategy, None)
+                    .is_some();
+            if !due && !stopped && !profit {
+                continue;
+            }
             let Some(exit) = book.buy_vwap(
                 trade.size,
                 if stopped {
@@ -210,7 +216,16 @@ where
             trade.exit_at = Some(frame.at);
             trade.exit = Some(exit);
             trade.pnl = Some(pnl);
-            trade.reason = Some(if stopped { "stop" } else { "hold" }.into());
+            trade.reason = Some(
+                if stopped {
+                    "stop"
+                } else if due {
+                    "hold"
+                } else {
+                    "take_profit"
+                }
+                .into(),
+            );
         }
         let mut unrealized = 0.0;
         for (i, t) in out
@@ -420,6 +435,42 @@ mod tests {
                 HashMap::new()
             },
         }
+    }
+    #[test]
+    fn amount_and_price_take_profit_wait_for_a_full_real_book() {
+        for (usd, pct) in [(Some(40.0), None), (None, Some(3.0))] {
+            let s = StrategyConfig {
+                take_profit_usd: usd,
+                take_profit_price_pct: pct,
+                ..Default::default()
+            };
+            let frames = [
+                frame(0, 100.0, true),
+                frame(300_000, 105.0, true),
+                frame(360_000, 100.0, false),
+                frame(420_000, 100.0, true),
+            ];
+            let r = run(&frames, &s, 500.0).unwrap();
+            assert_eq!(r.trades.len(), 1);
+            assert_eq!(r.trades[0].exit_at, Some(420_000));
+            assert_eq!(r.trades[0].exit, Some(100.01));
+            assert_eq!(r.trades[0].reason.as_deref(), Some("take_profit"));
+            assert!(r.trades[0].pnl.unwrap() > 40.0);
+        }
+        let frames = [
+            frame(0, 100.0, true),
+            frame(300_000, 105.0, true),
+            frame(360_000, 100.0, true),
+        ];
+        let original = run(&frames, &StrategyConfig::default(), 500.0).unwrap();
+        assert!(original.trades[0].exit_at.is_none());
+        let high = StrategyConfig {
+            take_profit_usd: Some(1000.0),
+            ..Default::default()
+        };
+        assert!(run(&frames, &high, 500.0).unwrap().trades[0]
+            .exit_at
+            .is_none());
     }
     #[test]
     fn baseline_is_not_an_entry_and_stop_requires_an_observed_fill() {
