@@ -61,6 +61,13 @@ pub async fn collect(client: &HyperliquidRestClient, db: &PaperDb) -> Result<()>
             .await?,
     );
     let mut books = HashMap::new();
+    let unavailable_books = wanted
+        .iter()
+        .filter(|coin| !markets.contains_key(*coin))
+        .count();
+    // A quote cannot be used without this frame's mark/contract metadata.
+    // Keep watch registrations, but avoid wasting request slots on missing scopes.
+    wanted.retain(|coin| markets.contains_key(coin));
     let wanted_count = wanted.len();
     // Bound the book phase below the replay freshness window (15 seconds).
     // A stalled request must release its slot instead of occupying it for 3×30s.
@@ -79,10 +86,12 @@ pub async fn collect(client: &HyperliquidRestClient, db: &PaperDb) -> Result<()>
     wanted.sort();
     let mut requests = stream::iter(wanted)
         .map(|coin| async move {
-            let raw =
-                tokio::time::timeout(std::time::Duration::from_secs(4), client.l2_book(&coin))
-                    .await
-                    .unwrap_or_else(|_| Err(anyhow::anyhow!("book request exceeded 4s budget")));
+            let raw = tokio::time::timeout(
+                std::time::Duration::from_secs(4),
+                client.execution_l2_book(&coin),
+            )
+            .await
+            .unwrap_or_else(|_| Err(anyhow::anyhow!("book request exceeded 4s budget")));
             (coin, raw)
         })
         .buffer_unordered(12);
@@ -128,7 +137,7 @@ pub async fn collect(client: &HyperliquidRestClient, db: &PaperDb) -> Result<()>
     let received_books = books.len();
     books.retain(|_, q| fresh_at(at, q.observed_at));
     tracing::info!(
-        "HL execution research coverage: complete={} markets={} scopes={} books={} wanted_books={} missing_books={} stale_books={} stale_markets={} elapsed_ms={}",
+        "HL execution research coverage: complete={} markets={} scopes={} books={} wanted_books={} missing_books={} stale_books={} stale_markets={} skipped_unavailable_books={} elapsed_ms={}",
         complete,
         markets.len(),
         complete_scopes.len(),
@@ -137,6 +146,7 @@ pub async fn collect(client: &HyperliquidRestClient, db: &PaperDb) -> Result<()>
         wanted_count.saturating_sub(books.len()),
         received_books - books.len(),
         stale_markets.len(),
+        unavailable_books,
         collection_start.elapsed().as_millis()
     );
     db.record_execution_frame(&Frame {

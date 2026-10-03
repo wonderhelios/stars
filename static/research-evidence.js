@@ -69,6 +69,10 @@
       const response=await fetch('/api/research/handoff',{cache:'no-store',signal:controller.signal});
       const d=await response.json();if(!response.ok)throw new Error(d.error||`HTTP ${response.status}`);
       if(!Array.isArray(d.strategies))throw new Error('请更新Hyper Fly看板，当前策略状态接口不兼容');
+      if(d.compatible_rules===false){
+        el('handoff-summary').textContent=d.compatibility_error||'两项目规则版本不一致，请更新Hyper Fly。';
+        el('handoff-cards').innerHTML='';return;
+      }
       const list=d.strategies;
       const ready=list.filter(s=>s.validated).length;
       el('handoff-summary').textContent=`${ready?'验证通过 '+ready+' 个候选，可去 Hyper Fly 申请切换。':'暂无通过完整验证的策略。'} 当前生效：${d.active_name||'—'} · ${d.paused?'实盘已暂停新开仓':'实盘允许新开仓'}。策略库${list.length}个候选。`;

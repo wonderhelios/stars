@@ -96,6 +96,22 @@ async fn publish_strategy(
                 .into_response()
         }
     };
+    // Fail clearly before posting newly introduced fields to an outdated receiver.
+    let compatibility=async {
+        let response=state.http.get(&state.strategy_library_url).timeout(std::time::Duration::from_secs(8)).send().await?;
+        anyhow::ensure!(response.status().is_success(),"Hyper Fly策略库状态接口失败：{}",response.status());
+        let status=response.json::<serde_json::Value>().await?;
+        anyhow::ensure!(status["rule_hash"].as_str()==Some(trading_core::rule_hash().as_str()),
+            "Hyper Fly看板未升级或共享规则不一致。请更新Hyper Fly，重启看板和机器人，再重新回放并保存；不能丢弃止盈字段来兼容旧版。");
+        Ok::<_,anyhow::Error>(())
+    }.await;
+    if let Err(error) = compatibility {
+        return (
+            StatusCode::CONFLICT,
+            Json(serde_json::json!({"error":error.to_string()})),
+        )
+            .into_response();
+    }
     // Recompute evidence on the server. The browser cannot promote a sampled result.
     let candidate = match state.hl_paper.execution_candidate(input, 500.0).await {
         Ok(result) => result,
@@ -129,11 +145,43 @@ async fn publish_strategy(
     };
     let status =
         StatusCode::from_u16(response.status().as_u16()).unwrap_or(StatusCode::BAD_GATEWAY);
-    let body = response
-        .json::<serde_json::Value>()
-        .await
-        .unwrap_or_else(|_| serde_json::json!({"error":"Hyper Fly 策略库返回了无法识别的响应"}));
+    let raw = match response.text().await {
+        Ok(raw) => raw,
+        Err(e) => {
+            return (
+                StatusCode::BAD_GATEWAY,
+                Json(serde_json::json!({"error":format!("读取Hyper Fly策略库响应失败：{e}")})),
+            )
+                .into_response()
+        }
+    };
+    let body = strategy_library_reply(status, &raw);
     (status, Json(body)).into_response()
+}
+
+fn strategy_library_reply(status: StatusCode, raw: &str) -> serde_json::Value {
+    serde_json::from_str::<serde_json::Value>(&raw).unwrap_or_else(|_| {
+        let detail: String = raw.chars().take(1500).collect();
+        serde_json::json!({"error":format!("Hyper Fly拒绝策略（HTTP {}）：{}。若提示未知止盈字段，请更新Hyper Fly并重启看板服务。",status.as_u16(),detail)})
+    })
+}
+
+#[cfg(test)]
+mod publish_reply_tests {
+    use super::*;
+    #[test]
+    fn plain_422_keeps_field_error_and_upgrade_hint() {
+        let raw = "Failed to deserialize: unknown field `take_profit_price_pct`";
+        let reply = strategy_library_reply(StatusCode::UNPROCESSABLE_ENTITY, raw);
+        let error = reply["error"].as_str().unwrap();
+        assert!(error.contains(raw));
+        assert!(error.contains("422"));
+        assert!(error.contains("更新Hyper Fly"));
+        assert_eq!(
+            strategy_library_reply(StatusCode::OK, r#"{"saved":true}"#)["saved"],
+            true
+        );
+    }
 }
 
 async fn health() -> &'static str {
@@ -317,7 +365,15 @@ async fn get_handoff_status(State(state): State<WebState>) -> Response {
     }
     .await;
     match result {
-        Ok(value) => Json(value).into_response(),
+        Ok(mut value) => {
+            let compatible =
+                value["rule_hash"].as_str() == Some(trading_core::rule_hash().as_str());
+            value["compatible_rules"] = serde_json::json!(compatible);
+            if !compatible {
+                value["compatibility_error"]=serde_json::json!("研究服务与Hyper Fly规则版本不同或看板未升级，请同时更新两项目并重启看板和机器人；然后重新回放。");
+            }
+            Json(value).into_response()
+        }
         Err(error) => (
             StatusCode::BAD_GATEWAY,
             Json(serde_json::json!({"error":error.to_string()})),

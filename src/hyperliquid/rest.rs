@@ -73,6 +73,44 @@ impl HyperliquidRestClient {
         }
     }
 
+    /// Independent pool: a stalled CDN connection must not stall the recovery read.
+    fn fresh_connection(&self) -> Self {
+        Self {
+            http: Client::builder()
+                .timeout(Duration::from_secs(8))
+                .connect_timeout(Duration::from_secs(3))
+                .http1_only()
+                .no_gzip()
+                .pool_max_idle_per_host(0)
+                .tcp_nodelay(true)
+                .build()
+                .expect("recovery client init"),
+            base: self.base.clone(),
+            dex_cache: Mutex::new(None),
+        }
+    }
+    async fn execution_ctxs_by_dex(&self, dex: &str) -> Result<Vec<HlTicker>> {
+        let recovery = self.fresh_connection();
+        first_success(
+            self.perp_ctxs_by_dex(dex),
+            recovery.perp_ctxs_by_dex(dex),
+            Duration::from_secs(2),
+        )
+        .await
+    }
+    pub async fn execution_l2_book(
+        &self,
+        coin: &str,
+    ) -> anyhow::Result<trading_core::replay::Quote> {
+        let recovery = self.fresh_connection();
+        first_success(
+            self.l2_book(coin),
+            recovery.l2_book(coin),
+            Duration::from_secs(1),
+        )
+        .await
+    }
+
     async fn post_text(&self, body: &serde_json::Value) -> Result<String> {
         let mut last_err: Option<Error> = None;
         for attempt in 0..MAX_RETRY {
@@ -130,7 +168,13 @@ impl HyperliquidRestClient {
                 return Ok(names.clone());
             }
         }
-        let dexes: Vec<Option<PerpDex>> = self.post_json(json!({"type": "perpDexs"})).await?;
+        let recovery = self.fresh_connection();
+        let dexes: Vec<Option<PerpDex>> = first_success(
+            self.post_json(json!({"type":"perpDexs"})),
+            recovery.post_json(json!({"type":"perpDexs"})),
+            Duration::from_secs(1),
+        )
+        .await?;
         let names = dex_names(dexes);
         *cache = Some((Instant::now(), names.clone()));
         Ok(names)
@@ -263,7 +307,14 @@ impl HyperliquidRestClient {
         let mut scopes = std::collections::HashSet::new();
         let mut queries = stream::iter(dexes.iter().cloned())
             .map(|dex| async move {
-                let result = tokio::time::timeout_at(deadline, self.perp_ctxs_by_dex(&dex)).await;
+                let request = async {
+                    if market_budget <= Duration::from_secs(8) {
+                        self.execution_ctxs_by_dex(&dex).await
+                    } else {
+                        self.perp_ctxs_by_dex(&dex).await
+                    }
+                };
+                let result = tokio::time::timeout_at(deadline, request).await;
                 (dex, result)
             })
             .buffer_unordered(12);
@@ -358,9 +409,58 @@ fn dex_names(dexes: Vec<Option<PerpDex>>) -> Vec<String> {
     names
 }
 
+/// Delayed duplicate reads only: first valid result wins; dropping the other
+/// future cancels it. No retries of orders and no extension of the caller's budget.
+async fn first_success<T, E>(
+    primary: impl std::future::Future<Output = std::result::Result<T, E>>,
+    recovery: impl std::future::Future<Output = std::result::Result<T, E>>,
+    delay: Duration,
+) -> std::result::Result<T, E> {
+    tokio::pin!(primary, recovery);
+    tokio::select! {
+        result=&mut primary => return match result {Ok(v)=>Ok(v),Err(_)=>recovery.await},
+        _=tokio::time::sleep(delay)=>{}
+    }
+    tokio::select! {
+        result=&mut primary => match result {Ok(v)=>Ok(v),Err(_)=>recovery.await},
+        result=&mut recovery => match result {Ok(v)=>Ok(v),Err(_)=>primary.await},
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[tokio::test]
+    async fn recovery_read_wins_over_stalled_primary_and_survives_bad_reply() {
+        let stalled = std::future::pending::<std::result::Result<u32, &str>>();
+        let result = tokio::time::timeout(
+            Duration::from_millis(100),
+            first_success(stalled, async { Ok(7) }, Duration::from_millis(5)),
+        )
+        .await
+        .unwrap();
+        assert_eq!(result, Ok(7));
+        assert_eq!(
+            first_success(
+                async { Err("truncated") },
+                async { Ok::<_, &str>(8) },
+                Duration::from_secs(2)
+            )
+            .await,
+            Ok(8)
+        );
+        let result = first_success(
+            async {
+                tokio::time::sleep(Duration::from_millis(20)).await;
+                Ok(9)
+            },
+            async { Err("bad recovery") },
+            Duration::from_millis(1),
+        )
+        .await;
+        assert_eq!(result, Ok(9));
+    }
 
     #[tokio::test]
     async fn dex_discovery_cache_expires_and_never_masks_failed_refresh() {
@@ -397,7 +497,8 @@ mod tests {
         client.dex_cache.lock().await.as_mut().unwrap().0 =
             Instant::now() - Duration::from_secs(601);
         assert!(client.perp_dex_names().await.is_err());
-        assert_eq!(calls.load(Ordering::SeqCst), 4);
+        // Failed refresh exhausts both independent decode paths, never returns stale names.
+        assert_eq!(calls.load(Ordering::SeqCst), 7);
         server.abort();
     }
 

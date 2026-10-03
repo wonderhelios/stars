@@ -1341,6 +1341,7 @@
               <button id="replay-save" type="button" disabled>保存此次回放的候选到策略库</button>
             </div>
             <p id="replay-editor-note" class="execution-note"></p>
+            <p id="replay-save-status" class="execution-note" role="status"></p>
             <p class="execution-note">金额：按可完整平仓的盘口估算，扣除双边手续费，不含资金费。百分比：未加杠杆的价格盈利幅度，做空时为下跌幅度；例如3%表示平仓买入均价较开仓价低3%，不是保证金收益30%。最多2位小数。默认不设止盈，仍按止损或持仓到期退出；改参数后必须重新回放。</p>
           </div>
           <div id="execution-replay-result" class="execution-note">点击候选中的“执行回放”。从新版部署开始采集完整分钟扫描与L2盘口；旧信号排行榜仍用于探索。当前支持交接 Hyperliquid 单腿做空（含 USDC 抵押的 HIP-3）；跨平台对冲及 OKX / Binance 尚不可交接实盘。</div>
@@ -2024,6 +2025,7 @@
         if (replayBusy || !candidate) return;
         replayEditorCandidate = {...candidate};
         replaySavedCandidate = null;
+        $("replay-save-status").textContent="";
         $("replay-save").disabled = true;
         $("replay-editor").classList.remove("hidden");
         $("replay-candidate-title").textContent = `${candidate.dexLabel} · ${candidate.kindLabel} · 持有${candidate.holdHours}h · 最多${candidate.maxOpen}仓`;
@@ -2156,7 +2158,7 @@
       async function saveStrategy(candidate, button) {
         const previous = button.textContent;
         button.disabled = true;
-        button.textContent = "保存中…";
+        button.textContent = "保存中…";$("replay-save-status").textContent="正在保存到Hyper Fly策略库…";
         try {
           const response = await fetch("/api/research/strategies", {
             method: "POST",
@@ -2165,12 +2167,12 @@
           });
           const result = await response.json();
           if (!response.ok) throw new Error(result.error || `HTTP ${response.status}`);
-          button.textContent = "已保存";
+          button.textContent = "已保存";$("replay-save-status").textContent="已保存到策略库；尚未通过的候选仅用于独立模拟，不会启用实盘。";
           window.researchEvidence?.loadHandoff();
           $("strategy-lab-status").textContent = "已保存到同服务器策略库，请在 Hyper Fly 启动影子验证；不会自动开启实盘";
           setTimeout(() => { button.textContent = previous; button.disabled = button.id === "replay-save" && !replayParametersMatch(); }, 2500);
         } catch (error) {
-          button.textContent = "保存失败";
+          button.textContent = "保存失败";$("replay-save-status").textContent=`保存失败：${error.message}`;
           $("strategy-lab-status").textContent = error.message;
           setTimeout(() => { button.textContent = previous; button.disabled = button.id === "replay-save" && !replayParametersMatch(); }, 3000);
         }
