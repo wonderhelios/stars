@@ -75,7 +75,7 @@
       }
       const list=d.strategies;
       const ready=list.filter(s=>s.validated).length;
-      el('handoff-summary').textContent=`${ready?'验证通过 '+ready+' 个候选，可去 Hyper Fly 申请切换。':'暂无通过完整验证的策略。'} 当前生效：${d.active_name||'—'} · ${d.paused?'实盘已暂停新开仓':'实盘允许新开仓'}。策略库${list.length}个候选。`;
+      el('handoff-summary').textContent=`${ready?'验证通过 '+ready+' 个候选，可去 Hyper Fly 申请切换。':'暂无通过完整验证的策略。'} 当前生效：${d.active_name||'—'}${d.activation?.mode==='manual_trial'?'（人工试运行，未通过完整验证）':''} · ${d.paused?'实盘已暂停新开仓':'实盘允许新开仓'}。策略库${list.length}个候选。`;
       el('handoff-cards').innerHTML=list.map(s=>`<article class="study-card"><strong>${esc(s.name)}</strong><span class="study-stage ${s.validated?'ready':'wait'}">${s.validated?'验证通过 · 可申请切换':s.historical_passed?'待独立模拟验证':'回放证据不足'}</span><small>${esc(s.dex_scope)} · ${s.hold_hours}h · 止损${s.stop_pct}% · ${s.max_positions}仓</small><small>${esc(s.blocker||'在Hyper Fly检查空仓与订单状态后启用；不会自动恢复开仓')}</small><a href="${flyUrl}" target="_blank" rel="noopener">${s.validated?'去 Hyper Fly 启用':'去 Hyper Fly 查看 / 模拟'}</a></article>`).join('');
     } catch(e) {
       el('handoff-summary').textContent=`交接状态暂不可用：${e.name==='AbortError'?'读取超时':e.message}。需要同时更新并启动 Hyper Fly 看板，当前不能判断可否实盘。`;
