@@ -23,6 +23,8 @@ pub struct SignalRow {
     pub prior_24h_return: Decimal,
     pub entry_price: Decimal,
     pub t1_price: Option<Decimal>,
+    pub t2_price: Option<Decimal>,
+    pub t12_price: Option<Decimal>,
     pub t4_price: Option<Decimal>,
     pub t8_price: Option<Decimal>,
     pub t24_price: Option<Decimal>,
@@ -215,6 +217,8 @@ impl PaperDb {
             }
         }
         for (name, definition) in [
+            ("t2_price", "TEXT"),
+            ("t12_price", "TEXT"),
             ("path_high", "TEXT"),
             ("path_high_at", "INTEGER"),
             ("path_low", "TEXT"),
@@ -681,15 +685,17 @@ impl PaperDb {
                 "SELECT id, inst_id, kind, triggered_at, funding_rate, prior_24h_return,
                         entry_price, t1_price, t4_price, t8_price, t24_price,
                         path_high, path_high_at, path_low, path_low_at, path_samples,
-                        stop_2_at, stop_3_at, stop_5_at
+                        stop_2_at, stop_3_at, stop_5_at, t2_price, t12_price
                  FROM signals_v3
                  WHERE t1_price IS NULL OR t4_price IS NULL OR t8_price IS NULL OR t24_price IS NULL
+                    OR ((t2_price IS NULL OR t12_price IS NULL) AND triggered_at >=
+                        (SELECT started_at FROM execution_cycles WHERE id='collector-v3'))
                  ORDER BY triggered_at ASC"
             } else {
                 "SELECT id, inst_id, kind, triggered_at, funding_rate, prior_24h_return,
                         entry_price, t1_price, t4_price, t8_price, t24_price,
                         path_high, path_high_at, path_low, path_low_at, path_samples,
-                        stop_2_at, stop_3_at, stop_5_at
+                        stop_2_at, stop_3_at, stop_5_at, t2_price, t12_price
                  FROM signals_v3 ORDER BY triggered_at ASC"
             };
             let mut stmt = c.prepare(sql)?;
@@ -711,6 +717,8 @@ impl PaperDb {
         tokio::task::spawn_blocking(move || -> anyhow::Result<()> {
             let c = conn.lock().unwrap();
             let sql = match column {
+                "t2_price" => "UPDATE signals_v3 SET t2_price = ?1 WHERE id = ?2",
+                "t12_price" => "UPDATE signals_v3 SET t12_price = ?1 WHERE id = ?2",
                 "t1_price" => "UPDATE signals_v3 SET t1_price = ?1 WHERE id = ?2",
                 "t4_price" => "UPDATE signals_v3 SET t4_price = ?1 WHERE id = ?2",
                 "t8_price" => "UPDATE signals_v3 SET t8_price = ?1 WHERE id = ?2",
@@ -801,6 +809,8 @@ fn parse_row(row: &Row<'_>) -> rusqlite::Result<SignalRow> {
         prior_24h_return: decimal(5)?,
         entry_price: decimal(6)?,
         t1_price: optional(7)?,
+        t2_price: optional(19)?,
+        t12_price: optional(20)?,
         t4_price: optional(8)?,
         t8_price: optional(9)?,
         t24_price: optional(10)?,
@@ -860,8 +870,10 @@ fn parse_funding_snapshot_row(row: &Row<'_>) -> rusqlite::Result<FundingSnapshot
 pub fn due_outcomes(row: &SignalRow, now: i64) -> Vec<(i64, &'static str, i64)> {
     [
         (1, "t1_price", row.t1_price),
+        (2, "t2_price", row.t2_price),
         (4, "t4_price", row.t4_price),
         (8, "t8_price", row.t8_price),
+        (12, "t12_price", row.t12_price),
         (24, "t24_price", row.t24_price),
     ]
     .into_iter()
@@ -941,6 +953,8 @@ mod tests {
         let db = PaperDb::open(path.to_str().unwrap()).unwrap();
         let conn = db.conn.lock().unwrap();
         for name in [
+            "t2_price",
+            "t12_price",
             "path_high",
             "path_high_at",
             "path_low",
@@ -997,6 +1011,38 @@ mod tests {
             .await
             .unwrap());
         assert_eq!(db.all_signals().await.unwrap().len(), 3);
+    }
+
+    #[tokio::test]
+    async fn added_horizons_persist_and_remain_pending_after_standard_exits() {
+        let path = std::env::temp_dir().join(format!("horizons-{}.sqlite", crate::paper::now_ms()));
+        let db = PaperDb::open(path.to_str().unwrap()).unwrap();
+        let at = crate::paper::now_ms() + 1;
+        db.insert(&signal("up_pos_fund", at)).await.unwrap();
+        let row = db.all_signals().await.unwrap().remove(0);
+        let due = due_outcomes(&row, at + 2 * 3_600_000 + 60_000);
+        assert!(due
+            .iter()
+            .any(|(h, col, t)| *h == 2 && *col == "t2_price" && *t == at + 2 * 3_600_000));
+        assert!(!due.iter().any(|(h, _, _)| *h == 12));
+        for col in ["t1_price", "t4_price", "t8_price", "t24_price"] {
+            db.update_price(row.id, col, Decimal::from(10))
+                .await
+                .unwrap();
+        }
+        assert_eq!(db.open_signals().await.unwrap().len(), 1);
+        db.update_price(row.id, "t2_price", Decimal::from(9))
+            .await
+            .unwrap();
+        db.update_price(row.id, "t12_price", Decimal::from(8))
+            .await
+            .unwrap();
+        let saved = db.all_signals().await.unwrap().remove(0);
+        assert_eq!(saved.t2_price, Some(Decimal::from(9)));
+        assert_eq!(saved.t12_price, Some(Decimal::from(8)));
+        assert!(db.open_signals().await.unwrap().is_empty());
+        drop(db);
+        let _ = std::fs::remove_file(path);
     }
 
     #[tokio::test]
