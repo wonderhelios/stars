@@ -33,6 +33,7 @@ pub fn router(state: WebState) -> Router {
         .route("/api/research/handoff", get(get_handoff_status))
         .route("/api/research/strategies", post(publish_strategy))
         .route("/api/research/execution", post(execution_replay))
+        .route("/api/research/presets", get(research_presets))
         .route("/api/research/cycles", get(get_execution_cycles))
         .route("/api/health", get(health))
         .fallback_service(ServeDir::new("static"))
@@ -51,6 +52,15 @@ struct ReplayRequest {
 }
 fn default_capital() -> f64 {
     500.0
+}
+
+async fn research_presets() -> Json<serde_json::Value> {
+    let strategy: trading_core::strategy::StrategyConfig =
+        serde_json::from_str(include_str!("../../deploy/hyper-trial-all8.json"))
+            .expect("bundled trial preset is valid JSON");
+    Json(
+        serde_json::json!({"strategies":[strategy],"warning":"参数起点，未验证；须使用当前周期重新回放，不包含历史收益"}),
+    )
 }
 
 async fn get_execution_cycles(State(state): State<WebState>) -> Response {
@@ -169,6 +179,17 @@ fn strategy_library_reply(status: StatusCode, raw: &str) -> serde_json::Value {
 #[cfg(test)]
 mod publish_reply_tests {
     use super::*;
+    #[tokio::test]
+    async fn preset_is_valid_and_has_no_fabricated_research_proof() {
+        let Json(value) = research_presets().await;
+        let s: trading_core::strategy::StrategyConfig =
+            serde_json::from_value(value["strategies"][0].clone()).unwrap();
+        s.validate().unwrap();
+        assert_eq!(s.hold_hours, 8);
+        assert_eq!(s.take_profit_price_pct, Some(8.0));
+        assert!(s.research_evidence.is_none());
+        assert!(s.validate_deployment().is_err());
+    }
     #[test]
     fn plain_422_keeps_field_error_and_upgrade_hint() {
         let raw = "Failed to deserialize: unknown field `take_profit_price_pct`";

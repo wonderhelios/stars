@@ -1289,7 +1289,7 @@
             <p class="execution-note">保留所有历史数据。新周期统一筛选信号、价格假设、跨平台费差和执行回放，不删除或跳过周期内的失败采样。交接区另列策略库既有记录，不作为本周期收益。断档只计相邻帧超过90秒；窗口头尾的停采还要结合采样分钟数和最新样本年龄判断。完整性门槛保持不变。</p>
           </div>
         <section class="panel lab-panel" aria-label="策略交接状态">
-          <div class="panel-head"><div><h2>哪些策略可以进入实盘？</h2><p class="sub">此处是既有策略库记录，不是所选周期的新收益；历史回放和独立模拟均通过后才可申请切换。</p></div><a id="hyper-fly-link" class="strategy-export" target="_blank" rel="noopener">打开 Hyper Fly</a></div>
+          <div class="panel-head"><div><h2>哪些策略可以进入实盘？</h2><p class="sub">此处是既有策略库记录，不是所选周期的新收益；正式启用需回放与独立模拟均通过；未验证候选可在 Hyper Fly 显式选择人工试运行。</p></div><a id="hyper-fly-link" class="strategy-export" target="_blank" rel="noopener">打开 Hyper Fly</a></div>
           <div id="handoff-summary" class="research-note">正在读取同服务器策略库的验证状态…</div>
           <div id="handoff-cards" class="study-cards"></div>
           <div class="panel-foot"><span>证据不足 → 历史回放 → 独立模拟 → 申请切换</span><span>保存、回放和切换不会自动恢复开仓；盈利数字不等于已证实alpha。</span></div>
@@ -1329,9 +1329,14 @@
         </section></details>
         <section class="panel lab-panel replay-panel" aria-label="共享规则执行回放">
           <div class="panel-head"><div><h2>实盘规则执行回放</h2><p class="sub">使用与 Hyper Fly 相同的穿越入场、杠杆排序、保证金、数量精度、盘口、冷却和账户风控</p></div></div>
+          <div class="research-controls"><button id="replay-preset" type="button">新建 / 调整 Hyperliquid 回放</button><span class="muted">从全DEX · 8h · 止损2% · 价格止盈8%开始；只是参数起点，不代表推荐或已验证。</span></div>
           <div id="replay-editor" class="replay-editor hidden">
             <strong id="replay-candidate-title"></strong>
             <div class="replay-controls">
+              <label for="replay-scope">市场范围</label><select id="replay-scope"><option value="main">主DEX（排除HIP-3）</option><option value="all">全部USDC DEX</option><option value="xyz">仅xyz</option><option value="para">仅para</option></select>
+              <label for="replay-kind">形态</label><select id="replay-kind"><option value="">全部正费率形态</option><option value="pump_pos_fund">暴涨＋正费率</option><option value="up_pos_fund">上涨＋正费率</option><option value="down_pos_fund">下跌＋正费率</option><option value="crash_pos_fund">暴跌＋正费率</option></select>
+              <label for="replay-hold">持有</label><select id="replay-hold"><option value="1">1h</option><option value="2">2h</option><option value="4">4h</option><option value="8">8h</option><option value="12">12h</option><option value="24">24h</option></select>
+              <label for="replay-capacity">仓位上限</label><select id="replay-capacity"><option value="1">1仓</option><option value="3">3仓</option><option value="5">5仓</option></select>
               <label for="replay-stop">价格逆向止损 %</label>
               <input id="replay-stop" type="number" min="0.1" max="20" step="0.01" value="2">
               <label for="replay-profit-mode">单仓止盈</label>
@@ -2029,6 +2034,7 @@
         $("replay-save").disabled = true;
         $("replay-editor").classList.remove("hidden");
         $("replay-candidate-title").textContent = `${candidate.dexLabel} · ${candidate.kindLabel} · 持有${candidate.holdHours}h · 最多${candidate.maxOpen}仓`;
+        $("replay-scope").value=candidate.dexScope;$("replay-kind").value=candidate.kind;$("replay-hold").value=candidate.holdHours;$("replay-capacity").value=candidate.maxOpen;
         $("replay-stop").value = candidate.stopPct ?? 2;
         $("replay-profit-mode").value = candidate.takeProfitUsd!=null?'usd':candidate.takeProfitPct!=null?'pct':'none';
         $("replay-profit-value").value = candidate.takeProfitUsd ?? candidate.takeProfitPct ?? '';
@@ -2045,22 +2051,34 @@
         const metric = (label,value,tone="") => `<div class="execution-metric"><span>${escapeHtml(label)}</span><strong class="${tone}">${escapeHtml(value)}</strong></div>`;
         const usd = n => `${n>=0?"+":""}${n.toFixed(2)} USDC`;
         const closedPnl = closed.reduce((n,t)=>n+(Number(t.pnl)||0),0);
+        const values=closed.map(t=>Number(t.pnl)||0).sort((a,b)=>b-a);
+        const profitSum=values.filter(v=>v>0).reduce((a,b)=>a+b,0);
+        const best=values[0]??null,worst=values.at(-1)??null;
+        const top2=values.slice(0,2).filter(v=>v>0).reduce((a,b)=>a+b,0);
+        const median=values.length?(values[(values.length-1)>>1]+values[values.length>>1])/2:null;
+        const concentration=profitSum>0?(top2/profitSum*100).toFixed(1)+'%':'暂无盈利';
+        const contribution=`<details open><summary>收益是否集中在少数交易？</summary><p>已平仓单笔中位数 ${median==null?'暂无':usd(median)} · 最好 ${best==null?'暂无':usd(best)} · 最差 ${worst==null?'暂无':usd(worst)} · 前两笔盈利占全部正盈利 ${concentration}。</p><p>排除最大盈利一笔后的其余已平仓盈亏合计 ${best>0?usd(closedPnl-best):'无正盈利可排除'}。这里只拆解交易贡献；删除交易会改变复利、容量和风控，不能当作重新回放后的账户收益。</p></details>`;
+
         $("execution-replay-result").innerHTML = `<div class="replay-summary">
-          <strong>${report.deployable ? "历史回放门槛通过，仍需独立模拟" : "未通过历史回放验证，不能启用实盘"}</strong>
+          <strong>${report.deployable ? "历史回放门槛通过，仍需独立模拟" : "未通过历史回放验证；仅可独立模拟或人工试运行"}</strong>
           <p>采集周期 ${escapeHtml(report.collection_cycle || "旧版全历史")} · 实际数据 ${report.range_start ? escapeHtml(dateTime(report.range_start)) : "尚无"} ～ ${report.range_end ? escapeHtml(dateTime(report.range_end)) : "尚无"}。</p>
           <p>这是已采集数据上的模拟结果，不是预期收益承诺。初始本金 ${report.initial_equity.toFixed(2)} USDC；总盈亏包含未平仓头寸的估值。</p>
           <div class="execution-metrics">${metric("模拟总盈亏",usd(pnl),pnl>=0?"pos":"neg")}${metric("模拟账户收益",signed(report.return_pct))}${metric("期末净值",report.equity.toFixed(2)+" USDC")}${metric("最大回撤",report.max_drawdown_pct.toFixed(2)+"%")}</div>
           <div class="execution-funnel"><span>已平 ${closed.length} 笔 · 盈亏 ${usd(closedPnl)}</span><span>未平 ${report.trades.length-closed.length} 仓</span><span>后30%验证 ${report.validation_n} 笔</span><span>验证单笔均值 ${report.validation_mean_usd==null?"暂无":usd(report.validation_mean_usd)}</span></div>
+          ${contribution}
+          <div class="execution-funnel"><span>容量限制跳过 ${report.skipped_capacity??0} 次</span><span>账户风控跳过 ${report.skipped_risk??0} 次</span></div>
           <p>数据质量：路径缺口 ${report.data_gaps} 处 · 缺盘口 ${report.missing_books} 次 · 不完整轮次 ${report.incomplete_frames} 轮。统计对象不同，不能相加成“漏了多少笔交易”；全DEX不完整也可能发生在本策略范围以外。缺失数据会使结果不可靠。</p>
           ${report.blockers.length?`<strong>尚未通过的原因</strong><ul>${report.blockers.map(v=>`<li>${escapeHtml(v)}</li>`).join("")}</ul>`:""}
           <details><summary>逐笔模拟交易（${report.trades.length}笔）</summary><div class="table-scroll"><table class="lab-table"><thead><tr><th>合约</th><th>入场</th><th>退出</th><th>杠杆</th><th>平仓盈亏 USDC</th><th>退出原因</th></tr></thead><tbody>${report.trades.map(t=>`<tr><td>${escapeHtml(t.coin)}</td><td>${escapeHtml(dateTime(t.entry_at))}</td><td>${t.exit_at==null?"未平仓":escapeHtml(dateTime(t.exit_at))}</td><td>${t.leverage}×</td><td>${t.pnl==null?"—":Number(t.pnl).toFixed(2)}</td><td>${escapeHtml(({stop:"止损",hold:"到期",take_profit:"单仓止盈"})[t.reason]||t.reason||"持仓中")}</td></tr>`).join("")}</tbody></table></div></details>
-          <p>资金费仅对负费率预留成本，不计正费率收入；未使用真实结算流水。模型 ${escapeHtml(report.execution_model)}。保存未通过的候选仅用于后续模拟，不授予实盘资格。</p>
+          <p>资金费仅对负费率预留成本，不计正费率收入；未使用真实结算流水。模型 ${escapeHtml(report.execution_model)}。保存不会启用实盘。正式启用需独立验证；未验证候选可在Hyper Fly由用户显式确认人工试运行，切换后保持暂停。</p>
         </div>`;
       }
       async function replayStrategy(candidate, button) {
         if (replayBusy) return;
         replayBusy = true;
         button.disabled = true;
+        for(const id of ["replay-scope","replay-kind","replay-hold","replay-capacity","replay-preset"])$(id).disabled=true;
+        $("replay-candidate-title").textContent=`${candidate.dexLabel} · ${candidate.kindLabel} · 持有${candidate.holdHours}h · 最多${candidate.maxOpen}仓`;
         $("replay-stop").disabled = true;$("replay-profit-mode").disabled=true;$("replay-profit-value").disabled=true;
         $("replay-cycle").disabled = true;
         $("replay-save").disabled = true;
@@ -2078,7 +2096,7 @@
           $("replay-save").disabled = false;
           renderStrategyLab();
         } catch(error) {box.textContent = `回放失败：${error.message}`;}
-        finally {replayBusy = false;button.disabled = false;$("replay-stop").disabled = false;$("replay-profit-mode").disabled=false;$("replay-profit-value").disabled=$("replay-profit-mode").value==="none";$("replay-cycle").disabled = false;}
+        finally {replayBusy = false;for(const id of ["replay-scope","replay-kind","replay-hold","replay-capacity","replay-preset"])$(id).disabled=false;button.disabled = false;$("replay-stop").disabled = false;$("replay-profit-mode").disabled=false;$("replay-profit-value").disabled=$("replay-profit-mode").value==="none";$("replay-cycle").disabled = false;}
       }
       document.addEventListener("click", event => {
         const button = event.target.closest(".strategy-replay");
@@ -2113,6 +2131,25 @@
         $("replay-save").disabled = true;
         $("execution-replay-result").textContent = "止损已修改，请重新回放；之前的结果不能用于保存当前参数。";
       });
+      function replayShapeSettings() {
+        return {dexScope:$("replay-scope").value,dexLabel:$("replay-scope").selectedOptions[0].textContent,kind:$("replay-kind").value,kindLabel:$("replay-kind").selectedOptions[0].textContent,holdHours:Number($("replay-hold").value),maxOpen:Number($("replay-capacity").value)};
+      }
+      for(const id of ["replay-scope","replay-kind","replay-hold","replay-capacity"])$(id).addEventListener('change',()=>{
+        replaySavedCandidate=null;$("replay-save").disabled=true;$("replay-save-status").textContent='';
+        $("execution-replay-result").textContent='参数已修改，请重新回放；旧结果不能用于保存。';
+      });
+      $("replay-preset").addEventListener('click',async()=>{
+        if(replayBusy || !researchCycle.id)return;
+        const cycle=researchCycle.id;$("replay-preset").disabled=true;
+        try {
+          const response=await fetch('/api/research/presets',{cache:'no-store',signal:AbortSignal.timeout(10000)});
+          const d=await response.json();if(!response.ok)throw new Error(d.error||`HTTP ${response.status}`);
+          if(researchCycle.id!==cycle)return;
+          const s=d.strategies[0];
+          openReplayEditor({venue:'hyperliquid',dexScope:s.dex_scope,dexLabel:'全部USDC DEX',kind:'',kindLabel:'全部正费率形态',holdHours:s.hold_hours,maxOpen:s.max_positions,stopPct:s.stop_loss_pct,takeProfitUsd:s.take_profit_usd??null,takeProfitPct:s.take_profit_price_pct??null});
+        }catch(e){$("execution-replay-result").textContent='读取参数起点失败：'+e.message;}
+        finally{$("replay-preset").disabled=false;}
+      });
       function replayProfitSettings() {
         const mode=$("replay-profit-mode").value;
         const value=Number($("replay-profit-value").value);
@@ -2125,7 +2162,7 @@
       function replayParametersMatch() {
         if(!replaySavedCandidate)return false;
         try {const p=replayProfitSettings();return replaySavedCandidate.stopPct===Number($("replay-stop").value)
-          && (replaySavedCandidate.takeProfitUsd??null)===p.takeProfitUsd && (replaySavedCandidate.takeProfitPct??null)===p.takeProfitPct;}
+          && ["dexScope","kind","holdHours","maxOpen"].every(k=>replaySavedCandidate[k]===replayShapeSettings()[k]) && (replaySavedCandidate.takeProfitUsd??null)===p.takeProfitUsd && (replaySavedCandidate.takeProfitPct??null)===p.takeProfitPct;}
         catch{return false;}
       }
       function invalidateProfitReplay() {
@@ -2145,8 +2182,8 @@
         }
         let profit;
         try {profit=replayProfitSettings();}catch(error){$("execution-replay-result").textContent=error.message;return;}
-        const candidate = {...replayEditorCandidate,stopPct:stop,...profit,executionManifest:null};
-        if (stop !== replayEditorCandidate.stopPct || (replayEditorCandidate.takeProfitUsd??null)!==profit.takeProfitUsd || (replayEditorCandidate.takeProfitPct??null)!==profit.takeProfitPct) {
+        const candidate = {...replayEditorCandidate,...replayShapeSettings(),stopPct:stop,...profit,executionManifest:null};
+        if (candidate.dexScope!==replayEditorCandidate.dexScope || candidate.kind!==replayEditorCandidate.kind || candidate.holdHours!==replayEditorCandidate.holdHours || candidate.maxOpen!==replayEditorCandidate.maxOpen || stop !== replayEditorCandidate.stopPct || (replayEditorCandidate.takeProfitUsd??null)!==profit.takeProfitUsd || (replayEditorCandidate.takeProfitPct??null)!==profit.takeProfitPct) {
           candidate.trainMean=null;candidate.validationMean=null;candidate.validationMedian=null;
           candidate.liveEligible=false;
         }
@@ -2167,7 +2204,7 @@
           });
           const result = await response.json();
           if (!response.ok) throw new Error(result.error || `HTTP ${response.status}`);
-          button.textContent = "已保存";$("replay-save-status").textContent="已保存到策略库；尚未通过的候选仅用于独立模拟，不会启用实盘。";
+          button.textContent = "已保存";$("replay-save-status").textContent="已保存到策略库；可去Hyper Fly独立模拟或显式选择人工试运行，尚未启用实盘。";
           window.researchEvidence?.loadHandoff();
           $("strategy-lab-status").textContent = "已保存到同服务器策略库，请在 Hyper Fly 启动影子验证；不会自动开启实盘";
           setTimeout(() => { button.textContent = previous; button.disabled = button.id === "replay-save" && !replayParametersMatch(); }, 2500);
