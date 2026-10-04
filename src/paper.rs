@@ -558,6 +558,12 @@ pub struct PaperSnapshot {
     pub net_notional: f64,
     pub margin_used: f64,
     pub margin_usage_pct: f64,
+    /// maintenance margin required for the whole book (cross-margin basis)
+    pub maintenance_margin: f64,
+    /// account equity at which cross-margin liquidation triggers
+    pub liq_equity: f64,
+    /// how far equity can fall, in % of equity, before account liquidation
+    pub liq_buffer_pct: f64,
     pub nearest_liq_pct: Option<f64>,
     pub days_elapsed: usize,
     pub total_cost: f64,
@@ -584,6 +590,13 @@ pub fn snapshot(state: &PaperState) -> PaperSnapshot {
         })
         .sum();
     let margin: f64 = state.positions.iter().map(|x| x.notional / cfg.leverage).sum();
+    // Cross-margin maintenance requirement: each position contributes
+    // notional * maintenance_rate(coin).
+    let maint: f64 = state
+        .positions
+        .iter()
+        .map(|x| x.notional * maintenance_margin_rate(x.max_leverage))
+        .sum();
     let unrealized: f64 = state.positions.iter().map(|x| x.unrealized_pnl).sum();
     let realized: f64 = state.trades.iter().map(|x| x.pnl_usd).sum();
     let wins = state.trades.iter().filter(|x| x.pnl_usd > 0.0).count();
@@ -610,6 +623,13 @@ pub fn snapshot(state: &PaperState) -> PaperSnapshot {
         net_notional: net,
         margin_used: margin,
         margin_usage_pct: if state.equity > 0.0 { margin / state.equity * 100.0 } else { 0.0 },
+        maintenance_margin: maint,
+        liq_equity: maint,
+        liq_buffer_pct: if state.equity > 0.0 {
+            ((state.equity - maint) / state.equity * 100.0).max(0.0)
+        } else {
+            0.0
+        },
         nearest_liq_pct: nearest,
         days_elapsed: state.days_elapsed,
         total_cost: state.total_cost,
