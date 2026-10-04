@@ -52,15 +52,25 @@ impl Exec {
     }
 
     pub async fn reader() -> Result<Self> {
+        Self::reader_for(None).await
+    }
+
+    /// Read-only client bound to an account so equity/positions can be read
+    /// without any signing key (used by dry runs).
+    pub async fn reader_for(account: Option<&str>) -> Result<Self> {
         let http = reqwest::Client::builder()
             .timeout(Duration::from_secs(20))
             .build()?;
         let info = InfoClient::new(Some(http.clone()), Some(BaseUrl::Mainnet)).await?;
+        let account = match account {
+            Some(a) => Some(Address::from_str(a).context("invalid HL_ACCOUNT_ADDRESS")?),
+            None => None,
+        };
         Ok(Self {
             info,
             http,
             trading: None,
-            account: None,
+            account,
         })
     }
 

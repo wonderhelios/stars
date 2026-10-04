@@ -281,18 +281,21 @@ async fn run_trade(args: &[String], db_path: &str) -> anyhow::Result<()> {
     println!("流动宇宙 {} 币 · 多头腿 {} · 空头腿 {}", liquid.len(), long.len(), short.len());
 
     // Account + markets (signing client only when live).
-    let exec = match (&live, std::env::var("HL_ACCOUNT_ADDRESS")) {
-        (true, Ok(addr)) => {
+    let addr_env = std::env::var("HL_ACCOUNT_ADDRESS").ok();
+    let exec = match (&live, &addr_env) {
+        (true, Some(addr)) => {
             let key = std::env::var("HL_API_WALLET_KEY_FILE")
                 .context("live 交易需要 HL_API_WALLET_KEY_FILE")?;
-            exchange::Exec::signer(&addr, std::path::Path::new(&key)).await?
+            exchange::Exec::signer(addr, std::path::Path::new(&key)).await?
         }
-        (false, _) => exchange::Exec::reader().await?,
-        (true, Err(_)) => anyhow::bail!("live 交易需要 HL_ACCOUNT_ADDRESS"),
+        // Dry run still reads the real account (read-only) so the plan matches.
+        (false, Some(addr)) => exchange::Exec::reader_for(Some(addr)).await?,
+        (false, None) => exchange::Exec::reader().await?,
+        (true, None) => anyhow::bail!("live 交易需要 HL_ACCOUNT_ADDRESS"),
     };
     let markets = exec.markets().await?;
 
-    let acct = if live {
+    let acct = if addr_env.is_some() {
         let a = exec.account().await?;
         println!("账户净值 ${:.2} · 现有持仓 {} 个", a.equity, a.positions.len());
         if !a.positions.is_empty() {
@@ -302,11 +305,15 @@ async fn run_trade(args: &[String], db_path: &str) -> anyhow::Result<()> {
             for (coin, size) in list {
                 println!("  {coin}: {size}");
             }
-            anyhow::ensure!(
-                flag("--close-existing").is_some(),
-                "账户已有仓位。本程序会把不在目标名单里的仓位全部平掉（reduce-only）。\
-                 确认要接管请加 --close-existing；若是别的机器人开的仓，先停掉它并手动清空。"
-            );
+            if live {
+                anyhow::ensure!(
+                    flag("--close-existing").is_some(),
+                    "账户已有仓位。本程序会把不在目标名单里的仓位全部平掉（reduce-only）。\
+                     确认要接管请加 --close-existing；若是别的机器人开的仓，先停掉它并手动清空。"
+                );
+            } else {
+                println!("（dry-run 只展示，不会平掉这些仓位）");
+            }
         }
         a
     } else {
