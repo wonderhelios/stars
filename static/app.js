@@ -624,9 +624,10 @@ function renderMonitor(d) {
   const pos = d.positions || [];
   const hist = d.history || [];
   const eq = d.equity || 0;
-  const base = hist.length ? hist[0].equity : eq;
-  const pnl = eq - base;
-  const pnlPct = base > 0 ? (pnl / base) * 100 : 0;
+  const base = hist.length ? hist[0].equity : 0;
+  const valid = eq > 0 && base > 0;
+  const pnl = valid ? eq - base : 0;
+  const pnlPct = valid ? (pnl / base) * 100 : 0;
   const buffer = d.liq_buffer_pct || 0;
 
   const keyed = !!(c.key_path && c.key_path.trim());
@@ -646,8 +647,8 @@ function renderMonitor(d) {
     warn +
     metric("实盘就绪", ready ? (c.armed ? "可下单" : "已配置(未启用)") : "未就绪", ready ? "pos" : "neg") +
     metric("账户净值", "$" + fmt(eq, 2)) +
-    metric("累计盈亏", (pnl >= 0 ? "+" : "") + "$" + fmt(pnl, 2), pnl >= 0 ? "pos" : "neg") +
-    metric("收益率", pct(pnlPct), pnlPct >= 0 ? "pos" : "neg") +
+    metric("累计盈亏", valid ? (pnl >= 0 ? "+" : "") + "$" + fmt(pnl, 2) : "—", valid && pnl >= 0 ? "pos" : "neg") +
+    metric("收益率", valid ? pct(pnlPct) : "—", valid && pnlPct >= 0 ? "pos" : "neg") +
     metric("持仓数", pos.length) +
     metric("杠杆", fmt(c.leverage || 0, 1) + "×") +
     metric("总名义敞口", "$" + fmt(d.gross_notional || 0, 0)) +
