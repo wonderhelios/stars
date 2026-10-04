@@ -443,7 +443,11 @@ function renderHolding(trades) {
 
 // 选一组好看的坐标轴刻度
 function niceAxis(lo, hi, ticks) {
-  if (!(hi > lo)) return { lo: lo - 1, hi: lo + 1, lines: [lo] };
+  if (!(hi > lo)) {
+    // 完全平直时给一个 ±1% 的窗口，否则整张图只有一根网格线
+    const step = Math.max(1, Math.round(Math.abs(lo) * 0.01));
+    return { lo: lo - step, hi: lo + step, lines: [lo - step, lo, lo + step] };
+  }
   const raw = (hi - lo) / (ticks || 5);
   const mag = Math.pow(10, Math.floor(Math.log10(raw)));
   const norm = raw / mag;
@@ -491,16 +495,25 @@ function renderChart(history) {
     .join("");
 
   const baseY = Y(cap);
+  const lastS = strat[n - 1], lastM = mkt[n - 1];
+  const yS = Y(lastS), yM = Y(lastM);
+  // 端点标签互相挨太近会叠成糊的，错开或省略
+  const baseVisible =
+    cap >= ax.lo && cap <= ax.hi && Math.abs(yS - baseY) >= 15 && Math.abs(yM - baseY) >= 15;
   const baseline =
     cap >= ax.lo && cap <= ax.hi
-      ? `<line x1="${padL}" y1="${baseY}" x2="${W - padR}" y2="${baseY}" stroke="#c9d3e3" stroke-width="1" stroke-dasharray="4 4"/>
-         <text x="${W - padR + 6}" y="${baseY + 4}" font-size="11" fill="#9aa6b8">本金</text>`
+      ? `<line x1="${padL}" y1="${baseY}" x2="${W - padR}" y2="${baseY}" stroke="#c9d3e3" stroke-width="1" stroke-dasharray="4 4"/>` +
+        (baseVisible
+          ? `<text x="${W - padR + 6}" y="${baseY + 4}" font-size="11" fill="#9aa6b8" paint-order="stroke" stroke="#fff" stroke-width="3">本金</text>`
+          : "")
       : "";
-
-  const lastS = strat[n - 1], lastM = mkt[n - 1];
+  const marketLabel =
+    Math.abs(yS - yM) >= 14
+      ? `<text x="${W - padR + 6}" y="${yM + 4}" font-size="12" fill="#768297" paint-order="stroke" stroke="#fff" stroke-width="3">${money(lastM)}</text>`
+      : "";
   const endLabels = `
-    <text x="${W - padR + 6}" y="${Y(lastS) + 4}" font-size="12" font-weight="600" fill="#2d6df6">${money(lastS)}</text>
-    <text x="${W - padR + 6}" y="${Y(lastM) + 4}" font-size="12" fill="#768297">${money(lastM)}</text>`;
+    <text x="${W - padR + 6}" y="${yS + 4}" font-size="12" font-weight="600" fill="#2d6df6" paint-order="stroke" stroke="#fff" stroke-width="3">${money(lastS)}</text>
+    ${marketLabel}`;
 
   $("pp-chart").innerHTML = `
     <svg viewBox="0 0 ${W} ${H}" role="img" aria-label="净值曲线">
@@ -811,22 +824,31 @@ function renderLiveChart(history) {
     .map((v) => `<line x1="${padL}" y1="${Y(v)}" x2="${W - padR}" y2="${Y(v)}" stroke="#eef1f6"/>
       <text x="${padL - 8}" y="${Y(v) + 4}" text-anchor="end" font-size="11" fill="#768297">${money(v)}</text>`)
     .join("");
+  // 时间跨度不足两天时只显示时分，否则三个标签会全是同一天
+  const spanMs = history[n - 1].ts - history[0].ts;
+  const xfmt = spanMs < 2 * 86_400_000 ? (ms) => new Date(ms).toISOString().slice(11, 16) : ts2d;
   const xlabels = [0, Math.floor((n - 1) / 2), n - 1]
     .map((i) => {
       const anchor = i === 0 ? "start" : i === n - 1 ? "end" : "middle";
-      return `<text x="${X(i)}" y="${H - 10}" text-anchor="${anchor}" font-size="11" fill="#768297">${ts2d(history[i].ts)}</text>`;
+      return `<text x="${X(i)}" y="${H - 10}" text-anchor="${anchor}" font-size="11" fill="#768297">${xfmt(history[i].ts)}</text>`;
     })
     .join("");
   const baseY = Y(base);
+  const endY = Y(vals[n - 1]);
   const line = `<polyline points="${vals.map((v, i) => `${X(i)},${Y(v)}`).join(" ")}" fill="none" stroke="#2d6df6" stroke-width="2.2"/>`;
+  // 曲线平直时起点与终点重合，两个标签叠一起会糊 —— 只在分得开时才画起点
+  const baseLabel =
+    Math.abs(endY - baseY) >= 15
+      ? `<text x="${W - padR + 6}" y="${baseY + 4}" font-size="11" fill="#9aa6b8" paint-order="stroke" stroke="#fff" stroke-width="3">起点</text>`
+      : "";
 
   el.innerHTML = `
     <svg viewBox="0 0 ${W} ${H}" role="img" aria-label="实盘净值曲线">
       ${grid}
       <line x1="${padL}" y1="${baseY}" x2="${W - padR}" y2="${baseY}" stroke="#c9d3e3" stroke-width="1" stroke-dasharray="4 4"/>
-      <text x="${W - padR + 6}" y="${baseY + 4}" font-size="11" fill="#9aa6b8">起点</text>
+      ${baseLabel}
       ${line}
-      <text x="${W - padR + 6}" y="${Y(vals[n - 1]) + 4}" font-size="12" font-weight="600" fill="#2d6df6">${money(vals[n - 1])}</text>
+      <text x="${W - padR + 6}" y="${endY + 4}" font-size="12" font-weight="600" fill="#2d6df6" paint-order="stroke" stroke="#fff" stroke-width="3">${money(vals[n - 1])}</text>
       ${xlabels}
     </svg>
     <div class="legend">
