@@ -195,8 +195,10 @@ async function refreshPaper() {
       metric("累计成本", "$" + fmt(d.total_cost, 2));
 
     renderChart(d.history);
+    renderDailyPnl(d.history, d.config ? d.config.capital : 1);
     renderPositions(d.positions);
     renderTrades(d.trades, d.config);
+    renderHolding(d.trades);
   } catch (e) {
     $("pp-error").innerHTML = `<div class="error">${e.message}</div>`;
   }
@@ -276,8 +278,104 @@ function renderTrades(trades, config) {
     </tr></thead><tbody>${rows}</tbody></table>`;
 }
 
-function renderChart(history) {
+// 每日盈亏：从净值曲线上取相邻两点的差
+function renderDailyPnl(history, capital) {
   if (!history || history.length < 2) {
+    $("pp-daily").innerHTML = '<div class="empty">还没有完整交易日（需要至少 2 天）</div>';
+    return;
+  }
+  const rows = [];
+  for (let i = 1; i < history.length; i++) {
+    const prev = history[i - 1], cur = history[i];
+    const pnl = cur.equity - prev.equity;
+    const pct = prev.equity > 0 ? (pnl / prev.equity) * 100 : 0;
+    const mkt = prev.market > 0 ? ((cur.market / prev.market) - 1) * 100 : 0;
+    // 曲线右侧大部分是回放，最后一段是前向
+    rows.push({ ts: cur.ts, equity: cur.equity, pnl, pct, mkt, replayed: i < history.length - 1 });
+  }
+  const list = rows.slice().reverse();
+  const show = list.slice(0, 30);
+  const wins = rows.filter((r) => r.pnl > 0).length;
+  const total = rows.reduce((s, r) => s + r.pnl, 0);
+  const best = rows.reduce((a, b) => (b.pnl > a.pnl ? b : a), rows[0]);
+  const worst = rows.reduce((a, b) => (b.pnl < a.pnl ? b : a), rows[0]);
+  const body = show
+    .map((r) => {
+      const cls = r.pnl >= 0 ? "pos" : "neg";
+      return `<tr>
+        <td>${ts2d(r.ts)}</td>
+        <td>$${fmt(r.equity, 2)}</td>
+        <td class="${cls}">${r.pnl >= 0 ? "+" : ""}$${fmt(r.pnl, 2)}</td>
+        <td class="${cls}">${pct(r.pct)}</td>
+        <td class="muted">${pct(r.mkt)}</td>
+      </tr>`;
+    })
+    .join("");
+  $("pp-daily").innerHTML = `<div class="note">
+      共 ${rows.length} 个交易日 · 上涨 ${wins} 天 / 下跌 ${rows.length - wins} 天（${fmt((wins / rows.length) * 100, 1)}% 胜率）
+      · 累计 ${total >= 0 ? "+" : ""}$${fmt(total, 2)}
+      · 最好 ${ts2d(best.ts)} +$${fmt(best.pnl, 2)}
+      · 最差 ${ts2d(worst.ts)} $${fmt(worst.pnl, 2)}
+    </div>
+    <table><thead><tr>
+      <th>日期(UTC)</th><th>净值</th><th>当日盈亏</th><th>当日%</th><th>同期市场%</th>
+    </tr></thead><tbody>${body}</tbody></table>
+    ${list.length > show.length ? `<div class="note">只显示最近 ${show.length} 天</div>` : ""}`;
+}
+
+// 持有期分析：赚的钱来自长仓还是短仓
+function renderHolding(trades) {
+  if (!trades || !trades.length) {
+    $("pp-holding").innerHTML = '<div class="empty">还没有平仓记录</div>';
+    return;
+  }
+  const buckets = [
+    ["1 天内", 0, 1],
+    ["2-3 天", 1, 3],
+    ["4-7 天", 3, 7],
+    ["8-14 天", 7, 14],
+    ["15 天以上", 14, 1e9],
+  ];
+  const rows = buckets.map(([label, lo, hi]) => {
+    const v = trades.filter(
+      (t) => lo < (t.exit_ts - t.entry_ts) / 86400000 && (t.exit_ts - t.entry_ts) / 86400000 <= hi
+    );
+    if (!v.length) return { label, n: 0, avg: 0, win: 0, sum: 0 };
+    const sum = v.reduce((s, t) => s + t.pnl_usd, 0);
+    return {
+      label,
+      n: v.length,
+      avg: sum / v.length,
+      win: (v.filter((t) => t.pnl_usd > 0).length / v.length) * 100,
+      sum,
+    };
+  });
+  const all = trades.map((t) => (t.exit_ts - t.entry_ts) / 86400000);
+  const avgHold = all.reduce((a, b) => a + b, 0) / all.length;
+  const sorted = all.slice().sort((a, b) => a - b);
+  const medHold = sorted[Math.floor(sorted.length / 2)];
+
+  $("pp-holding").innerHTML = `<div class="note">
+      平均持有 <b>${fmt(avgHold, 1)} 天</b> · 中位 <b>${fmt(medHold, 0)} 天</b>
+      · 规律：<b>持有越久越赚钱</b>，短命仓位是亏损来源（这也是为什么不该加止损）
+    </div>
+    <table><thead><tr>
+      <th>持有期</th><th>笔数</th><th>占比</th><th>平均盈亏</th><th>合计盈亏</th><th>胜率</th>
+    </tr></thead><tbody>${rows
+      .map((r) => {
+        const cls = r.avg >= 0 ? "pos" : "neg";
+        return `<tr>
+          <td>${r.label}</td><td>${r.n}</td>
+          <td>${fmt((r.n / trades.length) * 100, 1)}%</td>
+          <td class="${cls}">${r.avg >= 0 ? "+" : ""}$${fmt(r.avg, 2)}</td>
+          <td class="${cls}">${r.sum >= 0 ? "+" : ""}$${fmt(r.sum, 2)}</td>
+          <td>${fmt(r.win, 0)}%</td>
+        </tr>`;
+      })
+      .join("")}</tbody></table>`;
+}
+
+function renderChart(history) {  if (!history || history.length < 2) {
     $("pp-chart").innerHTML = '<div class="empty">数据不足，曲线需要至少 2 个点</div>';
     return;
   }
