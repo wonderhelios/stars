@@ -286,7 +286,7 @@ function renderTrades(trades, config) {
 
 
 // ---------- 分页 ----------
-const PAGE_SIZE = 15;
+const PAGE_SIZE = 10;
 let dailyPage = 0;
 let tradesPage = 0;
 let lastDaily = [];
