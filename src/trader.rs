@@ -96,6 +96,10 @@ pub fn ranking(
     let mut sigs: Vec<(String, f64)> = Vec::new();
     let mut liquid: Vec<String> = Vec::new();
     for (coin, cm) in closes.iter() {
+        // Only main-DEX perps: the executor does not handle HIP-3 namespaces.
+        if coin.contains(':') {
+            continue;
+        }
         let Some(vm) = dollar_vol.get(coin) else { continue };
         let vols: Vec<f64> = ((i - vol_window)..i)
             .filter_map(|j| vm.get(&ts[j]).copied())
