@@ -130,6 +130,14 @@
       .chart svg { width: 100%; height: auto; display: block; }
       .chart .legend { display: flex; flex-wrap: wrap; gap: 16px; font-size: 12px; color: var(--muted); margin-top: 8px; }
 
+      .live-status { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px;
+        padding: 12px 15px; border-radius: 10px; margin: 14px 0 0; font-size: 13px; border: 1px solid; }
+      .live-status .tag { font-weight: 700; }
+      .live-status.run { background: #f0fbf4; border-color: #bfe8cf; color: #0f7a3d; }
+      .live-status.idle { background: #fff9ec; border-color: #f3e0b5; color: #8a6100; }
+      .live-status.off { background: var(--bg); border-color: var(--line); color: var(--muted); }
+      .live-status.err { background: #fef2f2; border-color: #f6c9c9; color: #b3261e; }
+
       .logbox { background: #0f172a; color: #d6e2f5; font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
         font-size: 12px; line-height: 1.7; padding: 14px 16px; border-radius: 10px; overflow-x: auto;
         white-space: pre-wrap; word-break: break-all; margin: 0; }
@@ -340,6 +348,7 @@
               <button class="btn ghost" id="mo-refresh">刷新</button>
             </div>
           </div>
+          <div id="mo-status"></div>
           <div class="metrics" id="mo-metrics"></div>
           <div class="panel-head" style="margin-top:14px"><h2>净值曲线</h2></div>
           <div class="chart" id="mo-chart"></div>

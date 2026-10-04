@@ -660,20 +660,47 @@ function renderMonitor(d) {
 
   const keyed = !!(c.key_path && c.key_path.trim());
   const ready = !!(d.configured && keyed);
-  let warn = "";
-  if (c.armed && !keyed) {
-    warn =
-      '<div class="note neg"><b>⚠ 无法下单：API 钱包密钥路径为空。</b>' +
-      '「启用实盘」只是许可开关；没有密钥就无法签名发单。请到「实盘设置」填好密钥路径并保存。</div>';
-  } else if (c.armed && keyed) {
-    warn = '<div class="note">实盘已就绪：点「执行调仓」立即下单，或等 UTC 00:05 自动调仓。</div>';
+  const holding = pos.length > 0;
+  const auto = !!c.auto_run;
+  const nextRun = (() => {
+    const n = new Date();
+    const t = new Date(Date.UTC(n.getUTCFullYear(), n.getUTCMonth(), n.getUTCDate(), 0, 5, 0));
+    if (t <= n) t.setUTCDate(t.getUTCDate() + 1);
+    return ts2m(t.getTime());
+  })();
+
+  // 状态横幅：一眼看出到底跑没跑
+  let cls, tag, text;
+  if (c.armed && keyed && holding) {
+    cls = "run";
+    tag = "● 运行中";
+    text = `<b>实盘已启动</b> · 持有 <b>${pos.length}</b> 个仓位 · 总名义 $${fmt(d.gross_notional || 0, 0)}`;
+  } else if (c.armed && keyed && !holding) {
+    cls = "idle";
+    tag = "● 已启用，尚无持仓";
+    text = "点「执行调仓」建立初始仓位（或等自动调仓）";
+  } else if (c.armed && !keyed) {
+    cls = "err";
+    tag = "● 无法下单";
+    text = "<b>API 钱包密钥路径为空</b>，无法签名发单。请到「实盘设置」填好并保存。";
   } else {
-    warn = '<div class="note">实盘未启用：只会生成计划，不会发单。</div>';
+    cls = "off";
+    tag = "● 未启用";
+    text = "当前只会生成计划，不会发送订单";
   }
+  const autoText = auto
+    ? `<span>每日自动调仓：<b>已开启</b>，下次 <b>${nextRun} UTC</b>（北京时间 08:05）</span>`
+    : `<span>每日自动调仓：<b>已关闭</b>（需手动点「执行调仓」）</span>`;
+  const lastText = d.last_run_at
+    ? `<span>上次调仓 <b>${ts2m(d.last_run_at)}</b>${d.last_live ? "（真实下单）" : "（仅生成计划）"}</span>`
+    : "<span>还没有调仓记录</span>";
+  $("mo-status").innerHTML = `<div class="live-status ${cls}">
+    <span class="tag">${tag}</span><span>${text}</span>${autoText}${lastText}
+  </div>`;
 
   $("mo-metrics").innerHTML =
-    warn +
-    metric("实盘就绪", ready ? (c.armed ? "可下单" : "已配置(未启用)") : "未就绪", ready ? "pos" : "neg") +
+    metric("实盘状态", holding ? "运行中" : c.armed ? "待建仓" : "未启用",
+      holding ? "pos" : c.armed ? "" : "neg") +
     metric("账户净值", "$" + fmt(eq, 2)) +
     metric("累计盈亏", valid ? (pnl >= 0 ? "+" : "") + "$" + fmt(pnl, 2) : "—", valid && pnl >= 0 ? "pos" : "neg") +
     metric("收益率", valid ? pct(pnlPct) : "—", valid && pnlPct >= 0 ? "pos" : "neg") +
