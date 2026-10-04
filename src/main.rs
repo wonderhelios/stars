@@ -82,7 +82,11 @@ async fn main() -> anyhow::Result<()> {
                     continue;
                 }
                 info!("实盘自动调仓开始");
-                match live::run(&st.store, &snapshot, true).await {
+                let markets = {
+                    let meta = st.meta.lock().await;
+                    live::markets_from_meta(&meta.universe)
+                };
+                match live::run(&st.store, &snapshot, &markets, true).await {
                     Ok((result, records)) => {
                         let mut guard = st.live.lock().await;
                         guard.last_run_at = Some(now_ms());

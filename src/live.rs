@@ -4,11 +4,29 @@
 //! `trader::ranking` (identical to the paper engine) and `exchange::Exec`, so the
 //! live book cannot drift from what was validated.
 
-use crate::exchange::Exec;
+use crate::exchange::{Exec, MarketInfo};
 use crate::hl::maintenance_margin_rate;
 use crate::trader::{self, TradeConfig};
 use anyhow::Result;
 use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
+
+/// Build the market map from the cached universe so no meta request is needed.
+pub fn markets_from_meta(universe: &[crate::hl::CoinMeta]) -> HashMap<String, MarketInfo> {
+    universe
+        .iter()
+        .filter(|c| !c.is_delisted)
+        .map(|c| {
+            (
+                c.name.clone(),
+                MarketInfo {
+                    sz_decimals: c.sz_decimals.unwrap_or(4),
+                    max_leverage: c.max_leverage,
+                },
+            )
+        })
+        .collect()
+}
 
 #[derive(Clone, Serialize, Deserialize)]
 pub struct LiveConfig {
@@ -146,7 +164,10 @@ pub struct LiveSnapshot {
 }
 
 /// Read-only view of the live account: positions, exposure and liquidation risk.
-pub async fn snapshot(state: &LiveState) -> LiveSnapshot {
+pub async fn snapshot(
+    state: &LiveState,
+    markets: &HashMap<String, MarketInfo>,
+) -> LiveSnapshot {
     let cfg = state.config.clone();
     let mut snap = LiveSnapshot {
         configured: cfg.can_sign(),
@@ -186,7 +207,6 @@ pub async fn snapshot(state: &LiveState) -> LiveSnapshot {
         }
     };
     snap.equity = acct.equity;
-    let markets = exec.markets().await.unwrap_or_default();
     let coins: Vec<String> = acct.positions.keys().cloned().collect();
     let mids = trader::fetch_mids(&exec, &coins).await;
 
@@ -207,7 +227,7 @@ pub async fn snapshot(state: &LiveState) -> LiveSnapshot {
         });
         snap.gross_notional += notional;
         snap.net_notional += pos.size * mark;
-        if let Some(m) = markets.get(coin) {
+        if let Some(m) = markets.get(coin.as_str()) {
             snap.maintenance_margin += notional * maintenance_margin_rate(m.max_leverage);
         }
         if let Some(d) = dist {
@@ -255,6 +275,7 @@ pub struct RunResult {
 pub async fn run(
     store: &crate::store::Store,
     state: &LiveState,
+    markets: &HashMap<String, MarketInfo>,
     live: bool,
 ) -> Result<(RunResult, Vec<LiveRecord>)> {
     let cfg = state.config.clone();
@@ -278,14 +299,13 @@ pub async fn run(
     anyhow::ensure!(!long.is_empty(), "流动性过滤后没有候选");
 
     let acct = exec.account().await?;
-    let markets = exec.markets().await?;
     let mut coins: Vec<String> = long.iter().chain(short.iter()).cloned().collect();
     coins.extend(acct.positions.keys().cloned());
     coins.sort();
     coins.dedup();
     let mids = trader::fetch_mids(&exec, &coins).await;
 
-    let plan = trader::build_plan(&long, &short, &acct, &markets, &mids, &tc, None);
+    let plan = trader::build_plan(&long, &short, &acct, markets, &mids, &tc, None);
 
     let mut plan_lines = vec![format!(
         "流动宇宙 {} 币 · 多头腿 {} · 空头腿 {} · 账户净值 ${:.2} · 每仓 ${:.2} · 杠杆 {:.0}x · 缓冲 {:.0}%",
@@ -334,7 +354,7 @@ pub async fn run(
         });
     }
 
-    let executed = trader::execute(&exec, &plan, &tc, &markets, live).await?;
+    let executed = trader::execute(&exec, &plan, &tc, markets, live).await?;
     if live {
         // Update recorded results with what the exchange reported.
         for (i, line) in executed.iter().enumerate() {

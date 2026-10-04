@@ -8,7 +8,7 @@ use alloy::{primitives::Address, signers::local::PrivateKeySigner};
 use anyhow::{anyhow, bail, Context, Result};
 use hyperliquid_rust_sdk::{
     BaseUrl, ClientLimit, ClientOrder, ClientOrderRequest, ExchangeClient, ExchangeDataStatus,
-    ExchangeResponseStatus, InfoClient,
+    ExchangeResponseStatus,
 };
 use serde_json::{json, Value};
 use std::collections::HashMap;
@@ -39,7 +39,6 @@ pub struct Acct {
 }
 
 pub struct Exec {
-    info: InfoClient,
     http: reqwest::Client,
     trading: Option<ExchangeClient>,
     account: Option<Address>,
@@ -69,13 +68,11 @@ impl Exec {
         let http = reqwest::Client::builder()
             .timeout(Duration::from_secs(20))
             .build()?;
-        let info = InfoClient::new(Some(http.clone()), Some(BaseUrl::Mainnet)).await?;
         let account = match account {
             Some(a) => Some(Address::from_str(a).context("invalid HL_ACCOUNT_ADDRESS")?),
             None => None,
         };
         Ok(Self {
-            info,
             http,
             trading: None,
             account,
@@ -87,7 +84,6 @@ impl Exec {
         let http = reqwest::Client::builder()
             .timeout(Duration::from_secs(20))
             .build()?;
-        let info = InfoClient::new(Some(http.clone()), Some(BaseUrl::Mainnet)).await?;
         let address = Address::from_str(account).context("invalid account address")?;
         let key = std::fs::read_to_string(key_path)
             .with_context(|| format!("read {}", key_path.display()))?
@@ -105,7 +101,6 @@ impl Exec {
         .await
         .context("exchange client init timed out")??;
         Ok(Self {
-            info,
             http,
             trading: Some(trading),
             account: Some(address),
@@ -138,22 +133,24 @@ impl Exec {
         Ok(out)
     }
 
-    /// Mid price from the l2 book.
-    pub async fn mid(&self, coin: &str) -> Result<f64> {
-        let book = self.info.l2_snapshot(coin.to_string()).await?;
-        anyhow::ensure!(book.levels.len() == 2, "bad book for {coin}");
-        let bid: f64 = book.levels[0]
-            .first()
-            .context("empty bids")?
-            .px
-            .parse()?;
-        let ask: f64 = book.levels[1]
-            .first()
-            .context("empty asks")?
-            .px
-            .parse()?;
-        anyhow::ensure!(bid > 0.0 && ask > 0.0, "invalid book for {coin}");
-        Ok((bid + ask) / 2.0)
+    /// Every mid price in one request (avoids one l2 call per coin).
+    pub async fn all_mids(&self) -> Result<HashMap<String, f64>> {
+        let v = self.info_post(json!({"type": "allMids"})).await?;
+        let mut out = HashMap::new();
+        if let Some(obj) = v.as_object() {
+            for (coin, val) in obj {
+                if coin.contains('@') {
+                    continue;
+                }
+                if let Some(p) = val.as_str().and_then(|x| x.parse::<f64>().ok()) {
+                    if p > 0.0 {
+                        out.insert(coin.clone(), p);
+                    }
+                }
+            }
+        }
+        anyhow::ensure!(!out.is_empty(), "empty allMids response");
+        Ok(out)
     }
 
     pub async fn account(&self) -> Result<Acct> {

@@ -142,10 +142,10 @@ $("pp-toggle").addEventListener("click", async () => {
     }
   }
   await refreshPaper();
+// 实盘接口按次计费（Hyperliquid 有限流），所以低频轮询。
 refreshLiveConfig();
 refreshMonitor();
-setInterval(refreshLiveConfig, 20000);
-setInterval(refreshMonitor, 15000);
+setInterval(refreshMonitor, 60000);
 });
 
 $("pp-step").addEventListener("click", async () => {
@@ -153,19 +153,19 @@ $("pp-step").addEventListener("click", async () => {
   const d = await res.json();
   if (!res.ok) $("pp-error").innerHTML = `<div class="error">${d.error || "步进失败"}</div>`;
   await refreshPaper();
+// 实盘接口按次计费（Hyperliquid 有限流），所以低频轮询。
 refreshLiveConfig();
 refreshMonitor();
-setInterval(refreshLiveConfig, 20000);
-setInterval(refreshMonitor, 15000);
+setInterval(refreshMonitor, 60000);
 });
 
 $("pp-reset").addEventListener("click", async () => {
   await fetch("/api/paper/reset", { method: "POST" });
   await refreshPaper();
+// 实盘接口按次计费（Hyperliquid 有限流），所以低频轮询。
 refreshLiveConfig();
 refreshMonitor();
-setInterval(refreshLiveConfig, 20000);
-setInterval(refreshMonitor, 15000);
+setInterval(refreshMonitor, 60000);
 });
 
 async function refreshPaper() {
@@ -772,7 +772,7 @@ refreshStatus();
 setInterval(refreshStatus, 5000);
 setInterval(refreshPaper, 10000);
 refreshPaper();
+// 实盘接口按次计费（Hyperliquid 有限流），所以低频轮询。
 refreshLiveConfig();
 refreshMonitor();
-setInterval(refreshLiveConfig, 20000);
-setInterval(refreshMonitor, 15000);
+setInterval(refreshMonitor, 60000);

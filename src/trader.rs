@@ -321,19 +321,19 @@ pub async fn execute(
     Ok(log)
 }
 
-/// Fetch mids for every coin the plan touches.
+/// Mids for the coins we care about, from one bulk request.
 pub async fn fetch_mids(exec: &Exec, coins: &[String]) -> HashMap<String, f64> {
-    let mut out = HashMap::new();
-    for coin in coins {
-        match exec.mid(coin).await {
-            Ok(m) if m > 0.0 => {
-                out.insert(coin.clone(), m);
-            }
-            Ok(_) => {}
-            Err(e) => eprintln!("{coin}: 取价失败 {e}"),
+    let all = match exec.all_mids().await {
+        Ok(m) => m,
+        Err(e) => {
+            eprintln!("取价失败: {e}");
+            return HashMap::new();
         }
-    }
-    out
+    };
+    coins
+        .iter()
+        .filter_map(|c| all.get(c).map(|p| (c.clone(), *p)))
+        .collect()
 }
 
 pub fn load_panel(store: &crate::store::Store) -> Result<Vec<PanelEntry>> {

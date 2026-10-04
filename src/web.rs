@@ -297,9 +297,15 @@ async fn paper_step(State(state): State<AppState>) -> Response {
 
 // ==================== live trading ====================
 
+async fn live_markets(state: &AppState) -> std::collections::HashMap<String, crate::exchange::MarketInfo> {
+    let meta = state.meta.lock().await;
+    crate::live::markets_from_meta(&meta.universe)
+}
+
 async fn live_status(State(state): State<AppState>) -> Response {
     let st = state.live.lock().await.clone();
-    let snap = crate::live::snapshot(&st).await;
+    let markets = live_markets(&state).await;
+    let snap = crate::live::snapshot(&st, &markets).await;
     // Record at most one equity point per hour so the monitoring curve appears
     // the same day instead of after a couple of daily closes.
     if snap.equity > 0.0 {
@@ -391,7 +397,8 @@ struct LiveRunBody {
 async fn live_run(State(state): State<AppState>, body: Option<Json<LiveRunBody>>) -> Response {
     let live = body.map(|b| b.live).unwrap_or(false);
     let st = state.live.lock().await.clone();
-    match crate::live::run(&state.store, &st, live).await {
+    let markets = live_markets(&state).await;
+    match crate::live::run(&state.store, &st, &markets, live).await {
         Ok((result, records)) => {
             let mut guard = state.live.lock().await;
             guard.last_run_at = Some(crate::live::now_ms_pub());
