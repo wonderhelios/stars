@@ -433,6 +433,7 @@ pub struct PaperSnapshot {
     pub market_pct: f64,
     pub alpha_pct: f64,
     pub gross_notional: f64,
+    pub net_notional: f64,
     pub margin_used: f64,
     pub margin_usage_pct: f64,
     pub nearest_liq_pct: Option<f64>,
@@ -451,6 +452,14 @@ pub fn snapshot(state: &PaperState) -> PaperSnapshot {
     let cfg = state.config.clone().unwrap_or_default();
     let pnl = state.equity - cfg.capital;
     let gross: f64 = state.positions.iter().map(|x| x.notional).sum();
+    let net: f64 = state
+        .positions
+        .iter()
+        .map(|x| match x.side {
+            Side::Long => x.notional,
+            Side::Short => -x.notional,
+        })
+        .sum();
     let margin: f64 = state.positions.iter().map(|x| x.notional / cfg.leverage).sum();
     let unrealized: f64 = state.positions.iter().map(|x| x.unrealized_pnl).sum();
     let realized: f64 = state.trades.iter().map(|x| x.pnl_usd).sum();
@@ -475,6 +484,7 @@ pub fn snapshot(state: &PaperState) -> PaperSnapshot {
         market_pct: (state.market - 1.0) * 100.0,
         alpha_pct: (state.equity / cfg.capital - state.market) * 100.0,
         gross_notional: gross,
+        net_notional: net,
         margin_used: margin,
         margin_usage_pct: if state.equity > 0.0 { margin / state.equity * 100.0 } else { 0.0 },
         nearest_liq_pct: nearest,

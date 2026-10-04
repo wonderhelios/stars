@@ -183,10 +183,10 @@ async function refreshPaper() {
       metric("平仓胜率", fmt(d.win_rate, 1) + "%") +
       metric("杠杆", fmt(d.leverage, 0) + "×") +
       metric("总名义敞口", "$" + fmt(d.gross_notional, 0)) +
+      metric("净敞口（市场中性）", "$" + fmt(d.net_notional, 0), Math.abs(d.net_notional) < 1 ? "pos" : "") +
       metric("占用保证金", "$" + fmt(d.margin_used, 0) + ` (${fmt(d.margin_usage_pct, 0)}%)`) +
       metric("距最近爆仓", liq, d.nearest_liq_pct != null && d.nearest_liq_pct < 20 ? "neg" : "") +
-      metric("同期等权市场", pct(d.market_pct), d.market_pct >= 0 ? "pos" : "neg") +
-      metric("相对市场 alpha", pct(d.alpha_pct), d.alpha_pct >= 0 ? "pos" : "neg") +
+      metric("同期等权市场（参考）", pct(d.market_pct), d.market_pct >= 0 ? "pos" : "neg") +
       metric("已运行天数", d.days_elapsed) +
       metric("累计成本", "$" + fmt(d.total_cost, 2));
 
