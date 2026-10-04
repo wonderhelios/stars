@@ -253,8 +253,13 @@ impl Exec {
         } else {
             mid * (1.0 - slippage)
         };
-        let px = order_price(aggressive, sz_decimals, !buy);
-        anyhow::ensure!(px > 0.0, "bad limit price for {coin}");
+        let mut px = order_price(aggressive, sz_decimals, !buy);
+        if px <= 0.0 {
+            // Very low-priced coins can round down to zero; step up one tick
+            // instead of failing outright.
+            px = order_price(aggressive, sz_decimals, true);
+        }
+        anyhow::ensure!(px > 0.0, "无法为 {coin} 构造有效价格（mid={mid}）");
         let order = ClientOrderRequest {
             asset: coin.to_string(),
             is_buy: buy,

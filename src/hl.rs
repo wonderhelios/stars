@@ -10,8 +10,8 @@ const BASE: &str = "https://api.hyperliquid.xyz/info";
 #[derive(Debug, Clone, Deserialize)]
 pub struct CoinMeta {
     pub name: String,
-    #[allow(dead_code)]
-    pub sz_decimals: Option<u32>,
+    #[serde(default = "default_sz_decimals", rename = "szDecimals")]
+    pub sz_decimals: u32,
     #[serde(default = "default_max_lev", rename = "maxLeverage")]
     pub max_leverage: u32,
     #[serde(default)]
@@ -20,6 +20,11 @@ pub struct CoinMeta {
 
 fn default_max_lev() -> u32 {
     10
+}
+
+/// Fallback lot precision when the API omits it.
+fn default_sz_decimals() -> u32 {
+    4
 }
 
 /// Hyperliquid maintenance margin rate for a coin: half the initial margin at
@@ -184,5 +189,25 @@ impl HlClient {
             .and_then(|s| s.parse::<f64>().ok())
             .unwrap_or(0.00015);
         Ok((cross, add))
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    /// Regression: the API spells it `szDecimals`; without the rename every coin
+    /// silently fell back to 4 decimals and every live order was rejected.
+    #[test]
+    fn coin_meta_reads_sz_decimals() {
+        let raw = r#"{"name":"PUMP","szDecimals":0,"maxLeverage":10,"isDelisted":false}"#;
+        let c: CoinMeta = serde_json::from_str(raw).unwrap();
+        assert_eq!(c.sz_decimals, 0);
+        assert_eq!(c.max_leverage, 10);
+
+        let raw2 = r#"{"name":"BCH","szDecimals":3}"#;
+        let c2: CoinMeta = serde_json::from_str(raw2).unwrap();
+        assert_eq!(c2.sz_decimals, 3);
+        assert_eq!(c2.max_leverage, 10); // default applies
     }
 }

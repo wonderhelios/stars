@@ -20,7 +20,7 @@ pub fn markets_from_meta(universe: &[crate::hl::CoinMeta]) -> HashMap<String, Ma
             (
                 c.name.clone(),
                 MarketInfo {
-                    sz_decimals: c.sz_decimals.unwrap_or(4),
+                    sz_decimals: c.sz_decimals,
                     max_leverage: c.max_leverage,
                 },
             )
