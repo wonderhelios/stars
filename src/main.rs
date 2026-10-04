@@ -200,6 +200,7 @@ async fn backfill(
             rest.push(u.name.clone());
         }
     }
+    let delisted_set: std::collections::HashSet<String> = delisted.iter().cloned().collect();
     let mut ordered = Vec::new();
     ordered.extend(liquid);
     ordered.extend(delisted);
@@ -220,6 +221,18 @@ async fn backfill(
             r.current = coin.clone();
             r.coins_done = i;
         }
+        // Skip the full re-download so a restart does not re-fetch hundreds of
+        // coins and trip the exchange rate limit. Active coins only need recent
+        // data; a delisted coin's history never changes once it is cached.
+        let cached = store.coin_latest_ts(coin).ok().flatten();
+        let fresh = match cached {
+            Some(_) if delisted_set.contains(coin) => true,
+            Some(t) => t >= now - 2 * 86_400_000,
+            None => false,
+        };
+        if fresh {
+            continue;
+        }
         match client.daily_candles(coin, CANDLE_START_MS, now).await {
             Ok(candles) => {
                 if let Err(e) = store.upsert_candles(coin, &candles) {
@@ -228,6 +241,8 @@ async fn backfill(
             }
             Err(e) => error!("candles {coin}: {e}"),
         }
+        // Pace the backfill: unthrottled it fires hundreds of requests at once.
+        tokio::time::sleep(Duration::from_millis(80)).await;
     }
     {
         let mut r = refresh.lock().await;
@@ -254,7 +269,7 @@ async fn refresh_liquid(
             }
             Err(e) => error!("refresh {coin}: {e}"),
         }
-        tokio::time::sleep(Duration::from_millis(60)).await;
+        tokio::time::sleep(Duration::from_millis(80)).await;
     }
     Ok(())
 }

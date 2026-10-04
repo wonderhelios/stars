@@ -14,7 +14,7 @@ pub struct CoinMeta {
     pub sz_decimals: u32,
     #[serde(default = "default_max_lev", rename = "maxLeverage")]
     pub max_leverage: u32,
-    #[serde(default)]
+    #[serde(default, rename = "isDelisted")]
     pub is_delisted: bool,
 }
 
@@ -209,5 +209,15 @@ mod tests {
         let c2: CoinMeta = serde_json::from_str(raw2).unwrap();
         assert_eq!(c2.sz_decimals, 3);
         assert_eq!(c2.max_leverage, 10); // default applies
+        assert!(!c2.is_delisted);
+    }
+
+    /// Regression: the API spells it `isDelisted`; without the rename delisted
+    /// coins looked active and were re-downloaded on every restart.
+    #[test]
+    fn coin_meta_reads_is_delisted() {
+        let raw = r#"{"name":"MATIC","szDecimals":1,"isDelisted":true}"#;
+        let c: CoinMeta = serde_json::from_str(raw).unwrap();
+        assert!(c.is_delisted);
     }
 }

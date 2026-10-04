@@ -46,16 +46,36 @@ pub struct Exec {
 
 impl Exec {
     async fn info_post(&self, body: Value) -> Result<Value> {
-        let v: Value = self
-            .http
-            .post("https://api.hyperliquid.xyz/info")
-            .json(&body)
-            .send()
-            .await?
-            .error_for_status()?
-            .json()
-            .await?;
-        Ok(v)
+        let mut last: Option<anyhow::Error> = None;
+        for attempt in 0..5u32 {
+            match self
+                .http
+                .post("https://api.hyperliquid.xyz/info")
+                .json(&body)
+                .send()
+                .await
+            {
+                Ok(resp) => {
+                    let status = resp.status();
+                    if status.is_success() {
+                        return Ok(resp.json().await?);
+                    }
+                    // Hyperliquid returns a plain 429 when the IP is over budget.
+                    if status.as_u16() == 429 {
+                        tokio::time::sleep(Duration::from_millis(
+                            500 * 2u64.pow(attempt),
+                        ))
+                        .await;
+                        last = Some(anyhow!("请求被限流 (429)，已重试 {attempt} 次"));
+                        continue;
+                    }
+                    last = Some(anyhow!("HTTP {status}"));
+                }
+                Err(e) => last = Some(anyhow!("请求失败: {e}")),
+            }
+            tokio::time::sleep(Duration::from_millis(250)).await;
+        }
+        Err(last.unwrap_or_else(|| anyhow!("info 请求失败")))
     }
 
     pub async fn reader() -> Result<Self> {

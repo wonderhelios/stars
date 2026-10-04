@@ -55,6 +55,16 @@ impl Store {
         Ok(conn.query_row("SELECT MAX(t) FROM candles", [], |r| r.get(0))?)
     }
 
+    /// Newest cached candle timestamp for one coin.
+    pub fn coin_latest_ts(&self, coin: &str) -> Result<Option<i64>> {
+        let conn = self.conn.lock().unwrap();
+        Ok(conn.query_row(
+            "SELECT MAX(t) FROM candles WHERE coin = ?1",
+            [coin],
+            |r| r.get(0),
+        )?)
+    }
+
     pub fn all_panels(&self) -> Result<Vec<(String, Vec<Candle>)>> {
         let conn = self.conn.lock().unwrap();
         let mut stmt = conn.prepare("SELECT coin,t,o,h,l,c,v FROM candles ORDER BY coin, t")?;
