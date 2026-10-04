@@ -419,31 +419,80 @@ function renderHolding(trades) {
       .join("")}</tbody></table>`;
 }
 
-function renderChart(history) {  if (!history || history.length < 2) {
+// 选一组好看的坐标轴刻度
+function niceAxis(lo, hi, ticks) {
+  if (!(hi > lo)) return { lo: lo - 1, hi: lo + 1, lines: [lo] };
+  const raw = (hi - lo) / (ticks || 5);
+  const mag = Math.pow(10, Math.floor(Math.log10(raw)));
+  const norm = raw / mag;
+  const step = (norm <= 1 ? 1 : norm <= 2 ? 2 : norm <= 5 ? 5 : 10) * mag;
+  const nlo = Math.floor(lo / step) * step;
+  const nhi = Math.ceil(hi / step) * step;
+  const lines = [];
+  for (let v = nlo; v <= nhi + step * 0.001; v += step) lines.push(v);
+  return { lo: nlo, hi: nhi, lines };
+}
+
+function renderChart(history) {
+  if (!history || history.length < 2) {
     $("pp-chart").innerHTML = '<div class="empty">数据不足，曲线需要至少 2 个点</div>';
     return;
   }
-  const W = 1080, H = 220, pad = 30;
-  const all = history.flatMap((p) => [p.equity, p.market * (history[0].equity || 1)]);
-  const lo = Math.min(...all), hi = Math.max(...all);
-  const span = hi - lo || 1;
+  const W = 1080, H = 300;
+  const padL = 78, padR = 84, padT = 16, padB = 34;
+  const cap = history[0].equity || 1;
+  const strat = history.map((p) => p.equity);
+  const mkt = history.map((p) => p.market * cap);
+  const ax = niceAxis(Math.min(...strat.concat(mkt)), Math.max(...strat.concat(mkt)), 5);
+  const span = ax.hi - ax.lo || 1;
   const n = history.length;
-  const X = (i) => pad + (i / (n - 1)) * (W - pad * 2);
-  const Y = (v) => H - pad - ((v - lo) / span) * (H - pad * 2);
-  const cap = history[0].equity;
-  const stratLine = history.map((p, i) => `${X(i)},${Y(p.equity)}`).join(" ");
-  const mktLine = history.map((p, i) => `${X(i)},${Y(p.market * cap)}`).join(" ");
+  const X = (i) => padL + (i / (n - 1)) * (W - padL - padR);
+  const Y = (v) => padT + (1 - (v - ax.lo) / span) * (H - padT - padB);
+  const money = (v) => "$" + Math.round(v).toLocaleString();
+
+  const grid = ax.lines
+    .map((v) => {
+      const y = Y(v);
+      return `<line x1="${padL}" y1="${y}" x2="${W - padR}" y2="${y}" stroke="#eef1f6"/>
+        <text x="${padL - 8}" y="${y + 4}" text-anchor="end" font-size="11" fill="#768297">${money(v)}</text>`;
+    })
+    .join("");
+
+  const poly = (arr, color, w) =>
+    `<polyline points="${arr.map((v, i) => `${X(i)},${Y(v)}`).join(" ")}" fill="none" stroke="${color}" stroke-width="${w}"/>`;
+
+  const xlabels = [0, Math.floor((n - 1) / 2), n - 1]
+    .map((i) => {
+      const anchor = i === 0 ? "start" : i === n - 1 ? "end" : "middle";
+      return `<text x="${X(i)}" y="${H - 10}" text-anchor="${anchor}" font-size="11" fill="#768297">${ts2d(history[i].ts)}</text>`;
+    })
+    .join("");
+
+  const baseY = Y(cap);
+  const baseline =
+    cap >= ax.lo && cap <= ax.hi
+      ? `<line x1="${padL}" y1="${baseY}" x2="${W - padR}" y2="${baseY}" stroke="#c9d3e3" stroke-width="1" stroke-dasharray="4 4"/>
+         <text x="${W - padR + 6}" y="${baseY + 4}" font-size="11" fill="#9aa6b8">本金</text>`
+      : "";
+
+  const lastS = strat[n - 1], lastM = mkt[n - 1];
+  const endLabels = `
+    <text x="${W - padR + 6}" y="${Y(lastS) + 4}" font-size="12" font-weight="600" fill="#2d6df6">${money(lastS)}</text>
+    <text x="${W - padR + 6}" y="${Y(lastM) + 4}" font-size="12" fill="#768297">${money(lastM)}</text>`;
+
   $("pp-chart").innerHTML = `
-    <svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">
-      <line x1="${pad}" y1="${H - pad}" x2="${W - pad}" y2="${H - pad}" stroke="#e7ebf1"/>
-      <line x1="${pad}" y1="${pad}" x2="${pad}" y2="${H - pad}" stroke="#e7ebf1"/>
-      <polyline points="${mktLine}" fill="none" stroke="#768297" stroke-width="1.5"/>
-      <polyline points="${stratLine}" fill="none" stroke="#2d6df6" stroke-width="2"/>
+    <svg viewBox="0 0 ${W} ${H}" role="img" aria-label="净值曲线">
+      ${grid}
+      ${baseline}
+      ${poly(mkt, "#768297", 1.6)}
+      ${poly(strat, "#2d6df6", 2.2)}
+      ${endLabels}
+      ${xlabels}
     </svg>
     <div class="legend">
       <span><span style="color:#2d6df6">━</span> 策略净值（多空前 20%，市场中性）</span>
       <span><span style="color:#768297">━</span> 等权市场（若无对冲会拿到的）</span>
-      <span>${ts2d(history[0].ts)} → ${ts2d(history[history.length - 1].ts)}</span>
+      <span>本金 ${money(cap)} · ${ts2d(history[0].ts)} → ${ts2d(history[n - 1].ts)}</span>
     </div>`;
 }
 
