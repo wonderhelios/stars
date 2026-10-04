@@ -318,9 +318,9 @@
             <li><span class="state">✅</span><div class="txt"><b>点时间流动性过滤</b><span>只在滚动 30 日成交额达标的币上建仓，无前视</span></div><span class="badge ok">已通过</span></li>
             <li><span class="state">✅</span><div class="txt"><b>市场中性</b><span>多空名义相等，净敞口 ≈ 0</span></div><span class="badge ok">已通过</span></li>
             <li><span class="state">✅</span><div class="txt"><b>费率与爆仓已建模</b><span>费率取自 Hyperliquid 实时接口</span></div><span class="badge ok">已通过</span></li>
-            <li><span class="state">⬜</span><div class="txt"><b>真实滑点实测</b><span>对比实际成交价与计划 mid 价，这是纸交易测不到的</span></div><span class="badge pending">进行中</span></li>
-            <li><span class="state">⬜</span><div class="txt"><b>实盘与纸交易逐日对上</b><span>方向一致、量级接近</span></div><span class="badge pending">待验证</span></li>
-            <li><span class="state">⬜</span><div class="txt"><b>强平缓冲始终 &gt; 40%</b><span>低于此值需降杠杆或减少仓位</span></div><span class="badge pending">待验证</span></li>
+            <li><span class="state" id="ck-slip-s">⬜</span><div class="txt"><b>真实滑点实测</b><span id="ck-slip-t">对比实际成交价与计划 mid 价，这是纸交易测不到的</span></div><span class="badge pending" id="ck-slip-b">待实测</span></li>
+            <li><span class="state" id="ck-buf-s">⬜</span><div class="txt"><b>强平缓冲始终 &gt; 40%</b><span id="ck-buf-t">低于此值需降杠杆或减少仓位</span></div><span class="badge pending" id="ck-buf-b">待验证</span></li>
+            <li><span class="state" id="ck-match-s">⬜</span><div class="txt"><b>实盘与纸交易逐日对上</b><span>方向一致、量级接近（需要几天数据）</span></div><span class="badge pending" id="ck-match-b">待验证</span></li>
           </ul>
           <p class="note"><b>必须用全仓保证金（Cross）。</b>3× 满仓时「初始保证金占用 ≈ 100% 净值」是数学必然，<b>不是爆仓线</b>；真正决定强平的是维持保证金。</p>
           <p class="note">真正的尾部风险不是大盘涨跌（已被对冲），而是<b>动量崩盘</b>：赢家暴跌 + 输家暴涨同时发生，两条腿一起亏。</p>

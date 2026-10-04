@@ -695,6 +695,28 @@ function renderMonitor(d) {
       return metric(`实测平均滑点 (${sl.n}笔)`, v, cls);
     })();
 
+  // 检查清单按实测结果自动打勾
+  const sl = slippageStats(d.records || []);
+  const mark = (sid, bid, ok, okText, okDetail) => {
+    const se = $(sid), be = $(bid);
+    if (!se || !be) return;
+    if (ok) {
+      se.textContent = "✅";
+      be.className = "badge ok";
+      be.textContent = okText;
+      if (okDetail) {
+        const te = $(sid.replace("-s", "-t"));
+        if (te) te.textContent = okDetail;
+      }
+    }
+  };
+  if (sl) {
+    mark("ck-slip-s", "ck-slip-b", true, "已实测",
+      `实测 ${sl.n} 笔成交，平均滑点 ${sl.avg >= 0 ? "+" : ""}${sl.avg.toFixed(3)}%（最差 ${sl.worst.toFixed(3)}%，最好 ${sl.best.toFixed(3)}%）；纸交易假设 0 滑点`);
+  }
+  mark("ck-buf-s", "ck-buf-b", buffer > 40, "已通过",
+    buffer > 40 ? `当前 ${buffer.toFixed(1)}%，安全` : `当前 ${buffer.toFixed(1)}%，偏低`);
+
   const err = d.error ? `<div class="note neg">${d.error}</div>` : "";
   if (!pos.length) {
     $("mo-positions").innerHTML = err + '<div class="empty">账户当前没有持仓</div>';
