@@ -6,6 +6,11 @@ const pct = (v, d = 2) => `${(v >= 0 ? "+" : "")}${v.toFixed(d)}%`;
 const signed = (v, d = 2) => `${(v >= 0 ? "+" : "")}${v.toFixed(d)}`;
 const fmt = (v, d = 2) => v.toFixed(d);
 const ts2d = (ms) => new Date(ms).toISOString().slice(0, 10);
+// 短时间戳（MM-DD HH:MM），用于指标卡避免换行
+const ts2m = (ms) => {
+  const iso = new Date(ms).toISOString();
+  return iso.slice(5, 10) + " " + iso.slice(11, 16);
+};
 
 // ---------- 导航 ----------
 document.querySelectorAll(".nav button").forEach((b) => {
@@ -299,6 +304,7 @@ function renderTrades(trades, config) {
 
 // ---------- 分页 ----------
 const PAGE_SIZE = 10;
+const LIVE_PAGE_SIZE = 5;
 let dailyPage = 0;
 let tradesPage = 0;
 let lastDaily = [];
@@ -307,8 +313,9 @@ let lastConfig = null;
 let lastCapital = 1;
 
 // 通用分页条；点击由全局委托处理
-function pager(key, total, page) {
-  const pages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+function pager(key, total, page, size) {
+  const per = size || PAGE_SIZE;
+  const pages = Math.max(1, Math.ceil(total / per));
   const p = Math.min(Math.max(0, page), pages - 1);
   return `<div class="pager">
     <button class="btn ghost" data-pager="${key}" data-to="${p - 1}" ${p <= 0 ? "disabled" : ""}>← 上一页</button>
@@ -617,6 +624,27 @@ async function refreshLiveConfig() {
 let livePage = 0;
 let lastLiveData = null;
 
+// 从下单记录里还原真实成交滑点（正 = 成本增加）
+function slippageStats(records) {
+  const list = [];
+  for (const r of records || []) {
+    const m = /成交\s+([\d.]+)@([\d.]+)/.exec(r.result || "");
+    if (!m || !r.price) continue;
+    const fill = parseFloat(m[2]);
+    if (!isFinite(fill) || fill <= 0) continue;
+    let sl = ((fill - r.price) / r.price) * 100;
+    if (r.side === "卖") sl = -sl; // 卖出成交价低于计划 = 成本增加
+    list.push(sl);
+  }
+  if (!list.length) return null;
+  return {
+    n: list.length,
+    avg: list.reduce((a, b) => a + b, 0) / list.length,
+    worst: Math.max(...list),
+    best: Math.min(...list),
+  };
+}
+
 function renderMonitor(d) {
   if (!d) return;
   lastLiveData = d;
@@ -658,7 +686,14 @@ function renderMonitor(d) {
     metric("维持保证金", "$" + fmt(d.maintenance_margin || 0, 0)) +
     metric("逐仓距爆仓(最小)", d.nearest_liq_pct == null ? "—" : fmt(d.nearest_liq_pct, 1) + "%",
       d.nearest_liq_pct != null && d.nearest_liq_pct < 20 ? "neg" : "") +
-    metric("最后调仓", d.last_run_at ? new Date(d.last_run_at).toISOString().slice(0, 16).replace("T", " ") : "—");
+    metric("最后调仓", d.last_run_at ? `<span class="sm">${ts2m(d.last_run_at)}</span>` : "—") +
+    (() => {
+      const sl = slippageStats(d.records);
+      if (!sl) return metric("实测平均滑点", "—");
+      const cls = sl.avg > 0.15 ? "neg" : "pos";
+      const v = `<span class="sm">${sl.avg >= 0 ? "+" : ""}${sl.avg.toFixed(3)}%</span>`;
+      return metric(`实测平均滑点 (${sl.n}笔)`, v, cls);
+    })();
 
   const err = d.error ? `<div class="note neg">${d.error}</div>` : "";
   if (!pos.length) {
@@ -690,19 +725,19 @@ function renderMonitor(d) {
   renderLiveChart(hist);
 
   const recs = (d.records || []).slice().reverse();
-  const pages = Math.max(1, Math.ceil(recs.length / PAGE_SIZE));
+  const pages = Math.max(1, Math.ceil(recs.length / LIVE_PAGE_SIZE));
   if (livePage > pages - 1) livePage = 0;
-  const pageItems = recs.slice(livePage * PAGE_SIZE, (livePage + 1) * PAGE_SIZE);
+  const pageItems = recs.slice(livePage * LIVE_PAGE_SIZE, (livePage + 1) * LIVE_PAGE_SIZE);
   $("mo-records").innerHTML = recs.length
     ? `<table><thead><tr><th>时间</th><th>币</th><th>方向</th><th>动作</th><th>数量</th><th>价格</th><th>名义</th><th>结果</th></tr></thead><tbody>${pageItems
         .map((r) => `<tr>
-          <td class="muted">${new Date(r.ts).toISOString().slice(0, 16).replace("T", " ")}</td>
+          <td class="muted">${ts2m(r.ts)}</td>
           <td>${r.coin}</td><td>${r.side}</td><td>${r.action}</td>
           <td>${fmt(r.size, 6)}</td><td>${fmt(r.price, 6)}</td><td>$${fmt(r.notional, 0)}</td>
           <td class="${r.live ? "" : "muted"}">${r.result}</td>
         </tr>`)
         .join("")}</tbody></table>
-      ${pager("live", recs.length, livePage)}`
+      ${pager("live", recs.length, livePage, LIVE_PAGE_SIZE)}`
     : '<div class="empty">还没有下单记录</div>';
 }
 

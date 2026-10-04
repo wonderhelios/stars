@@ -113,7 +113,8 @@
       .metrics { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; margin: 14px 0; }
       .metric { background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 12px; }
       .metric .k { font-size: 12px; color: var(--muted); }
-      .metric .v { font-size: 20px; font-weight: 650; margin-top: 2px; }
+      .metric .v { font-size: 20px; font-weight: 650; margin-top: 2px; white-space: nowrap; }
+      .metric .v.sm { font-size: 15px; }
       .metric .v.pos { color: var(--green); }
       .metric .v.neg { color: var(--red); }
 
