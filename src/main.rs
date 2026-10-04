@@ -1,9 +1,12 @@
+mod exchange;
 mod hl;
 mod momentum;
 mod paper;
 mod store;
+mod trader;
 mod web;
 
+use anyhow::Context;
 use crate::hl::{CoinMeta, HlClient, MarketCtx};
 use crate::paper::PaperState;
 use crate::store::Store;
@@ -31,6 +34,12 @@ async fn main() -> anyhow::Result<()> {
         .unwrap_or_else(|_| "/var/lib/stars/candles.sqlite".to_string());
     let paper_path = std::env::var("STARS_PAPER")
         .unwrap_or_else(|_| "/var/lib/stars/paper.json".to_string());
+
+    // ===== trade subcommand (live execution) =====
+    let args: Vec<String> = std::env::args().collect();
+    if args.get(1).map(|s| s.as_str()) == Some("trade") {
+        return run_trade(&args, &db_path).await;
+    }
 
     let store = Arc::new(Store::open(std::path::Path::new(&db_path))?);
     let client = HlClient::new();
@@ -227,3 +236,145 @@ fn now_ms() -> i64 {
         .map(|d| d.as_millis() as i64)
         .unwrap_or(0)
 }
+
+/// `stars trade [--live] [--positions N] [--leverage X] [--slippage 0.005]`
+///
+/// Defaults to a dry run that prints exactly what would be sent. Live trading
+/// requires `--live` plus HL_ACCOUNT_ADDRESS and HL_API_WALLET_KEY_FILE.
+async fn run_trade(args: &[String], db_path: &str) -> anyhow::Result<()> {
+    let flag = |name: &str| args.iter().position(|a| a == name);
+    let value = |name: &str| -> Option<String> {
+        flag(name).and_then(|i| args.get(i + 1)).cloned()
+    };
+    let live = flag("--live").is_some();
+
+    let mut cfg = trader::TradeConfig::default();
+    if let Some(v) = value("--positions") {
+        cfg.target_positions = v.parse().context("--positions")?;
+    }
+    if let Some(v) = value("--leverage") {
+        cfg.leverage = v.parse().context("--leverage")?;
+    }
+    if let Some(v) = value("--lookback") {
+        cfg.lookback = v.parse().context("--lookback")?;
+    }
+    if let Some(v) = value("--top") {
+        cfg.top_frac = v.parse().context("--top")?;
+    }
+    if let Some(v) = value("--minvol") {
+        cfg.min_vol_usd = v.parse().context("--minvol")?;
+    }
+    if let Some(v) = value("--slippage") {
+        cfg.slippage = v.parse().context("--slippage")?;
+    }
+
+    let store = Store::open(std::path::Path::new(db_path))?;
+    let panel = trader::load_panel(&store)?;
+    anyhow::ensure!(
+        panel.len() >= 20,
+        "本地 K 线缓存不足（{} 币），先启动一次服务完成回填",
+        panel.len()
+    );
+
+    let (long, short, liquid) = trader::ranking(&panel, &cfg);
+    anyhow::ensure!(!long.is_empty(), "没有选出候选（流动性过滤后为空）");
+    println!("流动宇宙 {} 币 · 多头腿 {} · 空头腿 {}", liquid.len(), long.len(), short.len());
+
+    // Account + markets (signing client only when live).
+    let exec = match (&live, std::env::var("HL_ACCOUNT_ADDRESS")) {
+        (true, Ok(addr)) => {
+            let key = std::env::var("HL_API_WALLET_KEY_FILE")
+                .context("live 交易需要 HL_API_WALLET_KEY_FILE")?;
+            exchange::Exec::signer(&addr, std::path::Path::new(&key)).await?
+        }
+        (false, _) => exchange::Exec::reader().await?,
+        (true, Err(_)) => anyhow::bail!("live 交易需要 HL_ACCOUNT_ADDRESS"),
+    };
+    let markets = exec.markets().await?;
+
+    let acct = if live {
+        let a = exec.account().await?;
+        println!("账户净值 ${:.2} · 现有持仓 {} 个", a.equity, a.positions.len());
+        if !a.positions.is_empty() {
+            println!("现有仓位：");
+            let mut list: Vec<_> = a.positions.iter().collect();
+            list.sort_by(|x, y| x.0.cmp(y.0));
+            for (coin, size) in list {
+                println!("  {coin}: {size}");
+            }
+            anyhow::ensure!(
+                flag("--close-existing").is_some(),
+                "账户已有仓位。本程序会把不在目标名单里的仓位全部平掉（reduce-only）。\
+                 确认要接管请加 --close-existing；若是别的机器人开的仓，先停掉它并手动清空。"
+            );
+        }
+        a
+    } else {
+        // Dry run without an account: assume the configured capital.
+        let equity: f64 = value("--capital")
+            .map(|v| v.parse().unwrap_or(2000.0))
+            .unwrap_or(2000.0);
+        println!("[DRY-RUN] 未读取账户，按 --capital ${equity:.0} 计算（真实运行时用账户净值）");
+        exchange::Acct {
+            equity,
+            positions: Default::default(),
+        }
+    };
+
+    // Mids for every coin we might touch.
+    let mut coins: Vec<String> = long.iter().chain(short.iter()).cloned().collect();
+    coins.extend(acct.positions.keys().cloned());
+    coins.sort();
+    coins.dedup();
+    let mids = trader::fetch_mids(&exec, &coins).await;
+
+    let plan = trader::build_plan(&long, &short, &acct, &markets, &mids, &cfg, None);
+    println!(
+        "\n目标：每腿 {} 仓 · 每仓 ${:.2} · 目标总名义 ${:.0} · 杠杆 {}x",
+        cfg.target_positions.min(long.len().max(1)),
+        plan.per_coin,
+        plan.per_coin * 2.0 * cfg.target_positions.min(long.len().max(1)) as f64,
+        cfg.leverage
+    );
+    println!("多头腿: {}", plan.long_leg.join(" "));
+    println!("空头腿: {}", plan.short_leg.join(" "));
+    println!("账户净值 ${:.2}", plan.equity);
+    if plan.orders.is_empty() {
+        println!("无需调仓（已在目标状态）。");
+    } else {
+        println!("\n计划下单 {} 笔：", plan.orders.len());
+        for o in &plan.orders {
+            println!(
+                "  {} {} {:.6} @≈{:.6} (${:.2}) · {}",
+                if o.buy { "买入" } else { "卖出" },
+                o.coin,
+                o.size,
+                o.mid,
+                o.notional,
+                o.reason
+            );
+        }
+    }
+    for n in &plan.notes {
+        println!("  注意: {n}");
+    }
+
+    if !live {
+        println!("\n[DRY-RUN] 未发送任何订单。确认无误后加 --live 执行。");
+        return Ok(());
+    }
+
+    println!("\n发送订单…");
+    for line in trader::execute(&exec, &plan, &cfg, &markets, true).await? {
+        println!("  {line}");
+    }
+    if let Ok(a) = exec.account().await {
+        println!(
+            "\n执行后：净值 ${:.2} · 持仓 {} 个",
+            a.equity,
+            a.positions.len()
+        );
+    }
+    Ok(())
+}
+

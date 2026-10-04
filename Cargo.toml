@@ -14,3 +14,7 @@ anyhow = "1"
 axum = "0.7"
 tower-http = { version = "0.5", features = ["fs", "cors", "compression-gzip"] }
 rusqlite = { version = "0.32", features = ["bundled"] }
+# Live execution (only used by the `trade` subcommand)
+hyperliquid_rust_sdk = { git = "https://github.com/hyperliquid-dex/hyperliquid-rust-sdk", rev = "aac75585daf12d0a3761126cc7da7a5e035b5853" }
+alloy = { version = "1", default-features = false, features = ["signer-local"] }
+uuid = { version = "1", features = ["v4"] }
