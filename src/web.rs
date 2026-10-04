@@ -31,6 +31,9 @@ pub struct MetaCache {
     pub ctxs: Vec<MarketCtx>,
     pub liquid: Vec<String>,
     pub refreshed_at: i64,
+    /// Hyperliquid base-tier fee schedule (cross = taker, add = maker).
+    pub fee_taker: f64,
+    pub fee_maker: f64,
 }
 
 #[derive(Clone, Default)]
@@ -97,6 +100,8 @@ async fn status(State(state): State<AppState>) -> Json<serde_json::Value> {
         "cached_coins": cached.len(),
         "latest_ts": latest_ts,
         "refreshed_at": meta.refreshed_at,
+        "fee_taker": meta.fee_taker,
+        "fee_maker": meta.fee_maker,
         "refresh": json!({
             "phase": refresh.phase,
             "coins_done": refresh.coins_done,
@@ -175,10 +180,19 @@ struct PaperStartReq {
     fee: f64,
     #[serde(default = "d_cap")]
     capital: f64,
+    #[serde(default = "d_lev")]
+    leverage: f64,
+    #[serde(default = "d_replay")]
+    replay_days: usize,
+    #[serde(default = "d_target_pos")]
+    target_positions: usize,
 }
 
 fn d_fee() -> f64 { 0.00045 }
-fn d_cap() -> f64 { 10_000.0 }
+fn d_cap() -> f64 { 2_000.0 }
+fn d_lev() -> f64 { 3.0 }
+fn d_replay() -> usize { 90 }
+fn d_target_pos() -> usize { 8 }
 
 async fn paper_start(
     State(state): State<AppState>,
@@ -188,17 +202,30 @@ async fn paper_start(
     if p.running {
         return (StatusCode::CONFLICT, Json(json!({"error": "纸交易已在运行"}))).into_response();
     }
+    // Default the fee to the live Hyperliquid taker rate when the caller does
+    // not override it.
+    let fee = if req.fee > 0.0 {
+        req.fee
+    } else {
+        let cached = state.meta.lock().await.fee_taker;
+        if cached > 0.0 { cached } else { d_fee() }
+    };
     p.config = Some(PaperConfig {
         lookback: req.lookback.max(1),
         top_frac: req.top_frac.clamp(0.05, 0.5),
         min_vol_usd: req.min_vol_usd.max(0.0),
-        fee: req.fee,
+        fee,
         capital: req.capital.max(1.0),
+        leverage: req.leverage.clamp(1.0, 20.0),
+        replay_days: req.replay_days.min(365),
+        target_positions: req.target_positions.clamp(1, 30),
     });
     p.running = true;
-    p.equity = p.config.as_ref().unwrap().capital;
-    p.benchmark = p.config.as_ref().unwrap().capital;
+    let capital = p.config.as_ref().unwrap().capital;
+    p.equity = capital;
+    p.market = 1.0;
     p.positions.clear();
+    p.trades.clear();
     p.history.clear();
     p.last_ts = None;
     p.days_elapsed = 0;
@@ -223,8 +250,7 @@ async fn paper_reset(State(state): State<AppState>) -> Response {
 }
 
 async fn paper_step(State(state): State<AppState>) -> Response {
-    let mut p = state.paper.lock().await;
-    if !p.running {
+    if !state.paper.lock().await.running {
         return (StatusCode::CONFLICT, Json(json!({"error": "纸交易未启动"}))).into_response();
     }
     let panel: Vec<PanelEntry> = state
@@ -234,7 +260,15 @@ async fn paper_step(State(state): State<AppState>) -> Response {
         .into_iter()
         .map(|(coin, candles)| PanelEntry { coin, candles })
         .collect();
-    paper::step(&mut p, &panel);
+    let max_lev: std::collections::HashMap<String, u32> = {
+        let meta = state.meta.lock().await;
+        meta.universe
+            .iter()
+            .map(|c| (c.name.clone(), c.max_leverage))
+            .collect()
+    };
+    let mut p = state.paper.lock().await;
+    paper::step(&mut p, &panel, &max_lev);
     let _ = p.save(&state.paper_path);
     Json(json!(paper::snapshot(&*p))).into_response()
 }

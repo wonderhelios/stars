@@ -143,6 +143,7 @@
 
       .badge { display: inline-block; padding: 2px 8px; border-radius: 20px; font-size: 12px; font-weight: 600; }
       .badge.ok { background: var(--green-soft); color: var(--green); }
+      .badge.neg-badge { background: var(--red-soft); color: var(--red); }
       .badge.pending { background: var(--amber-soft); color: var(--amber); }
       .badge.todo { background: var(--bg); color: var(--muted); }
 
@@ -224,9 +225,11 @@
             </div>
           </div>
           <div class="controls" id="pp-config">
-            <div class="field"><label>初始资金 USD</label><input id="pp-capital" type="number" value="10000" /></div>
+            <div class="field"><label>初始资金 USD</label><input id="pp-capital" type="number" value="2000" /></div>
+            <div class="field"><label>杠杆</label><input id="pp-leverage" type="number" value="3" min="1" max="20" step="1" /></div>
             <div class="field"><label>回看天数</label><input id="pp-lookback" type="number" value="14" /></div>
             <div class="field"><label>多头比例</label><input id="pp-top" type="number" value="0.2" step="0.05" /></div>
+            <div class="field"><label>每腿仓位数上限</label><input id="pp-target" type="number" value="8" min="1" max="30" /></div>
             <div class="field"><label>最低成交额(USD)</label>
               <select id="pp-minvol">
                 <option value="1000000">$1M</option>
@@ -234,14 +237,16 @@
                 <option value="10000000">$10M</option>
               </select>
             </div>
-            <div class="field"><label>单边费率 %</label><input id="pp-fee" type="number" value="0.045" step="0.005" /></div>
+            <div class="field"><label>单边费率 %（Hyperliquid 实时）</label><input id="pp-fee" type="number" value="0.045" step="0.005" /></div>
           </div>
           <div id="pp-error"></div>
           <div class="metrics" id="pp-metrics"></div>
-          <div class="panel-head"><h2>净值曲线（策略 vs 等权基准）</h2></div>
+          <div class="panel-head"><h2>净值曲线（策略 vs 等权市场）</h2></div>
           <div class="chart" id="pp-chart"></div>
           <div class="panel-head" style="margin-top:14px"><h2>当前持仓</h2></div>
           <div id="pp-positions"></div>
+          <div class="panel-head" style="margin-top:14px"><h2>交易记录</h2></div>
+          <div id="pp-trades"></div>
         </div>
       </section>
 
@@ -256,16 +261,18 @@
             </div>
           </div>
           <ul class="checklist">
+            <li><span class="state">✅</span><div class="txt"><b>策略定义与实盘一致</b><span>纸交易 = 真实策略：多动量前 20% + 空后 20%，等权、市场中性、按杠杆计算保证金</span></div><span class="badge ok">已对齐</span></li>
             <li><span class="state">✅</span><div class="txt"><b>幸存者偏差修正</b><span>回测纳入全部退市币，alpha 未被稀释掉</span></div><span class="badge ok">已通过</span></li>
             <li><span class="state">✅</span><div class="txt"><b>点时间流动性过滤</b><span>只在滚动 30 日成交额达标的币上建仓，无前视</span></div><span class="badge ok">已通过</span></li>
-            <li><span class="state">✅</span><div class="txt"><b>市场中性</b><span>纯 alpha 与 BTC 相关性 ≈ 0，beta 已剥离</span></div><span class="badge ok">已通过</span></li>
+            <li><span class="state">✅</span><div class="txt"><b>市场中性</b><span>多空名义敞口相等，净敞口 ≈ 0，与 BTC 相关性 ≈ 0</span></div><span class="badge ok">已通过</span></li>
             <li><span class="state">✅</span><div class="txt"><b>分年一致</b><span>2024 / 2025 / 2026 均为正收益</span></div><span class="badge ok">已通过</span></li>
-            <li><span class="state">✅</span><div class="txt"><b>资金费率</b><span>历史 8h 费率中位 ~0.01%，与动量零相关，非隐藏成本</span></div><span class="badge ok">已通过</span></li>
-            <li><span class="state">⬜</span><div class="txt"><b>纸交易 2~4 周</b><span>前向验证真实滑点 / 成交时点，至少覆盖一次换仓周期</span></div><span class="badge pending">待验证</span></li>
-            <li><span class="state">⬜</span><div class="txt"><b>纸交易净 Sharpe &gt; 0.5</b><span>扣真实成本后的净值曲线 Sharpe 达标</span></div><span class="badge pending">待验证</span></li>
-            <li><span class="state">⬜</span><div class="txt"><b>小资金实盘</b><span>先上能承受全额亏损的小资金，确认实盘与纸交易一致后再加仓</span></div><span class="badge todo">待验证</span></li>
+            <li><span class="state">✅</span><div class="txt"><b>费率与爆仓已建模</b><span>费率取自 Hyperliquid 实时接口；按 3× 逐仓计算每个仓位的爆仓价</span></div><span class="badge ok">已通过</span></li>
+            <li><span class="state">⬜</span><div class="txt"><b>纸交易 2~4 周</b><span>前向验证真实滑点 / 成交时点 / 资金费率，至少覆盖一次完整换仓周期</span></div><span class="badge pending">待验证</span></li>
+            <li><span class="state">⬜</span><div class="txt"><b>纸交易盈亏与回测一致</b><span>方向一致、量级接近（回测年化 alpha 约 +60%，Sharpe ≈ 1.2）</span></div><span class="badge pending">待验证</span></li>
+            <li><span class="state">⬜</span><div class="txt"><b>爆仓距离始终安全</b><span>「距最近爆仓」不应长期低于 20%；若接近需降杠杆或分散</span></div><span class="badge pending">待验证</span></li>
+            <li><span class="state">⬜</span><div class="txt"><b>小资金实盘</b><span>$2000 起步，实盘与纸交易逐日对上后再考虑加仓</span></div><span class="badge todo">待验证</span></li>
           </ul>
-          <p class="note">结论：alpha 是真的，但「回测 → 实盘」之间隔着执行成本这一关。纸交易的作用不是再攒数据找 alpha，而是确认真实成交成本 ≈ 回测假设。净 Sharpe &gt; 0.5 且小资金实盘一致后，才逐步放大仓位。</p>
+          <p class="note">风险提示：3× 逐仓下单个仓位约 28% 反向波动即触发爆仓（「距爆仓」列会实时显示）。多空对冲能大幅降低组合层面的风险，但单个币的独立行情仍可能先打掉一条腿——所以「距最近爆仓」是最需要盯的指标。</p>
         </div>
       </section>
     </main>

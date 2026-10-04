@@ -12,8 +12,21 @@ pub struct CoinMeta {
     pub name: String,
     #[allow(dead_code)]
     pub sz_decimals: Option<u32>,
+    #[serde(default = "default_max_lev", rename = "maxLeverage")]
+    pub max_leverage: u32,
     #[serde(default)]
     pub is_delisted: bool,
+}
+
+fn default_max_lev() -> u32 {
+    10
+}
+
+/// Hyperliquid maintenance margin rate for a coin: half the initial margin at
+/// the coin's max leverage.
+pub fn maintenance_margin_rate(max_leverage: u32) -> f64 {
+    let lev = max_leverage.max(1) as f64;
+    0.5 / lev
 }
 
 #[derive(Debug, Clone)]
@@ -153,5 +166,23 @@ impl HlClient {
             tokio::time::sleep(std::time::Duration::from_millis(30)).await;
         }
         Ok(out)
+    }
+
+    /// Exchange fee schedule (base tier). `cross` = taker, `add` = maker.
+    /// The zero address returns the standard tier every new account starts on.
+    pub async fn fee_schedule(&self) -> Result<(f64, f64)> {
+        let v = self
+            .post(json!({"type": "userFees",
+                         "user": "0x0000000000000000000000000000000000000000"}))
+            .await?;
+        let cross = v["feeSchedule"]["cross"]
+            .as_str()
+            .and_then(|s| s.parse::<f64>().ok())
+            .unwrap_or(0.00045);
+        let add = v["feeSchedule"]["add"]
+            .as_str()
+            .and_then(|s| s.parse::<f64>().ok())
+            .unwrap_or(0.00015);
+        Ok((cross, add))
     }
 }

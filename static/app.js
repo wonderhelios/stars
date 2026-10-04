@@ -18,6 +18,7 @@ document.querySelectorAll(".nav button").forEach((b) => {
 });
 
 // ---------- 状态轮询 ----------
+let feePrefilled = false;
 async function refreshStatus() {
   try {
     const res = await fetch("/api/status", { cache: "no-store" });
@@ -36,6 +37,14 @@ async function refreshStatus() {
     } else {
       led.className = "led off";
       $("statusText").textContent = "等待数据";
+    }
+    // Prefill the real Hyperliquid taker fee once.
+    if (!feePrefilled && d.fee_taker > 0) {
+      $("pp-fee").value = (d.fee_taker * 100).toFixed(4);
+      feePrefilled = true;
+    }
+    if (d.fee_taker > 0) {
+      $("pp-fee").title = `Hyperliquid 实时费率：taker ${(d.fee_taker * 100).toFixed(4)}% / maker ${(d.fee_maker * 100).toFixed(4)}%`;
     }
   } catch (e) {
     $("led").className = "led off";
@@ -116,7 +125,10 @@ $("pp-toggle").addEventListener("click", async () => {
       top_frac: parseFloat($("pp-top").value) || 0.2,
       min_vol_usd: parseFloat($("pp-minvol").value),
       fee: parseFloat($("pp-fee").value) / 100 || 0.00045,
-      capital: parseFloat($("pp-capital").value) || 10000,
+      capital: parseFloat($("pp-capital").value) || 2000,
+      leverage: parseFloat($("pp-leverage").value) || 3,
+      target_positions: parseInt($("pp-target").value) || 8,
+      replay_days: 90,
     };
     const res = await fetch("/api/paper/start", {
       method: "POST",
@@ -156,27 +168,107 @@ async function refreshPaper() {
       $("pp-metrics").innerHTML = '<div class="empty">尚未启动纸交易。设置参数后点「启动纸交易」。</div>';
       $("pp-chart").innerHTML = "";
       $("pp-positions").innerHTML = "";
+      $("pp-trades").innerHTML = "";
       return;
     }
 
-    const cls = d.alpha_pct >= 0 ? "pos" : "neg";
+    const pnlCls = d.pnl >= 0 ? "pos" : "neg";
+    const liq = d.nearest_liq_pct == null ? "—" : fmt(d.nearest_liq_pct, 1) + "%";
     $("pp-metrics").innerHTML =
-      metric("策略净值", "$" + fmt(d.equity, 0)) +
-      metric("基准净值", "$" + fmt(d.benchmark, 0)) +
-      metric("累计 alpha", pct(d.alpha_pct), cls) +
-      metric("策略收益", pct(d.strategy_ret_pct), d.strategy_ret_pct >= 0 ? "pos" : "neg") +
-      metric("基准收益", pct(d.benchmark_ret_pct), d.benchmark_ret_pct >= 0 ? "pos" : "neg") +
+      metric("账户净值", "$" + fmt(d.equity, 2)) +
+      metric("累计盈亏", `${d.pnl >= 0 ? "+" : ""}$${fmt(d.pnl, 2)}`, pnlCls) +
+      metric("收益率", pct(d.pnl_pct), pnlCls) +
+      metric("已实现盈亏", `${d.realized_pnl >= 0 ? "+" : ""}$${fmt(d.realized_pnl, 2)}`, d.realized_pnl >= 0 ? "pos" : "neg") +
+      metric("未实现盈亏", `${d.unrealized_pnl >= 0 ? "+" : ""}$${fmt(d.unrealized_pnl, 2)}`, d.unrealized_pnl >= 0 ? "pos" : "neg") +
+      metric("平仓胜率", fmt(d.win_rate, 1) + "%") +
+      metric("杠杆", fmt(d.leverage, 0) + "×") +
+      metric("总名义敞口", "$" + fmt(d.gross_notional, 0)) +
+      metric("占用保证金", "$" + fmt(d.margin_used, 0) + ` (${fmt(d.margin_usage_pct, 0)}%)`) +
+      metric("距最近爆仓", liq, d.nearest_liq_pct != null && d.nearest_liq_pct < 20 ? "neg" : "") +
+      metric("同期等权市场", pct(d.market_pct), d.market_pct >= 0 ? "pos" : "neg") +
+      metric("相对市场 alpha", pct(d.alpha_pct), d.alpha_pct >= 0 ? "pos" : "neg") +
       metric("已运行天数", d.days_elapsed) +
       metric("累计成本", "$" + fmt(d.total_cost, 2));
 
     renderChart(d.history);
-    $("pp-positions").innerHTML = d.positions.length
-      ? `<table><thead><tr><th>币</th><th>名义(USD)</th><th>入场价</th></tr></thead>
-         <tbody>${d.positions.map((p) => `<tr><td>${p.coin}</td><td>$${fmt(p.notional, 0)}</td><td>${fmt(p.entry_close, 6)}</td></tr>`).join("")}</tbody></table>`
-      : '<div class="empty">暂无持仓（等待第一次换仓）</div>';
+    renderPositions(d.positions);
+    renderTrades(d.trades, d.config);
   } catch (e) {
     $("pp-error").innerHTML = `<div class="error">${e.message}</div>`;
   }
+}
+
+function sideLabel(s) {
+  return s === "long"
+    ? '<span class="badge ok">多</span>'
+    : '<span class="badge neg-badge">空</span>';
+}
+
+function renderPositions(positions) {
+  if (!positions || !positions.length) {
+    $("pp-positions").innerHTML = '<div class="empty">暂无持仓</div>';
+    return;
+  }
+  const rows = positions
+    .slice()
+    .sort((a, b) => (a.side === b.side ? b.notional - a.notional : a.side === "long" ? -1 : 1))
+    .map((p) => {
+      const cls = p.unrealized_pnl >= 0 ? "pos" : "neg";
+      const dist =
+        p.side === "long"
+          ? ((p.mark_price - p.liq_price) / p.mark_price) * 100
+          : ((p.liq_price - p.mark_price) / p.mark_price) * 100;
+      return `<tr>
+        <td>${p.coin}</td>
+        <td>${sideLabel(p.side)}</td>
+        <td>$${fmt(p.notional, 0)}</td>
+        <td>${fmt(p.entry_price, 6)}</td>
+        <td>${fmt(p.mark_price, 6)}</td>
+        <td class="${cls}">${p.unrealized_pnl >= 0 ? "+" : ""}$${fmt(p.unrealized_pnl, 2)}</td>
+        <td>${fmt(p.liq_price, 6)}</td>
+        <td class="${dist < 20 ? "neg" : "muted"}">${fmt(dist, 1)}%</td>
+      </tr>`;
+    })
+    .join("");
+  $("pp-positions").innerHTML = `<table><thead><tr>
+    <th>币</th><th>方向</th><th>名义</th><th>入场价</th><th>当前价</th>
+    <th>未实现盈亏</th><th>爆仓价</th><th>距爆仓</th>
+  </tr></thead><tbody>${rows}</tbody></table>`;
+}
+
+function renderTrades(trades, config) {
+  if (!trades || !trades.length) {
+    $("pp-trades").innerHTML =
+      '<div class="empty">还没有平仓记录（首次换仓后开始出现）</div>';
+    return;
+  }
+  const list = trades.slice().reverse();
+  const realized = list.reduce((s, t) => s + t.pnl_usd, 0);
+  const wins = list.filter((t) => t.pnl_usd > 0).length;
+  const rows = list
+    .slice(0, 100)
+    .map((t) => {
+      const cls = t.pnl_usd >= 0 ? "pos" : "neg";
+      const d1 = ts2d(t.entry_ts);
+      const d2 = ts2d(t.exit_ts);
+      return `<tr>
+        <td>${t.coin}</td>
+        <td>${sideLabel(t.side)}</td>
+        <td>${fmt(t.entry_price, 6)}</td>
+        <td>${fmt(t.exit_price, 6)}</td>
+        <td class="${cls}">${t.pnl_usd >= 0 ? "+" : ""}$${fmt(t.pnl_usd, 2)}</td>
+        <td class="${cls}">${pct(t.pnl_pct)}</td>
+        <td class="muted">${d1} → ${d2}</td>
+      </tr>`;
+    })
+    .join("");
+  $("pp-trades").innerHTML = `<div class="note">
+      共 ${list.length} 笔平仓 · 已实现盈亏 <b class="${realized >= 0 ? "pos" : "neg"}">${realized >= 0 ? "+" : ""}$${fmt(realized, 2)}</b>
+      · 胜率 ${fmt((wins / list.length) * 100, 1)}%
+    </div>
+    <table><thead><tr>
+      <th>币</th><th>方向</th><th>入场价</th><th>出场价</th><th>盈亏</th><th>盈亏%</th><th>持有</th>
+    </tr></thead><tbody>${rows}</tbody></table>`;
 }
 
 function renderChart(history) {
@@ -185,23 +277,25 @@ function renderChart(history) {
     return;
   }
   const W = 1080, H = 220, pad = 30;
-  const all = history.flatMap((p) => [p.strategy, p.benchmark]);
+  const all = history.flatMap((p) => [p.equity, p.market * (history[0].equity || 1)]);
   const lo = Math.min(...all), hi = Math.max(...all);
   const span = hi - lo || 1;
   const n = history.length;
   const X = (i) => pad + (i / (n - 1)) * (W - pad * 2);
   const Y = (v) => H - pad - ((v - lo) / span) * (H - pad * 2);
-  const line = (key) => history.map((p, i) => `${X(i)},${Y(p[key])}`).join(" ");
+  const cap = history[0].equity;
+  const stratLine = history.map((p, i) => `${X(i)},${Y(p.equity)}`).join(" ");
+  const mktLine = history.map((p, i) => `${X(i)},${Y(p.market * cap)}`).join(" ");
   $("pp-chart").innerHTML = `
     <svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">
       <line x1="${pad}" y1="${H - pad}" x2="${W - pad}" y2="${H - pad}" stroke="#e7ebf1"/>
       <line x1="${pad}" y1="${pad}" x2="${pad}" y2="${H - pad}" stroke="#e7ebf1"/>
-      <polyline points="${line("benchmark")}" fill="none" stroke="#768297" stroke-width="1.5"/>
-      <polyline points="${line("strategy")}" fill="none" stroke="#2d6df6" stroke-width="2"/>
+      <polyline points="${mktLine}" fill="none" stroke="#768297" stroke-width="1.5"/>
+      <polyline points="${stratLine}" fill="none" stroke="#2d6df6" stroke-width="2"/>
     </svg>
     <div class="note" style="display:flex;gap:16px">
-      <span><span style="color:#2d6df6">━</span> 策略</span>
-      <span><span style="color:#768297">━</span> 等权基准</span>
+      <span><span style="color:#2d6df6">━</span> 策略净值（多空前 20%，市场中性）</span>
+      <span><span style="color:#768297">━</span> 等权市场（若无对冲会拿到的）</span>
       <span>${ts2d(history[0].ts)} → ${ts2d(history[history.length - 1].ts)}</span>
     </div>`;
 }

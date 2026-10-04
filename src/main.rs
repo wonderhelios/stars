@@ -53,8 +53,9 @@ async fn main() -> anyhow::Result<()> {
         let meta = meta.clone();
         let refresh = refresh.clone();
         let paper = paper.clone();
+        let paper_path = paper_path.clone();
         tokio::spawn(async move {
-            refresh_loop(store, client, meta, refresh, paper).await;
+            refresh_loop(store, client, meta, refresh, paper, paper_path).await;
         });
     }
 
@@ -74,6 +75,7 @@ async fn refresh_loop(
     meta: Arc<Mutex<MetaCache>>,
     refresh: Arc<Mutex<RefreshStatus>>,
     paper: Arc<Mutex<PaperState>>,
+    paper_path: String,
 ) {
     // Initial full backfill.
     if let Err(e) = backfill(&store, &client, &meta, &refresh).await {
@@ -96,9 +98,17 @@ async fn refresh_loop(
             .into_iter()
             .map(|(coin, candles)| crate::momentum::PanelEntry { coin, candles })
             .collect::<Vec<_>>();
+        let max_lev: std::collections::HashMap<String, u32> = {
+            let m = meta.lock().await;
+            m.universe
+                .iter()
+                .map(|c| (c.name.clone(), c.max_leverage))
+                .collect()
+        };
         let mut p = paper.lock().await;
         if p.running {
-            crate::paper::step(&mut p, &panel);
+            crate::paper::step(&mut p, &panel, &max_lev);
+            let _ = p.save(std::path::Path::new(&paper_path));
         }
     }
 }
@@ -195,6 +205,7 @@ async fn refresh_meta(
 ) -> anyhow::Result<(Vec<CoinMeta>, Vec<MarketCtx>)> {
     let universe = client.universe().await?;
     let ctxs = client.market_ctxs().await?;
+    let (fee_taker, fee_maker) = client.fee_schedule().await.unwrap_or((0.00045, 0.00015));
     let liquid: Vec<String> = ctxs
         .iter()
         .filter(|c| !c.is_delisted && c.day_ntl_vlm >= LIQUID_VOL_USD)
@@ -205,6 +216,8 @@ async fn refresh_meta(
     m.ctxs = ctxs.clone();
     m.liquid = liquid;
     m.refreshed_at = now_ms();
+    m.fee_taker = fee_taker;
+    m.fee_maker = fee_maker;
     Ok((universe, ctxs))
 }
 
