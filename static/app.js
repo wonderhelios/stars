@@ -104,17 +104,17 @@ function renderBacktest(d) {
     metric("样本天数", d.days) +
     metric("参与币数", d.coins_traded);
 
-  $("bt-years").innerHTML = `<table><thead><tr><th>年份</th><th>天数</th><th>alpha 年化</th><th>t 统计</th></tr></thead>
+  $("bt-years").innerHTML = `<div class="table-scroll"><table><thead><tr><th>年份</th><th>天数</th><th>alpha 年化</th><th>t 统计</th></tr></thead>
     <tbody>${d.per_year.map((y) => `<tr><td>${y.year}</td><td>${y.days}</td>
       <td class="${y.alpha_annual >= 0 ? "pos" : "neg"}">${pct(y.alpha_annual * 100)}</td>
-      <td>${fmt(y.t_stat, 2)}</td></tr>`).join("")}</tbody></table>`;
+      <td>${fmt(y.t_stat, 2)}</td></tr>`).join("")}</tbody></table></div>`;
 
-  $("bt-cost").innerHTML = `<table><thead><tr><th>单边费率</th><th>净年化 alpha</th></tr></thead>
+  $("bt-cost").innerHTML = `<div class="table-scroll"><table><thead><tr><th>单边费率</th><th>净年化 alpha</th></tr></thead>
     <tbody>${d.cost_sensitivity.map((c) => `<tr><td>${(c.fee * 100).toFixed(3)}%</td>
-      <td class="${c.net_annual >= 0 ? "pos" : "neg"}">${pct(c.net_annual * 100)}</td></tr>`).join("")}</tbody></table>`;
+      <td class="${c.net_annual >= 0 ? "pos" : "neg"}">${pct(c.net_annual * 100)}</td></tr>`).join("")}</tbody></table></div>`;
 
-  $("bt-coins").innerHTML = `<table><thead><tr><th>币</th><th>入选次数</th></tr></thead>
-    <tbody>${d.top_coins.map(([c, n]) => `<tr><td>${c}</td><td>${n}</td></tr>`).join("")}</tbody></table>`;
+  $("bt-coins").innerHTML = `<div class="table-scroll"><table><thead><tr><th>币</th><th>入选次数</th></tr></thead>
+    <tbody>${d.top_coins.map(([c, n]) => `<tr><td>${c}</td><td>${n}</td></tr>`).join("")}</tbody></table></div>`;
 }
 
 // ---------- 纸交易 ----------
@@ -253,10 +253,10 @@ function renderPositions(positions) {
       </tr>`;
     })
     .join("");
-  $("pp-positions").innerHTML = `<table><thead><tr>
+  $("pp-positions").innerHTML = `<div class="table-scroll"><table><thead><tr>
     <th>币</th><th>方向</th><th>名义</th><th>均价</th><th>当前价</th>
     <th>未实现盈亏</th><th>爆仓价</th><th>距爆仓</th>
-  </tr></thead><tbody>${rows}</tbody></table>`;
+  </tr></thead><tbody>${rows}</tbody></table></div>`;
 }
 
 function renderTrades(trades, config) {
@@ -294,9 +294,9 @@ function renderTrades(trades, config) {
       共 ${list.length} 笔平仓 · 已实现盈亏 <b class="${realized >= 0 ? "pos" : "neg"}">${realized >= 0 ? "+" : ""}$${fmt(realized, 2)}</b>
       · 胜率 ${fmt((wins / list.length) * 100, 1)}%
     </div>
-    <table><thead><tr>
+    <div class="table-scroll"><table><thead><tr>
       <th>币</th><th>方向</th><th>均价</th><th>出场价</th><th>盈亏</th><th>盈亏%</th><th>持有</th><th>原因</th>
-    </tr></thead><tbody>${rows}</tbody></table>
+    </tr></thead><tbody>${rows}</tbody></table></div>
     ${pager("trades", list.length, tradesPage)}`;
 }
 
@@ -383,9 +383,9 @@ function renderDailyPnl(history, capital) {
       · 最好 ${ts2d(best.ts)} +$${fmt(best.pnl, 2)}
       · 最差 ${ts2d(worst.ts)} $${fmt(worst.pnl, 2)}
     </div>
-    <table><thead><tr>
+    <div class="table-scroll"><table><thead><tr>
       <th>日期(UTC)</th><th>净值</th><th>当日盈亏</th><th>当日%</th><th>同期市场%</th>
-    </tr></thead><tbody>${body}</tbody></table>
+    </tr></thead><tbody>${body}</tbody></table></div>
     ${pager("daily", list.length, dailyPage)}`;
 }
 
@@ -425,7 +425,7 @@ function renderHolding(trades) {
       平均持有 <b>${fmt(avgHold, 1)} 天</b> · 中位 <b>${fmt(medHold, 0)} 天</b>
       · 规律：<b>持有越久越赚钱</b>，短命仓位是亏损来源（这也是为什么不该加止损）
     </div>
-    <table><thead><tr>
+    <div class="table-scroll"><table><thead><tr>
       <th>持有期</th><th>笔数</th><th>占比</th><th>平均盈亏</th><th>合计盈亏</th><th>胜率</th>
     </tr></thead><tbody>${rows
       .map((r) => {
@@ -438,7 +438,7 @@ function renderHolding(trades) {
           <td>${fmt(r.win, 0)}%</td>
         </tr>`;
       })
-      .join("")}</tbody></table>`;
+      .join("")}</tbody></table></div>`;
 }
 
 // 选一组好看的坐标轴刻度
@@ -658,6 +658,24 @@ function slippageStats(records) {
   };
 }
 
+// 把交易所返回的结果文本拆成结构化字段（原来整列都是重复的一长串文字）
+function parseFill(r) {
+  const t = r.result || "";
+  const m = /成交\s+([\d.]+)@([\d.]+)/.exec(t);
+  if (m) {
+    const px = parseFloat(m[2]);
+    let slip = r.price > 0 ? ((px - r.price) / r.price) * 100 : 0;
+    if (r.side === "卖") slip = -slip; // 卖出成交价低于计划 = 成本增加
+    return { kind: "filled", px, slip };
+  }
+  if (/未成交|挂单/.test(t)) return { kind: "unfilled" };
+  if (/失败|错误|invalid|rejected/i.test(t)) {
+    return { kind: "failed", msg: t.replace(/^[^:：]*失败[:：]\s*/, "").slice(0, 60) };
+  }
+  if (t === "计划") return { kind: "plan" };
+  return { kind: "other", msg: t };
+}
+
 function renderMonitor(d) {
   if (!d) return;
   lastLiveData = d;
@@ -778,10 +796,10 @@ function renderMonitor(d) {
         </tr>`;
       })
       .join("");
-    $("mo-positions").innerHTML = err + `<table><thead><tr>
+    $("mo-positions").innerHTML = err + `<div class="table-scroll"><table><thead><tr>
       <th>币</th><th>方向</th><th>数量</th><th>入场价</th><th>当前价</th>
       <th>名义</th><th>未实现盈亏</th><th>爆仓价</th><th>距爆仓</th>
-    </tr></thead><tbody>${rows}</tbody></table>`;
+    </tr></thead><tbody>${rows}</tbody></table></div>`;
   }
 
   renderLiveChart(hist);
@@ -791,14 +809,44 @@ function renderMonitor(d) {
   if (livePage > pages - 1) livePage = 0;
   const pageItems = recs.slice(livePage * LIVE_PAGE_SIZE, (livePage + 1) * LIVE_PAGE_SIZE);
   $("mo-records").innerHTML = recs.length
-    ? `<table><thead><tr><th>时间</th><th>币</th><th>方向</th><th>动作</th><th>数量</th><th>价格</th><th>名义</th><th>结果</th></tr></thead><tbody>${pageItems
-        .map((r) => `<tr>
-          <td class="muted">${ts2m(r.ts)}</td>
-          <td>${r.coin}</td><td>${r.side}</td><td>${r.action}</td>
-          <td>${fmt(r.size, 6)}</td><td>${fmt(r.price, 6)}</td><td>$${fmt(r.notional, 0)}</td>
-          <td class="${r.live ? "" : "muted"}">${r.result}</td>
-        </tr>`)
-        .join("")}</tbody></table>
+    ? `<div class="table-scroll"><table><thead><tr>
+        <th>时间</th><th>币</th><th>方向</th><th>动作</th><th>数量</th>
+        <th>计划价</th><th>成交价</th><th>滑点</th><th>状态</th>
+      </tr></thead><tbody>${pageItems
+        .map((r) => {
+          const f = parseFill(r);
+          let pxCell = '<span class="muted">—</span>';
+          let slipCell = '<span class="muted">—</span>';
+          let status = '<span class="badge-mini mute">—</span>';
+          if (f.kind === "filled") {
+            status = '<span class="badge-mini ok">成交</span>';
+            pxCell = fmt(f.px, 6);
+            const cls = f.slip > 0.03 ? "neg" : f.slip < -0.03 ? "pos" : "muted";
+            slipCell = `<span class="${cls}">${f.slip >= 0 ? "+" : ""}${f.slip.toFixed(3)}%</span>`;
+          } else if (f.kind === "unfilled") {
+            status = '<span class="badge-mini warn">未成交</span>';
+          } else if (f.kind === "failed") {
+            status = `<span class="badge-mini err" title="${f.msg}">失败</span>`;
+          } else if (f.kind === "plan") {
+            status = '<span class="badge-mini mute">计划</span>';
+          }
+          const note =
+            f.kind === "failed" && f.msg
+              ? `<div class="muted" style="font-size:11px;max-width:220px;white-space:normal">${f.msg}</div>`
+              : "";
+          return `<tr>
+            <td class="muted">${ts2m(r.ts)}</td>
+            <td>${r.coin}</td>
+            <td>${sideLabel(r.side === "买" ? "long" : "short")}</td>
+            <td class="muted">${r.action}</td>
+            <td>${fmt(r.size, 6)}</td>
+            <td class="muted">${fmt(r.price, 6)}</td>
+            <td>${pxCell}</td>
+            <td>${slipCell}</td>
+            <td>${status}${note}</td>
+          </tr>`;
+        })
+        .join("")}</tbody></table></div>
       ${pager("live", recs.length, livePage, LIVE_PAGE_SIZE)}`
     : '<div class="empty">还没有下单记录</div>';
 }

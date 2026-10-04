@@ -138,6 +138,14 @@
       .live-status.off { background: var(--bg); border-color: var(--line); color: var(--muted); }
       .live-status.err { background: #fef2f2; border-color: #f6c9c9; color: #b3261e; }
 
+      /* 表格横向滚动容器（手机端需要） */
+      .table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+      .badge-mini { display: inline-block; padding: 1px 7px; border-radius: 999px; font-size: 11px; font-weight: 600; white-space: nowrap; }
+      .badge-mini.ok { background: var(--green-soft); color: var(--green); }
+      .badge-mini.warn { background: var(--amber-soft); color: var(--amber); }
+      .badge-mini.err { background: var(--red-soft); color: var(--red); }
+      .badge-mini.mute { background: var(--bg); color: var(--muted); }
+
       .logbox { background: #0f172a; color: #d6e2f5; font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
         font-size: 12px; line-height: 1.7; padding: 14px 16px; border-radius: 10px; overflow-x: auto;
         white-space: pre-wrap; word-break: break-all; margin: 0; }
@@ -169,6 +177,57 @@
       .muted { color: var(--muted); }
       .empty { text-align: center; padding: 28px; color: var(--muted); }
       .error { background: var(--red-soft); color: var(--red); border-radius: 8px; padding: 10px 14px; margin: 10px 0; }
+
+      /* ==================== 手机端适配 ==================== */
+      @media (max-width: 820px) {
+        body { font-size: 13px; }
+        .topbar { height: auto; flex-wrap: wrap; gap: 6px; padding: 8px 12px; }
+        .brand { font-size: 14px; }
+        .brand .dot { width: 8px; height: 8px; }
+        .nav {
+          order: 3; margin-left: 0; width: 100%;
+          overflow-x: auto; -webkit-overflow-scrolling: touch;
+          gap: 2px; padding-bottom: 2px;
+        }
+        .nav button { padding: 7px 10px; font-size: 13px; white-space: nowrap; }
+        .status-pill { margin-left: auto; font-size: 11px; max-width: 46%; }
+        #statusText { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+        main { padding: 10px; }
+        .panel { padding: 13px 14px; border-radius: 10px; margin-bottom: 12px; }
+        .panel-head { flex-direction: column; align-items: flex-start; gap: 8px; }
+        .panel-head h2 { font-size: 15px; }
+        .panel-kicker { font-size: 10px; }
+        .sub { font-size: 12px; }
+
+        .metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin: 10px 0; }
+        .metric { padding: 9px 10px; }
+        .metric .k { font-size: 11px; }
+        .metric .v { font-size: 16px; }
+        .metric .v.sm { font-size: 12px; }
+
+        .controls { gap: 9px; }
+        .field { flex: 1 1 45%; min-width: 0; }
+        .field input, .field select { width: 100%; min-width: 0; }
+        .btn { padding: 8px 12px; font-size: 13px; }
+
+        .table-scroll { margin: 0 -4px; }
+        table { font-size: 12px; }
+        th, td { padding: 6px 7px; white-space: nowrap; }
+        th { font-size: 11px; }
+
+        .logbox { font-size: 11px; padding: 10px 11px; line-height: 1.6; border-radius: 8px; }
+        .chart svg { min-width: 520px; }
+        .chart { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+        .pager { flex-wrap: wrap; gap: 8px; }
+        .live-status { font-size: 12px; padding: 10px 12px; gap: 4px 10px; }
+        .checklist li { padding: 9px 0; }
+      }
+
+      @media (max-width: 420px) {
+        .metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .metric .v { font-size: 15px; }
+      }
     </style>
   </head>
   <body>
