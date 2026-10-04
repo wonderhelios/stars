@@ -629,7 +629,22 @@ function renderMonitor(d) {
   const pnlPct = base > 0 ? (pnl / base) * 100 : 0;
   const buffer = d.liq_buffer_pct || 0;
 
+  const keyed = !!(c.key_path && c.key_path.trim());
+  const ready = !!(d.configured && keyed);
+  let warn = "";
+  if (c.armed && !keyed) {
+    warn =
+      '<div class="note neg"><b>⚠ 无法下单：API 钱包密钥路径为空。</b>' +
+      '「启用实盘」只是许可开关；没有密钥就无法签名发单。请到「实盘设置」填好密钥路径并保存。</div>';
+  } else if (c.armed && keyed) {
+    warn = '<div class="note">实盘已就绪：点「执行调仓」立即下单，或等 UTC 00:05 自动调仓。</div>';
+  } else {
+    warn = '<div class="note">实盘未启用：只会生成计划，不会发单。</div>';
+  }
+
   $("mo-metrics").innerHTML =
+    warn +
+    metric("实盘就绪", ready ? (c.armed ? "可下单" : "已配置(未启用)") : "未就绪", ready ? "pos" : "neg") +
     metric("账户净值", "$" + fmt(eq, 2)) +
     metric("累计盈亏", (pnl >= 0 ? "+" : "") + "$" + fmt(pnl, 2), pnl >= 0 ? "pos" : "neg") +
     metric("收益率", pct(pnlPct), pnlPct >= 0 ? "pos" : "neg") +
