@@ -167,6 +167,7 @@ pub struct LiveSnapshot {
 pub async fn snapshot(
     state: &LiveState,
     markets: &HashMap<String, MarketInfo>,
+    http: Option<reqwest::Client>,
 ) -> LiveSnapshot {
     let cfg = state.config.clone();
     let mut snap = LiveSnapshot {
@@ -192,7 +193,11 @@ pub async fn snapshot(
         snap.error = Some("未配置账户地址".into());
         return snap;
     }
-    let exec = match Exec::reader_for(Some(&cfg.account)).await {
+    let exec_res = match http {
+        Some(h) => Exec::reader_shared(h, Some(&cfg.account)).await,
+        None => Exec::reader_for(Some(&cfg.account)).await,
+    };
+    let exec = match exec_res {
         Ok(e) => e,
         Err(e) => {
             snap.error = Some(format!("{e}"));

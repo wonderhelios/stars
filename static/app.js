@@ -147,10 +147,6 @@ $("pp-toggle").addEventListener("click", async () => {
     }
   }
   await refreshPaper();
-// 实盘接口按次计费（Hyperliquid 有限流），所以低频轮询。
-refreshLiveConfig();
-refreshMonitor();
-setInterval(refreshMonitor, 60000);
 });
 
 $("pp-step").addEventListener("click", async () => {
@@ -158,19 +154,11 @@ $("pp-step").addEventListener("click", async () => {
   const d = await res.json();
   if (!res.ok) $("pp-error").innerHTML = `<div class="error">${d.error || "步进失败"}</div>`;
   await refreshPaper();
-// 实盘接口按次计费（Hyperliquid 有限流），所以低频轮询。
-refreshLiveConfig();
-refreshMonitor();
-setInterval(refreshMonitor, 60000);
 });
 
 $("pp-reset").addEventListener("click", async () => {
   await fetch("/api/paper/reset", { method: "POST" });
   await refreshPaper();
-// 实盘接口按次计费（Hyperliquid 有限流），所以低频轮询。
-refreshLiveConfig();
-refreshMonitor();
-setInterval(refreshMonitor, 60000);
 });
 
 async function refreshPaper() {
@@ -725,8 +713,10 @@ function renderMonitor(d) {
   const lastText = d.last_run_at
     ? `<span>上次调仓 <b>${ts2m(d.last_run_at)}</b>${d.last_live ? "（真实下单）" : "（仅生成计划）"}</span>`
     : "<span>还没有调仓记录</span>";
+  const ago = liveFetchedAt ? Math.round((Date.now() - liveFetchedAt) / 1000) : null;
+  const freshness = ago == null ? "" : `<span class="muted" id="mo-ago">数据更新于 ${ago} 秒前</span>`;
   $("mo-status").innerHTML = `<div class="live-status ${cls}">
-    <span class="tag">${tag}</span><span>${text}</span>${autoText}${lastText}
+    <span class="tag">${tag}</span><span>${text}</span>${autoText}${lastText}${freshness}
   </div>`;
 
   $("mo-metrics").innerHTML =
@@ -905,10 +895,19 @@ function renderLiveChart(history) {
     </div>`;
 }
 
-async function refreshMonitor() {
+let liveFetchedAt = 0;
+
+// 手机端省电：页面切到后台就停止轮询，切回来立刻拉一次
+document.addEventListener("visibilitychange", () => {
+  if (!document.hidden) refreshMonitor();
+});
+
+async function refreshMonitor(force) {
   if (liveBusy) return;
+  if (document.hidden && !force) return;
   try {
     const d = await fetchLive();
+    liveFetchedAt = Date.now();
     if (!liveLoaded) {
       lvConfigInto(d);
       liveLoaded = true;
@@ -919,14 +918,18 @@ async function refreshMonitor() {
   }
 }
 
-$("mo-refresh").addEventListener("click", refreshMonitor);
+$("mo-refresh").addEventListener("click", () => refreshMonitor(true));
 
 // ---------- 启动 ----------
 refreshStatus();
 setInterval(refreshStatus, 5000);
+setInterval(() => {
+  const el = $("mo-ago");
+  if (el && liveFetchedAt) el.textContent = `数据更新于 ${Math.round((Date.now() - liveFetchedAt) / 1000)} 秒前`;
+}, 1000);
 setInterval(refreshPaper, 10000);
 refreshPaper();
-// 实盘接口按次计费（Hyperliquid 有限流），所以低频轮询。
+// 每次轮询只打 3 个接口（账户 + 现货 + 批量价格），20 秒足够实时且远离限流。
 refreshLiveConfig();
-refreshMonitor();
-setInterval(refreshMonitor, 60000);
+refreshMonitor(true);
+setInterval(refreshMonitor, 20000);

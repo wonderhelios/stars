@@ -25,6 +25,8 @@ pub struct AppState {
     pub live_path: Arc<std::path::PathBuf>,
     pub meta: Arc<Mutex<MetaCache>>,
     pub refresh: Arc<Mutex<RefreshStatus>>,
+    /// Shared HTTP client so Hyperliquid connections are pooled.
+    pub http: reqwest::Client,
 }
 
 #[derive(Clone, Default)]
@@ -305,7 +307,7 @@ async fn live_markets(state: &AppState) -> std::collections::HashMap<String, cra
 async fn live_status(State(state): State<AppState>) -> Response {
     let st = state.live.lock().await.clone();
     let markets = live_markets(&state).await;
-    let snap = crate::live::snapshot(&st, &markets).await;
+    let snap = crate::live::snapshot(&st, &markets, Some(state.http.clone())).await;
     // Record at most one equity point per hour so the monitoring curve appears
     // the same day instead of after a couple of daily closes.
     if snap.equity > 0.0 {

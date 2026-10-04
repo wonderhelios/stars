@@ -84,6 +84,19 @@ impl Exec {
 
     /// Read-only client bound to an account so equity/positions can be read
     /// without any signing key (used by dry runs).
+    /// Build with a shared client so connections are reused across requests.
+    pub async fn reader_shared(http: reqwest::Client, account: Option<&str>) -> Result<Self> {
+        let account = match account {
+            Some(a) => Some(Address::from_str(a).context("invalid HL_ACCOUNT_ADDRESS")?),
+            None => None,
+        };
+        Ok(Self {
+            http,
+            trading: None,
+            account,
+        })
+    }
+
     pub async fn reader_for(account: Option<&str>) -> Result<Self> {
         let http = reqwest::Client::builder()
             .timeout(Duration::from_secs(20))
@@ -176,49 +189,55 @@ impl Exec {
     pub async fn account(&self) -> Result<Acct> {
         let account = self.account.context("read-only client has no account")?;
         let addr = account.to_string();
-        let perp = self
-            .info_post(json!({"type": "clearinghouseState", "user": addr}))
-            .await?;
+        // Both views in one round trip.
+        let (perp_res, spot_res) = tokio::join!(
+            self.info_post(json!({"type": "clearinghouseState", "user": addr})),
+            self.info_post(json!({"type": "spotClearinghouseState", "user": addr}))
+        );
+        let perp = perp_res?;
         let mut equity: f64 = perp["marginSummary"]["accountValue"]
             .as_str()
             .and_then(|s| s.parse().ok())
             .unwrap_or(0.0);
         // A unified account keeps its collateral in the spot balance, so the
-        // perp view alone reads 0. Retry instead of silently reporting zero.
+        // perp view alone reads 0. Retry rather than silently reporting zero.
         let mut last_err: Option<anyhow::Error> = None;
-        for attempt in 0..3 {
-            match self
-                .info_post(json!({"type": "spotClearinghouseState", "user": addr}))
-                .await
-            {
-                Ok(spot) => {
-                    let usdc: f64 = spot["balances"]
-                        .as_array()
-                        .map(|b| {
-                            b.iter()
-                                .filter(|x| x["coin"].as_str() == Some("USDC"))
-                                .filter_map(|x| x["total"].as_str()?.parse::<f64>().ok())
-                                .sum()
-                        })
-                        .unwrap_or(0.0);
-                    if usdc > equity {
-                        equity = usdc;
-                    }
-                    last_err = None;
-                    break;
-                }
-                Err(e) => {
-                    last_err = Some(e);
-                    if attempt < 2 {
-                        tokio::time::sleep(Duration::from_millis(400)).await;
+        let mut spot_opt = spot_res.ok();
+        for attempt in 0..2 {
+            let Some(spot) = spot_opt.take() else {
+                match self
+                    .info_post(json!({"type": "spotClearinghouseState", "user": addr}))
+                    .await
+                {
+                    Ok(v) => spot_opt = Some(v),
+                    Err(e) => {
+                        last_err = Some(e);
+                        if attempt == 0 {
+                            tokio::time::sleep(Duration::from_millis(400)).await;
+                        }
+                        continue;
                     }
                 }
+                continue;
+            };
+            let usdc: f64 = spot["balances"]
+                .as_array()
+                .map(|b| {
+                    b.iter()
+                        .filter(|x| x["coin"].as_str() == Some("USDC"))
+                        .filter_map(|x| x["total"].as_str()?.parse::<f64>().ok())
+                        .sum()
+                })
+                .unwrap_or(0.0);
+            if usdc > equity {
+                equity = usdc;
             }
+            last_err = None;
+            break;
         }
         if let Some(e) = last_err {
-            // Only fatal when the perp side gave us nothing either.
             if equity <= 0.0 {
-                return Err(e).context("读取账户余额失败（现货接口连续 3 次）");
+                return Err(e).context("读取账户余额失败（现货接口）");
             }
         }
         let mut positions = HashMap::new();

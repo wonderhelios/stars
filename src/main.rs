@@ -57,6 +57,10 @@ async fn main() -> anyhow::Result<()> {
         paper_path: Arc::new(std::path::PathBuf::from(&paper_path)),
         live: live.clone(),
         live_path: Arc::new(std::path::PathBuf::from(&live_path)),
+        http: reqwest::Client::builder()
+            .timeout(Duration::from_secs(20))
+            .pool_max_idle_per_host(8)
+            .build()?,
         meta: meta.clone(),
         refresh: refresh.clone(),
     };
