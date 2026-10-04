@@ -1,369 +1,280 @@
-use std::str::FromStr;
-use std::sync::Arc;
-use std::time::Duration;
+//! Paper-trading engine: runs the momentum strategy forward with daily
+//! rebalance, tracking strategy equity vs an equal-weight benchmark to validate
+//! live execution against the backtest.
 
-use rust_decimal::Decimal;
-use tokio::time::interval;
-use tracing::{error, info};
+use crate::momentum::PanelEntry;
+use serde::{Deserialize, Serialize};
 
-use crate::okx::RestClient;
-pub use crate::paper_store::PaperDb;
-use crate::paper_store::{due_outcomes, CandidateSnapshot, FundingSnapshot, SignalRow};
-use crate::signal::{classify, Signal, TRADE_COST_PCT};
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct PaperConfig {
+    pub lookback: usize,
+    pub top_frac: f64,
+    pub min_vol_usd: f64,
+    pub fee: f64, // per-side
+    pub capital: f64,
+}
 
-const SCAN_INTERVAL_SECS: u64 = 300;
-const TRACK_INTERVAL_SECS: u64 = 60;
-
-// ========== 扫描任务 ==========
-
-pub async fn scan_once(
-    client: &RestClient,
-    db: &PaperDb,
-    funding_threshold: Decimal,
-) -> anyhow::Result<usize> {
-    let scan_started_at = now_ms();
-    let tickers = client.all_tickers_usdt_swap().await?;
-    let all_funding = match client.all_funding_now().await {
-        Ok(rows) => Some(rows),
-        Err(error) => {
-            error!("OKX whole-market funding snapshot unavailable: {}", error);
-            None
+impl Default for PaperConfig {
+    fn default() -> Self {
+        Self {
+            lookback: 14,
+            top_frac: 0.2,
+            min_vol_usd: 5_000_000.0,
+            fee: 0.00045,
+            capital: 10_000.0,
         }
+    }
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct PaperPosition {
+    pub coin: String,
+    pub notional: f64,
+    pub entry_close: f64,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct EquityPoint {
+    pub ts: i64,
+    pub strategy: f64,
+    pub benchmark: f64,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize, Default)]
+pub struct PaperState {
+    pub running: bool,
+    pub config: Option<PaperConfig>,
+    pub equity: f64,
+    pub benchmark: f64,
+    pub positions: Vec<PaperPosition>,
+    pub last_ts: Option<i64>,
+    pub started_at: Option<i64>,
+    pub days_elapsed: usize,
+    pub total_cost: f64,
+    pub history: Vec<EquityPoint>,
+}
+
+impl PaperState {
+    pub fn load(path: &std::path::Path) -> Self {
+        std::fs::read_to_string(path)
+            .ok()
+            .and_then(|s| serde_json::from_str(&s).ok())
+            .unwrap_or_default()
+    }
+
+    pub fn save(&self, path: &std::path::Path) -> anyhow::Result<()> {
+        if let Some(parent) = path.parent() {
+            std::fs::create_dir_all(parent)?;
+        }
+        std::fs::write(path, serde_json::to_string_pretty(self)?)?;
+        Ok(())
+    }
+}
+
+/// Advance the paper trade by one daily close. On the first call it only sets
+/// the initial positions at the latest close (no return is booked yet); each
+/// later call marks positions to market for the new day, then rebalances.
+pub fn step(state: &mut PaperState, panel: &[PanelEntry]) {
+    let Some(cfg) = state.config.clone() else {
+        return;
     };
 
-    if let Some(funding) = &all_funding {
-        let snapshots = tickers
+    // Build timeline + per-coin close & dollar-volume maps.
+    let mut timeline: std::collections::BTreeSet<i64> = Default::default();
+    let mut closes: std::collections::HashMap<String, std::collections::BTreeMap<i64, f64>> =
+        Default::default();
+    let mut dollar_vol: std::collections::HashMap<String, std::collections::BTreeMap<i64, f64>> =
+        Default::default();
+    for e in panel {
+        let mut cm = std::collections::BTreeMap::new();
+        let mut vm = std::collections::BTreeMap::new();
+        for c in &e.candles {
+            if c.c > 0.0 {
+                timeline.insert(c.t);
+                cm.insert(c.t, c.c);
+                vm.insert(c.t, c.v * c.c);
+            }
+        }
+        closes.insert(e.coin.clone(), cm);
+        dollar_vol.insert(e.coin.clone(), vm);
+    }
+    let ts: Vec<i64> = timeline.into_iter().collect();
+    let vol_window = 30usize;
+    if ts.len() < cfg.lookback + vol_window + 2 {
+        return;
+    }
+
+    // Target day index: latest close on first call, next close afterwards.
+    let first = state.last_ts.is_none();
+    let i = if first {
+        ts.len() - 1
+    } else {
+        let lt = state.last_ts.unwrap();
+        match ts.binary_search(&lt) {
+            Ok(j) if j + 1 < ts.len() => j + 1,
+            _ => return, // no new close yet
+        }
+    };
+    if i < cfg.lookback + vol_window {
+        return;
+    }
+    let t = ts[i];
+
+    // Signal = trailing `lookback` return at close t, restricted to coins with
+    // rolling `vol_window` mean dollar volume >= min_vol_usd.
+    let mut sigs: Vec<(String, f64)> = Vec::new();
+    for (coin, cm) in closes.iter() {
+        let Some(vm) = dollar_vol.get(coin) else { continue };
+        let mut vols: Vec<f64> = Vec::with_capacity(vol_window);
+        for j in (i - vol_window)..i {
+            if let Some(v) = vm.get(&ts[j]) {
+                vols.push(*v);
+            }
+        }
+        if vols.len() < 5 {
+            continue;
+        }
+        let avg_vol: f64 = vols.iter().sum::<f64>() / vols.len() as f64;
+        if avg_vol < cfg.min_vol_usd {
+            continue;
+        }
+        let now = cm.get(&t);
+        let past = cm.get(&ts[i - cfg.lookback]);
+        let (Some(now), Some(past)) = (now, past) else { continue };
+        if *now <= 0.0 || *past <= 0.0 {
+            continue;
+        }
+        sigs.push((coin.clone(), now / past - 1.0));
+    }
+    if sigs.len() < 10 {
+        return;
+    }
+    sigs.sort_by(|a, b| a.1.partial_cmp(&b.1).unwrap());
+    let k = ((sigs.len() as f64 * cfg.top_frac).round() as usize).max(1);
+    let winners: Vec<&(String, f64)> = sigs[sigs.len() - k..].iter().collect();
+
+    // First call: only establish positions, no return booked.
+    if first {
+        let per = cfg.capital / k as f64;
+        state.positions = winners
             .iter()
-            .filter(|ticker| ticker.volume_quote_24h() >= Decimal::from(100_000))
-            .filter_map(|ticker| {
-                let rate = funding.get(&ticker.inst_id)?;
-                Some(FundingSnapshot {
-                    observed_at: scan_started_at,
-                    inst_id: ticker.inst_id.clone(),
-                    funding_rate: rate.rate,
-                    funding_period_hours: rate.period_hours?,
-                    next_funding_at: rate.next_funding_at,
-                    prior_24h_return: ticker.prior_24h_pct(),
-                    reference_price: ticker.last,
-                    bid_price: ticker.bid,
-                    ask_price: ticker.ask,
-                    quote_kind: Some("top"),
-                    quote_observed_at: (ticker.bid.is_some() && ticker.ask.is_some())
-                        .then_some(scan_started_at),
-                    volume_quote_24h: ticker.volume_quote_24h(),
-                    open_interest_base: None,
-                })
+            .map(|w| PaperPosition {
+                coin: w.0.clone(),
+                notional: per,
+                entry_close: closes.get(&w.0).and_then(|m| m.get(&t)).copied().unwrap_or(0.0),
             })
             .collect();
-        match db.record_funding_snapshots(snapshots).await {
-            Ok(count) => info!("OKX funding research snapshot: {} markets", count),
-            Err(error) => error!("OKX funding research snapshot: {}", error),
-        }
+        state.last_ts = Some(t);
+        state.started_at = Some(t);
+        state.days_elapsed = 1;
+        state.history.push(EquityPoint {
+            ts: t,
+            strategy: state.equity,
+            benchmark: state.benchmark,
+        });
+        return;
     }
 
-    let mut triggered = 0usize;
-    let mut candidates = 0usize;
-    let mut recorded = 0usize;
-    let mut failed = 0usize;
-
-    for t in &tickers {
-        if t.volume_quote_24h() < Decimal::from(500_000) {
-            continue;
-        }
-        if t.open_24h.is_zero() {
-            continue;
-        }
-
-        let prior_pct = t.prior_24h_pct();
-
-        if prior_pct.abs() < Decimal::from(3) {
-            continue;
-        }
-
-        candidates += 1;
-
-        let funding_now = if let Some(row) = all_funding
-            .as_ref()
-            .and_then(|rows| rows.get(&t.inst_id))
-            .cloned()
-        {
-            row
-        } else {
-            match client.funding_now(&t.inst_id).await {
-                Ok(row) => row,
-                Err(error) => {
-                    error!("funding {}: {}", t.inst_id, error);
-                    failed += 1;
-                    continue;
+    // Mark current positions to market (prev close -> t).
+    let t_prev = ts[i - 1];
+    let mut strat_ret = 0.0;
+    let mut weight = 0.0;
+    for p in &state.positions {
+        if let Some(cm) = closes.get(&p.coin) {
+            if let (Some(prev), Some(cur)) = (cm.get(&t_prev), cm.get(&t)) {
+                if *prev > 0.0 {
+                    strat_ret += (cur / prev - 1.0) * p.notional;
+                    weight += p.notional;
                 }
             }
-        };
-        let funding = funding_now.rate;
-
-        if funding <= funding_threshold {
-            continue;
         }
-
-        // 逐个请求资金费会耗时；重新读取此刻的价格和 24h 变化，避免旧快照充当入场价。
-        let fresh = match client.ticker(&t.inst_id).await {
-            Ok(row) => row,
-            Err(e) => {
-                error!("ticker {}: {}", t.inst_id, e);
-                failed += 1;
-                continue;
+    }
+    if weight > 0.0 {
+        strat_ret /= weight;
+    }
+    let bench_rets: Vec<f64> = sigs
+        .iter()
+        .filter_map(|(coin, _)| {
+            let cm = closes.get(coin)?;
+            let prev = cm.get(&t_prev)?;
+            let cur = cm.get(&t)?;
+            if *prev > 0.0 {
+                Some(cur / prev - 1.0)
+            } else {
+                None
             }
-        };
-        if fresh.volume_quote_24h() < Decimal::from(500_000) || fresh.last <= Decimal::ZERO {
-            continue;
-        }
-        let prior_pct = fresh.prior_24h_pct();
-        if prior_pct.abs() < Decimal::from(3) {
-            continue;
-        }
-        let Some(kind) = classify(prior_pct, funding) else {
-            continue;
-        };
+        })
+        .collect();
+    let bench_ret = if bench_rets.is_empty() {
+        0.0
+    } else {
+        bench_rets.iter().sum::<f64>() / bench_rets.len() as f64
+    };
 
-        let triggered_at = now_ms();
+    state.equity *= 1.0 + strat_ret;
+    state.benchmark *= 1.0 + bench_ret;
 
-        let snapshot = CandidateSnapshot {
-            scan_started_at,
-            observed_at: triggered_at,
-            inst_id: t.inst_id.clone(),
-            kind: kind.to_string(),
-            funding_rate: funding,
-            funding_period_hours: funding_now.period_hours,
-            next_funding_at: funding_now.next_funding_at,
-            prior_24h_return: prior_pct,
-            reference_price: fresh.last,
-            bid_price: fresh.bid,
-            ask_price: fresh.ask,
-            quote_kind: Some("top"),
-            quote_observed_at: (fresh.bid.is_some() && fresh.ask.is_some()).then_some(triggered_at),
-            volume_quote_24h: fresh.volume_quote_24h(),
-            open_interest_base: None,
-            max_leverage: None,
-            size_decimals: None,
-        };
-        if let Err(e) = db.record_candidate(snapshot).await {
-            error!("candidate {}: {}", t.inst_id, e);
-            failed += 1;
-        } else {
-            recorded += 1;
-        }
-
-        let sig = Signal {
-            inst_id: t.inst_id.clone(),
-            kind: kind.to_string(),
-            triggered_at,
-            funding_rate: funding,
-            prior_24h_return: prior_pct,
-            entry_price: fresh.last,
-        };
-
-        match db.insert(&sig).await {
-            Ok(true) => {
-                triggered += 1;
-                info!(
-                    "信号触发: {} {} prior={:+.2}% funding={:+.4}% entry={}",
-                    sig.inst_id,
-                    sig.kind,
-                    sig.prior_24h_return,
-                    sig.funding_rate * Decimal::from(100),
-                    sig.entry_price
-                );
-            }
-            Ok(false) => {}
-            Err(e) => error!("insert {}: {}", sig.inst_id, e),
+    // Rebalance to winners, equal weight, apply turnover cost.
+    let per = cfg.capital / k as f64;
+    let mut turnover = 0.0;
+    let old: std::collections::HashSet<String> =
+        state.positions.iter().map(|p| p.coin.clone()).collect();
+    let mut new_positions = Vec::new();
+    for w in &winners {
+        let entry = closes.get(&w.0).and_then(|m| m.get(&t)).copied().unwrap_or(0.0);
+        new_positions.push(PaperPosition {
+            coin: w.0.clone(),
+            notional: per,
+            entry_close: entry,
+        });
+        if !old.contains(&w.0) {
+            turnover += per;
         }
     }
+    let cost = turnover * 2.0 * cfg.fee;
+    state.total_cost += cost;
+    state.equity -= cost;
 
-    db.finish_scan(
-        scan_started_at,
-        now_ms(),
-        tickers.len(),
-        candidates,
-        recorded,
-        failed,
-    )
-    .await?;
-    info!(
-        "扫描完成: 候选 {} 快照 {} 失败 {} 触发 {}",
-        candidates, recorded, failed, triggered
-    );
-    Ok(triggered)
-}
-
-// ========== 跟踪任务 ==========
-
-pub async fn update_open_signals(client: &RestClient, db: &PaperDb) -> anyhow::Result<usize> {
-    let open = db.open_signals().await?;
-    if open.is_empty() {
-        return Ok(0);
-    }
-
-    let now = now_ms();
-    let mut updated = 0usize;
-
-    match client.all_tickers_usdt_swap().await {
-        Ok(tickers) => {
-            let prices = tickers
-                .into_iter()
-                .map(|ticker| (ticker.inst_id, ticker.last))
-                .collect();
-            if let Err(error) = db.update_path_extremes(now, prices).await {
-                error!("OKX path update: {}", error);
-            }
-        }
-        Err(error) => error!("OKX path snapshot: {}", error),
-    }
-
-    for row in &open {
-        for (_, col, target_ts) in due_outcomes(row, now) {
-            match client.price_at_time(&row.inst_id, target_ts).await {
-                Ok(Some(price)) => {
-                    if let Err(e) = db.update_price(row.id, col, price).await {
-                        error!("update {} {}: {}", row.id, col, e);
-                    } else {
-                        updated += 1;
-                    }
-                }
-                Ok(None) => error!("no price for {} at ts {}", row.inst_id, target_ts),
-                Err(e) => error!("fetch {} price at {}: {}", row.inst_id, target_ts, e),
-            }
-        }
-    }
-
-    if updated > 0 {
-        info!("跟踪更新: {} 条价格", updated);
-    }
-    Ok(updated)
-}
-
-// ========== 报表 ==========
-
-pub async fn report(db: &PaperDb) -> anyhow::Result<()> {
-    let rows = db.all_signals().await?;
-    if rows.is_empty() {
-        println!("\n暂无信号记录\n");
-        return Ok(());
-    }
-
-    let cost = Decimal::from_str(TRADE_COST_PCT).unwrap();
-
-    println!("\n\n========== 纸上交易复盘 ==========");
-    println!("  信号总数: {}", rows.len());
-
-    let completed = rows.iter().filter(|r| r.t24_price.is_some()).count();
-    let pending = rows.len() - completed;
-    println!("  已完成 T+24h: {}  未完成: {}", completed, pending);
-
-    use std::collections::BTreeMap;
-    let mut by_kind: BTreeMap<String, Vec<&SignalRow>> = BTreeMap::new();
-    for r in &rows {
-        by_kind.entry(r.kind.clone()).or_default().push(r);
-    }
-
-    for (kind, group) in &by_kind {
-        println!("\n  【{}】共 {} 个信号", kind, group.len());
-
-        for (h, label) in [(1i64, "T+ 1h"), (4, "T+ 4h"), (8, "T+ 8h"), (24, "T+24h")] {
-            let mut nets: Vec<Decimal> = Vec::new();
-            for r in group {
-                let p = match h {
-                    1 => r.t1_price,
-                    4 => r.t4_price,
-                    8 => r.t8_price,
-                    24 => r.t24_price,
-                    _ => None,
-                };
-                let Some(p) = p else { continue };
-                if r.entry_price.is_zero() {
-                    continue;
-                }
-                let raw_ret = (p - r.entry_price) / r.entry_price * Decimal::from(100);
-                nets.push(-raw_ret - cost);
-            }
-
-            if nets.is_empty() {
-                println!("      {}: 暂无数据", label);
-                continue;
-            }
-
-            let n = nets.len();
-            let sum: Decimal = nets.iter().copied().sum();
-            let avg = sum / Decimal::from(n as i64);
-            let mut sorted = nets.clone();
-            sorted.sort();
-            let median = sorted[n / 2];
-            let win = nets.iter().filter(|v| **v > Decimal::ZERO).count();
-            let wr = Decimal::from(win as i64) / Decimal::from(n as i64) * Decimal::from(100);
-
-            println!(
-                "      {}: 净均{:+.2}%  中位{:+.2}%  胜率{:.1}%  n={}",
-                label, avg, median, wr, n
-            );
-        }
-    }
-
-    Ok(())
-}
-
-// ========== 运行入口 ==========
-
-pub async fn run_daemon(db_path: &str, funding_threshold: Decimal) -> anyhow::Result<()> {
-    let db = Arc::new(PaperDb::open(db_path)?);
-    let client = Arc::new(RestClient::new());
-
-    info!(
-        "纸上交易监控启动: 数据库={} funding阈值={}",
-        db_path, funding_threshold
-    );
-    info!(
-        "扫描间隔: {}s  跟踪间隔: {}s",
-        SCAN_INTERVAL_SECS, TRACK_INTERVAL_SECS
-    );
-
-    let db1 = db.clone();
-    let client1 = client.clone();
-    tokio::spawn(async move {
-        let mut ticker = interval(Duration::from_secs(SCAN_INTERVAL_SECS));
-        loop {
-            ticker.tick().await;
-            if let Err(e) = scan_once(&client1, &db1, funding_threshold).await {
-                error!("scan_once: {}", e);
-            }
-        }
+    state.positions = new_positions;
+    state.last_ts = Some(t);
+    state.days_elapsed += 1;
+    state.history.push(EquityPoint {
+        ts: t,
+        strategy: state.equity,
+        benchmark: state.benchmark,
     });
-
-    let db2 = db.clone();
-    let client2 = client.clone();
-    tokio::spawn(async move {
-        let mut ticker = interval(Duration::from_secs(TRACK_INTERVAL_SECS));
-        loop {
-            ticker.tick().await;
-            if let Err(e) = update_open_signals(&client2, &db2).await {
-                error!("update_open_signals: {}", e);
-            }
-        }
-    });
-
-    tokio::signal::ctrl_c().await?;
-    info!("收到 Ctrl+C，退出");
-    Ok(())
 }
 
-pub async fn run_scan_once(db_path: &str, funding_threshold: Decimal) -> anyhow::Result<()> {
-    let db = PaperDb::open(db_path)?;
-    let client = RestClient::new();
-    let n = scan_once(&client, &db, funding_threshold).await?;
-    println!("扫描完成: 触发 {} 个信号", n);
-    Ok(())
+#[derive(Serialize)]
+pub struct PaperSnapshot {
+    pub running: bool,
+    pub equity: f64,
+    pub benchmark: f64,
+    pub alpha_pct: f64,
+    pub strategy_ret_pct: f64,
+    pub benchmark_ret_pct: f64,
+    pub days_elapsed: usize,
+    pub total_cost: f64,
+    pub positions: Vec<PaperPosition>,
+    pub history: Vec<EquityPoint>,
+    pub config: Option<PaperConfig>,
 }
 
-pub(crate) fn now_ms() -> i64 {
-    std::time::SystemTime::now()
-        .duration_since(std::time::UNIX_EPOCH)
-        .unwrap()
-        .as_millis() as i64
+pub fn snapshot(state: &PaperState) -> PaperSnapshot {
+    let capital = state.config.as_ref().map(|c| c.capital).unwrap_or(1.0);
+    let strat_ret = state.equity / capital - 1.0;
+    let bench_ret = state.benchmark / capital - 1.0;
+    PaperSnapshot {
+        running: state.running,
+        equity: state.equity,
+        benchmark: state.benchmark,
+        alpha_pct: (strat_ret - bench_ret) * 100.0,
+        strategy_ret_pct: strat_ret * 100.0,
+        benchmark_ret_pct: bench_ret * 100.0,
+        days_elapsed: state.days_elapsed,
+        total_cost: state.total_cost,
+        positions: state.positions.clone(),
+        history: state.history.clone(),
+        config: state.config.clone(),
+    }
 }

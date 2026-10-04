@@ -1,266 +1,216 @@
-mod binance;
-mod error;
-mod execution_research;
-mod hyperliquid;
-mod okx;
+mod hl;
+mod momentum;
 mod paper;
-mod paper_store;
-mod research;
-mod research_lab;
-mod signal;
-mod state;
-mod types;
+mod store;
 mod web;
 
-use rust_decimal::Decimal;
-use state::AppState;
-use std::str::FromStr;
+use crate::hl::{CoinMeta, HlClient, MarketCtx};
+use crate::paper::PaperState;
+use crate::store::Store;
+use crate::web::{AppState, MetaCache, RefreshStatus};
 use std::sync::Arc;
 use std::time::Duration;
-use tokio::time::timeout;
+use tokio::sync::Mutex;
 use tracing::{error, info};
-use tracing_subscriber::EnvFilter;
 
-/// 单次扫描的整体超时，超过就放弃本轮
-const SCAN_TIMEOUT: Duration = Duration::from_secs(120);
-/// 单次跟踪的超时
-const TRACK_TIMEOUT: Duration = Duration::from_secs(60);
+/// Start of daily-candle backfill (Hyperliquid perp launch era).
+const CANDLE_START_MS: i64 = 1688000000000; // 2023-06-29
+/// Coins with current 24h volume above this are "liquid" (prioritized + paper universe).
+const LIQUID_VOL_USD: f64 = 1_000_000.0;
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
     tracing_subscriber::fmt()
-        .with_env_filter(EnvFilter::try_from_default_env().unwrap_or_else(|_| "info".into()))
+        .with_env_filter(
+            tracing_subscriber::EnvFilter::try_from_default_env()
+                .unwrap_or_else(|_| "info".into()),
+        )
         .init();
 
-    let args: Vec<String> = std::env::args().collect();
-    let okx_db_path = std::env::var("OKX_QUANT_DB")
-        .unwrap_or_else(|_| "/var/lib/okx-quant/paper.sqlite".to_string());
-    let binance_db_path = std::env::var("OKX_QUANT_BINANCE_DB")
-        .unwrap_or_else(|_| "/var/lib/okx-quant/binance.sqlite".to_string());
-    let hl_db_path = std::env::var("OKX_QUANT_HL_DB")
-        .unwrap_or_else(|_| "/var/lib/okx-quant/hyperliquid.sqlite".to_string());
+    let db_path = std::env::var("STARS_DB")
+        .unwrap_or_else(|_| "/var/lib/stars/candles.sqlite".to_string());
+    let paper_path = std::env::var("STARS_PAPER")
+        .unwrap_or_else(|_| "/var/lib/stars/paper.json".to_string());
 
-    for path in [&okx_db_path, &binance_db_path, &hl_db_path] {
-        if let Some(parent) = std::path::Path::new(path).parent() {
-            std::fs::create_dir_all(parent)?;
-        }
-    }
+    let store = Arc::new(Store::open(std::path::Path::new(&db_path))?);
+    let client = HlClient::new();
+    let paper = Arc::new(Mutex::new(PaperState::load(std::path::Path::new(&paper_path))));
+    let meta = Arc::new(Mutex::new(MetaCache::default()));
+    let refresh = Arc::new(Mutex::new(RefreshStatus::default()));
 
-    if args.len() > 1 {
-        match args[1].as_str() {
-            "research" => {
-                if args.len() > 2 && args[2] == "scan" {
-                    let top_n: usize = args.get(3).and_then(|s| s.parse().ok()).unwrap_or(200);
-                    return research::run_scan(top_n).await;
-                }
-                return research::run(&args[2..]).await;
-            }
-            "paper" => {
-                let threshold = Decimal::from_str(signal::FUNDING_THRESHOLD_STR)?;
-                let sub = args.get(2).map(|s| s.as_str()).unwrap_or("run");
-                return match sub {
-                    "run" => paper::run_daemon(&okx_db_path, threshold).await,
-                    "scan" => paper::run_scan_once(&okx_db_path, threshold).await,
-                    "report" => {
-                        let db = paper::PaperDb::open(&okx_db_path)?;
-                        paper::report(&db).await
-                    }
-                    other => {
-                        eprintln!("未知子命令: paper {}", other);
-                        Ok(())
-                    }
-                };
-            }
-            "binance" => {
-                let threshold = Decimal::from_str(signal::FUNDING_THRESHOLD_STR)?;
-                let sub = args.get(2).map(|s| s.as_str()).unwrap_or("run");
-                return match sub {
-                    "run" => binance::paper::run_daemon(&binance_db_path, threshold).await,
-                    other => {
-                        eprintln!("未知子命令: binance {}", other);
-                        Ok(())
-                    }
-                };
-            }
-            "hyperliquid" => {
-                let threshold = Decimal::from_str(signal::FUNDING_THRESHOLD_STR)?;
-                let sub = args.get(2).map(|s| s.as_str()).unwrap_or("run");
-                return match sub {
-                    "run" => hyperliquid::paper::run_daemon(&hl_db_path, threshold).await,
-                    other => {
-                        eprintln!("未知子命令: hyperliquid {}", other);
-                        Ok(())
-                    }
-                };
-            }
-            _ => {}
-        }
-    }
-
-    // ===== 默认 serve 模式 =====
-    let state = AppState::new();
-    let okx_paper_db = Arc::new(paper::PaperDb::open(&okx_db_path)?);
-    let binance_paper_db = Arc::new(binance::paper::BinancePaperDb::open(&binance_db_path)?);
-    let hl_paper_db = Arc::new(hyperliquid::paper::HyperliquidPaperDb::open(&hl_db_path)?);
-
-    let threshold = Decimal::from_str(signal::FUNDING_THRESHOLD_STR)?;
-
-    // ===== OKX（t=0s 启动）=====
-    {
-        let db = okx_paper_db.clone();
-        let th = threshold;
-        tokio::spawn(async move {
-            let client = Arc::new(okx::RestClient::new());
-            // interval 的首个 tick 会立即完成，启动后立刻扫描并补齐到期价格。
-            let mut scan_ticker = tokio::time::interval(Duration::from_secs(300));
-            let mut track_ticker = tokio::time::interval(Duration::from_secs(60));
-            loop {
-                tokio::select! {
-                    _ = scan_ticker.tick() => {
-                        match timeout(SCAN_TIMEOUT, paper::scan_once(&client, &db, th)).await {
-                            Ok(Ok(n)) => info!("OKX 扫描: {} 触发", n),
-                            Ok(Err(e)) => error!("OKX scan: {}", e),
-                            Err(_) => error!("OKX scan timeout"),
-                        }
-                    }
-                    _ = track_ticker.tick() => {
-                        match timeout(TRACK_TIMEOUT, paper::update_open_signals(&client, &db)).await {
-                            Ok(Ok(_)) => {}
-                            Ok(Err(e)) => error!("OKX track: {}", e),
-                            Err(_) => error!("OKX track timeout"),
-                        }
-                    }
-                }
-            }
-        });
-    }
-
-    // ===== 币安（t=100s 启动）=====
-    {
-        let db = binance_paper_db.clone();
-        let th = threshold;
-        tokio::spawn(async move {
-            tokio::time::sleep(Duration::from_secs(100)).await;
-            let client = Arc::new(binance::BinanceRestClient::new());
-            let mut scan_ticker = tokio::time::interval(Duration::from_secs(300));
-            let mut track_ticker = tokio::time::interval(Duration::from_secs(60));
-            loop {
-                tokio::select! {
-                    _ = scan_ticker.tick() => {
-                        match timeout(SCAN_TIMEOUT, binance::paper::scan_once(&client, &db, th)).await {
-                            Ok(Ok(n)) => info!("BN 扫描: {} 触发", n),
-                            Ok(Err(e)) => error!("BN scan: {}", e),
-                            Err(_) => error!("BN scan timeout"),
-                        }
-                    }
-                    _ = track_ticker.tick() => {
-                        match timeout(TRACK_TIMEOUT, binance::paper::update_open_signals(&client, &db)).await {
-                            Ok(Ok(_)) => {}
-                            Ok(Err(e)) => error!("BN track: {}", e),
-                            Err(_) => error!("BN track timeout"),
-                        }
-                    }
-                }
-            }
-        });
-    }
-
-    // ===== Hyperliquid（t=200s 启动）=====
-    {
-        let db = hl_paper_db.clone();
-        let th = threshold;
-        tokio::spawn(async move {
-            tokio::time::sleep(Duration::from_secs(200)).await;
-            let client = Arc::new(hyperliquid::HyperliquidRestClient::new());
-            // Outcome requests can take minutes on a slow upstream. Keep them
-            // independent from signal/path scanning so neither task starves the other.
-            let tracking_client = client.clone();
-            let tracking_db = db.clone();
-            tokio::spawn(async move {
-                let mut ticker = tokio::time::interval(Duration::from_secs(60));
-                ticker.set_missed_tick_behavior(tokio::time::MissedTickBehavior::Skip);
-                loop {
-                    ticker.tick().await;
-                    match timeout(
-                        TRACK_TIMEOUT,
-                        hyperliquid::paper::update_open_signals(&tracking_client, &tracking_db),
-                    )
-                    .await
-                    {
-                        Ok(Ok(_)) => {}
-                        Ok(Err(e)) => error!("HL track: {}", e),
-                        Err(_) => error!("HL track timeout"),
-                    }
-                }
-            });
-            let mut ticker = tokio::time::interval(Duration::from_secs(300));
-            ticker.set_missed_tick_behavior(tokio::time::MissedTickBehavior::Skip);
-            loop {
-                ticker.tick().await;
-                match timeout(
-                    SCAN_TIMEOUT,
-                    hyperliquid::paper::scan_once(&client, &db, th),
-                )
-                .await
-                {
-                    Ok(Ok(n)) => info!("HL 扫描: {} 触发", n),
-                    Ok(Err(e)) => error!("HL scan: {}", e),
-                    Err(_) => error!("HL scan timeout"),
-                }
-            }
-        });
-    }
-
-    {
-        let db = hl_paper_db.clone();
-        tokio::spawn(async move {
-            let client = hyperliquid::HyperliquidRestClient::new();
-            let mut ticker = tokio::time::interval(Duration::from_secs(60));
-            ticker.set_missed_tick_behavior(tokio::time::MissedTickBehavior::Skip);
-            loop {
-                ticker.tick().await;
-                match timeout(
-                    Duration::from_secs(55),
-                    execution_research::collect(&client, &db),
-                )
-                .await
-                {
-                    Ok(Ok(())) => info!("HL execution research frame recorded"),
-                    Ok(Err(e)) => error!("HL execution research: {}", e),
-                    Err(_) => error!("HL execution research frame timeout; gap recorded by replay"),
-                }
-            }
-        });
-    }
-
-    // ===== OKX WebSocket 实时行情 =====
-    let ws_state = state.clone();
-    tokio::spawn(async move {
-        if let Err(e) = okx::ws::run_forever(ws_state).await {
-            error!("ws task exited: {}", e);
-        }
-    });
-
-    // ===== HTTP 服务 =====
-    let web_state = web::api::WebState {
-        app: state.clone(),
-        okx_paper: okx_paper_db,
-        binance_paper: binance_paper_db,
-        hl_paper: hl_paper_db,
-        http: reqwest::Client::builder()
-            .timeout(Duration::from_secs(10))
-            .build()?,
-        strategy_library_url: std::env::var("HYPER_FLY_STRATEGY_LIBRARY_URL")
-            .unwrap_or_else(|_| "http://127.0.0.1:19527/internal/strategy-library".to_string()),
+    let state = AppState {
+        store: store.clone(),
+        paper: paper.clone(),
+        paper_path: Arc::new(std::path::PathBuf::from(&paper_path)),
+        meta: meta.clone(),
+        refresh: refresh.clone(),
     };
-    let app = web::api::router(web_state);
+
+    // ===== background refresh task =====
+    {
+        let store = store.clone();
+        let client = client.clone();
+        let meta = meta.clone();
+        let refresh = refresh.clone();
+        let paper = paper.clone();
+        tokio::spawn(async move {
+            refresh_loop(store, client, meta, refresh, paper).await;
+        });
+    }
+
+    // ===== HTTP =====
+    let app = web::router(state);
     let addr = "0.0.0.0:3000";
     let listener = tokio::net::TcpListener::bind(addr).await?;
-    info!("Web server listening on http://{}", addr);
-    info!("OKX DB: {}", okx_db_path);
-    info!("Binance DB: {}", binance_db_path);
-    info!("Hyperliquid DB: {}", hl_db_path);
-
+    info!("stars listening on http://{addr}");
+    info!("db: {db_path}, paper: {paper_path}");
     axum::serve(listener, app).await?;
     Ok(())
+}
+
+async fn refresh_loop(
+    store: Arc<Store>,
+    client: HlClient,
+    meta: Arc<Mutex<MetaCache>>,
+    refresh: Arc<Mutex<RefreshStatus>>,
+    paper: Arc<Mutex<PaperState>>,
+) {
+    // Initial full backfill.
+    if let Err(e) = backfill(&store, &client, &meta, &refresh).await {
+        error!("initial backfill failed: {e}");
+    }
+
+    // Periodic refresh: re-fetch contexts + latest candles for liquid coins,
+    // and step the paper trade when new daily data lands.
+    let mut ticker = tokio::time::interval(Duration::from_secs(1800));
+    ticker.set_missed_tick_behavior(tokio::time::MissedTickBehavior::Skip);
+    loop {
+        ticker.tick().await;
+        if let Err(e) = refresh_liquid(&store, &client, &meta).await {
+            error!("refresh failed: {e}");
+        }
+        // advance paper trade on fresh data
+        let panel = store
+            .all_panels()
+            .unwrap_or_default()
+            .into_iter()
+            .map(|(coin, candles)| crate::momentum::PanelEntry { coin, candles })
+            .collect::<Vec<_>>();
+        let mut p = paper.lock().await;
+        if p.running {
+            crate::paper::step(&mut p, &panel);
+        }
+    }
+}
+
+/// One-shot full backfill: liquid coins first, then delisted, then the rest.
+async fn backfill(
+    store: &Arc<Store>,
+    client: &HlClient,
+    meta: &Arc<Mutex<MetaCache>>,
+    refresh: &Arc<Mutex<RefreshStatus>>,
+) -> anyhow::Result<()> {
+    let (universe, ctxs) = refresh_meta(client, meta).await?;
+
+    // Order: liquid, delisted, then remaining active.
+    let mut liquid: Vec<String> = Vec::new();
+    let mut delisted: Vec<String> = Vec::new();
+    let mut rest: Vec<String> = Vec::new();
+    for u in &universe {
+        let vol = ctxs
+            .iter()
+            .find(|c| c.coin == u.name)
+            .map(|c| c.day_ntl_vlm)
+            .unwrap_or(0.0);
+        if u.is_delisted {
+            delisted.push(u.name.clone());
+        } else if vol >= LIQUID_VOL_USD {
+            liquid.push(u.name.clone());
+        } else {
+            rest.push(u.name.clone());
+        }
+    }
+    let mut ordered = Vec::new();
+    ordered.extend(liquid);
+    ordered.extend(delisted);
+    ordered.extend(rest);
+
+    let total = ordered.len();
+    let now = now_ms();
+    {
+        let mut r = refresh.lock().await;
+        r.phase = "backfill".into();
+        r.coins_total = total;
+        r.coins_done = 0;
+    }
+
+    for (i, coin) in ordered.iter().enumerate() {
+        {
+            let mut r = refresh.lock().await;
+            r.current = coin.clone();
+            r.coins_done = i;
+        }
+        match client.daily_candles(coin, CANDLE_START_MS, now).await {
+            Ok(candles) => {
+                if let Err(e) = store.upsert_candles(coin, &candles) {
+                    error!("cache {coin}: {e}");
+                }
+            }
+            Err(e) => error!("candles {coin}: {e}"),
+        }
+    }
+    {
+        let mut r = refresh.lock().await;
+        r.phase = "idle".into();
+        r.coins_done = total;
+        r.current = String::new();
+    }
+    Ok(())
+}
+
+async fn refresh_liquid(
+    store: &Arc<Store>,
+    client: &HlClient,
+    meta: &Arc<Mutex<MetaCache>>,
+) -> anyhow::Result<()> {
+    let (_universe, _ctxs) = refresh_meta(client, meta).await?;
+    let liquid = meta.lock().await.liquid.clone();
+    let now = now_ms();
+    let from = now - 7 * 86_400_000;
+    for coin in &liquid {
+        match client.daily_candles(coin, from, now).await {
+            Ok(candles) => {
+                let _ = store.upsert_candles(coin, &candles);
+            }
+            Err(e) => error!("refresh {coin}: {e}"),
+        }
+        tokio::time::sleep(Duration::from_millis(60)).await;
+    }
+    Ok(())
+}
+
+async fn refresh_meta(
+    client: &HlClient,
+    meta: &Arc<Mutex<MetaCache>>,
+) -> anyhow::Result<(Vec<CoinMeta>, Vec<MarketCtx>)> {
+    let universe = client.universe().await?;
+    let ctxs = client.market_ctxs().await?;
+    let liquid: Vec<String> = ctxs
+        .iter()
+        .filter(|c| !c.is_delisted && c.day_ntl_vlm >= LIQUID_VOL_USD)
+        .map(|c| c.coin.clone())
+        .collect();
+    let mut m = meta.lock().await;
+    m.universe = universe.clone();
+    m.ctxs = ctxs.clone();
+    m.liquid = liquid;
+    m.refreshed_at = now_ms();
+    Ok((universe, ctxs))
+}
+
+fn now_ms() -> i64 {
+    std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .map(|d| d.as_millis() as i64)
+        .unwrap_or(0)
 }

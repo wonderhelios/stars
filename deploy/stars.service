@@ -1,0 +1,16 @@
+[Unit]
+Description=stars momentum alpha lab
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/opt/stars/target/release/stars
+Restart=always
+RestartSec=5
+Environment=STARS_DB=/var/lib/stars/candles.sqlite
+Environment=STARS_PAPER=/var/lib/stars/paper.json
+Environment=RUST_LOG=info
+
+[Install]
+WantedBy=multi-user.target
