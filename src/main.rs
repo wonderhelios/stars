@@ -1,5 +1,6 @@
 mod exchange;
 mod hl;
+mod live;
 mod momentum;
 mod paper;
 mod store;
@@ -34,6 +35,8 @@ async fn main() -> anyhow::Result<()> {
         .unwrap_or_else(|_| "/var/lib/stars/candles.sqlite".to_string());
     let paper_path = std::env::var("STARS_PAPER")
         .unwrap_or_else(|_| "/var/lib/stars/paper.json".to_string());
+    let live_path = std::env::var("STARS_LIVE")
+        .unwrap_or_else(|_| "/var/lib/stars/live.json".to_string());
 
     // ===== trade subcommand (live execution) =====
     let args: Vec<String> = std::env::args().collect();
@@ -44,6 +47,7 @@ async fn main() -> anyhow::Result<()> {
     let store = Arc::new(Store::open(std::path::Path::new(&db_path))?);
     let client = HlClient::new();
     let paper = Arc::new(Mutex::new(PaperState::load(std::path::Path::new(&paper_path))));
+    let live = Arc::new(Mutex::new(live::LiveState::load(std::path::Path::new(&live_path))));
     let meta = Arc::new(Mutex::new(MetaCache::default()));
     let refresh = Arc::new(Mutex::new(RefreshStatus::default()));
 
@@ -51,9 +55,52 @@ async fn main() -> anyhow::Result<()> {
         store: store.clone(),
         paper: paper.clone(),
         paper_path: Arc::new(std::path::PathBuf::from(&paper_path)),
+        live: live.clone(),
+        live_path: Arc::new(std::path::PathBuf::from(&live_path)),
         meta: meta.clone(),
         refresh: refresh.clone(),
     };
+
+    // ===== daily live rebalance task =====
+    {
+        let st = state.clone();
+        tokio::spawn(async move {
+            const DAY: i64 = 86_400_000;
+            loop {
+                let now = now_ms();
+                // Next 00:05 UTC — just after the daily candle closes.
+                let mut next = now / DAY * DAY + 5 * 60 * 1000;
+                if next <= now {
+                    next += DAY;
+                }
+                let wait = (next - now).max(0) as u64;
+                info!("实盘定时器：{} 分钟后检查（UTC 00:05 触发）", wait / 60_000);
+                tokio::time::sleep(Duration::from_millis(wait)).await;
+
+                let snapshot = st.live.lock().await.clone();
+                if !(snapshot.config.auto_run && snapshot.config.armed) {
+                    continue;
+                }
+                info!("实盘自动调仓开始");
+                match live::run(&st.store, &snapshot, true).await {
+                    Ok((result, records)) => {
+                        let mut guard = st.live.lock().await;
+                        guard.last_run_at = Some(now_ms());
+                        guard.last_plan = result.plan_lines.clone();
+                        guard.last_live = true;
+                        guard.records.extend(records);
+                        guard.history.push(live::EquityPoint {
+                            ts: now_ms(),
+                            equity: result.equity,
+                        });
+                        let _ = guard.save(&st.live_path);
+                        info!("实盘自动调仓完成：{:?}", result.executed);
+                    }
+                    Err(e) => error!("实盘自动调仓失败：{e}"),
+                }
+            }
+        });
+    }
 
     // ===== background refresh task =====
     {
@@ -305,8 +352,8 @@ async fn run_trade(args: &[String], db_path: &str) -> anyhow::Result<()> {
             println!("现有仓位：");
             let mut list: Vec<_> = a.positions.iter().collect();
             list.sort_by(|x, y| x.0.cmp(y.0));
-            for (coin, size) in list {
-                println!("  {coin}: {size}");
+            for (coin, pos) in list {
+                println!("  {coin}: {:.6}", pos.size);
             }
             if live {
                 anyhow::ensure!(

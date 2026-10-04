@@ -24,10 +24,18 @@ pub struct MarketInfo {
 }
 
 #[derive(Clone, Debug, Default)]
+pub struct Pos {
+    /// signed size (negative = short)
+    pub size: f64,
+    pub entry_px: f64,
+    /// exchange-reported liquidation price, if any
+    pub liq_px: Option<f64>,
+}
+
+#[derive(Clone, Debug, Default)]
 pub struct Acct {
     pub equity: f64,
-    /// coin -> signed position size (negative = short)
-    pub positions: HashMap<String, f64>,
+    pub positions: HashMap<String, Pos>,
 }
 
 pub struct Exec {
@@ -180,13 +188,22 @@ impl Exec {
         if let Some(arr) = perp["assetPositions"].as_array() {
             for item in arr {
                 let p = &item["position"];
-                if let (Some(coin), Some(szi)) = (p["coin"].as_str(), p["szi"].as_str()) {
-                    if let Ok(size) = szi.parse::<f64>() {
-                        if size.abs() > 1e-10 {
-                            positions.insert(coin.to_string(), size);
-                        }
-                    }
+                let Some(coin) = p["coin"].as_str() else { continue };
+                let size = p["szi"].as_str().and_then(|v| v.parse::<f64>().ok()).unwrap_or(0.0);
+                if size.abs() <= 1e-10 {
+                    continue;
                 }
+                positions.insert(
+                    coin.to_string(),
+                    Pos {
+                        size,
+                        entry_px: p["entryPx"]
+                            .as_str()
+                            .and_then(|v| v.parse().ok())
+                            .unwrap_or(0.0),
+                        liq_px: p["liquidationPx"].as_str().and_then(|v| v.parse().ok()),
+                    },
+                );
             }
         }
         Ok(Acct { equity, positions })

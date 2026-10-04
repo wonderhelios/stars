@@ -129,6 +129,11 @@
       .chart svg { width: 100%; height: auto; display: block; }
       .chart .legend { display: flex; flex-wrap: wrap; gap: 16px; font-size: 12px; color: var(--muted); margin-top: 8px; }
 
+      .logbox { background: #0f172a; color: #d6e2f5; font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 12px; line-height: 1.7; padding: 14px 16px; border-radius: 10px; overflow-x: auto;
+        white-space: pre-wrap; word-break: break-all; margin: 0; }
+      .logbox.neg { color: #ffb4b4; }
+
       .pager { display: flex; align-items: center; gap: 12px; margin-top: 10px; }
       .pager button { padding: 5px 12px; font-size: 13px; }
       .pager .info { font-size: 12px; color: var(--muted); }
@@ -163,7 +168,7 @@
       <nav class="nav">
         <button data-view="backtest" class="active">回测</button>
         <button data-view="paper">纸交易</button>
-        <button data-view="live">上实盘清单</button>
+        <button data-view="live">实盘</button>
       </nav>
       <div class="status-pill">
         <span class="led" id="led"></span>
@@ -259,32 +264,75 @@
         </div>
       </section>
 
-      <!-- ============ 上实盘清单 ============ -->
+      <!-- ============ 实盘 ============ -->
       <section id="view-live" class="view">
         <div class="panel">
           <div class="panel-head">
             <div>
-              <div class="panel-kicker">GO / NO-GO</div>
-              <h2>上实盘清单</h2>
-              <p class="sub">逐项验证，全部通过前不要上真金。</p>
+              <div class="panel-kicker">LIVE TRADING · HYPERLIQUID</div>
+              <h2>实盘</h2>
+              <p class="sub">与纸交易<b>共用同一套排名代码</b>，不会漂移。默认只生成计划；勾选「启用实盘」后才会真正发单。</p>
+            </div>
+            <div class="actions">
+              <button class="btn ghost" id="lv-plan">生成计划（不下单）</button>
+              <button class="btn danger" id="lv-run">执行调仓</button>
             </div>
           </div>
+
+          <div class="controls">
+            <div class="field"><label>账户地址（主账户，不是 API 钱包）</label><input id="lv-account" placeholder="0x..." /></div>
+            <div class="field"><label>API 钱包密钥文件路径</label><input id="lv-key" placeholder="/etc/stars/api-wallet.key" /></div>
+            <div class="field"><label>每腿仓位数</label><input id="lv-positions" type="number" value="8" min="1" max="30" /></div>
+            <div class="field"><label>杠杆</label><input id="lv-leverage" type="number" value="3" min="1" max="20" step="0.5" /></div>
+            <div class="field"><label>保证金缓冲 %</label><input id="lv-buffer" type="number" value="90" min="30" max="100" /></div>
+            <div class="field"><label>滑点上限 %</label><input id="lv-slippage" type="number" value="0.5" min="0.05" max="5" step="0.05" /></div>
+            <div class="field"><label>回看天数</label><input id="lv-lookback" type="number" value="14" min="2" max="120" /></div>
+            <div class="field"><label>多头比例</label><input id="lv-top" type="number" value="0.2" min="0.02" max="0.9" step="0.05" /></div>
+            <div class="field"><label>最低成交额(USD)</label>
+              <select id="lv-minvol">
+                <option value="2000000">$2M</option>
+                <option value="5000000" selected>$5M</option>
+                <option value="10000000">$10M</option>
+              </select>
+            </div>
+            <div class="field"><label>启用实盘（允许发单）</label>
+              <select id="lv-armed"><option value="false" selected>关闭（只生成计划）</option><option value="true">开启（可发真单）</option></select>
+            </div>
+            <div class="field"><label>每日自动调仓（UTC 00:05）</label>
+              <select id="lv-auto"><option value="false" selected>关闭</option><option value="true">开启</option></select>
+            </div>
+            <div class="field"><label>&nbsp;</label><button class="btn ghost" id="lv-save">保存配置</button></div>
+          </div>
+
+          <div class="metrics" id="lv-metrics"></div>
+
+          <div class="panel-head" style="margin-top:14px"><h2>账户持仓</h2></div>
+          <div id="lv-positions"></div>
+
+          <div class="panel-head" style="margin-top:14px"><h2>最近计划 / 执行结果</h2></div>
+          <div id="lv-plan-out"></div>
+
+          <div class="panel-head" style="margin-top:14px"><h2>下单记录</h2></div>
+          <div id="lv-records"></div>
+        </div>
+
+        <div class="panel" style="margin-top:16px">
+          <div class="panel-head"><div><div class="panel-kicker">GO / NO-GO</div><h2>上线检查清单</h2></div></div>
           <ul class="checklist">
-            <li><span class="state">✅</span><div class="txt"><b>策略定义与实盘一致</b><span>纸交易 = 真实策略：多动量前 20% + 空后 20%，等权、市场中性、按杠杆计算保证金</span></div><span class="badge ok">已对齐</span></li>
-            <li><span class="state">✅</span><div class="txt"><b>幸存者偏差修正</b><span>回测纳入全部退市币，alpha 未被稀释掉</span></div><span class="badge ok">已通过</span></li>
+            <li><span class="state">✅</span><div class="txt"><b>策略定义与实盘一致</b><span>实盘与纸交易共用同一套排名代码，不存在两套实现</span></div><span class="badge ok">已对齐</span></li>
+            <li><span class="state">✅</span><div class="txt"><b>幸存者偏差修正</b><span>回测纳入全部退市币</span></div><span class="badge ok">已通过</span></li>
             <li><span class="state">✅</span><div class="txt"><b>点时间流动性过滤</b><span>只在滚动 30 日成交额达标的币上建仓，无前视</span></div><span class="badge ok">已通过</span></li>
-            <li><span class="state">✅</span><div class="txt"><b>市场中性</b><span>多空名义敞口相等，净敞口 ≈ 0，与 BTC 相关性 ≈ 0</span></div><span class="badge ok">已通过</span></li>
-            <li><span class="state">✅</span><div class="txt"><b>分年一致</b><span>2024 / 2025 / 2026 均为正收益</span></div><span class="badge ok">已通过</span></li>
-            <li><span class="state">✅</span><div class="txt"><b>费率与爆仓已建模</b><span>费率取自 Hyperliquid 实时接口；按 3× 逐仓计算每个仓位的爆仓价</span></div><span class="badge ok">已通过</span></li>
-            <li><span class="state">⬜</span><div class="txt"><b>纸交易 2~4 周</b><span>前向验证真实滑点 / 成交时点 / 资金费率，至少覆盖一次完整换仓周期</span></div><span class="badge pending">待验证</span></li>
-            <li><span class="state">⬜</span><div class="txt"><b>纸交易盈亏与回测一致</b><span>方向一致、量级接近（回测年化 alpha 约 +60%，Sharpe ≈ 1.2）</span></div><span class="badge pending">待验证</span></li>
-            <li><span class="state">⬜</span><div class="txt"><b>爆仓距离始终安全</b><span>「距最近爆仓」不应长期低于 20%；若接近需降杠杆或分散</span></div><span class="badge pending">待验证</span></li>
-            <li><span class="state">⬜</span><div class="txt"><b>小资金实盘</b><span>$2000 起步，实盘与纸交易逐日对上后再考虑加仓</span></div><span class="badge todo">待验证</span></li>
+            <li><span class="state">✅</span><div class="txt"><b>市场中性</b><span>多空名义相等，净敞口 ≈ 0</span></div><span class="badge ok">已通过</span></li>
+            <li><span class="state">✅</span><div class="txt"><b>费率与爆仓已建模</b><span>费率取自 Hyperliquid 实时接口</span></div><span class="badge ok">已通过</span></li>
+            <li><span class="state">⬜</span><div class="txt"><b>真实滑点实测</b><span>对比实际成交价与计划 mid 价，这是纸交易测不到的</span></div><span class="badge pending">进行中</span></li>
+            <li><span class="state">⬜</span><div class="txt"><b>实盘与纸交易逐日对上</b><span>方向一致、量级接近</span></div><span class="badge pending">待验证</span></li>
+            <li><span class="state">⬜</span><div class="txt"><b>强平缓冲始终 > 40%</b><span>低于此值需降杠杆或减少仓位</span></div><span class="badge pending">待验证</span></li>
           </ul>
-          <p class="note"><b>保证金口径（务必用全仓）：</b>「初始保证金占用 101%」是 3× 满仓的数学结果（初始保证金 = 名义 ÷ 杠杆 = 本金），<b>不是爆仓线</b>。真正决定强平的是维持保证金：按 5~17% 计，全仓口径下强平净值线约 $616，<b>账户要跌 82% 才会被强平</b>。逐仓口径则每个仓位跌 ~28% 就被单独强平（上述 90 天回放触发了 13 次）——所以实盘必须用<b>全仓保证金</b>，多空两腿互相抵消后才能拿到这个缓冲。</p>
+          <p class="note"><b>必须用全仓保证金（Cross）。</b>3× 满仓时「初始保证金占用 ≈ 100% 净值」是数学必然，<b>不是爆仓线</b>；真正决定强平的是维持保证金，全仓口径下账户要跌约 80% 才会被强平。逐仓下每个仓位跌 ~28% 就单独爆仓。</p>
           <p class="note">真正的尾部风险不是大盘涨跌（已被对冲），而是<b>动量崩盘</b>：赢家暴跌 + 输家暴涨同时发生，两条腿一起亏。</p>
         </div>
       </section>
+
     </main>
 
     <script src="/app.js"></script>

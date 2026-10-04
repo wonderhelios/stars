@@ -21,6 +21,8 @@ pub struct AppState {
     pub store: Arc<Store>,
     pub paper: Arc<Mutex<PaperState>>,
     pub paper_path: Arc<std::path::PathBuf>,
+    pub live: Arc<Mutex<crate::live::LiveState>>,
+    pub live_path: Arc<std::path::PathBuf>,
     pub meta: Arc<Mutex<MetaCache>>,
     pub refresh: Arc<Mutex<RefreshStatus>>,
 }
@@ -56,6 +58,10 @@ pub fn router(state: AppState) -> Router {
         .route("/api/paper/stop", post(paper_stop))
         .route("/api/paper/reset", post(paper_reset))
         .route("/api/paper/step", post(paper_step))
+        .route("/api/live", get(live_status))
+        .route("/api/live/config", post(live_config))
+        .route("/api/live/run", post(live_run))
+        .route("/api/live/reset", post(live_reset))
         .layer(CompressionLayer::new())
         .layer(CorsLayer::permissive())
         .with_state(state)
@@ -287,4 +293,111 @@ async fn paper_step(State(state): State<AppState>) -> Response {
         Some(v) => Json(v).into_response(),
         None => (StatusCode::CONFLICT, Json(json!({"error": "数据不足"}))).into_response(),
     }
+}
+
+// ==================== live trading ====================
+
+async fn live_status(State(state): State<AppState>) -> Response {
+    let st = state.live.lock().await.clone();
+    let snap = crate::live::snapshot(&st).await;
+    Json(json!(snap)).into_response()
+}
+
+#[derive(serde::Deserialize)]
+struct LiveConfigBody {
+    account: Option<String>,
+    key_path: Option<String>,
+    target_positions: Option<usize>,
+    leverage: Option<f64>,
+    margin_buffer: Option<f64>,
+    slippage: Option<f64>,
+    lookback: Option<usize>,
+    top_frac: Option<f64>,
+    min_vol_usd: Option<f64>,
+    armed: Option<bool>,
+    auto_run: Option<bool>,
+}
+
+async fn live_config(
+    State(state): State<AppState>,
+    Json(body): Json<LiveConfigBody>,
+) -> Response {
+    let mut st = state.live.lock().await;
+    let c = &mut st.config;
+    if let Some(v) = body.account {
+        c.account = v.trim().to_string();
+    }
+    if let Some(v) = body.key_path {
+        c.key_path = v.trim().to_string();
+    }
+    if let Some(v) = body.target_positions {
+        c.target_positions = v.clamp(1, 30);
+    }
+    if let Some(v) = body.leverage {
+        c.leverage = v.clamp(1.0, 20.0);
+    }
+    if let Some(v) = body.margin_buffer {
+        c.margin_buffer = v.clamp(0.3, 1.0);
+    }
+    if let Some(v) = body.slippage {
+        c.slippage = v.clamp(0.0005, 0.05);
+    }
+    if let Some(v) = body.lookback {
+        c.lookback = v.clamp(2, 120);
+    }
+    if let Some(v) = body.top_frac {
+        c.top_frac = v.clamp(0.02, 0.9);
+    }
+    if let Some(v) = body.min_vol_usd {
+        c.min_vol_usd = v.max(0.0);
+    }
+    if let Some(v) = body.armed {
+        c.armed = v;
+    }
+    if let Some(v) = body.auto_run {
+        c.auto_run = v;
+    }
+    let cfg = st.config.clone();
+    let _ = st.save(&state.live_path);
+    Json(json!({"ok": true, "config": cfg})).into_response()
+}
+
+#[derive(serde::Deserialize, Default)]
+struct LiveRunBody {
+    #[serde(default)]
+    live: bool,
+}
+
+async fn live_run(State(state): State<AppState>, body: Option<Json<LiveRunBody>>) -> Response {
+    let live = body.map(|b| b.live).unwrap_or(false);
+    let st = state.live.lock().await.clone();
+    match crate::live::run(&state.store, &st, live).await {
+        Ok((result, records)) => {
+            let mut guard = state.live.lock().await;
+            guard.last_run_at = Some(crate::live::now_ms_pub());
+            guard.last_plan = result.plan_lines.clone();
+            guard.last_live = live;
+            if live {
+                guard.records.extend(records);
+                guard.history.push(crate::live::EquityPoint {
+                    ts: crate::live::now_ms_pub(),
+                    equity: result.equity,
+                });
+            }
+            let _ = guard.save(&state.live_path);
+            Json(json!({"ok": true, "result": result})).into_response()
+        }
+        Err(e) => Json(json!({"ok": false, "error": format!("{e}")})).into_response(),
+    }
+}
+
+async fn live_reset(State(state): State<AppState>) -> Response {
+    let mut st = state.live.lock().await;
+    let cfg = st.config.clone();
+    *st = crate::live::LiveState {
+        config: cfg,
+        ..Default::default()
+    };
+    let _ = st.save(&state.live_path);
+    Json(json!({"ok": true})).into_response()
 }

@@ -182,7 +182,8 @@ pub fn build_plan(
     // 1) close positions that are gone or must flip side
     let mut closes: Vec<Order> = Vec::new();
     let mut opens: Vec<Order> = Vec::new();
-    for (coin, cur) in acct.positions.iter() {
+    for (coin, pos) in acct.positions.iter() {
+        let cur = pos.size;
         if cur.abs() < 1e-12 {
             continue;
         }
@@ -202,7 +203,7 @@ pub fn build_plan(
             if size * mid >= cfg.min_order_usd {
                 closes.push(Order {
                     coin: coin.clone(),
-                    buy: *cur < 0.0, // buy to close a short
+                    buy: cur < 0.0, // buy to close a short
                     reduce_only: true,
                     size,
                     mid: *mid,
@@ -236,7 +237,7 @@ pub fn build_plan(
 
     // 2) open positions that are missing entirely
     for (coin, (target, is_long)) in wanted.iter() {
-        let cur = acct.positions.get(coin).copied().unwrap_or(0.0);
+        let cur = acct.positions.get(coin).map(|p| p.size).unwrap_or(0.0);
         let flip = cur * target < 0.0;
         // A flip is handled by the close above; reopen here once it is flat.
         if cur.abs() < 1e-12 || flip {

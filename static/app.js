@@ -142,6 +142,8 @@ $("pp-toggle").addEventListener("click", async () => {
     }
   }
   await refreshPaper();
+refreshLive();
+setInterval(refreshLive, 15000);
 });
 
 $("pp-step").addEventListener("click", async () => {
@@ -149,11 +151,15 @@ $("pp-step").addEventListener("click", async () => {
   const d = await res.json();
   if (!res.ok) $("pp-error").innerHTML = `<div class="error">${d.error || "步进失败"}</div>`;
   await refreshPaper();
+refreshLive();
+setInterval(refreshLive, 15000);
 });
 
 $("pp-reset").addEventListener("click", async () => {
   await fetch("/api/paper/reset", { method: "POST" });
   await refreshPaper();
+refreshLive();
+setInterval(refreshLive, 15000);
 });
 
 async function refreshPaper() {
@@ -496,8 +502,179 @@ function renderChart(history) {
     </div>`;
 }
 
+
+// ==================== 实盘 ====================
+let liveLoaded = false;
+let liveBusy = false;
+
+async function fetchLive() {
+  const res = await fetch("/api/live", { cache: "no-store" });
+  if (!res.ok) throw new Error("HTTP " + res.status);
+  return res.json();
+}
+
+function lvConfigInto(d) {
+  const c = d.config || {};
+  $("lv-account").value = c.account || "";
+  $("lv-key").value = c.key_path || "";
+  $("lv-positions").value = c.target_positions ?? 8;
+  $("lv-leverage").value = c.leverage ?? 3;
+  $("lv-buffer").value = Math.round((c.margin_buffer ?? 0.9) * 100);
+  $("lv-slippage").value = ((c.slippage ?? 0.005) * 100).toFixed(2);
+  $("lv-lookback").value = c.lookback ?? 14;
+  $("lv-top").value = c.top_frac ?? 0.2;
+  $("lv-minvol").value = String(c.min_vol_usd ?? 5000000);
+  $("lv-armed").value = String(!!c.armed);
+  $("lv-auto").value = String(!!c.auto_run);
+}
+
+function renderLive(d) {
+  const armed = d.config && d.config.armed;
+  const hasPos = (d.positions || []).length;
+  const eq = d.equity || 0;
+  const buffer = d.liq_buffer_pct || 0;
+  const last = d.last_run_at ? new Date(d.last_run_at).toISOString().slice(0, 16).replace("T", " ") : "—";
+  $("lv-metrics").innerHTML =
+    metric("账户净值", "$" + fmt(eq, 2)) +
+    metric("实盘状态", armed ? "已启用（可发单）" : "未启用（只生成计划）", armed ? "neg" : "pos") +
+    metric("持仓数", hasPos) +
+    metric("总名义敞口", "$" + fmt(d.gross_notional || 0, 0)) +
+    metric("净敞口（市场中性）", "$" + fmt(d.net_notional || 0, 2), Math.abs(d.net_notional || 0) < 1 ? "pos" : "") +
+    metric("占用保证金", "$" + fmt(d.margin_used || 0, 0)) +
+    metric("维持保证金", "$" + fmt(d.maintenance_margin || 0, 0)) +
+    metric("账户强平缓冲", fmt(buffer, 1) + "%", buffer < 40 ? "neg" : "pos") +
+    metric("逐仓距爆仓(最小)", d.nearest_liq_pct == null ? "—" : fmt(d.nearest_liq_pct, 1) + "%",
+      d.nearest_liq_pct != null && d.nearest_liq_pct < 20 ? "neg" : "") +
+    metric("最后运行", last) +
+    metric("下单记录", (d.records || []).length);
+
+  const err = d.error ? `<div class="note neg">${d.error}</div>` : "";
+  if (!hasPos) {
+    $("lv-positions").innerHTML = err + '<div class="empty">账户当前没有持仓</div>';
+  } else {
+    const rows = d.positions.map((p) => {
+      const cls = p.unrealized >= 0 ? "pos" : "neg";
+      const dist = p.dist_pct == null ? "—" : fmt(p.dist_pct, 1) + "%";
+      return `<tr>
+        <td>${p.coin}</td>
+        <td>${sideLabel(p.side)}</td>
+        <td>${fmt(p.size, 6)}</td>
+        <td>${fmt(p.entry_px, 6)}</td>
+        <td>${fmt(p.mark_px, 6)}</td>
+        <td>$${fmt(p.notional, 0)}</td>
+        <td class="${cls}">${p.unrealized >= 0 ? "+" : ""}$${fmt(p.unrealized, 2)}</td>
+        <td>${p.liq_px == null ? "—" : fmt(p.liq_px, 6)}</td>
+        <td class="${p.dist_pct != null && p.dist_pct < 20 ? "neg" : "muted"}">${dist}</td>
+      </tr>`;
+    }).join("");
+    $("lv-positions").innerHTML = err + `<table><thead><tr>
+      <th>币</th><th>方向</th><th>数量</th><th>入场价</th><th>当前价</th>
+      <th>名义</th><th>未实现盈亏</th><th>爆仓价</th><th>距爆仓</th>
+    </tr></thead><tbody>${rows}</tbody></table>`;
+  }
+
+  const plan = d.last_plan || [];
+  $("lv-plan-out").innerHTML = plan.length
+    ? `<pre class="logbox">${plan.join("\n")}</pre>`
+    : '<div class="empty">还没有生成过计划。点「生成计划」查看会下哪些单（不会发单）。</div>';
+
+  const recs = (d.records || []).slice().reverse().slice(0, 50);
+  $("lv-records").innerHTML = recs.length
+    ? `<table><thead><tr><th>时间</th><th>币</th><th>方向</th><th>动作</th><th>数量</th><th>价格</th><th>名义</th><th>结果</th></tr></thead><tbody>${recs
+        .map((r) => `<tr>
+          <td class="muted">${new Date(r.ts).toISOString().slice(0, 16).replace("T", " ")}</td>
+          <td>${r.coin}</td><td>${r.side}</td><td>${r.action}</td>
+          <td>${fmt(r.size, 6)}</td><td>${fmt(r.price, 6)}</td><td>$${fmt(r.notional, 0)}</td>
+          <td class="${r.live ? "" : "muted"}">${r.result}</td>
+        </tr>`)
+        .join("")}</tbody></table>`
+    : '<div class="empty">还没有记录</div>';
+}
+
+async function refreshLive() {
+  if (liveBusy) return;
+  try {
+    const d = await fetchLive();
+    if (!liveLoaded) {
+      lvConfigInto(d);
+      liveLoaded = true;
+    }
+    renderLive(d);
+  } catch (e) {
+    $("lv-metrics").innerHTML = `<div class="note neg">读取实盘状态失败：${e}</div>`;
+  }
+}
+
+$("lv-save").addEventListener("click", async () => {
+  const body = {
+    account: $("lv-account").value,
+    key_path: $("lv-key").value,
+    target_positions: Number($("lv-positions").value),
+    leverage: Number($("lv-leverage").value),
+    margin_buffer: Number($("lv-buffer").value) / 100,
+    slippage: Number($("lv-slippage").value) / 100,
+    lookback: Number($("lv-lookback").value),
+    top_frac: Number($("lv-top").value),
+    min_vol_usd: Number($("lv-minvol").value),
+    armed: $("lv-armed").value === "true",
+    auto_run: $("lv-auto").value === "true",
+  };
+  $("lv-save").textContent = "保存中…";
+  try {
+    const res = await fetch("/api/live/config", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+    const d = await res.json();
+    if (!d.ok) throw new Error(d.error || "保存失败");
+    $("lv-save").textContent = "已保存 ✓";
+  } catch (e) {
+    $("lv-save").textContent = "保存失败";
+  }
+  setTimeout(() => ($("lv-save").textContent = "保存配置"), 1500);
+});
+
+async function runLive(live) {
+  if (live && $("lv-armed").value !== "true") {
+    alert("请先把「启用实盘」设为开启并保存配置，否则不会发送任何订单。");
+    return;
+  }
+  if (live && !confirm("确认执行真实调仓？会对 Hyperliquid 账户发送真实订单。")) return;
+  liveBusy = true;
+  const btn = live ? $("lv-run") : $("lv-plan");
+  const label = btn.textContent;
+  btn.textContent = live ? "执行中…" : "计算中…";
+  btn.disabled = true;
+  try {
+    const res = await fetch("/api/live/run", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ live }),
+    });
+    const d = await res.json();
+    if (!d.ok) throw new Error(d.error || "失败");
+    const r = d.result;
+    const extra = r.executed && r.executed.length
+      ? "\n\n执行结果:\n" + r.executed.join("\n")
+      : "";
+    $("lv-plan-out").innerHTML = `<pre class="logbox">${(r.plan_lines || []).join("\n")}${extra}</pre>`;
+  } catch (e) {
+    $("lv-plan-out").innerHTML = `<pre class="logbox neg">${e}</pre>`;
+  }
+  btn.textContent = label;
+  btn.disabled = false;
+  liveBusy = false;
+  refreshLive();
+}
+
+$("lv-plan").addEventListener("click", () => runLive(false));
+$("lv-run").addEventListener("click", () => runLive(true));
+
 // ---------- 启动 ----------
 refreshStatus();
 setInterval(refreshStatus, 5000);
 setInterval(refreshPaper, 10000);
 refreshPaper();
+refreshLive();
+setInterval(refreshLive, 15000);
