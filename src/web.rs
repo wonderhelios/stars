@@ -300,6 +300,20 @@ async fn paper_step(State(state): State<AppState>) -> Response {
 async fn live_status(State(state): State<AppState>) -> Response {
     let st = state.live.lock().await.clone();
     let snap = crate::live::snapshot(&st).await;
+    // Record at most one equity point per UTC day so the monitoring curve
+    // builds itself without waiting for a rebalance.
+    if snap.equity > 0.0 {
+        let now = crate::live::now_ms_pub();
+        let today = now / 86_400_000;
+        let last = st.history.last().map(|p| p.ts / 86_400_000);
+        if last != Some(today) {
+            let mut guard = state.live.lock().await;
+            guard
+                .history
+                .push(crate::live::EquityPoint { ts: now, equity: snap.equity });
+            let _ = guard.save(&state.live_path);
+        }
+    }
     Json(json!(snap)).into_response()
 }
 

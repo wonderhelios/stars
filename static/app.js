@@ -142,8 +142,10 @@ $("pp-toggle").addEventListener("click", async () => {
     }
   }
   await refreshPaper();
-refreshLive();
-setInterval(refreshLive, 15000);
+refreshLiveConfig();
+refreshMonitor();
+setInterval(refreshLiveConfig, 20000);
+setInterval(refreshMonitor, 15000);
 });
 
 $("pp-step").addEventListener("click", async () => {
@@ -151,15 +153,19 @@ $("pp-step").addEventListener("click", async () => {
   const d = await res.json();
   if (!res.ok) $("pp-error").innerHTML = `<div class="error">${d.error || "步进失败"}</div>`;
   await refreshPaper();
-refreshLive();
-setInterval(refreshLive, 15000);
+refreshLiveConfig();
+refreshMonitor();
+setInterval(refreshLiveConfig, 20000);
+setInterval(refreshMonitor, 15000);
 });
 
 $("pp-reset").addEventListener("click", async () => {
   await fetch("/api/paper/reset", { method: "POST" });
   await refreshPaper();
-refreshLive();
-setInterval(refreshLive, 15000);
+refreshLiveConfig();
+refreshMonitor();
+setInterval(refreshLiveConfig, 20000);
+setInterval(refreshMonitor, 15000);
 });
 
 async function refreshPaper() {
@@ -322,6 +328,9 @@ document.addEventListener("click", (e) => {
   } else if (key === "trades") {
     tradesPage = to;
     renderTrades(lastTrades, lastConfig);
+  } else if (key === "live") {
+    livePage = to;
+    renderMonitor(lastLiveData);
   }
 });
 
@@ -503,15 +512,9 @@ function renderChart(history) {
 }
 
 
-// ==================== 实盘 ====================
+// ==================== 实盘设置 ====================
 let liveLoaded = false;
 let liveBusy = false;
-
-async function fetchLive() {
-  const res = await fetch("/api/live", { cache: "no-store" });
-  if (!res.ok) throw new Error("HTTP " + res.status);
-  return res.json();
-}
 
 function lvConfigInto(d) {
   const c = d.config || {};
@@ -528,81 +531,10 @@ function lvConfigInto(d) {
   $("lv-auto").value = String(!!c.auto_run);
 }
 
-function renderLive(d) {
-  const armed = d.config && d.config.armed;
-  const hasPos = (d.positions || []).length;
-  const eq = d.equity || 0;
-  const buffer = d.liq_buffer_pct || 0;
-  const last = d.last_run_at ? new Date(d.last_run_at).toISOString().slice(0, 16).replace("T", " ") : "—";
-  $("lv-metrics").innerHTML =
-    metric("账户净值", "$" + fmt(eq, 2)) +
-    metric("实盘状态", armed ? "已启用（可发单）" : "未启用（只生成计划）", armed ? "neg" : "pos") +
-    metric("持仓数", hasPos) +
-    metric("总名义敞口", "$" + fmt(d.gross_notional || 0, 0)) +
-    metric("净敞口（市场中性）", "$" + fmt(d.net_notional || 0, 2), Math.abs(d.net_notional || 0) < 1 ? "pos" : "") +
-    metric("占用保证金", "$" + fmt(d.margin_used || 0, 0)) +
-    metric("维持保证金", "$" + fmt(d.maintenance_margin || 0, 0)) +
-    metric("账户强平缓冲", fmt(buffer, 1) + "%", buffer < 40 ? "neg" : "pos") +
-    metric("逐仓距爆仓(最小)", d.nearest_liq_pct == null ? "—" : fmt(d.nearest_liq_pct, 1) + "%",
-      d.nearest_liq_pct != null && d.nearest_liq_pct < 20 ? "neg" : "") +
-    metric("最后运行", last) +
-    metric("下单记录", (d.records || []).length);
-
-  const err = d.error ? `<div class="note neg">${d.error}</div>` : "";
-  if (!hasPos) {
-    $("lv-positions").innerHTML = err + '<div class="empty">账户当前没有持仓</div>';
-  } else {
-    const rows = d.positions.map((p) => {
-      const cls = p.unrealized >= 0 ? "pos" : "neg";
-      const dist = p.dist_pct == null ? "—" : fmt(p.dist_pct, 1) + "%";
-      return `<tr>
-        <td>${p.coin}</td>
-        <td>${sideLabel(p.side)}</td>
-        <td>${fmt(p.size, 6)}</td>
-        <td>${fmt(p.entry_px, 6)}</td>
-        <td>${fmt(p.mark_px, 6)}</td>
-        <td>$${fmt(p.notional, 0)}</td>
-        <td class="${cls}">${p.unrealized >= 0 ? "+" : ""}$${fmt(p.unrealized, 2)}</td>
-        <td>${p.liq_px == null ? "—" : fmt(p.liq_px, 6)}</td>
-        <td class="${p.dist_pct != null && p.dist_pct < 20 ? "neg" : "muted"}">${dist}</td>
-      </tr>`;
-    }).join("");
-    $("lv-positions").innerHTML = err + `<table><thead><tr>
-      <th>币</th><th>方向</th><th>数量</th><th>入场价</th><th>当前价</th>
-      <th>名义</th><th>未实现盈亏</th><th>爆仓价</th><th>距爆仓</th>
-    </tr></thead><tbody>${rows}</tbody></table>`;
-  }
-
-  const plan = d.last_plan || [];
-  $("lv-plan-out").innerHTML = plan.length
-    ? `<pre class="logbox">${plan.join("\n")}</pre>`
-    : '<div class="empty">还没有生成过计划。点「生成计划」查看会下哪些单（不会发单）。</div>';
-
-  const recs = (d.records || []).slice().reverse().slice(0, 50);
-  $("lv-records").innerHTML = recs.length
-    ? `<table><thead><tr><th>时间</th><th>币</th><th>方向</th><th>动作</th><th>数量</th><th>价格</th><th>名义</th><th>结果</th></tr></thead><tbody>${recs
-        .map((r) => `<tr>
-          <td class="muted">${new Date(r.ts).toISOString().slice(0, 16).replace("T", " ")}</td>
-          <td>${r.coin}</td><td>${r.side}</td><td>${r.action}</td>
-          <td>${fmt(r.size, 6)}</td><td>${fmt(r.price, 6)}</td><td>$${fmt(r.notional, 0)}</td>
-          <td class="${r.live ? "" : "muted"}">${r.result}</td>
-        </tr>`)
-        .join("")}</tbody></table>`
-    : '<div class="empty">还没有记录</div>';
-}
-
-async function refreshLive() {
-  if (liveBusy) return;
-  try {
-    const d = await fetchLive();
-    if (!liveLoaded) {
-      lvConfigInto(d);
-      liveLoaded = true;
-    }
-    renderLive(d);
-  } catch (e) {
-    $("lv-metrics").innerHTML = `<div class="note neg">读取实盘状态失败：${e}</div>`;
-  }
+async function fetchLive() {
+  const res = await fetch("/api/live", { cache: "no-store" });
+  if (!res.ok) throw new Error("HTTP " + res.status);
+  return res.json();
 }
 
 $("lv-save").addEventListener("click", async () => {
@@ -655,9 +587,7 @@ async function runLive(live) {
     const d = await res.json();
     if (!d.ok) throw new Error(d.error || "失败");
     const r = d.result;
-    const extra = r.executed && r.executed.length
-      ? "\n\n执行结果:\n" + r.executed.join("\n")
-      : "";
+    const extra = r.executed && r.executed.length ? "\n\n执行结果:\n" + r.executed.join("\n") : "";
     $("lv-plan-out").innerHTML = `<pre class="logbox">${(r.plan_lines || []).join("\n")}${extra}</pre>`;
   } catch (e) {
     $("lv-plan-out").innerHTML = `<pre class="logbox neg">${e}</pre>`;
@@ -665,16 +595,168 @@ async function runLive(live) {
   btn.textContent = label;
   btn.disabled = false;
   liveBusy = false;
-  refreshLive();
+  refreshMonitor();
 }
 
 $("lv-plan").addEventListener("click", () => runLive(false));
 $("lv-run").addEventListener("click", () => runLive(true));
+
+async function refreshLiveConfig() {
+  try {
+    const d = await fetchLive();
+    if (!liveLoaded) {
+      lvConfigInto(d);
+      liveLoaded = true;
+    }
+  } catch (e) {
+    /* 设置页静默失败，监控页会提示 */
+  }
+}
+
+// ==================== 实盘监控 ====================
+let livePage = 0;
+let lastLiveData = null;
+
+function renderMonitor(d) {
+  if (!d) return;
+  lastLiveData = d;
+  const c = d.config || {};
+  const pos = d.positions || [];
+  const hist = d.history || [];
+  const eq = d.equity || 0;
+  const base = hist.length ? hist[0].equity : eq;
+  const pnl = eq - base;
+  const pnlPct = base > 0 ? (pnl / base) * 100 : 0;
+  const buffer = d.liq_buffer_pct || 0;
+
+  $("mo-metrics").innerHTML =
+    metric("账户净值", "$" + fmt(eq, 2)) +
+    metric("累计盈亏", (pnl >= 0 ? "+" : "") + "$" + fmt(pnl, 2), pnl >= 0 ? "pos" : "neg") +
+    metric("收益率", pct(pnlPct), pnlPct >= 0 ? "pos" : "neg") +
+    metric("持仓数", pos.length) +
+    metric("杠杆", fmt(c.leverage || 0, 1) + "×") +
+    metric("总名义敞口", "$" + fmt(d.gross_notional || 0, 0)) +
+    metric("净敞口（市场中性）", "$" + fmt(d.net_notional || 0, 2), Math.abs(d.net_notional || 0) < 1 ? "pos" : "") +
+    metric("账户强平缓冲", fmt(buffer, 1) + "%", buffer < 40 ? "neg" : "pos") +
+    metric("强平净值线", "$" + fmt(d.maintenance_margin || 0, 0)) +
+    metric("维持保证金", "$" + fmt(d.maintenance_margin || 0, 0)) +
+    metric("逐仓距爆仓(最小)", d.nearest_liq_pct == null ? "—" : fmt(d.nearest_liq_pct, 1) + "%",
+      d.nearest_liq_pct != null && d.nearest_liq_pct < 20 ? "neg" : "") +
+    metric("最后调仓", d.last_run_at ? new Date(d.last_run_at).toISOString().slice(0, 16).replace("T", " ") : "—");
+
+  const err = d.error ? `<div class="note neg">${d.error}</div>` : "";
+  if (!pos.length) {
+    $("mo-positions").innerHTML = err + '<div class="empty">账户当前没有持仓</div>';
+  } else {
+    const rows = pos
+      .map((p) => {
+        const cls = p.unrealized >= 0 ? "pos" : "neg";
+        const dist = p.dist_pct == null ? "—" : fmt(p.dist_pct, 1) + "%";
+        return `<tr>
+          <td>${p.coin}</td>
+          <td>${sideLabel(p.side)}</td>
+          <td>${fmt(p.size, 6)}</td>
+          <td>${fmt(p.entry_px, 6)}</td>
+          <td>${fmt(p.mark_px, 6)}</td>
+          <td>$${fmt(p.notional, 0)}</td>
+          <td class="${cls}">${p.unrealized >= 0 ? "+" : ""}$${fmt(p.unrealized, 2)}</td>
+          <td>${p.liq_px == null ? "—" : fmt(p.liq_px, 6)}</td>
+          <td class="${p.dist_pct != null && p.dist_pct < 20 ? "neg" : "muted"}">${dist}</td>
+        </tr>`;
+      })
+      .join("");
+    $("mo-positions").innerHTML = err + `<table><thead><tr>
+      <th>币</th><th>方向</th><th>数量</th><th>入场价</th><th>当前价</th>
+      <th>名义</th><th>未实现盈亏</th><th>爆仓价</th><th>距爆仓</th>
+    </tr></thead><tbody>${rows}</tbody></table>`;
+  }
+
+  renderLiveChart(hist);
+
+  const recs = (d.records || []).slice().reverse();
+  const pages = Math.max(1, Math.ceil(recs.length / PAGE_SIZE));
+  if (livePage > pages - 1) livePage = 0;
+  const pageItems = recs.slice(livePage * PAGE_SIZE, (livePage + 1) * PAGE_SIZE);
+  $("mo-records").innerHTML = recs.length
+    ? `<table><thead><tr><th>时间</th><th>币</th><th>方向</th><th>动作</th><th>数量</th><th>价格</th><th>名义</th><th>结果</th></tr></thead><tbody>${pageItems
+        .map((r) => `<tr>
+          <td class="muted">${new Date(r.ts).toISOString().slice(0, 16).replace("T", " ")}</td>
+          <td>${r.coin}</td><td>${r.side}</td><td>${r.action}</td>
+          <td>${fmt(r.size, 6)}</td><td>${fmt(r.price, 6)}</td><td>$${fmt(r.notional, 0)}</td>
+          <td class="${r.live ? "" : "muted"}">${r.result}</td>
+        </tr>`)
+        .join("")}</tbody></table>
+      ${pager("live", recs.length, livePage)}`
+    : '<div class="empty">还没有下单记录</div>';
+}
+
+function renderLiveChart(history) {
+  const el = $("mo-chart");
+  if (!history || history.length < 2) {
+    el.innerHTML = '<div class="empty">还没有足够的数据点（每天自动记录一次净值）</div>';
+    return;
+  }
+  const W = 1080, H = 300;
+  const padL = 78, padR = 84, padT = 16, padB = 34;
+  const vals = history.map((p) => p.equity);
+  const base = vals[0];
+  const ax = niceAxis(Math.min(...vals, base), Math.max(...vals, base), 5);
+  const span = ax.hi - ax.lo || 1;
+  const n = history.length;
+  const X = (i) => padL + (i / (n - 1)) * (W - padL - padR);
+  const Y = (v) => padT + (1 - (v - ax.lo) / span) * (H - padT - padB);
+  const money = (v) => "$" + Math.round(v).toLocaleString();
+
+  const grid = ax.lines
+    .map((v) => `<line x1="${padL}" y1="${Y(v)}" x2="${W - padR}" y2="${Y(v)}" stroke="#eef1f6"/>
+      <text x="${padL - 8}" y="${Y(v) + 4}" text-anchor="end" font-size="11" fill="#768297">${money(v)}</text>`)
+    .join("");
+  const xlabels = [0, Math.floor((n - 1) / 2), n - 1]
+    .map((i) => {
+      const anchor = i === 0 ? "start" : i === n - 1 ? "end" : "middle";
+      return `<text x="${X(i)}" y="${H - 10}" text-anchor="${anchor}" font-size="11" fill="#768297">${ts2d(history[i].ts)}</text>`;
+    })
+    .join("");
+  const baseY = Y(base);
+  const line = `<polyline points="${vals.map((v, i) => `${X(i)},${Y(v)}`).join(" ")}" fill="none" stroke="#2d6df6" stroke-width="2.2"/>`;
+
+  el.innerHTML = `
+    <svg viewBox="0 0 ${W} ${H}" role="img" aria-label="实盘净值曲线">
+      ${grid}
+      <line x1="${padL}" y1="${baseY}" x2="${W - padR}" y2="${baseY}" stroke="#c9d3e3" stroke-width="1" stroke-dasharray="4 4"/>
+      <text x="${W - padR + 6}" y="${baseY + 4}" font-size="11" fill="#9aa6b8">起点</text>
+      ${line}
+      <text x="${W - padR + 6}" y="${Y(vals[n - 1]) + 4}" font-size="12" font-weight="600" fill="#2d6df6">${money(vals[n - 1])}</text>
+      ${xlabels}
+    </svg>
+    <div class="legend">
+      <span><span style="color:#2d6df6">━</span> 实盘账户净值</span>
+      <span>起点 ${money(base)} · ${ts2d(history[0].ts)} → ${ts2d(history[n - 1].ts)}</span>
+    </div>`;
+}
+
+async function refreshMonitor() {
+  if (liveBusy) return;
+  try {
+    const d = await fetchLive();
+    if (!liveLoaded) {
+      lvConfigInto(d);
+      liveLoaded = true;
+    }
+    renderMonitor(d);
+  } catch (e) {
+    $("mo-metrics").innerHTML = `<div class="note neg">读取实盘状态失败：${e}</div>`;
+  }
+}
+
+$("mo-refresh").addEventListener("click", refreshMonitor);
 
 // ---------- 启动 ----------
 refreshStatus();
 setInterval(refreshStatus, 5000);
 setInterval(refreshPaper, 10000);
 refreshPaper();
-refreshLive();
-setInterval(refreshLive, 15000);
+refreshLiveConfig();
+refreshMonitor();
+setInterval(refreshLiveConfig, 20000);
+setInterval(refreshMonitor, 15000);

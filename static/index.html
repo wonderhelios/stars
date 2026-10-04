@@ -168,7 +168,8 @@
       <nav class="nav">
         <button data-view="backtest" class="active">回测</button>
         <button data-view="paper">纸交易</button>
-        <button data-view="live">实盘</button>
+        <button data-view="live">实盘设置</button>
+        <button data-view="monitor">实盘监控</button>
       </nav>
       <div class="status-pill">
         <span class="led" id="led"></span>
@@ -264,14 +265,14 @@
         </div>
       </section>
 
-      <!-- ============ 实盘 ============ -->
+      <!-- ============ 实盘设置 ============ -->
       <section id="view-live" class="view">
         <div class="panel">
           <div class="panel-head">
             <div>
-              <div class="panel-kicker">LIVE TRADING · HYPERLIQUID</div>
-              <h2>实盘</h2>
-              <p class="sub">与纸交易<b>共用同一套排名代码</b>，不会漂移。默认只生成计划；勾选「启用实盘」后才会真正发单。</p>
+              <div class="panel-kicker">LIVE SETUP · HYPERLIQUID</div>
+              <h2>实盘设置</h2>
+              <p class="sub">配置 + 启停。<b>只读观测请看「实盘监控」tab。</b>实盘与纸交易共用同一套排名代码，不会漂移。</p>
             </div>
             <div class="actions">
               <button class="btn ghost" id="lv-plan">生成计划（不下单）</button>
@@ -281,7 +282,7 @@
 
           <div class="controls">
             <div class="field"><label>账户地址（主账户，不是 API 钱包）</label><input id="lv-account" placeholder="0x..." /></div>
-            <div class="field"><label>API 钱包密钥文件路径</label><input id="lv-key" placeholder="/etc/stars/api-wallet.key" /></div>
+            <div class="field"><label>API 钱包密钥文件路径</label><input id="lv-key" placeholder="/etc/hyper-fly/api-wallet.key" /></div>
             <div class="field"><label>每腿仓位数</label><input id="lv-positions" type="number" value="8" min="1" max="30" /></div>
             <div class="field"><label>杠杆</label><input id="lv-leverage" type="number" value="3" min="1" max="20" step="0.5" /></div>
             <div class="field"><label>保证金缓冲 %</label><input id="lv-buffer" type="number" value="90" min="30" max="100" /></div>
@@ -304,16 +305,8 @@
             <div class="field"><label>&nbsp;</label><button class="btn ghost" id="lv-save">保存配置</button></div>
           </div>
 
-          <div class="metrics" id="lv-metrics"></div>
-
-          <div class="panel-head" style="margin-top:14px"><h2>账户持仓</h2></div>
-          <div id="lv-positions"></div>
-
-          <div class="panel-head" style="margin-top:14px"><h2>最近计划 / 执行结果</h2></div>
+          <div class="panel-head" style="margin-top:14px"><h2>计划 / 执行结果</h2></div>
           <div id="lv-plan-out"></div>
-
-          <div class="panel-head" style="margin-top:14px"><h2>下单记录</h2></div>
-          <div id="lv-records"></div>
         </div>
 
         <div class="panel" style="margin-top:16px">
@@ -326,10 +319,33 @@
             <li><span class="state">✅</span><div class="txt"><b>费率与爆仓已建模</b><span>费率取自 Hyperliquid 实时接口</span></div><span class="badge ok">已通过</span></li>
             <li><span class="state">⬜</span><div class="txt"><b>真实滑点实测</b><span>对比实际成交价与计划 mid 价，这是纸交易测不到的</span></div><span class="badge pending">进行中</span></li>
             <li><span class="state">⬜</span><div class="txt"><b>实盘与纸交易逐日对上</b><span>方向一致、量级接近</span></div><span class="badge pending">待验证</span></li>
-            <li><span class="state">⬜</span><div class="txt"><b>强平缓冲始终 > 40%</b><span>低于此值需降杠杆或减少仓位</span></div><span class="badge pending">待验证</span></li>
+            <li><span class="state">⬜</span><div class="txt"><b>强平缓冲始终 &gt; 40%</b><span>低于此值需降杠杆或减少仓位</span></div><span class="badge pending">待验证</span></li>
           </ul>
-          <p class="note"><b>必须用全仓保证金（Cross）。</b>3× 满仓时「初始保证金占用 ≈ 100% 净值」是数学必然，<b>不是爆仓线</b>；真正决定强平的是维持保证金，全仓口径下账户要跌约 80% 才会被强平。逐仓下每个仓位跌 ~28% 就单独爆仓。</p>
+          <p class="note"><b>必须用全仓保证金（Cross）。</b>3× 满仓时「初始保证金占用 ≈ 100% 净值」是数学必然，<b>不是爆仓线</b>；真正决定强平的是维持保证金。</p>
           <p class="note">真正的尾部风险不是大盘涨跌（已被对冲），而是<b>动量崩盘</b>：赢家暴跌 + 输家暴涨同时发生，两条腿一起亏。</p>
+        </div>
+      </section>
+
+      <!-- ============ 实盘监控 ============ -->
+      <section id="view-monitor" class="view">
+        <div class="panel">
+          <div class="panel-head">
+            <div>
+              <div class="panel-kicker">LIVE MONITOR</div>
+              <h2>实盘监控</h2>
+              <p class="sub">只读观测。<b>配置与启停在「实盘设置」。</b></p>
+            </div>
+            <div class="actions">
+              <button class="btn ghost" id="mo-refresh">刷新</button>
+            </div>
+          </div>
+          <div class="metrics" id="mo-metrics"></div>
+          <div class="panel-head" style="margin-top:14px"><h2>净值曲线</h2></div>
+          <div class="chart" id="mo-chart"></div>
+          <div class="panel-head" style="margin-top:14px"><h2>当前持仓</h2></div>
+          <div id="mo-positions"></div>
+          <div class="panel-head" style="margin-top:14px"><h2>下单记录</h2></div>
+          <div id="mo-records"></div>
         </div>
       </section>
 
