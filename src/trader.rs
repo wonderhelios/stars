@@ -23,6 +23,8 @@ pub struct TradeConfig {
     pub min_order_usd: f64,
     /// skip adjustments smaller than this share of the target notional
     pub rebalance_band: f64,
+    /// fraction of equity actually deployed, leaving room for fees and slippage
+    pub margin_buffer: f64,
 }
 
 impl Default for TradeConfig {
@@ -36,6 +38,7 @@ impl Default for TradeConfig {
             slippage: 0.005,
             min_order_usd: 10.0,
             rebalance_band: 0.02,
+            margin_buffer: 0.90,
         }
     }
 }
@@ -138,7 +141,10 @@ pub fn build_plan(
 ) -> Plan {
     let equity = equity_override.unwrap_or(acct.equity);
     let n = long.len().max(1);
-    let per_coin = equity * cfg.leverage / 2.0 / n as f64;
+    // Deploy only part of the equity so fees and adverse fills cannot push the
+    // book past the margin limit mid-run.
+    let deployable = equity * cfg.margin_buffer;
+    let per_coin = deployable * cfg.leverage / 2.0 / n as f64;
     let mut plan = Plan {
         equity,
         per_coin,

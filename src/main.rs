@@ -267,6 +267,9 @@ async fn run_trade(args: &[String], db_path: &str) -> anyhow::Result<()> {
     if let Some(v) = value("--slippage") {
         cfg.slippage = v.parse().context("--slippage")?;
     }
+    if let Some(v) = value("--buffer") {
+        cfg.margin_buffer = v.parse().context("--buffer")?;
+    }
 
     let store = Store::open(std::path::Path::new(db_path))?;
     let panel = trader::load_panel(&store)?;
@@ -337,11 +340,12 @@ async fn run_trade(args: &[String], db_path: &str) -> anyhow::Result<()> {
 
     let plan = trader::build_plan(&long, &short, &acct, &markets, &mids, &cfg, None);
     println!(
-        "\n目标：每腿 {} 仓 · 每仓 ${:.2} · 目标总名义 ${:.0} · 杠杆 {}x",
+        "\n目标：每腿 {} 仓 · 每仓 ${:.2} · 目标总名义 ${:.0} · 杠杆 {}x · 保证金缓冲 {:.0}%",
         cfg.target_positions.min(long.len().max(1)),
         plan.per_coin,
         plan.per_coin * 2.0 * cfg.target_positions.min(long.len().max(1)) as f64,
-        cfg.leverage
+        cfg.leverage,
+        cfg.margin_buffer * 100.0
     );
     println!("多头腿: {}", plan.long_leg.join(" "));
     println!("空头腿: {}", plan.short_leg.join(" "));
