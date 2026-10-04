@@ -232,7 +232,37 @@ async fn paper_start(
     p.total_cost = 0.0;
     p.started_at = None;
     let _ = p.save(&state.paper_path);
-    Json(json!({"ok": true, "config": p.config})).into_response()
+    drop(p);
+
+    // Run the initial replay immediately so the book, trade log and equity
+    // curve are populated the moment the user presses start.
+    let snapshot = run_paper_step(&state).await;
+    match snapshot {
+        Some(v) => Json(json!({"ok": true, "config": v["config"], "paper": v})).into_response(),
+        None => Json(json!({"ok": true})).into_response(),
+    }
+}
+
+/// Load the candle panel + per-coin max leverage and advance the paper trade.
+async fn run_paper_step(state: &AppState) -> Option<serde_json::Value> {
+    let panel: Vec<PanelEntry> = state
+        .store
+        .all_panels()
+        .unwrap_or_default()
+        .into_iter()
+        .map(|(coin, candles)| PanelEntry { coin, candles })
+        .collect();
+    let max_lev: std::collections::HashMap<String, u32> = {
+        let meta = state.meta.lock().await;
+        meta.universe
+            .iter()
+            .map(|c| (c.name.clone(), c.max_leverage))
+            .collect()
+    };
+    let mut p = state.paper.lock().await;
+    paper::step(&mut p, &panel, &max_lev);
+    let _ = p.save(&state.paper_path);
+    Some(json!(paper::snapshot(&*p)))
 }
 
 async fn paper_stop(State(state): State<AppState>) -> Response {
@@ -253,22 +283,8 @@ async fn paper_step(State(state): State<AppState>) -> Response {
     if !state.paper.lock().await.running {
         return (StatusCode::CONFLICT, Json(json!({"error": "纸交易未启动"}))).into_response();
     }
-    let panel: Vec<PanelEntry> = state
-        .store
-        .all_panels()
-        .unwrap_or_default()
-        .into_iter()
-        .map(|(coin, candles)| PanelEntry { coin, candles })
-        .collect();
-    let max_lev: std::collections::HashMap<String, u32> = {
-        let meta = state.meta.lock().await;
-        meta.universe
-            .iter()
-            .map(|c| (c.name.clone(), c.max_leverage))
-            .collect()
-    };
-    let mut p = state.paper.lock().await;
-    paper::step(&mut p, &panel, &max_lev);
-    let _ = p.save(&state.paper_path);
-    Json(json!(paper::snapshot(&*p))).into_response()
+    match run_paper_step(&state).await {
+        Some(v) => Json(v).into_response(),
+        None => (StatusCode::CONFLICT, Json(json!({"error": "数据不足"}))).into_response(),
+    }
 }
