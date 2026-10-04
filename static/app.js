@@ -243,6 +243,8 @@ function renderPositions(positions) {
 }
 
 function renderTrades(trades, config) {
+  lastTrades = trades || [];
+  lastConfig = config;
   if (!trades || !trades.length) {
     $("pp-trades").innerHTML =
       '<div class="empty">还没有平仓记录（首次换仓后开始出现）</div>';
@@ -251,8 +253,10 @@ function renderTrades(trades, config) {
   const list = trades.slice().reverse();
   const realized = list.reduce((s, t) => s + t.pnl_usd, 0);
   const wins = list.filter((t) => t.pnl_usd > 0).length;
-  const rows = list
-    .slice(0, 100)
+  const pages = Math.max(1, Math.ceil(list.length / PAGE_SIZE));
+  if (tradesPage > pages - 1) tradesPage = 0;
+  const pageItems = list.slice(tradesPage * PAGE_SIZE, (tradesPage + 1) * PAGE_SIZE);
+  const rows = pageItems
     .map((t) => {
       const cls = t.pnl_usd >= 0 ? "pos" : "neg";
       const d1 = ts2d(t.entry_ts);
@@ -275,11 +279,50 @@ function renderTrades(trades, config) {
     </div>
     <table><thead><tr>
       <th>币</th><th>方向</th><th>均价</th><th>出场价</th><th>盈亏</th><th>盈亏%</th><th>持有</th><th>原因</th>
-    </tr></thead><tbody>${rows}</tbody></table>`;
+    </tr></thead><tbody>${rows}</tbody></table>
+    ${pager("trades", list.length, tradesPage)}`;
 }
+
+
+
+// ---------- 分页 ----------
+const PAGE_SIZE = 15;
+let dailyPage = 0;
+let tradesPage = 0;
+let lastDaily = [];
+let lastTrades = [];
+let lastConfig = null;
+let lastCapital = 1;
+
+// 通用分页条；点击由全局委托处理
+function pager(key, total, page) {
+  const pages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+  const p = Math.min(Math.max(0, page), pages - 1);
+  return `<div class="pager">
+    <button class="btn ghost" data-pager="${key}" data-to="${p - 1}" ${p <= 0 ? "disabled" : ""}>← 上一页</button>
+    <span class="info">第 ${p + 1} / ${pages} 页 · 共 ${total} 条</span>
+    <button class="btn ghost" data-pager="${key}" data-to="${p + 1}" ${p >= pages - 1 ? "disabled" : ""}>下一页 →</button>
+  </div>`;
+}
+
+document.addEventListener("click", (e) => {
+  const btn = e.target.closest("[data-pager]");
+  if (!btn) return;
+  const key = btn.dataset.pager;
+  const to = Number(btn.dataset.to);
+  if (key === "daily") {
+    dailyPage = to;
+    renderDailyPnl(lastDaily, lastCapital);
+  } else if (key === "trades") {
+    tradesPage = to;
+    renderTrades(lastTrades, lastConfig);
+  }
+});
 
 // 每日盈亏：从净值曲线上取相邻两点的差
 function renderDailyPnl(history, capital) {
+  lastDaily = history || [];
+  lastCapital = capital;
   if (!history || history.length < 2) {
     $("pp-daily").innerHTML = '<div class="empty">还没有完整交易日（需要至少 2 天）</div>';
     return;
@@ -290,11 +333,12 @@ function renderDailyPnl(history, capital) {
     const pnl = cur.equity - prev.equity;
     const pct = prev.equity > 0 ? (pnl / prev.equity) * 100 : 0;
     const mkt = prev.market > 0 ? ((cur.market / prev.market) - 1) * 100 : 0;
-    // 曲线右侧大部分是回放，最后一段是前向
-    rows.push({ ts: cur.ts, equity: cur.equity, pnl, pct, mkt, replayed: i < history.length - 1 });
+    rows.push({ ts: cur.ts, equity: cur.equity, pnl, pct, mkt });
   }
   const list = rows.slice().reverse();
-  const show = list.slice(0, 30);
+  const pages = Math.max(1, Math.ceil(list.length / PAGE_SIZE));
+  if (dailyPage > pages - 1) dailyPage = 0;
+  const show = list.slice(dailyPage * PAGE_SIZE, (dailyPage + 1) * PAGE_SIZE);
   const wins = rows.filter((r) => r.pnl > 0).length;
   const total = rows.reduce((s, r) => s + r.pnl, 0);
   const best = rows.reduce((a, b) => (b.pnl > a.pnl ? b : a), rows[0]);
@@ -320,7 +364,7 @@ function renderDailyPnl(history, capital) {
     <table><thead><tr>
       <th>日期(UTC)</th><th>净值</th><th>当日盈亏</th><th>当日%</th><th>同期市场%</th>
     </tr></thead><tbody>${body}</tbody></table>
-    ${list.length > show.length ? `<div class="note">只显示最近 ${show.length} 天</div>` : ""}`;
+    ${pager("daily", list.length, dailyPage)}`;
 }
 
 // 持有期分析：赚的钱来自长仓还是短仓
@@ -396,7 +440,7 @@ function renderChart(history) {  if (!history || history.length < 2) {
       <polyline points="${mktLine}" fill="none" stroke="#768297" stroke-width="1.5"/>
       <polyline points="${stratLine}" fill="none" stroke="#2d6df6" stroke-width="2"/>
     </svg>
-    <div class="note" style="display:flex;gap:16px">
+    <div class="legend">
       <span><span style="color:#2d6df6">━</span> 策略净值（多空前 20%，市场中性）</span>
       <span><span style="color:#768297">━</span> 等权市场（若无对冲会拿到的）</span>
       <span>${ts2d(history[0].ts)} → ${ts2d(history[history.length - 1].ts)}</span>
