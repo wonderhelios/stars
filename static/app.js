@@ -181,6 +181,7 @@ async function refreshPaper() {
       metric("已实现盈亏", `${d.realized_pnl >= 0 ? "+" : ""}$${fmt(d.realized_pnl, 2)}`, d.realized_pnl >= 0 ? "pos" : "neg") +
       metric("未实现盈亏", `${d.unrealized_pnl >= 0 ? "+" : ""}$${fmt(d.unrealized_pnl, 2)}`, d.unrealized_pnl >= 0 ? "pos" : "neg") +
       metric("平仓胜率", fmt(d.win_rate, 1) + "%") +
+      metric("爆仓次数", d.liquidations, d.liquidations > 0 ? "neg" : "pos") +
       metric("杠杆", fmt(d.leverage, 0) + "×") +
       metric("总名义敞口", "$" + fmt(d.gross_notional, 0)) +
       metric("净敞口（市场中性）", "$" + fmt(d.net_notional, 0), Math.abs(d.net_notional) < 1 ? "pos" : "") +
@@ -222,7 +223,7 @@ function renderPositions(positions) {
         <td>${p.coin}</td>
         <td>${sideLabel(p.side)}</td>
         <td>$${fmt(p.notional, 0)}</td>
-        <td>${fmt(p.entry_price, 6)}</td>
+        <td>${fmt(p.basis_price || p.entry_price, 6)}</td>
         <td>${fmt(p.mark_price, 6)}</td>
         <td class="${cls}">${p.unrealized_pnl >= 0 ? "+" : ""}$${fmt(p.unrealized_pnl, 2)}</td>
         <td>${fmt(p.liq_price, 6)}</td>
@@ -231,7 +232,7 @@ function renderPositions(positions) {
     })
     .join("");
   $("pp-positions").innerHTML = `<table><thead><tr>
-    <th>币</th><th>方向</th><th>名义</th><th>入场价</th><th>当前价</th>
+    <th>币</th><th>方向</th><th>名义</th><th>均价</th><th>当前价</th>
     <th>未实现盈亏</th><th>爆仓价</th><th>距爆仓</th>
   </tr></thead><tbody>${rows}</tbody></table>`;
 }
@@ -254,11 +255,12 @@ function renderTrades(trades, config) {
       return `<tr>
         <td>${t.coin}</td>
         <td>${sideLabel(t.side)}</td>
-        <td>${fmt(t.entry_price, 6)}</td>
+        <td>${fmt(t.avg_entry || t.entry_price, 6)}</td>
         <td>${fmt(t.exit_price, 6)}</td>
         <td class="${cls}">${t.pnl_usd >= 0 ? "+" : ""}$${fmt(t.pnl_usd, 2)}</td>
         <td class="${cls}">${pct(t.pnl_pct)}</td>
         <td class="muted">${d1} → ${d2}</td>
+        <td class="muted">${t.reason === "liquidated" ? "爆仓强平" : "换仓"}</td>
       </tr>`;
     })
     .join("");
@@ -267,7 +269,7 @@ function renderTrades(trades, config) {
       · 胜率 ${fmt((wins / list.length) * 100, 1)}%
     </div>
     <table><thead><tr>
-      <th>币</th><th>方向</th><th>入场价</th><th>出场价</th><th>盈亏</th><th>盈亏%</th><th>持有</th>
+      <th>币</th><th>方向</th><th>均价</th><th>出场价</th><th>盈亏</th><th>盈亏%</th><th>持有</th><th>原因</th>
     </tr></thead><tbody>${rows}</tbody></table>`;
 }
 

@@ -68,9 +68,18 @@ impl Default for PaperConfig {
 pub struct PaperPosition {
     pub coin: String,
     pub side: Side,
+    /// current notional; resized at each rebalance to follow equity (compounding)
     pub notional: f64,
+    /// original entry price, kept for display
     pub entry_price: f64,
+    /// original entry time, kept for display
     pub entry_ts: i64,
+    /// PnL basis; resets to the mark price whenever the position is resized
+    #[serde(default)]
+    pub basis_price: f64,
+    /// PnL realized when the position was resized (carried into the final trade)
+    #[serde(default)]
+    pub realized_carry: f64,
     pub mark_price: f64,
     pub unrealized_pnl: f64,
     pub liq_price: f64,
@@ -85,12 +94,19 @@ pub struct Trade {
     pub coin: String,
     pub side: Side,
     pub entry_ts: i64,
+    /// price the position first opened at
     pub entry_price: f64,
+    /// notional-weighted average entry after rebalancing (PnL is measured from this)
+    #[serde(default)]
+    pub avg_entry: f64,
     pub exit_ts: i64,
     pub exit_price: f64,
     pub notional: f64,
     pub pnl_usd: f64,
     pub pnl_pct: f64,
+    /// "rebalance" (left the leg) or "liquidated" (hit the isolated liq price)
+    #[serde(default)]
+    pub reason: String,
     #[serde(default)]
     pub replayed: bool,
 }
@@ -115,6 +131,8 @@ pub struct PaperState {
     pub replay_until: Option<i64>,
     pub days_elapsed: usize,
     pub total_cost: f64,
+    #[serde(default)]
+    pub liquidations: usize,
     pub history: Vec<EquityPoint>,
 }
 
@@ -145,6 +163,11 @@ fn cum_pnl(side: Side, notional: f64, entry: f64, px: f64) -> f64 {
     }
 }
 
+/// Total PnL of a position at `px`, including PnL banked when it was resized.
+fn position_pnl(pos: &PaperPosition, px: f64) -> f64 {
+    pos.realized_carry + cum_pnl(pos.side, pos.notional, pos.basis_price, px)
+}
+
 /// Isolated liquidation price for a position of the given side and leverage.
 pub fn liq_price(side: Side, entry: f64, leverage: f64, max_leverage: u32) -> f64 {
     let m = maintenance_margin_rate(max_leverage);
@@ -157,13 +180,44 @@ pub fn liq_price(side: Side, entry: f64, leverage: f64, max_leverage: u32) -> f6
 
 fn mark(pos: &mut PaperPosition, px: f64, leverage: f64) {
     pos.mark_price = px;
-    pos.unrealized_pnl = cum_pnl(pos.side, pos.notional, pos.entry_price, px);
-    pos.liq_price = liq_price(pos.side, pos.entry_price, leverage, pos.max_leverage);
+    pos.unrealized_pnl = position_pnl(pos, px);
+    // The liquidation price follows the basis the current size was opened at.
+    let basis = if pos.basis_price > 0.0 { pos.basis_price } else { pos.entry_price };
+    pos.liq_price = liq_price(pos.side, basis, leverage, pos.max_leverage);
+}
+
+/// Resize a position to `target` notional at the current price, keeping the cost
+/// basis correct:
+///   - adding: the basis becomes the notional-weighted average entry
+///   - reducing: the basis is unchanged and the removed slice's PnL is banked
+/// This is what makes the isolated liquidation price behave like a real
+/// averaged position rather than tracking the latest mark.
+fn resize(pos: &mut PaperPosition, target: f64, px: f64, leverage: f64) {
+    if px <= 0.0 || target <= 0.0 {
+        return;
+    }
+    let old = pos.notional;
+    let basis = if pos.basis_price > 0.0 { pos.basis_price } else { pos.entry_price };
+    if target > old {
+        // Quantity-weighted average entry, so PnL is continuous across the add.
+        let add = target - old;
+        let qty = old / basis + add / px;
+        pos.basis_price = (old + add) / qty;
+    } else if target < old {
+        let remove = old - target;
+        pos.realized_carry += cum_pnl(pos.side, remove, basis, px);
+    } else {
+        return;
+    }
+    pos.notional = target;
+    mark(pos, px, leverage);
 }
 
 struct Panel {
     ts: Vec<i64>,
     closes: HashMap<String, BTreeMap<i64, f64>>,
+    highs: HashMap<String, BTreeMap<i64, f64>>,
+    lows: HashMap<String, BTreeMap<i64, f64>>,
     dollar_vol: HashMap<String, BTreeMap<i64, f64>>,
 }
 
@@ -171,29 +225,47 @@ impl Panel {
     fn build(panel: &[PanelEntry]) -> Self {
         let mut timeline: BTreeSet<i64> = Default::default();
         let mut closes: HashMap<String, BTreeMap<i64, f64>> = Default::default();
+        let mut highs: HashMap<String, BTreeMap<i64, f64>> = Default::default();
+        let mut lows: HashMap<String, BTreeMap<i64, f64>> = Default::default();
         let mut dollar_vol: HashMap<String, BTreeMap<i64, f64>> = Default::default();
         for e in panel {
             let mut cm = BTreeMap::new();
+            let mut hm = BTreeMap::new();
+            let mut lm = BTreeMap::new();
             let mut vm = BTreeMap::new();
             for c in &e.candles {
                 if c.c > 0.0 {
                     timeline.insert(c.t);
                     cm.insert(c.t, c.c);
+                    hm.insert(c.t, c.h);
+                    lm.insert(c.t, c.l);
                     vm.insert(c.t, c.v * c.c);
                 }
             }
             closes.insert(e.coin.clone(), cm);
+            highs.insert(e.coin.clone(), hm);
+            lows.insert(e.coin.clone(), lm);
             dollar_vol.insert(e.coin.clone(), vm);
         }
         Self {
             ts: timeline.into_iter().collect(),
             closes,
+            highs,
+            lows,
             dollar_vol,
         }
     }
 
     fn px(&self, coin: &str, t: i64) -> Option<f64> {
         self.closes.get(coin).and_then(|m| m.get(&t)).copied()
+    }
+
+    fn hi(&self, coin: &str, t: i64) -> Option<f64> {
+        self.highs.get(coin).and_then(|m| m.get(&t)).copied()
+    }
+
+    fn lo(&self, coin: &str, t: i64) -> Option<f64> {
+        self.lows.get(coin).and_then(|m| m.get(&t)).copied()
     }
 }
 
@@ -287,10 +359,11 @@ fn advance(
     let long_leg: HashSet<String> = sigs[sigs.len() - n..].iter().map(|s| s.0.clone()).collect();
     let short_leg: HashSet<String> = sigs[..n].iter().map(|s| s.0.clone()).collect();
 
-    // Fixed position size so the book does not balloon when fewer coins are
-    // liquid: each leg deploys gross/2 across `target_positions` slots.
-    let leg_notional = cfg.capital * cfg.leverage / 2.0;
-    let per_coin = leg_notional / cfg.target_positions.max(1) as f64;
+    // Position size follows current equity so the strategy compounds. Each leg
+    // deploys equity*leverage/2 across the names it actually holds, so gross
+    // exposure stays at the target leverage even when fewer coins qualify.
+    let leg_notional = state.equity.max(0.0) * cfg.leverage / 2.0;
+    let per_coin = leg_notional / n as f64;
 
     // ---------- first day: open the book ----------
     if is_first {
@@ -304,6 +377,8 @@ fn advance(
                     notional: per_coin,
                     entry_price: px,
                     entry_ts: t,
+                    basis_price: px,
+                    realized_carry: 0.0,
                     mark_price: px,
                     unrealized_pnl: 0.0,
                     liq_price: 0.0,
@@ -326,12 +401,51 @@ fn advance(
     // ---------- settle the previous close ----------
     let t_prev = p.ts[i - 1];
     let mut day_pnl = 0.0;
-    for pos in state.positions.iter_mut() {
-        if let (Some(prev), Some(cur)) = (p.px(&pos.coin, t_prev), p.px(&pos.coin, t)) {
-            day_pnl += cum_pnl(pos.side, pos.notional, pos.entry_price, cur)
-                - cum_pnl(pos.side, pos.notional, pos.entry_price, prev);
-            mark(pos, cur, cfg.leverage);
+    // Positions whose isolated margin was wiped out by an intraday move.
+    let mut liquidated: Vec<(PaperPosition, f64)> = Vec::new();
+    let mut survivors: Vec<PaperPosition> = Vec::new();
+    for mut pos in state.positions.drain(..) {
+        let prev = p.px(&pos.coin, t_prev);
+        let cur = p.px(&pos.coin, t);
+        let hit = pos.liq_price > 0.0
+            && match pos.side {
+                Side::Long => p.lo(&pos.coin, t).is_some_and(|l| l <= pos.liq_price),
+                Side::Short => p.hi(&pos.coin, t).is_some_and(|h| h >= pos.liq_price),
+            };
+        if hit {
+            // Force-closed at the liquidation price.
+            let liq = pos.liq_price;
+            if let Some(prev) = prev {
+                day_pnl += position_pnl(&pos, liq) - position_pnl(&pos, prev);
+            }
+            mark(&mut pos, liq, cfg.leverage);
+            liquidated.push((pos, liq));
+            continue;
         }
+        if let (Some(prev), Some(cur)) = (prev, cur) {
+            day_pnl += position_pnl(&pos, cur) - position_pnl(&pos, prev);
+            mark(&mut pos, cur, cfg.leverage);
+        }
+        survivors.push(pos);
+    }
+    state.positions = survivors;
+    for (pos, liq) in liquidated {
+        let pnl = position_pnl(&pos, liq);
+        state.trades.push(Trade {
+            coin: pos.coin.clone(),
+            side: pos.side,
+            entry_ts: pos.entry_ts,
+            entry_price: pos.entry_price,
+            avg_entry: pos.basis_price,
+            exit_ts: t,
+            exit_price: liq,
+            notional: pos.notional,
+            pnl_usd: pnl,
+            pnl_pct: if pos.notional > 0.0 { pnl / pos.notional * 100.0 } else { 0.0 },
+            reason: "liquidated".into(),
+            replayed: pos.replayed,
+        });
+        state.liquidations += 1;
     }
     let mkt: Vec<f64> = sigs
         .iter()
@@ -347,8 +461,11 @@ fn advance(
     state.equity += day_pnl;
 
     // ---------- trade membership changes ----------
+    // A new rebalance day: re-size every surviving position to the equity-based
+    // target (compounding + equal weight), close the ones leaving a leg, and
+    // open the ones entering.
     let mut keep: Vec<PaperPosition> = Vec::new();
-    let mut closed = 0.0;
+    let mut turnover = 0.0;
     for pos in state.positions.drain(..) {
         let wanted = match pos.side {
             Side::Long => long_leg.contains(&pos.coin),
@@ -358,7 +475,8 @@ fn advance(
         if wanted {
             let mut pos = pos;
             if let Some(px) = px {
-                mark(&mut pos, px, cfg.leverage);
+                turnover += (per_coin - pos.notional).abs();
+                resize(&mut pos, per_coin, px, cfg.leverage);
             }
             keep.push(pos);
         } else {
@@ -366,20 +484,22 @@ fn advance(
             // last mark so the realized PnL is not silently lost.
             let exit_px = px.unwrap_or(pos.mark_price);
             if exit_px > 0.0 {
-                let pnl = cum_pnl(pos.side, pos.notional, pos.entry_price, exit_px);
+                let pnl = position_pnl(&pos, exit_px);
                 state.trades.push(Trade {
                     coin: pos.coin.clone(),
                     side: pos.side,
                     entry_ts: pos.entry_ts,
                     entry_price: pos.entry_price,
+                    avg_entry: pos.basis_price,
                     exit_ts: t,
                     exit_price: exit_px,
                     notional: pos.notional,
                     pnl_usd: pnl,
                     pnl_pct: if pos.notional > 0.0 { pnl / pos.notional * 100.0 } else { 0.0 },
+                    reason: "rebalance".into(),
                     replayed: pos.replayed,
                 });
-                closed += pos.notional;
+                turnover += pos.notional;
             }
         }
     }
@@ -387,7 +507,6 @@ fn advance(
 
     let have: HashSet<(String, Side)> =
         state.positions.iter().map(|x| (x.coin.clone(), x.side)).collect();
-    let mut opened = 0.0;
     for (leg, side) in [(&long_leg, Side::Long), (&short_leg, Side::Short)] {
         for coin in leg {
             if have.contains(&(coin.clone(), side)) {
@@ -401,6 +520,8 @@ fn advance(
                 notional: per_coin,
                 entry_price: px,
                 entry_ts: t,
+                basis_price: px,
+                realized_carry: 0.0,
                 mark_price: px,
                 unrealized_pnl: 0.0,
                 liq_price: 0.0,
@@ -409,11 +530,12 @@ fn advance(
             };
             mark(&mut pos, px, cfg.leverage);
             state.positions.push(pos);
-            opened += per_coin;
+            turnover += per_coin;
         }
     }
 
-    let cost = (closed + opened) * cfg.fee;
+    // Fee on everything that moved this rebalance: resizes, closes and opens.
+    let cost = turnover * cfg.fee;
     state.total_cost += cost;
     state.equity -= cost;
 
@@ -439,6 +561,7 @@ pub struct PaperSnapshot {
     pub nearest_liq_pct: Option<f64>,
     pub days_elapsed: usize,
     pub total_cost: f64,
+    pub liquidations: usize,
     pub realized_pnl: f64,
     pub unrealized_pnl: f64,
     pub win_rate: f64,
@@ -490,6 +613,7 @@ pub fn snapshot(state: &PaperState) -> PaperSnapshot {
         nearest_liq_pct: nearest,
         days_elapsed: state.days_elapsed,
         total_cost: state.total_cost,
+        liquidations: state.liquidations,
         realized_pnl: realized,
         unrealized_pnl: unrealized,
         win_rate: if state.trades.is_empty() {
