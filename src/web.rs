@@ -6,7 +6,7 @@ use crate::paper::{self, PaperConfig, PaperState};
 use crate::store::Store;
 use axum::{
     extract::State,
-    http::StatusCode,
+    http::{header, StatusCode},
     response::{IntoResponse, Response},
     routing::{get, post},
     Json, Router,
@@ -14,7 +14,7 @@ use axum::{
 use serde_json::json;
 use std::sync::Arc;
 use tokio::sync::Mutex;
-use tower_http::{compression::CompressionLayer, cors::CorsLayer, services::ServeDir};
+use tower_http::{compression::CompressionLayer, cors::CorsLayer};
 
 #[derive(Clone)]
 pub struct AppState {
@@ -43,6 +43,8 @@ pub struct RefreshStatus {
 
 pub fn router(state: AppState) -> Router {
     Router::new()
+        .route("/", get(index_html))
+        .route("/app.js", get(app_js))
         .route("/api/health", get(health))
         .route("/api/status", get(status))
         .route("/api/backtest", post(backtest))
@@ -51,10 +53,23 @@ pub fn router(state: AppState) -> Router {
         .route("/api/paper/stop", post(paper_stop))
         .route("/api/paper/reset", post(paper_reset))
         .route("/api/paper/step", post(paper_step))
-        .fallback_service(ServeDir::new("static"))
         .layer(CompressionLayer::new())
         .layer(CorsLayer::permissive())
         .with_state(state)
+}
+
+const INDEX_HTML: &str = include_str!("../static/index.html");
+const APP_JS: &str = include_str!("../static/app.js");
+
+async fn index_html() -> impl IntoResponse {
+    ([(header::CONTENT_TYPE, "text/html; charset=utf-8")], INDEX_HTML)
+}
+
+async fn app_js() -> impl IntoResponse {
+    (
+        [(header::CONTENT_TYPE, "text/javascript; charset=utf-8")],
+        APP_JS,
+    )
 }
 
 async fn health() -> &'static str {
