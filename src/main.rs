@@ -3,6 +3,7 @@ mod hl;
 mod live;
 mod momentum;
 mod paper;
+mod portfolio;
 mod probe;
 mod store;
 mod trader;
@@ -541,7 +542,7 @@ async fn backfill_hourly(
         anyhow::bail!("流动性宇宙为空，跳过小时线回填");
     }
     let now = now_ms();
-    let from = now - 90 * 86_400_000; // 90 天，留足 30 天量能窗口
+    let from = now - 210 * 86_400_000; // 210 天：留足 30 天量能窗口后仍有 ~180 天可用于组合分析
     {
         let mut r = refresh.lock().await;
         r.phase = "hourly".into();
@@ -556,21 +557,33 @@ async fn backfill_hourly(
             r.coins_done = i;
         }
         let have = store.hourly_latest_ts(coin).ok().flatten();
+        let first = store.hourly_first_ts(coin).ok().flatten();
         let fresh = have.map(|t| t >= now - 2 * 3_600_000).unwrap_or(false);
-        if fresh {
+        // 还要检查历史是否够长：只判断「最新是否新鲜」会跳过更早的补拉
+        let need_older = first.map(|t| t > from + 3_600_000).unwrap_or(true);
+        if fresh && !need_older {
             continue;
         }
-        // 增量：已有数据就从上次之后拉，只有首次才回溯 90 天
-        let start = have.map(|t| t + 1).unwrap_or(from);
-        match client.hourly_candles(coin, start, now).await {
-            Ok(cs) => {
-                if let Err(e) = store.upsert_hourly(coin, &cs) {
-                    error!("小时线 {coin}: {e}");
+        if need_older {
+            let end = first.unwrap_or(now);
+            match client.hourly_candles(coin, from, end).await {
+                Ok(cs) => {
+                    let _ = store.upsert_hourly(coin, &cs);
                 }
+                Err(e) => error!("小时线补历史 {coin}: {e}"),
             }
-            Err(e) => error!("小时线 {coin}: {e}"),
+            tokio::time::sleep(Duration::from_millis(80)).await;
         }
-        tokio::time::sleep(Duration::from_millis(80)).await;
+        if !fresh {
+            let start = have.map(|t| t + 1).unwrap_or(now - 3 * 86_400_000);
+            match client.hourly_candles(coin, start, now).await {
+                Ok(cs) => {
+                    let _ = store.upsert_hourly(coin, &cs);
+                }
+                Err(e) => error!("小时线 {coin}: {e}"),
+            }
+            tokio::time::sleep(Duration::from_millis(80)).await;
+        }
     }
     {
         let mut r = refresh.lock().await;

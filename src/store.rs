@@ -92,6 +92,15 @@ impl Store {
         )?)
     }
 
+    pub fn hourly_first_ts(&self, coin: &str) -> Result<Option<i64>> {
+        let conn = self.conn.lock().unwrap();
+        Ok(conn.query_row(
+            "SELECT MIN(t) FROM candles_h WHERE coin = ?1",
+            [coin],
+            |r| r.get(0),
+        )?)
+    }
+
     /// All hourly panels (coin -> candles), for the probe signal.
     pub fn hourly_panels(&self) -> Result<Vec<(String, Vec<Candle>)>> {
         let conn = self.conn.lock().unwrap();

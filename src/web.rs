@@ -70,6 +70,7 @@ pub fn router(state: AppState) -> Router {
         .route("/api/probe/config", post(probe_config))
         .route("/api/probe/reset", post(probe_reset))
         .route("/api/probe/replay", post(probe_replay))
+        .route("/api/portfolio", get(portfolio_view))
         .layer(CompressionLayer::new())
         .layer(CorsLayer::permissive())
         .with_state(state)
@@ -524,4 +525,64 @@ async fn probe_replay(State(state): State<AppState>, body: Option<Json<ReplayBod
     st.rounds.sort_by_key(|r| r.ts);
     let _ = st.save(&state.probe_path);
     Json(json!({"ok": true, "rounds": n})).into_response()
+}
+
+
+// ==================== 策略组合 ====================
+
+/// 组合分析比较重（要遍历全部日线 + 小时线），缓存 10 分钟。
+static PORTFOLIO_CACHE: std::sync::OnceLock<
+    tokio::sync::Mutex<Option<(i64, serde_json::Value)>>,
+> = std::sync::OnceLock::new();
+
+async fn portfolio_view(State(state): State<AppState>) -> Response {
+    let cache = PORTFOLIO_CACHE.get_or_init(|| tokio::sync::Mutex::new(None));
+    let mut guard = cache.lock().await;
+    let now = crate::live::now_ms_pub();
+    if let Some((ts, v)) = guard.as_ref() {
+        if now - ts < 600_000 {
+            return Json(v.clone()).into_response();
+        }
+    }
+    let daily = match state.store.all_panels() {
+        Ok(p) => p
+            .into_iter()
+            .map(|(coin, candles)| crate::momentum::PanelEntry { coin, candles })
+            .collect::<Vec<_>>(),
+        Err(e) => return Json(json!({"ok": false, "error": format!("{e}")})).into_response(),
+    };
+    let hourly = match state.store.hourly_panels() {
+        Ok(p) => p,
+        Err(e) => return Json(json!({"ok": false, "error": format!("{e}")})).into_response(),
+    };
+    let (taker, maker) = {
+        let m = state.meta.lock().await;
+        (m.fee_taker, m.fee_maker)
+    };
+    let (taker, maker) = if taker > 0.0 {
+        (taker, maker)
+    } else {
+        (0.00045, 0.00015)
+    };
+    let a = crate::portfolio::momentum_series(&daily, taker);
+    let b = crate::portfolio::reversal_series(&hourly, maker);
+    let (corr, combos, best_w) = crate::portfolio::combine(&a, &b);
+    // 重叠天数以及各自在重叠期内的表现，方便判读
+    let overlap = {
+        let sa: std::collections::BTreeSet<i64> = a.dates.iter().copied().collect();
+        b.dates.iter().filter(|d| sa.contains(d)).count()
+    };
+    let out = json!({
+        "overlap_days": overlap,
+        "ok": true,
+        "momentum": a,
+        "reversal": b,
+        "corr": corr,
+        "combos": combos,
+        "best_weight": best_w,
+        "hourly_coins": hourly.len(),
+        "daily_coins": daily.len(),
+    });
+    *guard = Some((now, out.clone()));
+    Json(out).into_response()
 }

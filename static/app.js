@@ -1060,6 +1060,123 @@ $("pb-save").addEventListener("click", async () => {
   setTimeout(() => ($("pb-save").textContent = "保存"), 1500);
 });
 
+
+// ==================== 策略组合 ====================
+async function refreshCombo() {
+  const btn = $("cb-refresh");
+  const label = btn.textContent;
+  btn.textContent = "计算中…";
+  btn.disabled = true;
+  try {
+    const res = await fetch("/api/portfolio", { cache: "no-store" });
+    const d = await res.json();
+    if (!d.ok) throw new Error(d.error || "计算失败");
+    renderCombo(d);
+  } catch (e) {
+    $("cb-metrics").innerHTML = `<div class="note neg">${e}</div>`;
+  }
+  btn.textContent = label;
+  btn.disabled = false;
+}
+
+function renderCombo(d) {
+  const a = d.momentum || {}, b = d.reversal || {};
+  const corr = d.corr || 0;
+  const best = (d.combos || []).reduce((x, y) => (y.sharpe > (x?.sharpe ?? -9) ? y : x), null);
+  $("cb-metrics").innerHTML =
+    metric("相关系数", corr.toFixed(3), Math.abs(corr) < 0.2 ? "pos" : "neg") +
+    metric("重叠天数", d.overlap_days || 0, (d.overlap_days || 0) >= 120 ? "pos" : "") +
+    metric("最优权重", best ? `${Math.round(best.weight_momentum * 100)}% 动量` : "—") +
+    metric("组合最优 Sharpe", best ? best.sharpe.toFixed(2) : "—", "pos") +
+    metric("日频动量 年化", pct(a.ann_pct || 0), (a.ann_pct || 0) >= 0 ? "pos" : "neg") +
+    metric("日频动量 Sharpe", fmt(a.sharpe || 0, 2)) +
+    metric("4h反转 年化", pct(b.ann_pct || 0), (b.ann_pct || 0) >= 0 ? "pos" : "neg") +
+    metric("4h反转 Sharpe", fmt(b.sharpe || 0, 2));
+
+  const combos = d.combos || [];
+  const bestW = best ? best.weight_momentum : -1;
+  $("cb-sweep").innerHTML = combos.length
+    ? `<div class="table-scroll"><table><thead><tr>
+        <th>权重（动量/反转）</th><th>年化</th><th>波动</th><th>Sharpe</th><th>t 值</th>
+      </tr></thead><tbody>${combos
+        .map((c) => {
+          const on = Math.abs(c.weight_momentum - bestW) < 1e-9;
+          return `<tr style="${on ? "background:var(--blue-soft)" : ""}">
+            <td>${Math.round(c.weight_momentum * 100)}% / ${Math.round((1 - c.weight_momentum) * 100)}%${on ? " ★" : ""}</td>
+            <td class="${c.ann_pct >= 0 ? "pos" : "neg"}">${pct(c.ann_pct)}</td>
+            <td>${fmt(c.vol_pct, 1)}%</td>
+            <td><b>${fmt(c.sharpe, 2)}</b></td>
+            <td>${fmt(c.t, 2)}</td>
+          </tr>`;
+        })
+        .join("")}</tbody></table></div>`
+    : '<div class="empty">重叠期太短，无法做组合分析（需要更多小时线）</div>';
+
+  renderComboChart(d);
+}
+
+function renderComboChart(d) {
+  const el = $("cb-chart");
+  const a = d.momentum || {}, b = d.reversal || {};
+  const best = (d.combos || []).reduce((x, y) => (y.sharpe > (x?.sharpe ?? -9) ? y : x), null);
+  if (!best) {
+    el.innerHTML = '<div class="empty">重叠期太短</div>';
+    return;
+  }
+  const ma = new Map(a.dates.map((t, i) => [t, a.rets[i]]));
+  const mb = new Map(b.dates.map((t, i) => [t, b.rets[i]]));
+  const days = [...ma.keys()].filter((t) => mb.has(t)).sort((x, y) => x - y);
+  if (days.length < 20) {
+    el.innerHTML = '<div class="empty">重叠期太短</div>';
+    return;
+  }
+  const w = best.weight_momentum;
+  const cum = (f) => {
+    let acc = 1;
+    return days.map((t) => (acc *= 1 + f(t)));
+  };
+  const cM = cum((t) => ma.get(t));
+  const cR = cum((t) => mb.get(t));
+  const cB = cum((t) => w * ma.get(t) + (1 - w) * mb.get(t));
+  const all = cM.concat(cR, cB);
+  const W = 1080, H = 300, padL = 78, padR = 84, padT = 16, padB = 34;
+  const ax = niceAxis(Math.min(...all), Math.max(...all), 5);
+  const span = ax.hi - ax.lo || 1;
+  const n = days.length;
+  const X = (i) => padL + (i / (n - 1)) * (W - padL - padR);
+  const Y = (v) => padT + (1 - (v - ax.lo) / span) * (H - padT - padB);
+  const num = (v) => v.toFixed(2);
+  const grid = ax.lines
+    .map((v) => `<line x1="${padL}" y1="${Y(v)}" x2="${W - padR}" y2="${Y(v)}" stroke="#eef1f6"/>
+      <text x="${padL - 8}" y="${Y(v) + 4}" text-anchor="end" font-size="11" fill="#768297">${num(v)}x</text>`)
+    .join("");
+  const line = (arr, color, wid) =>
+    `<polyline points="${arr.map((v, i) => `${X(i)},${Y(v)}`).join(" ")}" fill="none" stroke="${color}" stroke-width="${wid}"/>`;
+  const xlabels = [0, Math.floor((n - 1) / 2), n - 1]
+    .map((i) => {
+      const anchor = i === 0 ? "start" : i === n - 1 ? "end" : "middle";
+      return `<text x="${X(i)}" y="${H - 10}" text-anchor="${anchor}" font-size="11" fill="#768297">${ts2d(days[i])}</text>`;
+    })
+    .join("");
+  el.innerHTML = `
+    <svg viewBox="0 0 ${W} ${H}" role="img" aria-label="组合净值曲线">
+      ${grid}
+      ${line(cM, "#768297", 1.5)}
+      ${line(cR, "#149661", 1.5)}
+      ${line(cB, "#2d6df6", 2.4)}
+      <text x="${W - padR + 6}" y="${Y(cB[n - 1]) + 4}" font-size="12" font-weight="600" fill="#2d6df6" paint-order="stroke" stroke="#fff" stroke-width="3">${num(cB[n - 1])}x</text>
+      ${xlabels}
+    </svg>
+    <div class="legend">
+      <span><span style="color:#2d6df6">━</span> 组合（${Math.round(w * 100)}% 动量 + ${Math.round((1 - w) * 100)}% 反转）</span>
+      <span><span style="color:#768297">━</span> 日频动量</span>
+      <span><span style="color:#149661">━</span> 4h反转</span>
+      <span>${days.length} 天重叠期</span>
+    </div>`;
+}
+
+$("cb-refresh").addEventListener("click", refreshCombo);
+
 // ---------- 启动 ----------
 refreshStatus();
 setInterval(refreshStatus, 5000);
