@@ -133,6 +133,7 @@ function lvConfigInto(d) {
   $("lv-leverage").value = c.leverage ?? 3;
   $("lv-buffer").value = Math.round((c.margin_buffer ?? 0.9) * 100);
   $("lv-slippage").value = ((c.slippage ?? 0.005) * 100).toFixed(2);
+  $("lv-tp").value = Math.round((c.take_profit_pct ?? 0.1) * 100);
   $("lv-lookback").value = c.lookback ?? 14;
   $("lv-top").value = c.top_frac ?? 0.2;
   $("lv-minvol").value = String(c.min_vol_usd ?? 5000000);
@@ -154,6 +155,7 @@ $("lv-save").addEventListener("click", async () => {
     leverage: Number($("lv-leverage").value),
     margin_buffer: Number($("lv-buffer").value) / 100,
     slippage: Number($("lv-slippage").value) / 100,
+    take_profit_pct: Number($("lv-tp").value) / 100,
     lookback: Number($("lv-lookback").value),
     top_frac: Number($("lv-top").value),
     min_vol_usd: Number($("lv-minvol").value),
@@ -206,6 +208,24 @@ async function runLive(live) {
   liveBusy = false;
   refreshMonitor();
 }
+
+$("lv-tp-btn").addEventListener("click", async () => {
+  const btn = $("lv-tp-btn");
+  const label = btn.textContent;
+  btn.textContent = "处理中…";
+  btn.disabled = true;
+  try {
+    const res = await fetch("/api/live/tp", { method: "POST" });
+    const d = await res.json();
+    if (!d.ok) throw new Error(d.error || "失败");
+    $("lv-plan-out").innerHTML = `<pre class="logbox">${(d.log || []).join("\n")}</pre>`;
+  } catch (e) {
+    $("lv-plan-out").innerHTML = `<pre class="logbox neg">${e}</pre>`;
+  }
+  btn.textContent = label;
+  btn.disabled = false;
+  refreshMonitor(true);
+});
 
 $("lv-rebuild").addEventListener("click", async () => {
   if (
@@ -423,6 +443,7 @@ function renderMonitor(d) {
         metric("已实现盈亏", parsed.n ? (realized >= 0 ? "+" : "") + "$" + fmt(realized, 2) : "—",
           realized >= 0 ? "pos" : "neg") +
         metric("总名义敞口", "$" + fmt(d.gross_notional || 0, 0)) +
+        metric("止盈挂单", (d.tp_orders || []).length + " / " + nPos, (d.tp_orders || []).length >= nPos ? "pos" : "") +
         metric("最后调仓", d.last_run_at ? `<span class="sm">${ts2m(d.last_run_at)}</span>` : "—")
     );
 
@@ -480,6 +501,13 @@ function renderMonitor(d) {
 
   const chron = d.records || [];
   const hints = entryHints(chron);
+  const orders = d.tp_orders || [];
+  $("mo-orders").innerHTML = orders.length
+    ? `<table><thead><tr><th>币</th><th>方向</th><th>挂单价</th><th>数量</th></tr></thead><tbody>${orders
+        .map((o) => `<tr><td>${o.coin}</td><td>${o.side}</td><td>${fmt(o.px, 6)}</td><td>${fmt(o.sz, 6)}</td></tr>`)
+        .join("")}</tbody></table>`
+    : '<div class="empty">当前没有挂单（价格碰到止盈价会自动成交）</div>';
+
   const recs = chron.map((r, i) => ({ r, hint: hints[i] })).reverse();
   const pages = Math.max(1, Math.ceil(recs.length / LIVE_PAGE_SIZE));
   if (livePage > pages - 1) livePage = 0;

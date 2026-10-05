@@ -67,6 +67,7 @@ pub fn router(state: AppState) -> Router {
         .route("/api/live/run", post(live_run))
         .route("/api/live/reset", post(live_reset))
         .route("/api/live/rebuild", post(live_rebuild))
+        .route("/api/live/tp", post(live_tp))
         .route("/api/live/records/clear", post(live_records_clear))
         .route("/api/probe", get(probe_status))
         .route("/api/probe/config", post(probe_config))
@@ -351,6 +352,7 @@ struct LiveConfigBody {
     lookback: Option<usize>,
     top_frac: Option<f64>,
     min_vol_usd: Option<f64>,
+    take_profit_pct: Option<f64>,
     armed: Option<bool>,
     auto_run: Option<bool>,
 }
@@ -387,6 +389,9 @@ async fn live_config(
     }
     if let Some(v) = body.min_vol_usd {
         c.min_vol_usd = v.max(0.0);
+    }
+    if let Some(v) = body.take_profit_pct {
+        c.take_profit_pct = v.clamp(0.0, 0.5);
     }
     if let Some(v) = body.armed {
         c.armed = v;
@@ -611,4 +616,30 @@ async fn live_records_clear(State(state): State<AppState>) -> Response {
     st.records.clear();
     let _ = st.save(&state.live_path);
     Json(json!({"ok": true, "cleared": n})).into_response()
+}
+
+
+/// 重新挂止盈单（不调仓，只刷新止盈）。
+async fn live_tp(State(state): State<AppState>) -> Response {
+    let st = state.live.lock().await.clone();
+    if !st.config.armed {
+        return Json(json!({"ok": false, "error": "实盘未启用"})).into_response();
+    }
+    if !st.config.can_sign() {
+        return Json(json!({"ok": false, "error": "未配置 API 钱包密钥"})).into_response();
+    }
+    let exec = match crate::exchange::Exec::signer(
+        &st.config.account,
+        std::path::Path::new(&st.config.key_path),
+    )
+    .await
+    {
+        Ok(e) => e,
+        Err(e) => return Json(json!({"ok": false, "error": format!("{e}")})).into_response(),
+    };
+    let markets = live_markets(&state).await;
+    match crate::live::refresh_take_profits(&exec, &markets, st.config.take_profit_pct).await {
+        Ok(log) => Json(json!({"ok": true, "log": log})).into_response(),
+        Err(e) => Json(json!({"ok": false, "error": format!("{e}")})).into_response(),
+    }
 }

@@ -4,7 +4,7 @@
 //! `trader::ranking` (identical to the paper engine) and `exchange::Exec`, so the
 //! live book cannot drift from what was validated.
 
-use crate::exchange::{Exec, MarketInfo};
+use crate::exchange::{order_price, round_size, Exec, MarketInfo};
 use crate::hl::maintenance_margin_rate;
 use crate::trader::{self, TradeConfig};
 use anyhow::Result;
@@ -39,6 +39,9 @@ pub struct LiveConfig {
     pub lookback: usize,
     pub top_frac: f64,
     pub min_vol_usd: f64,
+    /// 止盈幅度（相对调仓时的中间价）。0 = 不挂止盈单。
+    #[serde(default = "default_tp")]
+    pub take_profit_pct: f64,
     /// allow sending real orders; off until the user arms it
     pub armed: bool,
     /// run one rebalance per day automatically
@@ -57,10 +60,15 @@ impl Default for LiveConfig {
             lookback: 14,
             top_frac: 0.2,
             min_vol_usd: 5_000_000.0,
+            take_profit_pct: 0.10,
             armed: false,
             auto_run: false,
         }
     }
+}
+
+fn default_tp() -> f64 {
+    0.10
 }
 
 impl LiveConfig {
@@ -168,6 +176,8 @@ pub struct LiveSnapshot {
     pub nearest_liq_pct: Option<f64>,
     /// 仍是逐仓的仓位数（Hyperliquid 不允许持仓时切换模式）
     pub isolated_count: usize,
+    /// 盘口上挂着的止盈单
+    pub tp_orders: Vec<crate::exchange::OpenOrder>,
     pub config: LiveConfig,
     pub history: Vec<EquityPoint>,
     pub records: Vec<LiveRecord>,
@@ -196,6 +206,7 @@ pub async fn snapshot(
         liq_buffer_pct: 0.0,
         nearest_liq_pct: None,
         isolated_count: 0,
+        tp_orders: Vec::new(),
         config: cfg.clone(),
         history: state.history.clone(),
         records: state.records.clone(),
@@ -268,6 +279,9 @@ pub async fn snapshot(
     }
     snap.positions.sort_by(|a, b| a.coin.cmp(&b.coin));
     snap.isolated_count = snap.positions.iter().filter(|p| !p.is_cross).count();
+    if let Ok(orders) = exec.open_order_details().await {
+        snap.tp_orders = orders.into_iter().filter(|o| o.reduce_only).collect();
+    }
     snap.margin_used = if cfg.leverage > 0.0 {
         snap.gross_notional / cfg.leverage
     } else {
@@ -407,6 +421,12 @@ pub async fn run(
         }
     }
     let executed = outcome.orders;
+    if live {
+        match refresh_take_profits(&exec, markets, cfg.take_profit_pct).await {
+            Ok(log) => plan_lines.extend(log),
+            Err(e) => plan_lines.push(format!("止盈单处理失败: {e}")),
+        }
+    }
 
     Ok((
         RunResult {
@@ -522,5 +542,77 @@ pub async fn rebuild_cross(
         }
         tokio::time::sleep(std::time::Duration::from_millis(250)).await;
     }
+    Ok(log)
+}
+
+
+/// 调仓后重新挂止盈单：先撤掉所有旧挂单，再按当前持仓挂新的被动限价单。
+///
+/// 回测里止盈是「当日相对调仓价涨/跌 tp 就平仓」，所以订单必须每天重挂 ——
+/// 挂在盘口等价格来碰，成交是 maker 费率（0.015%），比市价平仓便宜 3 倍。
+pub async fn refresh_take_profits(
+    exec: &Exec,
+    markets: &HashMap<String, MarketInfo>,
+    tp_pct: f64,
+) -> Result<Vec<String>> {
+    let mut log = Vec::new();
+    match exec.open_orders().await {
+        Ok(orders) => {
+            if !orders.is_empty() {
+                match exec.cancel_orders(&orders).await {
+                    Ok(n) => log.push(format!("撤销旧挂单 {n} 个")),
+                    Err(e) => log.push(format!("撤单失败: {e}")),
+                }
+            }
+        }
+        Err(e) => log.push(format!("读取挂单失败: {e}")),
+    }
+    if tp_pct <= 0.0 {
+        log.push("未启用止盈".into());
+        return Ok(log);
+    }
+    let acct = exec.account().await?;
+    if acct.positions.is_empty() {
+        log.push("无持仓，不挂止盈".into());
+        return Ok(log);
+    }
+    let coins: Vec<String> = acct.positions.keys().cloned().collect();
+    let mids = trader::fetch_mids(exec, &coins).await;
+    let mut placed = 0usize;
+    let mut failed = Vec::new();
+    for (coin, pos) in acct.positions.iter() {
+        let Some(m) = markets.get(coin.as_str()) else {
+            continue;
+        };
+        let Some(&mid) = mids.get(coin) else { continue };
+        if mid <= 0.0 {
+            continue;
+        }
+        // 多头：涨到 +tp 卖出；空头：跌到 -tp 买回
+        let (buy, raw) = if pos.size > 0.0 {
+            (false, mid * (1.0 + tp_pct))
+        } else {
+            (true, mid * (1.0 - tp_pct))
+        };
+        let px = order_price(raw, m.sz_decimals, buy);
+        let size = round_size(pos.size.abs(), m.sz_decimals);
+        if size <= 0.0 || size * mid < 10.0 || px <= 0.0 {
+            continue;
+        }
+        match exec.resting_reduce_order(coin, buy, size, px).await {
+            Ok(_) => placed += 1,
+            Err(e) => failed.push(format!("{coin}: {e}")),
+        }
+        tokio::time::sleep(std::time::Duration::from_millis(120)).await;
+    }
+    log.push(format!(
+        "止盈单：挂上 {placed} 个（±{:.0}%）{}",
+        tp_pct * 100.0,
+        if failed.is_empty() {
+            String::new()
+        } else {
+            format!("，失败 {}", failed.join("; "))
+        }
+    ));
     Ok(log)
 }

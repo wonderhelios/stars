@@ -7,8 +7,8 @@
 use alloy::{primitives::Address, signers::local::PrivateKeySigner};
 use anyhow::{anyhow, bail, Context, Result};
 use hyperliquid_rust_sdk::{
-    BaseUrl, ClientLimit, ClientOrder, ClientOrderRequest, ExchangeClient, ExchangeDataStatus,
-    ExchangeResponseStatus,
+    BaseUrl, ClientCancelRequest, ClientLimit, ClientOrder, ClientOrderRequest, ExchangeClient,
+    ExchangeDataStatus, ExchangeResponseStatus,
 };
 use serde_json::{json, Value};
 use std::collections::HashMap;
@@ -33,6 +33,15 @@ pub struct Pos {
     /// true = cross margin, false = isolated
     pub is_cross: bool,
     pub leverage: u32,
+}
+
+#[derive(Clone, Debug, serde::Serialize)]
+pub struct OpenOrder {
+    pub coin: String,
+    pub side: String,
+    pub px: f64,
+    pub sz: f64,
+    pub reduce_only: bool,
 }
 
 #[derive(Clone, Debug, Default)]
@@ -285,6 +294,111 @@ impl Exec {
             ExchangeResponseStatus::Ok(_) => Ok(()),
             ExchangeResponseStatus::Err(e) => bail!("leverage rejected for {coin}: {e}"),
         }
+    }
+
+    /// 挂一个被动限价单（Gtc，留在盘口）用于止盈：只减仓。
+    /// 返回交易所订单号，便于之后撤销。
+    pub async fn resting_reduce_order(
+        &self,
+        coin: &str,
+        buy: bool,
+        size: f64,
+        px: f64,
+    ) -> Result<u64> {
+        let trading = self.trading.as_ref().context("not a signing client")?;
+        anyhow::ensure!(px > 0.0 && size > 0.0, "invalid resting order {coin}");
+        let cloid = Uuid::new_v4();
+        let coin_owned = coin.to_string();
+        let resp = sdk_retry(&format!("挂止盈单 {coin}"), || {
+            let order = ClientOrderRequest {
+                asset: coin_owned.clone(),
+                is_buy: buy,
+                reduce_only: true,
+                limit_px: px,
+                sz: size,
+                cloid: Some(cloid),
+                // Gtc = 一直挂在盘口，等价格来碰（被动成交 = maker 费率）
+                order_type: ClientOrder::Limit(ClientLimit { tif: "Gtc".into() }),
+            };
+            trading.order(order, None)
+        })
+        .await?;
+        match one_status(resp)? {
+            ExchangeDataStatus::Resting(r) => Ok(r.oid),
+            ExchangeDataStatus::Filled(_) => Ok(0),
+            other => bail!("止盈单未挂上 {coin}: {other:?}"),
+        }
+    }
+
+    /// 当前所有挂单（coin, oid）。
+    pub async fn open_orders(&self) -> Result<Vec<(String, u64)>> {
+        let account = self.account.context("read-only client has no account")?;
+        let v = self
+            .info_post(json!({"type": "openOrders", "user": account.to_string()}))
+            .await?;
+        let mut out = Vec::new();
+        if let Some(arr) = v.as_array() {
+            for o in arr {
+                if let (Some(coin), Some(oid)) = (o["coin"].as_str(), o["oid"].as_u64()) {
+                    out.push((coin.to_string(), oid));
+                }
+            }
+        }
+        Ok(out)
+    }
+
+    /// 挂单详情，给前端展示。
+    pub async fn open_order_details(&self) -> Result<Vec<OpenOrder>> {
+        let account = self.account.context("read-only client has no account")?;
+        let v = self
+            .info_post(json!({"type": "openOrders", "user": account.to_string()}))
+            .await?;
+        let mut out = Vec::new();
+        if let Some(arr) = v.as_array() {
+            for o in arr {
+                let coin = o["coin"].as_str().unwrap_or("").to_string();
+                if coin.is_empty() {
+                    continue;
+                }
+                out.push(OpenOrder {
+                    coin,
+                    side: if o["side"].as_str() == Some("B") { "买" } else { "卖" }.into(),
+                    px: o["limitPx"].as_str().and_then(|x| x.parse().ok()).unwrap_or(0.0),
+                    sz: o["sz"].as_str().and_then(|x| x.parse().ok()).unwrap_or(0.0),
+                    reduce_only: o["reduceOnly"].as_bool().unwrap_or(false),
+                });
+            }
+        }
+        Ok(out)
+    }
+
+    /// 批量撤单。返回成功撤销的数量。
+    pub async fn cancel_orders(&self, orders: &[(String, u64)]) -> Result<usize> {
+        if orders.is_empty() {
+            return Ok(0);
+        }
+        let trading = self.trading.as_ref().context("not a signing client")?;
+        let mut n = 0usize;
+        for chunk in orders.chunks(20) {
+            // ClientCancelRequest 不实现 Clone，所以在闭包里每次重建
+            let part: Vec<(String, u64)> = chunk.to_vec();
+            let resp = sdk_retry("撤单", || {
+                let reqs: Vec<ClientCancelRequest> = part
+                    .iter()
+                    .map(|(coin, oid)| ClientCancelRequest {
+                        asset: coin.clone(),
+                        oid: *oid,
+                    })
+                    .collect();
+                trading.bulk_cancel(reqs, None)
+            })
+            .await?;
+            match resp {
+                ExchangeResponseStatus::Ok(_) => n += chunk.len(),
+                ExchangeResponseStatus::Err(e) => bail!("撤单失败: {e}"),
+            }
+        }
+        Ok(n)
     }
 
     /// Immediate-or-cancel order with a slippage cap around `mid`.
