@@ -334,7 +334,7 @@ pub async fn run(
     let panel = trader::load_panel(store)?;
     anyhow::ensure!(panel.len() >= 20, "K 线缓存不足（{} 币）", panel.len());
     let acct0 = exec.account().await?;
-    let (weights, liquid) = trader::target_weights(&panel, &tc, acct0.equity);
+    let (weights, liquid) = trader::target_weights(&panel, &tc, acct0.equity, crate::live::now_ms_pub() as i64);
     anyhow::ensure!(!weights.is_empty(), "流动性过滤后没有候选");
 
     let acct = exec.account().await?;
@@ -469,7 +469,7 @@ pub async fn rebuild_cross(
     let tc = cfg.trade_config();
 
     let panel = trader::load_panel(store)?;
-    let (weights, _) = trader::target_weights(&panel, &tc, 0.0);
+    let (weights, _) = trader::target_weights(&panel, &tc, 0.0, crate::live::now_ms_pub() as i64);
     anyhow::ensure!(!weights.is_empty(), "流动性过滤后没有候选");
 
     let acct = exec.account().await?;
@@ -644,7 +644,8 @@ pub fn take_profit_order(is_long: bool, mid: f64, tp_pct: f64, sz_decimals: u32)
         return (buy, 0.0);
     }
     let tick = price_tick(raw, sz_decimals);
-    let mut px = order_price(raw, sz_decimals, buy);
+    // 挂单要和 IOC 相反：取整方向朝「远离市价」，否则粗价位币上会变成立即成交。
+    let mut px = order_price(raw, sz_decimals, !buy);
     let right_side = |p: f64| p > 0.0 && if is_long { p > mid } else { p < mid };
     for _ in 0..4 {
         if right_side(px) {

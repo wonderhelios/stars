@@ -93,6 +93,15 @@ async fn main() -> anyhow::Result<()> {
                 if !(snapshot.config.auto_run && snapshot.config.armed) {
                     continue;
                 }
+                // 与手动调仓共用同一道执行闸门。否则自动调仓和手动点击会交错，
+                // 两边都在对方写入前读到同一个账户，于是发出两倍的「开仓」单。
+                let _gate = match st.exec_gate.try_lock() {
+                    Ok(g) => g,
+                    Err(_) => {
+                        info!("实盘自动调仓跳过：已有订单操作在执行中");
+                        continue;
+                    }
+                };
                 info!("实盘自动调仓开始");
                 let markets = {
                     let meta = st.meta.lock().await;
@@ -425,7 +434,7 @@ async fn run_trade(args: &[String], db_path: &str) -> anyhow::Result<()> {
                 .and_then(|w| w[1].parse().ok())
                 .unwrap_or(500.0)
         });
-    let (weights, liquid) = trader::target_weights(&panel, &cfg, equity_hint);
+    let (weights, liquid) = trader::target_weights(&panel, &cfg, equity_hint, i64::MAX);
     anyhow::ensure!(!weights.is_empty(), "没有选出候选（流动性过滤后为空）");
     println!(
         "流动宇宙 {} 币 · 多头腿 {} · 空头腿 {}",
@@ -494,9 +503,7 @@ async fn run_trade(args: &[String], db_path: &str) -> anyhow::Result<()> {
         "\n目标：每腿 {} 仓 · 每仓 ${:.2} · 目标总名义 ${:.0} · 杠杆 {}x · 保证金缓冲 {:.0}%",
         weights.iter().filter(|(_, w)| *w > 0.0).count(),
         plan.per_coin,
-        plan.per_coin
-            * 2.0
-            * weights.iter().filter(|(_, w)| *w > 0.0).count() as f64,
+        plan.gross_notional,
         cfg.leverage,
         cfg.margin_buffer * 100.0
     );

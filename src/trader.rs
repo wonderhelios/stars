@@ -51,6 +51,9 @@ pub struct Order {
     pub coin: String,
     pub buy: bool,
     pub reduce_only: bool,
+    /// 带符号的目标仓位（币本位数量）。execute 在平仓后重读账户，用它把开仓
+    /// 量算成「目标 − 实际」，避免部分成交/被拒导致方向做反。
+    pub target: f64,
     pub size: f64,
     pub mid: f64,
     pub sz_decimals: u32,
@@ -105,12 +108,28 @@ impl FactorPanel {
         }
     }
 
+    #[allow(dead_code)]
     pub fn len(&self) -> usize {
         self.ts.len()
     }
 
     pub fn is_empty(&self) -> bool {
         self.ts.is_empty()
+    }
+
+    /// 最后一根**已经收盘**的日线索引。
+    ///
+    /// Hyperliquid 的 candleSnapshot 会把「正在形成」的当根一起返回。如果直接取
+    /// len()-1，量能因子拿到的分子是当天的几分钟成交量（而非一整天），除以 30 日
+    /// 均值后冲击值接近 0，实盘会选出与回测完全不同的组合；而且最后一根是否已收盘
+    /// 取决于刷新任务有没有在午夜后跑过，组合变得依赖时序。
+    pub fn last_closed_index(&self, now_ms: i64) -> usize {
+        const DAY: i64 = 86_400_000;
+        let mut i = self.ts.len().saturating_sub(1);
+        while i > 0 && self.ts[i].saturating_add(DAY) > now_ms {
+            i -= 1;
+        }
+        i
     }
 
     /// 某一时点上「滚动 30 日成交额达标」的币 —— 严格只用截至该时点的数据。
@@ -268,7 +287,12 @@ impl FactorPanel {
                     .partial_cmp(&scores[*b])
                     .unwrap_or(std::cmp::Ordering::Equal)
             });
-            let k = ((n as f64 * cfg.top_frac).round() as usize).max(1).min(cap);
+            // 2k > n 时 [n-k, k) 会同时落在两条腿里，而判断顺序把重叠区
+            // 全给了多头 —— 空头腿不足 k 个，组合变成净多头。所以硬性限制 k <= n/2。
+            let k = ((n as f64 * cfg.top_frac).round() as usize)
+                .max(1)
+                .min(cap)
+                .min((n / 2).max(1));
             for (pos, &j) in order.iter().enumerate() {
                 let w = if pos >= n - k {
                     0.5 / k as f64
@@ -285,6 +309,16 @@ impl FactorPanel {
             .filter(|(_, w)| w.abs() > 1e-12)
             .collect();
         out.sort_by(|a, b| b.1.partial_cmp(&a.1).unwrap_or(std::cmp::Ordering::Equal));
+        // 跨因子抵消会把 Σ|w| 压到 1 以下：某币一个因子看多、另一个看空时会相互
+        // 抵消（实测约 44 个流动币里有 23 个归零）。不重新归一化的话，实际敞口会
+        // 比设置低 13%~30%，而且恰好在三因子分歧最大时最低。
+        let sum: f64 = out.iter().map(|(_, w)| w.abs()).sum();
+        assert!(sum.is_finite(), "权重和出现了非有限值");
+        if sum > 0.0 {
+            for (_, w) in out.iter_mut() {
+                *w /= sum;
+            }
+        }
 
         out
     }
@@ -296,12 +330,14 @@ pub fn target_weights(
     panel: &[PanelEntry],
     cfg: &TradeConfig,
     equity_hint: f64,
+    now_ms: i64,
 ) -> (Vec<(String, f64)>, Vec<String>) {
     let fp = FactorPanel::build(panel);
     if fp.is_empty() {
         return (Vec::new(), Vec::new());
     }
-    let i = fp.len() - 1;
+    // 只用已收盘的日线，避免把正在形成的当根当成收盘价（量能因子会被毁掉）。
+    let i = fp.last_closed_index(now_ms);
     let liquid = fp.liquid_at(i, cfg.min_vol_usd, 30);
     let w = fp.weights_at(i, cfg, equity_hint);
     (w, liquid)
@@ -321,11 +357,11 @@ pub fn build_plan(
     // Deploy only part of the equity so fees and adverse fills cannot push the
     // book past the margin limit mid-run.
     let deployable = equity * cfg.margin_buffer;
-    let gross_w: f64 = weights.iter().map(|(_, w)| w.abs()).sum();
+    // 权重已归一化到 Σ|w| = 1，所以直接按权重缩放名义即可。
     let per_coin = if weights.is_empty() {
         0.0
     } else {
-        deployable * cfg.leverage * gross_w / weights.len() as f64
+        deployable * cfg.leverage / weights.len() as f64
     };
     let long_leg: Vec<String> = weights
         .iter()
@@ -360,7 +396,7 @@ pub fn build_plan(
         let (Some(mid), Some(m)) = (mids.get(coin), markets.get(coin)) else {
             continue;
         };
-        let notional = w.abs() * deployable * cfg.leverage * gross_w;
+        let notional = w.abs() * deployable * cfg.leverage;
         let size = round_size(notional / mid, m.sz_decimals);
         if size * mid >= cfg.min_order_usd {
             wanted.insert(coin.clone(), (if *w > 0.0 { size } else { -size }, *w > 0.0));
@@ -398,6 +434,7 @@ pub fn build_plan(
                     coin: coin.clone(),
                     buy: cur < 0.0, // buy to close a short
                     reduce_only: true,
+                    target: 0.0,
                     size,
                     mid: *mid,
                     sz_decimals: m.sz_decimals,
@@ -423,6 +460,7 @@ pub fn build_plan(
                     // 只有「delta 与原仓位反向」才是减仓。之前用 |delta| < |cur|
                     // 判断，会把「加仓」误标成只减仓，实盘会被交易所拒绝。
                     reduce_only: cur * delta < 0.0,
+                    target,
                     size: dsize,
                     mid: *mid,
                     sz_decimals: m.sz_decimals,
@@ -453,6 +491,7 @@ pub fn build_plan(
                     coin: coin.clone(),
                     buy: *is_long,
                     reduce_only: false,
+                    target: if *is_long { size } else { -size },
                     size,
                     mid: *mid,
                     sz_decimals: m.sz_decimals,
@@ -463,7 +502,11 @@ pub fn build_plan(
         }
     }
 
-    plan.gross_notional = opens.iter().map(|o| o.notional).sum();
+    // 真实的目标总名义 = Σ|w| × 可部署 × 杠杆。之前用「开仓单求和」，那是本次
+    // 的增量而不是目标敞口，用来展示会误导（平均每仓 × 2 × 腿数同样不准）。
+    plan.gross_notional = weights.iter().map(|(_, w)| w.abs()).sum::<f64>()
+        * deployable
+        * cfg.leverage;
     plan.orders = closes;
     plan.orders.extend(opens);
     plan
@@ -528,58 +571,121 @@ pub async fn execute(
         tokio::time::sleep(std::time::Duration::from_millis(150)).await;
     }
 
-    // ---- 2) 重新读账户，给已空仓的目标币设杠杆（全仓）----
+    // ---- 2) 重新读账户：既用于设杠杆，也用于把开仓量算成「目标 − 实际」----
+    //
+    // 之前的做法是直接按计划里的数量开仓。如果某笔平仓只成交了一部分（或被拒），
+    // 仓位就与计划不符，而开仓单仍按旧计划发出 —— 结果可能把仓位做成反方向，
+    // 而且止盈单还会挂到错误的一侧，把错误固定一整天。
+    let after = match exec.account().await {
+        Ok(a) => Some(a),
+        Err(e) => {
+            prelim.push(format!("开仓前重读账户失败，出于安全跳过全部开仓: {e}"));
+            None
+        }
+    };
     let mut all_coins: Vec<String> = Vec::new();
     all_coins.extend(plan.long_leg.iter().cloned());
     all_coins.extend(plan.short_leg.iter().cloned());
     all_coins.extend(plan.orders.iter().map(|o| o.coin.clone()));
     all_coins.sort();
     all_coins.dedup();
-    match exec.account().await {
-        Ok(after) => {
-            for coin in &all_coins {
-                if after
-                    .positions
-                    .get(coin)
-                    .map(|p| p.size.abs() > 1e-12)
-                    .unwrap_or(false)
-                {
-                    continue; // 仍有仓位，切不了模式，跳过
-                }
-                let max_lev = markets.get(coin).map(|m| m.max_leverage).unwrap_or(10);
-                let want = cfg.leverage.round() as u32;
-                let lev = want.clamp(1, max_lev.max(1));
-                match exec.set_leverage(coin, lev).await {
-                    Ok(_) => {}
-                    Err(e) => prelim.push(format!("{coin}: 设置杠杆失败 {e}")),
-                }
-                tokio::time::sleep(std::time::Duration::from_millis(120)).await;
+    if let Some(after) = after.as_ref() {
+        for coin in &all_coins {
+            if after
+                .positions
+                .get(coin)
+                .map(|p| p.size.abs() > 1e-12)
+                .unwrap_or(false)
+            {
+                continue; // 仍有仓位，切不了模式，跳过
             }
+            let max_lev = markets.get(coin).map(|m| m.max_leverage).unwrap_or(10);
+            let want = cfg.leverage.round() as u32;
+            let lev = want.clamp(1, max_lev.max(1));
+            match exec.set_leverage(coin, lev).await {
+                Ok(_) => {}
+                Err(e) => prelim.push(format!("{coin}: 设置杠杆失败 {e}")),
+            }
+            tokio::time::sleep(std::time::Duration::from_millis(120)).await;
         }
-        Err(e) => prelim.push(format!("重新读取账户失败，跳过杠杆设置: {e}")),
     }
 
     // ---- 3) 再开仓 ----
-    for (i, o) in plan.orders.iter().enumerate() {
-        if o.reduce_only {
-            continue;
+    if let Some(after) = after {
+        for (i, o) in plan.orders.iter().enumerate() {
+            if o.reduce_only {
+                continue;
+            }
+            let actual = after.positions.get(&o.coin).map(|p| p.size).unwrap_or(0.0);
+            // 平仓后方向仍然相反 —— 残余仓位没平掉，只能用只减仓把它清掉，
+            // 绝不能按计划继续加另一个方向。
+            if actual * o.target < 0.0 && actual.abs() > 1e-12 {
+                orders[i] = match exec
+                    .ioc(
+                        &o.coin,
+                        actual < 0.0,
+                        true,
+                        actual.abs(),
+                        o.mid,
+                        cfg.slippage,
+                        o.sz_decimals,
+                    )
+                    .await
+                {
+                    Ok(st) => format!(
+                        "{} {} 只减仓平残余 {:.6} · {} · 平仓未完成，纠正方向",
+                        if actual < 0.0 { "买" } else { "卖" },
+                        o.coin,
+                        actual.abs(),
+                        crate::exchange::describe(&st)
+                    ),
+                    Err(e) => format!("{} 纠正残余仓位失败: {e}", o.coin),
+                };
+                tokio::time::sleep(std::time::Duration::from_millis(150)).await;
+                continue;
+            }
+            let delta = o.target - actual;
+            let dsize = round_size(delta.abs(), o.sz_decimals);
+            let dnotional = dsize * o.mid;
+            if dnotional < cfg.min_order_usd {
+                orders[i] = format!(
+                    "{} 已到位（差 ${:.2}），跳过",
+                    o.coin, dnotional
+                );
+                continue;
+            }
+            let reduce_only = actual * delta < 0.0;
+            orders[i] = match exec
+                .ioc(
+                    &o.coin,
+                    delta > 0.0,
+                    reduce_only,
+                    dsize,
+                    o.mid,
+                    cfg.slippage,
+                    o.sz_decimals,
+                )
+                .await
+            {
+                Ok(st) => format!(
+                    "{} {} {} {:.6} · {} · {}",
+                    if delta > 0.0 { "买" } else { "卖" },
+                    o.coin,
+                    if reduce_only { "只减仓" } else { "开仓" },
+                    dsize,
+                    crate::exchange::describe(&st),
+                    if (dsize - o.size).abs() > 1e-12 {
+                        format!("{}（按实际仓位修正）", o.reason)
+                    } else {
+                        o.reason.clone()
+                    }
+                ),
+                Err(e) => format!("{} 开仓失败: {e}", o.coin),
+            };
+            tokio::time::sleep(std::time::Duration::from_millis(150)).await;
         }
-        orders[i] = match exec
-            .ioc(&o.coin, o.buy, false, o.size, o.mid, cfg.slippage, o.sz_decimals)
-            .await
-        {
-            Ok(st) => format!(
-                "{} {} 开仓 {:.6} · {} · {}",
-                if o.buy { "买" } else { "卖" },
-                o.coin,
-                o.size,
-                crate::exchange::describe(&st),
-                o.reason
-            ),
-            Err(e) => format!("{} {} 开仓失败: {e}", if o.buy { "买" } else { "卖" }, o.coin),
-        };
-        tokio::time::sleep(std::time::Duration::from_millis(150)).await;
     }
+
 
     Ok(Outcome { prelim, orders })
 }
@@ -606,4 +712,108 @@ pub fn load_panel(store: &crate::store::Store) -> Result<Vec<PanelEntry>> {
         .into_iter()
         .map(|(coin, candles)| PanelEntry { coin, candles })
         .collect())
+}
+
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::hl::Candle;
+
+    /// 造一个合成面板：24 个币、50 天，价格与成交量都带确定性噪声。
+    fn synthetic() -> Vec<PanelEntry> {
+        const DAY: i64 = 86_400_000;
+        let t0 = 1_700_000_000_000i64;
+        (0..24)
+            .map(|j| {
+                let mut px = 1.0 + j as f64 * 0.37;
+                let candles = (0..50)
+                    .map(|d| {
+                        // 让各币的动量/波动/量能互不相同，制造跨因子分歧
+                        let drift = ((j * 7 + d * 13) % 11) as f64 / 100.0 - 0.05;
+                        px *= 1.0 + drift;
+                        // 成交量要高于 min_vol_usd（$5M）才会进入流动宇宙
+                        let vol = 6_000_000.0 + ((j * 31 + d * 17) % 23) as f64 * 90_000.0;
+                        Candle {
+                            t: t0 + d as i64 * DAY,
+                            o: px,
+                            h: px * 1.02,
+                            l: px * 0.98,
+                            c: px,
+                            v: vol,
+                        }
+                    })
+                    .collect();
+                PanelEntry {
+                    coin: format!("C{j:02}"),
+                    candles,
+                }
+            })
+            .collect()
+    }
+
+    #[test]
+    fn weights_are_normalised_to_unit_gross() {
+        // 跨因子会相互抵消，如果不重新归一化，Σ|w| 会小于 1，实际杠杆就会低于设置。
+        // 这个不变量一旦退化，实盘敞口会静默缩水 13%~30%。
+        let panel = synthetic();
+        let cfg = TradeConfig {
+            min_position_usd: 0.0,
+            ..Default::default()
+        };
+        let (w, _) = target_weights(&panel, &cfg, 1000.0, i64::MAX);
+        assert!(!w.is_empty(), "应该选出组合");
+        let gross: f64 = w.iter().map(|(_, x)| x.abs()).sum();
+        assert!(
+            (gross - 1.0).abs() < 1e-9,
+            "Σ|w| 必须是 1，实际 {gross}"
+        );
+    }
+
+    #[test]
+    fn long_and_short_legs_are_balanced() {
+        let panel = synthetic();
+        let cfg = TradeConfig {
+            min_position_usd: 0.0,
+            ..Default::default()
+        };
+        let (w, _) = target_weights(&panel, &cfg, 1000.0, i64::MAX);
+        let net: f64 = w.iter().map(|(_, x)| *x).sum();
+        assert!(net.abs() < 1e-9, "组合必须市场中性，净敞口 {net}");
+    }
+
+    #[test]
+    fn only_closed_bars_are_used() {
+        // 最后一根如果是「正在形成」的当根，量能因子会拿到几分钟的成交量，
+        // 实盘会选出与回测完全不同的组合。用 now 卡在最后一根中间来验证。
+        const DAY: i64 = 86_400_000;
+        let panel = synthetic();
+        let cfg = TradeConfig {
+            min_position_usd: 0.0,
+            ..Default::default()
+        };
+        let fp = FactorPanel::build(&panel);
+        let last = *fp.ts.last().unwrap();
+        let i = fp.last_closed_index(last + DAY / 2);
+        assert!(
+            fp.ts[i] < last,
+            "当根还没收盘，就不能用最后一根；得到索引 {} / {}", i, fp.len()
+        );
+        let i2 = fp.last_closed_index(last + DAY);
+        assert_eq!(i2, fp.len() - 1, "收盘后应能用最后一根");
+    }
+
+    #[test]
+    fn k_never_exceeds_half_the_universe() {
+        // 2k > n 时重叠区会被判成多头，空头腿不足 k 个，组合变成净多头。
+        let panel = synthetic();
+        let cfg = TradeConfig {
+            top_frac: 0.9,
+            min_position_usd: 0.0,
+            ..Default::default()
+        };
+        let (w, _) = target_weights(&panel, &cfg, 1000.0, i64::MAX);
+        let net: f64 = w.iter().map(|(_, x)| *x).sum();
+        assert!(net.abs() < 1e-9, "top_frac=0.9 也不能变成净多头，净敞口 {net}");
+    }
 }
