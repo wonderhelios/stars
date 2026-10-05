@@ -232,12 +232,20 @@ pub fn build_plan(
                 opens.push(Order {
                     coin: coin.clone(),
                     buy: delta > 0.0,
-                    reduce_only: delta.abs() < cur.abs(), // reducing, not flipping
+                    // 只有「delta 与原仓位反向」才是减仓。之前用 |delta| < |cur|
+                    // 判断，会把「加仓」误标成只减仓，实盘会被交易所拒绝。
+                    reduce_only: cur * delta < 0.0,
                     size: dsize,
                     mid: *mid,
                     sz_decimals: m.sz_decimals,
                     notional: dnotional,
-                    reason: if delta > 0.0 { "加仓到目标".into() } else { "减仓到目标".into() },
+                    // 文案要看「相对原仓位是增还是减」，而不是买/卖方向：
+                    // 空头买回是减仓、空头继续卖才是加仓。
+                    reason: if cur * delta > 0.0 {
+                        "加仓到目标".into()
+                    } else {
+                        "减仓到目标".into()
+                    },
                 });
             }
         }
@@ -273,74 +281,119 @@ pub fn build_plan(
     plan
 }
 
-/// Send the plan. Returns a human-readable log line per order.
+/// 执行结果：前置日志（设杠杆等）与**逐条对应 plan.orders 的结果**分开返回，
+/// 避免用下标对应时错位（曾经导致失败信息挂到别的币上）。
+pub struct Outcome {
+    pub prelim: Vec<String>,
+    pub orders: Vec<String>,
+}
+
+/// Send the plan. `orders[i]` always corresponds to `plan.orders[i]`.
+///
+/// 顺序很重要：先平仓 → 重新读账户 → 给已经空仓的币设杠杆（Hyperliquid
+/// 不允许持仓时切换保证金模式）→ 再开仓。这样反手的币也能切成全仓。
 pub async fn execute(
     exec: &Exec,
     plan: &Plan,
     cfg: &TradeConfig,
     markets: &HashMap<String, MarketInfo>,
     live: bool,
-) -> Result<Vec<String>> {
-    let mut log = Vec::new();
-    // 对**所有目标币**设置杠杆（不只是有订单的），这样每次调仓都会把
-    // 整个组合重新拉回全仓保证金；只对有订单的币设置会漏掉没动的仓位。
-    let mut lev_done: BTreeSet<String> = Default::default();
+) -> Result<Outcome> {
+    let mut prelim: Vec<String> = Vec::new();
+    let mut orders: Vec<String> = vec![String::new(); plan.orders.len()];
+
+    if !live {
+        for (i, o) in plan.orders.iter().enumerate() {
+            orders[i] = format!(
+                "[DRY-RUN] {} {} {} {:.6} @≈{:.6} (${:.2}) · {}",
+                if o.buy { "买" } else { "卖" },
+                o.coin,
+                if o.reduce_only { "只减仓" } else { "开仓" },
+                o.size,
+                o.mid,
+                o.notional,
+                o.reason
+            );
+        }
+        return Ok(Outcome { prelim, orders });
+    }
+
+    // ---- 1) 先平仓 ----
+    for (i, o) in plan.orders.iter().enumerate() {
+        if !o.reduce_only {
+            continue;
+        }
+        orders[i] = match exec
+            .ioc(&o.coin, o.buy, true, o.size, o.mid, cfg.slippage, o.sz_decimals)
+            .await
+        {
+            Ok(st) => format!(
+                "{} {} 只减仓 {:.6} · {} · {}",
+                if o.buy { "买" } else { "卖" },
+                o.coin,
+                o.size,
+                crate::exchange::describe(&st),
+                o.reason
+            ),
+            Err(e) => format!("{} {} 平仓失败: {e}", if o.buy { "买" } else { "卖" }, o.coin),
+        };
+        tokio::time::sleep(std::time::Duration::from_millis(150)).await;
+    }
+
+    // ---- 2) 重新读账户，给已空仓的目标币设杠杆（全仓）----
     let mut all_coins: Vec<String> = Vec::new();
     all_coins.extend(plan.long_leg.iter().cloned());
     all_coins.extend(plan.short_leg.iter().cloned());
     all_coins.extend(plan.orders.iter().map(|o| o.coin.clone()));
     all_coins.sort();
     all_coins.dedup();
-    for coin in &all_coins {
-        if !lev_done.insert(coin.clone()) {
-            continue;
-        }
-        // Hyperliquid 不允许持仓时切换保证金模式：已有仓位的币跳过，
-        // 等它被平掉后再切（或用「转为全仓」逐币处理）。
-        if plan.held.contains(coin) {
-            continue;
-        }
-        let max_lev = markets.get(coin).map(|m| m.max_leverage).unwrap_or(10);
-        let want = cfg.leverage.round() as u32;
-        let lev = want.clamp(1, max_lev.max(1));
-        if lev != want {
-            log.push(format!("{coin}: 最大杠杆 {max_lev}x，按 {lev}x 设置"));
-        }
-        if live {
-            if let Err(e) = exec.set_leverage(coin, lev).await {
-                log.push(format!("{coin}: 设置杠杆失败 {e}"));
+    match exec.account().await {
+        Ok(after) => {
+            for coin in &all_coins {
+                if after
+                    .positions
+                    .get(coin)
+                    .map(|p| p.size.abs() > 1e-12)
+                    .unwrap_or(false)
+                {
+                    continue; // 仍有仓位，切不了模式，跳过
+                }
+                let max_lev = markets.get(coin).map(|m| m.max_leverage).unwrap_or(10);
+                let want = cfg.leverage.round() as u32;
+                let lev = want.clamp(1, max_lev.max(1));
+                match exec.set_leverage(coin, lev).await {
+                    Ok(_) => {}
+                    Err(e) => prelim.push(format!("{coin}: 设置杠杆失败 {e}")),
+                }
+                tokio::time::sleep(std::time::Duration::from_millis(120)).await;
             }
-            // 逐个设置，中间留点间隔，避免 16 个请求瞬间打满
-            tokio::time::sleep(std::time::Duration::from_millis(120)).await;
         }
+        Err(e) => prelim.push(format!("重新读取账户失败，跳过杠杆设置: {e}")),
     }
-    for o in &plan.orders {
-        let side = if o.buy { "买" } else { "卖" };
-        let tag = if o.reduce_only { "只减仓" } else { "开仓" };
-        if !live {
-            log.push(format!(
-                "[DRY-RUN] {} {} {} {:.6} @≈{:.6} (${:.2}) · {}",
-                side, o.coin, tag, o.size, o.mid, o.notional, o.reason
-            ));
+
+    // ---- 3) 再开仓 ----
+    for (i, o) in plan.orders.iter().enumerate() {
+        if o.reduce_only {
             continue;
         }
-        match exec
-            .ioc(&o.coin, o.buy, o.reduce_only, o.size, o.mid, cfg.slippage, o.sz_decimals)
+        orders[i] = match exec
+            .ioc(&o.coin, o.buy, false, o.size, o.mid, cfg.slippage, o.sz_decimals)
             .await
         {
-            Ok(status) => log.push(format!(
-                "{} {} {} {:.6} · {} · {}",
-                side,
+            Ok(st) => format!(
+                "{} {} 开仓 {:.6} · {} · {}",
+                if o.buy { "买" } else { "卖" },
                 o.coin,
-                tag,
                 o.size,
-                crate::exchange::describe(&status),
+                crate::exchange::describe(&st),
                 o.reason
-            )),
-            Err(e) => log.push(format!("{} {} {} 失败: {e}", side, o.coin, tag)),
-        }
+            ),
+            Err(e) => format!("{} {} 开仓失败: {e}", if o.buy { "买" } else { "卖" }, o.coin),
+        };
+        tokio::time::sleep(std::time::Duration::from_millis(150)).await;
     }
-    Ok(log)
+
+    Ok(Outcome { prelim, orders })
 }
 
 /// Mids for the coins we care about, from one bulk request.

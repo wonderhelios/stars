@@ -356,6 +356,13 @@ pub async fn run(
     for n in &plan.notes {
         plan_lines.push(format!("注意: {n}"));
     }
+    if !plan.held.is_empty() {
+        plan_lines.push(format!(
+            "注意: {} 个已有仓位无法切换保证金模式（Hyperliquid 不允许持仓时切换），\
+             如需全部转为全仓请用「转为全仓」逐币处理",
+            plan.held.len()
+        ));
+    }
     if plan.orders.is_empty() {
         plan_lines.push("无需调仓（已在目标状态）".into());
     }
@@ -384,15 +391,21 @@ pub async fn run(
         });
     }
 
-    let executed = trader::execute(&exec, &plan, &tc, markets, live).await?;
-    if live {
-        // Update recorded results with what the exchange reported.
-        for (i, line) in executed.iter().enumerate() {
-            if let Some(r) = records.get_mut(i) {
-                r.result = line.clone();
-            }
+    let outcome = trader::execute(&exec, &plan, &tc, markets, live).await?;
+    // 前置日志（设杠杆失败等）单独放在最前面，绝不与订单结果混用下标
+    for line in &outcome.prelim {
+        plan_lines.push(format!("注意: {line}"));
+    }
+    // 逐条按同一下标对应，保证失败信息挂在正确的币上
+    for (i, line) in outcome.orders.iter().enumerate() {
+        if line.is_empty() {
+            continue;
+        }
+        if let Some(r) = records.get_mut(i) {
+            r.result = line.clone();
         }
     }
+    let executed = outcome.orders;
 
     Ok((
         RunResult {

@@ -510,8 +510,14 @@ async fn run_trade(args: &[String], db_path: &str) -> anyhow::Result<()> {
     }
 
     println!("\n发送订单…");
-    for line in trader::execute(&exec, &plan, &cfg, &markets, true).await? {
-        println!("  {line}");
+    let outcome = trader::execute(&exec, &plan, &cfg, &markets, true).await?;
+    for line in &outcome.prelim {
+        println!("  注意: {line}");
+    }
+    for line in &outcome.orders {
+        if !line.is_empty() {
+            println!("  {line}");
+        }
     }
     if let Ok(a) = exec.account().await {
         println!(
