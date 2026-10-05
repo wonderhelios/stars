@@ -300,6 +300,7 @@ struct LiveConfigBody {
     top_frac: Option<f64>,
     min_vol_usd: Option<f64>,
     take_profit_pct: Option<f64>,
+    rebalance_days: Option<u32>,
     armed: Option<bool>,
     auto_run: Option<bool>,
 }
@@ -341,6 +342,9 @@ async fn live_config(
     }
     if let Some(v) = body.take_profit_pct {
         c.take_profit_pct = v.clamp(0.0, 0.5);
+    }
+    if let Some(v) = body.rebalance_days {
+        c.rebalance_days = v.clamp(1, 30);
     }
     if let Some(v) = body.armed {
         c.armed = v;
