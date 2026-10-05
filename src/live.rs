@@ -148,6 +148,9 @@ pub struct LivePosition {
     pub unrealized: f64,
     pub liq_px: Option<f64>,
     pub dist_pct: Option<f64>,
+    /// true = 全仓，false = 逐仓
+    pub is_cross: bool,
+    pub leverage: u32,
 }
 
 #[derive(Serialize)]
@@ -163,6 +166,8 @@ pub struct LiveSnapshot {
     pub maintenance_margin: f64,
     pub liq_buffer_pct: f64,
     pub nearest_liq_pct: Option<f64>,
+    /// 仍是逐仓的仓位数（Hyperliquid 不允许持仓时切换模式）
+    pub isolated_count: usize,
     pub config: LiveConfig,
     pub history: Vec<EquityPoint>,
     pub records: Vec<LiveRecord>,
@@ -190,6 +195,7 @@ pub async fn snapshot(
         maintenance_margin: 0.0,
         liq_buffer_pct: 0.0,
         nearest_liq_pct: None,
+        isolated_count: 0,
         config: cfg.clone(),
         history: state.history.clone(),
         records: state.records.clone(),
@@ -256,9 +262,12 @@ pub async fn snapshot(
             unrealized,
             liq_px: pos.liq_px,
             dist_pct: dist,
+            is_cross: pos.is_cross,
+            leverage: pos.leverage,
         });
     }
     snap.positions.sort_by(|a, b| a.coin.cmp(&b.coin));
+    snap.isolated_count = snap.positions.iter().filter(|p| !p.is_cross).count();
     snap.margin_used = if cfg.leverage > 0.0 {
         snap.gross_notional / cfg.leverage
     } else {

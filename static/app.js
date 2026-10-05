@@ -752,6 +752,10 @@ function renderMonitor(d) {
     tag = "● 未启用";
     text = "当前只会生成计划，不会发送订单";
   }
+  const isoN = d.isolated_count || 0;
+  if (isoN > 0) {
+    text += `<span class="neg"><b>⚠ ${isoN} 个仓位仍是逐仓</b>（Hyperliquid 不允许持仓时切换模式，需用「转为全仓」逐币处理）</span>`;
+  }
   const autoText = auto
     ? `<span>每日自动调仓：<b>已开启</b>，下次 <b>${nextRun} UTC</b>（北京时间 08:05）</span>`
     : `<span>每日自动调仓：<b>已关闭</b>（需手动点「执行调仓」）</span>`;
@@ -779,6 +783,8 @@ function renderMonitor(d) {
     metric("维持保证金", "$" + fmt(d.maintenance_margin || 0, 0)) +
     metric("逐仓距爆仓(最小)", d.nearest_liq_pct == null ? "—" : fmt(d.nearest_liq_pct, 1) + "%",
       d.nearest_liq_pct != null && d.nearest_liq_pct < 20 ? "neg" : "") +
+    metric("保证金模式", (d.positions || []).length ? ((d.positions || []).length - (d.isolated_count || 0)) + " 全仓 / " + (d.isolated_count || 0) + " 逐仓" : "—",
+      (d.isolated_count || 0) > 0 ? "neg" : "pos") +
     metric("最后调仓", d.last_run_at ? `<span class="sm">${ts2m(d.last_run_at)}</span>` : "—") +
     (() => {
       const chron0 = d.records || [];
@@ -844,6 +850,7 @@ function renderMonitor(d) {
           <td class="${cls}">${p.unrealized >= 0 ? "+" : ""}$${fmt(p.unrealized, 2)}</td>
           <td>${p.liq_px == null ? "—" : fmt(p.liq_px, 6)}</td>
           <td class="${p.dist_pct != null && p.dist_pct < 20 ? "neg" : "muted"}">${dist}</td>
+          <td>${p.is_cross ? '<span class="badge-mini ok">全仓</span>' : '<span class="badge-mini err">逐仓</span>'}</td>
         </tr>`;
       })
       .join("");

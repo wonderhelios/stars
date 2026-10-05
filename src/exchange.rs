@@ -30,6 +30,9 @@ pub struct Pos {
     pub entry_px: f64,
     /// exchange-reported liquidation price, if any
     pub liq_px: Option<f64>,
+    /// true = cross margin, false = isolated
+    pub is_cross: bool,
+    pub leverage: u32,
 }
 
 #[derive(Clone, Debug, Default)]
@@ -258,6 +261,8 @@ impl Exec {
                             .and_then(|v| v.parse().ok())
                             .unwrap_or(0.0),
                         liq_px: p["liquidationPx"].as_str().and_then(|v| v.parse().ok()),
+                        is_cross: p["leverage"]["type"].as_str() == Some("cross"),
+                        leverage: p["leverage"]["value"].as_u64().unwrap_or(0) as u32,
                     },
                 );
             }
