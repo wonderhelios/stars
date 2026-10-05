@@ -100,6 +100,14 @@ pub struct LiveRecord {
     pub notional: f64,
     pub result: String,
     pub live: bool,
+    /// Position entry price when this order closes/reduces, so the UI can show
+    /// the realised P&L of the close. None for opening orders.
+    #[serde(default)]
+    pub entry_px: Option<f64>,
+    /// True when the order shrinks/closes a position (so the UI can label the
+    /// row with the *position* direction rather than the order direction).
+    #[serde(default)]
+    pub reduce_only: bool,
 }
 
 #[derive(Clone, Serialize, Deserialize, Default)]
@@ -346,6 +354,12 @@ pub async fn run(
     let now = now_ms_pub();
     let mut records = Vec::new();
     for o in &plan.orders {
+        // 减仓/平仓的单子带上原持仓的入场价，前端据此算这笔的已实现盈亏
+        let entry_px = if o.reduce_only {
+            acct.positions.get(&o.coin).map(|p| p.entry_px)
+        } else {
+            None
+        };
         records.push(LiveRecord {
             ts: now,
             coin: o.coin.clone(),
@@ -356,6 +370,8 @@ pub async fn run(
             notional: o.notional,
             result: if live { "已发送".into() } else { "计划".into() },
             live,
+            entry_px,
+            reduce_only: o.reduce_only,
         });
     }
 

@@ -647,14 +647,21 @@ function slippageStats(records) {
 }
 
 // 把交易所返回的结果文本拆成结构化字段（原来整列都是重复的一长串文字）
-function parseFill(r) {
+function parseFill(r, entryHint) {
   const t = r.result || "";
   const m = /成交\s+([\d.]+)@([\d.]+)/.exec(t);
   if (m) {
     const px = parseFloat(m[2]);
     let slip = r.price > 0 ? ((px - r.price) / r.price) * 100 : 0;
     if (r.side === "卖") slip = -slip; // 卖出成交价低于计划 = 成本增加
-    return { kind: "filled", px, slip };
+    // 平仓/减仓单：用入场价算这笔的已实现盈亏
+    let pnl = null;
+    const entry = r.entry_px > 0 ? r.entry_px : entryHint > 0 ? entryHint : 0;
+    if (entry > 0) {
+      // 卖 = 平多；买 = 平空
+      pnl = r.side === "卖" ? (px - entry) * r.size : (entry - px) * r.size;
+    }
+    return { kind: "filled", px, slip, pnl };
   }
   if (/未成交|挂单/.test(t)) return { kind: "unfilled" };
   if (/失败|错误|invalid|rejected/i.test(t)) {
@@ -662,6 +669,19 @@ function parseFill(r) {
   }
   if (t === "计划") return { kind: "plan" };
   return { kind: "other", msg: t };
+}
+
+// 旧记录没存入场价：用该币最近一次「开仓」的成交价回推（仅缺失时兜底）
+function entryHints(records) {
+  const last = Object.create(null);
+  const out = new Array(records.length).fill(null);
+  records.forEach((r, i) => {
+    const closing = /平仓|减仓/.test(r.action || "");
+    out[i] = r.entry_px > 0 ? r.entry_px : closing ? last[r.coin] ?? null : null;
+    const m = /成交\s+[\d.]+@([\d.]+)/.exec(r.result || "");
+    if (m && !closing) last[r.coin] = parseFloat(m[1]);
+  });
+  return out;
 }
 
 function renderMonitor(d) {
@@ -736,6 +756,22 @@ function renderMonitor(d) {
       d.nearest_liq_pct != null && d.nearest_liq_pct < 20 ? "neg" : "") +
     metric("最后调仓", d.last_run_at ? `<span class="sm">${ts2m(d.last_run_at)}</span>` : "—") +
     (() => {
+      const chron0 = d.records || [];
+      const hints0 = entryHints(chron0);
+      let real = 0, n = 0;
+      chron0.forEach((r, i) => {
+        const f = parseFill(r, hints0[i]);
+        if (f.kind === "filled" && f.pnl != null) {
+          real += f.pnl;
+          n++;
+        }
+      });
+      if (!n) return metric("已实现盈亏", "—");
+      const cls = real >= 0 ? "pos" : "neg";
+      return metric(`已实现盈亏 (${n}笔平仓)`,
+        `<span class="sm">${real >= 0 ? "+" : ""}$${fmt(real, 2)}</span>`, cls);
+    })() +
+    (() => {
       const sl = slippageStats(d.records);
       if (!sl) return metric("实测平均滑点", "—");
       const cls = sl.avg > 0.15 ? "neg" : "pos";
@@ -794,25 +830,31 @@ function renderMonitor(d) {
 
   renderLiveChart(hist);
 
-  const recs = (d.records || []).slice().reverse();
+  const chron = d.records || [];
+  const hints = entryHints(chron);
+  const recs = chron.map((r, i) => ({ r, hint: hints[i] })).reverse();
   const pages = Math.max(1, Math.ceil(recs.length / LIVE_PAGE_SIZE));
   if (livePage > pages - 1) livePage = 0;
   const pageItems = recs.slice(livePage * LIVE_PAGE_SIZE, (livePage + 1) * LIVE_PAGE_SIZE);
   $("mo-records").innerHTML = recs.length
     ? `<div class="table-scroll"><table><thead><tr>
         <th>时间</th><th>币</th><th>方向</th><th>动作</th><th>数量</th>
-        <th>计划价</th><th>成交价</th><th>滑点</th><th>状态</th>
+        <th>计划价</th><th>成交价</th><th>滑点</th><th>盈亏</th><th>状态</th>
       </tr></thead><tbody>${pageItems
-        .map((r) => {
-          const f = parseFill(r);
+        .map(({ r, hint }) => {
+          const f = parseFill(r, hint);
           let pxCell = '<span class="muted">—</span>';
           let slipCell = '<span class="muted">—</span>';
+          let pnlCell = '<span class="muted">—</span>';
           let status = '<span class="badge-mini mute">—</span>';
           if (f.kind === "filled") {
             status = '<span class="badge-mini ok">成交</span>';
             pxCell = fmt(f.px, 6);
             const cls = f.slip > 0.03 ? "neg" : f.slip < -0.03 ? "pos" : "muted";
             slipCell = `<span class="${cls}">${f.slip >= 0 ? "+" : ""}${f.slip.toFixed(3)}%</span>`;
+            if (f.pnl != null) {
+              pnlCell = `<b class="${f.pnl >= 0 ? "pos" : "neg"}">${f.pnl >= 0 ? "+" : ""}$${fmt(f.pnl, 2)}</b>`;
+            }
           } else if (f.kind === "unfilled") {
             status = '<span class="badge-mini warn">未成交</span>';
           } else if (f.kind === "failed") {
@@ -820,6 +862,9 @@ function renderMonitor(d) {
           } else if (f.kind === "plan") {
             status = '<span class="badge-mini mute">计划</span>';
           }
+          // 方向要显示「持仓方向」：平仓时下单方向与持仓方向相反
+          const closing = r.reduce_only || /平仓|减仓/.test(r.action || "");
+          const posLong = r.side === "买" ? !closing : closing;
           const note =
             f.kind === "failed" && f.msg
               ? `<div class="muted" style="font-size:11px;max-width:220px;white-space:normal">${f.msg}</div>`
@@ -827,12 +872,13 @@ function renderMonitor(d) {
           return `<tr>
             <td class="muted">${ts2m(r.ts)}</td>
             <td>${r.coin}</td>
-            <td>${sideLabel(r.side === "买" ? "long" : "short")}</td>
+            <td>${sideLabel(posLong ? "long" : "short")}${closing ? '<span class="muted" style="font-size:11px"> 平</span>' : ""}</td>
             <td class="muted">${r.action}</td>
             <td>${fmt(r.size, 6)}</td>
             <td class="muted">${fmt(r.price, 6)}</td>
             <td>${pxCell}</td>
             <td>${slipCell}</td>
+            <td>${pnlCell}</td>
             <td>${status}${note}</td>
           </tr>`;
         })
