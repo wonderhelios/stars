@@ -138,6 +138,12 @@ document.addEventListener("click", (e) => {
   if (key === "live") {
     livePage = to;
     renderMonitor(lastLiveData);
+  } else if (key === "pos") {
+    posPage = to;
+    renderMonitor(lastLiveData);
+  } else if (key === "order") {
+    orderPage = to;
+    renderMonitor(lastLiveData);
   }
 });
 
@@ -306,6 +312,8 @@ async function refreshLiveConfig() {
 
 // ==================== 实盘监控 ====================
 let livePage = 0;
+let posPage = 0;
+let orderPage = 0;
 let lastLiveData = null;
 
 // 从下单记录里还原真实成交滑点（正 = 成本增加）
@@ -391,6 +399,7 @@ function entryHints(records) {
 }
 
 function renderMonitor(d) {
+  lastLiveData = d;
   if (!d) return;
   lastLiveData = d;
   const c = d.config || {};
@@ -516,7 +525,10 @@ function renderMonitor(d) {
   if (!pos.length) {
     $("mo-positions").innerHTML = err + '<div class="empty">账户当前没有持仓</div>';
   } else {
+    const posPages = Math.max(1, Math.ceil(pos.length / LIVE_PAGE_SIZE));
+    if (posPage > posPages - 1) posPage = 0;
     const rows = pos
+      .slice(posPage * LIVE_PAGE_SIZE, (posPage + 1) * LIVE_PAGE_SIZE)
       .map((p) => {
         const cls = p.unrealized >= 0 ? "pos" : "neg";
         const dist = p.dist_pct == null ? "—" : fmt(p.dist_pct, 1) + "%";
@@ -537,7 +549,7 @@ function renderMonitor(d) {
     $("mo-positions").innerHTML = err + `<div class="table-scroll"><table><thead><tr>
       <th>币</th><th>方向</th><th>数量</th><th>入场价</th><th>当前价</th>
       <th>名义</th><th>未实现盈亏</th><th>爆仓价</th><th>距爆仓</th>
-    </tr></thead><tbody>${rows}</tbody></table></div>`;
+    </tr></thead><tbody>${rows}</tbody></table></div>` + pager("pos", pos.length, posPage, LIVE_PAGE_SIZE);
   }
 
   renderLiveChart(hist);
@@ -545,10 +557,13 @@ function renderMonitor(d) {
   const chron = d.records || [];
   const hints = entryHints(chron);
   const orders = d.tp_orders || [];
+  const orderPages = Math.max(1, Math.ceil(orders.length / LIVE_PAGE_SIZE));
+  if (orderPage > orderPages - 1) orderPage = 0;
   $("mo-orders").innerHTML = orders.length
     ? `<div class="table-scroll"><table><thead><tr><th>币</th><th>方向</th><th>挂单价</th><th>数量</th></tr></thead><tbody>${orders
+        .slice(orderPage * LIVE_PAGE_SIZE, (orderPage + 1) * LIVE_PAGE_SIZE)
         .map((o) => `<tr><td>${o.coin}</td><td>${orderSideLabel(o.side)}</td><td>${fmtCompact(o.px)}</td><td>${fmtCompact(o.sz)}</td></tr>`)
-        .join("")}</tbody></table></div>`
+        .join("")}</tbody></table></div>` + pager("order", orders.length, orderPage, LIVE_PAGE_SIZE)
     : '<div class="empty">当前没有挂单（价格碰到止盈价会自动成交）</div>';
 
   const recs = chron.map((r, i) => ({ r, hint: hints[i] })).reverse();
