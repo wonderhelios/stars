@@ -25,8 +25,6 @@ pub struct AppState {
     pub live_path: Arc<std::path::PathBuf>,
     pub meta: Arc<Mutex<MetaCache>>,
     pub refresh: Arc<Mutex<RefreshStatus>>,
-    pub probe: Arc<Mutex<crate::probe::ProbeState>>,
-    pub probe_path: Arc<std::path::PathBuf>,
     /// Shared HTTP client so Hyperliquid connections are pooled.
     pub http: reqwest::Client,
     /// 调仓/止盈的执行闸门。互斥锁只保护状态、不覆盖下单过程，所以自动调仓
@@ -71,10 +69,6 @@ pub fn router(state: AppState) -> Router {
         .route("/api/live/rebuild", post(live_rebuild))
         .route("/api/live/tp", post(live_tp))
         .route("/api/live/records/clear", post(live_records_clear))
-        .route("/api/probe", get(probe_status))
-        .route("/api/probe/config", post(probe_config))
-        .route("/api/probe/reset", post(probe_reset))
-        .route("/api/probe/replay", post(probe_replay))
         .layer(CompressionLayer::new())
         .layer(CorsLayer::permissive())
         .with_state(state)
@@ -131,11 +125,9 @@ async fn status(State(state): State<AppState>) -> Json<serde_json::Value> {
     }))
 }
 
-
 fn d14() -> usize { 14 }
 fn d020() -> f64 { 0.2 }
 fn d5m() -> f64 { 5_000_000.0 }
-
 
 async fn paper_status(State(state): State<AppState>) -> Json<serde_json::Value> {
     Json(json!(paper::snapshot(&*state.paper.lock().await)))
@@ -412,96 +404,6 @@ async fn live_reset(State(state): State<AppState>) -> Response {
     Json(json!({"ok": true})).into_response()
 }
 
-
-// ==================== maker 成交探测器 ====================
-
-async fn probe_status(State(state): State<AppState>) -> Response {
-    let p = state.probe.lock().await;
-    let summary = crate::probe::summarize(&p);
-    let recent: Vec<_> = p.rounds.iter().rev().take(30).cloned().collect();
-    Json(json!({
-        "config": p.config,
-        "rounds": p.rounds.len(),
-        "last_run_at": p.last_run_at,
-        "last_error": p.last_error,
-        "summary": summary,
-        "recent": recent,
-    }))
-    .into_response()
-}
-
-#[derive(serde::Deserialize)]
-struct ProbeConfigBody {
-    lookback_h: Option<usize>,
-    rebal_h: Option<usize>,
-    top_frac: Option<f64>,
-    min_vol_usd: Option<f64>,
-    enabled: Option<bool>,
-}
-
-async fn probe_config(State(state): State<AppState>, Json(b): Json<ProbeConfigBody>) -> Response {
-    let mut p = state.probe.lock().await;
-    if let Some(v) = b.lookback_h {
-        p.config.lookback_h = v.clamp(1, 168);
-    }
-    if let Some(v) = b.rebal_h {
-        p.config.rebal_h = v.clamp(1, 72);
-    }
-    if let Some(v) = b.top_frac {
-        p.config.top_frac = v.clamp(0.02, 0.5);
-    }
-    if let Some(v) = b.min_vol_usd {
-        p.config.min_vol_usd = v.max(0.0);
-    }
-    if let Some(v) = b.enabled {
-        p.config.enabled = v;
-    }
-    let cfg = p.config.clone();
-    let _ = p.save(&state.probe_path);
-    Json(json!({"ok": true, "config": cfg})).into_response()
-}
-
-async fn probe_reset(State(state): State<AppState>) -> Response {
-    let mut p = state.probe.lock().await;
-    let cfg = p.config.clone();
-    *p = crate::probe::ProbeState {
-        config: cfg,
-        ..Default::default()
-    };
-    let _ = p.save(&state.probe_path);
-    Json(json!({"ok": true})).into_response()
-}
-
-
-#[derive(serde::Deserialize, Default)]
-struct ReplayBody {
-    #[serde(default)]
-    days: Option<i64>,
-}
-
-/// 用历史小时线回放，立刻给出触及率（样本内，与向前观测区分展示）。
-async fn probe_replay(State(state): State<AppState>, body: Option<Json<ReplayBody>>) -> Response {
-    let days = body.and_then(|b| b.days).unwrap_or(30).clamp(3, 90);
-    let panel = match state.store.hourly_panels() {
-        Ok(p) => p,
-        Err(e) => return Json(json!({"ok": false, "error": format!("{e}")})).into_response(),
-    };
-    if panel.len() < 8 {
-        return Json(json!({"ok": false, "error": format!("小时线不足（{} 币）", panel.len())}))
-            .into_response();
-    }
-    let mut st = state.probe.lock().await;
-    let cfg = st.config.clone();
-    let rounds = crate::probe::replay(&panel, &cfg, days);
-    let n = rounds.len();
-    st.rounds.retain(|r| !r.replayed);
-    st.rounds.extend(rounds);
-    st.rounds.sort_by_key(|r| r.ts);
-    let _ = st.save(&state.probe_path);
-    Json(json!({"ok": true, "rounds": n})).into_response()
-}
-
-
 /// 逐币把现有仓位转成全仓（平→切→重开）。
 async fn live_rebuild(State(state): State<AppState>) -> Response {
     let _gate = match state.exec_gate.try_lock() {
@@ -521,7 +423,6 @@ async fn live_rebuild(State(state): State<AppState>) -> Response {
     }
 }
 
-
 /// 只清空下单记录（保留净值曲线和配置）。用于清掉旧版本写下的错位记录。
 async fn live_records_clear(State(state): State<AppState>) -> Response {
     let mut st = state.live.lock().await;
@@ -530,7 +431,6 @@ async fn live_records_clear(State(state): State<AppState>) -> Response {
     let _ = st.save(&state.live_path);
     Json(json!({"ok": true, "cleared": n})).into_response()
 }
-
 
 /// 重新挂止盈单（不调仓，只刷新止盈）。
 async fn live_tp(State(state): State<AppState>) -> Response {

@@ -3,7 +3,6 @@ mod hl;
 mod live;
 mod momentum;
 mod paper;
-mod probe;
 mod store;
 mod trader;
 mod web;
@@ -38,8 +37,6 @@ async fn main() -> anyhow::Result<()> {
         .unwrap_or_else(|_| "/var/lib/stars/paper.json".to_string());
     let live_path = std::env::var("STARS_LIVE")
         .unwrap_or_else(|_| "/var/lib/stars/live.json".to_string());
-    let probe_path = std::env::var("STARS_PROBE")
-        .unwrap_or_else(|_| "/var/lib/stars/probe.json".to_string());
 
     // ===== trade subcommand (live execution) =====
     let args: Vec<String> = std::env::args().collect();
@@ -51,7 +48,6 @@ async fn main() -> anyhow::Result<()> {
     let client = HlClient::new();
     let paper = Arc::new(Mutex::new(PaperState::load(std::path::Path::new(&paper_path))));
     let live = Arc::new(Mutex::new(live::LiveState::load(std::path::Path::new(&live_path))));
-    let probe = Arc::new(Mutex::new(probe::ProbeState::load(std::path::Path::new(&probe_path))));
     let meta = Arc::new(Mutex::new(MetaCache::default()));
     let refresh = Arc::new(Mutex::new(RefreshStatus::default()));
 
@@ -62,8 +58,6 @@ async fn main() -> anyhow::Result<()> {
         paper_path: Arc::new(std::path::PathBuf::from(&paper_path)),
         live: live.clone(),
         live_path: Arc::new(std::path::PathBuf::from(&live_path)),
-        probe: probe.clone(),
-        probe_path: Arc::new(std::path::PathBuf::from(&probe_path)),
         http: reqwest::Client::builder()
             .timeout(Duration::from_secs(20))
             .pool_max_idle_per_host(8)
@@ -122,63 +116,6 @@ async fn main() -> anyhow::Result<()> {
                     }
                     Err(e) => error!("实盘自动调仓失败：{e}"),
                 }
-            }
-        });
-    }
-
-    // ===== monthly-hourly backfill + probe loop =====
-    {
-        let store = store.clone();
-        let meta = meta.clone();
-        let refresh = refresh.clone();
-        let probe = probe.clone();
-        let probe_path = probe_path.clone();
-        // 回填独立运行，不阻塞探测器
-        {
-            let store = store.clone();
-            let client = HlClient::new();
-            let meta = meta.clone();
-            let refresh = refresh.clone();
-            tokio::spawn(async move {
-                // 启动后先等 3 分钟，避免用户刚部署就操作时和回填抢配额
-                tokio::time::sleep(Duration::from_secs(180)).await;
-                if let Err(e) = backfill_hourly(&store, &client, &meta, &refresh).await {
-                    error!("小时线回填失败: {e}");
-                }
-                loop {
-                    tokio::time::sleep(Duration::from_secs(1800)).await;
-                    if let Err(e) = backfill_hourly(&store, &client, &meta, &refresh).await {
-                        error!("小时线增量更新失败: {e}");
-                    }
-                }
-            });
-        }
-        tokio::spawn(async move {
-            loop {
-                tokio::time::sleep(Duration::from_secs(120)).await;
-                // 每 4 小时推进一轮探测器
-                let now = now_ms();
-                let due = {
-                    let p = probe.lock().await;
-                    let step = p.config.rebal_h.max(1) as i64 * 3_600_000;
-                    match p.last_run_at {
-                        None => true,
-                        Some(t) => now - t >= step,
-                    }
-                };
-                if !due {
-                    continue;
-                }
-                match run_probe_once(&store, &probe).await {
-                    Ok(msg) => info!("探测器: {msg}"),
-                    Err(e) => {
-                        error!("探测器失败: {e}");
-                        let mut p = probe.lock().await;
-                        p.last_error = Some(format!("{e}"));
-                    }
-                }
-                let p = probe.lock().await;
-                let _ = p.save(std::path::Path::new(&probe_path));
             }
         });
     }
@@ -584,122 +521,3 @@ async fn run_trade(args: &[String], db_path: &str) -> anyhow::Result<()> {
     Ok(())
 }
 
-
-
-/// 回填小时线（探测器用）。只做流动性宇宙，已新鲜的跳过。
-async fn backfill_hourly(
-    store: &Arc<Store>,
-    client: &HlClient,
-    meta: &Arc<Mutex<MetaCache>>,
-    refresh: &Arc<Mutex<RefreshStatus>>,
-) -> anyhow::Result<()> {
-    // 等主回填把宇宙准备好
-    for _ in 0..60 {
-        if !meta.lock().await.liquid.is_empty() {
-            break;
-        }
-        tokio::time::sleep(Duration::from_secs(5)).await;
-    }
-    let liquid = meta.lock().await.liquid.clone();
-    if liquid.is_empty() {
-        anyhow::bail!("流动性宇宙为空，跳过小时线回填");
-    }
-    let now = now_ms();
-    let from = now - 210 * 86_400_000; // 210 天：留足 30 天量能窗口后仍有 ~180 天可用于组合分析
-    {
-        let mut r = refresh.lock().await;
-        r.phase = "hourly".into();
-        r.coins_total = liquid.len();
-        r.coins_done = 0;
-    }
-    let total = liquid.len();
-    for (i, coin) in liquid.iter().enumerate() {
-        {
-            let mut r = refresh.lock().await;
-            r.current = coin.clone();
-            r.coins_done = i;
-        }
-        let have = store.hourly_latest_ts(coin).ok().flatten();
-        let first = store.hourly_first_ts(coin).ok().flatten();
-        let fresh = have.map(|t| t >= now - 2 * 3_600_000).unwrap_or(false);
-        // 还要检查历史是否够长：只判断「最新是否新鲜」会跳过更早的补拉
-        let need_older = first.map(|t| t > from + 3_600_000).unwrap_or(true);
-        if fresh && !need_older {
-            continue;
-        }
-        if need_older {
-            let end = first.unwrap_or(now);
-            match client.hourly_candles(coin, from, end).await {
-                Ok(cs) => {
-                    let _ = store.upsert_hourly(coin, &cs);
-                }
-                Err(e) => error!("小时线补历史 {coin}: {e}"),
-            }
-            tokio::time::sleep(Duration::from_millis(80)).await;
-        }
-        if !fresh {
-            let start = have.map(|t| t + 1).unwrap_or(now - 3 * 86_400_000);
-            match client.hourly_candles(coin, start, now).await {
-                Ok(cs) => {
-                    let _ = store.upsert_hourly(coin, &cs);
-                }
-                Err(e) => error!("小时线 {coin}: {e}"),
-            }
-            tokio::time::sleep(Duration::from_millis(80)).await;
-        }
-    }
-    {
-        let mut r = refresh.lock().await;
-        r.phase = "idle".into();
-        r.coins_done = total;
-        r.current = String::new();
-    }
-    info!("小时线回填完成：{total} 币");
-    Ok(())
-}
-
-/// 推进一轮探测器：先评估上一轮（窗口已结束），再开启新一轮。
-async fn run_probe_once(
-    store: &Arc<Store>,
-    probe: &Arc<Mutex<probe::ProbeState>>,
-) -> anyhow::Result<String> {
-    let panel = store.hourly_panels()?;
-    if panel.len() < 8 {
-        anyhow::bail!("小时线不足（{} 币）", panel.len());
-    }
-    let mut p = probe.lock().await;
-    if !p.config.enabled {
-        return Ok("已停用".into());
-    }
-    let cfg = p.config.clone();
-    // 1) 评估尚未评估且窗口已结束的轮次
-    let now = now_ms();
-    let mut done = 0;
-    for r in p.rounds.iter_mut() {
-        if !r.evaluated && now >= r.ts + cfg.rebal_h as i64 * 3_600_000 {
-            probe::evaluate(r, &panel, &cfg);
-            if r.evaluated {
-                done += 1;
-            }
-        }
-    }
-    // 2) 开新轮
-    let (longs, shorts, mids) = probe::targets(&panel, &cfg);
-    let started = !longs.is_empty();
-    if started {
-        p.rounds.push(probe::ProbeRound {
-            ts: now,
-            longs,
-            shorts,
-            mids,
-            ..Default::default()
-        });
-        if p.rounds.len() > 500 {
-            let drop = p.rounds.len() - 500;
-            p.rounds.drain(0..drop);
-        }
-    }
-    p.last_run_at = Some(now);
-    p.last_error = None;
-    Ok(format!("评估 {done} 轮 · 新轮 {}", if started { "已开" } else { "跳过" }))
-}

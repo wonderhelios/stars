@@ -187,15 +187,6 @@ impl HlClient {
     }
 
     /// Hourly candles: one request covers ~400 hours.
-    pub async fn hourly_candles(
-        &self,
-        coin: &str,
-        start_ms: i64,
-        end_ms: i64,
-    ) -> Result<Vec<Candle>> {
-        self.candles(coin, "1h", start_ms, end_ms, 400 * 3_600_000)
-            .await
-    }
 
     /// Exchange fee schedule (base tier). `cross` = taker, `add` = maker.
     /// The zero address returns the standard tier every new account starts on.

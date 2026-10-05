@@ -24,13 +24,7 @@ impl Store {
                 PRIMARY KEY (coin, t)
             );
             CREATE INDEX IF NOT EXISTS idx_candles_t ON candles(t);
-            CREATE TABLE IF NOT EXISTS candles_h (
-                coin TEXT NOT NULL,
-                t INTEGER NOT NULL,
-                o REAL, h REAL, l REAL, c REAL, v REAL,
-                PRIMARY KEY (coin, t)
-            );
-            CREATE INDEX IF NOT EXISTS idx_candles_h_t ON candles_h(t);",
+        ",
         )?;
         Ok(Self {
             conn: Mutex::new(conn),
@@ -60,73 +54,6 @@ impl Store {
     pub fn latest_ts(&self) -> Result<Option<i64>> {
         let conn = self.conn.lock().unwrap();
         Ok(conn.query_row("SELECT MAX(t) FROM candles", [], |r| r.get(0))?)
-    }
-
-    /// Upsert into the hourly table.
-    pub fn upsert_hourly(&self, coin: &str, candles: &[Candle]) -> Result<usize> {
-        let conn = self.conn.lock().unwrap();
-        let mut n = 0;
-        let tx = conn.unchecked_transaction()?;
-        {
-            let mut stmt = tx.prepare(
-                "INSERT INTO candles_h (coin, t, o, h, l, c, v)
-                 VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)
-                 ON CONFLICT(coin, t) DO UPDATE SET
-                   o=excluded.o, h=excluded.h, l=excluded.l, c=excluded.c, v=excluded.v",
-            )?;
-            for c in candles {
-                stmt.execute(rusqlite::params![coin, c.t, c.o, c.h, c.l, c.c, c.v])?;
-                n += 1;
-            }
-        }
-        tx.commit()?;
-        Ok(n)
-    }
-
-    pub fn hourly_latest_ts(&self, coin: &str) -> Result<Option<i64>> {
-        let conn = self.conn.lock().unwrap();
-        Ok(conn.query_row(
-            "SELECT MAX(t) FROM candles_h WHERE coin = ?1",
-            [coin],
-            |r| r.get(0),
-        )?)
-    }
-
-    pub fn hourly_first_ts(&self, coin: &str) -> Result<Option<i64>> {
-        let conn = self.conn.lock().unwrap();
-        Ok(conn.query_row(
-            "SELECT MIN(t) FROM candles_h WHERE coin = ?1",
-            [coin],
-            |r| r.get(0),
-        )?)
-    }
-
-    /// All hourly panels (coin -> candles), for the probe signal.
-    pub fn hourly_panels(&self) -> Result<Vec<(String, Vec<Candle>)>> {
-        let conn = self.conn.lock().unwrap();
-        let mut stmt = conn.prepare("SELECT coin,t,o,h,l,c,v FROM candles_h ORDER BY coin, t")?;
-        let rows = stmt.query_map([], |r| {
-            Ok((
-                r.get::<_, String>(0)?,
-                Candle {
-                    t: r.get(1)?,
-                    o: r.get(2)?,
-                    h: r.get(3)?,
-                    l: r.get(4)?,
-                    c: r.get(5)?,
-                    v: r.get(6)?,
-                },
-            ))
-        })?;
-        let mut out: Vec<(String, Vec<Candle>)> = Vec::new();
-        for row in rows {
-            let (coin, c) = row?;
-            match out.last_mut() {
-                Some((last, list)) if *last == coin => list.push(c),
-                _ => out.push((coin, vec![c])),
-            }
-        }
-        Ok(out)
     }
 
     /// Newest cached candle timestamp for one coin.
