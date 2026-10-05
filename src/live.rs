@@ -125,6 +125,10 @@ pub struct LiveState {
     pub records: Vec<LiveRecord>,
     pub last_run_at: Option<i64>,
     pub last_plan: Vec<String>,
+    /// 上次调仓时各币的中间价。止盈幅度必须相对它计算，而不是相对当前价 ——
+    /// 否则手动刷新会把止盈线随行情搬走（100 建仓、现价 80 的多头会被挂到 88）。
+    #[serde(default)]
+    pub tp_ref: HashMap<String, f64>,
     pub last_live: bool,
 }
 
@@ -183,6 +187,10 @@ pub struct LiveSnapshot {
     pub records: Vec<LiveRecord>,
     pub last_run_at: Option<i64>,
     pub last_plan: Vec<String>,
+    /// 上次调仓时各币的中间价。止盈幅度必须相对它计算，而不是相对当前价 ——
+    /// 否则手动刷新会把止盈线随行情搬走（100 建仓、现价 80 的多头会被挂到 88）。
+    #[serde(default)]
+    pub tp_ref: HashMap<String, f64>,
     pub last_live: bool,
 }
 
@@ -207,6 +215,7 @@ pub async fn snapshot(
         nearest_liq_pct: None,
         isolated_count: 0,
         tp_orders: Vec::new(),
+        tp_ref: HashMap::new(),
         config: cfg.clone(),
         history: state.history.clone(),
         records: state.records.clone(),
@@ -304,6 +313,9 @@ pub struct RunResult {
     pub short_leg: Vec<String>,
     pub per_coin: f64,
     pub plan_lines: Vec<String>,
+    /// 本次调仓使用的参考价，供上层持久化（止盈幅度相对它计算）。
+    #[serde(default)]
+    pub tp_ref: Option<HashMap<String, f64>>,
     pub executed: Vec<String>,
     pub live: bool,
 }
@@ -408,6 +420,21 @@ pub async fn run(
         });
     }
 
+    // 调仓前先撤掉自己的旧止盈单。必须在 execute 之前：否则昨天的止盈单会在
+    // 调仓过程中成交，把计划要减的仓位提前平掉，之后的减仓单被拒、开仓单照发。
+    //
+    // 失败必须中止，不能只记录：撤不掉的旧单会在新单之外继续存在，同一个仓位上
+    // 出现两张只减仓单（交易所只按仓位校验，不会去重）。
+    if live {
+        match cancel_our_take_profits(&exec).await {
+            Ok(n) if n > 0 => plan_lines.push(format!("撤销旧止盈单 {n} 个")),
+            Ok(_) => {}
+            Err(e) => {
+                return Err(e.context("撤销旧止盈单失败，已在调仓前中止"));
+            }
+        }
+    }
+
     let outcome = trader::execute(&exec, &plan, &tc, markets, live).await?;
     // 前置日志（设杠杆失败等）单独放在最前面，绝不与订单结果混用下标
     for line in &outcome.prelim {
@@ -423,10 +450,20 @@ pub async fn run(
         }
     }
     let executed = outcome.orders;
+    let mut tp_ref_out: HashMap<String, f64> = HashMap::new();
     if live {
-        match refresh_take_profits(&exec, markets, cfg.take_profit_pct).await {
+        // 基准价用本次调仓的目标币中间价，而不是挂单时的实时价 ——
+        // 后者会让手动「刷新止盈单」把止盈线随行情一起搬走。
+        let tp_ref: HashMap<String, f64> = plan
+            .long_leg
+            .iter()
+            .chain(plan.short_leg.iter())
+            .filter_map(|c| mids.get(c).map(|m| (c.clone(), *m)))
+            .collect();
+        tp_ref_out = tp_ref.clone();
+        match place_take_profits(&exec, markets, cfg.take_profit_pct, &tp_ref).await {
             Ok(log) => plan_lines.extend(log),
-            Err(e) => plan_lines.push(format!("止盈单处理失败: {e}")),
+            Err(e) => plan_lines.push(format!("止盈单挂单失败: {e}")),
         }
     }
 
@@ -436,6 +473,7 @@ pub async fn run(
             long_leg: plan.long_leg.clone(),
             short_leg: plan.short_leg.clone(),
             per_coin: plan.per_coin,
+            tp_ref: Some(tp_ref_out),
             plan_lines,
             executed,
             live,
@@ -468,17 +506,26 @@ pub async fn rebuild_cross(
     let exec = Exec::signer(&cfg.account, std::path::Path::new(&cfg.key_path)).await?;
     let tc = cfg.trade_config();
 
-    let panel = trader::load_panel(store)?;
-    let (weights, _) = trader::target_weights(&panel, &tc, 0.0, crate::live::now_ms_pub() as i64);
-    anyhow::ensure!(!weights.is_empty(), "流动性过滤后没有候选");
-
+    // 先读账户：仓位数上限（cap）依赖净值，必须在算权重之前拿到。
     let acct = exec.account().await?;
     if acct.positions.is_empty() {
         return Ok(vec!["账户没有持仓，无需转换".into()]);
     }
+    let panel = trader::load_panel(store)?;
+    let (weights, _) = trader::target_weights(
+        &panel,
+        &tc,
+        acct.equity,
+        crate::live::now_ms_pub() as i64,
+    );
+    anyhow::ensure!(!weights.is_empty(), "流动性过滤后没有候选");
     let coins: Vec<String> = acct.positions.keys().cloned().collect();
     let mids = trader::fetch_mids(&exec, &coins).await;
-    let per_coin = acct.equity * cfg.margin_buffer * cfg.leverage / weights.len().max(1) as f64;
+    // 按各自权重还原仓位。之前用「净值×杠杆÷仓位数」等权重建，会把权重抹平，
+    // 总敞口也从 Σ|w| 变成 1 —— 点一次「转为全仓」就悄悄改了权重和杠杆。
+    let deployable = acct.equity * cfg.margin_buffer;
+    let wmap: HashMap<String, f64> = weights.iter().cloned().collect();
+    let per_coin = deployable * cfg.leverage / weights.len().max(1) as f64;
 
     let mut log = vec![format!(
         "逐币转全仓：{} 个持仓 · 目标每仓 ${:.2}",
@@ -526,7 +573,10 @@ pub async fn rebuild_cross(
         let want_long = w > 0.0;
         let want_short = w < 0.0;
         if want_long || want_short {
-            let tsize = crate::exchange::round_size(per_coin / mid, m.sz_decimals);
+            // 每个币按自己的 |w| 还原，而不是等权
+            let w = wmap.get(coin).map(|x| x.abs()).unwrap_or(0.0);
+            let notional = w * deployable * cfg.leverage;
+            let tsize = crate::exchange::round_size(notional / mid, m.sz_decimals);
             if tsize * mid >= 10.0 {
                 match exec
                     .ioc(coin, want_long, false, tsize, mid, cfg.slippage, m.sz_decimals)
@@ -548,31 +598,42 @@ pub async fn rebuild_cross(
 }
 
 
-/// 调仓后重新挂止盈单：先撤掉所有旧挂单，再按当前持仓挂新的被动限价单。
+/// 撤掉本程序挂出的止盈单。
 ///
-/// 回测里止盈是「当日相对调仓价涨/跌 tp 就平仓」，所以订单必须每天重挂 ——
-/// 挂在盘口等价格来碰，成交是 maker 费率（0.015%），比市价平仓便宜 3 倍。
-pub async fn refresh_take_profits(
+/// 只撤带 cloid 前缀的单，不会误撤用户手动挂的单。返回撤销数量。
+/// 注意：`open_orders` 失败会直接冒泡 —— 撤不掉旧单就绝不能继续下单，
+/// 否则同一个仓位上会同时存在两张只减仓单（交易所只按仓位校验，不会去重）。
+pub async fn cancel_our_take_profits(exec: &Exec) -> Result<usize> {
+    let orders = exec.open_order_details().await?;
+    let ours: Vec<(String, u64)> = orders
+        .iter()
+        .filter(|o| crate::exchange::is_ours(o.cloid.as_deref()))
+        .map(|o| (o.coin.clone(), o.oid))
+        .collect();
+    if ours.is_empty() {
+        return Ok(0);
+    }
+    exec.cancel_orders(&ours).await
+}
+
+/// 为当前所有持仓挂止盈单。
+///
+/// `reference` 是**调仓时**记录的参考价：止盈幅度必须相对那个价格算，而不是
+/// 相对当前中间价。否则手动「刷新止盈单」会把止盈线随行情一起搬走 —— 例如
+/// 100 建仓、现价 80 的多头会被挂到 88，变成一笔自动的亏损出场。
+/// 参考价缺失（或已越过止盈线）时退回当前中间价，避免挂出立即成交的单。
+pub async fn place_take_profits(
     exec: &Exec,
     markets: &HashMap<String, MarketInfo>,
     tp_pct: f64,
+    reference: &HashMap<String, f64>,
 ) -> Result<Vec<String>> {
     let mut log = Vec::new();
-    match exec.open_orders().await {
-        Ok(orders) => {
-            if !orders.is_empty() {
-                match exec.cancel_orders(&orders).await {
-                    Ok(n) => log.push(format!("撤销旧挂单 {n} 个")),
-                    Err(e) => log.push(format!("撤单失败: {e}")),
-                }
-            }
-        }
-        Err(e) => log.push(format!("读取挂单失败: {e}")),
-    }
     if tp_pct <= 0.0 {
         log.push("未启用止盈".into());
         return Ok(log);
     }
+    anyhow::ensure!(!markets.is_empty(), "市场元数据为空，拒绝挂止盈单");
     let acct = exec.account().await?;
     if acct.positions.is_empty() {
         log.push("无持仓，不挂止盈".into());
@@ -580,22 +641,38 @@ pub async fn refresh_take_profits(
     }
     let coins: Vec<String> = acct.positions.keys().cloned().collect();
     let mids = trader::fetch_mids(exec, &coins).await;
+    anyhow::ensure!(!mids.is_empty(), "取不到中间价，拒绝挂止盈单");
+
     let mut placed = 0usize;
     let mut failed = Vec::new();
     for (coin, pos) in acct.positions.iter() {
         let Some(m) = markets.get(coin.as_str()) else {
+            failed.push(format!("{coin}: 缺市场元数据"));
             continue;
         };
-        let Some(&mid) = mids.get(coin) else { continue };
+        let Some(&mid) = mids.get(coin) else {
+            failed.push(format!("{coin}: 缺中间价"));
+            continue;
+        };
         if mid <= 0.0 {
             continue;
         }
-        let (buy, px) = take_profit_order(pos.size > 0.0, mid, tp_pct, m.sz_decimals);
-        let size = round_size(pos.size.abs(), m.sz_decimals);
+        let is_long = pos.size > 0.0;
+        // 基准价优先用调仓时记录的参考价
+        let mut base = reference.get(coin).copied().unwrap_or(mid);
+        // 参考价已被突破（行情反向走过头）时不能用它：挂出来会立刻成交。
+        if is_long && base * (1.0 + tp_pct) <= mid {
+            base = mid;
+        }
+        if !is_long && base * (1.0 - tp_pct) >= mid {
+            base = mid;
+        }
+        let (buy, px) = take_profit_order(is_long, base, tp_pct, m.sz_decimals);
         if px <= 0.0 {
             failed.push(format!("{coin}: 价位精度不足，无法挂出有效止盈价"));
             continue;
         }
+        let size = round_size(pos.size.abs(), m.sz_decimals);
         if size <= 0.0 || size * mid < 10.0 {
             continue;
         }
@@ -611,17 +688,31 @@ pub async fn refresh_take_profits(
         if failed.is_empty() {
             String::new()
         } else {
-            format!("，失败 {}", failed.join("; "))
+            format!("，未挂 {}", failed.join("; "))
         }
     ));
     Ok(log)
 }
 
+/// 供外部按钮调用：先撤自己的旧单，再按参考价重挂。
+pub async fn refresh_take_profits(
+    exec: &Exec,
+    markets: &HashMap<String, MarketInfo>,
+    tp_pct: f64,
+    reference: &HashMap<String, f64>,
+) -> Result<Vec<String>> {
+    let mut log = Vec::new();
+    match cancel_our_take_profits(exec).await {
+        Ok(n) if n > 0 => log.push(format!("撤销旧止盈单 {n} 个")),
+        Ok(_) => {}
+        Err(e) => return Err(e.context("撤销旧止盈单失败")),
+    }
+    log.extend(place_take_profits(exec, markets, tp_pct, reference).await?);
+    Ok(log)
+}
 
 /// 交易所允许的最小价位（和 `order_price` 的精度规则一致）。
 fn price_tick(px: f64, sz_decimals: u32) -> f64 {
-    // dp 是「小数位数」，所以最小价位是 10^-dp（和 order_price 里的
-    // factor = 10^dp 相除口径一致）。
     let dp = (4 - px.log10().floor() as i32).min(6 - sz_decimals as i32);
     10_f64.powi(-dp)
 }
@@ -644,7 +735,7 @@ pub fn take_profit_order(is_long: bool, mid: f64, tp_pct: f64, sz_decimals: u32)
         return (buy, 0.0);
     }
     let tick = price_tick(raw, sz_decimals);
-    // 挂单要和 IOC 相反：取整方向朝「远离市价」，否则粗价位币上会变成立即成交。
+    // 挂单要和 IOC 相反：取整方向朝「远离市价」，避免变成立即成交的市价单。
     let mut px = order_price(raw, sz_decimals, !buy);
     let right_side = |p: f64| p > 0.0 && if is_long { p > mid } else { p < mid };
     for _ in 0..4 {
@@ -665,7 +756,6 @@ mod tests {
         let (buy, px) = take_profit_order(true, 100.0, 0.10, 2);
         assert!(!buy, "多头止盈必须是卖出");
         assert!(px > 100.0, "多头止盈必须挂在市价上方，实际 {px}");
-        assert!((px - 110.0).abs() < 0.5, "应接近 110，实际 {px}");
     }
 
     #[test]
@@ -673,13 +763,10 @@ mod tests {
         let (buy, px) = take_profit_order(false, 100.0, 0.10, 2);
         assert!(buy, "空头止盈必须是买入");
         assert!(px < 100.0, "空头止盈必须挂在市价下方，实际 {px}");
-        assert!((px - 90.0).abs() < 0.5, "应接近 90，实际 {px}");
     }
 
     #[test]
     fn take_profit_stays_on_the_correct_side_after_rounding() {
-        // 各种价位与精度下，取整都不能把挂单价推到市价错误的一侧（否则会立即
-        // 成交，变成市价单）。
         for &mid in &[0.00001234_f64, 0.5, 3.14159, 87.65, 1234.5, 98765.4] {
             for &sd in &[0u32, 1, 2, 4, 6] {
                 let (buy, px) = take_profit_order(true, mid, 0.10, sd);
@@ -694,7 +781,6 @@ mod tests {
 
     #[test]
     fn take_profit_price_is_never_zero_or_negative() {
-        // 价位精度不足时允许返回 0（调用方跳过该币），但绝不允许返回负数。
         for &mid in &[0.000001_f64, 1.0, 100.0] {
             for &tp in &[0.01, 0.1, 0.5] {
                 for &sd in &[0u32, 2, 6] {

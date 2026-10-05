@@ -3,7 +3,6 @@ mod hl;
 mod live;
 mod momentum;
 mod paper;
-mod portfolio;
 mod probe;
 mod store;
 mod trader;

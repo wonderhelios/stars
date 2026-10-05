@@ -216,16 +216,12 @@ fn resize(pos: &mut PaperPosition, target: f64, px: f64, leverage: f64) {
 struct Panel {
     ts: Vec<i64>,
     closes: HashMap<String, BTreeMap<i64, f64>>,
-    highs: HashMap<String, BTreeMap<i64, f64>>,
-    lows: HashMap<String, BTreeMap<i64, f64>>,
 }
 
 impl Panel {
     fn build(panel: &[PanelEntry]) -> Self {
         let mut timeline: BTreeSet<i64> = Default::default();
         let mut closes: HashMap<String, BTreeMap<i64, f64>> = Default::default();
-        let mut highs: HashMap<String, BTreeMap<i64, f64>> = Default::default();
-        let mut lows: HashMap<String, BTreeMap<i64, f64>> = Default::default();
         for e in panel {
             let mut cm = BTreeMap::new();
             let mut hm = BTreeMap::new();
@@ -239,14 +235,10 @@ impl Panel {
                 }
             }
             closes.insert(e.coin.clone(), cm);
-            highs.insert(e.coin.clone(), hm);
-            lows.insert(e.coin.clone(), lm);
         }
         Self {
             ts: timeline.into_iter().collect(),
             closes,
-            highs,
-            lows,
         }
     }
 
@@ -254,13 +246,7 @@ impl Panel {
         self.closes.get(coin).and_then(|m| m.get(&t)).copied()
     }
 
-    fn hi(&self, coin: &str, t: i64) -> Option<f64> {
-        self.highs.get(coin).and_then(|m| m.get(&t)).copied()
-    }
 
-    fn lo(&self, coin: &str, t: i64) -> Option<f64> {
-        self.lows.get(coin).and_then(|m| m.get(&t)).copied()
-    }
 }
 
 /// Advance the paper trade. On a fresh start this replays `replay_days` of
@@ -328,7 +314,12 @@ fn advance(
         ..Default::default()
     };
     let weights = fp.weights_at(i, &tc, state.equity);
-    if weights.len() < 12 {
+    // 这里曾经写成 `weights.len() < 12`，但重构后它统计的是「实际持仓数」
+    // （受 cap 限制，小账户只有几个），而不是「合格币数」。后果是：小账户下
+    // 每天都被判定为样本不足直接 return，而 return 发生在更新 last_ts 之前，
+    // 于是 last_ts 永远为 None、fresh 永远为真 —— 纸交易永远不交易，净值和
+    // 天数冻结在 0。现在改成与实盘一致的判据。
+    if weights.is_empty() {
         return;
     }
     // 权重来自「三本账平均」，每仓名义 = |w| × 净值 × 杠杆
@@ -392,11 +383,10 @@ fn advance(
     for mut pos in state.positions.drain(..) {
         let prev = p.px(&pos.coin, t_prev);
         let cur = p.px(&pos.coin, t);
-        let hit = pos.liq_price > 0.0
-            && match pos.side {
-                Side::Long => p.lo(&pos.coin, t).is_some_and(|l| l <= pos.liq_price),
-                Side::Short => p.hi(&pos.coin, t).is_some_and(|h| h >= pos.liq_price),
-            };
+        // 实盘是 cross margin：单仓不会单独被强平，只有「账户权益低于全组合
+        // 维持保证金」才会。之前按逐仓逐个币判爆仓，模型能表示的失败模式和真正
+        // 会终结账户的失败模式不是一回事（改由下面的账户级判定负责）。
+        let hit = false;
         if hit {
             // Force-closed at the liquidation price.
             let liq = pos.liq_price;
@@ -446,6 +436,41 @@ fn advance(
         state.market *= 1.0 + mkt.iter().sum::<f64>() / mkt.len() as f64;
     }
     state.equity += day_pnl;
+
+    // 账户级（全仓）强平：权益跌破全组合维持保证金就清盘。这是实盘真正会终结
+    // 账户的机制，也是「能扛多大回撤」唯一该依据的模型。
+    let maint: f64 = state
+        .positions
+        .iter()
+        .map(|x| x.notional * maintenance_margin_rate(x.max_leverage))
+        .sum();
+    if !state.positions.is_empty() && state.equity < maint {
+        let doomed: Vec<PaperPosition> = state.positions.drain(..).collect();
+        for pos in doomed {
+            let px = p.px(&pos.coin, t).unwrap_or(pos.mark_price);
+            let pnl = position_pnl(&pos, px);
+            state.trades.push(Trade {
+                coin: pos.coin.clone(),
+                side: pos.side,
+                entry_ts: pos.entry_ts,
+                entry_price: pos.entry_price,
+                avg_entry: pos.basis_price,
+                exit_ts: t,
+                exit_price: px,
+                notional: pos.notional,
+                pnl_usd: pnl,
+                pnl_pct: if pos.notional > 0.0 {
+                    pnl / pos.notional * 100.0
+                } else {
+                    0.0
+                },
+                reason: "全仓强平".into(),
+                replayed: pos.replayed,
+            });
+            state.liquidations += 1;
+        }
+        state.equity = 0.0;
+    }
 
     // ---------- trade membership changes ----------
     // A new rebalance day: re-size every surviving position to the equity-based

@@ -37,11 +37,32 @@ pub struct Pos {
 
 #[derive(Clone, Debug, serde::Serialize)]
 pub struct OpenOrder {
+    pub oid: u64,
     pub coin: String,
     pub side: String,
     pub px: f64,
     pub sz: f64,
     pub reduce_only: bool,
+    /// 我们的止盈单都带固定 cloid 前缀，用来把「自己的单」和用户手动挂的单区分开。
+    pub cloid: Option<String>,
+}
+
+/// 本程序挂出的订单统一使用的 cloid 前缀（Hyperliquid 要求 0x + 32 位十六进制）。
+/// 撤单时只撤带这个前缀的，不会误撤用户手动挂的单。
+const STARS_CLOID_PREFIX: &str = "0x5741";
+
+/// 生成一个可识别归属的 cloid。SDK 要求 Uuid，所以把前两个字节固定成 'W''A'，
+/// 序列化后就是 0x5741 开头的十六进制串。
+fn stars_cloid() -> Uuid {
+    let mut b = *Uuid::new_v4().as_bytes();
+    b[0] = 0x57;
+    b[1] = 0x41;
+    Uuid::from_bytes(b)
+}
+
+/// 这个挂单是不是我们自己挂的。
+pub fn is_ours(cloid: Option<&str>) -> bool {
+    cloid.map(|c| c.starts_with(STARS_CLOID_PREFIX)).unwrap_or(false)
 }
 
 #[derive(Clone, Debug, Default)]
@@ -307,7 +328,7 @@ impl Exec {
     ) -> Result<u64> {
         let trading = self.trading.as_ref().context("not a signing client")?;
         anyhow::ensure!(px > 0.0 && size > 0.0, "invalid resting order {coin}");
-        let cloid = Uuid::new_v4();
+        let cloid = stars_cloid();
         let coin_owned = coin.to_string();
         let resp = sdk_retry(&format!("挂止盈单 {coin}"), || {
             let order = ClientOrderRequest {
@@ -330,23 +351,6 @@ impl Exec {
         }
     }
 
-    /// 当前所有挂单（coin, oid）。
-    pub async fn open_orders(&self) -> Result<Vec<(String, u64)>> {
-        let account = self.account.context("read-only client has no account")?;
-        let v = self
-            .info_post(json!({"type": "openOrders", "user": account.to_string()}))
-            .await?;
-        let mut out = Vec::new();
-        if let Some(arr) = v.as_array() {
-            for o in arr {
-                if let (Some(coin), Some(oid)) = (o["coin"].as_str(), o["oid"].as_u64()) {
-                    out.push((coin.to_string(), oid));
-                }
-            }
-        }
-        Ok(out)
-    }
-
     /// 挂单详情，给前端展示。
     pub async fn open_order_details(&self) -> Result<Vec<OpenOrder>> {
         let account = self.account.context("read-only client has no account")?;
@@ -361,6 +365,7 @@ impl Exec {
                     continue;
                 }
                 out.push(OpenOrder {
+                    oid: o["oid"].as_u64().unwrap_or(0),
                     coin,
                     side: if o["side"].as_str() == Some("B") { "买" } else { "卖" }.into(),
                     px: o["limitPx"].as_str().and_then(|x| x.parse().ok()).unwrap_or(0.0),
@@ -368,6 +373,7 @@ impl Exec {
                     // openOrders 不一定返回 reduceOnly。本程序每次调仓都先撤光
                     // 所有挂单，且只挂只减仓的止盈单，所以盘口上剩下的就是止盈单。
                     reduce_only: o["reduceOnly"].as_bool().unwrap_or(true),
+                    cloid: o["cloid"].as_str().map(|c| c.to_string()),
                 });
             }
         }

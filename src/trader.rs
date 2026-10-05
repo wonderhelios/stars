@@ -41,7 +41,7 @@ impl Default for TradeConfig {
             min_order_usd: 10.0,
             rebalance_band: 0.02,
             margin_buffer: 0.90,
-            min_position_usd: 40.0,
+            min_position_usd: 15.0,
         }
     }
 }
@@ -174,10 +174,14 @@ impl FactorPanel {
         // 账户小的时候自动收缩每腿仓位数：交易所最小下单额 $10，仓位太小就
         // 永远跟不上净值增长（复利被卡死）。三本书 × 两条腿最多 6k 个不同币，
         // 所以要求 gross / (6k) >= min_position_usd。
+        // 复利需要每个仓位足够大（交易所最小下单额是 $10，仓位太小就调不动），
+        // 但分散化更重要：实测 6 个仓位的组合在 90 天里回撤 −92%，而 28 个仓位
+        // 是 −26%。所以这里只在仓位会逼近最小下单额时才收缩，且用实测的
+        // 「名字数 ≈ 4k」（三本账相互抵消后每腿约 3~4k 个名字）来换算。
         let gross = equity * cfg.margin_buffer * cfg.leverage;
         let cap = if equity > 0.0 && cfg.min_position_usd > 0.0 {
             let max_names = (gross / cfg.min_position_usd).floor().max(2.0) as usize;
-            cfg.target_positions.min((max_names / 6).max(1))
+            cfg.target_positions.min((max_names / 4).max(1))
         } else {
             cfg.target_positions
         };

@@ -1,7 +1,7 @@
 //! HTTP API + shared state.
 
 use crate::hl::{CoinMeta, MarketCtx};
-use crate::momentum::{self, BacktestParams, HedgeMode, PanelEntry};
+use crate::momentum::PanelEntry;
 use crate::paper::{self, PaperConfig, PaperState};
 use crate::store::Store;
 use axum::{
@@ -59,7 +59,6 @@ pub fn router(state: AppState) -> Router {
         .route("/app.js", get(app_js))
         .route("/api/health", get(health))
         .route("/api/status", get(status))
-        .route("/api/backtest", post(backtest))
         .route("/api/paper", get(paper_status))
         .route("/api/paper/start", post(paper_start))
         .route("/api/paper/stop", post(paper_stop))
@@ -76,7 +75,6 @@ pub fn router(state: AppState) -> Router {
         .route("/api/probe/config", post(probe_config))
         .route("/api/probe/reset", post(probe_reset))
         .route("/api/probe/replay", post(probe_replay))
-        .route("/api/portfolio", get(portfolio_view))
         .layer(CompressionLayer::new())
         .layer(CorsLayer::permissive())
         .with_state(state)
@@ -133,57 +131,11 @@ async fn status(State(state): State<AppState>) -> Json<serde_json::Value> {
     }))
 }
 
-#[derive(serde::Deserialize)]
-struct BacktestReq {
-    #[serde(default = "d14")]
-    lookback: usize,
-    #[serde(default = "d020")]
-    top_frac: f64,
-    #[serde(default = "d5m")]
-    min_vol_usd: f64,
-    #[serde(default = "d_ew")]
-    hedge: String,
-}
 
 fn d14() -> usize { 14 }
 fn d020() -> f64 { 0.2 }
 fn d5m() -> f64 { 5_000_000.0 }
-fn d_ew() -> String { "equal_weight".into() }
 
-async fn backtest(
-    State(state): State<AppState>,
-    Json(req): Json<BacktestReq>,
-) -> Response {
-    let hedge = match req.hedge.as_str() {
-        "long_short" => HedgeMode::LongShort,
-        _ => HedgeMode::EqualWeight,
-    };
-    let params = BacktestParams {
-        lookback: req.lookback.max(1),
-        top_frac: req.top_frac.clamp(0.05, 0.5),
-        min_vol_usd: req.min_vol_usd.max(0.0),
-        hedge,
-    };
-
-    let panel: Vec<PanelEntry> = state
-        .store
-        .all_panels()
-        .unwrap_or_default()
-        .into_iter()
-        .map(|(coin, candles)| PanelEntry { coin, candles })
-        .collect();
-    if panel.len() < 10 {
-        return (
-            StatusCode::CONFLICT,
-            Json(json!({"error": "缓存数据不足，请等待数据回填完成"})),
-        )
-            .into_response();
-    }
-
-    let result = momentum::run(&panel, &params);
-
-    Json(json!(result)).into_response()
-}
 
 async fn paper_status(State(state): State<AppState>) -> Json<serde_json::Value> {
     Json(json!(paper::snapshot(&*state.paper.lock().await)))
@@ -548,66 +500,6 @@ async fn probe_replay(State(state): State<AppState>, body: Option<Json<ReplayBod
 }
 
 
-// ==================== 策略组合 ====================
-
-/// 组合分析比较重（要遍历全部日线 + 小时线），缓存 10 分钟。
-static PORTFOLIO_CACHE: std::sync::OnceLock<
-    tokio::sync::Mutex<Option<(i64, serde_json::Value)>>,
-> = std::sync::OnceLock::new();
-
-async fn portfolio_view(State(state): State<AppState>) -> Response {
-    let cache = PORTFOLIO_CACHE.get_or_init(|| tokio::sync::Mutex::new(None));
-    let mut guard = cache.lock().await;
-    let now = crate::live::now_ms_pub();
-    if let Some((ts, v)) = guard.as_ref() {
-        if now - ts < 600_000 {
-            return Json(v.clone()).into_response();
-        }
-    }
-    let daily = match state.store.all_panels() {
-        Ok(p) => p
-            .into_iter()
-            .map(|(coin, candles)| crate::momentum::PanelEntry { coin, candles })
-            .collect::<Vec<_>>(),
-        Err(e) => return Json(json!({"ok": false, "error": format!("{e}")})).into_response(),
-    };
-    let hourly = match state.store.hourly_panels() {
-        Ok(p) => p,
-        Err(e) => return Json(json!({"ok": false, "error": format!("{e}")})).into_response(),
-    };
-    let (taker, maker) = {
-        let m = state.meta.lock().await;
-        (m.fee_taker, m.fee_maker)
-    };
-    let (taker, maker) = if taker > 0.0 {
-        (taker, maker)
-    } else {
-        (0.00045, 0.00015)
-    };
-    let a = crate::portfolio::momentum_series(&daily, taker);
-    let b = crate::portfolio::reversal_series(&hourly, maker);
-    let (corr, combos, best_w) = crate::portfolio::combine(&a, &b);
-    // 重叠天数以及各自在重叠期内的表现，方便判读
-    let overlap = {
-        let sa: std::collections::BTreeSet<i64> = a.dates.iter().copied().collect();
-        b.dates.iter().filter(|d| sa.contains(d)).count()
-    };
-    let out = json!({
-        "overlap_days": overlap,
-        "ok": true,
-        "momentum": a,
-        "reversal": b,
-        "corr": corr,
-        "combos": combos,
-        "best_weight": best_w,
-        "hourly_coins": hourly.len(),
-        "daily_coins": daily.len(),
-    });
-    *guard = Some((now, out.clone()));
-    Json(out).into_response()
-}
-
-
 /// 逐币把现有仓位转成全仓（平→切→重开）。
 async fn live_rebuild(State(state): State<AppState>) -> Response {
     let _gate = match state.exec_gate.try_lock() {
@@ -663,7 +555,7 @@ async fn live_tp(State(state): State<AppState>) -> Response {
         Err(e) => return Json(json!({"ok": false, "error": format!("{e}")})).into_response(),
     };
     let markets = live_markets(&state).await;
-    match crate::live::refresh_take_profits(&exec, &markets, st.config.take_profit_pct).await {
+    match crate::live::refresh_take_profits(&exec, &markets, st.config.take_profit_pct, &st.tp_ref).await {
         Ok(log) => Json(json!({"ok": true, "log": log})).into_response(),
         Err(e) => Json(json!({"ok": false, "error": format!("{e}")})).into_response(),
     }
