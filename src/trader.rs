@@ -25,6 +25,8 @@ pub struct TradeConfig {
     pub rebalance_band: f64,
     /// fraction of equity actually deployed, leaving room for fees and slippage
     pub margin_buffer: f64,
+    /// 每仓最小名义：低于此值的币会被剔除，否则仓位太小无法跟随复利
+    pub min_position_usd: f64,
 }
 
 impl Default for TradeConfig {
@@ -39,6 +41,7 @@ impl Default for TradeConfig {
             min_order_usd: 10.0,
             rebalance_band: 0.02,
             margin_buffer: 0.90,
+            min_position_usd: 40.0,
         }
     }
 }
@@ -148,7 +151,19 @@ impl FactorPanel {
     ///   2. 低波动      = 负的 20 日波动（做多低波动、做空高波动）
     ///   3. 成交量冲击  = 当日成交额 ÷ 30 日均值
     /// 每个因子先在横截面上排名，再等权平均，避免量纲差异。
-    pub fn weights_at(&self, i: usize, cfg: &TradeConfig) -> Vec<(String, f64)> {
+    pub fn weights_at(&self, i: usize, cfg: &TradeConfig, equity: f64) -> Vec<(String, f64)> {
+        // 账户小的时候自动收缩每腿仓位数：交易所最小下单额 $10，仓位太小就
+        // 永远跟不上净值增长（复利被卡死）。三本书 × 两条腿最多 6k 个不同币，
+        // 所以要求 gross / (6k) >= min_position_usd。
+        let gross = equity * cfg.margin_buffer * cfg.leverage;
+        let cap = if equity > 0.0 && cfg.min_position_usd > 0.0 {
+            let max_names = (gross / cfg.min_position_usd).floor().max(2.0) as usize;
+            cfg.target_positions.min((max_names / 6).max(1))
+        } else {
+            cfg.target_positions
+        };
+        let cap = cap.max(1);
+
         let vol_win = 30usize;
         let shock_win = 30usize;
         let vol_lookback = 20usize;
@@ -253,9 +268,7 @@ impl FactorPanel {
                     .partial_cmp(&scores[*b])
                     .unwrap_or(std::cmp::Ordering::Equal)
             });
-            let k = ((n as f64 * cfg.top_frac).round() as usize)
-                .max(1)
-                .min(cfg.target_positions);
+            let k = ((n as f64 * cfg.top_frac).round() as usize).max(1).min(cap);
             for (pos, &j) in order.iter().enumerate() {
                 let w = if pos >= n - k {
                     0.5 / k as f64
@@ -272,6 +285,7 @@ impl FactorPanel {
             .filter(|(_, w)| w.abs() > 1e-12)
             .collect();
         out.sort_by(|a, b| b.1.partial_cmp(&a.1).unwrap_or(std::cmp::Ordering::Equal));
+
         out
     }
 }
@@ -281,6 +295,7 @@ impl FactorPanel {
 pub fn target_weights(
     panel: &[PanelEntry],
     cfg: &TradeConfig,
+    equity_hint: f64,
 ) -> (Vec<(String, f64)>, Vec<String>) {
     let fp = FactorPanel::build(panel);
     if fp.is_empty() {
@@ -288,7 +303,7 @@ pub fn target_weights(
     }
     let i = fp.len() - 1;
     let liquid = fp.liquid_at(i, cfg.min_vol_usd, 30);
-    let w = fp.weights_at(i, cfg);
+    let w = fp.weights_at(i, cfg, equity_hint);
     (w, liquid)
 }
 
@@ -397,7 +412,10 @@ pub fn build_plan(
             let delta = target - cur;
             let dsize = round_size(delta.abs(), m.sz_decimals);
             let dnotional = dsize * mid;
-            let threshold = cfg.min_order_usd.max(per_coin * cfg.rebalance_band);
+            // 复利门槛用「该仓自身的目标名义」算比例带，而不是全组合平均值：
+            // 小仓位过去被平均值抬高门槛，长期跟不上净值增长。
+            let pos_target = (cur + delta).abs() * mid;
+            let threshold = cfg.min_order_usd.max(pos_target * cfg.rebalance_band);
             if dnotional >= threshold {
                 opens.push(Order {
                     coin: coin.clone(),

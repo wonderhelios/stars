@@ -317,7 +317,8 @@ pub async fn run(
 
     let panel = trader::load_panel(store)?;
     anyhow::ensure!(panel.len() >= 20, "K 线缓存不足（{} 币）", panel.len());
-    let (weights, liquid) = trader::target_weights(&panel, &tc);
+    let acct0 = exec.account().await?;
+    let (weights, liquid) = trader::target_weights(&panel, &tc, acct0.equity);
     anyhow::ensure!(!weights.is_empty(), "流动性过滤后没有候选");
 
     let acct = exec.account().await?;
@@ -446,7 +447,7 @@ pub async fn rebuild_cross(
     let tc = cfg.trade_config();
 
     let panel = trader::load_panel(store)?;
-    let (weights, _) = trader::target_weights(&panel, &tc);
+    let (weights, _) = trader::target_weights(&panel, &tc, 0.0);
     anyhow::ensure!(!weights.is_empty(), "流动性过滤后没有候选");
 
     let acct = exec.account().await?;

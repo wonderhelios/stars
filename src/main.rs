@@ -413,7 +413,18 @@ async fn run_trade(args: &[String], db_path: &str) -> anyhow::Result<()> {
         panel.len()
     );
 
-    let (weights, liquid) = trader::target_weights(&panel, &cfg);
+    let equity_hint: f64 = std::env::var("HL_ACCOUNT_ADDRESS")
+        .ok()
+        .and_then(|_| None)
+        .unwrap_or_else(|| {
+            std::env::args()
+                .collect::<Vec<_>>()
+                .windows(2)
+                .find(|w| w[0] == "--capital")
+                .and_then(|w| w[1].parse().ok())
+                .unwrap_or(500.0)
+        });
+    let (weights, liquid) = trader::target_weights(&panel, &cfg, equity_hint);
     anyhow::ensure!(!weights.is_empty(), "没有选出候选（流动性过滤后为空）");
     println!(
         "流动宇宙 {} 币 · 多头腿 {} · 空头腿 {}",

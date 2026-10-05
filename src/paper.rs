@@ -327,7 +327,7 @@ fn advance(
         leverage: cfg.leverage,
         ..Default::default()
     };
-    let weights = fp.weights_at(i, &tc);
+    let weights = fp.weights_at(i, &tc, state.equity);
     if weights.len() < 12 {
         return;
     }
