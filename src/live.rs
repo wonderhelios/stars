@@ -104,6 +104,12 @@ impl LiveConfig {
 pub struct EquityPoint {
     pub ts: i64,
     pub equity: f64,
+    /// 该时刻的策略累计盈亏（已实现 + 未实现）。
+    ///
+    /// 曲线必须画这个而不是净值：净值里混着入金/出金，一次充值会在图上显示成
+    /// 一段陡峭的"盈利"，而那根本不是策略赚的。
+    #[serde(default)]
+    pub pnl: f64,
 }
 
 /// One order we sent (or planned) and what the exchange said about it.
@@ -190,6 +196,8 @@ pub struct LiveSnapshot {
     pub nearest_liq_pct: Option<f64>,
     /// 仍是逐仓的仓位数（Hyperliquid 不允许持仓时切换模式）
     pub isolated_count: usize,
+    /// 策略累计盈亏（已实现 + 未实现），与入金无关。
+    pub cumulative_pnl: f64,
     /// 盘口上挂着的止盈单
     pub tp_orders: Vec<crate::exchange::OpenOrder>,
     pub config: LiveConfig,
@@ -225,6 +233,7 @@ pub async fn snapshot(
         nearest_liq_pct: None,
         isolated_count: 0,
         tp_orders: Vec::new(),
+        cumulative_pnl: 0.0,
         tp_ref: HashMap::new(),
         config: cfg.clone(),
         history: state.history.clone(),
@@ -298,6 +307,7 @@ pub async fn snapshot(
     }
     snap.positions.sort_by(|a, b| a.coin.cmp(&b.coin));
     snap.isolated_count = snap.positions.iter().filter(|p| !p.is_cross).count();
+    snap.cumulative_pnl = state.unrealized_pnl(&snap.positions);
     // 不按 reduceOnly 过滤：该字段在 openOrders 里不一定存在，过滤会导致
     // 表格永远是空的。程序只挂只减仓单，所以全部展示即可。
     if let Ok(orders) = exec.open_order_details().await {
@@ -822,5 +832,17 @@ mod tests {
                 }
             }
         }
+    }
+}
+
+
+impl LiveState {
+    /// 当前持仓的未实现盈亏合计。
+    ///
+    /// 已实现盈亏没法在这里算：它要从成交明细里解析（`LiveRecord` 只存了订单
+    /// 和交易所回执文本）。所以页面上显示的「累计盈亏」由前端用「已实现 + 未实现」
+    /// 计算 —— 那才是与入金无关的正确口径。
+    pub fn unrealized_pnl(&self, positions: &[crate::live::LivePosition]) -> f64 {
+        positions.iter().map(|p| p.unrealized).sum()
     }
 }

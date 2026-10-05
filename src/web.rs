@@ -282,6 +282,7 @@ async fn live_status(State(state): State<AppState>) -> Response {
             guard.history.push(crate::live::EquityPoint {
                 ts: now,
                 equity: snap.equity,
+                pnl: snap.cumulative_pnl,
             });
             // Keep the file bounded (about 8 months of hourly points).
             let len = guard.history.len();
@@ -417,6 +418,7 @@ async fn live_run(State(state): State<AppState>, body: Option<Json<LiveRunBody>>
                     g.history.push(crate::live::EquityPoint {
                         ts: crate::live::now_ms_pub(),
                         equity: result.equity,
+                        pnl: 0.0,
                     });
                 }
                 let _ = g.save(&live_path);
@@ -467,6 +469,9 @@ async fn live_records_clear(State(state): State<AppState>) -> Response {
     let mut st = state.live.lock().await;
     let n = st.records.len();
     st.records.clear();
+    // 净值曲线也一起重置：否则它会从上一套策略（或入金前）延续下来，
+    // 基线和当前策略对不上，图上会出现一段根本不是策略赚的"盈利"。
+    st.history.clear();
     let _ = st.save(&state.live_path);
     Json(json!({"ok": true, "cleared": n})).into_response()
 }

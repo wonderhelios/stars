@@ -123,6 +123,7 @@ async fn main() -> anyhow::Result<()> {
                         guard.last_live = true;
                         guard.records.extend(records);
                         guard.history.push(live::EquityPoint {
+                            pnl: 0.0,
                             ts: now_ms(),
                             equity: result.equity,
                         });
