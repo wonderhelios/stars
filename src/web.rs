@@ -29,6 +29,9 @@ pub struct AppState {
     pub probe_path: Arc<std::path::PathBuf>,
     /// Shared HTTP client so Hyperliquid connections are pooled.
     pub http: reqwest::Client,
+    /// 调仓/止盈的执行闸门。互斥锁只保护状态、不覆盖下单过程，所以自动调仓
+    /// 和手动点击可能同时进入 —— 两笔调仓交错会下重复单、把仓位搞乱。
+    pub exec_gate: Arc<tokio::sync::Mutex<()>>,
 }
 
 #[derive(Clone, Default)]
@@ -412,6 +415,16 @@ struct LiveRunBody {
 
 async fn live_run(State(state): State<AppState>, body: Option<Json<LiveRunBody>>) -> Response {
     let live = body.map(|b| b.live).unwrap_or(false);
+    let _gate = match state.exec_gate.try_lock() {
+        Ok(g) => g,
+        Err(_) => {
+            return Json(json!({
+                "ok": false,
+                "error": "上一次调仓还在执行中，请稍候再试"
+            }))
+            .into_response()
+        }
+    };
     let st = state.live.lock().await.clone();
     let markets = live_markets(&state).await;
     match crate::live::run(&state.store, &st, &markets, live).await {
@@ -597,6 +610,12 @@ async fn portfolio_view(State(state): State<AppState>) -> Response {
 
 /// 逐币把现有仓位转成全仓（平→切→重开）。
 async fn live_rebuild(State(state): State<AppState>) -> Response {
+    let _gate = match state.exec_gate.try_lock() {
+        Ok(g) => g,
+        Err(_) => {
+            return Json(json!({"ok": false, "error": "有订单操作正在执行中，请稍候"})).into_response()
+        }
+    };
     let st = state.live.lock().await.clone();
     if !st.config.armed {
         return Json(json!({"ok": false, "error": "实盘未启用，请先在「实盘设置」打开开关"})).into_response();
@@ -621,6 +640,12 @@ async fn live_records_clear(State(state): State<AppState>) -> Response {
 
 /// 重新挂止盈单（不调仓，只刷新止盈）。
 async fn live_tp(State(state): State<AppState>) -> Response {
+    let _gate = match state.exec_gate.try_lock() {
+        Ok(g) => g,
+        Err(_) => {
+            return Json(json!({"ok": false, "error": "有订单操作正在执行中，请稍候"})).into_response()
+        }
+    };
     let st = state.live.lock().await.clone();
     if !st.config.armed {
         return Json(json!({"ok": false, "error": "实盘未启用"})).into_response();
