@@ -5,6 +5,8 @@ const $ = (id) => document.getElementById(id);
 const pct = (v, d = 2) => `${(v >= 0 ? "+" : "")}${v.toFixed(d)}%`;
 const signed = (v, d = 2) => `${(v >= 0 ? "+" : "")}${v.toFixed(d)}`;
 const fmt = (v, d = 2) => v.toFixed(d);
+// 价格和数量最多显示 6 位小数，去掉小数末尾的补零。
+const fmtCompact = (v) => v.toFixed(6).replace(/(\.\d*?[1-9])0+$|\.0+$/, "$1");
 const ts2d = (ms) => new Date(ms).toISOString().slice(0, 10);
 // 短时间戳（MM-DD HH:MM），用于指标卡避免换行
 const ts2m = (ms) => {
@@ -87,10 +89,16 @@ function pager(key, total, page, size) {
   </div>`;
 }
 
-function sideLabel(s) {
+function sideLabel(s, closing = false) {
+  const prefix = closing ? "平" : "";
   return s === "long"
-    ? '<span class="badge ok">多</span>'
-    : '<span class="badge neg-badge">空</span>';
+    ? `<span class="badge direction-label ok">${prefix}多</span>`
+    : `<span class="badge direction-label neg-badge">${prefix}空</span>`;
+}
+
+function orderSideLabel(s) {
+  const cls = s === "买" ? "ok" : s === "卖" ? "neg-badge" : "todo";
+  return `<span class="badge direction-label ${cls}">${s}</span>`;
 }
 
 
@@ -480,12 +488,12 @@ function renderMonitor(d) {
         return `<tr>
           <td>${p.coin}</td>
           <td>${sideLabel(p.side)}</td>
-          <td>${fmt(p.size, 6)}</td>
-          <td>${fmt(p.entry_px, 6)}</td>
-          <td>${fmt(p.mark_px, 6)}</td>
+          <td>${fmtCompact(p.size)}</td>
+          <td>${fmtCompact(p.entry_px)}</td>
+          <td>${fmtCompact(p.mark_px)}</td>
           <td>$${fmt(p.notional, 0)}</td>
           <td class="${cls}">${p.unrealized >= 0 ? "+" : ""}$${fmt(p.unrealized, 2)}</td>
-          <td>${p.liq_px == null ? "—" : fmt(p.liq_px, 6)}</td>
+          <td>${p.liq_px == null ? "—" : fmtCompact(p.liq_px)}</td>
           <td class="${p.dist_pct != null && p.dist_pct < 20 ? "neg" : "muted"}">${dist}</td>
           <td>${p.is_cross ? '<span class="badge-mini ok">全仓</span>' : '<span class="badge-mini err">逐仓</span>'}</td>
         </tr>`;
@@ -503,9 +511,9 @@ function renderMonitor(d) {
   const hints = entryHints(chron);
   const orders = d.tp_orders || [];
   $("mo-orders").innerHTML = orders.length
-    ? `<table><thead><tr><th>币</th><th>方向</th><th>挂单价</th><th>数量</th></tr></thead><tbody>${orders
-        .map((o) => `<tr><td>${o.coin}</td><td>${o.side}</td><td>${fmt(o.px, 6)}</td><td>${fmt(o.sz, 6)}</td></tr>`)
-        .join("")}</tbody></table>`
+    ? `<div class="table-scroll"><table><thead><tr><th>币</th><th>方向</th><th>挂单价</th><th>数量</th></tr></thead><tbody>${orders
+        .map((o) => `<tr><td>${o.coin}</td><td>${orderSideLabel(o.side)}</td><td>${fmtCompact(o.px)}</td><td>${fmtCompact(o.sz)}</td></tr>`)
+        .join("")}</tbody></table></div>`
     : '<div class="empty">当前没有挂单（价格碰到止盈价会自动成交）</div>';
 
   const recs = chron.map((r, i) => ({ r, hint: hints[i] })).reverse();
@@ -525,7 +533,7 @@ function renderMonitor(d) {
           let status = '<span class="badge-mini mute">—</span>';
           if (f.kind === "filled") {
             status = '<span class="badge-mini ok">成交</span>';
-            pxCell = fmt(f.px, 6);
+            pxCell = fmtCompact(f.px);
             const cls = f.slip > 0.03 ? "neg" : f.slip < -0.03 ? "pos" : "muted";
             slipCell = `<span class="${cls}">${f.slip >= 0 ? "+" : ""}${f.slip.toFixed(3)}%</span>`;
             if (f.pnl != null) {
@@ -548,10 +556,10 @@ function renderMonitor(d) {
           return `<tr>
             <td class="muted">${ts2m(r.ts)}</td>
             <td>${r.coin}</td>
-            <td>${sideLabel(posLong ? "long" : "short")}${closing ? '<span class="muted" style="font-size:11px"> 平</span>' : ""}</td>
+            <td>${sideLabel(posLong ? "long" : "short", closing)}</td>
             <td class="muted">${r.action}</td>
-            <td>${fmt(r.size, 6)}</td>
-            <td class="muted">${fmt(r.price, 6)}</td>
+            <td>${fmtCompact(r.size)}</td>
+            <td class="muted">${fmtCompact(r.price)}</td>
             <td>${pxCell}</td>
             <td>${slipCell}</td>
             <td>${pnlCell}</td>
