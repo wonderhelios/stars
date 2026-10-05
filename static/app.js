@@ -78,6 +78,26 @@ function metricGroup(title, html) {
   return `<div class="metric-group"><div class="g-title">${title}</div><div class="metrics">${html}</div></div>`;
 }
 
+// 轮询后台调仓结果（每 3 秒一次，最多 tries 次）
+async function pollPlanOut(tries) {
+  for (let i = 0; i < tries; i++) {
+    await new Promise((r) => setTimeout(r, 3000));
+    try {
+      const res = await fetch("/api/live", { cache: "no-store" });
+      const d = await res.json();
+      const plan = d.last_plan || [];
+      const busy = plan.length === 1 && plan[0].includes("执行中");
+      if (!busy && plan.length) {
+        $("lv-plan-out").innerHTML = `<pre class="logbox">${plan.join("\n")}</pre>`;
+        refreshMonitor(true);
+        return;
+      }
+    } catch (e) { /* 网络抖动，继续轮询 */ }
+  }
+  $("lv-plan-out").innerHTML =
+    '<pre class="logbox neg">等待超时。请刷新页面，到「实盘监控」核对持仓数与止盈挂单数。</pre>';
+}
+
 function pager(key, total, page, size) {
   const per = size || LIVE_PAGE_SIZE;
   const pages = Math.max(1, Math.ceil(total / per));
@@ -207,9 +227,16 @@ async function runLive(live) {
     });
     const d = await res.json();
     if (!d.ok) throw new Error(d.error || "失败");
-    const r = d.result;
-    const extra = r.executed && r.executed.length ? "\n\n执行结果:\n" + r.executed.join("\n") : "";
-    $("lv-plan-out").innerHTML = `<pre class="logbox">${(r.plan_lines || []).join("\n")}${extra}</pre>`;
+    // 真实调仓在后台任务里跑（浏览器断开也不会打断它），这里改为轮询结果。
+    if (d.started) {
+      $("lv-plan-out").innerHTML =
+        '<pre class="logbox">已开始执行，等待结果…\n（执行在服务器后台进行，关掉页面也不会中断）</pre>';
+      await pollPlanOut(90);
+    } else {
+      const r = d.result;
+      const extra = r.executed && r.executed.length ? "\n\n执行结果:\n" + r.executed.join("\n") : "";
+      $("lv-plan-out").innerHTML = `<pre class="logbox">${(r.plan_lines || []).join("\n")}${extra}</pre>`;
+    }
   } catch (e) {
     $("lv-plan-out").innerHTML = `<pre class="logbox neg">${e}</pre>`;
   }

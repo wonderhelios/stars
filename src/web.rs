@@ -371,7 +371,14 @@ struct LiveRunBody {
 
 async fn live_run(State(state): State<AppState>, body: Option<Json<LiveRunBody>>) -> Response {
     let live = body.map(|b| b.live).unwrap_or(false);
-    let _gate = match state.exec_gate.try_lock() {
+    // 交易执行必须在「脱离 HTTP 请求」的后台任务里跑。
+    //
+    // 之前是在 handler 里同步执行：29 笔 IOC 下单要十几到几十秒，一旦浏览器
+    // 或 nginx 断开连接，axum 会直接丢弃这个 future —— 执行到一半就没了，
+    // 仓位建了一半、组合失去对冲，而且前端只看到一个空响应。这个坑真实发生过。
+    //
+    // 现在立刻返回「已开始」，执行结果写进 LiveState，页面轮询取回。
+    let _gate = match state.exec_gate.clone().try_lock_owned() {
         Ok(g) => g,
         Err(_) => {
             return Json(json!({
@@ -381,26 +388,48 @@ async fn live_run(State(state): State<AppState>, body: Option<Json<LiveRunBody>>
             .into_response()
         }
     };
-    let st = state.live.lock().await.clone();
+
+    let store = state.store.clone();
+    let live_state = state.live.clone();
+    let live_path = state.live_path.clone();
     let markets = live_markets(&state).await;
-    match crate::live::run(&state.store, &st, &markets, live).await {
-        Ok((result, records)) => {
-            let mut guard = state.live.lock().await;
-            guard.last_run_at = Some(crate::live::now_ms_pub());
-            guard.last_plan = result.plan_lines.clone();
-            guard.last_live = live;
-            if live {
-                guard.records.extend(records);
-                guard.history.push(crate::live::EquityPoint {
-                    ts: crate::live::now_ms_pub(),
-                    equity: result.equity,
-                });
+    let st = state.live.lock().await.clone();
+    let mut guard = state.live.lock().await;
+    guard.last_plan = vec!["调仓执行中…（页面会自动刷新结果）".into()];
+    let _ = guard.save(&live_path);
+    drop(guard);
+
+    tokio::spawn(async move {
+        // gate 的所有权跟着任务走，任务结束才释放
+        let _held = _gate;
+        let outcome = crate::live::run(&store, &st, &markets, live).await;
+        let mut g = live_state.lock().await;
+        match outcome {
+            Ok((result, records)) => {
+                g.last_run_at = Some(crate::live::now_ms_pub());
+                g.last_plan = result.plan_lines.clone();
+                if let Some(r) = result.tp_ref.clone() {
+                    g.tp_ref = r;
+                }
+                g.last_live = live;
+                if live {
+                    g.records.extend(records);
+                    g.history.push(crate::live::EquityPoint {
+                        ts: crate::live::now_ms_pub(),
+                        equity: result.equity,
+                    });
+                }
+                let _ = g.save(&live_path);
             }
-            let _ = guard.save(&state.live_path);
-            Json(json!({"ok": true, "result": result})).into_response()
+            Err(e) => {
+                g.last_plan = vec![format!("调仓失败: {e}")];
+                let _ = g.save(&live_path);
+            }
         }
-        Err(e) => Json(json!({"ok": false, "error": format!("{e}")})).into_response(),
-    }
+    });
+
+    Json(json!({"ok": true, "started": true,
+        "message": "已开始执行，结果会在页面自动刷新"})).into_response()
 }
 
 async fn live_reset(State(state): State<AppState>) -> Response {
