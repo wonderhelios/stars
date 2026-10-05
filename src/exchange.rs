@@ -265,9 +265,14 @@ impl Exec {
         Ok(Acct { equity, positions })
     }
 
+    /// 设置杠杆并强制使用**全仓**（cross）保证金。
+    ///
+    /// 多空对冲组合必须用全仓：逐仓下每个仓位独立结算，一个币走反 20~30%
+    /// 就会被单独强平，而组合整体其实还在盈亏相抵。第三个参数是 is_cross，
+    /// 传 false 会变成逐仓（这里曾经写错成 false）。
     pub async fn set_leverage(&self, coin: &str, leverage: u32) -> Result<()> {
         let trading = self.trading.as_ref().context("not a signing client")?;
-        let resp = trading.update_leverage(leverage, coin, false, None).await?;
+        let resp = trading.update_leverage(leverage, coin, true, None).await?;
         match resp {
             ExchangeResponseStatus::Ok(_) => Ok(()),
             ExchangeResponseStatus::Err(e) => bail!("leverage rejected for {coin}: {e}"),

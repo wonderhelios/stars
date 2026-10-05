@@ -274,21 +274,28 @@ pub async fn execute(
     live: bool,
 ) -> Result<Vec<String>> {
     let mut log = Vec::new();
-    // Set leverage before any order, clamped to each coin's maximum.
+    // 对**所有目标币**设置杠杆（不只是有订单的），这样每次调仓都会把
+    // 整个组合重新拉回全仓保证金；只对有订单的币设置会漏掉没动的仓位。
     let mut lev_done: BTreeSet<String> = Default::default();
-    for o in &plan.orders {
-        if !lev_done.insert(o.coin.clone()) {
+    let mut all_coins: Vec<String> = Vec::new();
+    all_coins.extend(plan.long_leg.iter().cloned());
+    all_coins.extend(plan.short_leg.iter().cloned());
+    all_coins.extend(plan.orders.iter().map(|o| o.coin.clone()));
+    all_coins.sort();
+    all_coins.dedup();
+    for coin in &all_coins {
+        if !lev_done.insert(coin.clone()) {
             continue;
         }
-        let max_lev = markets.get(&o.coin).map(|m| m.max_leverage).unwrap_or(10);
+        let max_lev = markets.get(coin).map(|m| m.max_leverage).unwrap_or(10);
         let want = cfg.leverage.round() as u32;
         let lev = want.clamp(1, max_lev.max(1));
         if lev != want {
-            log.push(format!("{}: 最大杠杆 {max_lev}x，按 {lev}x 设置", o.coin));
+            log.push(format!("{coin}: 最大杠杆 {max_lev}x，按 {lev}x 设置"));
         }
         if live {
-            if let Err(e) = exec.set_leverage(&o.coin, lev).await {
-                log.push(format!("{}: 设置杠杆失败 {e}", o.coin));
+            if let Err(e) = exec.set_leverage(coin, lev).await {
+                log.push(format!("{coin}: 设置杠杆失败 {e}"));
             }
         }
     }
