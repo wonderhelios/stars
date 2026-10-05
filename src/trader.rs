@@ -65,6 +65,8 @@ pub struct Plan {
     /// Closes first, then opens/resizes.
     pub orders: Vec<Order>,
     pub notes: Vec<String>,
+    /// 下单前已持有仓位的币（这些币无法切换保证金模式）
+    pub held: Vec<String>,
 }
 
 /// Rank the liquid universe by trailing momentum (identical rule to the paper
@@ -150,6 +152,12 @@ pub fn build_plan(
         per_coin,
         long_leg: long.to_vec(),
         short_leg: short.to_vec(),
+        held: acct
+            .positions
+            .iter()
+            .filter(|(_, p)| p.size.abs() > 1e-12)
+            .map(|(c, _)| c.clone())
+            .collect(),
         ..Default::default()
     };
 
@@ -285,6 +293,11 @@ pub async fn execute(
     all_coins.dedup();
     for coin in &all_coins {
         if !lev_done.insert(coin.clone()) {
+            continue;
+        }
+        // Hyperliquid 不允许持仓时切换保证金模式：已有仓位的币跳过，
+        // 等它被平掉后再切（或用「转为全仓」逐币处理）。
+        if plan.held.contains(coin) {
             continue;
         }
         let max_lev = markets.get(coin).map(|m| m.max_leverage).unwrap_or(10);

@@ -405,3 +405,99 @@ pub fn now_ms_pub() -> i64 {
         .map(|d| d.as_millis() as i64)
         .unwrap_or(0)
 }
+
+
+/// 逐币把仓位转成全仓：平掉 → 切 cross → 按目标重新开仓。
+///
+/// Hyperliquid 不允许在持仓状态下切换保证金模式（"Cannot switch leverage
+/// while a position is open"），所以必须平掉再开。逐币处理的好处是组合里
+/// 其余仓位始终保持对冲，任一时刻只有 1 个仓位处于裸奔状态。
+pub async fn rebuild_cross(
+    store: &crate::store::Store,
+    state: &LiveState,
+    markets: &HashMap<String, MarketInfo>,
+) -> Result<Vec<String>> {
+    let cfg = state.config.clone();
+    anyhow::ensure!(cfg.armed, "实盘未启用（需先打开「启用实盘」开关）");
+    anyhow::ensure!(cfg.can_sign(), "未配置 API 钱包密钥");
+    let exec = Exec::signer(&cfg.account, std::path::Path::new(&cfg.key_path)).await?;
+    let tc = cfg.trade_config();
+
+    let panel = trader::load_panel(store)?;
+    let (long, short, _) = trader::ranking(&panel, &tc);
+    anyhow::ensure!(!long.is_empty(), "流动性过滤后没有候选");
+
+    let acct = exec.account().await?;
+    if acct.positions.is_empty() {
+        return Ok(vec!["账户没有持仓，无需转换".into()]);
+    }
+    let coins: Vec<String> = acct.positions.keys().cloned().collect();
+    let mids = trader::fetch_mids(&exec, &coins).await;
+    let n = long.len().max(1);
+    let per_coin = acct.equity * cfg.margin_buffer * cfg.leverage / 2.0 / n as f64;
+
+    let mut log = vec![format!(
+        "逐币转全仓：{} 个持仓 · 目标每仓 ${:.2}",
+        acct.positions.len(),
+        per_coin
+    )];
+    for coin in &coins {
+        let pos = &acct.positions[coin];
+        let Some(&mid) = mids.get(coin) else {
+            log.push(format!("{coin}: 取价失败，跳过"));
+            continue;
+        };
+        let Some(m) = markets.get(coin) else {
+            log.push(format!("{coin}: 缺市场元数据，跳过"));
+            continue;
+        };
+        let lev = (cfg.leverage.round() as u32).clamp(1, m.max_leverage.max(1));
+
+        // 1) 平仓
+        let size = crate::exchange::round_size(pos.size.abs(), m.sz_decimals);
+        if size * mid >= 10.0 {
+            let buy = pos.size < 0.0;
+            match exec
+                .ioc(coin, buy, true, size, mid, cfg.slippage, m.sz_decimals)
+                .await
+            {
+                Ok(s) => log.push(format!("平 {coin} {size} · {}", crate::exchange::describe(&s))),
+                Err(e) => {
+                    log.push(format!("平 {coin} 失败：{e}（保持原样）"));
+                    continue;
+                }
+            }
+        }
+        tokio::time::sleep(std::time::Duration::from_millis(200)).await;
+
+        // 2) 切全仓
+        match exec.set_leverage(coin, lev).await {
+            Ok(_) => log.push(format!("{coin}: 已切 {lev}x 全仓")),
+            Err(e) => log.push(format!("{coin}: 切全仓失败 {e}")),
+        }
+        tokio::time::sleep(std::time::Duration::from_millis(200)).await;
+
+        // 3) 若仍在目标腿里，按目标重新开仓
+        let want_long = long.contains(coin);
+        let want_short = short.contains(coin);
+        if want_long || want_short {
+            let tsize = crate::exchange::round_size(per_coin / mid, m.sz_decimals);
+            if tsize * mid >= 10.0 {
+                match exec
+                    .ioc(coin, want_long, false, tsize, mid, cfg.slippage, m.sz_decimals)
+                    .await
+                {
+                    Ok(s) => log.push(format!(
+                        "重开 {coin} {tsize} · {}",
+                        crate::exchange::describe(&s)
+                    )),
+                    Err(e) => log.push(format!("重开 {coin} 失败：{e}")),
+                }
+            }
+        } else {
+            log.push(format!("{coin}: 不在目标名单，保持平仓"));
+        }
+        tokio::time::sleep(std::time::Duration::from_millis(250)).await;
+    }
+    Ok(log)
+}

@@ -346,6 +346,7 @@
             </div>
             <div class="actions">
               <button class="btn ghost" id="lv-plan">生成计划（不下单）</button>
+              <button class="btn ghost" id="lv-rebuild">转为全仓</button>
               <button class="btn danger" id="lv-run">执行调仓</button>
             </div>
           </div>
@@ -375,6 +376,7 @@
             <div class="field"><label>&nbsp;</label><button class="btn ghost" id="lv-save">保存配置</button></div>
           </div>
 
+          <p class="note"><b>⚠ 保证金模式：</b>Hyperliquid <b>不允许在持仓时切换保证金模式</b>（报错 <code>Cannot switch leverage while a position is open</code>）。所以「执行调仓」只能给<b>没有持仓的币</b>设全仓；要把<b>已有仓位</b>转成全仓，必须点「<b>转为全仓</b>」——它会逐币「平掉 → 切全仓 → 按目标重开」，全程只有 1 个仓位短暂裸奔，其余保持对冲。成本约 $1~2 手续费。</p>
           <div class="panel-head" style="margin-top:14px"><h2>计划 / 执行结果</h2></div>
           <div id="lv-plan-out"></div>
         </div>

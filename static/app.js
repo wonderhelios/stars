@@ -606,6 +606,31 @@ async function runLive(live) {
   refreshMonitor();
 }
 
+$("lv-rebuild").addEventListener("click", async () => {
+  if (
+    !confirm(
+      "逐币把现有仓位转成全仓？\n\n会依次「平仓 → 切全仓 → 重开」，约 16 轮，耗时 1~2 分钟。\n全程只有 1 个仓位短暂无对冲，成本约 $1~2 手续费。\n\n确认执行？"
+    )
+  )
+    return;
+  const btn = $("lv-rebuild");
+  const label = btn.textContent;
+  btn.textContent = "转换中…";
+  btn.disabled = true;
+  $("lv-plan-out").innerHTML = '<pre class="logbox">正在逐币转换，请勿关闭页面…</pre>';
+  try {
+    const res = await fetch("/api/live/rebuild", { method: "POST" });
+    const d = await res.json();
+    if (!d.ok) throw new Error(d.error || "失败");
+    $("lv-plan-out").innerHTML = `<pre class="logbox">${(d.log || []).join("\n")}</pre>`;
+  } catch (e) {
+    $("lv-plan-out").innerHTML = `<pre class="logbox neg">${e}</pre>`;
+  }
+  btn.textContent = label;
+  btn.disabled = false;
+  refreshMonitor(true);
+});
+
 $("lv-plan").addEventListener("click", () => runLive(false));
 $("lv-run").addEventListener("click", () => runLive(true));
 

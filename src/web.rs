@@ -66,6 +66,7 @@ pub fn router(state: AppState) -> Router {
         .route("/api/live/config", post(live_config))
         .route("/api/live/run", post(live_run))
         .route("/api/live/reset", post(live_reset))
+        .route("/api/live/rebuild", post(live_rebuild))
         .route("/api/probe", get(probe_status))
         .route("/api/probe/config", post(probe_config))
         .route("/api/probe/reset", post(probe_reset))
@@ -585,4 +586,18 @@ async fn portfolio_view(State(state): State<AppState>) -> Response {
     });
     *guard = Some((now, out.clone()));
     Json(out).into_response()
+}
+
+
+/// 逐币把现有仓位转成全仓（平→切→重开）。
+async fn live_rebuild(State(state): State<AppState>) -> Response {
+    let st = state.live.lock().await.clone();
+    if !st.config.armed {
+        return Json(json!({"ok": false, "error": "实盘未启用，请先在「实盘设置」打开开关"})).into_response();
+    }
+    let markets = live_markets(&state).await;
+    match crate::live::rebuild_cross(&state.store, &st, &markets).await {
+        Ok(log) => Json(json!({"ok": true, "log": log})).into_response(),
+        Err(e) => Json(json!({"ok": false, "error": format!("{e}")})).into_response(),
+    }
 }
