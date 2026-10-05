@@ -393,7 +393,9 @@ async fn run_trade(args: &[String], db_path: &str) -> anyhow::Result<()> {
 
     let mut cfg = trader::TradeConfig::default();
     if let Some(v) = value("--positions") {
-        cfg.target_positions = v.parse().context("--positions")?;
+        // 与网页端同一区间：仓位数过大时 k 会超过半宇宙，重叠区被判成多头，
+        // 组合会变成净多头。
+        cfg.target_positions = v.parse::<usize>().context("--positions")?.clamp(1, 30);
     }
     if let Some(v) = value("--leverage") {
         cfg.leverage = v.parse().context("--leverage")?;
@@ -402,7 +404,7 @@ async fn run_trade(args: &[String], db_path: &str) -> anyhow::Result<()> {
         cfg.lookback = v.parse().context("--lookback")?;
     }
     if let Some(v) = value("--top") {
-        cfg.top_frac = v.parse().context("--top")?;
+        cfg.top_frac = v.parse::<f64>().context("--top")?.clamp(0.02, 0.5);
     }
     if let Some(v) = value("--minvol") {
         cfg.min_vol_usd = v.parse().context("--minvol")?;
@@ -498,6 +500,14 @@ async fn run_trade(args: &[String], db_path: &str) -> anyhow::Result<()> {
     let mids = trader::fetch_mids(&exec, &coins).await;
 
     let plan = trader::build_plan(&weights, &acct, &markets, &mids, &cfg, None);
+    // 调仓前撤掉自己的旧止盈单（与网页端同一流程）；失败即中止。
+    if live {
+        match live::cancel_our_take_profits(&exec).await {
+            Ok(n) if n > 0 => println!("撤销旧止盈单 {n} 个"),
+            Ok(_) => {}
+            Err(e) => return Err(e.context("撤销旧止盈单失败，已在调仓前中止")),
+        }
+    }
     println!(
         "\n目标：每腿 {} 仓 · 每仓 ${:.2} · 目标总名义 ${:.0} · 杠杆 {}x · 保证金缓冲 {:.0}%",
         weights.iter().filter(|(_, w)| *w > 0.0).count(),
@@ -543,6 +553,26 @@ async fn run_trade(args: &[String], db_path: &str) -> anyhow::Result<()> {
         if !line.is_empty() {
             println!("  {line}");
         }
+    }
+    // 调仓后按「本次调仓的参考价」挂止盈单，与网页端同一流程。
+    // 止盈幅度取持久化的实盘配置，保证 CLI 与网页端一致
+    let live_path = std::env::var("STARS_LIVE").unwrap_or_else(|_| "live.json".into());
+    let tp_pct = crate::live::LiveState::load(std::path::Path::new(&live_path))
+        .config
+        .take_profit_pct;
+    let tp_ref: std::collections::HashMap<String, f64> = plan
+        .long_leg
+        .iter()
+        .chain(plan.short_leg.iter())
+        .filter_map(|c| mids.get(c).map(|m| (c.clone(), *m)))
+        .collect();
+    match live::place_take_profits(&exec, &markets, tp_pct, &tp_ref).await {
+        Ok(log) => {
+            for l in log {
+                println!("  {l}");
+            }
+        }
+        Err(e) => println!("  止盈单挂单失败: {e}"),
     }
     if let Ok(a) = exec.account().await {
         println!(

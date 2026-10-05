@@ -402,8 +402,16 @@ fn advance(
             liquidated.push((pos, liq));
             continue;
         }
-        if let (Some(prev), Some(cur)) = (prev, cur) {
-            day_pnl += position_pnl(&pos, cur) - position_pnl(&pos, prev);
+        // 用仓位自己的 mark_price 作基数，而不是「上一根 K 线的价格」：某币在
+        // t_prev 缺数据、t 有数据时，前者会把这段涨跌整个丢掉，而平仓时又按建仓
+        // 价结算，账面权益和成交记录就会对不上。
+        if let Some(cur) = cur {
+            let base = if pos.mark_price > 0.0 {
+                pos.mark_price
+            } else {
+                cur
+            };
+            day_pnl += position_pnl(&pos, cur) - position_pnl(&pos, base);
             mark(&mut pos, cur, cfg.leverage);
         }
         survivors.push(pos);
@@ -427,10 +435,12 @@ fn advance(
         });
         state.liquidations += 1;
     }
-    // 等权市场基准：用当前流动宇宙全部币的等权涨跌
-    let mkt: Vec<f64> = p
-        .closes
-        .keys()
+    // 等权市场基准：只用当期的流动宇宙。之前用「全部缓存币」，把不流动、
+    // 已退市和 HIP-3 的币也算进去，market/alpha 这两个数字因此是错的。
+    let universe = fp.liquid_at(i, cfg.min_vol_usd, 30);
+    let mkt: Vec<f64> = universe
+        .iter()
+        .map(|c| c.as_str())
         .filter_map(|coin| {
             let prev = p.px(coin, t_prev)?;
             let cur = p.px(coin, t)?;
@@ -496,14 +506,48 @@ fn advance(
                     * state.equity.max(0.0)
                     * MARGIN_BUFFER
                     * cfg.leverage;
-                turnover += (target - pos.notional).abs();
-                resize(&mut pos, target, px, cfg.leverage);
+                // 实盘只在偏离超过 max($10, 目标×2%) 时才动仓，纸交易也照此办理。
+                // 之前每天都无条件重设，等于替实盘支付了它根本不会付的手续费，
+                // 换手成本被系统性高估。
+                let threshold = 10.0_f64.max(target * 0.02);
+                if (target - pos.notional).abs() >= threshold {
+                    turnover += (target - pos.notional).abs();
+                    resize(&mut pos, target, px, cfg.leverage);
+                }
             }
             keep.push(pos);
         } else {
-            // Close the position. If today's close is missing, fall back to the
-            // last mark so the realized PnL is not silently lost.
-            let exit_px = px.unwrap_or(pos.mark_price);
+            // 平仓。今天没有价格说明这个币已经消失/退市：按「归零」结算，而不是
+            // 按最后报价 —— 后者等于假设退市那一刻价格没动，从最后报价到真实退市
+            // 价的那段暴跌（多头）或暴涨（空头）就被白白漏掉了。3.2 年里有 4 次
+            // 这样的事件，每次都值约 4% 的净值。
+            let exit_px = match px {
+                Some(p) => p,
+                None => {
+                    let zeroed = 0.0_f64;
+                    let pnl = position_pnl(&pos, zeroed);
+                    let mut pos2 = pos;
+                    pos2.notional = 0.0;
+                    pos2.unrealized_pnl = 0.0;
+                    turnover += pnl.abs();
+                    state.trades.push(Trade {
+                        coin: pos2.coin.clone(),
+                        side: pos2.side,
+                        entry_ts: pos2.entry_ts,
+                        entry_price: pos2.entry_price,
+                        avg_entry: pos2.basis_price,
+                        exit_ts: t,
+                        exit_price: zeroed,
+                        notional: pos2.notional,
+                        pnl_usd: pnl,
+                        pnl_pct: -100.0,
+                        reason: "退市归零".into(),
+                        replayed: pos2.replayed,
+                    });
+                    state.equity += pnl;
+                    continue;
+                }
+            };
             if exit_px > 0.0 {
                 let pnl = position_pnl(&pos, exit_px);
                 state.trades.push(Trade {

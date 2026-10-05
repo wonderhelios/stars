@@ -228,8 +228,10 @@ impl FactorPanel {
                 continue;
             }
             // 20 日波动
+            // 窗口必须包含第 i 根：动量的分子用 close[i]、量能的分子用 dvol[i]，
+            // 波动若只到 i-1 就比另外两个因子旧一天（不是前视，但口径不一致）。
             let mut rets: Vec<f64> = Vec::with_capacity(vol_lookback);
-            for j in (i - vol_lookback)..i {
+            for j in (i + 1 - vol_lookback)..=i {
                 if j == 0 {
                     continue;
                 }
@@ -268,17 +270,6 @@ impl FactorPanel {
         if coins.len() < 8 {
             return Vec::new();
         }
-        // 逐因子排名（升序名次），再等权平均
-        let rank_of = |v: &[f64]| -> Vec<f64> {
-            let mut idx: Vec<usize> = (0..v.len()).collect();
-            idx.sort_by(|a, b| v[*a].partial_cmp(&v[*b]).unwrap_or(std::cmp::Ordering::Equal));
-            let mut r = vec![0.0; v.len()];
-            for (pos, &j) in idx.iter().enumerate() {
-                r[j] = pos as f64;
-            }
-            r
-        };
-        let _ = rank_of;
         // 三个因子各自选一个等权组合，再把三个组合的权重平均。
         // 这样持有的其实是「三张名单的叠加」（最多 3x2k 个币），
         // 分散化明显好于「先把排名平均、再选一批」——后者回撤大一倍。
@@ -286,10 +277,13 @@ impl FactorPanel {
         let mut acc: HashMap<String, f64> = HashMap::new();
         for scores in [&mom_adj, &low_vol, &shock_v] {
             let mut order: Vec<usize> = (0..n).collect();
+            // 平局时按币名定序：分数来自 HashMap 迭代，顺序随进程哈希种子变化，
+            // 只按分数排会让同一天的组合在不同进程里不一样。
             order.sort_by(|a, b| {
                 scores[*a]
                     .partial_cmp(&scores[*b])
                     .unwrap_or(std::cmp::Ordering::Equal)
+                    .then_with(|| coins[*a].cmp(&coins[*b]))
             });
             // 2k > n 时 [n-k, k) 会同时落在两条腿里，而判断顺序把重叠区
             // 全给了多头 —— 空头腿不足 k 个，组合变成净多头。所以硬性限制 k <= n/2。
@@ -312,7 +306,11 @@ impl FactorPanel {
             .into_iter()
             .filter(|(_, w)| w.abs() > 1e-12)
             .collect();
-        out.sort_by(|a, b| b.1.partial_cmp(&a.1).unwrap_or(std::cmp::Ordering::Equal));
+        out.sort_by(|a, b| {
+            b.1.partial_cmp(&a.1)
+                .unwrap_or(std::cmp::Ordering::Equal)
+                .then_with(|| a.0.cmp(&b.0))
+        });
         // 跨因子抵消会把 Σ|w| 压到 1 以下：某币一个因子看多、另一个看空时会相互
         // 抵消（实测约 44 个流动币里有 23 个归零）。不重新归一化的话，实际敞口会
         // 比设置低 13%~30%，而且恰好在三因子分歧最大时最低。

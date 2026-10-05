@@ -340,7 +340,9 @@ async fn live_config(
         c.lookback = v.clamp(2, 120);
     }
     if let Some(v) = body.top_frac {
-        c.top_frac = v.clamp(0.02, 0.9);
+        // 与纸交易用同一区间。之前实盘允许到 0.9、纸交易只到 0.5，
+        // 同一个参数在两个引擎里含义不同，无法互相验证。
+        c.top_frac = v.clamp(0.02, 0.5);
     }
     if let Some(v) = body.min_vol_usd {
         c.min_vol_usd = v.max(0.0);
