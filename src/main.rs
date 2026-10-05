@@ -135,6 +135,26 @@ async fn main() -> anyhow::Result<()> {
         });
     }
 
+    // ===== 持仓量快照采集（只记录，绝不下单）=====
+    //
+    // 官方 API 不提供 OI 历史，只能拿当前快照。第三方有历史但要付费，且免费档
+    // 只给 30 天 —— 不足以回测。所以这里每天记一次，攒够几个月后才有真正
+    // 的样本外数据来判断「持仓量拥挤度」是不是有效因子。
+    {
+        let store = store.clone();
+        let http = state.http.clone();
+        tokio::spawn(async move {
+            loop {
+                match snapshot_open_interest(&store, &http).await {
+                    Ok(n) => info!("持仓量快照：写入 {n} 个币"),
+                    Err(e) => error!("持仓量快照失败: {e}"),
+                }
+                // 6 小时跑一次，按 UTC 日对齐，同一天重复写入会覆盖
+                tokio::time::sleep(Duration::from_secs(6 * 3600)).await;
+            }
+        });
+    }
+
     // ===== background refresh task =====
     {
         let store = store.clone();
@@ -536,3 +556,38 @@ async fn run_trade(args: &[String], db_path: &str) -> anyhow::Result<()> {
     Ok(())
 }
 
+
+
+/// 抓一次全市场的当前持仓量快照并落库。只看公开行情，不涉及账户、不下任何单。
+async fn snapshot_open_interest(
+    store: &Arc<Store>,
+    http: &reqwest::Client,
+) -> anyhow::Result<usize> {
+    let v: serde_json::Value = http
+        .post("https://api.hyperliquid.xyz/info")
+        .json(&serde_json::json!({"type": "metaAndAssetCtxs"}))
+        .send()
+        .await?
+        .json()
+        .await?;
+    let universe = v[0]["universe"].as_array().cloned().unwrap_or_default();
+    let ctxs = v[1].as_array().cloned().unwrap_or_default();
+    let mut rows: Vec<(String, f64, f64)> = Vec::new();
+    for (u, c) in universe.iter().zip(ctxs.iter()) {
+        if u["isDelisted"].as_bool().unwrap_or(false) {
+            continue;
+        }
+        let Some(coin) = u["name"].as_str() else { continue };
+        if coin.contains(':') {
+            continue; // HIP-3 命名空间不在交易范围内
+        }
+        let oi = c["openInterest"].as_str().and_then(|s| s.parse::<f64>().ok()).unwrap_or(0.0);
+        let px = c["markPx"].as_str().and_then(|s| s.parse::<f64>().ok()).unwrap_or(0.0);
+        if oi <= 0.0 || px <= 0.0 {
+            continue;
+        }
+        rows.push((coin.to_string(), oi * px, px)); // 统一存 USD 名义
+    }
+    anyhow::ensure!(!rows.is_empty(), "快照为空，可能是接口异常");
+    store.upsert_oi_snapshot(now_ms(), &rows)
+}

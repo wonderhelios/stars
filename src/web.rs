@@ -98,6 +98,11 @@ async fn status(State(state): State<AppState>) -> Json<serde_json::Value> {
     let latest_ts = state.store.latest_ts().ok().flatten();
     let paper = paper::snapshot(&*state.paper.lock().await);
     let refresh = state.refresh.lock().await.clone();
+    let oi_cov = state
+        .store
+        .oi_coverage()
+        .map(|(d, c, f, l)| serde_json::json!({"days": d, "coins": c, "first": f, "last": l}))
+        .unwrap_or(serde_json::Value::Null);
 
     Json(json!({
         "universe_total": meta.universe.len(),
@@ -122,6 +127,7 @@ async fn status(State(state): State<AppState>) -> Json<serde_json::Value> {
             "current": refresh.current,
         }),
         "paper": paper,
+        "oi": oi_cov,
     }))
 }
 
