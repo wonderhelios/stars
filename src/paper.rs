@@ -12,6 +12,10 @@
 //! closes arrive.
 
 use crate::hl::maintenance_margin_rate;
+
+/// 与 `TradeConfig::default().margin_buffer` 保持一致，否则纸交易会跑 3.0x、
+/// 实盘只跑 2.7x，两边数字没法对照。
+const MARGIN_BUFFER: f64 = 0.90;
 use crate::momentum::PanelEntry;
 use serde::{Deserialize, Serialize};
 use std::collections::{BTreeMap, BTreeSet, HashMap, HashSet};
@@ -350,6 +354,7 @@ fn advance(
                     side,
                     notional: wmap.get(coin).map(|w| w.abs()).unwrap_or(0.0)
                     * state.equity.max(0.0)
+                    * MARGIN_BUFFER
                     * cfg.leverage,
                     entry_price: px,
                     entry_ts: t,
@@ -489,6 +494,7 @@ fn advance(
             if let Some(px) = px {
                 let target = wmap.get(&pos.coin).map(|w| w.abs()).unwrap_or(0.0)
                     * state.equity.max(0.0)
+                    * MARGIN_BUFFER
                     * cfg.leverage;
                 turnover += (target - pos.notional).abs();
                 resize(&mut pos, target, px, cfg.leverage);
@@ -534,6 +540,7 @@ fn advance(
                 side,
                 notional: wmap.get(coin).map(|w| w.abs()).unwrap_or(0.0)
                     * state.equity.max(0.0)
+                    * MARGIN_BUFFER
                     * cfg.leverage,
                 entry_price: px,
                 entry_ts: t,
@@ -549,6 +556,7 @@ fn advance(
             state.positions.push(pos);
             turnover += wmap.get(coin).map(|w| w.abs()).unwrap_or(0.0)
                 * state.equity.max(0.0)
+                * MARGIN_BUFFER
                 * cfg.leverage;
         }
     }
