@@ -397,10 +397,16 @@ function renderMonitor(d) {
   const pos = d.positions || [];
   const hist = d.history || [];
   const eq = d.equity || 0;
-  const base = hist.length ? hist[0].equity : 0;
-  const valid = eq > 0 && base > 0;
-  const pnl = valid ? eq - base : 0;
-  const pnlPct = valid ? (pnl / base) * 100 : 0;
+  // 盈亏必须用「成交已实现 + 当前未实现」算，不能用「净值 − 历史首点」：
+  // 后者会把入金/出金算成盈利。之前就是这样显示成 +15.52% 的，其实账户只是
+  // 从别的银行转进来了钱。
+  const parsedAcct = chronRecords(d);
+  const unrealized = pos.reduce((a, p) => a + (p.unrealized || 0), 0);
+  const pnl = parsedAcct.realized + unrealized;
+  // 收益率的基数 = 当前净值 − 累计盈亏（即策略开始时的本金）
+  const base = eq - pnl;
+  const valid = eq > 0;
+  const pnlPct = valid && base > 0 ? (pnl / base) * 100 : 0;
   const buffer = d.liq_buffer_pct || 0;
 
   const keyed = !!(c.key_path && c.key_path.trim());
@@ -679,7 +685,7 @@ async function refreshMonitor(force) {
 
 $("mo-refresh").addEventListener("click", () => refreshMonitor(true));
 $("mo-clear").addEventListener("click", async () => {
-  if (!confirm("清空所有下单记录？净值曲线和配置会保留。")) return;
+  if (!confirm("清空所有下单记录，并把净值曲线从现在重新开始？配置会保留。")) return;
   try {
     const res = await fetch("/api/live/records/clear", { method: "POST" });
     const d = await res.json();
@@ -690,7 +696,6 @@ $("mo-clear").addEventListener("click", async () => {
 });
 
 
-// ==================== 挂单探测 ====================
 
 
 
