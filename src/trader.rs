@@ -1,9 +1,21 @@
-//! Momentum execution: turn the daily signal into a concrete order list and,
-//! optionally, send it to Hyperliquid.
+//! Signal and order planning for the live book.
 //!
-//! The plan mirrors the paper engine exactly (long top N / short bottom N,
-//! equal notional, position size scaled to current equity), so what you see in
-//! the paper panel is what gets traded.
+//! The tradeable signal is a composite of three cross-sectional factors, each
+//! forming its own equal-weight book (long the top k, short the bottom k) with
+//! the three weight vectors averaged:
+//!
+//!   1. volatility-adjusted momentum - trailing return divided by 20-day vol
+//!   2. low volatility                - long calm names, short wild ones
+//!   3. volume shock                  - today's dollar volume over the 30-day mean
+//!
+//! Averaging the *weights* rather than the ranks matters: coins the three
+//! factors disagree on net out to zero and drop out, so the book holds the
+//! names they agree on. Weights are renormalised to sum|w| = 1 afterwards, and
+//! `build_plan` sizes each name as |w| * equity * margin_buffer * leverage.
+//!
+//! `FactorPanel` owns the panel, the point-in-time liquidity filter and the
+//! weights; both the live path and the paper engine call it, so they cannot
+//! drift apart.
 
 use crate::exchange::{round_size, Acct, Exec, MarketInfo};
 use crate::momentum::PanelEntry;

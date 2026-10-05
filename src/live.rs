@@ -644,6 +644,7 @@ pub async fn place_take_profits(
     anyhow::ensure!(!mids.is_empty(), "取不到中间价，拒绝挂止盈单");
 
     let mut placed = 0usize;
+    let mut filled = 0usize;
     let mut failed = Vec::new();
     for (coin, pos) in acct.positions.iter() {
         let Some(m) = markets.get(coin.as_str()) else {
@@ -677,13 +678,21 @@ pub async fn place_take_profits(
             continue;
         }
         match exec.resting_reduce_order(coin, buy, size, px).await {
+            // oid 为 0 表示挂出去的瞬间就成交了（价格已经越过止盈线）。
+            // 这不是失败，但也不能报成「挂上」。
+            Ok(0) => filled += 1,
             Ok(_) => placed += 1,
             Err(e) => failed.push(format!("{coin}: {e}")),
         }
         tokio::time::sleep(std::time::Duration::from_millis(120)).await;
     }
     log.push(format!(
-        "止盈单：挂上 {placed} 个（±{:.0}%）{}",
+        "止盈单：挂上 {placed} 个{}（±{:.0}%）{}",
+        if filled > 0 {
+            format!("，{filled} 个挂出即成交")
+        } else {
+            String::new()
+        },
         tp_pct * 100.0,
         if failed.is_empty() {
             String::new()
@@ -702,6 +711,17 @@ pub async fn refresh_take_profits(
     reference: &HashMap<String, f64>,
 ) -> Result<Vec<String>> {
     let mut log = Vec::new();
+    // 先确认「一定挂得上」再去撤旧单：撤单成功而挂单失败（取不到价、缺元数据）
+    // 会让账户在下次调仓前完全失去止盈保护，而且日志还会显示成功。
+    if tp_pct > 0.0 {
+        anyhow::ensure!(!markets.is_empty(), "市场元数据为空，拒绝撤销现有止盈单");
+        let acct = exec.account().await?;
+        if !acct.positions.is_empty() {
+            let coins: Vec<String> = acct.positions.keys().cloned().collect();
+            let mids = trader::fetch_mids(exec, &coins).await;
+            anyhow::ensure!(!mids.is_empty(), "取不到中间价，拒绝撤销现有止盈单");
+        }
+    }
     match cancel_our_take_profits(exec).await {
         Ok(n) if n > 0 => log.push(format!("撤销旧止盈单 {n} 个")),
         Ok(_) => {}

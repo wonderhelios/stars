@@ -1,15 +1,15 @@
-//! Paper-trading engine: a market-neutral long/short portfolio that mirrors what
-//! would actually be traded live.
+//! Paper/replay engine, driven by the same `trader::FactorPanel` the live path
+//! uses, so a replay and a live run consume an identical weight vector for the
+//! same date.
 //!
-//! Each day: rank the liquid universe by trailing momentum, go long the top
-//! `top_frac` and short the bottom `top_frac`, equal weight within each leg.
-//! Gross notional = capital * leverage, split evenly between the two legs.
-//! Positions are only traded when leg membership changes, so turnover reflects
-//! the real signal rather than constant rebalancing.
+//! Position sizes follow equity (compounding) and carry the same 90% margin
+//! buffer live applies, so the leverage reported here matches what live would
+//! deploy. Rebalances honour the same max($10, target*2%) band live uses.
 //!
-//! On start the engine replays `replay_days` of history so the trade log and
-//! equity curve are populated immediately, then continues forward as new daily
-//! closes arrive.
+//! Liquidation is modelled on the account level, not per position: the live
+//! account is cross margin, so no single position liquidates on its own - the
+//! book is closed when equity falls below the whole portfolio's maintenance
+//! requirement.
 
 use crate::hl::maintenance_margin_rate;
 
@@ -259,8 +259,9 @@ pub fn step(state: &mut PaperState, panel: &[PanelEntry], max_lev: &HashMap<Stri
     let Some(cfg) = state.config.clone() else {
         return;
     };
+    // 与实盘共用同一套因子面板，避免两份实现漂移。
+    // 注意：Panel 只负责取价，FactorPanel 负责打分，两者都从同一份 panel 构建。
     let p = Panel::build(panel);
-    // 与实盘共用同一套因子面板，避免两份实现漂移
     let fp = crate::trader::FactorPanel::build(panel);
     if p.ts.len() < cfg.lookback + 30 + 2 {
         return;
