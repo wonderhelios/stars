@@ -966,6 +966,100 @@ async function refreshMonitor(force) {
 
 $("mo-refresh").addEventListener("click", () => refreshMonitor(true));
 
+
+// ==================== 挂单探测 ====================
+let probeLoaded = false;
+
+async function fetchProbe() {
+  const res = await fetch("/api/probe", { cache: "no-store" });
+  if (!res.ok) throw new Error("HTTP " + res.status);
+  return res.json();
+}
+
+function renderProbe(d) {
+  const c = d.config || {};
+  const s = d.summary || {};
+  const cfgInto = () => {
+    $("pb-lookback").value = c.lookback_h ?? 4;
+    $("pb-rebal").value = c.rebal_h ?? 4;
+    $("pb-top").value = c.top_frac ?? 0.25;
+    $("pb-minvol").value = String(c.min_vol_usd ?? 150000);
+    $("pb-enabled").value = String(!!c.enabled);
+  };
+  if (!probeLoaded) {
+    cfgInto();
+    probeLoaded = true;
+  }
+  const rate = s.touch_rate || 0;
+  const cls = rate >= 70 ? "pos" : rate > 0 ? "neg" : "";
+  $("pb-status").innerHTML = `<div class="live-status ${c.enabled ? "run" : "off"}">
+    <span class="tag">${c.enabled ? "● 探测中" : "● 已停止"}</span>
+    <span>已收集 <b>${s.evaluated || 0}</b> 轮有效数据（共 ${d.rounds || 0} 轮）</span>
+    <span>最后运行 ${d.last_run_at ? ts2m(d.last_run_at) : "—"}</span>
+    ${d.last_error ? `<span class="neg">错误: ${d.last_error}</span>` : ""}
+  </div>`;
+  $("pb-metrics").innerHTML =
+    metric("触及率（成交上界）", fmt(rate, 1) + "%", cls) +
+    metric("被触及/总挂单", `${s.touched || 0} / ${s.total || 0}`) +
+    metric("理想口径年化", pct(s.ideal_ann || 0), (s.ideal_ann || 0) >= 0 ? "pos" : "neg") +
+    metric("现实口径年化", pct(s.real_ann || 0), (s.real_ann || 0) >= 0 ? "pos" : "neg") +
+    metric("现实 t 值", fmt(s.real_t || 0, 2), (s.real_t || 0) > 2 ? "pos" : "") +
+    metric("现实(taker)年化", pct(s.real_taker_ann || 0), (s.real_taker_ann || 0) >= 0 ? "pos" : "neg") +
+    metric("有效轮数", s.evaluated || 0);
+
+  const rounds = d.recent || [];
+  $("pb-rounds").innerHTML = rounds.length
+    ? `<div class="table-scroll"><table><thead><tr>
+        <th>时间</th><th>多头腿</th><th>空头腿</th><th>触及/总</th>
+        <th>理想毛收益</th><th>现实毛收益</th><th>状态</th>
+      </tr></thead><tbody>${rounds
+        .map((r) => {
+          const done = r.evaluated;
+          return `<tr>
+            <td class="muted">${ts2m(r.ts)}</td>
+            <td class="muted" style="font-size:12px">${(r.longs || []).join(" ") || "—"}</td>
+            <td class="muted" style="font-size:12px">${(r.shorts || []).join(" ") || "—"}</td>
+            <td>${done ? `${r.touched}/${r.total}` : "—"}</td>
+            <td class="${done && r.gross_ideal >= 0 ? "pos" : done ? "neg" : "muted"}">${done ? pct(r.gross_ideal * 100, 3) : "—"}</td>
+            <td class="${done && r.gross_real >= 0 ? "pos" : done ? "neg" : "muted"}">${done ? pct(r.gross_real * 100, 3) : "—"}</td>
+            <td>${done ? '<span class="badge-mini ok">已评估</span>' : '<span class="badge-mini mute">等窗口结束</span>'}</td>
+          </tr>`;
+        })
+        .join("")}</tbody></table></div>`
+    : '<div class="empty">还没有轮次。探测器每 4 小时记录一次，需要先等小时线回填完成。</div>';
+}
+
+async function refreshProbe() {
+  try {
+    renderProbe(await fetchProbe());
+  } catch (e) {
+    $("pb-status").innerHTML = `<div class="note neg">读取探测器失败：${e}</div>`;
+  }
+}
+
+$("pb-refresh").addEventListener("click", refreshProbe);
+$("pb-save").addEventListener("click", async () => {
+  $("pb-save").textContent = "保存中…";
+  try {
+    const res = await fetch("/api/probe/config", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        lookback_h: Number($("pb-lookback").value),
+        rebal_h: Number($("pb-rebal").value),
+        top_frac: Number($("pb-top").value),
+        min_vol_usd: Number($("pb-minvol").value),
+        enabled: $("pb-enabled").value === "true",
+      }),
+    });
+    const d = await res.json();
+    $("pb-save").textContent = d.ok ? "已保存 ✓" : "保存失败";
+  } catch (e) {
+    $("pb-save").textContent = "保存失败";
+  }
+  setTimeout(() => ($("pb-save").textContent = "保存"), 1500);
+});
+
 // ---------- 启动 ----------
 refreshStatus();
 setInterval(refreshStatus, 5000);
@@ -979,3 +1073,5 @@ refreshPaper();
 refreshLiveConfig();
 refreshMonitor(true);
 setInterval(refreshMonitor, 20000);
+refreshProbe();
+setInterval(refreshProbe, 60000);

@@ -156,13 +156,26 @@ impl HlClient {
 
     /// Daily candles for one coin over [start_ms, end_ms).
     pub async fn daily_candles(&self, coin: &str, start_ms: i64, end_ms: i64) -> Result<Vec<Candle>> {
+        self.candles(coin, "1d", start_ms, end_ms, 400 * 86_400_000).await
+    }
+
+    /// Candles at an arbitrary interval ("1h", "4h", "15m", ...).
+    /// `window_ms` caps how much history one request covers.
+    pub async fn candles(
+        &self,
+        coin: &str,
+        interval: &str,
+        start_ms: i64,
+        end_ms: i64,
+        window_ms: i64,
+    ) -> Result<Vec<Candle>> {
         let mut out = Vec::new();
         let mut t = start_ms;
         while t < end_ms {
-            let e = (t + 400 * 86_400_000).min(end_ms);
+            let e = (t + window_ms).min(end_ms);
             let v = self
                 .post(json!({"type": "candleSnapshot", "req": {
-                    "coin": coin, "interval": "1d", "startTime": t, "endTime": e
+                    "coin": coin, "interval": interval, "startTime": t, "endTime": e
                 }}))
                 .await?;
             let batch: Vec<Candle> = serde_json::from_value(v).unwrap_or_default();
@@ -171,6 +184,17 @@ impl HlClient {
             tokio::time::sleep(std::time::Duration::from_millis(30)).await;
         }
         Ok(out)
+    }
+
+    /// Hourly candles: one request covers ~400 hours.
+    pub async fn hourly_candles(
+        &self,
+        coin: &str,
+        start_ms: i64,
+        end_ms: i64,
+    ) -> Result<Vec<Candle>> {
+        self.candles(coin, "1h", start_ms, end_ms, 400 * 3_600_000)
+            .await
     }
 
     /// Exchange fee schedule (base tier). `cross` = taker, `add` = maker.

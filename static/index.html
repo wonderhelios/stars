@@ -238,6 +238,7 @@
         <button data-view="paper">纸交易</button>
         <button data-view="live">实盘设置</button>
         <button data-view="monitor">实盘监控</button>
+        <button data-view="probe">挂单探测</button>
       </nav>
       <div class="status-pill">
         <span class="led" id="led"></span>
@@ -415,6 +416,46 @@
           <div id="mo-positions"></div>
           <div class="panel-head" style="margin-top:14px"><h2>下单记录</h2></div>
           <div id="mo-records"></div>
+        </div>
+      </section>
+
+      <!-- ============ 挂单探测 ============ -->
+      <section id="view-probe" class="view">
+        <div class="panel">
+          <div class="panel-head">
+            <div>
+              <div class="panel-kicker">MAKER FILL PROBE</div>
+              <h2>挂单探测 · 4 小时反转</h2>
+              <p class="sub">零风险观测：每 4 小时记录一次目标价位，再用<b>真实的小时最高/最低价</b>判断「当时挂限价单会不会被触及」。触及率是成交率的<b>上界</b>（忽略了排队位置）。</p>
+            </div>
+            <div class="actions"><button class="btn ghost" id="pb-refresh">刷新</button></div>
+          </div>
+
+          <div class="controls">
+            <div class="field"><label>回看小时数</label><input id="pb-lookback" type="number" value="4" min="1" max="168" /></div>
+            <div class="field"><label>换仓间隔(小时)</label><input id="pb-rebal" type="number" value="4" min="1" max="72" /></div>
+            <div class="field"><label>多空比例</label><input id="pb-top" type="number" value="0.25" min="0.02" max="0.5" step="0.05" /></div>
+            <div class="field"><label>小时成交额门槛(USD)</label>
+              <select id="pb-minvol">
+                <option value="50000">$50K</option>
+                <option value="150000" selected>$150K</option>
+                <option value="500000">$500K</option>
+              </select>
+            </div>
+            <div class="field"><label>探测器</label>
+              <select id="pb-enabled"><option value="true" selected>运行中</option><option value="false">已停止</option></select>
+            </div>
+            <div class="field"><label>&nbsp;</label><button class="btn ghost" id="pb-save">保存</button></div>
+          </div>
+
+          <div id="pb-status"></div>
+          <div class="metrics" id="pb-metrics"></div>
+
+          <div class="panel-head" style="margin-top:14px"><h2>最近轮次</h2></div>
+          <div id="pb-rounds"></div>
+
+          <p class="note"><b>怎么解读：</b>「触及率」高不代表一定能成交——真实挂单还要排队。要看的是「<b>现实口径年化</b>」：它只用被触及的挂单建仓，并按 maker 费率计费。<b>如果触及率低于 70%，或现实口径明显低于理想口径，就说明这个策略靠不住。</b></p>
+          <p class="note">真实成交率只能靠<b>真金白银挂最小单</b>测出来。这个面板先把「价格会不会来碰我的挂单价」这一层验证掉——它是成交的必要条件。</p>
         </div>
       </section>
 
