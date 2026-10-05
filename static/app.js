@@ -23,7 +23,6 @@ document.querySelectorAll(".nav button").forEach((b) => {
 });
 
 // ---------- 状态轮询 ----------
-let feePrefilled = false;
 async function refreshStatus() {
   try {
     const res = await fetch("/api/status", { cache: "no-store" });
@@ -43,396 +42,18 @@ async function refreshStatus() {
       led.className = "led off";
       $("statusText").textContent = "等待数据";
     }
-    // Prefill the real Hyperliquid taker fee once.
-    if (!feePrefilled && d.fee_taker > 0) {
-      $("pp-fee").value = (d.fee_taker * 100).toFixed(4);
-      feePrefilled = true;
-    }
-    if (d.fee_taker > 0) {
-      $("pp-fee").title = `Hyperliquid 实时费率：taker ${(d.fee_taker * 100).toFixed(4)}% / maker ${(d.fee_maker * 100).toFixed(4)}%`;
-    }
   } catch (e) {
     $("led").className = "led off";
     $("statusText").textContent = "连接中断";
   }
 }
 
-// ---------- 回测 ----------
-$("bt-run").addEventListener("click", async () => {
-  $("bt-error").innerHTML = "";
-  $("bt-run").disabled = true;
-  $("bt-run").textContent = "回测中…";
-  try {
-    const body = {
-      lookback: parseInt($("bt-lookback").value) || 14,
-      top_frac: parseFloat($("bt-top").value) || 0.2,
-      min_vol_usd: parseFloat($("bt-minvol").value),
-      hedge: $("bt-hedge").value,
-    };
-    const res = await fetch("/api/backtest", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-    });
-    const d = await res.json();
-    if (!res.ok) throw new Error(d.error || "HTTP " + res.status);
-    renderBacktest(d);
-  } catch (e) {
-    $("bt-error").innerHTML = `<div class="error">${e.message}</div>`;
-  } finally {
-    $("bt-run").disabled = false;
-    $("bt-run").textContent = "运行回测";
-  }
-});
-
-function metric(k, v, cls) {
-  return `<div class="metric"><div class="k">${k}</div><div class="v ${cls || ""}">${v}</div></div>`;
-}
-
-function renderBacktest(d) {
-  $("bt-result").classList.remove("hidden");
-  const cls = d.alpha_annual >= 0 ? "pos" : "neg";
-  $("bt-metrics").innerHTML =
-    metric("纯 alpha 年化", pct(d.alpha_annual * 100), cls) +
-    metric("Sharpe", fmt(d.sharpe, 2), cls) +
-    metric("t 统计", fmt(d.t_stat, 2), cls) +
-    metric("胜率", fmt(d.win_rate * 100, 1) + "%") +
-    metric("beta", fmt(d.beta, 2)) +
-    metric("与 BTC 相关性", fmt(d.corr_btc, 2)) +
-    metric("多头腿年化", pct(d.long_leg_daily * 365 * 100)) +
-    metric("换手/天", fmt(d.turnover_daily * 100, 0) + "%") +
-    metric("样本天数", d.days) +
-    metric("参与币数", d.coins_traded);
-
-  $("bt-years").innerHTML = `<div class="table-scroll"><table><thead><tr><th>年份</th><th>天数</th><th>alpha 年化</th><th>t 统计</th></tr></thead>
-    <tbody>${d.per_year.map((y) => `<tr><td>${y.year}</td><td>${y.days}</td>
-      <td class="${y.alpha_annual >= 0 ? "pos" : "neg"}">${pct(y.alpha_annual * 100)}</td>
-      <td>${fmt(y.t_stat, 2)}</td></tr>`).join("")}</tbody></table></div>`;
-
-  $("bt-cost").innerHTML = `<div class="table-scroll"><table><thead><tr><th>单边费率</th><th>净年化 alpha</th></tr></thead>
-    <tbody>${d.cost_sensitivity.map((c) => `<tr><td>${(c.fee * 100).toFixed(3)}%</td>
-      <td class="${c.net_annual >= 0 ? "pos" : "neg"}">${pct(c.net_annual * 100)}</td></tr>`).join("")}</tbody></table></div>`;
-
-  $("bt-coins").innerHTML = `<div class="table-scroll"><table><thead><tr><th>币</th><th>入选次数</th></tr></thead>
-    <tbody>${d.top_coins.map(([c, n]) => `<tr><td>${c}</td><td>${n}</td></tr>`).join("")}</tbody></table></div>`;
-}
 
 // ---------- 纸交易 ----------
-let paperRunning = false;
 
-$("pp-toggle").addEventListener("click", async () => {
-  $("pp-error").innerHTML = "";
-  if (paperRunning) {
-    await fetch("/api/paper/stop", { method: "POST" });
-  } else {
-    const body = {
-      lookback: parseInt($("pp-lookback").value) || 14,
-      top_frac: parseFloat($("pp-top").value) || 0.2,
-      min_vol_usd: parseFloat($("pp-minvol").value),
-      fee: parseFloat($("pp-fee").value) / 100 || 0.00045,
-      capital: parseFloat($("pp-capital").value) || 2000,
-      leverage: parseFloat($("pp-leverage").value) || 3,
-      target_positions: parseInt($("pp-target").value) || 8,
-      replay_days: 90,
-    };
-    const res = await fetch("/api/paper/start", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-    });
-    const d = await res.json();
-    if (!res.ok) {
-      $("pp-error").innerHTML = `<div class="error">${d.error || "启动失败"}</div>`;
-      return;
-    }
-  }
-  await refreshPaper();
-});
-
-$("pp-step").addEventListener("click", async () => {
-  const res = await fetch("/api/paper/step", { method: "POST" });
-  const d = await res.json();
-  if (!res.ok) $("pp-error").innerHTML = `<div class="error">${d.error || "步进失败"}</div>`;
-  await refreshPaper();
-});
-
-$("pp-reset").addEventListener("click", async () => {
-  await fetch("/api/paper/reset", { method: "POST" });
-  await refreshPaper();
-});
-
-async function refreshPaper() {
-  try {
-    const res = await fetch("/api/paper", { cache: "no-store" });
-    const d = await res.json();
-    paperRunning = !!d.running;
-    $("pp-toggle").textContent = d.running ? "停止纸交易" : "启动纸交易";
-    $("pp-toggle").classList.toggle("danger", d.running);
-
-    if (!d.config) {
-      $("pp-metrics").innerHTML = '<div class="empty">尚未启动纸交易。设置参数后点「启动纸交易」。</div>';
-      $("pp-chart").innerHTML = "";
-      $("pp-positions").innerHTML = "";
-      $("pp-trades").innerHTML = "";
-      return;
-    }
-
-    const pnlCls = d.pnl >= 0 ? "pos" : "neg";
-    const liq = d.nearest_liq_pct == null ? "—" : fmt(d.nearest_liq_pct, 1) + "%";
-    $("pp-metrics").innerHTML =
-      metric("账户净值", "$" + fmt(d.equity, 2)) +
-      metric("累计盈亏", `${d.pnl >= 0 ? "+" : ""}$${fmt(d.pnl, 2)}`, pnlCls) +
-      metric("收益率", pct(d.pnl_pct), pnlCls) +
-      metric("已实现盈亏", `${d.realized_pnl >= 0 ? "+" : ""}$${fmt(d.realized_pnl, 2)}`, d.realized_pnl >= 0 ? "pos" : "neg") +
-      metric("未实现盈亏", `${d.unrealized_pnl >= 0 ? "+" : ""}$${fmt(d.unrealized_pnl, 2)}`, d.unrealized_pnl >= 0 ? "pos" : "neg") +
-      metric("平仓胜率", fmt(d.win_rate, 1) + "%") +
-      metric("爆仓次数", d.liquidations, d.liquidations > 0 ? "neg" : "pos") +
-      metric("杠杆", fmt(d.leverage, 0) + "×") +
-      metric("总名义敞口", "$" + fmt(d.gross_notional, 0)) +
-      metric("净敞口（市场中性）", "$" + fmt(d.net_notional, 0), Math.abs(d.net_notional) < 1 ? "pos" : "") +
-      metric("账户强平缓冲", fmt(d.liq_buffer_pct, 1) + "%", d.liq_buffer_pct < 40 ? "neg" : "pos") +
-      metric("强平净值线", "$" + fmt(d.liq_equity, 0)) +
-      metric("维持保证金", "$" + fmt(d.maintenance_margin, 0)) +
-      metric("初始保证金占用", "$" + fmt(d.margin_used, 0) + ` (${fmt(d.margin_usage_pct, 0)}%)`) +
-      metric("逐仓距爆仓(最小)", liq, d.nearest_liq_pct != null && d.nearest_liq_pct < 20 ? "neg" : "") +
-      metric("同期等权市场（参考）", pct(d.market_pct), d.market_pct >= 0 ? "pos" : "neg") +
-      metric("已运行天数", d.days_elapsed) +
-      metric("累计成本", "$" + fmt(d.total_cost, 2));
-
-    renderChart(d.history);
-    renderDailyPnl(d.history, d.config ? d.config.capital : 1);
-    renderPositions(d.positions);
-    renderTrades(d.trades, d.config);
-    renderHolding(d.trades);
-  } catch (e) {
-    $("pp-error").innerHTML = `<div class="error">${e.message}</div>`;
-  }
-}
-
-function sideLabel(s) {
-  return s === "long"
-    ? '<span class="badge ok">多</span>'
-    : '<span class="badge neg-badge">空</span>';
-}
-
-function renderPositions(positions) {
-  if (!positions || !positions.length) {
-    $("pp-positions").innerHTML = '<div class="empty">暂无持仓</div>';
-    return;
-  }
-  const rows = positions
-    .slice()
-    .sort((a, b) => (a.side === b.side ? b.notional - a.notional : a.side === "long" ? -1 : 1))
-    .map((p) => {
-      const cls = p.unrealized_pnl >= 0 ? "pos" : "neg";
-      const dist =
-        p.side === "long"
-          ? ((p.mark_price - p.liq_price) / p.mark_price) * 100
-          : ((p.liq_price - p.mark_price) / p.mark_price) * 100;
-      return `<tr>
-        <td>${p.coin}</td>
-        <td>${sideLabel(p.side)}</td>
-        <td>$${fmt(p.notional, 0)}</td>
-        <td>${fmt(p.basis_price || p.entry_price, 6)}</td>
-        <td>${fmt(p.mark_price, 6)}</td>
-        <td class="${cls}">${p.unrealized_pnl >= 0 ? "+" : ""}$${fmt(p.unrealized_pnl, 2)}</td>
-        <td>${fmt(p.liq_price, 6)}</td>
-        <td class="${dist < 20 ? "neg" : "muted"}">${fmt(dist, 1)}%</td>
-      </tr>`;
-    })
-    .join("");
-  $("pp-positions").innerHTML = `<div class="table-scroll"><table><thead><tr>
-    <th>币</th><th>方向</th><th>名义</th><th>均价</th><th>当前价</th>
-    <th>未实现盈亏</th><th>爆仓价</th><th>距爆仓</th>
-  </tr></thead><tbody>${rows}</tbody></table></div>`;
-}
-
-function renderTrades(trades, config) {
-  lastTrades = trades || [];
-  lastConfig = config;
-  if (!trades || !trades.length) {
-    $("pp-trades").innerHTML =
-      '<div class="empty">还没有平仓记录（首次换仓后开始出现）</div>';
-    return;
-  }
-  const list = trades.slice().reverse();
-  const realized = list.reduce((s, t) => s + t.pnl_usd, 0);
-  const wins = list.filter((t) => t.pnl_usd > 0).length;
-  const pages = Math.max(1, Math.ceil(list.length / PAGE_SIZE));
-  if (tradesPage > pages - 1) tradesPage = 0;
-  const pageItems = list.slice(tradesPage * PAGE_SIZE, (tradesPage + 1) * PAGE_SIZE);
-  const rows = pageItems
-    .map((t) => {
-      const cls = t.pnl_usd >= 0 ? "pos" : "neg";
-      const d1 = ts2d(t.entry_ts);
-      const d2 = ts2d(t.exit_ts);
-      return `<tr>
-        <td>${t.coin}</td>
-        <td>${sideLabel(t.side)}</td>
-        <td>${fmt(t.avg_entry || t.entry_price, 6)}</td>
-        <td>${fmt(t.exit_price, 6)}</td>
-        <td class="${cls}">${t.pnl_usd >= 0 ? "+" : ""}$${fmt(t.pnl_usd, 2)}</td>
-        <td class="${cls}">${pct(t.pnl_pct)}</td>
-        <td class="muted">${d1} → ${d2}</td>
-        <td class="muted">${t.reason === "liquidated" ? "爆仓强平" : "换仓"}</td>
-      </tr>`;
-    })
-    .join("");
-  $("pp-trades").innerHTML = `<div class="note">
-      共 ${list.length} 笔平仓 · 已实现盈亏 <b class="${realized >= 0 ? "pos" : "neg"}">${realized >= 0 ? "+" : ""}$${fmt(realized, 2)}</b>
-      · 胜率 ${fmt((wins / list.length) * 100, 1)}%
-    </div>
-    <div class="table-scroll"><table><thead><tr>
-      <th>币</th><th>方向</th><th>均价</th><th>出场价</th><th>盈亏</th><th>盈亏%</th><th>持有</th><th>原因</th>
-    </tr></thead><tbody>${rows}</tbody></table></div>
-    ${pager("trades", list.length, tradesPage)}`;
-}
-
-
-
-// ---------- 分页 ----------
-const PAGE_SIZE = 10;
-const LIVE_PAGE_SIZE = 5;
-let dailyPage = 0;
-let tradesPage = 0;
-let lastDaily = [];
-let lastTrades = [];
-let lastConfig = null;
-let lastCapital = 1;
-
-// 通用分页条；点击由全局委托处理
-function pager(key, total, page, size) {
-  const per = size || PAGE_SIZE;
-  const pages = Math.max(1, Math.ceil(total / per));
-  const p = Math.min(Math.max(0, page), pages - 1);
-  return `<div class="pager">
-    <button class="btn ghost" data-pager="${key}" data-to="${p - 1}" ${p <= 0 ? "disabled" : ""}>← 上一页</button>
-    <span class="info">第 ${p + 1} / ${pages} 页 · 共 ${total} 条</span>
-    <button class="btn ghost" data-pager="${key}" data-to="${p + 1}" ${p >= pages - 1 ? "disabled" : ""}>下一页 →</button>
-  </div>`;
-}
-
-document.addEventListener("click", (e) => {
-  const btn = e.target.closest("[data-pager]");
-  if (!btn) return;
-  const key = btn.dataset.pager;
-  const to = Number(btn.dataset.to);
-  if (key === "daily") {
-    dailyPage = to;
-    renderDailyPnl(lastDaily, lastCapital);
-  } else if (key === "trades") {
-    tradesPage = to;
-    renderTrades(lastTrades, lastConfig);
-  } else if (key === "live") {
-    livePage = to;
-    renderMonitor(lastLiveData);
-  }
-});
-
-// 每日盈亏：从净值曲线上取相邻两点的差
-function renderDailyPnl(history, capital) {
-  lastDaily = history || [];
-  lastCapital = capital;
-  if (!history || history.length < 2) {
-    $("pp-daily").innerHTML = '<div class="empty">还没有完整交易日（需要至少 2 天）</div>';
-    return;
-  }
-  const rows = [];
-  for (let i = 1; i < history.length; i++) {
-    const prev = history[i - 1], cur = history[i];
-    const pnl = cur.equity - prev.equity;
-    const pct = prev.equity > 0 ? (pnl / prev.equity) * 100 : 0;
-    const mkt = prev.market > 0 ? ((cur.market / prev.market) - 1) * 100 : 0;
-    rows.push({ ts: cur.ts, equity: cur.equity, pnl, pct, mkt });
-  }
-  const list = rows.slice().reverse();
-  const pages = Math.max(1, Math.ceil(list.length / PAGE_SIZE));
-  if (dailyPage > pages - 1) dailyPage = 0;
-  const show = list.slice(dailyPage * PAGE_SIZE, (dailyPage + 1) * PAGE_SIZE);
-  const wins = rows.filter((r) => r.pnl > 0).length;
-  const total = rows.reduce((s, r) => s + r.pnl, 0);
-  const best = rows.reduce((a, b) => (b.pnl > a.pnl ? b : a), rows[0]);
-  const worst = rows.reduce((a, b) => (b.pnl < a.pnl ? b : a), rows[0]);
-  const body = show
-    .map((r) => {
-      const cls = r.pnl >= 0 ? "pos" : "neg";
-      return `<tr>
-        <td>${ts2d(r.ts)}</td>
-        <td>$${fmt(r.equity, 2)}</td>
-        <td class="${cls}">${r.pnl >= 0 ? "+" : ""}$${fmt(r.pnl, 2)}</td>
-        <td class="${cls}">${pct(r.pct)}</td>
-        <td class="muted">${pct(r.mkt)}</td>
-      </tr>`;
-    })
-    .join("");
-  $("pp-daily").innerHTML = `<div class="note">
-      共 ${rows.length} 个交易日 · 上涨 ${wins} 天 / 下跌 ${rows.length - wins} 天（${fmt((wins / rows.length) * 100, 1)}% 胜率）
-      · 累计 ${total >= 0 ? "+" : ""}$${fmt(total, 2)}
-      · 最好 ${ts2d(best.ts)} +$${fmt(best.pnl, 2)}
-      · 最差 ${ts2d(worst.ts)} $${fmt(worst.pnl, 2)}
-    </div>
-    <div class="table-scroll"><table><thead><tr>
-      <th>日期(UTC)</th><th>净值</th><th>当日盈亏</th><th>当日%</th><th>同期市场%</th>
-    </tr></thead><tbody>${body}</tbody></table></div>
-    ${pager("daily", list.length, dailyPage)}`;
-}
-
-// 持有期分析：赚的钱来自长仓还是短仓
-function renderHolding(trades) {
-  if (!trades || !trades.length) {
-    $("pp-holding").innerHTML = '<div class="empty">还没有平仓记录</div>';
-    return;
-  }
-  const buckets = [
-    ["1 天内", 0, 1],
-    ["2-3 天", 1, 3],
-    ["4-7 天", 3, 7],
-    ["8-14 天", 7, 14],
-    ["15 天以上", 14, 1e9],
-  ];
-  const rows = buckets.map(([label, lo, hi]) => {
-    const v = trades.filter(
-      (t) => lo < (t.exit_ts - t.entry_ts) / 86400000 && (t.exit_ts - t.entry_ts) / 86400000 <= hi
-    );
-    if (!v.length) return { label, n: 0, avg: 0, win: 0, sum: 0 };
-    const sum = v.reduce((s, t) => s + t.pnl_usd, 0);
-    return {
-      label,
-      n: v.length,
-      avg: sum / v.length,
-      win: (v.filter((t) => t.pnl_usd > 0).length / v.length) * 100,
-      sum,
-    };
-  });
-  const all = trades.map((t) => (t.exit_ts - t.entry_ts) / 86400000);
-  const avgHold = all.reduce((a, b) => a + b, 0) / all.length;
-  const sorted = all.slice().sort((a, b) => a - b);
-  const medHold = sorted[Math.floor(sorted.length / 2)];
-
-  $("pp-holding").innerHTML = `<div class="note">
-      平均持有 <b>${fmt(avgHold, 1)} 天</b> · 中位 <b>${fmt(medHold, 0)} 天</b>
-      · 规律：<b>持有越久越赚钱</b>，短命仓位是亏损来源（这也是为什么不该加止损）
-    </div>
-    <div class="table-scroll"><table><thead><tr>
-      <th>持有期</th><th>笔数</th><th>占比</th><th>平均盈亏</th><th>合计盈亏</th><th>胜率</th>
-    </tr></thead><tbody>${rows
-      .map((r) => {
-        const cls = r.avg >= 0 ? "pos" : "neg";
-        return `<tr>
-          <td>${r.label}</td><td>${r.n}</td>
-          <td>${fmt((r.n / trades.length) * 100, 1)}%</td>
-          <td class="${cls}">${r.avg >= 0 ? "+" : ""}$${fmt(r.avg, 2)}</td>
-          <td class="${cls}">${r.sum >= 0 ? "+" : ""}$${fmt(r.sum, 2)}</td>
-          <td>${fmt(r.win, 0)}%</td>
-        </tr>`;
-      })
-      .join("")}</tbody></table></div>`;
-}
-
-// 选一组好看的坐标轴刻度
+// ---------- 渲染工具 ----------
 function niceAxis(lo, hi, ticks) {
   if (!(hi > lo)) {
-    // 完全平直时给一个 ±1% 的窗口，否则整张图只有一根网格线
     const step = Math.max(1, Math.round(Math.abs(lo) * 0.01));
     return { lo: lo - step, hi: lo + step, lines: [lo - step, lo, lo + step] };
   }
@@ -447,77 +68,57 @@ function niceAxis(lo, hi, ticks) {
   return { lo: nlo, hi: nhi, lines };
 }
 
-function renderChart(history) {
-  if (!history || history.length < 2) {
-    $("pp-chart").innerHTML = '<div class="empty">数据不足，曲线需要至少 2 个点</div>';
-    return;
-  }
-  const W = 1080, H = 300;
-  const padL = 78, padR = 84, padT = 16, padB = 34;
-  const cap = history[0].equity || 1;
-  const strat = history.map((p) => p.equity);
-  const mkt = history.map((p) => p.market * cap);
-  const ax = niceAxis(Math.min(...strat.concat(mkt)), Math.max(...strat.concat(mkt)), 5);
-  const span = ax.hi - ax.lo || 1;
-  const n = history.length;
-  const X = (i) => padL + (i / (n - 1)) * (W - padL - padR);
-  const Y = (v) => padT + (1 - (v - ax.lo) / span) * (H - padT - padB);
-  const money = (v) => "$" + Math.round(v).toLocaleString();
-
-  const grid = ax.lines
-    .map((v) => {
-      const y = Y(v);
-      return `<line x1="${padL}" y1="${y}" x2="${W - padR}" y2="${y}" stroke="#eef1f6"/>
-        <text x="${padL - 8}" y="${y + 4}" text-anchor="end" font-size="11" fill="#768297">${money(v)}</text>`;
-    })
-    .join("");
-
-  const poly = (arr, color, w) =>
-    `<polyline points="${arr.map((v, i) => `${X(i)},${Y(v)}`).join(" ")}" fill="none" stroke="${color}" stroke-width="${w}"/>`;
-
-  const xlabels = [0, Math.floor((n - 1) / 2), n - 1]
-    .map((i) => {
-      const anchor = i === 0 ? "start" : i === n - 1 ? "end" : "middle";
-      return `<text x="${X(i)}" y="${H - 10}" text-anchor="${anchor}" font-size="11" fill="#768297">${ts2d(history[i].ts)}</text>`;
-    })
-    .join("");
-
-  const baseY = Y(cap);
-  const lastS = strat[n - 1], lastM = mkt[n - 1];
-  const yS = Y(lastS), yM = Y(lastM);
-  // 端点标签互相挨太近会叠成糊的，错开或省略
-  const baseVisible =
-    cap >= ax.lo && cap <= ax.hi && Math.abs(yS - baseY) >= 15 && Math.abs(yM - baseY) >= 15;
-  const baseline =
-    cap >= ax.lo && cap <= ax.hi
-      ? `<line x1="${padL}" y1="${baseY}" x2="${W - padR}" y2="${baseY}" stroke="#c9d3e3" stroke-width="1" stroke-dasharray="4 4"/>` +
-        (baseVisible
-          ? `<text x="${W - padR + 6}" y="${baseY + 4}" font-size="11" fill="#9aa6b8" paint-order="stroke" stroke="#fff" stroke-width="3">本金</text>`
-          : "")
-      : "";
-  const marketLabel =
-    Math.abs(yS - yM) >= 14
-      ? `<text x="${W - padR + 6}" y="${yM + 4}" font-size="12" fill="#768297" paint-order="stroke" stroke="#fff" stroke-width="3">${money(lastM)}</text>`
-      : "";
-  const endLabels = `
-    <text x="${W - padR + 6}" y="${yS + 4}" font-size="12" font-weight="600" fill="#2d6df6" paint-order="stroke" stroke="#fff" stroke-width="3">${money(lastS)}</text>
-    ${marketLabel}`;
-
-  $("pp-chart").innerHTML = `
-    <svg viewBox="0 0 ${W} ${H}" role="img" aria-label="净值曲线">
-      ${grid}
-      ${baseline}
-      ${poly(mkt, "#768297", 1.6)}
-      ${poly(strat, "#2d6df6", 2.2)}
-      ${endLabels}
-      ${xlabels}
-    </svg>
-    <div class="legend">
-      <span><span style="color:#2d6df6">━</span> 策略净值（多空前 20%，市场中性）</span>
-      <span><span style="color:#768297">━</span> 等权市场（若无对冲会拿到的）</span>
-      <span>本金 ${money(cap)} · ${ts2d(history[0].ts)} → ${ts2d(history[n - 1].ts)}</span>
-    </div>`;
+function metric(k, v, cls) {
+  return `<div class="metric"><div class="k">${k}</div><div class="v ${cls || ""}">${v}</div></div>`;
 }
+
+function metricGroup(title, html) {
+  return `<div class="metric-group"><div class="g-title">${title}</div><div class="metrics">${html}</div></div>`;
+}
+
+function pager(key, total, page, size) {
+  const per = size || LIVE_PAGE_SIZE;
+  const pages = Math.max(1, Math.ceil(total / per));
+  const p = Math.min(Math.max(0, page), pages - 1);
+  return `<div class="pager">
+    <button class="btn ghost" data-pager="${key}" data-to="${p - 1}" ${p <= 0 ? "disabled" : ""}>← 上一页</button>
+    <span class="info">第 ${p + 1} / ${pages} 页 · 共 ${total} 条</span>
+    <button class="btn ghost" data-pager="${key}" data-to="${p + 1}" ${p >= pages - 1 ? "disabled" : ""}>下一页 →</button>
+  </div>`;
+}
+
+function sideLabel(s) {
+  return s === "long"
+    ? '<span class="badge ok">多</span>'
+    : '<span class="badge neg-badge">空</span>';
+}
+
+
+
+
+
+// ---------- 分页 ----------
+const LIVE_PAGE_SIZE = 5;
+
+// 通用分页条；点击由全局委托处理
+
+document.addEventListener("click", (e) => {
+  const btn = e.target.closest("[data-pager]");
+  if (!btn) return;
+  const key = btn.dataset.pager;
+  const to = Number(btn.dataset.to);
+  if (key === "live") {
+    livePage = to;
+    renderMonitor(lastLiveData);
+  }
+});
+
+// 每日盈亏：从净值曲线上取相邻两点的差
+
+// 持有期分析：赚的钱来自长仓还是短仓
+
+// 选一组好看的坐标轴刻度
+
 
 
 // ==================== 实盘设置 ====================
@@ -651,6 +252,29 @@ let livePage = 0;
 let lastLiveData = null;
 
 // 从下单记录里还原真实成交滑点（正 = 成本增加）
+// 汇总下单记录：已实现盈亏 + 实测滑点（都用同一套解析，避免口径不一致）
+function chronRecords(d) {
+  const recs = d.records || [];
+  const hints = entryHints(recs);
+  let realized = 0;
+  let n = 0;
+  const slips = [];
+  recs.forEach((r, i) => {
+    const f = parseFill(r, hints[i]);
+    if (f.kind === "filled") {
+      if (f.pnl != null) {
+        realized += f.pnl;
+        n++;
+      }
+      if (isFinite(f.slip)) slips.push(f.slip);
+    }
+  });
+  const slip = slips.length
+    ? { avg: slips.reduce((a, b) => a + b, 0) / slips.length, n: slips.length }
+    : null;
+  return { realized, n, slip };
+}
+
 function slippageStats(records) {
   const list = [];
   for (const r of records || []) {
@@ -768,47 +392,39 @@ function renderMonitor(d) {
     <span class="tag">${tag}</span><span>${text}</span>${autoText}${lastText}${freshness}
   </div>`;
 
+  const parsed = chronRecords(d);
+  const realized = parsed.realized;
+  const slip = parsed.slip;
+  const targetLev = (c.leverage || 0) * (c.margin_buffer || 1);
+  const actualLev = eq > 0 ? (d.gross_notional || 0) / eq : 0;
+  const nPos = pos.length;
+  const nCross = nPos - (d.isolated_count || 0);
+
   $("mo-metrics").innerHTML =
-    metric("实盘状态", holding ? "运行中" : c.armed ? "待建仓" : "未启用",
-      holding ? "pos" : c.armed ? "" : "neg") +
-    metric("账户净值", "$" + fmt(eq, 2)) +
-    metric("累计盈亏", valid ? (pnl >= 0 ? "+" : "") + "$" + fmt(pnl, 2) : "—", valid && pnl >= 0 ? "pos" : "neg") +
-    metric("收益率", valid ? pct(pnlPct) : "—", valid && pnlPct >= 0 ? "pos" : "neg") +
-    metric("持仓数", pos.length) +
-    metric("杠杆", fmt(c.leverage || 0, 1) + "×") +
-    metric("总名义敞口", "$" + fmt(d.gross_notional || 0, 0)) +
-    metric("净敞口（市场中性）", "$" + fmt(d.net_notional || 0, 2), Math.abs(d.net_notional || 0) < 1 ? "pos" : "") +
-    metric("账户强平缓冲", fmt(buffer, 1) + "%", buffer < 40 ? "neg" : "pos") +
-    metric("强平净值线", "$" + fmt(d.maintenance_margin || 0, 0)) +
-    metric("维持保证金", "$" + fmt(d.maintenance_margin || 0, 0)) +
-    metric("逐仓距爆仓(最小)", d.nearest_liq_pct == null ? "—" : fmt(d.nearest_liq_pct, 1) + "%",
-      d.nearest_liq_pct != null && d.nearest_liq_pct < 20 ? "neg" : "") +
-    metric("保证金模式", (d.positions || []).length ? ((d.positions || []).length - (d.isolated_count || 0)) + " 全仓 / " + (d.isolated_count || 0) + " 逐仓" : "—",
-      (d.isolated_count || 0) > 0 ? "neg" : "pos") +
-    metric("最后调仓", d.last_run_at ? `<span class="sm">${ts2m(d.last_run_at)}</span>` : "—") +
-    (() => {
-      const chron0 = d.records || [];
-      const hints0 = entryHints(chron0);
-      let real = 0, n = 0;
-      chron0.forEach((r, i) => {
-        const f = parseFill(r, hints0[i]);
-        if (f.kind === "filled" && f.pnl != null) {
-          real += f.pnl;
-          n++;
-        }
-      });
-      if (!n) return metric("已实现盈亏", "—");
-      const cls = real >= 0 ? "pos" : "neg";
-      return metric(`已实现盈亏 (${n}笔平仓)`,
-        `<span class="sm">${real >= 0 ? "+" : ""}$${fmt(real, 2)}</span>`, cls);
-    })() +
-    (() => {
-      const sl = slippageStats(d.records);
-      if (!sl) return metric("实测平均滑点", "—");
-      const cls = sl.avg > 0.15 ? "neg" : "pos";
-      const v = `<span class="sm">${sl.avg >= 0 ? "+" : ""}${sl.avg.toFixed(3)}%</span>`;
-      return metric(`实测平均滑点 (${sl.n}笔)`, v, cls);
-    })();
+    metricGroup(
+      "账户",
+      metric("净值", "$" + fmt(eq, 2)) +
+        metric("累计盈亏", valid ? (pnl >= 0 ? "+" : "") + "$" + fmt(pnl, 2) : "—", valid && pnl >= 0 ? "pos" : "neg") +
+        metric("收益率", valid ? pct(pnlPct) : "—", valid && pnlPct >= 0 ? "pos" : "neg") +
+        metric("持仓数", nPos)
+    ) +
+    metricGroup(
+      "风险",
+      metric("账户强平缓冲", fmt(buffer, 1) + "%", buffer < 40 ? "neg" : "pos") +
+        metric("净敞口", "$" + fmt(d.net_notional || 0, 2), Math.abs(d.net_notional || 0) < 5 ? "pos" : "neg") +
+        metric("实际 / 目标杠杆", fmt(actualLev, 2) + "x / " + fmt(targetLev, 2) + "x",
+          actualLev < targetLev * 0.9 ? "neg" : "pos") +
+        metric("保证金模式", nPos ? nCross + " 全仓 / " + (d.isolated_count || 0) + " 逐仓" : "—",
+          (d.isolated_count || 0) > 0 ? "neg" : "pos")
+    ) +
+    metricGroup(
+      "执行",
+      metric("实测平均滑点", slip ? slip.avg.toFixed(3) + "%" : "—", slip && slip.avg > 0.15 ? "neg" : "pos") +
+        metric("已实现盈亏", parsed.n ? (realized >= 0 ? "+" : "") + "$" + fmt(realized, 2) : "—",
+          realized >= 0 ? "pos" : "neg") +
+        metric("总名义敞口", "$" + fmt(d.gross_notional || 0, 0)) +
+        metric("最后调仓", d.last_run_at ? `<span class="sm">${ts2m(d.last_run_at)}</span>` : "—")
+    );
 
   // 检查清单按实测结果自动打勾
   const sl = slippageStats(d.records || []);
@@ -1103,121 +719,6 @@ $("pb-save").addEventListener("click", async () => {
 });
 
 
-// ==================== 策略组合 ====================
-async function refreshCombo() {
-  const btn = $("cb-refresh");
-  const label = btn.textContent;
-  btn.textContent = "计算中…";
-  btn.disabled = true;
-  try {
-    const res = await fetch("/api/portfolio", { cache: "no-store" });
-    const d = await res.json();
-    if (!d.ok) throw new Error(d.error || "计算失败");
-    renderCombo(d);
-  } catch (e) {
-    $("cb-metrics").innerHTML = `<div class="note neg">${e}</div>`;
-  }
-  btn.textContent = label;
-  btn.disabled = false;
-}
-
-function renderCombo(d) {
-  const a = d.momentum || {}, b = d.reversal || {};
-  const corr = d.corr || 0;
-  const best = (d.combos || []).reduce((x, y) => (y.sharpe > (x?.sharpe ?? -9) ? y : x), null);
-  $("cb-metrics").innerHTML =
-    metric("相关系数", corr.toFixed(3), Math.abs(corr) < 0.2 ? "pos" : "neg") +
-    metric("重叠天数", d.overlap_days || 0, (d.overlap_days || 0) >= 120 ? "pos" : "") +
-    metric("最优权重", best ? `${Math.round(best.weight_momentum * 100)}% 动量` : "—") +
-    metric("组合最优 Sharpe", best ? best.sharpe.toFixed(2) : "—", "pos") +
-    metric("日频动量 年化", pct(a.ann_pct || 0), (a.ann_pct || 0) >= 0 ? "pos" : "neg") +
-    metric("日频动量 Sharpe", fmt(a.sharpe || 0, 2)) +
-    metric("4h反转 年化", pct(b.ann_pct || 0), (b.ann_pct || 0) >= 0 ? "pos" : "neg") +
-    metric("4h反转 Sharpe", fmt(b.sharpe || 0, 2));
-
-  const combos = d.combos || [];
-  const bestW = best ? best.weight_momentum : -1;
-  $("cb-sweep").innerHTML = combos.length
-    ? `<div class="table-scroll"><table><thead><tr>
-        <th>权重（动量/反转）</th><th>年化</th><th>波动</th><th>Sharpe</th><th>t 值</th>
-      </tr></thead><tbody>${combos
-        .map((c) => {
-          const on = Math.abs(c.weight_momentum - bestW) < 1e-9;
-          return `<tr style="${on ? "background:var(--blue-soft)" : ""}">
-            <td>${Math.round(c.weight_momentum * 100)}% / ${Math.round((1 - c.weight_momentum) * 100)}%${on ? " ★" : ""}</td>
-            <td class="${c.ann_pct >= 0 ? "pos" : "neg"}">${pct(c.ann_pct)}</td>
-            <td>${fmt(c.vol_pct, 1)}%</td>
-            <td><b>${fmt(c.sharpe, 2)}</b></td>
-            <td>${fmt(c.t, 2)}</td>
-          </tr>`;
-        })
-        .join("")}</tbody></table></div>`
-    : '<div class="empty">重叠期太短，无法做组合分析（需要更多小时线）</div>';
-
-  renderComboChart(d);
-}
-
-function renderComboChart(d) {
-  const el = $("cb-chart");
-  const a = d.momentum || {}, b = d.reversal || {};
-  const best = (d.combos || []).reduce((x, y) => (y.sharpe > (x?.sharpe ?? -9) ? y : x), null);
-  if (!best) {
-    el.innerHTML = '<div class="empty">重叠期太短</div>';
-    return;
-  }
-  const ma = new Map(a.dates.map((t, i) => [t, a.rets[i]]));
-  const mb = new Map(b.dates.map((t, i) => [t, b.rets[i]]));
-  const days = [...ma.keys()].filter((t) => mb.has(t)).sort((x, y) => x - y);
-  if (days.length < 20) {
-    el.innerHTML = '<div class="empty">重叠期太短</div>';
-    return;
-  }
-  const w = best.weight_momentum;
-  const cum = (f) => {
-    let acc = 1;
-    return days.map((t) => (acc *= 1 + f(t)));
-  };
-  const cM = cum((t) => ma.get(t));
-  const cR = cum((t) => mb.get(t));
-  const cB = cum((t) => w * ma.get(t) + (1 - w) * mb.get(t));
-  const all = cM.concat(cR, cB);
-  const W = 1080, H = 300, padL = 78, padR = 84, padT = 16, padB = 34;
-  const ax = niceAxis(Math.min(...all), Math.max(...all), 5);
-  const span = ax.hi - ax.lo || 1;
-  const n = days.length;
-  const X = (i) => padL + (i / (n - 1)) * (W - padL - padR);
-  const Y = (v) => padT + (1 - (v - ax.lo) / span) * (H - padT - padB);
-  const num = (v) => v.toFixed(2);
-  const grid = ax.lines
-    .map((v) => `<line x1="${padL}" y1="${Y(v)}" x2="${W - padR}" y2="${Y(v)}" stroke="#eef1f6"/>
-      <text x="${padL - 8}" y="${Y(v) + 4}" text-anchor="end" font-size="11" fill="#768297">${num(v)}x</text>`)
-    .join("");
-  const line = (arr, color, wid) =>
-    `<polyline points="${arr.map((v, i) => `${X(i)},${Y(v)}`).join(" ")}" fill="none" stroke="${color}" stroke-width="${wid}"/>`;
-  const xlabels = [0, Math.floor((n - 1) / 2), n - 1]
-    .map((i) => {
-      const anchor = i === 0 ? "start" : i === n - 1 ? "end" : "middle";
-      return `<text x="${X(i)}" y="${H - 10}" text-anchor="${anchor}" font-size="11" fill="#768297">${ts2d(days[i])}</text>`;
-    })
-    .join("");
-  el.innerHTML = `
-    <svg viewBox="0 0 ${W} ${H}" role="img" aria-label="组合净值曲线">
-      ${grid}
-      ${line(cM, "#768297", 1.5)}
-      ${line(cR, "#149661", 1.5)}
-      ${line(cB, "#2d6df6", 2.4)}
-      <text x="${W - padR + 6}" y="${Y(cB[n - 1]) + 4}" font-size="12" font-weight="600" fill="#2d6df6" paint-order="stroke" stroke="#fff" stroke-width="3">${num(cB[n - 1])}x</text>
-      ${xlabels}
-    </svg>
-    <div class="legend">
-      <span><span style="color:#2d6df6">━</span> 组合（${Math.round(w * 100)}% 动量 + ${Math.round((1 - w) * 100)}% 反转）</span>
-      <span><span style="color:#768297">━</span> 日频动量</span>
-      <span><span style="color:#149661">━</span> 4h反转</span>
-      <span>${days.length} 天重叠期</span>
-    </div>`;
-}
-
-$("cb-refresh").addEventListener("click", refreshCombo);
 
 // ---------- 启动 ----------
 refreshStatus();
@@ -1226,8 +727,6 @@ setInterval(() => {
   const el = $("mo-ago");
   if (el && liveFetchedAt) el.textContent = `数据更新于 ${Math.round((Date.now() - liveFetchedAt) / 1000)} 秒前`;
 }, 1000);
-setInterval(refreshPaper, 10000);
-refreshPaper();
 // 每次轮询只打 3 个接口（账户 + 现货 + 批量价格），20 秒足够实时且远离限流。
 refreshLiveConfig();
 refreshMonitor(true);

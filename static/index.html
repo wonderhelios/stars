@@ -110,6 +110,9 @@
       .btn.ghost { background: var(--blue-soft); color: var(--blue-ink); }
       .btn.danger { background: var(--red-soft); color: var(--red); }
 
+      .metric-group { margin: 12px 0 0; }
+      .metric-group > .g-title { font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
+        color: var(--muted); font-weight: 650; margin-bottom: 6px; }
       .metrics { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; margin: 14px 0; }
       .metric { background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 12px; }
       .metric .k { font-size: 12px; color: var(--muted); }
@@ -234,12 +237,9 @@
     <header class="topbar">
       <div class="brand"><span class="dot"></span>stars · 动量 alpha 研究台</div>
       <nav class="nav">
-        <button data-view="backtest" class="active">回测</button>
-        <button data-view="paper">纸交易</button>
+        <button data-view="monitor" class="active">实盘监控</button>
         <button data-view="live">实盘设置</button>
-        <button data-view="monitor">实盘监控</button>
         <button data-view="probe">挂单探测</button>
-        <button data-view="combo">策略组合</button>
       </nav>
       <div class="status-pill">
         <span class="led" id="led"></span>
@@ -248,92 +248,7 @@
     </header>
 
     <main>
-      <!-- ============ 回测 ============ -->
-      <section id="view-backtest" class="view active">
-        <div class="panel">
-          <div class="panel-head">
-            <div>
-              <div class="panel-kicker">CROSS-SECTIONAL MOMENTUM</div>
-              <h2>横截面动量回测</h2>
-              <p class="sub">买过去 N 天涨幅前 X% 的流动币，用等权篮子对冲，看剥掉 beta 后的纯 alpha。</p>
-            </div>
-          </div>
-          <div class="controls">
-            <div class="field"><label>回看天数 lookback</label><input id="bt-lookback" type="number" value="14" min="1" /></div>
-            <div class="field"><label>多头比例 top%</label><input id="bt-top" type="number" value="0.2" min="0.05" max="0.5" step="0.05" /></div>
-            <div class="field"><label>最低滚动成交额(USD)</label>
-              <select id="bt-minvol">
-                <option value="1000000">$1M</option>
-                <option value="2000000">$2M</option>
-                <option value="5000000" selected>$5M</option>
-                <option value="10000000">$10M</option>
-              </select>
-            </div>
-            <div class="field"><label>对冲方式</label>
-              <select id="bt-hedge">
-                <option value="equal_weight" selected>等权对冲（纯 alpha）</option>
-                <option value="long_short">多空对冲</option>
-              </select>
-            </div>
-            <button class="btn" id="bt-run">运行回测</button>
-          </div>
-          <div id="bt-error"></div>
-          <div id="bt-result" class="hidden">
-            <div class="metrics" id="bt-metrics"></div>
-            <div class="panel-head"><h2>分年表现</h2></div>
-            <div id="bt-years"></div>
-            <div class="panel-head" style="margin-top:14px"><h2>成本敏感度（净年化）</h2></div>
-            <div id="bt-cost"></div>
-            <div class="panel-head" style="margin-top:14px"><h2>多头腿最常选的币</h2></div>
-            <div id="bt-coins"></div>
-          </div>
-        </div>
-      </section>
 
-      <!-- ============ 纸交易 ============ -->
-      <section id="view-paper" class="view">
-        <div class="panel">
-          <div class="panel-head">
-            <div>
-              <div class="panel-kicker">PAPER TRADING</div>
-              <h2>纸交易 · 前向验证</h2>
-              <p class="sub">用真实数据前向跑动量策略，验证「真实成交成本 = 回测假设」。</p>
-            </div>
-            <div>
-              <button class="btn ghost" id="pp-step">手动步进一天</button>
-              <button class="btn danger" id="pp-reset">重置</button>
-              <button class="btn" id="pp-toggle">启动纸交易</button>
-            </div>
-          </div>
-          <div class="controls" id="pp-config">
-            <div class="field"><label>初始资金 USD</label><input id="pp-capital" type="number" value="2000" /></div>
-            <div class="field"><label>杠杆</label><input id="pp-leverage" type="number" value="3" min="1" max="20" step="1" /></div>
-            <div class="field"><label>回看天数</label><input id="pp-lookback" type="number" value="14" /></div>
-            <div class="field"><label>多头比例</label><input id="pp-top" type="number" value="0.2" step="0.05" /></div>
-            <div class="field"><label>每腿仓位数上限</label><input id="pp-target" type="number" value="8" min="1" max="30" /></div>
-            <div class="field"><label>最低成交额(USD)</label>
-              <select id="pp-minvol">
-                <option value="1000000">$1M</option>
-                <option value="5000000" selected>$5M</option>
-                <option value="10000000">$10M</option>
-              </select>
-            </div>
-            <div class="field"><label>单边费率 %（Hyperliquid 实时）</label><input id="pp-fee" type="number" value="0.045" step="0.005" /></div>
-          </div>
-          <div id="pp-error"></div>
-          <div class="metrics" id="pp-metrics"></div>
-          <div class="panel-head"><h2>净值曲线（策略 vs 等权市场）</h2></div>
-          <div class="chart" id="pp-chart"></div>
-          <div class="panel-head" style="margin-top:14px"><h2>每日盈亏</h2></div>
-          <div id="pp-daily"></div>
-          <div class="panel-head" style="margin-top:14px"><h2>当前持仓</h2></div>
-          <div id="pp-positions"></div>
-          <div class="panel-head" style="margin-top:14px"><h2>交易记录</h2></div>
-          <div id="pp-trades"></div>
-          <div class="panel-head" style="margin-top:14px"><h2>持有期分析（赚的钱来自哪里）</h2></div>
-          <div id="pp-holding"></div>
-        </div>
-      </section>
 
       <!-- ============ 实盘设置 ============ -->
       <section id="view-live" class="view">
@@ -399,7 +314,7 @@
       </section>
 
       <!-- ============ 实盘监控 ============ -->
-      <section id="view-monitor" class="view">
+      <section id="view-monitor" class="view active">
         <div class="panel">
           <div class="panel-head">
             <div>
@@ -464,25 +379,6 @@
         </div>
       </section>
 
-      <!-- ============ 策略组合 ============ -->
-      <section id="view-combo" class="view">
-        <div class="panel">
-          <div class="panel-head">
-            <div>
-              <div class="panel-kicker">PORTFOLIO BLEND</div>
-              <h2>策略组合 · 日频动量 × 4h反转</h2>
-              <p class="sub">两个信号的<b>时间尺度完全不同</b>（14 天 vs 4 小时）。如果相关性接近 0，组合起来能在收益不变的前提下显著降低波动、提高 Sharpe。</p>
-            </div>
-            <div class="actions"><button class="btn ghost" id="cb-refresh">重算</button></div>
-          </div>
-          <div class="metrics" id="cb-metrics"></div>
-          <div class="panel-head" style="margin-top:14px"><h2>权重扫描</h2></div>
-          <div id="cb-sweep"></div>
-          <div class="panel-head" style="margin-top:14px"><h2>净值曲线（重叠期，起点归一）</h2></div>
-          <div class="chart" id="cb-chart"></div>
-          <p class="note"><b>怎么读：</b>单看 Sharpe 会高估——重叠期越短、市场越有利，数字越虚。<b>真正稳健的结论是「相关系数接近 0」</b>，这个性质不依赖收益水平。另外 4h 反转依赖 maker 挂单成交，实操难度远高于日频。</p>
-        </div>
-      </section>
 
     </main>
 
