@@ -297,6 +297,8 @@ pub async fn execute(
             if let Err(e) = exec.set_leverage(coin, lev).await {
                 log.push(format!("{coin}: 设置杠杆失败 {e}"));
             }
+            // 逐个设置，中间留点间隔，避免 16 个请求瞬间打满
+            tokio::time::sleep(std::time::Duration::from_millis(120)).await;
         }
     }
     for o in &plan.orders {

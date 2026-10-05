@@ -272,7 +272,10 @@ impl Exec {
     /// 传 false 会变成逐仓（这里曾经写错成 false）。
     pub async fn set_leverage(&self, coin: &str, leverage: u32) -> Result<()> {
         let trading = self.trading.as_ref().context("not a signing client")?;
-        let resp = trading.update_leverage(leverage, coin, true, None).await?;
+        let resp = sdk_retry(&format!("设置 {coin} 杠杆"), || {
+            trading.update_leverage(leverage, coin, true, None)
+        })
+        .await?;
         match resp {
             ExchangeResponseStatus::Ok(_) => Ok(()),
             ExchangeResponseStatus::Err(e) => bail!("leverage rejected for {coin}: {e}"),
@@ -304,16 +307,22 @@ impl Exec {
             px = order_price(aggressive, sz_decimals, true);
         }
         anyhow::ensure!(px > 0.0, "无法为 {coin} 构造有效价格（mid={mid}）");
-        let order = ClientOrderRequest {
-            asset: coin.to_string(),
-            is_buy: buy,
-            reduce_only,
-            limit_px: px,
-            sz: size,
-            cloid: Some(Uuid::new_v4()),
-            order_type: ClientOrder::Limit(ClientLimit { tif: "Ioc".into() }),
-        };
-        let resp = trading.order(order, None).await?;
+        // cloid 在重试间保持不变，避免重复下单被当成两笔
+        let cloid = Uuid::new_v4();
+        let coin_owned = coin.to_string();
+        let resp = sdk_retry(&format!("下单 {coin}"), || {
+            let order = ClientOrderRequest {
+                asset: coin_owned.clone(),
+                is_buy: buy,
+                reduce_only,
+                limit_px: px,
+                sz: size,
+                cloid: Some(cloid),
+                order_type: ClientOrder::Limit(ClientLimit { tif: "Ioc".into() }),
+            };
+            trading.order(order, None)
+        })
+        .await?;
         one_status(resp)
     }
 }
@@ -341,6 +350,32 @@ pub fn round_size(size: f64, sz_decimals: u32) -> f64 {
     }
     let factor = 10_f64.powi(sz_decimals as i32);
     (size * factor).floor() / factor
+}
+
+/// SDK 调用重试：Hyperliquid 在配额紧张时返回 429，SDK 会把原始错误抛出来。
+/// 下单和设杠杆都必须重试，否则用户看到的就是一句 429。
+async fn sdk_retry<T, F, Fut>(label: &str, mut f: F) -> Result<T>
+where
+    F: FnMut() -> Fut,
+    Fut: std::future::Future<Output = std::result::Result<T, hyperliquid_rust_sdk::Error>>,
+{
+    let mut last = String::new();
+    for attempt in 0..6u32 {
+        match f().await {
+            Ok(v) => return Ok(v),
+            Err(e) => {
+                let msg = format!("{e}");
+                let limited = msg.contains("429") || msg.contains("Too Many");
+                last = msg;
+                if !limited {
+                    return Err(anyhow!(last));
+                }
+                let wait = 700u64 * 2u64.pow(attempt.min(4));
+                tokio::time::sleep(Duration::from_millis(wait)).await;
+            }
+        }
+    }
+    Err(anyhow!("{label} 连续被限流（429），请稍后重试：{last}"))
 }
 
 fn one_status(value: ExchangeResponseStatus) -> Result<ExchangeDataStatus> {

@@ -131,6 +131,8 @@ async fn main() -> anyhow::Result<()> {
             let meta = meta.clone();
             let refresh = refresh.clone();
             tokio::spawn(async move {
+                // 启动后先等 3 分钟，避免用户刚部署就操作时和回填抢配额
+                tokio::time::sleep(Duration::from_secs(180)).await;
                 if let Err(e) = backfill_hourly(&store, &client, &meta, &refresh).await {
                     error!("小时线回填失败: {e}");
                 }
