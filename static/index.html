@@ -408,6 +408,7 @@
               <p class="sub">只读观测。<b>配置与启停在「实盘设置」。</b></p>
             </div>
             <div class="actions">
+              <button class="btn ghost" id="mo-clear">清空记录</button>
               <button class="btn ghost" id="mo-refresh">刷新</button>
             </div>
           </div>
@@ -418,6 +419,7 @@
           <div class="panel-head" style="margin-top:14px"><h2>当前持仓</h2></div>
           <div id="mo-positions"></div>
           <div class="panel-head" style="margin-top:14px"><h2>下单记录</h2></div>
+          <p class="note">只记录真实下单。修复前的版本曾把「设置杠杆失败」写到了错误的币上（用数组下标对应两个不同长度的列表）——那些是历史记录，无法追溯修正，可以点右上角「清空记录」清掉。</p>
           <div id="mo-records"></div>
         </div>
       </section>

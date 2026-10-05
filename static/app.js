@@ -997,6 +997,16 @@ async function refreshMonitor(force) {
 }
 
 $("mo-refresh").addEventListener("click", () => refreshMonitor(true));
+$("mo-clear").addEventListener("click", async () => {
+  if (!confirm("清空所有下单记录？净值曲线和配置会保留。")) return;
+  try {
+    const res = await fetch("/api/live/records/clear", { method: "POST" });
+    const d = await res.json();
+    if (d.ok) refreshMonitor(true);
+  } catch (e) {
+    alert("清空失败：" + e);
+  }
+});
 
 
 // ==================== 挂单探测 ====================

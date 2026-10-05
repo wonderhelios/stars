@@ -67,6 +67,7 @@ pub fn router(state: AppState) -> Router {
         .route("/api/live/run", post(live_run))
         .route("/api/live/reset", post(live_reset))
         .route("/api/live/rebuild", post(live_rebuild))
+        .route("/api/live/records/clear", post(live_records_clear))
         .route("/api/probe", get(probe_status))
         .route("/api/probe/config", post(probe_config))
         .route("/api/probe/reset", post(probe_reset))
@@ -600,4 +601,14 @@ async fn live_rebuild(State(state): State<AppState>) -> Response {
         Ok(log) => Json(json!({"ok": true, "log": log})).into_response(),
         Err(e) => Json(json!({"ok": false, "error": format!("{e}")})).into_response(),
     }
+}
+
+
+/// 只清空下单记录（保留净值曲线和配置）。用于清掉旧版本写下的错位记录。
+async fn live_records_clear(State(state): State<AppState>) -> Response {
+    let mut st = state.live.lock().await;
+    let n = st.records.len();
+    st.records.clear();
+    let _ = st.save(&state.live_path);
+    Json(json!({"ok": true, "cleared": n})).into_response()
 }
