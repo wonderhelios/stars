@@ -279,8 +279,10 @@ pub async fn snapshot(
     }
     snap.positions.sort_by(|a, b| a.coin.cmp(&b.coin));
     snap.isolated_count = snap.positions.iter().filter(|p| !p.is_cross).count();
+    // 不按 reduceOnly 过滤：该字段在 openOrders 里不一定存在，过滤会导致
+    // 表格永远是空的。程序只挂只减仓单，所以全部展示即可。
     if let Ok(orders) = exec.open_order_details().await {
-        snap.tp_orders = orders.into_iter().filter(|o| o.reduce_only).collect();
+        snap.tp_orders = orders;
     }
     snap.margin_used = if cfg.leverage > 0.0 {
         snap.gross_notional / cfg.leverage
@@ -588,15 +590,13 @@ pub async fn refresh_take_profits(
         if mid <= 0.0 {
             continue;
         }
-        // 多头：涨到 +tp 卖出；空头：跌到 -tp 买回
-        let (buy, raw) = if pos.size > 0.0 {
-            (false, mid * (1.0 + tp_pct))
-        } else {
-            (true, mid * (1.0 - tp_pct))
-        };
-        let px = order_price(raw, m.sz_decimals, buy);
+        let (buy, px) = take_profit_order(pos.size > 0.0, mid, tp_pct, m.sz_decimals);
         let size = round_size(pos.size.abs(), m.sz_decimals);
-        if size <= 0.0 || size * mid < 10.0 || px <= 0.0 {
+        if px <= 0.0 {
+            failed.push(format!("{coin}: 价位精度不足，无法挂出有效止盈价"));
+            continue;
+        }
+        if size <= 0.0 || size * mid < 10.0 {
             continue;
         }
         match exec.resting_reduce_order(coin, buy, size, px).await {
@@ -615,4 +615,95 @@ pub async fn refresh_take_profits(
         }
     ));
     Ok(log)
+}
+
+
+/// 交易所允许的最小价位（和 `order_price` 的精度规则一致）。
+fn price_tick(px: f64, sz_decimals: u32) -> f64 {
+    // dp 是「小数位数」，所以最小价位是 10^-dp（和 order_price 里的
+    // factor = 10^dp 相除口径一致）。
+    let dp = (4 - px.log10().floor() as i32).min(6 - sz_decimals as i32);
+    10_f64.powi(-dp)
+}
+
+/// 止盈单的方向与挂单价。多头要「卖出」且挂在市价上方，空头要「买入」且挂在
+/// 市价下方 —— 方向写反会变成加仓，价格写反会立刻成交变成市价单。
+///
+/// 低价币的价位精度可能不够（一个 tick 就超过止盈幅度），取整会把价格推到
+/// 市价的错误一侧。这时至少推离一个 tick；推不动就返回 0，让调用方跳过该币。
+pub fn take_profit_order(is_long: bool, mid: f64, tp_pct: f64, sz_decimals: u32) -> (bool, f64) {
+    if !mid.is_finite() || mid <= 0.0 {
+        return (true, 0.0);
+    }
+    let (buy, raw) = if is_long {
+        (false, mid * (1.0 + tp_pct))
+    } else {
+        (true, mid * (1.0 - tp_pct))
+    };
+    if !raw.is_finite() || raw <= 0.0 {
+        return (buy, 0.0);
+    }
+    let tick = price_tick(raw, sz_decimals);
+    let mut px = order_price(raw, sz_decimals, buy);
+    let right_side = |p: f64| p > 0.0 && if is_long { p > mid } else { p < mid };
+    for _ in 0..4 {
+        if right_side(px) {
+            return (buy, px);
+        }
+        px = if is_long { px + tick } else { px - tick };
+    }
+    if right_side(px) { (buy, px) } else { (buy, 0.0) }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn take_profit_sells_above_market_for_longs() {
+        let (buy, px) = take_profit_order(true, 100.0, 0.10, 2);
+        assert!(!buy, "多头止盈必须是卖出");
+        assert!(px > 100.0, "多头止盈必须挂在市价上方，实际 {px}");
+        assert!((px - 110.0).abs() < 0.5, "应接近 110，实际 {px}");
+    }
+
+    #[test]
+    fn take_profit_buys_below_market_for_shorts() {
+        let (buy, px) = take_profit_order(false, 100.0, 0.10, 2);
+        assert!(buy, "空头止盈必须是买入");
+        assert!(px < 100.0, "空头止盈必须挂在市价下方，实际 {px}");
+        assert!((px - 90.0).abs() < 0.5, "应接近 90，实际 {px}");
+    }
+
+    #[test]
+    fn take_profit_stays_on_the_correct_side_after_rounding() {
+        // 各种价位与精度下，取整都不能把挂单价推到市价错误的一侧（否则会立即
+        // 成交，变成市价单）。
+        for &mid in &[0.00001234_f64, 0.5, 3.14159, 87.65, 1234.5, 98765.4] {
+            for &sd in &[0u32, 1, 2, 4, 6] {
+                let (buy, px) = take_profit_order(true, mid, 0.10, sd);
+                assert!(!buy);
+                assert!(px > mid, "多头 mid={mid} sd={sd} 得到 {px}");
+                let (buy, px) = take_profit_order(false, mid, 0.10, sd);
+                assert!(buy);
+                assert!(px < mid, "空头 mid={mid} sd={sd} 得到 {px}");
+            }
+        }
+    }
+
+    #[test]
+    fn take_profit_price_is_never_zero_or_negative() {
+        // 价位精度不足时允许返回 0（调用方跳过该币），但绝不允许返回负数。
+        for &mid in &[0.000001_f64, 1.0, 100.0] {
+            for &tp in &[0.01, 0.1, 0.5] {
+                for &sd in &[0u32, 2, 6] {
+                    let (_, up) = take_profit_order(true, mid, tp, sd);
+                    let (_, dn) = take_profit_order(false, mid, tp, sd);
+                    assert!(up >= 0.0 && dn >= 0.0, "mid={mid} tp={tp} sd={sd} 得到 {up}/{dn}");
+                    assert!(up > mid || up == 0.0, "多头挂单价必须高于市价: {up} vs {mid}");
+                    assert!(dn < mid || dn == 0.0, "空头挂单价必须低于市价: {dn} vs {mid}");
+                }
+            }
+        }
+    }
 }

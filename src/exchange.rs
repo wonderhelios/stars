@@ -365,7 +365,9 @@ impl Exec {
                     side: if o["side"].as_str() == Some("B") { "买" } else { "卖" }.into(),
                     px: o["limitPx"].as_str().and_then(|x| x.parse().ok()).unwrap_or(0.0),
                     sz: o["sz"].as_str().and_then(|x| x.parse().ok()).unwrap_or(0.0),
-                    reduce_only: o["reduceOnly"].as_bool().unwrap_or(false),
+                    // openOrders 不一定返回 reduceOnly。本程序每次调仓都先撤光
+                    // 所有挂单，且只挂只减仓的止盈单，所以盘口上剩下的就是止盈单。
+                    reduce_only: o["reduceOnly"].as_bool().unwrap_or(true),
                 });
             }
         }
