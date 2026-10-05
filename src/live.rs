@@ -317,23 +317,23 @@ pub async fn run(
 
     let panel = trader::load_panel(store)?;
     anyhow::ensure!(panel.len() >= 20, "K 线缓存不足（{} 币）", panel.len());
-    let (long, short, liquid) = trader::ranking(&panel, &tc);
-    anyhow::ensure!(!long.is_empty(), "流动性过滤后没有候选");
+    let (weights, liquid) = trader::target_weights(&panel, &tc);
+    anyhow::ensure!(!weights.is_empty(), "流动性过滤后没有候选");
 
     let acct = exec.account().await?;
-    let mut coins: Vec<String> = long.iter().chain(short.iter()).cloned().collect();
+    let mut coins: Vec<String> = weights.iter().map(|(c, _)| c.clone()).collect();
     coins.extend(acct.positions.keys().cloned());
     coins.sort();
     coins.dedup();
     let mids = trader::fetch_mids(&exec, &coins).await;
 
-    let plan = trader::build_plan(&long, &short, &acct, markets, &mids, &tc, None);
+    let plan = trader::build_plan(&weights, &acct, markets, &mids, &tc, None);
 
     let mut plan_lines = vec![format!(
         "流动宇宙 {} 币 · 多头腿 {} · 空头腿 {} · 账户净值 ${:.2} · 每仓 ${:.2} · 杠杆 {:.0}x · 缓冲 {:.0}%",
         liquid.len(),
-        long.len(),
-        short.len(),
+        weights.iter().filter(|(_, w)| *w > 0.0).count(),
+        weights.iter().filter(|(_, w)| *w < 0.0).count(),
         plan.equity,
         plan.per_coin,
         cfg.leverage,
@@ -446,8 +446,8 @@ pub async fn rebuild_cross(
     let tc = cfg.trade_config();
 
     let panel = trader::load_panel(store)?;
-    let (long, short, _) = trader::ranking(&panel, &tc);
-    anyhow::ensure!(!long.is_empty(), "流动性过滤后没有候选");
+    let (weights, _) = trader::target_weights(&panel, &tc);
+    anyhow::ensure!(!weights.is_empty(), "流动性过滤后没有候选");
 
     let acct = exec.account().await?;
     if acct.positions.is_empty() {
@@ -455,8 +455,7 @@ pub async fn rebuild_cross(
     }
     let coins: Vec<String> = acct.positions.keys().cloned().collect();
     let mids = trader::fetch_mids(&exec, &coins).await;
-    let n = long.len().max(1);
-    let per_coin = acct.equity * cfg.margin_buffer * cfg.leverage / 2.0 / n as f64;
+    let per_coin = acct.equity * cfg.margin_buffer * cfg.leverage / weights.len().max(1) as f64;
 
     let mut log = vec![format!(
         "逐币转全仓：{} 个持仓 · 目标每仓 ${:.2}",
@@ -500,8 +499,9 @@ pub async fn rebuild_cross(
         tokio::time::sleep(std::time::Duration::from_millis(200)).await;
 
         // 3) 若仍在目标腿里，按目标重新开仓
-        let want_long = long.contains(coin);
-        let want_short = short.contains(coin);
+        let w = weights.iter().find(|(c, _)| c == coin).map(|(_, w)| *w).unwrap_or(0.0);
+        let want_long = w > 0.0;
+        let want_short = w < 0.0;
         if want_long || want_short {
             let tsize = crate::exchange::round_size(per_coin / mid, m.sz_decimals);
             if tsize * mid >= 10.0 {

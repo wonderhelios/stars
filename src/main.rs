@@ -413,9 +413,14 @@ async fn run_trade(args: &[String], db_path: &str) -> anyhow::Result<()> {
         panel.len()
     );
 
-    let (long, short, liquid) = trader::ranking(&panel, &cfg);
-    anyhow::ensure!(!long.is_empty(), "没有选出候选（流动性过滤后为空）");
-    println!("流动宇宙 {} 币 · 多头腿 {} · 空头腿 {}", liquid.len(), long.len(), short.len());
+    let (weights, liquid) = trader::target_weights(&panel, &cfg);
+    anyhow::ensure!(!weights.is_empty(), "没有选出候选（流动性过滤后为空）");
+    println!(
+        "流动宇宙 {} 币 · 多头腿 {} · 空头腿 {}",
+        liquid.len(),
+        weights.iter().filter(|(_, w)| *w > 0.0).count(),
+        weights.iter().filter(|(_, w)| *w < 0.0).count()
+    );
 
     // Account + markets (signing client only when live).
     let addr_env = std::env::var("HL_ACCOUNT_ADDRESS").ok();
@@ -466,18 +471,20 @@ async fn run_trade(args: &[String], db_path: &str) -> anyhow::Result<()> {
     };
 
     // Mids for every coin we might touch.
-    let mut coins: Vec<String> = long.iter().chain(short.iter()).cloned().collect();
+    let mut coins: Vec<String> = weights.iter().map(|(c, _)| c.clone()).collect();
     coins.extend(acct.positions.keys().cloned());
     coins.sort();
     coins.dedup();
     let mids = trader::fetch_mids(&exec, &coins).await;
 
-    let plan = trader::build_plan(&long, &short, &acct, &markets, &mids, &cfg, None);
+    let plan = trader::build_plan(&weights, &acct, &markets, &mids, &cfg, None);
     println!(
         "\n目标：每腿 {} 仓 · 每仓 ${:.2} · 目标总名义 ${:.0} · 杠杆 {}x · 保证金缓冲 {:.0}%",
-        cfg.target_positions.min(long.len().max(1)),
+        weights.iter().filter(|(_, w)| *w > 0.0).count(),
         plan.per_coin,
-        plan.per_coin * 2.0 * cfg.target_positions.min(long.len().max(1)) as f64,
+        plan.per_coin
+            * 2.0
+            * weights.iter().filter(|(_, w)| *w > 0.0).count() as f64,
         cfg.leverage,
         cfg.margin_buffer * 100.0
     );

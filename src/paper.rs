@@ -218,7 +218,6 @@ struct Panel {
     closes: HashMap<String, BTreeMap<i64, f64>>,
     highs: HashMap<String, BTreeMap<i64, f64>>,
     lows: HashMap<String, BTreeMap<i64, f64>>,
-    dollar_vol: HashMap<String, BTreeMap<i64, f64>>,
 }
 
 impl Panel {
@@ -227,32 +226,27 @@ impl Panel {
         let mut closes: HashMap<String, BTreeMap<i64, f64>> = Default::default();
         let mut highs: HashMap<String, BTreeMap<i64, f64>> = Default::default();
         let mut lows: HashMap<String, BTreeMap<i64, f64>> = Default::default();
-        let mut dollar_vol: HashMap<String, BTreeMap<i64, f64>> = Default::default();
         for e in panel {
             let mut cm = BTreeMap::new();
             let mut hm = BTreeMap::new();
             let mut lm = BTreeMap::new();
-            let mut vm = BTreeMap::new();
             for c in &e.candles {
                 if c.c > 0.0 {
                     timeline.insert(c.t);
                     cm.insert(c.t, c.c);
                     hm.insert(c.t, c.h);
                     lm.insert(c.t, c.l);
-                    vm.insert(c.t, c.v * c.c);
                 }
             }
             closes.insert(e.coin.clone(), cm);
             highs.insert(e.coin.clone(), hm);
             lows.insert(e.coin.clone(), lm);
-            dollar_vol.insert(e.coin.clone(), vm);
         }
         Self {
             ts: timeline.into_iter().collect(),
             closes,
             highs,
             lows,
-            dollar_vol,
         }
     }
 
@@ -276,8 +270,9 @@ pub fn step(state: &mut PaperState, panel: &[PanelEntry], max_lev: &HashMap<Stri
         return;
     };
     let p = Panel::build(panel);
-    let vol_window = 30usize;
-    if p.ts.len() < cfg.lookback + vol_window + 2 {
+    // 与实盘共用同一套因子面板，避免两份实现漂移
+    let fp = crate::trader::FactorPanel::build(panel);
+    if p.ts.len() < cfg.lookback + 30 + 2 {
         return;
     }
 
@@ -286,7 +281,7 @@ pub fn step(state: &mut PaperState, panel: &[PanelEntry], max_lev: &HashMap<Stri
         let last = p.ts.len() - 1;
         let start = last
             .saturating_sub(cfg.replay_days)
-            .max(cfg.lookback + vol_window);
+            .max(cfg.lookback + 30);
         (start..=last).collect()
     } else {
         match p.ts.binary_search(&state.last_ts.unwrap()) {
@@ -304,7 +299,7 @@ pub fn step(state: &mut PaperState, panel: &[PanelEntry], max_lev: &HashMap<Stri
     for (n, &i) in days.iter().enumerate() {
         let is_first = fresh && n == 0;
         let is_replay = fresh;
-        advance(state, &cfg, &p, max_lev, i, is_first, is_replay, vol_window);
+        advance(state, &cfg, &p, &fp, max_lev, i, is_first, is_replay);
         if fresh && n == 0 {
             state.started_at = Some(p.ts[i]);
         }
@@ -316,54 +311,42 @@ fn advance(
     state: &mut PaperState,
     cfg: &PaperConfig,
     p: &Panel,
+    fp: &crate::trader::FactorPanel,
     max_lev: &HashMap<String, u32>,
     i: usize,
     is_first: bool,
     replayed: bool,
-    vol_window: usize,
 ) {
     let t = p.ts[i];
-    // Rank the point-in-time liquid universe by trailing momentum.
-    let mut sigs: Vec<(String, f64)> = Vec::new();
-    for (coin, cm) in p.closes.iter() {
-        let Some(vm) = p.dollar_vol.get(coin) else { continue };
-        let mut vols: Vec<f64> = Vec::with_capacity(vol_window);
-        for j in (i - vol_window)..i {
-            if let Some(v) = vm.get(&p.ts[j]) {
-                vols.push(*v);
-            }
-        }
-        if vols.len() < 5 {
-            continue;
-        }
-        let avg = vols.iter().sum::<f64>() / vols.len() as f64;
-        if avg < cfg.min_vol_usd {
-            continue;
-        }
-        let (Some(now), Some(past)) = (cm.get(&t), cm.get(&p.ts[i - cfg.lookback])) else {
-            continue;
-        };
-        if *now <= 0.0 || *past <= 0.0 {
-            continue;
-        }
-        sigs.push((coin.clone(), now / past - 1.0));
-    }
-    if sigs.len() < 12 {
+    // 三因子打分（波动调整动量 / 低波动 / 成交量冲击）—— 与实盘同一份代码。
+    let tc = crate::trader::TradeConfig {
+        lookback: cfg.lookback,
+        top_frac: cfg.top_frac,
+        min_vol_usd: cfg.min_vol_usd,
+        target_positions: cfg.target_positions,
+        leverage: cfg.leverage,
+        ..Default::default()
+    };
+    let weights = fp.weights_at(i, &tc);
+    if weights.len() < 12 {
         return;
     }
-    sigs.sort_by(|a, b| a.1.partial_cmp(&b.1).unwrap());
-    let k = ((sigs.len() as f64 * cfg.top_frac).round() as usize).max(1);
-    // Hold at most `target_positions` names per leg, but never more than the
-    // number the momentum ranking actually offers.
-    let n = k.min(cfg.target_positions).max(1);
-    let long_leg: HashSet<String> = sigs[sigs.len() - n..].iter().map(|s| s.0.clone()).collect();
-    let short_leg: HashSet<String> = sigs[..n].iter().map(|s| s.0.clone()).collect();
+    // 权重来自「三本账平均」，每仓名义 = |w| × 净值 × 杠杆
+    let wmap: HashMap<String, f64> = weights.iter().cloned().collect();
+    let long_leg: HashSet<String> = weights
+        .iter()
+        .filter(|(_, w)| *w > 0.0)
+        .map(|(c, _)| c.clone())
+        .collect();
+    let short_leg: HashSet<String> = weights
+        .iter()
+        .filter(|(_, w)| *w < 0.0)
+        .map(|(c, _)| c.clone())
+        .collect();
 
     // Position size follows current equity so the strategy compounds. Each leg
     // deploys equity*leverage/2 across the names it actually holds, so gross
     // exposure stays at the target leverage even when fewer coins qualify.
-    let leg_notional = state.equity.max(0.0) * cfg.leverage / 2.0;
-    let per_coin = leg_notional / n as f64;
 
     // ---------- first day: open the book ----------
     if is_first {
@@ -374,7 +357,9 @@ fn advance(
                 let mut pos = PaperPosition {
                     coin: coin.clone(),
                     side,
-                    notional: per_coin,
+                    notional: wmap.get(coin).map(|w| w.abs()).unwrap_or(0.0)
+                    * state.equity.max(0.0)
+                    * cfg.leverage,
                     entry_price: px,
                     entry_ts: t,
                     basis_price: px,
@@ -447,9 +432,11 @@ fn advance(
         });
         state.liquidations += 1;
     }
-    let mkt: Vec<f64> = sigs
-        .iter()
-        .filter_map(|(coin, _)| {
+    // 等权市场基准：用当前流动宇宙全部币的等权涨跌
+    let mkt: Vec<f64> = p
+        .closes
+        .keys()
+        .filter_map(|coin| {
             let prev = p.px(coin, t_prev)?;
             let cur = p.px(coin, t)?;
             if prev > 0.0 { Some(cur / prev - 1.0) } else { None }
@@ -475,8 +462,11 @@ fn advance(
         if wanted {
             let mut pos = pos;
             if let Some(px) = px {
-                turnover += (per_coin - pos.notional).abs();
-                resize(&mut pos, per_coin, px, cfg.leverage);
+                let target = wmap.get(&pos.coin).map(|w| w.abs()).unwrap_or(0.0)
+                    * state.equity.max(0.0)
+                    * cfg.leverage;
+                turnover += (target - pos.notional).abs();
+                resize(&mut pos, target, px, cfg.leverage);
             }
             keep.push(pos);
         } else {
@@ -517,7 +507,9 @@ fn advance(
             let mut pos = PaperPosition {
                 coin: coin.clone(),
                 side,
-                notional: per_coin,
+                notional: wmap.get(coin).map(|w| w.abs()).unwrap_or(0.0)
+                    * state.equity.max(0.0)
+                    * cfg.leverage,
                 entry_price: px,
                 entry_ts: t,
                 basis_price: px,
@@ -530,7 +522,9 @@ fn advance(
             };
             mark(&mut pos, px, cfg.leverage);
             state.positions.push(pos);
-            turnover += per_coin;
+            turnover += wmap.get(coin).map(|w| w.abs()).unwrap_or(0.0)
+                * state.equity.max(0.0)
+                * cfg.leverage;
         }
     }
 

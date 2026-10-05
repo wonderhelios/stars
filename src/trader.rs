@@ -69,72 +69,233 @@ pub struct Plan {
     pub held: Vec<String>,
 }
 
-/// Rank the liquid universe by trailing momentum (identical rule to the paper
-/// engine) and return (long leg, short leg) with equal counts.
-pub fn ranking(
-    panel: &[PanelEntry],
-    cfg: &TradeConfig,
-) -> (Vec<String>, Vec<String>, Vec<String>) {
-    let vol_window = 30usize;
-    let mut timeline: BTreeSet<i64> = Default::default();
-    let mut closes: HashMap<String, BTreeMap<i64, f64>> = Default::default();
-    let mut dollar_vol: HashMap<String, BTreeMap<i64, f64>> = Default::default();
-    for e in panel {
-        let mut cm = BTreeMap::new();
-        let mut vm = BTreeMap::new();
-        for c in &e.candles {
-            if c.c > 0.0 {
-                timeline.insert(c.t);
-                cm.insert(c.t, c.c);
-                vm.insert(c.t, c.v * c.c);
+/// 共享的因子面板：把各币的收盘价与成交额对齐到统一时间轴。
+/// 实盘与纸交易都调用这里，避免两份实现漂移。
+pub struct FactorPanel {
+    pub ts: Vec<i64>,
+    closes: HashMap<String, BTreeMap<i64, f64>>,
+    dvol: HashMap<String, BTreeMap<i64, f64>>,
+}
+
+impl FactorPanel {
+    pub fn build(panel: &[PanelEntry]) -> Self {
+        let mut timeline: BTreeSet<i64> = Default::default();
+        let mut closes: HashMap<String, BTreeMap<i64, f64>> = Default::default();
+        let mut dvol: HashMap<String, BTreeMap<i64, f64>> = Default::default();
+        for e in panel {
+            let mut cm = BTreeMap::new();
+            let mut vm = BTreeMap::new();
+            for c in &e.candles {
+                if c.c > 0.0 {
+                    timeline.insert(c.t);
+                    cm.insert(c.t, c.c);
+                    vm.insert(c.t, c.v * c.c);
+                }
+            }
+            closes.insert(e.coin.clone(), cm);
+            dvol.insert(e.coin.clone(), vm);
+        }
+        Self {
+            ts: timeline.into_iter().collect(),
+            closes,
+            dvol,
+        }
+    }
+
+    pub fn len(&self) -> usize {
+        self.ts.len()
+    }
+
+    pub fn is_empty(&self) -> bool {
+        self.ts.is_empty()
+    }
+
+    /// 某一时点上「滚动 30 日成交额达标」的币 —— 严格只用截至该时点的数据。
+    pub fn liquid_at(&self, i: usize, min_vol_usd: f64, vol_win: usize) -> Vec<String> {
+        if i < vol_win {
+            return Vec::new();
+        }
+        let t = self.ts[i];
+        let mut out = Vec::new();
+        for (coin, cm) in self.closes.iter() {
+            if coin.contains(':') {
+                continue;
+            }
+            if !cm.contains_key(&t) {
+                continue;
+            }
+            let Some(vm) = self.dvol.get(coin) else { continue };
+            let mut sum = 0.0;
+            let mut n = 0usize;
+            for j in (i - vol_win)..i {
+                if let Some(v) = vm.get(&self.ts[j]) {
+                    sum += v;
+                    n += 1;
+                }
+            }
+            if n < 5 {
+                continue;
+            }
+            if sum / n as f64 >= min_vol_usd {
+                out.push(coin.clone());
             }
         }
-        closes.insert(e.coin.clone(), cm);
-        dollar_vol.insert(e.coin.clone(), vm);
+        out
     }
-    let ts: Vec<i64> = timeline.into_iter().collect();
-    if ts.len() < cfg.lookback + vol_window + 2 {
-        return (Vec::new(), Vec::new(), Vec::new());
-    }
-    let i = ts.len() - 1;
-    let t = ts[i];
-    let mut sigs: Vec<(String, f64)> = Vec::new();
-    let mut liquid: Vec<String> = Vec::new();
-    for (coin, cm) in closes.iter() {
-        // Only main-DEX perps: the executor does not handle HIP-3 namespaces.
-        if coin.contains(':') {
-            continue;
+
+    /// 三因子目标权重（带符号，绝对值之和为 1）。因子：
+    ///   1. 波动调整动量 = 回看期收益 ÷ 20 日波动（偏好稳定上涨而非一根大阳线）
+    ///   2. 低波动      = 负的 20 日波动（做多低波动、做空高波动）
+    ///   3. 成交量冲击  = 当日成交额 ÷ 30 日均值
+    /// 每个因子先在横截面上排名，再等权平均，避免量纲差异。
+    pub fn weights_at(&self, i: usize, cfg: &TradeConfig) -> Vec<(String, f64)> {
+        let vol_win = 30usize;
+        let shock_win = 30usize;
+        let vol_lookback = 20usize;
+        if i < cfg.lookback.max(vol_win) + 2 {
+            return Vec::new();
         }
-        let Some(vm) = dollar_vol.get(coin) else { continue };
-        let vols: Vec<f64> = ((i - vol_window)..i)
-            .filter_map(|j| vm.get(&ts[j]).copied())
-            .collect();
-        let avg_vol = vols.iter().sum::<f64>() / vols.len() as f64;
-        if vols.len() < 5 || avg_vol < cfg.min_vol_usd {
-            continue;
+        let t = self.ts[i];
+        let t_past = self.ts[i - cfg.lookback];
+
+        let mut coins: Vec<String> = Vec::new();
+        let mut mom_adj: Vec<f64> = Vec::new();
+        let mut low_vol: Vec<f64> = Vec::new();
+        let mut shock_v: Vec<f64> = Vec::new();
+
+        for (coin, cm) in self.closes.iter() {
+            if coin.contains(':') {
+                continue;
+            }
+            let Some(vm) = self.dvol.get(coin) else { continue };
+            let mut sum = 0.0;
+            let mut n = 0usize;
+            for j in (i - vol_win)..i {
+                if let Some(v) = vm.get(&self.ts[j]) {
+                    sum += v;
+                    n += 1;
+                }
+            }
+            if n < 5 {
+                continue;
+            }
+            let avg_vol = sum / n as f64;
+            if avg_vol < cfg.min_vol_usd {
+                continue;
+            }
+            let (Some(now), Some(past)) = (cm.get(&t), cm.get(&t_past)) else {
+                continue;
+            };
+            if *now <= 0.0 || *past <= 0.0 {
+                continue;
+            }
+            // 20 日波动
+            let mut rets: Vec<f64> = Vec::with_capacity(vol_lookback);
+            for j in (i - vol_lookback)..i {
+                if j == 0 {
+                    continue;
+                }
+                let (Some(a), Some(b)) = (cm.get(&self.ts[j]), cm.get(&self.ts[j - 1])) else {
+                    continue;
+                };
+                if *b > 0.0 {
+                    rets.push(a / b - 1.0);
+                }
+            }
+            if rets.len() < 5 {
+                continue;
+            }
+            let mean = rets.iter().sum::<f64>() / rets.len() as f64;
+            let var = rets.iter().map(|x| (x - mean).powi(2)).sum::<f64>() / (rets.len() - 1) as f64;
+            let vol = var.sqrt().max(1e-9);
+            // 成交量冲击
+            let mut vsum = 0.0;
+            let mut vn = 0usize;
+            for j in (i - shock_win)..i {
+                if let Some(v) = vm.get(&self.ts[j]) {
+                    vsum += v;
+                    vn += 1;
+                }
+            }
+            let shock = if vn > 0 && vsum > 0.0 {
+                vm.get(&t).copied().unwrap_or(0.0) / (vsum / vn as f64)
+            } else {
+                1.0
+            };
+            coins.push(coin.clone());
+            mom_adj.push((now / past - 1.0) / vol);
+            low_vol.push(-vol);
+            shock_v.push(shock);
         }
-        let (Some(now), Some(past)) = (cm.get(&t), cm.get(&ts[i - cfg.lookback])) else {
-            continue;
+        if coins.len() < 8 {
+            return Vec::new();
+        }
+        // 逐因子排名（升序名次），再等权平均
+        let rank_of = |v: &[f64]| -> Vec<f64> {
+            let mut idx: Vec<usize> = (0..v.len()).collect();
+            idx.sort_by(|a, b| v[*a].partial_cmp(&v[*b]).unwrap_or(std::cmp::Ordering::Equal));
+            let mut r = vec![0.0; v.len()];
+            for (pos, &j) in idx.iter().enumerate() {
+                r[j] = pos as f64;
+            }
+            r
         };
-        if *now <= 0.0 || *past <= 0.0 {
-            continue;
+        let _ = rank_of;
+        // 三个因子各自选一个等权组合，再把三个组合的权重平均。
+        // 这样持有的其实是「三张名单的叠加」（最多 3x2k 个币），
+        // 分散化明显好于「先把排名平均、再选一批」——后者回撤大一倍。
+        let n = coins.len();
+        let mut acc: HashMap<String, f64> = HashMap::new();
+        for scores in [&mom_adj, &low_vol, &shock_v] {
+            let mut order: Vec<usize> = (0..n).collect();
+            order.sort_by(|a, b| {
+                scores[*a]
+                    .partial_cmp(&scores[*b])
+                    .unwrap_or(std::cmp::Ordering::Equal)
+            });
+            let k = ((n as f64 * cfg.top_frac).round() as usize)
+                .max(1)
+                .min(cfg.target_positions);
+            for (pos, &j) in order.iter().enumerate() {
+                let w = if pos >= n - k {
+                    0.5 / k as f64
+                } else if pos < k {
+                    -0.5 / k as f64
+                } else {
+                    continue;
+                };
+                *acc.entry(coins[j].clone()).or_insert(0.0) += w / 3.0;
+            }
         }
-        liquid.push(coin.clone());
-        sigs.push((coin.clone(), now / past - 1.0));
+        let mut out: Vec<(String, f64)> = acc
+            .into_iter()
+            .filter(|(_, w)| w.abs() > 1e-12)
+            .collect();
+        out.sort_by(|a, b| b.1.partial_cmp(&a.1).unwrap_or(std::cmp::Ordering::Equal));
+        out
     }
-    sigs.sort_by(|a, b| a.1.partial_cmp(&b.1).unwrap());
-    let k = ((sigs.len() as f64 * cfg.top_frac).round() as usize).max(1);
-    let n = k.min(cfg.target_positions).max(1);
-    let long: Vec<String> = sigs[sigs.len() - n..].iter().map(|s| s.0.clone()).collect();
-    let short: Vec<String> = sigs[..n].iter().map(|s| s.0.clone()).collect();
-    (long, short, liquid)
+}
+
+/// 目标权重（带符号，Σ|w| = 1）+ 当时的流动宇宙。
+/// 实盘与纸交易都调用这里，保证只有一份实现。
+pub fn target_weights(
+    panel: &[PanelEntry],
+    cfg: &TradeConfig,
+) -> (Vec<(String, f64)>, Vec<String>) {
+    let fp = FactorPanel::build(panel);
+    if fp.is_empty() {
+        return (Vec::new(), Vec::new());
+    }
+    let i = fp.len() - 1;
+    let liquid = fp.liquid_at(i, cfg.min_vol_usd, 30);
+    let w = fp.weights_at(i, cfg);
+    (w, liquid)
 }
 
 /// Build the order list. `mids` must contain every coin we intend to trade.
 #[allow(clippy::too_many_arguments)]
 pub fn build_plan(
-    long: &[String],
-    short: &[String],
+    weights: &[(String, f64)],
     acct: &Acct,
     markets: &HashMap<String, MarketInfo>,
     mids: &HashMap<String, f64>,
@@ -142,16 +303,30 @@ pub fn build_plan(
     equity_override: Option<f64>,
 ) -> Plan {
     let equity = equity_override.unwrap_or(acct.equity);
-    let n = long.len().max(1);
     // Deploy only part of the equity so fees and adverse fills cannot push the
     // book past the margin limit mid-run.
     let deployable = equity * cfg.margin_buffer;
-    let per_coin = deployable * cfg.leverage / 2.0 / n as f64;
+    let gross_w: f64 = weights.iter().map(|(_, w)| w.abs()).sum();
+    let per_coin = if weights.is_empty() {
+        0.0
+    } else {
+        deployable * cfg.leverage * gross_w / weights.len() as f64
+    };
+    let long_leg: Vec<String> = weights
+        .iter()
+        .filter(|(_, w)| *w > 0.0)
+        .map(|(c, _)| c.clone())
+        .collect();
+    let short_leg: Vec<String> = weights
+        .iter()
+        .filter(|(_, w)| *w < 0.0)
+        .map(|(c, _)| c.clone())
+        .collect();
     let mut plan = Plan {
         equity,
         per_coin,
-        long_leg: long.to_vec(),
-        short_leg: short.to_vec(),
+        long_leg,
+        short_leg,
         held: acct
             .positions
             .iter()
@@ -161,29 +336,24 @@ pub fn build_plan(
         ..Default::default()
     };
 
-    // wanted: coin -> signed target size
-    let mut wanted: HashMap<String, (f64, bool)> = HashMap::new(); // (signed size, is_long)
-    for coin in long {
-        if let (Some(mid), Some(m)) = (mids.get(coin), markets.get(coin)) {
-            let size = round_size(per_coin / mid, m.sz_decimals);
-            if size * mid >= cfg.min_order_usd {
-                wanted.insert(coin.clone(), (size, true));
-            } else {
-                plan.notes.push(format!(
-                    "{coin}: 目标 ${:.0} 低于最小下单额，跳过（精度 {}）",
-                    per_coin, m.sz_decimals
-                ));
-            }
+    // wanted: coin -> signed target size（按权重缩放名义）
+    let mut wanted: HashMap<String, (f64, bool)> = HashMap::new();
+    for (coin, w) in weights {
+        if w.abs() < 1e-12 {
+            continue;
         }
-    }
-    for coin in short {
-        if let (Some(mid), Some(m)) = (mids.get(coin), markets.get(coin)) {
-            let size = round_size(per_coin / mid, m.sz_decimals);
-            if size * mid >= cfg.min_order_usd {
-                wanted.insert(coin.clone(), (-size, false));
-            } else {
-                plan.notes.push(format!("{coin}: 目标 ${per_coin:.0} 低于最小下单额，跳过"));
-            }
+        let (Some(mid), Some(m)) = (mids.get(coin), markets.get(coin)) else {
+            continue;
+        };
+        let notional = w.abs() * deployable * cfg.leverage * gross_w;
+        let size = round_size(notional / mid, m.sz_decimals);
+        if size * mid >= cfg.min_order_usd {
+            wanted.insert(coin.clone(), (if *w > 0.0 { size } else { -size }, *w > 0.0));
+        } else {
+            plan.notes.push(format!(
+                "{coin}: 目标 ${:.0} 低于最小下单额，跳过",
+                size * mid
+            ));
         }
     }
 
