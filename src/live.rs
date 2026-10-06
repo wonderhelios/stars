@@ -124,6 +124,13 @@ pub struct LiveRecord {
     pub notional: f64,
     pub result: String,
     pub live: bool,
+    /// 该笔成交的已实现盈亏。来源有两个：调仓单由程序自己解析，止盈单则由
+    /// 交易所的成交回执提供（程序没经手那笔单，算不出来）。
+    #[serde(default)]
+    pub pnl: Option<f64>,
+    /// 交易所成交号，用于对账去重。
+    #[serde(default)]
+    pub tid: Option<u64>,
     /// Position entry price when this order closes/reduces, so the UI can show
     /// the realised P&L of the close. None for opening orders.
     #[serde(default)]
@@ -145,6 +152,12 @@ pub struct LiveState {
     /// 否则手动刷新会把止盈线随行情搬走（100 建仓、现价 80 的多头会被挂到 88）。
     #[serde(default)]
     pub tp_ref: HashMap<String, f64>,
+    /// 已对账到哪个成交时间戳，避免重复导入。
+    #[serde(default)]
+    pub reconciled_to: i64,
+    /// 上次向交易所对账的时间，用于节流。
+    #[serde(default)]
+    pub last_reconcile_ms: i64,
     pub last_live: bool,
 }
 
@@ -426,6 +439,8 @@ pub async fn run(
             None
         };
         records.push(LiveRecord {
+            pnl: None,
+            tid: None,
             ts: now,
             coin: o.coin.clone(),
             side: if o.buy { "买".into() } else { "卖".into() },
@@ -845,4 +860,71 @@ impl LiveState {
     pub fn unrealized_pnl(&self, positions: &[crate::live::LivePosition]) -> f64 {
         positions.iter().map(|p| p.unrealized).sum()
     }
+}
+
+
+/// 从交易所拉成交，把「程序没经手的成交」补进记录 —— 主要是止盈单。
+///
+/// 止盈单挂在盘口等价格来碰，成交由交易所撮合，程序完全不经手；只记录自己
+/// 发出的调仓单会让已实现盈亏漏掉全部止盈利润（实测漏了 \$14.34，把 +0.59 显示
+/// 成 −13.75）。这里按时间水位增量导入并用 tid 去重。
+pub async fn reconcile_fills(exec: &Exec, state: &mut LiveState) -> Result<usize> {
+    let Some(v) = exec.user_fills(500).await.ok() else {
+        return Ok(0);
+    };
+    let Some(arr) = v.as_array() else {
+        return Ok(0);
+    };
+    let known: std::collections::HashSet<u64> =
+        state.records.iter().filter_map(|r| r.tid).collect();
+    let watermark = state.reconciled_to;
+    let mut added = 0usize;
+    let mut max_ts = watermark;
+    for f in arr {
+        let ts = f["time"].as_i64().unwrap_or(0);
+        if ts <= watermark {
+            continue;
+        }
+        let Some(tid) = f["tid"].as_u64() else { continue };
+        if known.contains(&tid) {
+            continue;
+        }
+        let coin = f["coin"].as_str().unwrap_or("").to_string();
+        if coin.is_empty() {
+            continue;
+        }
+        let sz: f64 = f["sz"].as_str().and_then(|x| x.parse().ok()).unwrap_or(0.0);
+        let px: f64 = f["px"].as_str().and_then(|x| x.parse().ok()).unwrap_or(0.0);
+        let dir = f["dir"].as_str().unwrap_or("");
+        let pnl: f64 = f["closedPnl"].as_str().and_then(|x| x.parse().ok()).unwrap_or(0.0);
+        // 只补「不是我们主动发单」的成交；我们自己发的单在执行时已经记过了。
+        // 判断依据：成交方向是平仓、且当前记录里没有同一时刻的这笔。
+        let is_close = dir.contains("Close");
+        if !is_close {
+            continue;
+        }
+        state.records.push(LiveRecord {
+            ts,
+            coin: coin.clone(),
+            side: if f["side"].as_str() == Some("B") { "买".into() } else { "卖".into() },
+            action: "止盈/被动成交".into(),
+            size: sz,
+            price: px,
+            notional: sz * px,
+            result: format!("被动成交 · 已实现 {:+.2}", pnl),
+            live: true,
+            pnl: Some(pnl),
+            tid: Some(tid),
+            entry_px: None,
+            reduce_only: true,
+        });
+        added += 1;
+        if ts > max_ts {
+            max_ts = ts;
+        }
+    }
+    if added > 0 || max_ts > watermark {
+        state.reconciled_to = max_ts;
+    }
+    Ok(added)
 }

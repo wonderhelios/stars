@@ -325,6 +325,13 @@ function chronRecords(d) {
   let n = 0;
   const slips = [];
   recs.forEach((r, i) => {
+    // 后端对账补入的被动成交（止盈单）直接带 pnl，用它更准；
+    // 我们自己发的调仓单则要从成交回执里解析。
+    if (r.pnl != null) {
+      realized += r.pnl;
+      n++;
+      return;
+    }
     const f = parseFill(r, hints[i]);
     if (f.kind === "filled") {
       if (f.pnl != null) {

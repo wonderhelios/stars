@@ -351,6 +351,22 @@ impl Exec {
         }
     }
 
+    /// 最近的成交明细。止盈单是被动挂单、由交易所自动成交的，程序不经手，
+    /// 所以必须回头拉成交才能把这块盈亏算进来。
+    pub async fn user_fills(&self, limit: usize) -> Result<serde_json::Value> {
+        let account = self.account.context("read-only client has no account")?;
+        self.info_post(json!({
+            "type": "userFills",
+            "user": account.to_string(),
+            "aggregateByTime": false
+        }))
+        .await
+        .map(|v| {
+            let _ = limit;
+            v
+        })
+    }
+
     /// 挂单详情，给前端展示。
     pub async fn open_order_details(&self) -> Result<Vec<OpenOrder>> {
         let account = self.account.context("read-only client has no account")?;

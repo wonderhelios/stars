@@ -268,8 +268,39 @@ async fn live_markets(state: &AppState) -> std::collections::HashMap<String, cra
 }
 
 async fn live_status(State(state): State<AppState>) -> Response {
-    let st = state.live.lock().await.clone();
+    let mut st = state.live.lock().await.clone();
     let markets = live_markets(&state).await;
+    // 与交易所对账，把止盈单的被动成交补进记录。止盈单是挂在盘口由交易所撮合的，
+    // 程序不经手，只记录自己发的调仓单会让「已实现盈亏」漏掉全部止盈利润。
+    // 节流 5 分钟，避免每次轮询都打交易所。
+    if st.config.can_sign() {
+        let now = crate::live::now_ms_pub();
+        if now - st.last_reconcile_ms > 300_000 {
+            st.last_reconcile_ms = now;
+            if let Ok(exec) = crate::exchange::Exec::signer(
+                &st.config.account,
+                std::path::Path::new(&st.config.key_path),
+            )
+            .await
+            {
+                match crate::live::reconcile_fills(&exec, &mut st).await {
+                    Ok(n) if n > 0 => {
+                        tracing::info!("对账：补入 {n} 笔被动成交");
+                        let mut g = state.live.lock().await;
+                        g.records = st.records.clone();
+                        g.reconciled_to = st.reconciled_to;
+                        g.last_reconcile_ms = st.last_reconcile_ms;
+                        let _ = g.save(&state.live_path);
+                    }
+                    Ok(_) => {
+                        let mut g = state.live.lock().await;
+                        g.last_reconcile_ms = st.last_reconcile_ms;
+                    }
+                    Err(e) => tracing::warn!("对账失败: {e}"),
+                }
+            }
+        }
+    }
     let snap = crate::live::snapshot(&st, &markets, Some(state.http.clone())).await;
     // Record at most one equity point per hour so the monitoring curve appears
     // the same day instead of after a couple of daily closes.
