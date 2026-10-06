@@ -875,6 +875,15 @@ pub async fn reconcile_fills(exec: &Exec, state: &mut LiveState) -> Result<usize
     let Some(arr) = v.as_array() else {
         return Ok(0);
     };
+    // 首次对账绝不能回溯：水位为 0 时直接对齐到「现在」，导入 0 笔。
+    //
+    // 否则 userFills 会把账户有史以来的成交全倒进来 —— 包括这个策略上线前的
+    // 几个月、上一套策略的、甚至别的品种的，已实现盈亏会瞬间变成 −623 这种
+    // 荒谬数字。这个错误真实发生过。
+    if state.reconciled_to == 0 {
+        state.reconciled_to = now_ms_pub();
+        return Ok(0);
+    }
     let known: std::collections::HashSet<u64> =
         state.records.iter().filter_map(|r| r.tid).collect();
     let watermark = state.reconciled_to;
@@ -890,7 +899,8 @@ pub async fn reconcile_fills(exec: &Exec, state: &mut LiveState) -> Result<usize
             continue;
         }
         let coin = f["coin"].as_str().unwrap_or("").to_string();
-        if coin.is_empty() {
+        // 只认主 DEX 的币：HIP-3 的名字带 ':'，我们从不交易它们。
+        if coin.is_empty() || coin.contains(':') {
             continue;
         }
         let sz: f64 = f["sz"].as_str().and_then(|x| x.parse().ok()).unwrap_or(0.0);
