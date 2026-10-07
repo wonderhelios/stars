@@ -107,6 +107,16 @@
       @media(max-width:1100px) { .metric-group .metrics { grid-template-columns:repeat(2,minmax(0,1fr)); } .topbar { width:196px; padding:30px 14px 20px; } main { margin-left:196px; padding:28px 22px 44px; } .metric-group .metrics,.metric-group:last-child .metrics { grid-template-columns:repeat(2,minmax(0,1fr)); row-gap:20px; } .metric-group .metric:nth-child(2n) { border:none; } .actions { max-width:350px; } }
       @media(max-width:760px) { .topbar { position:sticky; inset:auto; top:0; width:100%; height:auto; padding:14px 16px 10px; display:grid; grid-template-columns:1fr auto; gap:14px; background:#142b2a; } .brand { padding:0; font-size:21px; } .brand small { font-size:9px; } .brand .dot { width:30px; height:30px; } .status-pill { margin:0; padding:0; border:0; font-size:10px; max-width:160px; align-self:center; } #statusText { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; } .nav { flex-direction:row; grid-column:1/-1; gap:6px; overflow:auto; } .nav::before { display:none; } .nav button { width:auto; flex:1 0 auto; padding:9px 12px; justify-content:center; font-size:12px; } .nav button svg { width:15px; height:15px; } main { margin:0; padding:24px 14px 36px; } .view>.panel:first-child>.panel-head:first-child { align-items:flex-start; flex-wrap:wrap; gap:12px; margin-bottom:18px; } .view>.panel:first-child>.panel-head:first-child h2 { font-size:26px; } .panel,.content-card { padding:18px 16px; border-radius:12px; } .panel-head { gap:12px; flex-wrap:wrap; } .controls { padding:18px 16px; gap:14px; } .field { flex-basis:calc(50% - 10px); } .field:has(#lv-account),.field:has(#lv-key) { flex-basis:100%; } .metric-group { padding:18px 16px; } .metric-group .metrics,.metric-group:last-child .metrics { gap:16px; } .metric-group:first-child .v { font-size:26px; } .metric-group:nth-child(2) .v,.metric-group:nth-child(3) .v { font-size:16px; } .metrics { grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; } .metric { padding:14px; } .metric .v { font-size:21px; } .chart svg { min-width:560px; } .chart { margin:0 -5px; } .btn { padding:8px 12px; font-size:11px; } th,td { padding:10px 12px; } .checklist li { flex-wrap:wrap; gap:8px; } .checklist .txt { min-width:180px; } .pager { flex-wrap:wrap; } }
       @media(prefers-reduced-motion:reduce) { * { transition:none!important; scroll-behavior:auto!important; } }
+    .warn-banner {
+      margin: 10px 0;
+      padding: 10px 14px;
+      border-radius: 8px;
+      background: var(--warn-bg, #fdf3e3);
+      border: 1px solid #f0d3a0;
+      color: #8a5a12;
+      font-size: 13px;
+      line-height: 1.6;
+    }
     </style>
   </head>
   <body>
@@ -226,6 +236,7 @@
             </div>
           </div>
           <div id="mo-status"></div>
+          <div id="mo-warn"></div>
           <div class="metrics" id="mo-metrics"></div>
           <div class="content-card"><div class="panel-head" style="margin-top:14px"><h2>净值曲线</h2></div>
           <div class="chart" id="mo-chart"></div></div>

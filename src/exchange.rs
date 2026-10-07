@@ -33,6 +33,11 @@ pub struct Pos {
     /// true = cross margin, false = isolated
     pub is_cross: bool,
     pub leverage: u32,
+    /// 交易所报的仓位绝对值（USD）。这是「标记价 × 数量」，永远存在 ——
+    /// 行情接口偶尔读不到某个币时，靠它反推标记价，而不是退回开仓价。
+    pub position_value: f64,
+    /// 交易所报的未实现盈亏。同样是权威值，不依赖我们自己的行情缓存。
+    pub unrealized_pnl: f64,
 }
 
 #[derive(Clone, Debug, serde::Serialize)]
@@ -293,6 +298,14 @@ impl Exec {
                         liq_px: p["liquidationPx"].as_str().and_then(|v| v.parse().ok()),
                         is_cross: p["leverage"]["type"].as_str() == Some("cross"),
                         leverage: p["leverage"]["value"].as_u64().unwrap_or(0) as u32,
+                        position_value: p["positionValue"]
+                            .as_str()
+                            .and_then(|v| v.parse().ok())
+                            .unwrap_or(0.0),
+                        unrealized_pnl: p["unrealizedPnl"]
+                            .as_str()
+                            .and_then(|v| v.parse().ok())
+                            .unwrap_or(0.0),
                     },
                 );
             }

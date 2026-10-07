@@ -1,0 +1,1135 @@
+{
+  "meta": {
+    "daily_files": 234,
+    "daily_start": "2023-06-29 00:00:00+00:00",
+    "daily_end": "2026-10-04 00:00:00+00:00",
+    "evaluation_start": "2023-08-14 00:00:00+00:00",
+    "evaluation_end": "2026-10-03 00:00:00+00:00",
+    "days_by_period": {
+      "full": 1147,
+      "2023-24": 506,
+      "2025-26": 641
+    },
+    "universe_mean": 26.957795004306632,
+    "universe_median": 27.0,
+    "cap8_baseline_one_x_sharpe": 1.6181104842279508,
+    "missing_held_max_equity": {
+      "baseline": 0.19103417695521174,
+      "illiquidity": 0.0,
+      "blend_illiquidity": 0.16616726303895335,
+      "downside_share": 0.0,
+      "blend_downside_share": 0.18307345768523817,
+      "close_pressure": 0.28613043268606436,
+      "blend_close_pressure": 0.1610707819628414,
+      "trade_size": 0.272949348742862,
+      "blend_trade_size": 0.16830241338462368
+    },
+    "missing_exit_events": {
+      "baseline": [
+        2,
+        3,
+        2
+      ],
+      "illiquidity": [
+        0,
+        0,
+        0
+      ],
+      "blend_illiquidity": [
+        2,
+        3,
+        2
+      ],
+      "downside_share": [
+        0,
+        0,
+        0
+      ],
+      "blend_downside_share": [
+        2,
+        3,
+        2
+      ],
+      "close_pressure": [
+        0,
+        1,
+        0
+      ],
+      "blend_close_pressure": [
+        2,
+        3,
+        2
+      ],
+      "trade_size": [
+        1,
+        1,
+        0
+      ],
+      "blend_trade_size": [
+        2,
+        4,
+        2
+      ]
+    },
+    "baseline_gross_mean": 2.369275705600493,
+    "baseline_net_abs_mean": 0.23522122526271752,
+    "manifest": {
+      "0G.json": "e953dc70705450aa8c52a60f4bac11a36f4575aade7afe51df8280a27e11f56b",
+      "2Z.json": "5c08d7b81673fb320f1a3a5bbb83118bcbe470f5f1b6932fffedec7bd8b43eec",
+      "AAVE.json": "0e3792e7506fabe100f273534415945274bfd2007f440222673c868a32d5dd05",
+      "ACE.json": "408daae9e53b979a72c4f47481d0db32d74e5ee67a1d0d559e1d71d49f81e954",
+      "ADA.json": "59d01775adae665f3d525e190d4a279f9f7479eb2de9ab323b7f814befdeb135",
+      "AERO.json": "682dcffb3ad2fde1e19f88d05d57e0dba34239722342fee1ad172ddc6f46e428",
+      "AI.json": "750c706846d5dfc2180487b93de746f715aa13a75e847b17113d69ea4c7aab9f",
+      "AI16Z.json": "e46ffd3f1cb111095f8dd931885db2a7da23edd8b305116d094468f286554e48",
+      "AIXBT.json": "06c65d3bf9e649662ceadb9662e152961ba71f062df876c64510975c38e64bf7",
+      "ALGO.json": "1d7849c2a5fb2ba496f27fa63194cd6c0fa71f9300225c7323f895cebedc998b",
+      "ALT.json": "ab5ed9dff3ca9ac59688df06a34c2a45723999b9d87b82c9c8e9fabe73c95b58",
+      "ANIME.json": "a40e3edc9446030330c431547b8039084bc29385543e6b412cfd7d9c4ebf7a2e",
+      "APE.json": "298af6462281cbe15f3009291fa599237ad4064ecfce1ef2e7ab4874c73661d5",
+      "APEX.json": "c699d5e19a8e922ac302180c5b33153d0140eaa7ccb7ad6c129f5d394de6f023",
+      "APT.json": "32cd69fdb96b6c60509ef5078785548d286bc4d8c5bfd8073554e40eb0d8e866",
+      "AR.json": "b3e1de9c91cef01d22010b1f6aa9838028a14024567f657a2edeb85edc7db8ac",
+      "ARB.json": "a4e58622788c97b220fe1cc76475c7a5304cb852765014f293e60100abbe4775",
+      "ARK.json": "8a6762fb566cd063f95d43661e469244251ee0f756372441698e5040dbc1c1a7",
+      "ASTER.json": "87f90a4808775109836814281248f42c95d5a47bf9250d7a6ded9f44574adfb3",
+      "ATOM.json": "186f626fda2bd16d700714c9754ea3b55060205b38665338f0e4758a075e79ee",
+      "AVAX.json": "a495ccc090b15bb655818872d6eec4be6396fba44ece134a8963f9e2f8561b70",
+      "AVNT.json": "2ab1d3cbbb6e613ed1e398f132c1b433c2557b74a480564c25b4abefcf1cdefa",
+      "AXS.json": "c68d80b4c8ea0020940414f3bdbfd7446f68466cb52785eef5183e6a25cf3147",
+      "AZTEC.json": "a78b267231a12409a0f71f4bbe6b03c186e436d8dbf44d9b582df168b5c14bdb",
+      "BABY.json": "1c1ac65f89479d3620125a9c68ddae2784ea460f9e7f380f3b46e0236321ce3a",
+      "BADGER.json": "474e992207a9c9edf4d06c2ef86f513711089fec63d0f96903cab0e2f1b518da",
+      "BANANA.json": "3cde9ec81637ad652f34ff5390e8cbb1e3b4e1a343b327a08653d4f5dde18f94",
+      "BCH.json": "efcb90af761a52ef676019ebbef5180a41e565de133364b22c47e8c979bb0c2f",
+      "BERA.json": "99f3173e7df43a14e9fa4df7bcfd510f048622db2827201513f75167e9072cd3",
+      "BIGTIME.json": "ba45250261d239ab7c80bc732e13272aa21652ecae0f445d4fcf281a43c0bc5a",
+      "BIO.json": "3d8724b7462d8287a30a8080ac5f03b66086554b9eb9862d4ce2180836ce6697",
+      "BLAST.json": "6875973d88cc49486da2aa52bad545bf1b0ae5ca7d3bd0b1ffdf2279095c1fff",
+      "BLUR.json": "a43c2f0b22911dcfa0f104ba26e4e49d4a1af0d9c66c1a4b95a3832922ebbf17",
+      "BLZ.json": "973294966889c90ebf8e85c34585d1cf4b614def7e81950a99177fae7a5a9ed5",
+      "BNB.json": "3a66664f216346df7ea26cb45094093bc7a333049d7f206c60e937eb2e823a1e",
+      "BNT.json": "0863ada6cc3bfe80765432bfcf2f2af38b8eb912d68bf30413c13d8cb8dfc7f5",
+      "BOME.json": "fc9816f4b0d2ad5c9d841a00c6a2a93e764417992e4d9067d2e01c675b953d9e",
+      "BRETT.json": "3ea0f6ba6eb448175d80b50d0141cb76da7bc6e5f19214d420a79e596c7310ba",
+      "BSV.json": "67a0a189a1c705ff77df4aa495a845db74b7c51b406753a54dd31f0773294ad3",
+      "BTC.json": "530837a227a6a6972918c80ac849329395c1e7ebeaaf4f00e57983b7000fd269",
+      "CAKE.json": "ca87f6759e633db0aa56fa8bdd08fa83880c8992c227576cfb0ab21a47b5289f",
+      "CANTO.json": "ea9a23532611139cb6e954023ba55ea5988cc5d0c124d9a2aa8645e74d07da8d",
+      "CASHCAT.json": "6173c35412ba959c9fe64e46735fade9129f2ce243ee7941af47a521017c381c",
+      "CATI.json": "e02e635b65becdc31050d61ef8340db6ab588103484a6cfc13825269e2e6230a",
+      "CC.json": "9fafe724cbc4f96ccdbdadb50495f4a863f73c471f9fb2fd61313af0082e4485",
+      "CELO.json": "9637c68218510104c8e6c2dc53364e3dfd9f3c2b65b5b953061546c5a8fe3562",
+      "CFX.json": "48da9083245f60bd11a358494958adbf6f74928d137a72f58aa171b41f2d539e",
+      "CHILLGUY.json": "be74eaaa8264d2187257eaaf4ae9d3f36e0957641f0fb0f25fb6eb62b61b593d",
+      "CHIP.json": "aa374958ed7fab832123b2abec2e4bf229f440b8715269d888e345017e83bd3b",
+      "COMP.json": "98d1b1ea95da522cb5e4ad250ffea73a466a83930e1399b155fd96554dfbe6f3",
+      "CRV.json": "fc60523efcd31c824ee319a05640ff7bbcb3a4c206a9577f65ff27ddea343d67",
+      "CYBER.json": "9aa622d1d767a541feb467b22e33d43efdac985c23b23a0eb98d0aee21943895",
+      "DASH.json": "f11711ce68692d91f7530d1905e6028f9642885601515a778aead40723a4912a",
+      "DOGE.json": "8352d1e2c4c691b6dede9b5d2612ee7c51c58efb83c2e70c5981579d6272a879",
+      "DOOD.json": "8195993c84522a4a731bd344f9582a52907cde80d63822b54e73c632c6f8d5f9",
+      "DOT.json": "75f04143b361a7b8463e1d8b57e0c2509953ebff4a599d7ba8374147c2089110",
+      "DYDX.json": "eef77a58827fb396f5035ad4961b11d4275af84360a6cfe1ba3656eb33aeaca1",
+      "DYM.json": "894cea76efb0122de90f472284a055e9999bb134930fb8a62ab745a00a7cfd2c",
+      "EIGEN.json": "569958c7fe33f168d93243405fa236cd0ff529f4da64759025f9650c470219ac",
+      "ENA.json": "c2db307ffe0add55b5ee827b5bdfb1b461c8f378ad0b313afe3d58c54837341c",
+      "ENS.json": "86c96bd86af666d56ec87b793d51f114d221995c6cc0f81c8ae56a8a5ae1095c",
+      "ETC.json": "ceef11dcfe790fa6602d4d9d49966484ee007f53b140d2bedd7c14961af015e6",
+      "ETH.json": "f5bfc63a5c0ff529ded63b900b29f691ea73511238cf0413b5022361b2e3aa68",
+      "ETHFI.json": "4364b1338bfd0f8173c990c8c7446bcb927385fe2f2fb09769c6a9415cc94932",
+      "FARTCOIN.json": "6590610dcac680a22789c5632edfe643c5be58157006710fd593d7a97e13fe5c",
+      "FET.json": "ed76186c7d864271298f28470d61699904611e2dfce27c0894a82024630dc3e3",
+      "FIL.json": "c6cd2a01a16df7dd9aaf170d946ad61ccf7ca14b573bba392ebcfc0a8d79eafc",
+      "FOGO.json": "e48b655e332c5aa21f99bbd3e85c83512477d279262fd83da13dd113fed4c932",
+      "FRIEND.json": "d4c5a81713d5daded3e4561e3722e975229ea4ffac2f332733aa402d7404bdc9",
+      "FTM.json": "f5fb1f8d6463293bbf2a357852eda6d22d90f51929054883f2fa9b254ad755ef",
+      "FTT.json": "d788a23d5d114e63618c12498e2342656c8e8799c7e3efc3bce1979f6c9f623a",
+      "FXS.json": "34ee3452cb7430595d37e1b5cc3040d05fca5c61dc2e125da5e851f0d542d5eb",
+      "GALA.json": "5805dc26dcbedcf4ce77fee49e241be5e3cc3176aab9327093bebacb131a319b",
+      "GAS.json": "c37281f3dfa3de9f6fae0105f76631a50e9b85b0c6dd614e0e8b6a7f5e212c1e",
+      "GMT.json": "3a661f9b093bd50e3cde83dc4cce6a62a870e1c8a41f69c8354081e80dd43315",
+      "GMX.json": "775226ffcb4989249c46c24632f8eb6f317f3a7a693c787b395ac57a31b4ce48",
+      "GOAT.json": "ddfb470edebee82ca2f9e054539b8d8449b775c10c0fc11f0336185f43e6f044",
+      "GRAM.json": "77a6e708a5eb39f7858f2e0aff6baa23fadfa81780f3bf3e86ff1d742e8b8156",
+      "GRASS.json": "361010c080dce8f86d239c5bb4ec9564e7e3e89192fe545ba780f4e4a1629d36",
+      "GRIFFAIN.json": "61d0dff96c9adbebd842363d7ab0c9d16de5777a3af9425b3cf232fe4b1427d4",
+      "HBAR.json": "f6d3c5cb24f29942c3e09cc6fcd9877da98e7fc396052964fbb1089769f3e984",
+      "HEMI.json": "f7cecc62b27ac28d2d2bc8f128a0257a2acc98075436010cd2842a2a11058b8f",
+      "HMSTR.json": "d258bd262a15e9b8d43243740e5c339816e712a85f2658a1c47f30020af5f776",
+      "HPOS.json": "11969b6aea8aa4f6fea50cc47123c9b0be2ea1d53f1b3efd5985af354a88f2a3",
+      "HYPE.json": "c62bcbf46754914fda514a3fd1faab3a33e4bb64de054f757b866cd08562e077",
+      "HYPER.json": "6e76da13bd8122e8938b3f625836b11d53086c610888445db098b2ea1efbd1e8",
+      "ICP.json": "80b248b616586eec1fe49b01318ffb6983bd52f7bb88f33608f61f51650c8245",
+      "ILV.json": "918edb6b444acd00b9675b2a2d66a9416ea3c5e947adc1fd240efcff3490dcaa",
+      "IMX.json": "3b89867579f4cbb2e23a68dda5f64cfd6341215364489a60302aca1f457c2f66",
+      "INIT.json": "b804ba49718d53fcbb0911209b99097c3f90a5b3226c4be66acc6e3ce93c7562",
+      "INJ.json": "9d744c83313288a72ac644415341df871398f968867b07c727bd4c5deeb50f5e",
+      "IO.json": "7d91a408c0302f37a354bf175b44991203b3b40cbe27c0ea98909f723594f12b",
+      "IOTA.json": "6b101c4d44a1af8563886f51be1ae70426d59ab2dcdb26caaa432febcb74fdd9",
+      "IP.json": "8c1780a95ff001c36ef54fd3cb37e2e42d36b1d749c4fadfc235bf6883e2b2b8",
+      "JELLY.json": "b608a7c9571e9cc72afff99b9afee95b734b750a42b865bd826f7fc1e097d635",
+      "JTO.json": "cac4e332ed43bf0e5ef2f8c5f7e7615eb2131afd80acc0703200c953b7aa0962",
+      "JUP.json": "5549342420a7b8216acfa7305104b2f4d9f22b89811ecaff4804f4e126f09322",
+      "KAITO.json": "60d941dd44c37dc86db53298334f44a2b72e58f4f8a6a9a8d9ee7a6c859972a1",
+      "KAS.json": "3424ab9e6fbcac7246901a1fd200cfed5b369e223b59fb07f192d1020947ce14",
+      "LAUNCHCOIN.json": "9940c76d2cf312315046a5393cc93c59bd6be0e125be888aa9678d52e511d833",
+      "LAYER.json": "3311cf59217ad32c393bb43ffb751a32a432e0de62ee0b123938990306b843af",
+      "LDO.json": "617fffeef5f5464cc4d439fdb00fe3e61188001a0403828ca14f97585dcfc29e",
+      "LINEA.json": "c237b451e0ef387c43325bfebfa8780ac88fa21703594a6ccfc7d68badae4598",
+      "LINK.json": "91215642e5d547bb0e3582702aabf791f2a27c13f8896e8a7d96c3325e6c8bff",
+      "LISTA.json": "552e83d9a33594339b3e4d347d50f573e90ebb3fa4b00ba0d92b4c0624d9ee9a",
+      "LIT.json": "39c6e34b0814a7854a909792e39d3010ec9c0e6dbc11450f9908e00fe09332d8",
+      "LOOM.json": "c2e63a31b03444bbd69483a8d3b10ec00655b85fd198c99fdbfd60449042f9aa",
+      "LTC.json": "b6dc45513af5bf505d794d0a1558ec6caed41916faf47cc95ecd477862e6316e",
+      "MANTA.json": "e47277bf0f3c0499218e4761cf38f6fc917c846b526e7b3a03b02813928d9300",
+      "MATIC.json": "c3ace3b77f92f39e7c869489a2f9653bcd472ba936f946da6d4cb9492604ed5a",
+      "MAV.json": "a482f0427ca3b7eecb5e86345d906a5fd98ebae64bd21cb21b64f688c717ecce",
+      "MAVIA.json": "967c50df58bf8a0d1b6ab144ae3b57ad5ec3e769c5850def7f959766593450a6",
+      "ME.json": "f8f4844ece4896f1edc154831dc9ebc126c902fe7f3a37132aed14fb8d29c25b",
+      "MEGA.json": "3e6260c7d1e1525a8cdf17ebe90cb166678b1df7e15bf1224f0bf7fc4f1786f9",
+      "MELANIA.json": "388de3f7b600f8322f2a7ff46469fc2a8eb49d4cc0cd2d0af90f186ac0936f90",
+      "MEME.json": "dd7db5d38f8a44fb93bf9a50bf303744dab933284979280729ce3eea94c02120",
+      "MERL.json": "b26f69be7af55c1b8542e11e0be76e3d4567de0dae288d2c9795c6d6343e3f16",
+      "MET.json": "8f5e6d3e4e1762f5dac025500abc03a57baf7a77b32b4faba87cc3b0eb1c12d3",
+      "MEW.json": "15694ed20fe56c3a9d1e6b8b15dde92d5f54e637fa250b5c487713250287907f",
+      "MINA.json": "e18e5b88a8e93fe9c55a8d33bfa8e16bced1b287f82289f8e37939b3fe049b17",
+      "MKR.json": "1ac18c8fb840c0b05fb5bb0dd92585b6515848a2419f8f7e08bb27cb5299e2a0",
+      "MNT.json": "fd04dca240cb5b1d14a32cbd3052410e3e881ef2c2033e9f311a3ca236579e62",
+      "MON.json": "a27215653e876c3b7bc91694fa2a8bbdad239f28da36ac00f8a707a1dee78cae",
+      "MOODENG.json": "f33c7b959e876a8d5bf6db195515406ea306736967db2c806b42db237c4a187b",
+      "MORPHO.json": "1d104aa488268963894361045a994fd80ab23b793e781047271d79126a98e850",
+      "MOVE.json": "8f1aeecf69e03343cd8bc2c0925ca3b109d67c2b79437b8379fb3b2aafd7a9ff",
+      "MYRO.json": "6436d477f838cadff4f6cae57f04024103b70a18cf794dcfc963326680b316a5",
+      "NEAR.json": "0405533a1782faa8d0e4a478b949bbdbeeb48322219de280f8e39e0c488afb75",
+      "NEIROETH.json": "84c1fde8398d73065971be674add358859734b9c961adff0183b9a5fd608e021",
+      "NEO.json": "16573c66440b500f15baa2b7c6c400b31da6fc0639e4deb637a0198461ba130f",
+      "NFTI.json": "6eef002ac76ccf63dd0aaa0909530f5a142fe6f3d9bb5559405f6d32f42c96af",
+      "NIL.json": "4bc1a5387bd3ee4aceb927273ca5893f146bfb87298ee220dbc5139cc31d3cc8",
+      "NOT.json": "73c1a3a88f2a05ffc69cb707205c2d73dbcccebe4cdcbea9f0b0e2f04635a7a2",
+      "NTRN.json": "1ae628795734661c95b7983d830c1cd9f02e5dc4908ea18177c8890d16ea8567",
+      "NXPC.json": "b61dd5e277a85cabb35f6aa905c2a605b5d2882a1a1baed1c5623db53fb30381",
+      "OGN.json": "174bc3dcf4ab2e9dee8754f71c3c1ed760271e3d658f5c0bcccc31c53a4a9df7",
+      "OM.json": "9ba3deea80419db10d68bad5a8def3e2f589a6212861ca15807985f8194a8c26",
+      "OMNI.json": "1aeb3fb0c67b0266d7eaf65d0fc0a9e906951ab68b8663996e711ba9b05e9e95",
+      "ONDO.json": "f1b987d99cc8816628b6dd14c20119a9cd9499de2d4ebc51eb1d1411d6d1aa4a",
+      "OP.json": "3b834b3ded9ac1385756c0c7c55c197201abaeb9680484f73d9778ab6a3378a6",
+      "ORBS.json": "c70617f6b8ea5bf85f6ee17f933da066fe62fbf734a2fb8c032f14c7735eb1f9",
+      "ORDI.json": "bf4efe488377e37d3a6db0b5046a145fedf61c13b8786b086348141440e5be4b",
+      "OX.json": "68b0e0ded8d5dcb7ae4470ea567007241f4f6fcf7fe19147f7e5ec679b16f428",
+      "PANDORA.json": "a976bdb19c0a460db9cceb0b2585a890b02cf787782ffa3634133984b15c7c99",
+      "PAXG.json": "8f6a2af87a68a2d84b3f198834a36356a511deb6aad8d16b8a931b5e688751d6",
+      "PENDLE.json": "30588fa1619993f7f18149ebc5e5f4c211dbf2ebc5f675887329a2fa209fc36c",
+      "PENGU.json": "3e1e7f63f1010ed883c08c99315ff12e59c1d99d5161c96d10e696689f3e737e",
+      "PEOPLE.json": "f601b41d25c577a46b743f04a3b579799b6d893a9a455c3644eb232e89b6dede",
+      "PIXEL.json": "cfdc0938625cfb7c93223b7966e8106f01e11b9a72474c4b2313da01b3c11b30",
+      "PNUT.json": "fd650c330ef19ebbf9d3e22c6ebefd607e023c0d1512473644d24170d1230945",
+      "POL.json": "9609979c39bfac0584d5e7ebd7d79c2fc5b4636afa0b44a2dd192ac4f01c13e5",
+      "POLYX.json": "c4a3bb156b0407b61fe7a7a6f2439d4a2fda14a775f0354b2f317cc14db36d32",
+      "PONS.json": "3ddde3f579fe047bb9dcc22098842520fcd2b928bc5a11d5e710c50c640f065a",
+      "POPCAT.json": "c538dbf77e74410a42481fa236a1f9b83b670c1942ffb17aa39b24fb1c45abf3",
+      "PROMPT.json": "fb66d9eac53723543f78f8e433fcf079969e8e49ca1de8f773271bbece0e70c8",
+      "PROVE.json": "f73bd49221890d98ecc89259a20ee75434ab8bb7b8c864bdc58944893ab04409",
+      "PUMP.json": "868bad2fc26893ae4e057e99bc201403427c0c11306a09f5c77bfa0035e5dd99",
+      "PURR.json": "c2fe5609fcf1aca41685c56bb52aea09eb529fe81675e9f66c5cd211de074e24",
+      "PYTH.json": "8e795bd2a3370e3fed7ab7f8f463dee097cb898416db69005c77b5c44ec58bd6",
+      "RDNT.json": "5bdf181d099fffc76087077752011b7ad491ce0e943c9ad65c2c23dc916e760f",
+      "RENDER.json": "5ba636e4a8a85cc476b5fa417d358895b49351f8722b070fb2930e3c52e65d83",
+      "REQ.json": "ee59a180f306e7db1c46c5764778712982cf6d31a0e77a8b85d7bb91b95c9bfb",
+      "RESOLV.json": "bf60aad677e25eb63ffa084d8bf0be6549666e05e905bb9e46d677ba8e916d5e",
+      "REZ.json": "493898375aae1ef9f7d67352333debbe89e315dc6006e0b69392cd9676960c04",
+      "RLB.json": "6074170f9d40c424f9b8d934659ab0435f8e7a7e158cf091b8a26c6b04ea46ac",
+      "RNDR.json": "08805e94cb3b030eebc26dafb22023405cb692ed4b904953161f12539a57d69b",
+      "RSR.json": "b91ea08c7c1eb0aef6dbb91bd77aa810a3920b7a19ff39c2dc32d278188c887c",
+      "RUNE.json": "5da0edcc3a5456c4292ebb70fdea7304eb3004eef7dd90ad4a32922974e45636",
+      "S.json": "372415194786541617d3e2008fd08aa7f7fb945d9a5a9b5942bcce5e39880011",
+      "SAGA.json": "475545e720219c95c3d7cc5d67e2a808f6cd15b7bcf5eab677b5a9f3172188c1",
+      "SAND.json": "634fa1ae74f5ce309017f55d9d26934d719dc50c00e19ee06f54fa1f5c3e774f",
+      "SCR.json": "49737e76203b4defc82c631cfd09edc410eaaf0e803e423f28b2db3fc0d68874",
+      "SEI.json": "e9363a74a7d646d42a59026aef142f389d6bbd8bae1ae1772b0fb710cd26ee74",
+      "SHIA.json": "3cb74a912c23be101fe175df8671394a4929a79dcc00a459c8be62738ee74067",
+      "SKR.json": "ec6cabbbcaef931384d044d3059645d46fcbfb114a92410c2d205f25005683cd",
+      "SKY.json": "51581846b40b3740bbba88d2c844a88b0bb574c633573a39e352477ec653b5c5",
+      "SNX.json": "56e8a16900074dc2302a8e3a79ebb7f0ff1c509861452ad6550f5c0c4bfa0c55",
+      "SOL.json": "7cbdd81bddf44d01deaf90a7e2dcebf80f5c60f47ad1839dae9ed8ae467de5c6",
+      "SOPH.json": "65032cc1bb9eb4e78539ce65b52937895a164d6151f7498486d0cfd176eb75e1",
+      "SPX.json": "b184a2f36961bbb8111b5618a49bf1ae1128a0b07f3d13e56b14f1b18d8236d9",
+      "STABLE.json": "3515a39756dbeb2c5e088eeecc65639bf9957a3f03bc2697a0a4ce3fbe80ddce",
+      "STBL.json": "04a2682fe3b69c50703d0250ed8c378dc282420dcf3f9f3b67a073544c032a95",
+      "STG.json": "5240100d8961999e20af0c000e82194b11965fdffe367eaa2fc7d634e48eb53a",
+      "STRAX.json": "964538df28bd52c8320647c8b64768dbde7150808fa2fe5f70c990dad758cd6b",
+      "STRK.json": "9adcd5a0b7403440f470a2069dd28fb7701642ce8d6edecbe614c958b7e596ad",
+      "STX.json": "934540f4aec8a6853e0e8c624057a5fa97df10838f394efef8705711f1af0761",
+      "SUI.json": "5ae10444b68f9234267b1574997a3f58c4d6175b064684ff3546cf4ab896ac36",
+      "SUPER.json": "abb2b3f93193dfc3fe07c82c5fcb02a30aff9a3ef8513517c6c0721596671bfd",
+      "SUSHI.json": "1dd78e292d0cc077ab4591df4cc39367ddd33eded20e2463d0ebc1b0c35b9852",
+      "SYRUP.json": "e00a6b81be97bedf510a9e83ef958c40e83620fcd67280ccbbc4db9299ce8f26",
+      "TAO.json": "47e741c7b469f49a3a9c1e16cba1e67f2e3de2756ec1f00aaeb98d82fc9df6fc",
+      "TIA.json": "6c2c43c11504474b739fef4602ebc6ef1f9ff8f128b8b9ee9d85f9e2aa5c2971",
+      "TNSR.json": "46bd283621e75153c674d5263771088589cb4a8381e993c98e8675ed1622b23b",
+      "TON.json": "be58883623bf16f468f13fdd0ec12bd9315a514d27fdfcae7a8cdbebe0bf796d",
+      "TRB.json": "50b7b12f7b1cef5ff205a5bba827a8781faf64ad445c4d0fcf9553529ee4aeb3",
+      "TRUMP.json": "84022d1ec43a36f62a7d091b7c60b23b682582dbbcd5615ee79b8d442775b063",
+      "TRX.json": "ca169232059b6f938697e62935066ecf11525a579f5bd2c507e40e0b7151e75d",
+      "TST.json": "7dbe12c8b3b79d98efd67ab853d074db6919ad907c2741a5a4207c50ce075557",
+      "TURBO.json": "27e07f0482f58d37a3a0626cb1984bda5d8276ca428711cbdb7d98c0dcc8740b",
+      "UMA.json": "02725eaa97f9fb149319bfda3c0c0df70dac3e17b8ce9f5667756178a03aee83",
+      "UNI.json": "e2a990a72636a884566c02a742fb4c386a4defd226be9291fe55f6690640d986",
+      "UNIBOT.json": "0013cb08335f82822994ec2f0e2ebafd96478fdaaf4d16d0df4e8df99ede1c47",
+      "USELESS.json": "9aaa131f4605fe84da3d3da34bac9ec49914461bb289dd5ab09f841194d25da3",
+      "USTC.json": "f3cdda6a719ee2ae9f5fd774c1d775f6017616544c12176a74c2c428b7b0efe7",
+      "USUAL.json": "ea22d749ce350788493a251fdfb7bef588aed6015ec041fdece84107375b9af6",
+      "VINE.json": "5233775c48148d4a423b7273ac095f9950d72d29cd62ad15f032fc9c0e8e3f42",
+      "VIRTUAL.json": "3ff53ac8ea42a67a747d79285be5d72422eaceb982f464a7a341f0dcf0c914f3",
+      "VVV.json": "95fc8ac46b093f08b30b858256a412e9ff7f388ea2358a4f67848e7faae2cb91",
+      "W.json": "1ae1c5b8a5ba65aec3cdbb6c622d125c0432cfb4458022f83d0818c8f8b2718d",
+      "WCT.json": "a7f0b85fd5f4e7fcd69b4535a791d3d51cf2a742e89cb2e19327242c21b6acc1",
+      "WIF.json": "d40795837b62da79faa92741d2b7ef2aa5660268e71e0ecf0445bf07ee3beab8",
+      "WLD.json": "c12fa97539842fe103f6872c7ad45360ca7e78a7ef200aae0e2eb1ed47c0abb7",
+      "WLFI.json": "a18c3ad0b417d37768a3b07a9637410e77d28845148c8db3d799f59d93cce4ba",
+      "XAI.json": "90f1930cfc5eea151fb589416f04e294c002eeaa90503a278741c10ad15a0f59",
+      "XLM.json": "cde1ebe59209c32acf240d2b52701641bdd7aed5fc2458999b25c6d3ee526ac4",
+      "XMR.json": "b5ed9ca050b3a69ed61a2c1b174d5721a10200eb49da9f6947176177806c8656",
+      "XPL.json": "73664fabece9578b2f3a8a5d60e0ea186b231d9d5196ab3394d236f9c83e0b3e",
+      "XRP.json": "d308b123c4848e7db5bc950d51ac77c57918e3ad27d4d0c33ac6bcf18af20b20",
+      "YGG.json": "d6ac2ce04876fe43a9ab187cbddb09c7a5c750e75af0cc8cf90b0075ac3d9be4",
+      "YZY.json": "a59db1aea849ed9e551edf1603c85b023155ee2a72d6ce906054ec988c3711b3",
+      "ZEC.json": "6cc4720c690d12f2bb2654d02a95eff27cbf01ce2df807ab80e1cd6f042199ba",
+      "ZEN.json": "c06996456b440226d031b96b71af4c656b9d1bc424b8df21c8aa927dbdf6273a",
+      "ZEREBRO.json": "bb70e274693a49fd8240a2373ef6e52a555bcbe1a492467534de86d252f42ed9",
+      "ZETA.json": "5393c18a8caf80a2843d8ca0e3734fd970c795675851e52e40a0831f651231b3",
+      "ZK.json": "07f4bb71621db8eafca572f9925f20e2133b7f73b19b0693db516b390f7f5b6e",
+      "ZORA.json": "5efd4ff862344b964bcdb8fbaad346755ecfb860bcadeb997944ccb63a68e605",
+      "ZRO.json": "393243abcf91d0930229568d72dad0310dee6049edcbefd468813b64b1a6ad15",
+      "kBONK.json": "97351f3f46d50021e648e0c6d288ecd7ac437b0b617b5fe57c2b1dc8f5ad3513",
+      "kDOGS.json": "a8ef68c6ccc375a77f68ee425155a5f64f1cafb523dd123794124de928acb0b9",
+      "kFLOKI.json": "448603859d6b19bfdf2014980b43c71eb203c2f6f2f67802bdfc12da4cfc9baf",
+      "kLUNC.json": "37836f513c68e2af4bbaf3b2cd97a7dc65994fab8b5a81cf4618ffb790c4af45",
+      "kNEIRO.json": "07d35a19ccbe91f1d2aa4c365627e16585383d34f8ea121d3a6d5ea3673c754d",
+      "kPEPE.json": "2d35937f41030db1708f5d49656f39c935758adfc7d798c4e2f24ddbba1c9464",
+      "kSHIB.json": "29ac1831480fd3f217fd0fa4b4cfb986554f46b8080fe1a58bab257739c4faaf"
+    },
+    "funding": "NOT included: full historical data unavailable",
+    "minimum_order": "Large-account approximation: ignores $10 order minimum and size rounding; uses 2% relative band",
+    "selection": "4 fixed directions, 30d windows, 20% blends, cap5, all 3 offsets; no grid search"
+  },
+  "summary": {
+    "baseline": {
+      "full": {
+        "sharpe": 1.5444004362481545,
+        "annual_arithmetic": 1.2376474675184073,
+        "cagr": 1.559183368109916,
+        "max_drawdown": -0.633614527738566,
+        "phase_sharpes": [
+          1.775955835038076,
+          1.1196563118905254,
+          1.7375891618158619
+        ],
+        "daily_oneway_turnover_equity": 0.7399186904814982,
+        "annual_cost": 0.20255274151931013,
+        "correlation_baseline": 1.0
+      },
+      "2023-24": {
+        "sharpe": 0.4255000615131239,
+        "annual_arithmetic": 0.2940683098180011,
+        "cagr": 0.1559366553889836,
+        "max_drawdown": -0.6306144048427229,
+        "phase_sharpes": [
+          0.9124179761844422,
+          -0.5587273539618486,
+          0.9228095623167782
+        ],
+        "daily_oneway_turnover_equity": 0.6282320852514193,
+        "annual_cost": 0.171978533337576,
+        "correlation_baseline": 1.0
+      },
+      "2025-26": {
+        "sharpe": 2.3270314402323904,
+        "annual_arithmetic": 1.9825009055783218,
+        "cagr": 4.027417748712613,
+        "max_drawdown": -0.4815308318931069,
+        "phase_sharpes": [
+          2.386497167198128,
+          2.3325706137348,
+          2.262026539764243
+        ],
+        "daily_oneway_turnover_equity": 0.8280831557645247,
+        "annual_cost": 0.22668776389053863,
+        "correlation_baseline": 1.0
+      }
+    },
+    "illiquidity": {
+      "full": {
+        "sharpe": -1.5266660468311823,
+        "annual_arithmetic": -1.4386420993185174,
+        "cagr": -0.8464119210920439,
+        "max_drawdown": -0.9980354929792031,
+        "phase_sharpes": [
+          -1.6248332929362987,
+          -1.6672238176937748,
+          -1.287941029863473
+        ],
+        "daily_oneway_turnover_equity": 0.2918696733879622,
+        "annual_cost": 0.07989932308995466,
+        "correlation_baseline": -0.30889169435066527
+      },
+      "2023-24": {
+        "sharpe": -1.0834394812974837,
+        "annual_arithmetic": -0.8353114569062318,
+        "cagr": -0.6753784090578266,
+        "max_drawdown": -0.8212096008988885,
+        "phase_sharpes": [
+          -1.0405757925265715,
+          -1.3448828087116802,
+          -0.8648598426541994
+        ],
+        "daily_oneway_turnover_equity": 0.2724091523241024,
+        "annual_cost": 0.07457200544872304,
+        "correlation_baseline": -0.14583163045166914
+      },
+      "2025-26": {
+        "sharpe": -1.8103663315206209,
+        "annual_arithmetic": -1.9149062257781375,
+        "cagr": -0.9144551191823901,
+        "max_drawdown": -0.9915317880162967,
+        "phase_sharpes": [
+          -1.9927842216264107,
+          -1.8830112538290353,
+          -1.5553035191064173
+        ],
+        "daily_oneway_turnover_equity": 0.3072316447737861,
+        "annual_cost": 0.08410466275682395,
+        "correlation_baseline": -0.38871010803162437
+      }
+    },
+    "blend_illiquidity": {
+      "full": {
+        "sharpe": 1.2178852735055512,
+        "annual_arithmetic": 0.9403820719362416,
+        "cagr": 0.9756001351463711,
+        "max_drawdown": -0.6868466987659626,
+        "phase_sharpes": [
+          1.4188065339220968,
+          0.6841773843263707,
+          1.5506719022681856
+        ],
+        "daily_oneway_turnover_equity": 0.7680748931236733,
+        "annual_cost": 0.21026050199260557,
+        "correlation_baseline": 0.9565459962605999
+      },
+      "2023-24": {
+        "sharpe": 0.17176338701777605,
+        "annual_arithmetic": 0.11430739505361383,
+        "cagr": -0.015782524411433723,
+        "max_drawdown": -0.6868466987659626,
+        "phase_sharpes": [
+          0.621631087032255,
+          -0.9068422557207503,
+          0.8005013297418234
+        ],
+        "daily_oneway_turnover_equity": 0.6657307426717544,
+        "annual_cost": 0.18224379080639275,
+        "correlation_baseline": 0.963842991697958
+      },
+      "2025-26": {
+        "sharpe": 2.0055084165598895,
+        "annual_arithmetic": 1.5924784627359447,
+        "cagr": 2.587783803629,
+        "max_drawdown": -0.4618733522536234,
+        "phase_sharpes": [
+          2.02496618481706,
+          1.9130701565528707,
+          2.078488908309738
+        ],
+        "daily_oneway_turnover_equity": 0.8488645033088074,
+        "annual_cost": 0.232376657780786,
+        "correlation_baseline": 0.953147578814845
+      }
+    },
+    "downside_share": {
+      "full": {
+        "sharpe": -0.3993179415760079,
+        "annual_arithmetic": -0.40207854480003363,
+        "cagr": -0.5920627923684706,
+        "max_drawdown": -0.973914886455808,
+        "phase_sharpes": [
+          -0.347668417113041,
+          -0.24349653151929931,
+          -0.6067888760956835
+        ],
+        "daily_oneway_turnover_equity": 0.5390917096579947,
+        "annual_cost": 0.14757635551887605,
+        "correlation_baseline": -0.24289842088354027
+      },
+      "2023-24": {
+        "sharpe": -0.5196784352332163,
+        "annual_arithmetic": -0.5051456933200159,
+        "cagr": -0.6215756487389146,
+        "max_drawdown": -0.8160929791467647,
+        "phase_sharpes": [
+          -0.172432771443603,
+          -0.7334844583068656,
+          -0.6531180759491804
+        ],
+        "daily_oneway_turnover_equity": 0.4542880983456507,
+        "annual_cost": 0.1243613669221219,
+        "correlation_baseline": -0.27567897525065005
+      },
+      "2025-26": {
+        "sharpe": -0.3060272068136351,
+        "annual_arithmetic": -0.3207182060307496,
+        "cagr": -0.5413463697361626,
+        "max_drawdown": -0.899936150652484,
+        "phase_sharpes": [
+          -0.48045529829119166,
+          0.1353768373662106,
+          -0.5730031595159242
+        ],
+        "daily_oneway_turnover_equity": 0.6060349660137608,
+        "annual_cost": 0.16590207194626702,
+        "correlation_baseline": -0.22289555635282018
+      }
+    },
+    "blend_downside_share": {
+      "full": {
+        "sharpe": 1.4578213165754892,
+        "annual_arithmetic": 1.1040963567965394,
+        "cagr": 1.2934097309695598,
+        "max_drawdown": -0.6456074963457256,
+        "phase_sharpes": [
+          1.6108436319293373,
+          1.0884572611940828,
+          1.6741630566030477
+        ],
+        "daily_oneway_turnover_equity": 0.7307636143780094,
+        "annual_cost": 0.20004653943598008,
+        "correlation_baseline": 0.9551897076089865
+      },
+      "2023-24": {
+        "sharpe": 0.3411803710717854,
+        "annual_arithmetic": 0.21950178687028787,
+        "cagr": 0.10123491766866548,
+        "max_drawdown": -0.6089233090255203,
+        "phase_sharpes": [
+          0.8149084032588186,
+          -0.6902328693672249,
+          0.8988655793237625
+        ],
+        "daily_oneway_turnover_equity": 0.6102929704008276,
+        "annual_cost": 0.16706770064722656,
+        "correlation_baseline": 0.9519010045108397
+      },
+      "2025-26": {
+        "sharpe": 2.218088040520238,
+        "annual_arithmetic": 1.8023878581735804,
+        "cagr": 3.3399655274409112,
+        "max_drawdown": -0.4816911315786099,
+        "phase_sharpes": [
+          2.1701545643653026,
+          2.3159772521101942,
+          2.168132305085218
+        ],
+        "daily_oneway_turnover_equity": 0.8258621258482964,
+        "annual_cost": 0.22607975695097116,
+        "correlation_baseline": 0.956784421508223
+      }
+    },
+    "close_pressure": {
+      "full": {
+        "sharpe": 1.0751290226064574,
+        "annual_arithmetic": 0.9873088871913795,
+        "cagr": 0.7753151516583959,
+        "max_drawdown": -0.7802628525970056,
+        "phase_sharpes": [
+          1.0512048380433803,
+          0.9436830281410793,
+          1.2304992016349126
+        ],
+        "daily_oneway_turnover_equity": 0.5678280429936216,
+        "annual_cost": 0.15544292676950391,
+        "correlation_baseline": 0.4727878711444034
+      },
+      "2023-24": {
+        "sharpe": 0.6836484745272423,
+        "annual_arithmetic": 0.5197746749203032,
+        "cagr": 0.45240159036195055,
+        "max_drawdown": -0.7509979129365337,
+        "phase_sharpes": [
+          -0.4288862990309449,
+          1.3858926507377514,
+          1.0939390718749207
+        ],
+        "daily_oneway_turnover_equity": 0.4667715072835756,
+        "annual_cost": 0.12777870011887882,
+        "correlation_baseline": 0.4707865876979119
+      },
+      "2025-26": {
+        "sharpe": 1.3872425702273483,
+        "annual_arithmetic": 1.3563764556924165,
+        "cagr": 1.8724105201856631,
+        "max_drawdown": -0.6188172616131268,
+        "phase_sharpes": [
+          2.153407764640387,
+          0.6804085525733929,
+          1.3279113934682647
+        ],
+        "daily_oneway_turnover_equity": 0.6476012209488217,
+        "annual_cost": 0.17728083423473995,
+        "correlation_baseline": 0.47247366546000497
+      }
+    },
+    "blend_close_pressure": {
+      "full": {
+        "sharpe": 1.5684829888750744,
+        "annual_arithmetic": 1.228586686049171,
+        "cagr": 1.5699547115520076,
+        "max_drawdown": -0.6456478661907562,
+        "phase_sharpes": [
+          1.7507169874674278,
+          1.1593387604565142,
+          1.7953932187012804
+        ],
+        "daily_oneway_turnover_equity": 0.6885034738272271,
+        "annual_cost": 0.1884778259602034,
+        "correlation_baseline": 0.9760883811710114
+      },
+      "2023-24": {
+        "sharpe": 0.46589406559844404,
+        "annual_arithmetic": 0.32334340093405206,
+        "cagr": 0.15476189259461867,
+        "max_drawdown": -0.6456478661907562,
+        "phase_sharpes": [
+          0.6271113457310863,
+          -0.31456356992729534,
+          1.0851344209915412
+        ],
+        "daily_oneway_turnover_equity": 0.5835170998371858,
+        "annual_cost": 0.15973780608042962,
+        "correlation_baseline": 0.9758239294761649
+      },
+      "2025-26": {
+        "sharpe": 2.354043773654358,
+        "annual_arithmetic": 1.9431781092445686,
+        "cagr": 3.9786748269030703,
+        "max_drawdown": -0.43617517328432615,
+        "phase_sharpes": [
+          2.5824665052149918,
+          2.2204156843265186,
+          2.2592491314215635
+        ],
+        "daily_oneway_turnover_equity": 0.7713788330143737,
+        "annual_cost": 0.2111649555376848,
+        "correlation_baseline": 0.9760842637965838
+      }
+    },
+    "trade_size": {
+      "full": {
+        "sharpe": 0.5499184465636932,
+        "annual_arithmetic": 0.49458663425158456,
+        "cagr": 0.09750596526034128,
+        "max_drawdown": -0.7224376107239152,
+        "phase_sharpes": [
+          0.7169067905734116,
+          0.2676805481689913,
+          0.6651680009486766
+        ],
+        "daily_oneway_turnover_equity": 0.28966923830453756,
+        "annual_cost": 0.07929695398586716,
+        "correlation_baseline": 0.31886619406755723
+      },
+      "2023-24": {
+        "sharpe": 0.10892578474438959,
+        "annual_arithmetic": 0.08260910630671037,
+        "cagr": -0.18884680571364235,
+        "max_drawdown": -0.7224376107239152,
+        "phase_sharpes": [
+          0.12569259914226497,
+          -0.0523882649667844,
+          0.2534730200576882
+        ],
+        "daily_oneway_turnover_equity": 0.26628293083529436,
+        "annual_cost": 0.07289495231616183,
+        "correlation_baseline": 0.21322514269886372
+      },
+      "2025-26": {
+        "sharpe": 0.8254966529903219,
+        "annual_arithmetic": 0.8197982241737473,
+        "cagr": 0.40568253124716663,
+        "max_drawdown": -0.6664783805597191,
+        "phase_sharpes": [
+          1.088683914412205,
+          0.4634631378539972,
+          0.9243429067047635
+        ],
+        "daily_oneway_turnover_equity": 0.3081301924066234,
+        "annual_cost": 0.08435064017131316,
+        "correlation_baseline": 0.37247738624720306
+      }
+    },
+    "blend_trade_size": {
+      "full": {
+        "sharpe": 1.5030930386683365,
+        "annual_arithmetic": 1.1393014190186646,
+        "cagr": 1.3923069936893644,
+        "max_drawdown": -0.6347090268421389,
+        "phase_sharpes": [
+          1.71232074056227,
+          1.0670705863362488,
+          1.72988778910649
+        ],
+        "daily_oneway_turnover_equity": 0.6507303598107302,
+        "annual_cost": 0.1781374359981874,
+        "correlation_baseline": 0.9722808495185712
+      },
+      "2023-24": {
+        "sharpe": 0.46233840870920023,
+        "annual_arithmetic": 0.2916189443548574,
+        "cagr": 0.16441370391238566,
+        "max_drawdown": -0.6142599217882887,
+        "phase_sharpes": [
+          0.8404698860023831,
+          -0.45179084976444994,
+          0.9983361898896675
+        ],
+        "daily_oneway_turnover_equity": 0.552501289255417,
+        "annual_cost": 0.1512472279336704,
+        "correlation_baseline": 0.9713630068971529
+      },
+      "2025-26": {
+        "sharpe": 2.2099111250839045,
+        "annual_arithmetic": 1.8084548233554607,
+        "cagr": 3.3507918663500766,
+        "max_drawdown": -0.46841831507194726,
+        "phase_sharpes": [
+          2.3155530543840825,
+          2.1283855204458964,
+          2.1857948004217356
+        ],
+        "daily_oneway_turnover_equity": 0.7282715605923037,
+        "annual_cost": 0.19936433971214315,
+        "correlation_baseline": 0.9727693435319305
+      }
+    }
+  },
+  "bootstrap": {
+    "15": {
+      "blend_illiquidity": {
+        "delta_sharpe_ci95": [
+          -0.6172115286834419,
+          -0.06228008246911319
+        ],
+        "delta_mean_annual": -0.2972653955821655,
+        "p_fwer_maxT": 1.0
+      },
+      "blend_downside_share": {
+        "delta_sharpe_ci95": [
+          -0.3669680282948688,
+          0.18408439339737742
+        ],
+        "delta_mean_annual": -0.1335511107218677,
+        "p_fwer_maxT": 1.0
+      },
+      "blend_close_pressure": {
+        "delta_sharpe_ci95": [
+          -0.16009831605937344,
+          0.20390938942920406
+        ],
+        "delta_mean_annual": -0.009060781469236346,
+        "p_fwer_maxT": 0.9063645451516161
+      },
+      "blend_trade_size": {
+        "delta_sharpe_ci95": [
+          -0.2736411201670728,
+          0.1989625904887627
+        ],
+        "delta_mean_annual": -0.09834604849974257,
+        "p_fwer_maxT": 0.9950016661112963
+      }
+    },
+    "30": {
+      "blend_illiquidity": {
+        "delta_sharpe_ci95": [
+          -0.5985953722850703,
+          -0.057375478662743264
+        ],
+        "delta_mean_annual": -0.2972653955821655,
+        "p_fwer_maxT": 1.0
+      },
+      "blend_downside_share": {
+        "delta_sharpe_ci95": [
+          -0.36597774323159016,
+          0.19495532645707933
+        ],
+        "delta_mean_annual": -0.1335511107218677,
+        "p_fwer_maxT": 0.9993335554815062
+      },
+      "blend_close_pressure": {
+        "delta_sharpe_ci95": [
+          -0.16827055079088285,
+          0.2080475766525744
+        ],
+        "delta_mean_annual": -0.009060781469236346,
+        "p_fwer_maxT": 0.9163612129290236
+      },
+      "blend_trade_size": {
+        "delta_sharpe_ci95": [
+          -0.28747828023765354,
+          0.20737562596689563
+        ],
+        "delta_mean_annual": -0.09834604849974257,
+        "p_fwer_maxT": 0.9936687770743086
+      }
+    },
+    "60": {
+      "blend_illiquidity": {
+        "delta_sharpe_ci95": [
+          -0.5845735356864281,
+          -0.06703222745570389
+        ],
+        "delta_mean_annual": -0.2972653955821655,
+        "p_fwer_maxT": 1.0
+      },
+      "blend_downside_share": {
+        "delta_sharpe_ci95": [
+          -0.37580343268705996,
+          0.2118233761620289
+        ],
+        "delta_mean_annual": -0.1335511107218677,
+        "p_fwer_maxT": 1.0
+      },
+      "blend_close_pressure": {
+        "delta_sharpe_ci95": [
+          -0.18211643056390375,
+          0.21773136708070412
+        ],
+        "delta_mean_annual": -0.009060781469236346,
+        "p_fwer_maxT": 0.9326891036321227
+      },
+      "blend_trade_size": {
+        "delta_sharpe_ci95": [
+          -0.27965488103905567,
+          0.19948157458195473
+        ],
+        "delta_mean_annual": -0.09834604849974257,
+        "p_fwer_maxT": 0.9990003332222592
+      }
+    }
+  },
+  "stress": {
+    "baseline": {
+      "one_x": {
+        "full": {
+          "sharpe": 1.5702186466930144
+        },
+        "2023-24": {
+          "sharpe": 0.4628149274386912
+        },
+        "2025-26": {
+          "sharpe": 2.338082505710086
+        }
+      },
+      "slip_6bp": {
+        "full": {
+          "sharpe": 1.4434310034950546
+        },
+        "2023-24": {
+          "sharpe": 0.33200378493745325
+        },
+        "2025-26": {
+          "sharpe": 2.2201414571837224
+        }
+      },
+      "missing_5pct": {
+        "full": {
+          "sharpe": 1.538376271432716
+        },
+        "2023-24": {
+          "sharpe": 0.4255000615131239
+        },
+        "2025-26": {
+          "sharpe": 2.3163725469469756
+        }
+      }
+    },
+    "illiquidity": {
+      "one_x": {
+        "full": {
+          "sharpe": -1.5098962166464884
+        },
+        "2023-24": {
+          "sharpe": -1.0320436105801323
+        },
+        "2025-26": {
+          "sharpe": -1.8132817495414575
+        }
+      },
+      "slip_6bp": {
+        "full": {
+          "sharpe": -1.5600109912891933
+        },
+        "2023-24": {
+          "sharpe": -1.1216996464022275
+        },
+        "2025-26": {
+          "sharpe": -1.8415046063228047
+        }
+      },
+      "missing_5pct": {
+        "full": {
+          "sharpe": -1.5266660468311823
+        },
+        "2023-24": {
+          "sharpe": -1.0834394812974837
+        },
+        "2025-26": {
+          "sharpe": -1.8103663315206209
+        }
+      }
+    },
+    "blend_illiquidity": {
+      "one_x": {
+        "full": {
+          "sharpe": 1.2367862057318684
+        },
+        "2023-24": {
+          "sharpe": 0.19491931410954422
+        },
+        "2025-26": {
+          "sharpe": 2.015531695128199
+        }
+      },
+      "slip_6bp": {
+        "full": {
+          "sharpe": 1.1090920705741567
+        },
+        "2023-24": {
+          "sharpe": 0.07443192527285687
+        },
+        "2025-26": {
+          "sharpe": 1.8880473419645922
+        }
+      },
+      "missing_5pct": {
+        "full": {
+          "sharpe": 1.2119330708287495
+        },
+        "2023-24": {
+          "sharpe": 0.17176338701777605
+        },
+        "2025-26": {
+          "sharpe": 1.9946503959601944
+        }
+      }
+    },
+    "downside_share": {
+      "one_x": {
+        "full": {
+          "sharpe": -0.41866238862835087
+        },
+        "2023-24": {
+          "sharpe": -0.5597191299902448
+        },
+        "2025-26": {
+          "sharpe": -0.3091313436072069
+        }
+      },
+      "slip_6bp": {
+        "full": {
+          "sharpe": -0.4587713630005735
+        },
+        "2023-24": {
+          "sharpe": -0.5710082219008393
+        },
+        "2025-26": {
+          "sharpe": -0.37161469554919435
+        }
+      },
+      "missing_5pct": {
+        "full": {
+          "sharpe": -0.3993179415760079
+        },
+        "2023-24": {
+          "sharpe": -0.5196784352332163
+        },
+        "2025-26": {
+          "sharpe": -0.3060272068136351
+        }
+      }
+    },
+    "blend_downside_share": {
+      "one_x": {
+        "full": {
+          "sharpe": 1.4794434874814348
+        },
+        "2023-24": {
+          "sharpe": 0.3656900747647948
+        },
+        "2025-26": {
+          "sharpe": 2.2316636012363964
+        }
+      },
+      "slip_6bp": {
+        "full": {
+          "sharpe": 1.3521802697413434
+        },
+        "2023-24": {
+          "sharpe": 0.24348205527346975
+        },
+        "2025-26": {
+          "sharpe": 2.106197209411554
+        }
+      },
+      "missing_5pct": {
+        "full": {
+          "sharpe": 1.451800905327466
+        },
+        "2023-24": {
+          "sharpe": 0.3411803710717854
+        },
+        "2025-26": {
+          "sharpe": 2.2075173282289104
+        }
+      }
+    },
+    "close_pressure": {
+      "one_x": {
+        "full": {
+          "sharpe": 1.0741735059274302
+        },
+        "2023-24": {
+          "sharpe": 0.6866067312633732
+        },
+        "2025-26": {
+          "sharpe": 1.379480433414132
+        }
+      },
+      "slip_6bp": {
+        "full": {
+          "sharpe": 1.0073166520786574
+        },
+        "2023-24": {
+          "sharpe": 0.6224088901481772
+        },
+        "2025-26": {
+          "sharpe": 1.314558430178491
+        }
+      },
+      "missing_5pct": {
+        "full": {
+          "sharpe": 1.0735707811790183
+        },
+        "2023-24": {
+          "sharpe": 0.6836484745272423
+        },
+        "2025-26": {
+          "sharpe": 1.3847380374091343
+        }
+      }
+    },
+    "blend_close_pressure": {
+      "one_x": {
+        "full": {
+          "sharpe": 1.5906316406120353
+        },
+        "2023-24": {
+          "sharpe": 0.5030262926009755
+        },
+        "2025-26": {
+          "sharpe": 2.359097346145632
+        }
+      },
+      "slip_6bp": {
+        "full": {
+          "sharpe": 1.4721303300481008
+        },
+        "2023-24": {
+          "sharpe": 0.37744877063179055
+        },
+        "2025-26": {
+          "sharpe": 2.251498407762565
+        }
+      },
+      "missing_5pct": {
+        "full": {
+          "sharpe": 1.5627750386380097
+        },
+        "2023-24": {
+          "sharpe": 0.46589406559844404
+        },
+        "2025-26": {
+          "sharpe": 2.3439057508475734
+        }
+      }
+    },
+    "trade_size": {
+      "one_x": {
+        "full": {
+          "sharpe": 0.564434298175431
+        },
+        "2023-24": {
+          "sharpe": 0.14746705402691793
+        },
+        "2025-26": {
+          "sharpe": 0.8266041490087245
+        }
+      },
+      "slip_6bp": {
+        "full": {
+          "sharpe": 0.514481996435549
+        },
+        "2023-24": {
+          "sharpe": 0.07113470266173988
+        },
+        "2025-26": {
+          "sharpe": 0.7910353423337928
+        }
+      },
+      "missing_5pct": {
+        "full": {
+          "sharpe": 0.547094429462637
+        },
+        "2023-24": {
+          "sharpe": 0.10892578474438959
+        },
+        "2025-26": {
+          "sharpe": 0.8208920502852611
+        }
+      }
+    },
+    "blend_trade_size": {
+      "one_x": {
+        "full": {
+          "sharpe": 1.5331866831055232
+        },
+        "2023-24": {
+          "sharpe": 0.5116824553059844
+        },
+        "2025-26": {
+          "sharpe": 2.2237714179246963
+        }
+      },
+      "slip_6bp": {
+        "full": {
+          "sharpe": 1.4091701954026572
+        },
+        "2023-24": {
+          "sharpe": 0.3732193243275123
+        },
+        "2025-26": {
+          "sharpe": 2.111675630444711
+        }
+      },
+      "missing_5pct": {
+        "full": {
+          "sharpe": 1.4976651028699763
+        },
+        "2023-24": {
+          "sharpe": 0.46233840870920023
+        },
+        "2025-26": {
+          "sharpe": 2.2005140563212557
+        }
+      }
+    }
+  }
+}

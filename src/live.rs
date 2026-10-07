@@ -216,6 +216,10 @@ pub struct LiveSnapshot {
     pub isolated_count: usize,
     /// 策略累计盈亏（已实现 + 未实现），与入金无关。
     pub cumulative_pnl: f64,
+    /// 拿不到行情、只能用交易所市值反推估值的币。非空时要显眼提示 ——
+    /// 这些仓位的清算价、距离强平都算不出来，可能有隐藏风险。
+    #[serde(default)]
+    pub unpriced: Vec<String>,
     /// 影子回测净值曲线（从实盘开始那天起，起点归一为 1.0），供页面与实盘并排对照。
     #[serde(default)]
     pub shadow: Vec<(i64, f64)>,
@@ -256,6 +260,7 @@ pub async fn snapshot(
         tp_orders: Vec::new(),
         cumulative_pnl: 0.0,
         shadow: Vec::new(),
+        unpriced: Vec::new(),
         tp_ref: HashMap::new(),
         config: cfg.clone(),
         history: state.history.clone(),
@@ -289,11 +294,31 @@ pub async fn snapshot(
     snap.equity = acct.equity;
     let coins: Vec<String> = acct.positions.keys().cloned().collect();
     let mids = trader::fetch_mids(&exec, &coins).await;
+    let mut unpriced: Vec<String> = Vec::new();
 
     for (coin, pos) in acct.positions.iter() {
-        let mark = mids.get(coin).copied().unwrap_or(pos.entry_px);
+        // 拿不到中间价时**绝不能退回开仓价** —— 那会把未实现盈亏算成 0，
+        // 一个正在亏损的退市仓位会显示成持平，虚增净值和盈亏。改用交易所
+        // 报的市值反推标记价（positionValue = |size| × mark），它永远存在。
+        let (mark, price_known) = match mids.get(coin).copied() {
+            Some(m) if m > 0.0 => (m, true),
+            _ => {
+                let m = if pos.size.abs() > 1e-12 && pos.position_value > 0.0 {
+                    pos.position_value / pos.size.abs()
+                } else {
+                    pos.entry_px
+                };
+                unpriced.push(coin.clone());
+                (m, false)
+            }
+        };
         let notional = (pos.size * mark).abs();
-        let unrealized = pos.size * (mark - pos.entry_px);
+        // 有中间价就自己算（口径统一），否则直接用交易所的权威值。
+        let unrealized = if price_known {
+            pos.size * (mark - pos.entry_px)
+        } else {
+            pos.unrealized_pnl
+        };
         let dist = pos.liq_px.and_then(|liq| {
             if mark > 0.0 && liq > 0.0 {
                 Some(if pos.size > 0.0 {
@@ -345,6 +370,7 @@ pub async fn snapshot(
     } else {
         0.0
     };
+    snap.unpriced = unpriced;
     snap
 }
 

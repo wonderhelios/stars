@@ -1,0 +1,147 @@
+{
+  "days": 206,
+  "caveat": "Hybrid hourly/daily marks, sparse hourly coverage; not proof of realizable full-book fills. No maker fills assumed. Same daily signals and 3 offsets.",
+  "results": {
+    "0": {
+      "baseline": {
+        "sharpe": 1.4563666910033917,
+        "annual_arithmetic": 1.0805630727796707,
+        "target_hourly_gross_coverage": 0.9566493377172988
+      },
+      "illiquidity": {
+        "sharpe": -0.06772970286877074,
+        "annual_arithmetic": -0.04237031344924821,
+        "target_hourly_gross_coverage": 0.9574029126213593
+      },
+      "blend_illiquidity": {
+        "sharpe": 1.6466477918398716,
+        "annual_arithmetic": 1.1562616313829706,
+        "target_hourly_gross_coverage": 0.9637551569472688
+      },
+      "downside_share": {
+        "sharpe": -1.1356525748935387,
+        "annual_arithmetic": -0.9184026175377961,
+        "target_hourly_gross_coverage": 0.9654126213592233
+      },
+      "blend_downside_share": {
+        "sharpe": 1.0666113188122168,
+        "annual_arithmetic": 0.7731970130536016,
+        "target_hourly_gross_coverage": 0.9578352506581219
+      },
+      "close_pressure": {
+        "sharpe": -0.09643554938691995,
+        "annual_arithmetic": -0.09528873810481438,
+        "target_hourly_gross_coverage": 0.9649271844660194
+      },
+      "blend_close_pressure": {
+        "sharpe": 1.233527035074917,
+        "annual_arithmetic": 0.8841927180559042,
+        "target_hourly_gross_coverage": 0.9577248484681126
+      },
+      "trade_size": {
+        "sharpe": -1.0750192522551991,
+        "annual_arithmetic": -0.854421224243071,
+        "target_hourly_gross_coverage": 0.9603155339805824
+      },
+      "blend_trade_size": {
+        "sharpe": 0.9728500850590462,
+        "annual_arithmetic": 0.6798801371003346,
+        "target_hourly_gross_coverage": 0.9567017407241816
+      }
+    },
+    "1": {
+      "baseline": {
+        "sharpe": 1.4898031408486254,
+        "annual_arithmetic": 1.1302610074063832,
+        "target_hourly_gross_coverage": 0.9566493377172988
+      },
+      "illiquidity": {
+        "sharpe": -0.16524602872548172,
+        "annual_arithmetic": -0.1264771832817464,
+        "target_hourly_gross_coverage": 0.9574029126213593
+      },
+      "blend_illiquidity": {
+        "sharpe": 1.6604358826384829,
+        "annual_arithmetic": 1.1730578487277574,
+        "target_hourly_gross_coverage": 0.9637551569472688
+      },
+      "downside_share": {
+        "sharpe": -1.1951644368757628,
+        "annual_arithmetic": -0.9635877010887516,
+        "target_hourly_gross_coverage": 0.9654126213592233
+      },
+      "blend_downside_share": {
+        "sharpe": 1.0759570646234484,
+        "annual_arithmetic": 0.8041491122109704,
+        "target_hourly_gross_coverage": 0.9578352506581219
+      },
+      "close_pressure": {
+        "sharpe": -0.049847769304752376,
+        "annual_arithmetic": -0.05491778365804856,
+        "target_hourly_gross_coverage": 0.9649271844660194
+      },
+      "blend_close_pressure": {
+        "sharpe": 1.2923025931205687,
+        "annual_arithmetic": 0.9437085572046024,
+        "target_hourly_gross_coverage": 0.9577248484681126
+      },
+      "trade_size": {
+        "sharpe": -1.0676279458382971,
+        "annual_arithmetic": -0.8421175901999668,
+        "target_hourly_gross_coverage": 0.9603155339805824
+      },
+      "blend_trade_size": {
+        "sharpe": 1.0157166861274147,
+        "annual_arithmetic": 0.7329954888818161,
+        "target_hourly_gross_coverage": 0.9567017407241816
+      }
+    },
+    "4": {
+      "baseline": {
+        "sharpe": 1.2492916797293943,
+        "annual_arithmetic": 0.9597983332273143,
+        "target_hourly_gross_coverage": 0.9566493377172988
+      },
+      "illiquidity": {
+        "sharpe": -0.09181624535004422,
+        "annual_arithmetic": -0.06695328805522038,
+        "target_hourly_gross_coverage": 0.9574029126213593
+      },
+      "blend_illiquidity": {
+        "sharpe": 1.4463402573619693,
+        "annual_arithmetic": 1.0325475240694175,
+        "target_hourly_gross_coverage": 0.9637551569472688
+      },
+      "downside_share": {
+        "sharpe": -1.0494395291270289,
+        "annual_arithmetic": -0.8836151835345198,
+        "target_hourly_gross_coverage": 0.9654126213592233
+      },
+      "blend_downside_share": {
+        "sharpe": 0.8402672997788098,
+        "annual_arithmetic": 0.6320301533653164,
+        "target_hourly_gross_coverage": 0.9578352506581219
+      },
+      "close_pressure": {
+        "sharpe": -0.22170805500842516,
+        "annual_arithmetic": -0.20419046346352396,
+        "target_hourly_gross_coverage": 0.9649271844660194
+      },
+      "blend_close_pressure": {
+        "sharpe": 1.0550414662491125,
+        "annual_arithmetic": 0.7632429763854551,
+        "target_hourly_gross_coverage": 0.9577248484681126
+      },
+      "trade_size": {
+        "sharpe": -1.177546077212959,
+        "annual_arithmetic": -0.9344917747021099,
+        "target_hourly_gross_coverage": 0.9603155339805824
+      },
+      "blend_trade_size": {
+        "sharpe": 0.7762173343376277,
+        "annual_arithmetic": 0.5595024605119053,
+        "target_hourly_gross_coverage": 0.9567017407241816
+      }
+    }
+  }
+}

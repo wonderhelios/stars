@@ -479,6 +479,15 @@ function renderMonitor(d) {
   const nPos = pos.length;
   const nCross = nPos - (d.isolated_count || 0);
 
+  // 拿不到行情的持仓：必须显眼提示，否则净值看着正常但风险是隐形的
+  const unp = d.unpriced || [];
+  $("mo-warn").innerHTML = unp.length
+    ? `<div class="warn-banner">⚠ ${unp.length} 个持仓拿不到行情（${unp
+        .slice(0, 8)
+        .join(" ")}${unp.length > 8 ? " …" : ""}）—— 已改用交易所市值估值，
+        但这些仓位的强平距离无法计算，请检查是否已退市。</div>`
+    : "";
+
   $("mo-metrics").innerHTML =
     metricGroup(
       "账户",

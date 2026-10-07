@@ -906,6 +906,8 @@ mod slice_plan_tests {
                 liq_px: None,
                 is_cross: true,
                 leverage: 3,
+                position_value: 100.0,
+                unrealized_pnl: 0.0,
             },
         )
     }
