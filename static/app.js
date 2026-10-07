@@ -588,6 +588,27 @@ function renderMonitor(d) {
           let slipCell = '<span class="muted">—</span>';
           let pnlCell = '<span class="muted">—</span>';
           let status = '<span class="badge-mini mute">—</span>';
+          // 对账补入的被动成交（止盈单）：交易所回执里直接带成交价和盈亏，
+          // 但没有我们自己下单时的「计划价 vs 成交价」结构，所以 parseFill
+          // 认不出来 —— 必须在解析之前单独处理，否则这几列全是空的。
+          if (r.pnl != null) {
+            status = '<span class="badge-mini ok">成交</span>';
+            pxCell = r.price ? fmtCompact(r.price) : '<span class="muted">—</span>';
+            const cls = r.pnl >= 0 ? "pos" : "neg";
+            pnlCell = `<span class="${cls}">${r.pnl >= 0 ? "+" : ""}$${fmt(r.pnl, 2)}</span>`;
+            return `<tr>
+              <td class="muted">${ts2m(r.ts)}</td>
+              <td>${r.coin}</td>
+              <td>${sideLabel(r.side === "买" ? "long" : "short", true)}</td>
+              <td class="muted">${r.action}</td>
+              <td>${fmtCompact(r.size)}</td>
+              <td class="muted">—</td>
+              <td>${pxCell}</td>
+              <td><span class="muted">—</span></td>
+              <td>${pnlCell}</td>
+              <td>${status}</td>
+            </tr>`;
+          }
           if (f.kind === "filled") {
             status = '<span class="badge-mini ok">成交</span>';
             pxCell = fmtCompact(f.px);
