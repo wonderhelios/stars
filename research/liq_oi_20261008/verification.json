@@ -1,0 +1,20 @@
+{
+  "passed": [
+    "independent scalar baseline weights on 8 dates",
+    "all phase baseline return CSV parity",
+    "Binance per-snapshot timestamp cutoff",
+    "unique coin/day rows",
+    "all hourly timestamps on UTC grid",
+    "finite daily PnL",
+    "8 daily plus 6 hourly candidate family count",
+    "Python compilation"
+  ],
+  "output_sha256": {
+    "binance_daily_metrics.csv": "91edb3a8cdf1f614f3c244e6534753e0709753078eaf29a8e08be8c130efc583",
+    "daily_returns.csv": "22b318a0fedf190a9b04fd922ba8d4d4ebcd3f4e22631d1d74c68752caf62f03",
+    "hourly_daily_returns.csv": "dd384e8f649d8bb9736270f56bbfeb77b170893eb306bcde1a6bdac58a048ca7",
+    "results_daily.json": "da456b8b0114dae43d123bc4799566c52126ab5d82cf1f669b1c47c7822b97bd",
+    "results_hourly.json": "35066376d46878fa7f540af229cb9a4e0047816c0d14f8e9b86f24d0909dcae5",
+    "report.md": "3898722adf2e8d6f736797684e23e3ab597f2b4009243afd16db24acf7630d82"
+  }
+}

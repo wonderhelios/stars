@@ -1,0 +1,1480 @@
+{
+  "meta": {
+    "hypotheses_daily": 8,
+    "hypotheses_hourly": 6,
+    "hypotheses_total": 14,
+    "bootstrap": 4999,
+    "family_control": "Daily maxT(8) and hourly maxT(6), Bonferroni two families; require all block lengths",
+    "phase_policy": "all 3 offsets; arithmetic mean of phase Sharpes, not Sharpe of averaged PnL",
+    "execution": "next open taker .045% + slip .03%, 2.7x equity exposure; price/equity drift; 2% band; missing-price exit at stale mark flagged and stressed",
+    "funding": "Not fully available; excluded. No candidate can be declared investable on this backtest alone.",
+    "dates": [
+      "2023-08-14 00:00:00+00:00",
+      "2026-10-03 00:00:00+00:00"
+    ],
+    "days": {
+      "full": 1147,
+      "2023-24": 506,
+      "2025-26": 641
+    },
+    "bn_status": {
+      "200": 19151,
+      "404": 1
+    },
+    "coverage_mean": {
+      "price_volume_confirm": 30.63230921704658,
+      "price_volume_exhaust": 30.63230921704658,
+      "capacity_confirm": 30.215064420218038,
+      "oi_confirm": 9.641228939544103,
+      "oi_exhaust": 9.641228939544103,
+      "account_crowding_contra": 9.644202180376611,
+      "top_global_gap": 9.644202180376611,
+      "cascade_rebound": 30.63230921704658
+    },
+    "score_corr_14d_reversal_mean": {
+      "price_volume_confirm": -0.003929656332472759,
+      "price_volume_exhaust": 0.003929656332472759,
+      "capacity_confirm": 0.01757115415385035,
+      "oi_confirm": -0.18096406400235251,
+      "oi_exhaust": 0.18096406400235251,
+      "account_crowding_contra": -0.19047555906741956,
+      "top_global_gap": -0.16854688065200749,
+      "cascade_rebound": 0.06097756186042429
+    },
+    "missing_exposure_max": {
+      "baseline": 0.19103417695521174,
+      "price_volume_confirm": 0.2840943486873873,
+      "blend_price_volume_confirm": 0.21854018968976668,
+      "price_volume_exhaust": 0.2936188530979877,
+      "blend_price_volume_exhaust": 0.16960185543432918,
+      "capacity_confirm": 0.3065710944477213,
+      "blend_capacity_confirm": 0.21562488980094274,
+      "oi_confirm": 0.0,
+      "blend_oi_confirm": 0.19429229278381038,
+      "oi_exhaust": 0.0,
+      "blend_oi_exhaust": 0.14692785077913786,
+      "account_crowding_contra": 0.0,
+      "blend_account_crowding_contra": 0.14907398988890738,
+      "top_global_gap": 0.0,
+      "blend_top_global_gap": 0.1663841013664759,
+      "cascade_rebound": 0.0,
+      "blend_cascade_rebound": 0.19103423594040736
+    },
+    "input_sha256": {
+      "0G.json": "e953dc70705450aa8c52a60f4bac11a36f4575aade7afe51df8280a27e11f56b",
+      "2Z.json": "5c08d7b81673fb320f1a3a5bbb83118bcbe470f5f1b6932fffedec7bd8b43eec",
+      "AAVE.json": "0e3792e7506fabe100f273534415945274bfd2007f440222673c868a32d5dd05",
+      "ACE.json": "408daae9e53b979a72c4f47481d0db32d74e5ee67a1d0d559e1d71d49f81e954",
+      "ADA.json": "59d01775adae665f3d525e190d4a279f9f7479eb2de9ab323b7f814befdeb135",
+      "AERO.json": "682dcffb3ad2fde1e19f88d05d57e0dba34239722342fee1ad172ddc6f46e428",
+      "AI.json": "750c706846d5dfc2180487b93de746f715aa13a75e847b17113d69ea4c7aab9f",
+      "AI16Z.json": "e46ffd3f1cb111095f8dd931885db2a7da23edd8b305116d094468f286554e48",
+      "AIXBT.json": "06c65d3bf9e649662ceadb9662e152961ba71f062df876c64510975c38e64bf7",
+      "ALGO.json": "1d7849c2a5fb2ba496f27fa63194cd6c0fa71f9300225c7323f895cebedc998b",
+      "ALT.json": "ab5ed9dff3ca9ac59688df06a34c2a45723999b9d87b82c9c8e9fabe73c95b58",
+      "ANIME.json": "a40e3edc9446030330c431547b8039084bc29385543e6b412cfd7d9c4ebf7a2e",
+      "APE.json": "298af6462281cbe15f3009291fa599237ad4064ecfce1ef2e7ab4874c73661d5",
+      "APEX.json": "c699d5e19a8e922ac302180c5b33153d0140eaa7ccb7ad6c129f5d394de6f023",
+      "APT.json": "32cd69fdb96b6c60509ef5078785548d286bc4d8c5bfd8073554e40eb0d8e866",
+      "AR.json": "b3e1de9c91cef01d22010b1f6aa9838028a14024567f657a2edeb85edc7db8ac",
+      "ARB.json": "a4e58622788c97b220fe1cc76475c7a5304cb852765014f293e60100abbe4775",
+      "ARK.json": "8a6762fb566cd063f95d43661e469244251ee0f756372441698e5040dbc1c1a7",
+      "ASTER.json": "87f90a4808775109836814281248f42c95d5a47bf9250d7a6ded9f44574adfb3",
+      "ATOM.json": "186f626fda2bd16d700714c9754ea3b55060205b38665338f0e4758a075e79ee",
+      "AVAX.json": "a495ccc090b15bb655818872d6eec4be6396fba44ece134a8963f9e2f8561b70",
+      "AVNT.json": "2ab1d3cbbb6e613ed1e398f132c1b433c2557b74a480564c25b4abefcf1cdefa",
+      "AXS.json": "c68d80b4c8ea0020940414f3bdbfd7446f68466cb52785eef5183e6a25cf3147",
+      "AZTEC.json": "a78b267231a12409a0f71f4bbe6b03c186e436d8dbf44d9b582df168b5c14bdb",
+      "BABY.json": "1c1ac65f89479d3620125a9c68ddae2784ea460f9e7f380f3b46e0236321ce3a",
+      "BADGER.json": "474e992207a9c9edf4d06c2ef86f513711089fec63d0f96903cab0e2f1b518da",
+      "BANANA.json": "3cde9ec81637ad652f34ff5390e8cbb1e3b4e1a343b327a08653d4f5dde18f94",
+      "BCH.json": "efcb90af761a52ef676019ebbef5180a41e565de133364b22c47e8c979bb0c2f",
+      "BERA.json": "99f3173e7df43a14e9fa4df7bcfd510f048622db2827201513f75167e9072cd3",
+      "BIGTIME.json": "ba45250261d239ab7c80bc732e13272aa21652ecae0f445d4fcf281a43c0bc5a",
+      "BIO.json": "3d8724b7462d8287a30a8080ac5f03b66086554b9eb9862d4ce2180836ce6697",
+      "BLAST.json": "6875973d88cc49486da2aa52bad545bf1b0ae5ca7d3bd0b1ffdf2279095c1fff",
+      "BLUR.json": "a43c2f0b22911dcfa0f104ba26e4e49d4a1af0d9c66c1a4b95a3832922ebbf17",
+      "BLZ.json": "973294966889c90ebf8e85c34585d1cf4b614def7e81950a99177fae7a5a9ed5",
+      "BNB.json": "3a66664f216346df7ea26cb45094093bc7a333049d7f206c60e937eb2e823a1e",
+      "BNT.json": "0863ada6cc3bfe80765432bfcf2f2af38b8eb912d68bf30413c13d8cb8dfc7f5",
+      "BOME.json": "fc9816f4b0d2ad5c9d841a00c6a2a93e764417992e4d9067d2e01c675b953d9e",
+      "BRETT.json": "3ea0f6ba6eb448175d80b50d0141cb76da7bc6e5f19214d420a79e596c7310ba",
+      "BSV.json": "67a0a189a1c705ff77df4aa495a845db74b7c51b406753a54dd31f0773294ad3",
+      "BTC.json": "530837a227a6a6972918c80ac849329395c1e7ebeaaf4f00e57983b7000fd269",
+      "CAKE.json": "ca87f6759e633db0aa56fa8bdd08fa83880c8992c227576cfb0ab21a47b5289f",
+      "CANTO.json": "ea9a23532611139cb6e954023ba55ea5988cc5d0c124d9a2aa8645e74d07da8d",
+      "CASHCAT.json": "6173c35412ba959c9fe64e46735fade9129f2ce243ee7941af47a521017c381c",
+      "CATI.json": "e02e635b65becdc31050d61ef8340db6ab588103484a6cfc13825269e2e6230a",
+      "CC.json": "9fafe724cbc4f96ccdbdadb50495f4a863f73c471f9fb2fd61313af0082e4485",
+      "CELO.json": "9637c68218510104c8e6c2dc53364e3dfd9f3c2b65b5b953061546c5a8fe3562",
+      "CFX.json": "48da9083245f60bd11a358494958adbf6f74928d137a72f58aa171b41f2d539e",
+      "CHILLGUY.json": "be74eaaa8264d2187257eaaf4ae9d3f36e0957641f0fb0f25fb6eb62b61b593d",
+      "CHIP.json": "aa374958ed7fab832123b2abec2e4bf229f440b8715269d888e345017e83bd3b",
+      "COMP.json": "98d1b1ea95da522cb5e4ad250ffea73a466a83930e1399b155fd96554dfbe6f3",
+      "CRV.json": "fc60523efcd31c824ee319a05640ff7bbcb3a4c206a9577f65ff27ddea343d67",
+      "CYBER.json": "9aa622d1d767a541feb467b22e33d43efdac985c23b23a0eb98d0aee21943895",
+      "DASH.json": "f11711ce68692d91f7530d1905e6028f9642885601515a778aead40723a4912a",
+      "DOGE.json": "8352d1e2c4c691b6dede9b5d2612ee7c51c58efb83c2e70c5981579d6272a879",
+      "DOOD.json": "8195993c84522a4a731bd344f9582a52907cde80d63822b54e73c632c6f8d5f9",
+      "DOT.json": "75f04143b361a7b8463e1d8b57e0c2509953ebff4a599d7ba8374147c2089110",
+      "DYDX.json": "eef77a58827fb396f5035ad4961b11d4275af84360a6cfe1ba3656eb33aeaca1",
+      "DYM.json": "894cea76efb0122de90f472284a055e9999bb134930fb8a62ab745a00a7cfd2c",
+      "EIGEN.json": "569958c7fe33f168d93243405fa236cd0ff529f4da64759025f9650c470219ac",
+      "ENA.json": "c2db307ffe0add55b5ee827b5bdfb1b461c8f378ad0b313afe3d58c54837341c",
+      "ENS.json": "86c96bd86af666d56ec87b793d51f114d221995c6cc0f81c8ae56a8a5ae1095c",
+      "ETC.json": "ceef11dcfe790fa6602d4d9d49966484ee007f53b140d2bedd7c14961af015e6",
+      "ETH.json": "f5bfc63a5c0ff529ded63b900b29f691ea73511238cf0413b5022361b2e3aa68",
+      "ETHFI.json": "4364b1338bfd0f8173c990c8c7446bcb927385fe2f2fb09769c6a9415cc94932",
+      "FARTCOIN.json": "6590610dcac680a22789c5632edfe643c5be58157006710fd593d7a97e13fe5c",
+      "FET.json": "ed76186c7d864271298f28470d61699904611e2dfce27c0894a82024630dc3e3",
+      "FIL.json": "c6cd2a01a16df7dd9aaf170d946ad61ccf7ca14b573bba392ebcfc0a8d79eafc",
+      "FOGO.json": "e48b655e332c5aa21f99bbd3e85c83512477d279262fd83da13dd113fed4c932",
+      "FRIEND.json": "d4c5a81713d5daded3e4561e3722e975229ea4ffac2f332733aa402d7404bdc9",
+      "FTM.json": "f5fb1f8d6463293bbf2a357852eda6d22d90f51929054883f2fa9b254ad755ef",
+      "FTT.json": "d788a23d5d114e63618c12498e2342656c8e8799c7e3efc3bce1979f6c9f623a",
+      "FXS.json": "34ee3452cb7430595d37e1b5cc3040d05fca5c61dc2e125da5e851f0d542d5eb",
+      "GALA.json": "5805dc26dcbedcf4ce77fee49e241be5e3cc3176aab9327093bebacb131a319b",
+      "GAS.json": "c37281f3dfa3de9f6fae0105f76631a50e9b85b0c6dd614e0e8b6a7f5e212c1e",
+      "GMT.json": "3a661f9b093bd50e3cde83dc4cce6a62a870e1c8a41f69c8354081e80dd43315",
+      "GMX.json": "775226ffcb4989249c46c24632f8eb6f317f3a7a693c787b395ac57a31b4ce48",
+      "GOAT.json": "ddfb470edebee82ca2f9e054539b8d8449b775c10c0fc11f0336185f43e6f044",
+      "GRAM.json": "77a6e708a5eb39f7858f2e0aff6baa23fadfa81780f3bf3e86ff1d742e8b8156",
+      "GRASS.json": "361010c080dce8f86d239c5bb4ec9564e7e3e89192fe545ba780f4e4a1629d36",
+      "GRIFFAIN.json": "61d0dff96c9adbebd842363d7ab0c9d16de5777a3af9425b3cf232fe4b1427d4",
+      "HBAR.json": "f6d3c5cb24f29942c3e09cc6fcd9877da98e7fc396052964fbb1089769f3e984",
+      "HEMI.json": "f7cecc62b27ac28d2d2bc8f128a0257a2acc98075436010cd2842a2a11058b8f",
+      "HMSTR.json": "d258bd262a15e9b8d43243740e5c339816e712a85f2658a1c47f30020af5f776",
+      "HPOS.json": "11969b6aea8aa4f6fea50cc47123c9b0be2ea1d53f1b3efd5985af354a88f2a3",
+      "HYPE.json": "c62bcbf46754914fda514a3fd1faab3a33e4bb64de054f757b866cd08562e077",
+      "HYPER.json": "6e76da13bd8122e8938b3f625836b11d53086c610888445db098b2ea1efbd1e8",
+      "ICP.json": "80b248b616586eec1fe49b01318ffb6983bd52f7bb88f33608f61f51650c8245",
+      "ILV.json": "918edb6b444acd00b9675b2a2d66a9416ea3c5e947adc1fd240efcff3490dcaa",
+      "IMX.json": "3b89867579f4cbb2e23a68dda5f64cfd6341215364489a60302aca1f457c2f66",
+      "INIT.json": "b804ba49718d53fcbb0911209b99097c3f90a5b3226c4be66acc6e3ce93c7562",
+      "INJ.json": "9d744c83313288a72ac644415341df871398f968867b07c727bd4c5deeb50f5e",
+      "IO.json": "7d91a408c0302f37a354bf175b44991203b3b40cbe27c0ea98909f723594f12b",
+      "IOTA.json": "6b101c4d44a1af8563886f51be1ae70426d59ab2dcdb26caaa432febcb74fdd9",
+      "IP.json": "8c1780a95ff001c36ef54fd3cb37e2e42d36b1d749c4fadfc235bf6883e2b2b8",
+      "JELLY.json": "b608a7c9571e9cc72afff99b9afee95b734b750a42b865bd826f7fc1e097d635",
+      "JTO.json": "cac4e332ed43bf0e5ef2f8c5f7e7615eb2131afd80acc0703200c953b7aa0962",
+      "JUP.json": "5549342420a7b8216acfa7305104b2f4d9f22b89811ecaff4804f4e126f09322",
+      "KAITO.json": "60d941dd44c37dc86db53298334f44a2b72e58f4f8a6a9a8d9ee7a6c859972a1",
+      "KAS.json": "3424ab9e6fbcac7246901a1fd200cfed5b369e223b59fb07f192d1020947ce14",
+      "LAUNCHCOIN.json": "9940c76d2cf312315046a5393cc93c59bd6be0e125be888aa9678d52e511d833",
+      "LAYER.json": "3311cf59217ad32c393bb43ffb751a32a432e0de62ee0b123938990306b843af",
+      "LDO.json": "617fffeef5f5464cc4d439fdb00fe3e61188001a0403828ca14f97585dcfc29e",
+      "LINEA.json": "c237b451e0ef387c43325bfebfa8780ac88fa21703594a6ccfc7d68badae4598",
+      "LINK.json": "91215642e5d547bb0e3582702aabf791f2a27c13f8896e8a7d96c3325e6c8bff",
+      "LISTA.json": "552e83d9a33594339b3e4d347d50f573e90ebb3fa4b00ba0d92b4c0624d9ee9a",
+      "LIT.json": "39c6e34b0814a7854a909792e39d3010ec9c0e6dbc11450f9908e00fe09332d8",
+      "LOOM.json": "c2e63a31b03444bbd69483a8d3b10ec00655b85fd198c99fdbfd60449042f9aa",
+      "LTC.json": "b6dc45513af5bf505d794d0a1558ec6caed41916faf47cc95ecd477862e6316e",
+      "MANTA.json": "e47277bf0f3c0499218e4761cf38f6fc917c846b526e7b3a03b02813928d9300",
+      "MATIC.json": "c3ace3b77f92f39e7c869489a2f9653bcd472ba936f946da6d4cb9492604ed5a",
+      "MAV.json": "a482f0427ca3b7eecb5e86345d906a5fd98ebae64bd21cb21b64f688c717ecce",
+      "MAVIA.json": "967c50df58bf8a0d1b6ab144ae3b57ad5ec3e769c5850def7f959766593450a6",
+      "ME.json": "f8f4844ece4896f1edc154831dc9ebc126c902fe7f3a37132aed14fb8d29c25b",
+      "MEGA.json": "3e6260c7d1e1525a8cdf17ebe90cb166678b1df7e15bf1224f0bf7fc4f1786f9",
+      "MELANIA.json": "388de3f7b600f8322f2a7ff46469fc2a8eb49d4cc0cd2d0af90f186ac0936f90",
+      "MEME.json": "dd7db5d38f8a44fb93bf9a50bf303744dab933284979280729ce3eea94c02120",
+      "MERL.json": "b26f69be7af55c1b8542e11e0be76e3d4567de0dae288d2c9795c6d6343e3f16",
+      "MET.json": "8f5e6d3e4e1762f5dac025500abc03a57baf7a77b32b4faba87cc3b0eb1c12d3",
+      "MEW.json": "15694ed20fe56c3a9d1e6b8b15dde92d5f54e637fa250b5c487713250287907f",
+      "MINA.json": "e18e5b88a8e93fe9c55a8d33bfa8e16bced1b287f82289f8e37939b3fe049b17",
+      "MKR.json": "1ac18c8fb840c0b05fb5bb0dd92585b6515848a2419f8f7e08bb27cb5299e2a0",
+      "MNT.json": "fd04dca240cb5b1d14a32cbd3052410e3e881ef2c2033e9f311a3ca236579e62",
+      "MON.json": "a27215653e876c3b7bc91694fa2a8bbdad239f28da36ac00f8a707a1dee78cae",
+      "MOODENG.json": "f33c7b959e876a8d5bf6db195515406ea306736967db2c806b42db237c4a187b",
+      "MORPHO.json": "1d104aa488268963894361045a994fd80ab23b793e781047271d79126a98e850",
+      "MOVE.json": "8f1aeecf69e03343cd8bc2c0925ca3b109d67c2b79437b8379fb3b2aafd7a9ff",
+      "MYRO.json": "6436d477f838cadff4f6cae57f04024103b70a18cf794dcfc963326680b316a5",
+      "NEAR.json": "0405533a1782faa8d0e4a478b949bbdbeeb48322219de280f8e39e0c488afb75",
+      "NEIROETH.json": "84c1fde8398d73065971be674add358859734b9c961adff0183b9a5fd608e021",
+      "NEO.json": "16573c66440b500f15baa2b7c6c400b31da6fc0639e4deb637a0198461ba130f",
+      "NFTI.json": "6eef002ac76ccf63dd0aaa0909530f5a142fe6f3d9bb5559405f6d32f42c96af",
+      "NIL.json": "4bc1a5387bd3ee4aceb927273ca5893f146bfb87298ee220dbc5139cc31d3cc8",
+      "NOT.json": "73c1a3a88f2a05ffc69cb707205c2d73dbcccebe4cdcbea9f0b0e2f04635a7a2",
+      "NTRN.json": "1ae628795734661c95b7983d830c1cd9f02e5dc4908ea18177c8890d16ea8567",
+      "NXPC.json": "b61dd5e277a85cabb35f6aa905c2a605b5d2882a1a1baed1c5623db53fb30381",
+      "OGN.json": "174bc3dcf4ab2e9dee8754f71c3c1ed760271e3d658f5c0bcccc31c53a4a9df7",
+      "OM.json": "9ba3deea80419db10d68bad5a8def3e2f589a6212861ca15807985f8194a8c26",
+      "OMNI.json": "1aeb3fb0c67b0266d7eaf65d0fc0a9e906951ab68b8663996e711ba9b05e9e95",
+      "ONDO.json": "f1b987d99cc8816628b6dd14c20119a9cd9499de2d4ebc51eb1d1411d6d1aa4a",
+      "OP.json": "3b834b3ded9ac1385756c0c7c55c197201abaeb9680484f73d9778ab6a3378a6",
+      "ORBS.json": "c70617f6b8ea5bf85f6ee17f933da066fe62fbf734a2fb8c032f14c7735eb1f9",
+      "ORDI.json": "bf4efe488377e37d3a6db0b5046a145fedf61c13b8786b086348141440e5be4b",
+      "OX.json": "68b0e0ded8d5dcb7ae4470ea567007241f4f6fcf7fe19147f7e5ec679b16f428",
+      "PANDORA.json": "a976bdb19c0a460db9cceb0b2585a890b02cf787782ffa3634133984b15c7c99",
+      "PAXG.json": "8f6a2af87a68a2d84b3f198834a36356a511deb6aad8d16b8a931b5e688751d6",
+      "PENDLE.json": "30588fa1619993f7f18149ebc5e5f4c211dbf2ebc5f675887329a2fa209fc36c",
+      "PENGU.json": "3e1e7f63f1010ed883c08c99315ff12e59c1d99d5161c96d10e696689f3e737e",
+      "PEOPLE.json": "f601b41d25c577a46b743f04a3b579799b6d893a9a455c3644eb232e89b6dede",
+      "PIXEL.json": "cfdc0938625cfb7c93223b7966e8106f01e11b9a72474c4b2313da01b3c11b30",
+      "PNUT.json": "fd650c330ef19ebbf9d3e22c6ebefd607e023c0d1512473644d24170d1230945",
+      "POL.json": "9609979c39bfac0584d5e7ebd7d79c2fc5b4636afa0b44a2dd192ac4f01c13e5",
+      "POLYX.json": "c4a3bb156b0407b61fe7a7a6f2439d4a2fda14a775f0354b2f317cc14db36d32",
+      "PONS.json": "3ddde3f579fe047bb9dcc22098842520fcd2b928bc5a11d5e710c50c640f065a",
+      "POPCAT.json": "c538dbf77e74410a42481fa236a1f9b83b670c1942ffb17aa39b24fb1c45abf3",
+      "PROMPT.json": "fb66d9eac53723543f78f8e433fcf079969e8e49ca1de8f773271bbece0e70c8",
+      "PROVE.json": "f73bd49221890d98ecc89259a20ee75434ab8bb7b8c864bdc58944893ab04409",
+      "PUMP.json": "868bad2fc26893ae4e057e99bc201403427c0c11306a09f5c77bfa0035e5dd99",
+      "PURR.json": "c2fe5609fcf1aca41685c56bb52aea09eb529fe81675e9f66c5cd211de074e24",
+      "PYTH.json": "8e795bd2a3370e3fed7ab7f8f463dee097cb898416db69005c77b5c44ec58bd6",
+      "RDNT.json": "5bdf181d099fffc76087077752011b7ad491ce0e943c9ad65c2c23dc916e760f",
+      "RENDER.json": "5ba636e4a8a85cc476b5fa417d358895b49351f8722b070fb2930e3c52e65d83",
+      "REQ.json": "ee59a180f306e7db1c46c5764778712982cf6d31a0e77a8b85d7bb91b95c9bfb",
+      "RESOLV.json": "bf60aad677e25eb63ffa084d8bf0be6549666e05e905bb9e46d677ba8e916d5e",
+      "REZ.json": "493898375aae1ef9f7d67352333debbe89e315dc6006e0b69392cd9676960c04",
+      "RLB.json": "6074170f9d40c424f9b8d934659ab0435f8e7a7e158cf091b8a26c6b04ea46ac",
+      "RNDR.json": "08805e94cb3b030eebc26dafb22023405cb692ed4b904953161f12539a57d69b",
+      "RSR.json": "b91ea08c7c1eb0aef6dbb91bd77aa810a3920b7a19ff39c2dc32d278188c887c",
+      "RUNE.json": "5da0edcc3a5456c4292ebb70fdea7304eb3004eef7dd90ad4a32922974e45636",
+      "S.json": "372415194786541617d3e2008fd08aa7f7fb945d9a5a9b5942bcce5e39880011",
+      "SAGA.json": "475545e720219c95c3d7cc5d67e2a808f6cd15b7bcf5eab677b5a9f3172188c1",
+      "SAND.json": "634fa1ae74f5ce309017f55d9d26934d719dc50c00e19ee06f54fa1f5c3e774f",
+      "SCR.json": "49737e76203b4defc82c631cfd09edc410eaaf0e803e423f28b2db3fc0d68874",
+      "SEI.json": "e9363a74a7d646d42a59026aef142f389d6bbd8bae1ae1772b0fb710cd26ee74",
+      "SHIA.json": "3cb74a912c23be101fe175df8671394a4929a79dcc00a459c8be62738ee74067",
+      "SKR.json": "ec6cabbbcaef931384d044d3059645d46fcbfb114a92410c2d205f25005683cd",
+      "SKY.json": "51581846b40b3740bbba88d2c844a88b0bb574c633573a39e352477ec653b5c5",
+      "SNX.json": "56e8a16900074dc2302a8e3a79ebb7f0ff1c509861452ad6550f5c0c4bfa0c55",
+      "SOL.json": "7cbdd81bddf44d01deaf90a7e2dcebf80f5c60f47ad1839dae9ed8ae467de5c6",
+      "SOPH.json": "65032cc1bb9eb4e78539ce65b52937895a164d6151f7498486d0cfd176eb75e1",
+      "SPX.json": "b184a2f36961bbb8111b5618a49bf1ae1128a0b07f3d13e56b14f1b18d8236d9",
+      "STABLE.json": "3515a39756dbeb2c5e088eeecc65639bf9957a3f03bc2697a0a4ce3fbe80ddce",
+      "STBL.json": "04a2682fe3b69c50703d0250ed8c378dc282420dcf3f9f3b67a073544c032a95",
+      "STG.json": "5240100d8961999e20af0c000e82194b11965fdffe367eaa2fc7d634e48eb53a",
+      "STRAX.json": "964538df28bd52c8320647c8b64768dbde7150808fa2fe5f70c990dad758cd6b",
+      "STRK.json": "9adcd5a0b7403440f470a2069dd28fb7701642ce8d6edecbe614c958b7e596ad",
+      "STX.json": "934540f4aec8a6853e0e8c624057a5fa97df10838f394efef8705711f1af0761",
+      "SUI.json": "5ae10444b68f9234267b1574997a3f58c4d6175b064684ff3546cf4ab896ac36",
+      "SUPER.json": "abb2b3f93193dfc3fe07c82c5fcb02a30aff9a3ef8513517c6c0721596671bfd",
+      "SUSHI.json": "1dd78e292d0cc077ab4591df4cc39367ddd33eded20e2463d0ebc1b0c35b9852",
+      "SYRUP.json": "e00a6b81be97bedf510a9e83ef958c40e83620fcd67280ccbbc4db9299ce8f26",
+      "TAO.json": "47e741c7b469f49a3a9c1e16cba1e67f2e3de2756ec1f00aaeb98d82fc9df6fc",
+      "TIA.json": "6c2c43c11504474b739fef4602ebc6ef1f9ff8f128b8b9ee9d85f9e2aa5c2971",
+      "TNSR.json": "46bd283621e75153c674d5263771088589cb4a8381e993c98e8675ed1622b23b",
+      "TON.json": "be58883623bf16f468f13fdd0ec12bd9315a514d27fdfcae7a8cdbebe0bf796d",
+      "TRB.json": "50b7b12f7b1cef5ff205a5bba827a8781faf64ad445c4d0fcf9553529ee4aeb3",
+      "TRUMP.json": "84022d1ec43a36f62a7d091b7c60b23b682582dbbcd5615ee79b8d442775b063",
+      "TRX.json": "ca169232059b6f938697e62935066ecf11525a579f5bd2c507e40e0b7151e75d",
+      "TST.json": "7dbe12c8b3b79d98efd67ab853d074db6919ad907c2741a5a4207c50ce075557",
+      "TURBO.json": "27e07f0482f58d37a3a0626cb1984bda5d8276ca428711cbdb7d98c0dcc8740b",
+      "UMA.json": "02725eaa97f9fb149319bfda3c0c0df70dac3e17b8ce9f5667756178a03aee83",
+      "UNI.json": "e2a990a72636a884566c02a742fb4c386a4defd226be9291fe55f6690640d986",
+      "UNIBOT.json": "0013cb08335f82822994ec2f0e2ebafd96478fdaaf4d16d0df4e8df99ede1c47",
+      "USELESS.json": "9aaa131f4605fe84da3d3da34bac9ec49914461bb289dd5ab09f841194d25da3",
+      "USTC.json": "f3cdda6a719ee2ae9f5fd774c1d775f6017616544c12176a74c2c428b7b0efe7",
+      "USUAL.json": "ea22d749ce350788493a251fdfb7bef588aed6015ec041fdece84107375b9af6",
+      "VINE.json": "5233775c48148d4a423b7273ac095f9950d72d29cd62ad15f032fc9c0e8e3f42",
+      "VIRTUAL.json": "3ff53ac8ea42a67a747d79285be5d72422eaceb982f464a7a341f0dcf0c914f3",
+      "VVV.json": "95fc8ac46b093f08b30b858256a412e9ff7f388ea2358a4f67848e7faae2cb91",
+      "W.json": "1ae1c5b8a5ba65aec3cdbb6c622d125c0432cfb4458022f83d0818c8f8b2718d",
+      "WCT.json": "a7f0b85fd5f4e7fcd69b4535a791d3d51cf2a742e89cb2e19327242c21b6acc1",
+      "WIF.json": "d40795837b62da79faa92741d2b7ef2aa5660268e71e0ecf0445bf07ee3beab8",
+      "WLD.json": "c12fa97539842fe103f6872c7ad45360ca7e78a7ef200aae0e2eb1ed47c0abb7",
+      "WLFI.json": "a18c3ad0b417d37768a3b07a9637410e77d28845148c8db3d799f59d93cce4ba",
+      "XAI.json": "90f1930cfc5eea151fb589416f04e294c002eeaa90503a278741c10ad15a0f59",
+      "XLM.json": "cde1ebe59209c32acf240d2b52701641bdd7aed5fc2458999b25c6d3ee526ac4",
+      "XMR.json": "b5ed9ca050b3a69ed61a2c1b174d5721a10200eb49da9f6947176177806c8656",
+      "XPL.json": "73664fabece9578b2f3a8a5d60e0ea186b231d9d5196ab3394d236f9c83e0b3e",
+      "XRP.json": "d308b123c4848e7db5bc950d51ac77c57918e3ad27d4d0c33ac6bcf18af20b20",
+      "YGG.json": "d6ac2ce04876fe43a9ab187cbddb09c7a5c750e75af0cc8cf90b0075ac3d9be4",
+      "YZY.json": "a59db1aea849ed9e551edf1603c85b023155ee2a72d6ce906054ec988c3711b3",
+      "ZEC.json": "6cc4720c690d12f2bb2654d02a95eff27cbf01ce2df807ab80e1cd6f042199ba",
+      "ZEN.json": "c06996456b440226d031b96b71af4c656b9d1bc424b8df21c8aa927dbdf6273a",
+      "ZEREBRO.json": "bb70e274693a49fd8240a2373ef6e52a555bcbe1a492467534de86d252f42ed9",
+      "ZETA.json": "5393c18a8caf80a2843d8ca0e3734fd970c795675851e52e40a0831f651231b3",
+      "ZK.json": "07f4bb71621db8eafca572f9925f20e2133b7f73b19b0693db516b390f7f5b6e",
+      "ZORA.json": "5efd4ff862344b964bcdb8fbaad346755ecfb860bcadeb997944ccb63a68e605",
+      "ZRO.json": "393243abcf91d0930229568d72dad0310dee6049edcbefd468813b64b1a6ad15",
+      "kBONK.json": "97351f3f46d50021e648e0c6d288ecd7ac437b0b617b5fe57c2b1dc8f5ad3513",
+      "kDOGS.json": "a8ef68c6ccc375a77f68ee425155a5f64f1cafb523dd123794124de928acb0b9",
+      "kFLOKI.json": "448603859d6b19bfdf2014980b43c71eb203c2f6f2f67802bdfc12da4cfc9baf",
+      "kLUNC.json": "37836f513c68e2af4bbaf3b2cd97a7dc65994fab8b5a81cf4618ffb790c4af45",
+      "kNEIRO.json": "07d35a19ccbe91f1d2aa4c365627e16585383d34f8ea121d3a6d5ea3673c754d",
+      "kPEPE.json": "2d35937f41030db1708f5d49656f39c935758adfc7d798c4e2f24ddbba1c9464",
+      "kSHIB.json": "29ac1831480fd3f217fd0fa4b4cfb986554f46b8080fe1a58bab257739c4faaf"
+    }
+  },
+  "summary": {
+    "baseline": {
+      "full": {
+        "sharpe": 1.5444004362481545,
+        "annual_arithmetic": 1.2376474675184073,
+        "cagr": 1.559183368109916,
+        "max_drawdown": -0.633614527738566,
+        "phase_sharpes": [
+          1.775955835038076,
+          1.1196563118905254,
+          1.7375891618158619
+        ],
+        "phase_sd": 0.3007476004734222,
+        "correlation_baseline": 1.0,
+        "daily_abs_traded_equity": 0.7399186904814982,
+        "annual_cost": 0.20255274151931013
+      },
+      "2023-24": {
+        "sharpe": 0.4255000615131239,
+        "annual_arithmetic": 0.2940683098180011,
+        "cagr": 0.1559366553889836,
+        "max_drawdown": -0.6306144048427229,
+        "phase_sharpes": [
+          0.9124179761844422,
+          -0.5587273539618486,
+          0.9228095623167782
+        ],
+        "phase_sd": 0.6959668096947318,
+        "correlation_baseline": 1.0,
+        "daily_abs_traded_equity": 0.6282320852514193,
+        "annual_cost": 0.171978533337576
+      },
+      "2025-26": {
+        "sharpe": 2.3270314402323904,
+        "annual_arithmetic": 1.9825009055783218,
+        "cagr": 4.027417748712613,
+        "max_drawdown": -0.4815308318931069,
+        "phase_sharpes": [
+          2.386497167198128,
+          2.3325706137348,
+          2.262026539764243
+        ],
+        "phase_sd": 0.05096564925361391,
+        "correlation_baseline": 1.0,
+        "daily_abs_traded_equity": 0.8280831557645247,
+        "annual_cost": 0.22668776389053863
+      }
+    },
+    "price_volume_confirm": {
+      "full": {
+        "sharpe": -0.2960641812374241,
+        "annual_arithmetic": -0.2997275191351117,
+        "cagr": -0.5484055332050527,
+        "max_drawdown": -0.9583150983608597,
+        "phase_sharpes": [
+          -0.630295899501383,
+          -0.17730257117020476,
+          -0.08059407304068462
+        ],
+        "phase_sd": 0.2396125546556018,
+        "correlation_baseline": 0.029012178804296577,
+        "daily_abs_traded_equity": 1.2779642237338336,
+        "annual_cost": 0.3498427062471369
+      },
+      "2023-24": {
+        "sharpe": -0.5041140588008459,
+        "annual_arithmetic": -0.4799802415060939,
+        "cagr": -0.5600629475310254,
+        "max_drawdown": -0.847428960728925,
+        "phase_sharpes": [
+          0.11763172098580293,
+          -0.8466135955444029,
+          -0.7833603018439379
+        ],
+        "phase_sd": 0.44039838464952796,
+        "correlation_baseline": 0.08399093183935279,
+        "daily_abs_traded_equity": 1.0457008160440964,
+        "annual_cost": 0.2862605983920714
+      },
+      "2025-26": {
+        "sharpe": -0.14659891777812614,
+        "annual_arithmetic": -0.15743753860513204,
+        "cagr": -0.3969444587137942,
+        "max_drawdown": -0.8334447482680952,
+        "phase_sharpes": [
+          -1.148352208396295,
+          0.23680783367801425,
+          0.4717476213839022
+        ],
+        "phase_sd": 0.714810659037328,
+        "correlation_baseline": -0.003322048132564138,
+        "daily_abs_traded_equity": 1.461311001098899,
+        "annual_cost": 0.40003388655082356
+      }
+    },
+    "blend_price_volume_confirm": {
+      "full": {
+        "sharpe": 1.5244164215289346,
+        "annual_arithmetic": 1.2196651640235667,
+        "cagr": 1.522189620183403,
+        "max_drawdown": -0.6337873210948054,
+        "phase_sharpes": [
+          1.6122956374059507,
+          1.1200868626220628,
+          1.8408667645587902
+        ],
+        "phase_sd": 0.3007468306248618,
+        "correlation_baseline": 0.9613574153934737,
+        "daily_abs_traded_equity": 0.7827962589192268,
+        "annual_cost": 0.21429047587913833
+      },
+      "2023-24": {
+        "sharpe": 0.4239403906825668,
+        "annual_arithmetic": 0.291836457651002,
+        "cagr": 0.15722053547225076,
+        "max_drawdown": -0.625666969895173,
+        "phase_sharpes": [
+          0.9570475593705807,
+          -0.5499474054464292,
+          0.8647210181235488
+        ],
+        "phase_sd": 0.6896734140839922,
+        "correlation_baseline": 0.9598036734981247,
+        "daily_abs_traded_equity": 0.6519112665732779,
+        "annual_cost": 0.17846070922443483
+      },
+      "2025-26": {
+        "sharpe": 2.2816525849730493,
+        "annual_arithmetic": 1.952085328492393,
+        "cagr": 3.9297172306897856,
+        "max_drawdown": -0.46963775058783835,
+        "phase_sharpes": [
+          2.064510514241451,
+          2.311817311714204,
+          2.4686299289634936
+        ],
+        "phase_sd": 0.1663541571334041,
+        "correlation_baseline": 0.9618926893087204,
+        "daily_abs_traded_equity": 0.8861157692578385,
+        "annual_cost": 0.2425741918343333
+      }
+    },
+    "price_volume_exhaust": {
+      "full": {
+        "sharpe": -0.44171164151874204,
+        "annual_arithmetic": -0.4562524356034941,
+        "cagr": -0.6187468121089528,
+        "max_drawdown": -0.9579657337498056,
+        "phase_sharpes": [
+          -0.15658515640259496,
+          -0.48762415337463,
+          -0.6809256147790012
+        ],
+        "phase_sd": 0.21650896537446623,
+        "correlation_baseline": -0.03776107872221884,
+        "daily_abs_traded_equity": 1.2806319126873698,
+        "annual_cost": 0.3505729860981675
+      },
+      "2023-24": {
+        "sharpe": -0.08707056637887,
+        "annual_arithmetic": -0.08042987190882213,
+        "cagr": -0.3701582711226097,
+        "max_drawdown": -0.7261121611103527,
+        "phase_sharpes": [
+          -0.765495674640408,
+          0.3428694935275297,
+          0.16141448197626826
+        ],
+        "phase_sd": 0.4854049518659836,
+        "correlation_baseline": -0.09549603211659452,
+        "daily_abs_traded_equity": 1.0473736434233263,
+        "annual_cost": 0.2867185348871356
+      },
+      "2025-26": {
+        "sharpe": -0.691340786801146,
+        "annual_arithmetic": -0.7529236013281494,
+        "cagr": -0.6408776296900306,
+        "max_drawdown": -0.9558383732432473,
+        "phase_sharpes": [
+          0.27703254006760086,
+          -1.016937921560625,
+          -1.3341169789104137
+        ],
+        "phase_sd": 0.6968791448299859,
+        "correlation_baseline": -0.002517728094693436,
+        "daily_abs_traded_equity": 1.4647640253981435,
+        "annual_cost": 0.40097915195274186
+      }
+    },
+    "blend_price_volume_exhaust": {
+      "full": {
+        "sharpe": 1.3945914939863762,
+        "annual_arithmetic": 1.0945597691710267,
+        "cagr": 1.2267420529360578,
+        "max_drawdown": -0.6796691402396325,
+        "phase_sharpes": [
+          1.6650064089110825,
+          1.059386159357453,
+          1.4593819136905932
+        ],
+        "phase_sd": 0.251452209550094,
+        "correlation_baseline": 0.9597387735441926,
+        "daily_abs_traded_equity": 0.7846296667333923,
+        "annual_cost": 0.21479237126826614
+      },
+      "2023-24": {
+        "sharpe": 0.3638245574373173,
+        "annual_arithmetic": 0.24814733394992916,
+        "cagr": 0.06308385668980525,
+        "max_drawdown": -0.6270611246574714,
+        "phase_sharpes": [
+          0.6991497418229012,
+          -0.4148397300599219,
+          0.8071636605489725
+        ],
+        "phase_sd": 0.5523617812794606,
+        "correlation_baseline": 0.9566101853957472,
+        "daily_abs_traded_equity": 0.6548816790327757,
+        "annual_cost": 0.17927385963522235
+      },
+      "2025-26": {
+        "sharpe": 2.12004871317701,
+        "annual_arithmetic": 1.7627106150709881,
+        "cagr": 3.145502062774705,
+        "max_drawdown": -0.535380846454388,
+        "phase_sharpes": [
+          2.373887259714006,
+          2.1123886822388105,
+          1.8738701975782124
+        ],
+        "phase_sd": 0.20420295894396862,
+        "correlation_baseline": 0.9611789812403818,
+        "daily_abs_traded_equity": 0.8870516351834891,
+        "annual_cost": 0.24283038513148014
+      }
+    },
+    "capacity_confirm": {
+      "full": {
+        "sharpe": 0.07744016823232198,
+        "annual_arithmetic": 0.07888603282960442,
+        "cagr": -0.32336343735298617,
+        "max_drawdown": -0.8925825546104225,
+        "phase_sharpes": [
+          -0.25484252453535783,
+          0.4011229850963436,
+          0.08604004413598022
+        ],
+        "phase_sd": 0.26786583190814417,
+        "correlation_baseline": 0.03534719119753916,
+        "daily_abs_traded_equity": 1.2859063147695193,
+        "annual_cost": 0.35201685366815594
+      },
+      "2023-24": {
+        "sharpe": -0.3161421645635058,
+        "annual_arithmetic": -0.2992868033863822,
+        "cagr": -0.501767482519011,
+        "max_drawdown": -0.8180481235439986,
+        "phase_sharpes": [
+          -0.4865183838249504,
+          -0.3952791013954289,
+          -0.06662900847013818
+        ],
+        "phase_sd": 0.18032149615306256,
+        "correlation_baseline": 0.0043327506960788515,
+        "daily_abs_traded_equity": 1.0567310950529476,
+        "annual_cost": 0.2892801372707444
+      },
+      "2025-26": {
+        "sharpe": 0.3416003326736212,
+        "annual_arithmetic": 0.37741248388309767,
+        "cagr": -0.08882585857964598,
+        "max_drawdown": -0.7265254818829733,
+        "phase_sharpes": [
+          -0.08781655597014572,
+          0.9229334887630009,
+          0.1896840652280086
+        ],
+        "phase_sd": 0.42639014018304067,
+        "correlation_baseline": 0.05275065396462139,
+        "daily_abs_traded_equity": 1.4668153025645037,
+        "annual_cost": 0.4015406890770329
+      }
+    },
+    "blend_capacity_confirm": {
+      "full": {
+        "sharpe": 1.5569885015077884,
+        "annual_arithmetic": 1.2219803759780066,
+        "cagr": 1.528676772795933,
+        "max_drawdown": -0.6324890165643126,
+        "phase_sharpes": [
+          1.5897808881842173,
+          1.2523709264276108,
+          1.8288136899115368
+        ],
+        "phase_sd": 0.23647138003177562,
+        "correlation_baseline": 0.9561054521049449,
+        "daily_abs_traded_equity": 0.7937572801336152,
+        "annual_cost": 0.21729105543657717
+      },
+      "2023-24": {
+        "sharpe": 0.4611828204976692,
+        "annual_arithmetic": 0.3136212375780073,
+        "cagr": 0.1928725474510928,
+        "max_drawdown": -0.6151640180269718,
+        "phase_sharpes": [
+          0.7019955729546262,
+          -0.49211285841458724,
+          1.1736657469529685
+        ],
+        "phase_sd": 0.7010457316678143,
+        "correlation_baseline": 0.9538034705127615,
+        "daily_abs_traded_equity": 0.6633965349596935,
+        "annual_cost": 0.18160480144521612
+      },
+      "2025-26": {
+        "sharpe": 2.302726984787469,
+        "annual_arithmetic": 1.9390314275074914,
+        "cagr": 3.873858688204686,
+        "max_drawdown": -0.49350052444167564,
+        "phase_sharpes": [
+          2.207760675095398,
+          2.443323131729351,
+          2.257097147537659
+        ],
+        "phase_sd": 0.10143628305308659,
+        "correlation_baseline": 0.9574291310376463,
+        "daily_abs_traded_equity": 0.8966629541710635,
+        "annual_cost": 0.24546148370432863
+      }
+    },
+    "oi_confirm": {
+      "full": {
+        "sharpe": -0.027829659009901586,
+        "annual_arithmetic": 0.0996750481961427,
+        "cagr": -0.32673981658467083,
+        "max_drawdown": -0.8912194935913481,
+        "phase_sharpes": [
+          0.5221439992987078,
+          -0.6534803556065919,
+          0.04784737927817934
+        ],
+        "phase_sd": 0.4829205708013602,
+        "correlation_baseline": 0.018629721345475747,
+        "daily_abs_traded_equity": 0.9524157582897494,
+        "annual_cost": 0.2607238138318189
+      },
+      "2023-24": {
+        "sharpe": 0.038522407803757264,
+        "annual_arithmetic": 0.015300853635197323,
+        "cagr": -0.07593891066661569,
+        "max_drawdown": -0.5580326942703986,
+        "phase_sharpes": [
+          0.783768641691141,
+          -1.0518612304300001,
+          0.3836598121501309
+        ],
+        "phase_sd": 0.7881303309161852,
+        "correlation_baseline": 0.0441782743594199,
+        "daily_abs_traded_equity": 0.47775882888818827,
+        "annual_cost": 0.13078647940814153
+      },
+      "2025-26": {
+        "sharpe": -0.00951848645213207,
+        "annual_arithmetic": 0.16627932658590633,
+        "cagr": -0.4627714652708221,
+        "max_drawdown": -0.8675268076020087,
+        "phase_sharpes": [
+          0.5323446442884112,
+          -0.440683077319025,
+          -0.12021702632578242
+        ],
+        "phase_sd": 0.40487558731191997,
+        "correlation_baseline": 0.006836722978357958,
+        "daily_abs_traded_equity": 1.3271059396894218,
+        "annual_cost": 0.3632952509899792
+      }
+    },
+    "blend_oi_confirm": {
+      "full": {
+        "sharpe": 1.437556174980824,
+        "annual_arithmetic": 1.0779636729075799,
+        "cagr": 1.319313549353778,
+        "max_drawdown": -0.6392087335387867,
+        "phase_sharpes": [
+          1.8274093460157586,
+          0.8312966360093959,
+          1.6539625429173177
+        ],
+        "phase_sd": 0.4344988836361982,
+        "correlation_baseline": 0.9646646073413706,
+        "daily_abs_traded_equity": 0.8044889456261343,
+        "annual_cost": 0.22022884886515426
+      },
+      "2023-24": {
+        "sharpe": 0.43959804547654396,
+        "annual_arithmetic": 0.2977862090908409,
+        "cagr": 0.2237760075339704,
+        "max_drawdown": -0.6392087335387867,
+        "phase_sharpes": [
+          1.0838910473819243,
+          -0.7600759357741274,
+          0.9949790248218349
+        ],
+        "phase_sd": 0.8490738416676171,
+        "correlation_baseline": 0.9798945469635708,
+        "daily_abs_traded_equity": 0.6599974202550593,
+        "annual_cost": 0.1806742937948225
+      },
+      "2025-26": {
+        "sharpe": 2.190420205289183,
+        "annual_arithmetic": 1.6938291903666591,
+        "cagr": 3.037220821245787,
+        "max_drawdown": -0.4624928401795305,
+        "phase_sharpes": [
+          2.3853978307451795,
+          2.076323788269587,
+          2.1095389968527822
+        ],
+        "phase_sd": 0.13853523821673308,
+        "correlation_baseline": 0.9560368048486838,
+        "daily_abs_traded_equity": 0.9185493385087615,
+        "annual_cost": 0.25145288141677347
+      }
+    },
+    "oi_exhaust": {
+      "full": {
+        "sharpe": -0.40598395681088356,
+        "annual_arithmetic": -0.38480563647024096,
+        "cagr": -0.5576871222235372,
+        "max_drawdown": -0.9531710332761975,
+        "phase_sharpes": [
+          -0.8438886863439288,
+          -0.18063249873384857,
+          -0.19343068535487323
+        ],
+        "phase_sd": 0.3096894815841117,
+        "correlation_baseline": -0.025909122217127895,
+        "daily_abs_traded_equity": 0.9564664605056655,
+        "annual_cost": 0.261832693563426
+      },
+      "2023-24": {
+        "sharpe": -0.42200152977301864,
+        "annual_arithmetic": -0.26659114353955576,
+        "cagr": -0.31032856726264174,
+        "max_drawdown": -0.6496726457149644,
+        "phase_sharpes": [
+          -1.1037041361888074,
+          0.5366137330031931,
+          -0.6989141861334418
+        ],
+        "phase_sd": 0.6976967547758294,
+        "correlation_baseline": -0.061909762537463865,
+        "daily_abs_traded_equity": 0.47999116209560483,
+        "annual_cost": 0.13139758062367182
+      },
+      "2025-26": {
+        "sharpe": -0.4571880669704375,
+        "annual_arithmetic": -0.47812316131100036,
+        "cagr": -0.6788622468917013,
+        "max_drawdown": -0.9150732071465905,
+        "phase_sharpes": [
+          -0.7791929808236302,
+          -0.5686693134164614,
+          -0.023701906671220855
+        ],
+        "phase_sd": 0.3183423126267903,
+        "correlation_baseline": -0.011282907194461012,
+        "daily_abs_traded_equity": 1.332592047082094,
+        "annual_cost": 0.3647970728887232
+      }
+    },
+    "blend_oi_exhaust": {
+      "full": {
+        "sharpe": 1.333075090120431,
+        "annual_arithmetic": 1.0095404989952936,
+        "cagr": 1.0894090319461045,
+        "max_drawdown": -0.6370605514956459,
+        "phase_sharpes": [
+          1.4445228036566573,
+          0.9779313973162415,
+          1.5767710693883934
+        ],
+        "phase_sd": 0.2568627167070771,
+        "correlation_baseline": 0.9646471984903471,
+        "daily_abs_traded_equity": 0.8134899446193483,
+        "annual_cost": 0.2226928723395466
+      },
+      "2023-24": {
+        "sharpe": 0.3170713449915309,
+        "annual_arithmetic": 0.20939070633245524,
+        "cagr": 0.03929662411390807,
+        "max_drawdown": -0.6146678014316097,
+        "phase_sharpes": [
+          0.668167347242218,
+          -0.5077719825029795,
+          0.7908186702353541
+        ],
+        "phase_sd": 0.5853977126376869,
+        "correlation_baseline": 0.977969109554825,
+        "daily_abs_traded_equity": 0.6608423523759566,
+        "annual_cost": 0.1809055939629181
+      },
+      "2025-26": {
+        "sharpe": 2.0742735465354056,
+        "annual_arithmetic": 1.6411720045918552,
+        "cagr": 2.7630981755696933,
+        "max_drawdown": -0.4809583706068052,
+        "phase_sharpes": [
+          2.008618733179826,
+          2.113672473322016,
+          2.100529433104375
+        ],
+        "phase_sd": 0.04673400449428398,
+        "correlation_baseline": 0.9567628719929001,
+        "daily_abs_traded_equity": 0.9339886679815267,
+        "annual_cost": 0.2556793978599429
+      }
+    },
+    "account_crowding_contra": {
+      "full": {
+        "sharpe": 1.1821276188646015,
+        "annual_arithmetic": 0.793344978899007,
+        "cagr": 0.7800907955067639,
+        "max_drawdown": -0.5393099156890444,
+        "phase_sharpes": [
+          0.8808145635316758,
+          1.341361878506661,
+          1.324206414555468
+        ],
+        "phase_sd": 0.2131755856430598,
+        "correlation_baseline": 0.13768954606208308,
+        "daily_abs_traded_equity": 0.4522736140348928,
+        "annual_cost": 0.1238099018420519
+      },
+      "2023-24": {
+        "sharpe": 1.5347547570618276,
+        "annual_arithmetic": 0.7573974458492363,
+        "cagr": 0.889169918703805,
+        "max_drawdown": -0.2852229676712345,
+        "phase_sharpes": [
+          1.6393344652376247,
+          1.4221410779700796,
+          1.5427887279777786
+        ],
+        "phase_sd": 0.08885062515141623,
+        "correlation_baseline": 0.11379927848681304,
+        "daily_abs_traded_equity": 0.23312049040582958,
+        "annual_cost": 0.06381673424859585
+      },
+      "2025-26": {
+        "sharpe": 1.0603463430889233,
+        "annual_arithmetic": 0.8217216586543644,
+        "cagr": 0.7277156283253157,
+        "max_drawdown": -0.5280870851029864,
+        "phase_sharpes": [
+          0.5841734139515907,
+          1.3165674015678925,
+          1.2802982137472865
+        ],
+        "phase_sd": 0.3370305202091861,
+        "correlation_baseline": 0.14820457151362007,
+        "daily_abs_traded_equity": 0.6252712436079131,
+        "annual_cost": 0.1711680029376662
+      }
+    },
+    "blend_account_crowding_contra": {
+      "full": {
+        "sharpe": 1.615785300505647,
+        "annual_arithmetic": 1.2226440980321553,
+        "cagr": 1.604573829243084,
+        "max_drawdown": -0.632690106754437,
+        "phase_sharpes": [
+          1.7318265535194202,
+          1.1810859501854398,
+          1.934443397812081
+        ],
+        "phase_sd": 0.31831435225196986,
+        "correlation_baseline": 0.9788640227100784,
+        "daily_abs_traded_equity": 0.7312867161132365,
+        "annual_cost": 0.2001897385359985
+      },
+      "2023-24": {
+        "sharpe": 0.5898317322239087,
+        "annual_arithmetic": 0.39651527083256316,
+        "cagr": 0.2835783814211376,
+        "max_drawdown": -0.6103145956778152,
+        "phase_sharpes": [
+          1.022421197761088,
+          -0.36390654027555847,
+          1.1109805391861964
+        ],
+        "phase_sd": 0.675363215147283,
+        "correlation_baseline": 0.9865909120856214,
+        "daily_abs_traded_equity": 0.6198435145785199,
+        "annual_cost": 0.16968216211586984
+      },
+      "2025-26": {
+        "sharpe": 2.3650978446000113,
+        "annual_arithmetic": 1.8747832346358895,
+        "cagr": 3.7517714730050944,
+        "max_drawdown": -0.48758379315813166,
+        "phase_sharpes": [
+          2.2326317932897837,
+          2.3715625105766676,
+          2.491099229933582
+        ],
+        "phase_sd": 0.10561785796270848,
+        "correlation_baseline": 0.9745293911360684,
+        "daily_abs_traded_equity": 0.8192590405696585,
+        "annual_cost": 0.224272162355944
+      }
+    },
+    "top_global_gap": {
+      "full": {
+        "sharpe": 0.7793973610781598,
+        "annual_arithmetic": 0.4835168656258209,
+        "cagr": 0.3522191724795854,
+        "max_drawdown": -0.5719287925299997,
+        "phase_sharpes": [
+          0.568676319427903,
+          0.6376177977952655,
+          1.131897966011311
+        ],
+        "phase_sd": 0.2508395758495159,
+        "correlation_baseline": 0.1025243368631124,
+        "daily_abs_traded_equity": 0.3891389102945477,
+        "annual_cost": 0.10652677669313244
+      },
+      "2023-24": {
+        "sharpe": 0.6632575950812113,
+        "annual_arithmetic": 0.3564970265826887,
+        "cagr": 0.2600356563464135,
+        "max_drawdown": -0.4537527743872527,
+        "phase_sharpes": [
+          0.289042667970257,
+          0.6151940055328741,
+          1.085536111740503
+        ],
+        "phase_sd": 0.3269383560371891,
+        "correlation_baseline": 0.07890061746923858,
+        "daily_abs_traded_equity": 0.23625989065605046,
+        "annual_cost": 0.06467614506709381
+      },
+      "2025-26": {
+        "sharpe": 0.8551430685702837,
+        "annual_arithmetic": 0.5837852565085431,
+        "cagr": 0.4321706935841321,
+        "max_drawdown": -0.5686645367773082,
+        "phase_sharpes": [
+          0.7370382812877533,
+          0.660297469987083,
+          1.1680934544360149
+        ],
+        "phase_sd": 0.22349607907060887,
+        "correlation_baseline": 0.11503471884471728,
+        "daily_abs_traded_equity": 0.5098203204927999,
+        "annual_cost": 0.139563312734904
+      }
+    },
+    "blend_top_global_gap": {
+      "full": {
+        "sharpe": 1.56432674081896,
+        "annual_arithmetic": 1.179208232082544,
+        "cagr": 1.5115715035464767,
+        "max_drawdown": -0.6358373012632933,
+        "phase_sharpes": [
+          1.7186642343297842,
+          1.0758254593172103,
+          1.8984905288098852
+        ],
+        "phase_sd": 0.3531378395360181,
+        "correlation_baseline": 0.9805011486510294,
+        "daily_abs_traded_equity": 0.7301536628066044,
+        "annual_cost": 0.19987956519330796
+      },
+      "2023-24": {
+        "sharpe": 0.4857410417991794,
+        "annual_arithmetic": 0.3239468410605894,
+        "cagr": 0.2113722256022553,
+        "max_drawdown": -0.6136798535287632,
+        "phase_sharpes": [
+          0.9114779509388315,
+          -0.5381953715139524,
+          1.0839405459726588
+        ],
+        "phase_sd": 0.7274476707653368,
+        "correlation_baseline": 0.983924803401993,
+        "daily_abs_traded_equity": 0.6247999788000597,
+        "annual_cost": 0.17103899419651633
+      },
+      "2025-26": {
+        "sharpe": 2.3535829047535586,
+        "annual_arithmetic": 1.8543443691451167,
+        "cagr": 3.6685997130576227,
+        "max_drawdown": -0.49044521517709266,
+        "phase_sharpes": [
+          2.3108755510130345,
+          2.300532844632342,
+          2.449340318615299
+        ],
+        "phase_sd": 0.06784224163914293,
+        "correlation_baseline": 0.9786008944542045,
+        "daily_abs_traded_equity": 0.8133189734264352,
+        "annual_cost": 0.22264606897548664
+      }
+    },
+    "cascade_rebound": {
+      "full": {
+        "sharpe": -0.609308191929742,
+        "annual_arithmetic": -0.15026378561777456,
+        "cagr": -0.1650748548258041,
+        "max_drawdown": -0.4885652893934363,
+        "phase_sharpes": [
+          -0.8658930784303529,
+          -0.30405413195247843,
+          -0.6579773654063946
+        ],
+        "phase_sd": 0.23193715640235735,
+        "correlation_baseline": 0.0350588622555918,
+        "daily_abs_traded_equity": 0.042167133623525754,
+        "annual_cost": 0.011543252829440175
+      },
+      "2023-24": {
+        "sharpe": -1.0238387674144014,
+        "annual_arithmetic": -0.14773469761868177,
+        "cagr": -0.1391671841132934,
+        "max_drawdown": -0.23210955950972992,
+        "phase_sharpes": [
+          -1.7653966830236743,
+          -1.4716116960025323,
+          0.16549207678300223
+        ],
+        "phase_sd": 0.8494932989216708,
+        "correlation_baseline": 0.04798464587734081,
+        "daily_abs_traded_equity": 0.025811515078958718,
+        "annual_cost": 0.007065902252864949
+      },
+      "2025-26": {
+        "sharpe": -0.48810168650798663,
+        "annual_arithmetic": -0.1522602263783689,
+        "cagr": -0.173176390859466,
+        "max_drawdown": -0.42684763096331874,
+        "phase_sharpes": [
+          -0.6115381795657538,
+          0.1255989764747679,
+          -0.9783658564329739
+        ],
+        "phase_sd": 0.4590657280013068,
+        "correlation_baseline": 0.024920458657191724,
+        "daily_abs_traded_equity": 0.05507812111736495,
+        "annual_cost": 0.015077635655878656
+      }
+    },
+    "blend_cascade_rebound": {
+      "full": {
+        "sharpe": 1.5100274597415064,
+        "annual_arithmetic": 1.2093009830414814,
+        "cagr": 1.4857632182928093,
+        "max_drawdown": -0.6437979410591864,
+        "phase_sharpes": [
+          1.7292920930889246,
+          1.0953199800182785,
+          1.7054703061173162
+        ],
+        "phase_sd": 0.2934036919643012,
+        "correlation_baseline": 0.9975636877506705,
+        "daily_abs_traded_equity": 0.7417800546110569,
+        "annual_cost": 0.20306228994977682
+      },
+      "2023-24": {
+        "sharpe": 0.39367728802192364,
+        "annual_arithmetic": 0.2670621038948355,
+        "cagr": 0.12903714615784478,
+        "max_drawdown": -0.633616815294637,
+        "phase_sharpes": [
+          0.8548987941966613,
+          -0.5981354660329292,
+          0.9242685359020388
+        ],
+        "phase_sd": 0.7018890912366291,
+        "correlation_baseline": 0.9990273253764622,
+        "daily_abs_traded_equity": 0.6290294548531357,
+        "annual_cost": 0.17219681326604588
+      },
+      "2025-26": {
+        "sharpe": 2.2940436960628454,
+        "annual_arithmetic": 1.9530964165020162,
+        "cagr": 3.8835513197327836,
+        "max_drawdown": -0.48947990298996896,
+        "phase_sharpes": [
+          2.3463334415167196,
+          2.3318224851302465,
+          2.20397516154157
+        ],
+        "phase_sd": 0.06396299788117163,
+        "correlation_baseline": 0.9966748582095667,
+        "daily_abs_traded_equity": 0.8307844282109137,
+        "annual_cost": 0.22742723722273764
+      }
+    }
+  },
+  "bootstrap": {
+    "15": {
+      "price_volume_confirm": {
+        "delta_sharpe": -0.019984014719219845,
+        "ci95": [
+          -0.19218061575620463,
+          0.1549847133866629
+        ],
+        "p_daily_maxT": 0.9996,
+        "p_fwer_all14": 1.0
+      },
+      "price_volume_exhaust": {
+        "delta_sharpe": -0.14980894226177832,
+        "ci95": [
+          -0.32102780012782034,
+          0.020099114318881083
+        ],
+        "p_daily_maxT": 1.0,
+        "p_fwer_all14": 1.0
+      },
+      "capacity_confirm": {
+        "delta_sharpe": 0.012588065259633963,
+        "ci95": [
+          -0.18252838834179996,
+          0.20765337394389502
+        ],
+        "p_daily_maxT": 0.9932,
+        "p_fwer_all14": 1.0
+      },
+      "oi_confirm": {
+        "delta_sharpe": -0.10684426126733038,
+        "ci95": [
+          -0.2499260858859146,
+          0.05194834433397218
+        ],
+        "p_daily_maxT": 1.0,
+        "p_fwer_all14": 1.0
+      },
+      "oi_exhaust": {
+        "delta_sharpe": -0.21132534612772358,
+        "ci95": [
+          -0.3615939017958498,
+          -0.07751593880605766
+        ],
+        "p_daily_maxT": 1.0,
+        "p_fwer_all14": 1.0
+      },
+      "account_crowding_contra": {
+        "delta_sharpe": 0.07138486425749258,
+        "ci95": [
+          -0.11530743414152284,
+          0.2618490206977237
+        ],
+        "p_daily_maxT": 0.8662,
+        "p_fwer_all14": 1.0
+      },
+      "top_global_gap": {
+        "delta_sharpe": 0.019926304570805575,
+        "ci95": [
+          -0.18626016442567533,
+          0.24751076970758512
+        ],
+        "p_daily_maxT": 0.9898,
+        "p_fwer_all14": 1.0
+      },
+      "cascade_rebound": {
+        "delta_sharpe": -0.034372976506648056,
+        "ci95": [
+          -0.08746738056666477,
+          0.01176949565361174
+        ],
+        "p_daily_maxT": 1.0,
+        "p_fwer_all14": 1.0
+      }
+    },
+    "30": {
+      "price_volume_confirm": {
+        "delta_sharpe": -0.019984014719219845,
+        "ci95": [
+          -0.20607293150886102,
+          0.1464675484043281
+        ],
+        "p_daily_maxT": 1.0,
+        "p_fwer_all14": 1.0
+      },
+      "price_volume_exhaust": {
+        "delta_sharpe": -0.14980894226177832,
+        "ci95": [
+          -0.3144997866682307,
+          0.029954667911204755
+        ],
+        "p_daily_maxT": 1.0,
+        "p_fwer_all14": 1.0
+      },
+      "capacity_confirm": {
+        "delta_sharpe": 0.012588065259633963,
+        "ci95": [
+          -0.1763371312857727,
+          0.18836313479151623
+        ],
+        "p_daily_maxT": 0.9962,
+        "p_fwer_all14": 1.0
+      },
+      "oi_confirm": {
+        "delta_sharpe": -0.10684426126733038,
+        "ci95": [
+          -0.23821735891434223,
+          0.03541884106801093
+        ],
+        "p_daily_maxT": 1.0,
+        "p_fwer_all14": 1.0
+      },
+      "oi_exhaust": {
+        "delta_sharpe": -0.21132534612772358,
+        "ci95": [
+          -0.3564230220736297,
+          -0.07627284279206122
+        ],
+        "p_daily_maxT": 1.0,
+        "p_fwer_all14": 1.0
+      },
+      "account_crowding_contra": {
+        "delta_sharpe": 0.07138486425749258,
+        "ci95": [
+          -0.10939734405579106,
+          0.25903384991620215
+        ],
+        "p_daily_maxT": 0.86,
+        "p_fwer_all14": 1.0
+      },
+      "top_global_gap": {
+        "delta_sharpe": 0.019926304570805575,
+        "ci95": [
+          -0.19179020208810107,
+          0.2439994229921439
+        ],
+        "p_daily_maxT": 0.995,
+        "p_fwer_all14": 1.0
+      },
+      "cascade_rebound": {
+        "delta_sharpe": -0.034372976506648056,
+        "ci95": [
+          -0.08813864702303977,
+          0.01077483140023234
+        ],
+        "p_daily_maxT": 1.0,
+        "p_fwer_all14": 1.0
+      }
+    },
+    "60": {
+      "price_volume_confirm": {
+        "delta_sharpe": -0.019984014719219845,
+        "ci95": [
+          -0.2087375241141377,
+          0.15470524986202783
+        ],
+        "p_daily_maxT": 0.9998,
+        "p_fwer_all14": 1.0
+      },
+      "price_volume_exhaust": {
+        "delta_sharpe": -0.14980894226177832,
+        "ci95": [
+          -0.32422744743385856,
+          0.030110420845593316
+        ],
+        "p_daily_maxT": 1.0,
+        "p_fwer_all14": 1.0
+      },
+      "capacity_confirm": {
+        "delta_sharpe": 0.012588065259633963,
+        "ci95": [
+          -0.17000427096537332,
+          0.18440403583188972
+        ],
+        "p_daily_maxT": 0.996,
+        "p_fwer_all14": 1.0
+      },
+      "oi_confirm": {
+        "delta_sharpe": -0.10684426126733038,
+        "ci95": [
+          -0.22834112119327685,
+          0.021835086996265945
+        ],
+        "p_daily_maxT": 1.0,
+        "p_fwer_all14": 1.0
+      },
+      "oi_exhaust": {
+        "delta_sharpe": -0.21132534612772358,
+        "ci95": [
+          -0.3343934365495795,
+          -0.09209905713882428
+        ],
+        "p_daily_maxT": 1.0,
+        "p_fwer_all14": 1.0
+      },
+      "account_crowding_contra": {
+        "delta_sharpe": 0.07138486425749258,
+        "ci95": [
+          -0.09896034978198981,
+          0.2531127283781465
+        ],
+        "p_daily_maxT": 0.8424,
+        "p_fwer_all14": 1.0
+      },
+      "top_global_gap": {
+        "delta_sharpe": 0.019926304570805575,
+        "ci95": [
+          -0.17846208391948876,
+          0.23645819754240713
+        ],
+        "p_daily_maxT": 0.9926,
+        "p_fwer_all14": 1.0
+      },
+      "cascade_rebound": {
+        "delta_sharpe": -0.034372976506648056,
+        "ci95": [
+          -0.08439288954468202,
+          0.010052413146671234
+        ],
+        "p_daily_maxT": 1.0,
+        "p_fwer_all14": 1.0
+      }
+    }
+  },
+  "stress": {
+    "baseline": {
+      "slippage_6bp": {
+        "full": 1.4434310034950546,
+        "2023-24": 0.33200378493745325,
+        "2025-26": 2.2201414571837224
+      },
+      "missing_exit_5pct": {
+        "full": 1.538376271432716,
+        "2023-24": 0.4255000615131239,
+        "2025-26": 2.3163725469469756
+      },
+      "maker_fee_optimistic": {
+        "full": 1.6459119578818129,
+        "2023-24": 0.5198740538922692,
+        "2025-26": 2.434237858336671
+      }
+    },
+    "blend_price_volume_confirm": {
+      "slippage_6bp": {
+        "full": 1.4173289557510325,
+        "2023-24": 0.3259567978644234,
+        "2025-26": 2.1675898069462445
+      },
+      "missing_exit_5pct": {
+        "full": 1.5178676523063894,
+        "2023-24": 0.4239403906825668,
+        "2025-26": 2.270301270370844
+      },
+      "maker_fee_optimistic": {
+        "full": 1.6317995728649901,
+        "2023-24": 0.5222974230815797,
+        "2025-26": 2.3960127098074895
+      }
+    },
+    "blend_price_volume_exhaust": {
+      "slippage_6bp": {
+        "full": 1.2852698664706868,
+        "2023-24": 0.2643162228927531,
+        "2025-26": 2.002870375446156
+      },
+      "missing_exit_5pct": {
+        "full": 1.3889662446803388,
+        "2023-24": 0.3638245574373173,
+        "2025-26": 2.11007234558349
+      },
+      "maker_fee_optimistic": {
+        "full": 1.504242314642229,
+        "2023-24": 0.4637210858641543,
+        "2025-26": 2.2374535234360393
+      }
+    },
+    "blend_capacity_confirm": {
+      "slippage_6bp": {
+        "full": 1.4459816155029177,
+        "2023-24": 0.3584619587933653,
+        "2025-26": 2.185283332498507
+      },
+      "missing_exit_5pct": {
+        "full": 1.5511009521146246,
+        "2023-24": 0.4611828204976692,
+        "2025-26": 2.292504909383972
+      },
+      "maker_fee_optimistic": {
+        "full": 1.6678831071988842,
+        "2023-24": 0.5643793654833185,
+        "2025-26": 2.419720283976743
+      }
+    },
+    "blend_oi_confirm": {
+      "slippage_6bp": {
+        "full": 1.3200441057692291,
+        "2023-24": 0.33979921876290553,
+        "2025-26": 2.0594661222771014
+      },
+      "missing_exit_5pct": {
+        "full": 1.4316674330591048,
+        "2023-24": 0.43959804547654396,
+        "2025-26": 2.179620071063376
+      },
+      "maker_fee_optimistic": {
+        "full": 1.5551033339563702,
+        "2023-24": 0.5399227080885555,
+        "2025-26": 2.321070342464091
+      }
+    },
+    "blend_oi_exhaust": {
+      "slippage_6bp": {
+        "full": 1.2155095335602715,
+        "2023-24": 0.2159027600786404,
+        "2025-26": 1.9443079252058553
+      },
+      "missing_exit_5pct": {
+        "full": 1.3274317261191302,
+        "2023-24": 0.3170713449915309,
+        "2025-26": 2.064185922153994
+      },
+      "maker_fee_optimistic": {
+        "full": 1.4510552126137453,
+        "2023-24": 0.4189989658093163,
+        "2025-26": 2.2044142051290563
+      }
+    },
+    "blend_account_crowding_contra": {
+      "slippage_6bp": {
+        "full": 1.5099291275175537,
+        "2023-24": 0.4945914017357158,
+        "2025-26": 2.251064513897821
+      },
+      "missing_exit_5pct": {
+        "full": 1.6102852278927766,
+        "2023-24": 0.5898317322239087,
+        "2025-26": 2.355266925095654
+      },
+      "maker_fee_optimistic": {
+        "full": 1.7218695416612275,
+        "2023-24": 0.6857130832749561,
+        "2025-26": 2.4790685065239377
+      }
+    },
+    "blend_top_global_gap": {
+      "slippage_6bp": {
+        "full": 1.4584098187809726,
+        "2023-24": 0.3902774129276172,
+        "2025-26": 2.239601736482674
+      },
+      "missing_exit_5pct": {
+        "full": 1.5587055085561339,
+        "2023-24": 0.4857410417991794,
+        "2025-26": 2.3435036807126246
+      },
+      "maker_fee_optimistic": {
+        "full": 1.670157569432786,
+        "2023-24": 0.5817055800047709,
+        "2025-26": 2.4670262986127542
+      }
+    },
+    "blend_cascade_rebound": {
+      "slippage_6bp": {
+        "full": 1.4087457897046711,
+        "2023-24": 0.29981618060404397,
+        "2025-26": 2.1867964965369056
+      },
+      "missing_exit_5pct": {
+        "full": 1.5040080661090076,
+        "2023-24": 0.39367728802192364,
+        "2025-26": 2.283377156689306
+      },
+      "maker_fee_optimistic": {
+        "full": 1.6119473400023179,
+        "2023-24": 0.48845818058231655,
+        "2025-26": 2.4017381453865307
+      }
+    }
+  }
+}

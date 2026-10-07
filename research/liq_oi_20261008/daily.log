@@ -1,0 +1,12 @@
+block 15
+block 30
+block 60
+baseline [1.544, 0.426, 2.327] {}
+blend_price_volume_confirm [1.524, 0.424, 2.282] {'delta_sharpe': -0.019984014719219845, 'ci95': [-0.20607293150886102, 0.1464675484043281], 'p_daily_maxT': 1.0, 'p_fwer_all14': 1.0}
+blend_price_volume_exhaust [1.395, 0.364, 2.12] {'delta_sharpe': -0.14980894226177832, 'ci95': [-0.3144997866682307, 0.029954667911204755], 'p_daily_maxT': 1.0, 'p_fwer_all14': 1.0}
+blend_capacity_confirm [1.557, 0.461, 2.303] {'delta_sharpe': 0.012588065259633963, 'ci95': [-0.1763371312857727, 0.18836313479151623], 'p_daily_maxT': 0.9962, 'p_fwer_all14': 1.0}
+blend_oi_confirm [1.438, 0.44, 2.19] {'delta_sharpe': -0.10684426126733038, 'ci95': [-0.23821735891434223, 0.03541884106801093], 'p_daily_maxT': 1.0, 'p_fwer_all14': 1.0}
+blend_oi_exhaust [1.333, 0.317, 2.074] {'delta_sharpe': -0.21132534612772358, 'ci95': [-0.3564230220736297, -0.07627284279206122], 'p_daily_maxT': 1.0, 'p_fwer_all14': 1.0}
+blend_account_crowding_contra [1.616, 0.59, 2.365] {'delta_sharpe': 0.07138486425749258, 'ci95': [-0.10939734405579106, 0.25903384991620215], 'p_daily_maxT': 0.86, 'p_fwer_all14': 1.0}
+blend_top_global_gap [1.564, 0.486, 2.354] {'delta_sharpe': 0.019926304570805575, 'ci95': [-0.19179020208810107, 0.2439994229921439], 'p_daily_maxT': 0.995, 'p_fwer_all14': 1.0}
+blend_cascade_rebound [1.51, 0.394, 2.294] {'delta_sharpe': -0.034372976506648056, 'ci95': [-0.08813864702303977, 0.01077483140023234], 'p_daily_maxT': 1.0, 'p_fwer_all14': 1.0}

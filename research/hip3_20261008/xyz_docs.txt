@@ -1,0 +1,78 @@
+# trade\[XYZ] Docs
+
+## XYZ
+
+- [About trade\[XYZ\]](https://docs.trade.xyz/overview/about-trade-xyz.md): trade\[XYZ] and our products on Hyperliquid.
+- [Relationship to Hyperliquid](https://docs.trade.xyz/overview/relationship-to-hyperliquid.md): How Hyperliquid, trade\[XYZ] deployments, and trade\[XYZ] relate.
+- [Perpetuals](https://docs.trade.xyz/perpetuals.md): Perpetuals deployed by trade\[XYZ] through Hyperliquid HIP-3.
+- [Mechanics](https://docs.trade.xyz/perpetuals/mechanics.md): Price inputs, discovery bounds, funding, and fees for trade\[XYZ] perpetuals.
+- [Oracle Price](https://docs.trade.xyz/perpetuals/mechanics/oracle-price.md): How oracle prices are constructed and used for trade\[XYZ] perpetuals.
+- [Mark Price](https://docs.trade.xyz/perpetuals/mechanics/mark-price.md): How mark prices are constructed and used for trade\[XYZ] perpetuals.
+- [External Price](https://docs.trade.xyz/perpetuals/mechanics/external-price.md): External-price inputs for trade\[XYZ] perpetuals.
+- [Discovery Bounds](https://docs.trade.xyz/perpetuals/mechanics/discovery-bounds.md): Discovery-bound controls for trade\[XYZ] perpetuals.
+- [Fees](https://docs.trade.xyz/perpetuals/mechanics/fees.md): Trading fees and fee tiers for trade\[XYZ] perpetuals.
+- [Markets](https://docs.trade.xyz/perpetuals/markets.md): Asset classes available through trade\[XYZ] perpetuals.
+- [Stocks](https://docs.trade.xyz/perpetuals/markets/stocks.md): trade\[XYZ] perpetual markets for global stocks.
+- [US](https://docs.trade.xyz/perpetuals/markets/stocks/us.md): trade\[XYZ] perpetual markets for U.S. Stocks.
+- [Korea](https://docs.trade.xyz/perpetuals/markets/stocks/korea.md): trade\[XYZ] perpetual markets for Korea Stocks.
+- [Japan](https://docs.trade.xyz/perpetuals/markets/stocks/japan.md): trade\[XYZ] perpetual markets for Japan Stocks.
+- [Hong Kong](https://docs.trade.xyz/perpetuals/markets/stocks/hong-kong.md): trade\[XYZ] perpetual markets for Hong Kong Stocks.
+- [China](https://docs.trade.xyz/perpetuals/markets/stocks/china.md): trade\[XYZ] perpetual markets for China Stocks.
+- [Commodities](https://docs.trade.xyz/perpetuals/markets/commodities.md): trade\[XYZ] perpetual markets for commodities.
+- [Equity Indices](https://docs.trade.xyz/perpetuals/markets/equity-indices.md): trade\[XYZ] perpetual markets for global equity indices.
+- [US](https://docs.trade.xyz/perpetuals/markets/equity-indices/us.md): trade\[XYZ] perpetual markets for U.S. equity indices.
+- [Japan](https://docs.trade.xyz/perpetuals/markets/equity-indices/japan.md): trade\[XYZ] perpetual markets for Japan equity indices.
+- [Korea](https://docs.trade.xyz/perpetuals/markets/equity-indices/korea.md): trade\[XYZ] perpetual markets for Korea equity indices.
+- [FX](https://docs.trade.xyz/perpetuals/markets/fx.md): trade\[XYZ] perpetual markets for foreign exchange.
+- [Pre-IPO Perpetuals](https://docs.trade.xyz/perpetuals/markets/pre-ipo-perpetuals.md): trade\[XYZ] Pre-IPO Perpetual Markets and conversion mechanics.
+- [Alternative Settlement Events](https://docs.trade.xyz/perpetuals/markets/pre-ipo-perpetuals/alternative-settlement-events.md): Alternative settlement events and methodologies for Pre-IPO Perpetuals by trade\[XYZ].
+- [Specifications & Schedules](https://docs.trade.xyz/perpetuals/specifications-and-schedules.md): Contract specifications, market closures, and roll schedules for trade\[XYZ] perpetuals.
+- [Specification Index](https://docs.trade.xyz/perpetuals/specifications-and-schedules/specification-index.md): Consolidated specifications for active trade\[XYZ] perpetual markets.
+- [Pre-IPO Specification Index](https://docs.trade.xyz/perpetuals/specifications-and-schedules/pre-ipo-specification-index.md): Specifications for active trade\[XYZ] Pre-IPO Perpetual markets.
+- [Holiday Closures](https://docs.trade.xyz/perpetuals/specifications-and-schedules/holiday-closures.md): External-market holiday closures affecting trade\[XYZ] perpetual markets.
+- [Roll Schedules](https://docs.trade.xyz/perpetuals/specifications-and-schedules/roll-schedules.md): Reference-contract roll schedules for trade\[XYZ] perpetual markets.
+- [Risk & Margining](https://docs.trade.xyz/perpetuals/risk-and-margining.md): Margin, liquidation, and auto-deleveraging mechanics for trade\[XYZ] perpetuals.
+- [Margin Modes](https://docs.trade.xyz/perpetuals/risk-and-margining/margin-modes.md): Cross and isolated margin modes for trade\[XYZ] perpetuals.
+- [Liquidation Mechanics](https://docs.trade.xyz/perpetuals/risk-and-margining/liquidation-mechanics.md): Liquidation mechanics for trade\[XYZ] perpetuals.
+- [Auto-Deleveraging](https://docs.trade.xyz/perpetuals/risk-and-margining/auto-deleveraging.md): Auto-deleveraging mechanics for trade\[XYZ] perpetuals.
+- [Changelog](https://docs.trade.xyz/perpetuals/changelog.md): Material parameter and methodology changes for trade\[XYZ] perpetuals.
+- [Discovery Bounds v2](https://docs.trade.xyz/perpetuals/changelog/discovery-bounds-v2.md): Changelog entry for the Discovery Bounds v2 methodology.
+- [Oracle Time Constant Updates](https://docs.trade.xyz/perpetuals/changelog/oracle-time-constant-updates.md): Changelog entry for xyz oracle time-constant updates.
+- [Funding Rate Formula Updates](https://docs.trade.xyz/perpetuals/changelog/funding-rate-formula-updates.md): Changelog entry for xyz funding-rate formula updates.
+- [Equity Indices v1](https://docs.trade.xyz/perpetuals/changelog/equity-indices-v1.md): Changelog entry for the Equity Indices v1 methodology.
+- [Market Parameters](https://docs.trade.xyz/perpetuals/changelog/market-parameters.md): Historical parameter updates for xyz perpetual markets.
+- [6/24](https://docs.trade.xyz/perpetuals/changelog/market-parameters/6-24.md): Historical xyz market-parameter update dated June 24.
+- [6/12](https://docs.trade.xyz/perpetuals/changelog/market-parameters/6-12.md): Historical xyz market-parameter update dated June 12.
+- [7/28](https://docs.trade.xyz/perpetuals/changelog/market-parameters/7-28.md): Historical xyz market-parameter update dated July 28.
+- [Corporate Actions](https://docs.trade.xyz/perpetuals/corporate-actions.md): How corporate actions affect trading, positions and orders in XYZ equity markets.
+- [2026-09-28: Kioxia Stock Split](https://docs.trade.xyz/perpetuals/corporate-actions/2026-09-28-kioxia-stock-split.md): KIOXIA position settlement, order cancellation and reopening arrangements for Kioxia's 3-for-1 stock split.
+- [Events](https://docs.trade.xyz/events.md): Outcome contracts deployed by trade\[XYZ] through Hyperliquid HIP-4.
+- [Events Architecture](https://docs.trade.xyz/events/architecture.md): Architecture, responsibilities, and venue metadata for Events by trade\[XYZ].
+- [Contract Mechanics](https://docs.trade.xyz/events/event-contract-mechanics.md): How Events outcome tokens trade and settle on Hyperliquid HIP-4.
+- [Resolution](https://docs.trade.xyz/events/resolution.md): Resolution sources and settlement methodologies for Events.
+- [Specification Index](https://docs.trade.xyz/events/specification-index.md): Consolidated specifications for active trade\[XYZ] events markets.
+- [Fees](https://docs.trade.xyz/events/fees.md): Hyperliquid outcome-trading fees for Events.
+- [Consolidated Resources](https://docs.trade.xyz/events/developer-resources.md): Developer tools and market-data resources for Events.
+- [Live Market Feed](https://docs.trade.xyz/events/developer-resources/live-market-feed.md): A team-maintained convenience feed for active Events markets on Hyperliquid.
+- [General Disclaimer](https://docs.trade.xyz/legal-and-disclaimers/general-disclaimer.md): General legal and risk disclosures for trade\[XYZ] documentation and products.
+- [Perpetuals Risks and Disclaimers](https://docs.trade.xyz/legal-and-disclaimers/perpetuals-risks-and-disclaimers.md): Risks related to trading perpetual contracts.
+- [Pre-IPO Perpetual Markets Risks and Disclaimers](https://docs.trade.xyz/legal-and-disclaimers/perpetuals-risks-and-disclaimers/pre-ipo-perpetual-markets-risks-and-disclaimers.md): Risks and disclaimers for trade\[XYZ] Pre-IPO Perpetual markets.
+- [Events Risks and Disclaimers](https://docs.trade.xyz/legal-and-disclaimers/events-risks-and-disclaimers.md): Principal risks of trading Events.
+- [S\&P 500 Disclaimers](https://docs.trade.xyz/legal-and-disclaimers/s-and-p-500-disclaimers.md): Trademark, index, and licensing disclaimers related to the S\&P 500 perpetual contract.
+- [Perpetuals Architecture](https://docs.trade.xyz/architecture.md): Architecture and metadata for the xyz HIP-3 deployment.
+
+
+---
+
+# Agent Instructions
+This documentation is published with GitBook. GitBook is the documentation platform designed so that both humans and AI agents can read, navigate, and reason over technical content effectively. Learn more at gitbook.com.
+
+## Querying This Documentation
+If you need additional information, you can query the documentation dynamically by asking a question.
+Perform an HTTP GET request on a page URL with the `ask` query parameter:
+```
+GET https://docs.trade.xyz/overview/about-trade-xyz.md?ask=<question>
+```
+The question should be specific, self-contained, and written in natural language.
+The response will contain a direct answer to the question and relevant excerpts and sources from the documentation.
+Use this mechanism when the answer is not explicitly present in the current page, you need clarification or additional context, or you want to retrieve related documentation sections.

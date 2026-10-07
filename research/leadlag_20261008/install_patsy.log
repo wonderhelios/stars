@@ -1,0 +1,5 @@
+Collecting patsy
+  Downloading patsy-1.0.3-py2.py3-none-any.whl.metadata (3.7 kB)
+Downloading patsy-1.0.3-py2.py3-none-any.whl (233 kB)
+Installing collected packages: patsy
+Successfully installed patsy-1.0.3

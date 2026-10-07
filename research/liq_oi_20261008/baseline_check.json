@@ -1,0 +1,64 @@
+{
+  "scalar_parity_checks": [
+    {
+      "date": "2023-08-13 00:00:00+00:00",
+      "max_weight_error": 0.0
+    },
+    {
+      "date": "2023-09-17 00:00:00+00:00",
+      "max_weight_error": 0.0
+    },
+    {
+      "date": "2023-12-26 00:00:00+00:00",
+      "max_weight_error": 0.0
+    },
+    {
+      "date": "2024-06-28 00:00:00+00:00",
+      "max_weight_error": 0.0
+    },
+    {
+      "date": "2024-12-30 00:00:00+00:00",
+      "max_weight_error": 0.0
+    },
+    {
+      "date": "2025-07-18 00:00:00+00:00",
+      "max_weight_error": 0.0
+    },
+    {
+      "date": "2026-03-25 00:00:00+00:00",
+      "max_weight_error": 0.0
+    },
+    {
+      "date": "2026-10-02 00:00:00+00:00",
+      "max_weight_error": 1.3877787807814457e-17
+    }
+  ],
+  "summary": {
+    "full": {
+      "phase_sharpes": [
+        1.775955835038076,
+        1.1196563118905254,
+        1.7375891618158619
+      ],
+      "sharpe": 1.5444004362481545
+    },
+    "2023-24": {
+      "phase_sharpes": [
+        0.9124179761844422,
+        -0.5587273539618486,
+        0.9228095623167782
+      ],
+      "sharpe": 0.4255000615131239
+    },
+    "2025-26": {
+      "phase_sharpes": [
+        2.386497167198128,
+        2.3325706137348,
+        2.262026539764243
+      ],
+      "sharpe": 2.3270314402323904
+    }
+  },
+  "liquid_universe_mean": 26.957795004306632,
+  "legacy_headline_comparability": "trader.rs cap5, vol includes current day ddof1, prior30d volume missing excluded, byte-sum slots. Legacy /tmp/stag2.py uses cap8, vol excludes current day ddof0, liquidity includes current Q divided by 30, index slots, fixed unit weights at same close. Thus headline 1.79 is not an exact matched baseline for this engine."
+}

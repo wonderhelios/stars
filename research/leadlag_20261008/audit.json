@@ -1,0 +1,7 @@
+{
+  "target_neutrality_check": "PASS",
+  "timeline_check": "PASS",
+  "missing_exit_stress_baseline_sharpe": 1.538376271432716,
+  "formation_coint_tests": 45,
+  "formation_coint_pass": 0
+}

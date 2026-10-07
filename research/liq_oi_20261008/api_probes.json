@@ -1,0 +1,60 @@
+[
+  {
+    "request": {
+      "type": "metaAndAssetCtxs"
+    },
+    "status": 200,
+    "body": "[{\"universe\":[{\"szDecimals\":5,\"name\":\"BTC\",\"maxLeverage\":40,\"marginTableId\":56},{\"szDecimals\":4,\"name\":\"ETH\",\"maxLeverage\":25,\"marginTableId\":55},{\"szDecimals\":2,\"name\":\"ATOM\",\"maxLeverage\":5,\"marginTableId\":5},{\"szDecimals\":1,\"name\":\"MATIC\",\"maxLeverage\":20,\"marginTableId\":20,\"isDelisted\":true},{\"szDecimals\":1,\"name\":\"DYDX\",\"maxLeverage\":5,\"marginTableId\":5},{\"szDecimals\":2,\"name\":\"SOL\",\"maxLeverage\":20,\"marginTableId\":54},{\"szDecimals\":2,\"name\":\"AVAX\",\"maxLeverage\":10,\"marginTableId\":52},{\"szDecimals\":3,\"name\":\"BNB\",\"maxLeverage\":10,\"marginTableId\":51},{\"szDecimals\":1,\"name\":\"APE\",\"maxLeverage\":5,\"marginTableId\":5},{\"szDecimals\":1,\"name\":\"OP\",\"maxLeverage\":5,\"marginTableId\":5},{\"szDecimals\":2,\"name\":\"LTC\",\"maxLeverage\":10,\"marginTableId\":52},{\"szDecimals\":1,\"name\":\"ARB\",\"maxLeverage\":10,\"marginTableId\":51},{\"szDecimals\":0,\"name\":\"DOGE\",\"maxLeverage\":10,\"marginTableId\":52},{\"szDecimals\":1,\"name\":\"INJ\",\"maxLeverage\":5,\"marginTableId\":5},{\"szDecimals\":1,\"name\":\"SUI\",\"maxLeverage\":10,\"marginTableId\":52},{\"szDecimals\":0,\"name\":\"kPEPE\",\"maxLeverage\":10,\"marginTableId\":52},{\"szDecimals\":1,\"name\":\"CRV\",\"maxLeverage\":10,\"marginTableId\":52},{\"szDecimals\":1,\"name\":\"LDO\",\"maxLeverage\":5,\"marginTableId\":5},{\"szDecimals\":1,\"name\":\"LINK\",\"maxLeverage\":10,\"marginTableId\":52},{\"szDecimals\":1,\"name\":\"STX\",\"maxLeverage\":5,\"marginTableId\":5},{\"szDecimals\":1,\"name\":\"RNDR\",\"maxLeverage\":20,\"marginTableId\":20,\"isDelisted\":true},{\"szDecimals\":0,\"name\":\"CFX\",\"maxLeverage\":5,\"marginTableId\":5},{\"szDecimals\":0,\"name\":\"FTM\",\"maxLeverage\":10,\"marginTableId\":10,\"isDelisted\":true},{\"szDecimals\":2,\"name\":\"GMX\",\"maxLeverage\":3,\"marginTableId\":3},{\"szDecimals\":1,\"name\":\"SNX\",\"maxLeverage\":3,\"marginTableId\":3},{\"szDecimals\":0,\"name\":\"XRP\",\"maxLeverage\":20,\"marginTableId\":53},{\"szDecimals\":3,\"name\":\"BCH\",\"maxLeverage\":10,\"marginTableId\":52},{\"szDecimals\":2,\"name\":\"APT\",\"maxLeverage\":10,\"marginTableId\":52},{\"szDecimals\":2,\"name\":\"AAVE\",\"maxLeverage\":10,\"marginTableId\":52},{\"szDecimals\":2,\"name\":\"COMP\",\"maxLeverage\":5,\"marginTableId\":5},{\"szDecimals\":4,\"name\":\"MKR\",\"maxLeverage\":10,\"marginTableId\":51,\"isDelisted\":true},{\"szDecimals\":1,\"name\":\"WLD\",\"maxLeverage\":10,\"marginTableId\":52},{\"szDecimals\":1,\"name\":\"FXS\",\"maxLeverage\":5,\"marginTableId\":5,\"isDelisted\":true},{\"szDecimals\":0,\"name\":\"HPOS\",\"maxLeverage\":3,\"marginTableId\":3,\"onlyIsolated\":true,\"isDelisted\":true,\"marginMode\":\"strictIsolated\"},{\"szDecimals\":0,\"name\":\"RLB\",\"maxLeverage\":3,\"marginTableId\":3,\"onlyIsolated\":true,\"isDelisted\":tr"
+  },
+  {
+    "request": {
+      "type": "liquidations",
+      "coin": "BTC"
+    },
+    "status": 422,
+    "body": "Failed to deserialize the JSON body into the target type"
+  },
+  {
+    "request": {
+      "type": "openInterestHistory",
+      "coin": "BTC"
+    },
+    "status": 422,
+    "body": "Failed to deserialize the JSON body into the target type"
+  },
+  {
+    "request": {
+      "type": "userFills",
+      "user": "0x0000000000000000000000000000000000000000"
+    },
+    "status": 200,
+    "body": "[{\"coin\":\"xyz:KIOXIA\",\"px\":\"338.38\",\"sz\":\"0.036\",\"side\":\"A\",\"time\":1790577291662,\"startPosition\":\"0.036\",\"dir\":\"Settlement\",\"closedPnl\":\"0.0\",\"hash\":\"0x009edcb6f60cf708021804455f87ac0204dc009c910015daa4678809b500d0f2\",\"oid\":558635318085,\"crossed\":false,\"fee\":\"0.0\",\"tid\":670371474744862,\"feeToken\":\"USDC\",\"twapId\":null},{\"coin\":\"xyz:KIOXIA\",\"px\":\"338.38\",\"sz\":\"2000.0\",\"side\":\"A\",\"time\":1790577291662,\"startPosition\":\"2000.0\",\"dir\":\"Settlement\",\"closedPnl\":\"0.0\",\"hash\":\"0x009edcb6f60cf708021804455f87ac0204dc009c910015daa4678809b500d0f2\",\"oid\":558635318084,\"crossed\":false,\"fee\":\"0.0\",\"tid\":37470018788950,\"feeToken\":\"USDC\",\"twapId\":null},{\"coin\":\"xyz:KIOXIA\",\"px\":\"338.38\",\"sz\":\"92.636\",\"side\":\"B\",\"time\":1790577291662,\"startPosition\":\"-92.636\",\"dir\":\"Settlement\",\"closedPnl\":\"0.0\",\"hash\":\"0x009edcb6f60cf708021804455f87ac0204dc009c910015daa4678809b500d0f2\",\"oid\":558635318083,\"crossed\":false,\"fee\":\"0.0\",\"tid\":34481526464052,\"feeToken\":\"USDC\",\"twapId\":null},{\"coin\":\"xyz:KIOXIA\",\"px\":\"338.38\",\"sz\":\"0.253\",\"side\":\"B\",\"time\":1790577291662,\"startPosition\":\"-0.253\",\"dir\":\"Settlement\",\"closedPnl\":\"0.0\",\"hash\":\"0x009edcb6f60cf708021804455f87ac0204dc009c910015daa4678809b500d0f2\",\"oid\":558635318082,\"crossed\":false,\"fee\":\"0.0\",\"tid\":450956182883928,\"feeToken\":\"USDC\",\"twapId\":null},{\"coin\":\"xyz:KIOXIA\",\"px\":\"338.38\",\"sz\":\"0.878\",\"side\":\"A\",\"time\":1790577291662,\"startPosition\":\"0.878\",\"dir\":\"Settlement\",\"closedPnl\":\"0.0\",\"hash\":\"0x009edcb6f60cf708021804455f87ac0204dc009c910015daa4678809b500d0f2\",\"oid\":558635318081,\"crossed\":false,\"fee\":\"0.0\",\"tid\":191427609796275,\"feeToken\":\"USDC\",\"twapId\":null},{\"coin\":\"xyz:KIOXIA\",\"px\":\"338.38\",\"sz\":\"38.604\",\"side\":\"B\",\"time\":1790577291662,\"startPosition\":\"-38.604\",\"dir\":\"Settlement\",\"closedPnl\":\"0.0\",\"hash\":\"0x009edcb6f60cf708021804455f87ac0204dc009c910015daa4678809b500d0f2\",\"oid\":558635318080,\"crossed\":false,\"fee\":\"0.0\",\"tid\":650835808487249,\"feeToken\":\"USDC\",\"twapId\":null},{\"coin\":\"xyz:KIOXIA\",\"px\":\"338.38\",\"sz\":\"80.016\",\"side\":\"B\",\"time\":1790577291662,\"startPosition\":\"-80.016\",\"dir\":\"Settlement\",\"closedPnl\":\"0.0\",\"hash\":\"0x009edcb6f60cf708021804455f87ac0204dc009c910015daa4678809b500d0f2\",\"oid\":558635318079,\"crossed\":false,\"fee\":\"0.0\",\"tid\":159367474512085,\"feeToken\":\"USDC\",\"twapId\":null},{\"coin\":\"xyz:KIOXIA\",\"px\":\"338.38\",\"sz\":\"0.03\",\"side\":\"B\",\"time\":1790577291662,\"startPosition\":\"-0.03\",\"dir\":\"Settlement\",\"closedPnl\":\"0.0\",\"hash\":\"0x009edcb6f60cf708021804455f87ac0204dc009c910015daa4678809b500d0f2\",\"oid\":558635318078,\"crossed\":false,\"fee\""
+  },
+  {
+    "request": {
+      "type": "clearinghouseState",
+      "user": "0x0000000000000000000000000000000000000000"
+    },
+    "status": 200,
+    "body": "{\"marginSummary\":{\"accountValue\":\"557.13644\",\"totalNtlPos\":\"0.0\",\"totalRawUsd\":\"557.13644\",\"totalMarginUsed\":\"0.0\"},\"crossMarginSummary\":{\"accountValue\":\"557.13644\",\"totalNtlPos\":\"0.0\",\"totalRawUsd\":\"557.13644\",\"totalMarginUsed\":\"0.0\"},\"crossMaintenanceMarginUsed\":\"0.0\",\"withdrawable\":\"557.13644\",\"assetPositions\":[],\"time\":1791393722958}"
+  },
+  {
+    "url": "https://hyperliquid-archive.s3.amazonaws.com/asset_ctxs/20240701.csv.lz4",
+    "status": 403,
+    "body": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Error><Code>AccessDenied</Code><Message>Anonymous users cannot invoke requests against Requester Pays buckets. Please authenticate.</Message><RequestId>9G3K694GF2FS91N3</RequestId><HostId>45B3CsqyU2eQuUjMR9+rTdLDSfeJ+m0j17WjcNpkly1F5V/VfZoHlvzTJvwIHyNB/oGRo44q5Uw=</HostId></Error>"
+  },
+  {
+    "url": "https://hl-mainnet-node-data.s3.amazonaws.com/?list-type=2&prefix=node_fills_by_block/&max-keys=1",
+    "status": 403,
+    "body": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Error><Code>AccessDenied</Code><Message>Anonymous users cannot invoke requests against Requester Pays buckets. Please authenticate.</Message><RequestId>5KE2H32PV9NKMMFJ</RequestId><HostId>50d62HrKj5fmrnJSX+BP3IsylEXVWOsg+2bk87ofawEqwUpflYI5miXkIGv1+YWk/SHIA8YyW3X+TWmuQx1uAv/+xrR4JGME</HostId></Error>"
+  },
+  {
+    "local_oi": [
+      534,
+      3,
+      178,
+      1791158400000,
+      1791331200000
+    ]
+  }
+]

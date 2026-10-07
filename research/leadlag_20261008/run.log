@@ -1,0 +1,7 @@
+family 32 pairs 3 screened 45
+backtest 0
+bootstrap 15
+bootstrap 30
+bootstrap 60
+BASELINE {'candidate': 'baseline', 'kind': 'baseline', 'full_sharpe': np.float64(1.5444004362481545), 'full_phase_sd': np.float64(0.3007476004734222), 'full_phase_min': 1.1196563118905254, 'full_phase_max': 1.775955835038076, 'full_net_annual': np.float64(1.2376474675184073), 'full_cagr': np.float64(1.559183368109916), 'full_turnover': np.float64(0.7399186904814982), 'full_annual_cost': np.float64(0.20255274151931013), 'full_corr': np.float64(1.0), '2023-24_sharpe': np.float64(0.4255000615131239), '2023-24_phase_sd': np.float64(0.6959668096947318), '2023-24_phase_min': -0.5587273539618486, '2023-24_phase_max': 0.9228095623167782, '2023-24_net_annual': np.float64(0.2940683098180011), '2023-24_cagr': np.float64(0.1559366553889836), '2023-24_turnover': np.float64(0.6282320852514193), '2023-24_annual_cost': np.float64(0.171978533337576), '2023-24_corr': np.float64(1.0), '2025-26_sharpe': np.float64(2.3270314402323904), '2025-26_phase_sd': np.float64(0.05096564925361391), '2025-26_phase_min': 2.262026539764243, '2025-26_phase_max': 2.386497167198128, '2025-26_net_annual': np.float64(1.9825009055783218), '2025-26_cagr': np.float64(4.027417748712613), '2025-26_turnover': np.float64(0.8280831557645247), '2025-26_annual_cost': np.float64(0.22668776389053863), '2025-26_corr': np.float64(1.0), 'missing_max': np.float64(0.19103417695521174)}
+PASS []

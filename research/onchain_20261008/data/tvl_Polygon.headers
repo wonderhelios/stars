@@ -1,0 +1,17 @@
+HTTP/1.1 200 Connection established
+
+HTTP/2 200 
+date: Wed, 07 Oct 2026 17:27:21 GMT
+content-type: application/json
+access-control-allow-methods: GET,PUT,POST,DELETE,OPTIONS
+access-control-allow-origin: *
+cache-control: public, max-age=1798
+etag: W/"6ac675c2-1373c"
+last-modified: Wed, 07 Oct 2026 16:39:30 GMT
+server: cloudflare
+vary: Accept-Encoding
+x-lb-route: primary
+age: 1391
+cf-cache-status: HIT
+cf-ray: a46e9db83f425a63-ICN
+

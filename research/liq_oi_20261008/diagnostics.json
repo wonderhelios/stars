@@ -1,0 +1,166 @@
+{
+  "proxy_oi_correlations": [
+    {
+      "coin": "ADA",
+      "samples": 854,
+      "correlation_capacity_change_bn_oi_change": 0.02345880582969358
+    },
+    {
+      "coin": "APT",
+      "samples": 854,
+      "correlation_capacity_change_bn_oi_change": 0.01362501699390032
+    },
+    {
+      "coin": "ARB",
+      "samples": 1193,
+      "correlation_capacity_change_bn_oi_change": 0.0712584999492666
+    },
+    {
+      "coin": "ATOM",
+      "samples": 1193,
+      "correlation_capacity_change_bn_oi_change": 0.0420969207928102
+    },
+    {
+      "coin": "AVAX",
+      "samples": 1193,
+      "correlation_capacity_change_bn_oi_change": 0.03664174888430654
+    },
+    {
+      "coin": "BCH",
+      "samples": 1191,
+      "correlation_capacity_change_bn_oi_change": 0.12700129599346496
+    },
+    {
+      "coin": "BNB",
+      "samples": 1193,
+      "correlation_capacity_change_bn_oi_change": 0.036867597913041256
+    },
+    {
+      "coin": "BTC",
+      "samples": 1190,
+      "correlation_capacity_change_bn_oi_change": -0.04496187371902402
+    },
+    {
+      "coin": "DOGE",
+      "samples": 1193,
+      "correlation_capacity_change_bn_oi_change": 0.0605528285596206
+    },
+    {
+      "coin": "DOT",
+      "samples": 854,
+      "correlation_capacity_change_bn_oi_change": 0.07717039689805072
+    },
+    {
+      "coin": "ETH",
+      "samples": 1193,
+      "correlation_capacity_change_bn_oi_change": -0.0451684793700979
+    },
+    {
+      "coin": "LINK",
+      "samples": 1193,
+      "correlation_capacity_change_bn_oi_change": 0.05355549889385686
+    },
+    {
+      "coin": "LTC",
+      "samples": 1193,
+      "correlation_capacity_change_bn_oi_change": 0.07329002176470963
+    },
+    {
+      "coin": "NEAR",
+      "samples": 854,
+      "correlation_capacity_change_bn_oi_change": 0.060256421193931084
+    },
+    {
+      "coin": "SOL",
+      "samples": 1193,
+      "correlation_capacity_change_bn_oi_change": 0.02095082757988881
+    },
+    {
+      "coin": "XRP",
+      "samples": 1193,
+      "correlation_capacity_change_bn_oi_change": 0.03863118648205684
+    }
+  ],
+  "conditional_upprice_groups": [
+    {
+      "period": "2023-24",
+      "variable": "volume",
+      "expanding": false,
+      "coin_events_overlapping": 2246,
+      "active_calendar_days": 352,
+      "mean_day_equal_weight_market_relative_next_return": -0.0011971298516294446,
+      "net_spread_cost_if_long_vs_equal_market": 0.003,
+      "inference": "Descriptive only; overlapping coin events NOT independent samples; no t test or significance claim"
+    },
+    {
+      "period": "2023-24",
+      "variable": "volume",
+      "expanding": true,
+      "coin_events_overlapping": 1728,
+      "active_calendar_days": 382,
+      "mean_day_equal_weight_market_relative_next_return": 0.000448018498320662,
+      "net_spread_cost_if_long_vs_equal_market": 0.003,
+      "inference": "Descriptive only; overlapping coin events NOT independent samples; no t test or significance claim"
+    },
+    {
+      "period": "2023-24",
+      "variable": "actual_bn_oi",
+      "expanding": false,
+      "coin_events_overlapping": 702,
+      "active_calendar_days": 277,
+      "mean_day_equal_weight_market_relative_next_return": 0.0009122348949415858,
+      "net_spread_cost_if_long_vs_equal_market": 0.003,
+      "inference": "Descriptive only; overlapping coin events NOT independent samples; no t test or significance claim"
+    },
+    {
+      "period": "2023-24",
+      "variable": "actual_bn_oi",
+      "expanding": true,
+      "coin_events_overlapping": 886,
+      "active_calendar_days": 306,
+      "mean_day_equal_weight_market_relative_next_return": 0.0005669689237958346,
+      "net_spread_cost_if_long_vs_equal_market": 0.003,
+      "inference": "Descriptive only; overlapping coin events NOT independent samples; no t test or significance claim"
+    },
+    {
+      "period": "2025-26",
+      "variable": "volume",
+      "expanding": false,
+      "coin_events_overlapping": 7052,
+      "active_calendar_days": 588,
+      "mean_day_equal_weight_market_relative_next_return": -0.0010047626987710369,
+      "net_spread_cost_if_long_vs_equal_market": 0.003,
+      "inference": "Descriptive only; overlapping coin events NOT independent samples; no t test or significance claim"
+    },
+    {
+      "period": "2025-26",
+      "variable": "volume",
+      "expanding": true,
+      "coin_events_overlapping": 3877,
+      "active_calendar_days": 567,
+      "mean_day_equal_weight_market_relative_next_return": 0.0006402218638175225,
+      "net_spread_cost_if_long_vs_equal_market": 0.003,
+      "inference": "Descriptive only; overlapping coin events NOT independent samples; no t test or significance claim"
+    },
+    {
+      "period": "2025-26",
+      "variable": "actual_bn_oi",
+      "expanding": false,
+      "coin_events_overlapping": 1527,
+      "active_calendar_days": 425,
+      "mean_day_equal_weight_market_relative_next_return": 0.0013160729335461158,
+      "net_spread_cost_if_long_vs_equal_market": 0.003,
+      "inference": "Descriptive only; overlapping coin events NOT independent samples; no t test or significance claim"
+    },
+    {
+      "period": "2025-26",
+      "variable": "actual_bn_oi",
+      "expanding": true,
+      "coin_events_overlapping": 1746,
+      "active_calendar_days": 455,
+      "mean_day_equal_weight_market_relative_next_return": -0.000669581705902008,
+      "net_spread_cost_if_long_vs_equal_market": 0.003,
+      "inference": "Descriptive only; overlapping coin events NOT independent samples; no t test or significance claim"
+    }
+  ]
+}

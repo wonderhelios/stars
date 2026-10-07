@@ -96,6 +96,9 @@ impl LiveConfig {
             target_positions: self.target_positions,
             slippage: self.slippage,
             margin_buffer: self.margin_buffer,
+            // 这里漏掉过 rebalance_slices：`..Default::default()` 会静默用默认值 3，
+            // 界面上改成 1 也毫无作用。下面有 field_parity 测试守着。
+            rebalance_slices: self.rebalance_slices,
             ..Default::default()
         }
     }
@@ -1047,4 +1050,37 @@ pub fn shadow_curve(store: &crate::store::Store, from_ts: i64, cfg: &LiveConfig)
         idx += 1;
     }
     out
+}
+
+#[cfg(test)]
+mod config_parity_tests {
+    use super::*;
+
+    /// 实盘配置的每个可调字段都必须真的传进 TradeConfig。
+    ///
+    /// 之前用 `..Default::default()` 兜底，漏传 `rebalance_slices`，
+    /// 结果是界面上改了参数、实盘行为完全不变，而且不留任何痕迹。
+    #[test]
+    fn every_live_field_reaches_trade_config() {
+        let cfg = LiveConfig {
+            lookback: 7,
+            top_frac: 0.11,
+            min_vol_usd: 7_000_000.0,
+            leverage: 5.0,
+            target_positions: 13,
+            slippage: 0.007,
+            margin_buffer: 0.77,
+            rebalance_slices: 4,
+            ..LiveConfig::default()
+        };
+        let tc = cfg.trade_config();
+        assert_eq!(tc.lookback, 7, "lookback 没传");
+        assert_eq!(tc.top_frac, 0.11, "top_frac 没传");
+        assert_eq!(tc.min_vol_usd, 7_000_000.0, "min_vol_usd 没传");
+        assert_eq!(tc.leverage, 5.0, "leverage 没传");
+        assert_eq!(tc.target_positions, 13, "target_positions 没传");
+        assert_eq!(tc.slippage, 0.007, "slippage 没传");
+        assert_eq!(tc.margin_buffer, 0.77, "margin_buffer 没传");
+        assert_eq!(tc.rebalance_slices, 4, "rebalance_slices 没传（UI 会失效）");
+    }
 }

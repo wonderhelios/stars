@@ -1,0 +1,13 @@
+HTTP/1.1 200 Connection established
+
+HTTP/2 404 
+date: Wed, 07 Oct 2026 17:27:27 GMT
+content-type: text/html; charset=utf-8
+access-control-allow-methods: GET,PUT,POST,DELETE,OPTIONS
+access-control-allow-origin: *
+cache-control: public, max-age=1798
+server: cloudflare
+vary: Accept-Encoding
+cf-cache-status: MISS
+cf-ray: a46e9dd97b465a63-ICN
+
