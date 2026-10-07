@@ -493,8 +493,17 @@ function renderMonitor(d) {
         metric("净敞口", "$" + fmt(d.net_notional || 0, 2), Math.abs(d.net_notional || 0) < 5 ? "pos" : "neg") +
         metric("实际 / 目标杠杆", fmt(actualLev, 2) + "x / " + fmt(targetLev, 2) + "x",
           actualLev < targetLev * 0.9 ? "neg" : "pos") +
-        metric("保证金模式", nPos ? nCross + " 全仓 / " + (d.isolated_count || 0) + " 逐仓" : "—",
-          (d.isolated_count || 0) > 0 ? "neg" : "pos")
+        metric(
+          "保证金模式",
+          // 全是全仓时只说「全仓」。逐仓是早期一个真实 bug（is_cross 传了 false），
+          // 现已修复；把「0 逐仓」挂在卡片上只会让人以为还有问题。
+          nPos
+            ? (d.isolated_count || 0) > 0
+              ? nCross + " 全仓 / " + d.isolated_count + " 逐仓"
+              : nCross + " 全仓"
+            : "—",
+          (d.isolated_count || 0) > 0 ? "neg" : "pos"
+        )
     ) +
     metricGroup(
       "执行",
