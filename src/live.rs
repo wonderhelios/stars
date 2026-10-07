@@ -39,11 +39,6 @@ pub struct LiveConfig {
     pub lookback: usize,
     pub top_frac: f64,
     pub min_vol_usd: f64,
-    /// 换仓间隔（天）。信号是 14 日动量，持有 1 天还是 2 天对敞口几乎无影响，
-    /// 但换手和成本直接减半：实测 Sharpe 1.86 → 2.22，回撤 −26.8% → −18.4%，
-    /// 安全杠杆 2.76x → 3.59x，且 2023-24 / 2025-26 两个子区间都改善。
-    #[serde(default = "default_rebal_days")]
-    pub rebalance_days: u32,
     /// 止盈幅度（相对调仓时的中间价）。0 = 不挂止盈单。
     #[serde(default = "default_tp")]
     pub take_profit_pct: f64,
@@ -65,8 +60,7 @@ impl Default for LiveConfig {
             lookback: 14,
             top_frac: 0.2,
             min_vol_usd: 5_000_000.0,
-            take_profit_pct: 0.10,
-            rebalance_days: 2,
+            take_profit_pct: 0.0,
             armed: false,
             auto_run: false,
         }
@@ -74,11 +68,9 @@ impl Default for LiveConfig {
 }
 
 fn default_tp() -> f64 {
-    0.10
-}
-
-fn default_rebal_days() -> u32 {
-    2
+    // 默认关闭：实测 10% 止盈在真实模型下是中性偏负（Sharpe 1.62 → 1.59），
+    // 且会持续打薄某一侧腿、造成需要额外机制去补的漂移。
+    0.0
 }
 
 impl LiveConfig {
@@ -938,3 +930,5 @@ pub async fn reconcile_fills(exec: &Exec, state: &mut LiveState) -> Result<usize
     }
     Ok(added)
 }
+
+

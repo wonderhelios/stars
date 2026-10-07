@@ -86,17 +86,9 @@ async fn main() -> anyhow::Result<()> {
                 if !(snapshot.config.auto_run && snapshot.config.armed) {
                     continue;
                 }
-                // 换仓节奏必须按「UTC 日」判断，不能按「距上次运行多久」。
-                //
-                // 之前用 last_run_at 算间隔，而手动调仓也会更新它 —— 结果一次手动
-                // 调仓就把自动调仓往后推了整整一个周期（实测把 10-06 00:05 那次
-                // 推到了 10-08，组合两天没人管）。按 UTC 日的模数判断则与手动操作
-                // 完全无关。
-                let n = snapshot.config.rebalance_days.max(1) as i64;
-                if n > 1 && (now_ms() / DAY) % n != 0 {
-                    info!("实盘自动调仓跳过：按 {n} 天节奏，今天不是调仓日");
-                    continue;
-                }
+                // 每日调仓。曾经改成「每 2 日」以省一半换手，但回测显示那个
+                // 结果完全取决于 2 天周期的相位（相位 A Sharpe 2.07 / 相位 B 1.42，
+                // 只差错开一天），不是真实边际，已回退。
                 // 与手动调仓共用同一道执行闸门。否则自动调仓和手动点击会交错，
                 // 两边都在对方写入前读到同一个账户，于是发出两倍的「开仓」单。
                 let _gate = match st.exec_gate.try_lock() {
