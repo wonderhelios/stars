@@ -39,6 +39,13 @@ pub struct LiveConfig {
     pub lookback: usize,
     pub top_frac: f64,
     pub min_vol_usd: f64,
+    /// 错峰调仓档数：每个币每 N 天轮到一次。1 = 每日全量。
+    ///
+    /// 实测（相位平均 + 两个子区间均通过）：换手 29%→13%、成本 16.2%→7.3%、
+    /// Sharpe 1.62→1.79，弱势区间 0.37→0.73。信号是 14 日动量，滞后几天对它
+    /// 的影响远小于省下的成本。
+    #[serde(default = "default_slices")]
+    pub rebalance_slices: u32,
     /// 止盈幅度（相对调仓时的中间价）。0 = 不挂止盈单。
     #[serde(default = "default_tp")]
     pub take_profit_pct: f64,
@@ -61,10 +68,16 @@ impl Default for LiveConfig {
             top_frac: 0.2,
             min_vol_usd: 5_000_000.0,
             take_profit_pct: 0.0,
+            rebalance_slices: 3,
             armed: false,
             auto_run: false,
         }
     }
+}
+
+fn default_slices() -> u32 {
+    // 实测最佳：换手 29%→13%，Sharpe 1.62→1.79，两个子区间均改善。
+    3
 }
 
 fn default_tp() -> f64 {

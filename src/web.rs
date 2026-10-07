@@ -346,6 +346,7 @@ struct LiveConfigBody {
     top_frac: Option<f64>,
     min_vol_usd: Option<f64>,
     take_profit_pct: Option<f64>,
+    rebalance_slices: Option<u32>,
 
     armed: Option<bool>,
     auto_run: Option<bool>,
@@ -385,6 +386,9 @@ async fn live_config(
     }
     if let Some(v) = body.min_vol_usd {
         c.min_vol_usd = v.max(0.0);
+    }
+    if let Some(v) = body.rebalance_slices {
+        c.rebalance_slices = v.clamp(1, 10);
     }
     if let Some(v) = body.take_profit_pct {
         c.take_profit_pct = v.clamp(0.0, 0.5);

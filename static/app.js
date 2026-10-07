@@ -167,6 +167,7 @@ function lvConfigInto(d) {
   $("lv-leverage").value = c.leverage ?? 3;
   $("lv-buffer").value = Math.round((c.margin_buffer ?? 0.9) * 100);
   $("lv-slippage").value = ((c.slippage ?? 0.005) * 100).toFixed(2);
+  $("lv-slices").value = c.rebalance_slices ?? 3;
   $("lv-tp").value = Math.round((c.take_profit_pct ?? 0.1) * 100);
   $("lv-lookback").value = c.lookback ?? 14;
   $("lv-top").value = c.top_frac ?? 0.2;
@@ -189,6 +190,7 @@ $("lv-save").addEventListener("click", async () => {
     leverage: Number($("lv-leverage").value),
     margin_buffer: Number($("lv-buffer").value) / 100,
     slippage: Number($("lv-slippage").value) / 100,
+    rebalance_slices: Number($("lv-slices").value),
     take_profit_pct: Number($("lv-tp").value) / 100,
     lookback: Number($("lv-lookback").value),
     top_frac: Number($("lv-top").value),

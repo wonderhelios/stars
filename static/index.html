@@ -149,6 +149,7 @@
             <div class="field"><label>杠杆</label><input id="lv-leverage" type="number" value="3" min="1" max="20" step="0.5" /></div>
             <div class="field"><label>保证金缓冲 %</label><input id="lv-buffer" type="number" value="90" min="30" max="100" /></div>
             <div class="field"><label>滑点上限 %</label><input id="lv-slippage" type="number" value="0.5" min="0.05" max="5" step="0.05" /></div>
+            <div class="field"><label>错峰调仓（档）</label><input id="lv-slices" type="number" value="3" min="1" max="10" step="1" /></div>
             <div class="field"><label>止盈 % （0 = 关闭）</label><input id="lv-tp" type="number" value="10" min="0" max="50" step="1" /></div>
             <div class="field"><label>回看天数</label><input id="lv-lookback" type="number" value="14" min="2" max="120" /></div>
             <div class="field"><label>多头比例</label><input id="lv-top" type="number" value="0.2" min="0.02" max="0.9" step="0.05" /></div>
@@ -187,7 +188,7 @@
                  · 新币做空 —— 中位数占优但尾部致命，回测归零（−100% 回撤），加止损也救不回</p>
             </div>
           </details>
-          <p class="note"><b>止盈机制：</b>每次调仓后会为每个持仓挂一张<b>只减仓的被动限价单</b>（多头挂在 +10%、空头挂在 −10%，相对调仓时的中间价）。价格碰到就自动成交，成交是 <b>maker 费率 0.015%</b>，比市价平仓便宜 3 倍。下次调仓会先撤旧单再挂新单。<b>实测：10% 止盈把 Sharpe 从 2.14 提到 2.84，且 2023-24 / 2025-26 两个区间都改善。</b></p>
+          <p class="note"><b>止盈机制：</b>每次调仓后会为每个持仓挂一张<b>只减仓的被动限价单</b>（多头挂在 +10%、空头挂在 −10%，相对调仓时的中间价）。价格碰到就自动成交，成交是 <b>maker 费率 0.015%</b>，比市价平仓便宜 3 倍。下次调仓会先撤旧单再挂新单。<b>注意：这里的止盈默认关闭（0）。</b>早先"止盈把 Sharpe 从 2.14 提到 2.84"的结论基于一个错误假设（止盈后第二天自动重开），真实模型下止盈是中性偏负，且会打薄一侧腿造成漂移，因此默认关闭。</p>
           <p class="note"><b>⚠ 保证金模式：</b>Hyperliquid <b>不允许在持仓时切换保证金模式</b>（报错 <code>Cannot switch leverage while a position is open</code>）。所以「执行调仓」只能给<b>没有持仓的币</b>设全仓；要把<b>已有仓位</b>转成全仓，必须点「<b>转为全仓</b>」——它会逐币「平掉 → 切全仓 → 按目标重开」，全程只有 1 个仓位短暂裸奔，其余保持对冲。成本约 $1~2 手续费。</p>
           <div class="panel-head" style="margin-top:14px"><h2>计划 / 执行结果</h2></div>
           <div id="lv-plan-out"></div>
