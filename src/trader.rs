@@ -120,6 +120,11 @@ impl FactorPanel {
         }
     }
 
+    /// 某币在某时刻的收盘价，供影子回测取价。
+    pub fn close_at(&self, coin: &str, t: i64) -> Option<f64> {
+        self.closes.get(coin).and_then(|m| m.get(&t)).copied()
+    }
+
     #[allow(dead_code)]
     pub fn len(&self) -> usize {
         self.ts.len()

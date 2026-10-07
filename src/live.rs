@@ -203,6 +203,9 @@ pub struct LiveSnapshot {
     pub isolated_count: usize,
     /// 策略累计盈亏（已实现 + 未实现），与入金无关。
     pub cumulative_pnl: f64,
+    /// 影子回测净值曲线（从实盘开始那天起，起点归一为 1.0），供页面与实盘并排对照。
+    #[serde(default)]
+    pub shadow: Vec<(i64, f64)>,
     /// 盘口上挂着的止盈单
     pub tp_orders: Vec<crate::exchange::OpenOrder>,
     pub config: LiveConfig,
@@ -239,6 +242,7 @@ pub async fn snapshot(
         isolated_count: 0,
         tp_orders: Vec::new(),
         cumulative_pnl: 0.0,
+        shadow: Vec::new(),
         tp_ref: HashMap::new(),
         config: cfg.clone(),
         history: state.history.clone(),
@@ -932,3 +936,76 @@ pub async fn reconcile_fills(exec: &Exec, state: &mut LiveState) -> Result<usize
 }
 
 
+
+
+/// 影子回测：从实盘开始那天起，用同一套信号、同样的成本假设重算一遍，
+/// 看模型"应该"赚多少。
+///
+/// 用途是拿它和实盘的真实净值曲线并排看：如果实盘明显跑输影子，说明差额来
+/// 自执行（滑点、成交质量、时机），而不是信号 —— 那是回测给不了的信息。
+///
+/// 成本假设与回测一致：双边 × (taker 费率 + 配置里的滑点上限)。
+pub fn shadow_curve(store: &crate::store::Store, from_ts: i64, cfg: &LiveConfig) -> Vec<(i64, f64)> {
+    let Ok(panel) = crate::trader::load_panel(store) else {
+        return Vec::new();
+    };
+    let tc = cfg.trade_config();
+    let fp = crate::trader::FactorPanel::build(&panel);
+    if fp.is_empty() {
+        return Vec::new();
+    }
+    let day = 86_400_000i64;
+    let start = from_ts / day * day;
+    let mut eq = 1.0f64;
+    let mut out: Vec<(i64, f64)> = Vec::new();
+    let mut prev_w: Vec<(String, f64)> = Vec::new();
+    let mut last_close: std::collections::HashMap<String, f64> = Default::default();
+    let mut idx = 30usize;
+    while idx + 1 < fp.len() {
+        let t = fp.ts[idx];
+        if t < start {
+            idx += 1;
+            continue;
+        }
+        // 先按昨日持仓结算今日涨跌
+        let mut ret = 0.0f64;
+        for (coin, w) in &prev_w {
+            let c_now = fp.close_at(coin, fp.ts[idx + 1]);
+            let c_prev = last_close.get(coin).copied();
+            if let (Some(a), Some(b)) = (c_now, c_prev) {
+                if b > 0.0 {
+                    ret += w * (a / b - 1.0);
+                }
+            }
+        }
+        // 再按信号调仓
+        let new = fp.weights_at(idx, &tc, 1_000.0);
+        if !new.is_empty() {
+            let mut turn = 0.0f64;
+            let mut map: std::collections::HashMap<String, f64> = Default::default();
+            for (c, x) in &new {
+                *map.entry(c.clone()).or_insert(0.0) += x;
+            }
+            let mut keys: std::collections::HashSet<String> = Default::default();
+            for (c, _) in prev_w.iter().chain(new.iter()) {
+                keys.insert(c.clone());
+            }
+            for c in &keys {
+                let a = prev_w.iter().find(|(x, _)| x == c).map(|(_, v)| *v).unwrap_or(0.0);
+                let b = map.get(c).copied().unwrap_or(0.0);
+                turn += (b - a).abs();
+            }
+            ret -= turn / 2.0 * 2.0 * (0.00045 + cfg.slippage);
+            prev_w = new;
+        }
+        eq *= 1.0 + ret;
+        for (c, _) in &prev_w {
+            if let Some(v) = fp.close_at(c, fp.ts[idx + 1]) {
+                last_close.insert(c.clone(), v);
+            }
+        }
+        out.push((t, eq));
+        idx += 1;
+    }
+    out
+}

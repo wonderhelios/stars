@@ -301,7 +301,14 @@ async fn live_status(State(state): State<AppState>) -> Response {
             }
         }
     }
-    let snap = crate::live::snapshot(&st, &markets, Some(state.http.clone())).await;
+    let mut snap = crate::live::snapshot(&st, &markets, Some(state.http.clone())).await;
+    // 影子回测：从实盘第一天起，用同一套信号和成本假设重算一遍，供页面并排对照。
+    // 只处理实盘开始之后的日期，所以很快。
+    let shadow = st
+        .history
+        .first()
+        .map(|p| crate::live::shadow_curve(&state.store, p.ts, &st.config))
+        .unwrap_or_default();
     // Record at most one equity point per hour so the monitoring curve appears
     // the same day instead of after a couple of daily closes.
     if snap.equity > 0.0 {
@@ -323,6 +330,7 @@ async fn live_status(State(state): State<AppState>) -> Response {
             let _ = guard.save(&state.live_path);
         }
     }
+    snap.shadow = shadow;
     Json(json!(snap)).into_response()
 }
 

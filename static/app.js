@@ -566,7 +566,7 @@ function renderMonitor(d) {
     </tr></thead><tbody>${rows}</tbody></table></div>` + pager("pos", pos.length, posPage, LIVE_PAGE_SIZE);
   }
 
-  renderLiveChart(hist);
+  renderLiveChart(hist, d.shadow);
 
   const chron = d.records || [];
   const hints = entryHints(chron);
@@ -656,7 +656,7 @@ function renderMonitor(d) {
     : '<div class="empty">还没有下单记录</div>';
 }
 
-function renderLiveChart(history) {
+function renderLiveChart(history, shadow) {
   const el = $("mo-chart");
   if (!history || history.length < 2) {
     el.innerHTML = '<div class="empty">还没有足够的数据点（每天自动记录一次净值）</div>';
@@ -689,6 +689,25 @@ function renderLiveChart(history) {
   const baseY = Y(base);
   const endY = Y(vals[n - 1]);
   const line = `<polyline points="${vals.map((v, i) => `${X(i)},${Y(v)}`).join(" ")}" fill="none" stroke="#2d6df6" stroke-width="2.2"/>`;
+  // 影子回测：把它的净值和实盘对齐到同一个起点，画成虚线对照。
+  // 实盘明显低于虚线，说明差额来自执行而不是信号。
+  let shadowLine = "";
+  if (shadow && shadow.length > 1 && base > 0) {
+    const byDay = new Map();
+    for (const p of shadow) byDay.set(Math.floor(p.ts / 86400000), p.equity);
+    const pts = [];
+    let scale = null;
+    for (let i = 0; i < n; i++) {
+      const key = Math.floor(history[i].ts / 86400000);
+      const v = byDay.get(key);
+      if (v == null) continue;
+      if (scale == null) scale = history[i].equity / v; // 对齐起点
+      pts.push(`${X(i)},${Y(v * scale)}`);
+    }
+    if (pts.length > 1) {
+      shadowLine = `<polyline points="${pts.join(" ")}" fill="none" stroke="#9aa6b8" stroke-width="1.8" stroke-dasharray="6 4"/>`;
+    }
+  }
   // 曲线平直时起点与终点重合，两个标签叠一起会糊 —— 只在分得开时才画起点
   const baseLabel =
     Math.abs(endY - baseY) >= 15
@@ -700,7 +719,7 @@ function renderLiveChart(history) {
       ${grid}
       <line x1="${padL}" y1="${baseY}" x2="${W - padR}" y2="${baseY}" stroke="#c9d3e3" stroke-width="1" stroke-dasharray="4 4"/>
       ${baseLabel}
-      ${line}
+      ${line}${shadowLine}
       <text x="${W - padR + 6}" y="${endY + 4}" font-size="12" font-weight="600" fill="#2d6df6" paint-order="stroke" stroke="#fff" stroke-width="3">${money(vals[n - 1])}</text>
       ${xlabels}
     </svg>
