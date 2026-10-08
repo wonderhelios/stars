@@ -411,30 +411,12 @@ pub async fn snapshot(
         }
     }
     snap.unpriced = unpriced;
-    // TxFlow：把交易所口径的真实盈亏填进去。页面以前只显示未实现，
-    // 一个赚了 $1,945 的账户看起来像在亏钱 —— 这里补上已实现和净入金。
-    if cfg.txflow {
-        // 边界 = 本策略最早一条下单记录。账户在策略之前有自己的交易历史，
-        // 不切开会把用户自己赚的钱算成策略业绩。
-        let since = state
-            .records
-            .iter()
-            .map(|r| r.ts)
-            .min()
-            .unwrap_or(0);
-        if let Some(Ok(p)) = exec.txflow_pnl(since).await {
-            snap.tx_realized = p.realized;
-            snap.tx_fees = p.fees;
-            snap.tx_volume = p.volume;
-            snap.tx_fills = p.fills;
-            snap.tx_net_deposit = p.net_deposit;
-            snap.tx_total_pnl = if p.net_deposit.abs() > 0.0 {
-                snap.equity - p.net_deposit
-            } else {
-                0.0
-            };
-        }
-    }
+    // 业绩不在这里查。
+    //
+    // 曾经在 snapshot() 里调 txflow_pnl()：那要发 2 个请求，而 snapshot 是页面
+    // 每次轮询都会走的路径。加上全局限速（回填正在占着闸门）之后，状态请求排队
+    // 到超过 nginx 超时，页面直接 502。
+    // 改成独立接口 /api/txflow/pnl，由页面单独、低频地拉。
     snap
 }
 

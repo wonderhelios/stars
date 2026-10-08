@@ -419,7 +419,31 @@ function entryHints(records) {
   return out;
 }
 
+// TxFlow 业绩单独、低频拉取（60 秒一次），不放在状态轮询里 ——
+// 否则每次轮询都要打两次交易所接口，在限速下会把状态请求拖到 502。
+let txPnl = null;
+let txPnlAt = 0;
+async function fetchTxPnl() {
+  if (Date.now() - txPnlAt < 60000) return;
+  txPnlAt = Date.now();
+  try {
+    const r = await fetch("/api/txflow/pnl", { cache: "no-store" });
+    const j = await r.json();
+    if (j.ok) txPnl = j;
+  } catch (e) {
+    /* 静默：业绩拉不到不该影响监控页 */
+  }
+}
+
 function renderMonitor(d) {
+  if (txPnl) {
+    d.tx_realized = txPnl.realized;
+    d.tx_fees = txPnl.fees;
+    d.tx_volume = txPnl.volume;
+    d.tx_fills = txPnl.fills;
+    d.tx_net_deposit = txPnl.net_deposit;
+    d.tx_total_pnl = (d.equity || 0) - txPnl.net_deposit;
+  }
   lastLiveData = d;
   if (!d) return;
   lastLiveData = d;
@@ -793,6 +817,8 @@ async function refreshMonitor(force) {
       lvConfigInto(d);
       liveLoaded = true;
     }
+    // 先拿业绩（有 60 秒缓存，不会每次都请求），再渲染
+    await fetchTxPnl();
     renderMonitor(d);
   } catch (e) {
     $("mo-metrics").innerHTML = `<div class="note neg">读取实盘状态失败：${e}</div>`;

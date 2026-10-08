@@ -79,6 +79,33 @@ pub fn router(state: AppState) -> Router {
 }
 
 /// The same monitor/config handlers backed by an isolated TxFlow AppState.
+/// 独立、低频的业绩查询。**不要**把它塞进 live_status —— 那会让每次页面轮询
+/// 都去拉两次交易所接口，在限速下直接把状态请求拖到 502。
+async fn txflow_pnl(State(state): State<AppState>) -> Response {
+    let st = state.live.lock().await.clone();
+    if !st.config.txflow {
+        return Json(json!({"ok": false, "error": "非 TxFlow 账户"})).into_response();
+    }
+    let since = st.records.iter().map(|r| r.ts).min().unwrap_or(0);
+    let exec = match crate::exchange::Exec::reader_for(Some(&st.config.account)).await {
+        Ok(e) => e,
+        Err(e) => return Json(json!({"ok": false, "error": format!("{e}")})).into_response(),
+    };
+    match exec.txflow_pnl(since).await {
+        Some(Ok(p)) => Json(json!({
+            "ok": true,
+            "realized": p.realized,
+            "fees": p.fees,
+            "volume": p.volume,
+            "fills": p.fills,
+            "net_deposit": p.net_deposit,
+        }))
+        .into_response(),
+        Some(Err(e)) => Json(json!({"ok": false, "error": format!("{e}")})).into_response(),
+        None => Json(json!({"ok": false, "error": "无 TxFlow 客户端"})).into_response(),
+    }
+}
+
 pub fn txflow_router(state: AppState) -> Router {
     Router::new()
         .route("/txflow", get(txflow_html))
@@ -88,6 +115,7 @@ pub fn txflow_router(state: AppState) -> Router {
         .route("/api/txflow/agent/approve", post(crate::txflow_agent::approve))
         .route("/api/txflow/status", get(status))
         .route("/api/txflow/live", get(live_status))
+        .route("/api/txflow/pnl", get(txflow_pnl))
         .route("/api/txflow/live/config", post(live_config))
         .route("/api/txflow/live/run", post(live_run))
         .route("/api/txflow/live/reset", post(live_reset))
