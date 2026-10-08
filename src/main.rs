@@ -6,6 +6,7 @@ mod paper;
 mod store;
 mod trader;
 mod web;
+mod txflow;
 
 use anyhow::Context;
 use crate::hl::{CoinMeta, HlClient, MarketCtx};
@@ -47,7 +48,9 @@ async fn main() -> anyhow::Result<()> {
     let store = Arc::new(Store::open(std::path::Path::new(&db_path))?);
     let client = HlClient::new();
     let paper = Arc::new(Mutex::new(PaperState::load(std::path::Path::new(&paper_path))));
-    let live = Arc::new(Mutex::new(live::LiveState::load(std::path::Path::new(&live_path))));
+    let mut hl_live = live::LiveState::load(std::path::Path::new(&live_path));
+    hl_live.config.txflow = false;
+    let live = Arc::new(Mutex::new(hl_live));
     let meta = Arc::new(Mutex::new(MetaCache::default()));
     let refresh = Arc::new(Mutex::new(RefreshStatus::default()));
 
@@ -65,6 +68,30 @@ async fn main() -> anyhow::Result<()> {
         meta: meta.clone(),
         refresh: refresh.clone(),
     };
+
+    // TxFlow owns its database, settings and records; no HL data is reused.
+    let tx_db = std::env::var("STARS_TXFLOW_DB").unwrap_or_else(|_| {
+        std::path::Path::new(&db_path).with_file_name("txflow-candles.sqlite").to_string_lossy().into_owned()
+    });
+    let tx_path = std::env::var("STARS_TXFLOW_LIVE").unwrap_or_else(|_| {
+        std::path::Path::new(&live_path).with_file_name("txflow-live.json").to_string_lossy().into_owned()
+    });
+    anyhow::ensure!(tx_db != db_path && tx_path != live_path, "TxFlow 数据路径不能与 Hyperliquid 相同");
+    let mut tx_live = live::LiveState::load(std::path::Path::new(&tx_path));
+    tx_live.config.txflow = true;
+    let tx_state = AppState {
+        store: Arc::new(Store::open(std::path::Path::new(&tx_db))?),
+        live: Arc::new(Mutex::new(tx_live)),
+        live_path: Arc::new(std::path::PathBuf::from(tx_path)),
+        meta: Arc::new(Mutex::new(MetaCache::default())),
+        refresh: Arc::new(Mutex::new(RefreshStatus::default())),
+        exec_gate: Arc::new(Mutex::new(())),
+        ..state.clone()
+    };
+    {
+        let tx = tx_state.clone();
+        tokio::spawn(async move { txflow::background(tx).await; });
+    }
 
     // ===== daily live rebalance task =====
     {
@@ -192,9 +219,9 @@ async fn main() -> anyhow::Result<()> {
     }
 
     // ===== HTTP =====
-    let app = web::router(state);
-    let addr = "0.0.0.0:3000";
-    let listener = tokio::net::TcpListener::bind(addr).await?;
+    let app = web::router(state).merge(web::txflow_router(tx_state));
+    let addr = std::env::var("STARS_BIND_ADDR").unwrap_or_else(|_| "0.0.0.0:3000".into());
+    let listener = tokio::net::TcpListener::bind(&addr).await?;
     info!("stars listening on http://{addr}");
     info!("db: {db_path}, paper: {paper_path}");
     axum::serve(listener, app).await?;

@@ -18,3 +18,12 @@ rusqlite = { version = "0.32", features = ["bundled"] }
 hyperliquid_rust_sdk = { git = "https://github.com/hyperliquid-dex/hyperliquid-rust-sdk", rev = "aac75585daf12d0a3761126cc7da7a5e035b5853" }
 alloy = { version = "1", default-features = false, features = ["signer-local"] }
 uuid = { version = "1", features = ["v4"] }
+
+# TxFlow wire signing (ordered MessagePack + EIP-712).
+rmp-serde = "1"
+alloy-sol-types = "1"
+futures = "0.3"
+
+[dev-dependencies]
+tokio = { version = "1", features = ["test-util"] }
+tower = { version = "0.5", features = ["util"] }

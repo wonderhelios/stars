@@ -19,7 +19,7 @@ use uuid::Uuid;
 
 #[derive(Clone, Copy, Debug)]
 pub struct MarketInfo {
-    pub sz_decimals: u32,
+    pub sz_decimals: i32,
     pub max_leverage: u32,
 }
 
@@ -77,12 +77,29 @@ pub struct Acct {
 }
 
 pub struct Exec {
+    txflow: Option<crate::txflow::Client>,
     http: reqwest::Client,
     trading: Option<ExchangeClient>,
     account: Option<Address>,
 }
 
 impl Exec {
+    pub fn is_txflow(&self) -> bool { self.txflow.is_some() }
+    pub async fn txflow_prices(&self, coins: &[String]) -> Option<Result<HashMap<String, f64>>> {
+        if let Some(tx) = &self.txflow { Some(tx.prices(coins).await) } else { None }
+    }
+    pub async fn txflow_maintenance_margin(&self) -> Option<Result<f64>> {
+        if let Some(tx) = &self.txflow { Some(tx.maintenance_margin().await) } else { None }
+    }
+    pub async fn signer_config(cfg: &crate::live::LiveConfig) -> Result<Self> {
+        if cfg.txflow { Self::txflow(&cfg.account, Some(Path::new(&cfg.key_path))).await }
+        else { Self::signer(&cfg.account, Path::new(&cfg.key_path)).await }
+    }
+    pub async fn txflow(account: &str, key: Option<&Path>) -> Result<Self> {
+        let client = crate::txflow::Client::new(account, key).await?;
+        Ok(Self { txflow: Some(client), http: reqwest::Client::new(), trading: None, account: None })
+    }
+
     async fn info_post(&self, body: Value) -> Result<Value> {
         let mut last: Option<anyhow::Error> = None;
         for attempt in 0..5u32 {
@@ -129,6 +146,7 @@ impl Exec {
             None => None,
         };
         Ok(Self {
+            txflow: None,
             http,
             trading: None,
             account,
@@ -144,6 +162,7 @@ impl Exec {
             None => None,
         };
         Ok(Self {
+            txflow: None,
             http,
             trading: None,
             account,
@@ -172,6 +191,7 @@ impl Exec {
         .await
         .context("exchange client init timed out")??;
         Ok(Self {
+            txflow: None,
             http,
             trading: Some(trading),
             account: Some(address),
@@ -195,7 +215,7 @@ impl Exec {
             out.insert(
                 name.to_string(),
                 MarketInfo {
-                    sz_decimals: m["szDecimals"].as_u64().unwrap_or(4) as u32,
+                    sz_decimals: m["szDecimals"].as_i64().unwrap_or(4) as i32,
                     max_leverage: m["maxLeverage"].as_u64().unwrap_or(10) as u32,
                 },
             );
@@ -206,6 +226,7 @@ impl Exec {
 
     /// Every mid price in one request (avoids one l2 call per coin).
     pub async fn all_mids(&self) -> Result<HashMap<String, f64>> {
+        if let Some(tx) = &self.txflow { return tx.all_mids().await; }
         let v = self.info_post(json!({"type": "allMids"})).await?;
         let mut out = HashMap::new();
         if let Some(obj) = v.as_object() {
@@ -225,6 +246,7 @@ impl Exec {
     }
 
     pub async fn account(&self) -> Result<Acct> {
+        if let Some(tx) = &self.txflow { return tx.account().await; }
         let account = self.account.context("read-only client has no account")?;
         let addr = account.to_string();
         // Both views in one round trip.
@@ -319,6 +341,7 @@ impl Exec {
     /// 就会被单独强平，而组合整体其实还在盈亏相抵。第三个参数是 is_cross，
     /// 传 false 会变成逐仓（这里曾经写错成 false）。
     pub async fn set_leverage(&self, coin: &str, leverage: u32) -> Result<()> {
+        if let Some(tx) = &self.txflow { return tx.set_leverage(coin, leverage).await; }
         let trading = self.trading.as_ref().context("not a signing client")?;
         let resp = sdk_retry(&format!("设置 {coin} 杠杆"), || {
             trading.update_leverage(leverage, coin, true, None)
@@ -339,6 +362,7 @@ impl Exec {
         size: f64,
         px: f64,
     ) -> Result<u64> {
+        if let Some(tx) = &self.txflow { return tx.resting_reduce_order(coin, buy, size, px).await; }
         let trading = self.trading.as_ref().context("not a signing client")?;
         anyhow::ensure!(px > 0.0 && size > 0.0, "invalid resting order {coin}");
         let cloid = stars_cloid();
@@ -367,6 +391,7 @@ impl Exec {
     /// 最近的成交明细。止盈单是被动挂单、由交易所自动成交的，程序不经手，
     /// 所以必须回头拉成交才能把这块盈亏算进来。
     pub async fn user_fills(&self, limit: usize) -> Result<serde_json::Value> {
+        if let Some(tx) = &self.txflow { return tx.user_fills(limit).await; }
         let account = self.account.context("read-only client has no account")?;
         self.info_post(json!({
             "type": "userFills",
@@ -382,6 +407,7 @@ impl Exec {
 
     /// 挂单详情，给前端展示。
     pub async fn open_order_details(&self) -> Result<Vec<OpenOrder>> {
+        if let Some(tx) = &self.txflow { return tx.open_orders().await; }
         let account = self.account.context("read-only client has no account")?;
         let v = self
             .info_post(json!({"type": "openOrders", "user": account.to_string()}))
@@ -411,6 +437,7 @@ impl Exec {
 
     /// 批量撤单。返回成功撤销的数量。
     pub async fn cancel_orders(&self, orders: &[(String, u64)]) -> Result<usize> {
+        if let Some(tx) = &self.txflow { return tx.cancel_orders(orders).await; }
         if orders.is_empty() {
             return Ok(0);
         }
@@ -480,8 +507,9 @@ impl Exec {
         size: f64,
         mid: f64,
         slippage: f64,
-        sz_decimals: u32,
+        sz_decimals: i32,
     ) -> Result<ExchangeDataStatus> {
+        if let Some(tx) = &self.txflow { return tx.ioc(coin, buy, reduce_only, size, mid, slippage).await; }
         let trading = self.trading.as_ref().context("not a signing client")?;
         let aggressive = if buy {
             mid * (1.0 + slippage)
@@ -517,11 +545,11 @@ impl Exec {
 
 /// Tick rounding: at most 5 significant figures and never finer than the
 /// size decimals allow (same rule the exchange applies).
-pub fn order_price(px: f64, sz_decimals: u32, round_up: bool) -> f64 {
+pub fn order_price(px: f64, sz_decimals: i32, round_up: bool) -> f64 {
     if !px.is_finite() || px <= 0.0 {
         return 0.0;
     }
-    let decimal_places = (4 - px.log10().floor() as i32).min(6 - sz_decimals as i32);
+    let decimal_places = (4 - px.log10().floor() as i32).min(6 - sz_decimals);
     let factor = 10_f64.powi(decimal_places);
     let scaled = px * factor;
     if round_up {
@@ -532,11 +560,11 @@ pub fn order_price(px: f64, sz_decimals: u32, round_up: bool) -> f64 {
 }
 
 /// Truncate a size to the coin's lot size.
-pub fn round_size(size: f64, sz_decimals: u32) -> f64 {
+pub fn round_size(size: f64, sz_decimals: i32) -> f64 {
     if !size.is_finite() || size <= 0.0 {
         return 0.0;
     }
-    let factor = 10_f64.powi(sz_decimals as i32);
+    let factor = 10_f64.powi(sz_decimals);
     (size * factor).floor() / factor
 }
 

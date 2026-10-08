@@ -36,10 +36,13 @@ async function refreshStatus() {
       led.className = "led warn";
       $("statusText").textContent =
         `回填数据 ${refresh.coins_done}/${refresh.coins_total} · ${refresh.current || ""}`;
+    } else if ((refresh.phase || "").startsWith("error:")) {
+      led.className = "led warn";
+      $("statusText").textContent = "行情更新失败 · " + refresh.phase.slice(6);
     } else if (d.cached_coins > 0) {
       led.className = "led";
       $("statusText").textContent =
-        `已缓存 ${d.cached_coins} 币 · 流动性 ${d.universe_liquid} · ${d.paper?.running ? "纸交易运行中" : "纸交易未启动"}`;
+        `已缓存 ${d.cached_coins} 币 · 流动性 ${d.universe_liquid} · ${d.exchange === "txflow" ? "TxFlow 日线就绪" : d.paper?.running ? "纸交易运行中" : "纸交易未启动"}`;
     } else {
       led.className = "led off";
       $("statusText").textContent = "等待数据";
@@ -261,7 +264,8 @@ $("lv-tp-btn").addEventListener("click", async () => {
     const res = await fetch("/api/live/tp", { method: "POST" });
     const d = await res.json();
     if (!d.ok) throw new Error(d.error || "失败");
-    $("lv-plan-out").innerHTML = `<pre class="logbox">${(d.log || []).join("\n")}</pre>`;
+    if (d.started) await pollPlanOut(180);
+    else $("lv-plan-out").innerHTML = `<pre class="logbox">${(d.log || []).join("\n")}</pre>`;
   } catch (e) {
     $("lv-plan-out").innerHTML = `<pre class="logbox neg">${e}</pre>`;
   }

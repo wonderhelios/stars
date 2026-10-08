@@ -4,7 +4,7 @@
 
 - 默认监听 `0.0.0.0:3000`
 - 数据缓存在 SQLite（`STARS_DB`），纸交易状态存 JSON（`STARS_PAPER`）
-- 只需出网访问 `https://api.hyperliquid.xyz/info`，不需要任何钱包密钥
+- 行情需要出网访问 `https://api.hyperliquid.xyz/info` 和 `https://api.txflow.com/info`；实盘交易另需已授权的 API / Agent 钱包密钥文件
 
 ## 首次部署
 
@@ -96,3 +96,29 @@ systemctl restart stars
 ```
 
 `hedge` 取值：`equal_weight`（等权对冲，纯 alpha）或 `long_short`（多空对冲）。
+
+## 更新到 TxFlow 页面
+
+沿用现有服务和 Nginx 配置：
+
+```bash
+cd /opt/stars
+git pull --ff-only origin main
+cargo build --release --locked
+sudo systemctl restart stars
+sudo systemctl status stars --no-pager
+curl --fail --silent --show-error http://127.0.0.1:3000/api/health
+curl --fail --silent --show-error http://127.0.0.1:3000/api/txflow/status
+```
+
+访问原站点的 `/txflow`。首次启动会后台回填 TxFlow 日线，可在页面状态栏或 `/api/txflow/status` 查看进度。
+
+默认新增三个独立持久文件，与原 Hyperliquid 数据文件位于同一目录，无需迁移原数据：
+
+- `txflow-candles.sqlite`：日线缓存。
+- `txflow-live.json`：配置、交易记录与净值。
+- `txflow-orders.json`：本策略止盈订单归属；不要删除。
+
+可通过 `STARS_TXFLOW_DB`、`STARS_TXFLOW_LIVE`、`STARS_TXFLOW_ORDERS` 指定文件路径；实际运行服务的用户需有对应目录的写权限。
+
+实盘默认关闭。要启用时，在 TxFlow 先授权 Agent 钱包，将该 Agent 的密钥保存到服务器仅运行用户可读的文件，在页面填写主账户地址和密钥文件路径。先生成计划核对，再由操作者启用实盘。所有 TxFlow 交易请求共用后端队列，间隔至少 300ms。

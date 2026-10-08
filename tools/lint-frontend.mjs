@@ -4,7 +4,7 @@
 import { readFileSync } from "node:fs";
 
 const app = readFileSync(new URL("../static/app.js", import.meta.url), "utf8");
-const html = readFileSync(new URL("../static/index.html", import.meta.url), "utf8");
+const html = readFileSync(new URL(process.argv[2] || "../static/index.html", import.meta.url), "utf8");
 
 // 定义：function / async function / const|let|var 赋值
 const defined = new Set();

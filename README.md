@@ -34,3 +34,24 @@ STARS_DB=/var/lib/stars/candles.sqlite STARS_PAPER=/var/lib/stars/paper.json ./t
 ## 下一步
 
 见页面的「上实盘清单」：纸交易 2~4 周 → 净 Sharpe > 0.5 → 小资金实盘 → 逐步放大。
+
+## TxFlow 策略页面
+
+打开 `/txflow`（左侧导航也有入口）。页面复用 Hyperliquid 的实盘监控与设置，信号直接调用同一套三因子排名、多空权重和错峰调仓代码。数据只来自 TxFlow 已收盘日线，独立保存，不混用 Hyperliquid 的缓存或交易记录。Hyperliquid 的回测收益不代表 TxFlow 的表现。
+
+- 支持生成计划、Agent 钱包签名调仓、只减仓止盈、撤单和每日自动调仓。
+- 所有 TxFlow `/exchange` 请求共用后端串行队列，上一请求结束后至少等待 **300ms**，包括拒单和网络失败。交易请求不自动重试；结果未知时停止后续发单，先在交易所核对持仓。
+- 账户需使用单向持仓；主钱包先在 TxFlow 授权 Agent，服务器仅读取 Agent 密钥文件。实盘及自动调仓默认关闭。
+- 数量支持负数精度（例如 DOGE 的 10 个数量步长），价格按市场 `priceTick` 向滑点上限内取整。
+- 启动时后台读取日线，每 30 分钟刷新；调仓前再次刷新。历史不足或缺失昨天收盘数据的市场不进入信号宇宙。
+
+可选环境变量（默认与原数据文件位于同一目录）：
+
+| 变量 | 默认文件 / 用途 |
+| --- | --- |
+| `STARS_TXFLOW_DB` | `txflow-candles.sqlite`，独立日线缓存 |
+| `STARS_TXFLOW_LIVE` | `txflow-live.json`，独立配置与交易记录 |
+| `STARS_TXFLOW_ORDERS` | `txflow-orders.json`，本策略止盈订单归属，须持久保存 |
+| `STARS_BIND_ADDR` | `0.0.0.0:3000`，服务监听地址 |
+
+TxFlow 接入采用当前交易页面的协议适配，官方 API 文档尚未发布完整说明。只读行情/账户接口可运行 `cargo test mainnet_public_reads -- --ignored` 验证；实际授权账户的成交与撤单仍需小额验证，不能把默认测试通过理解为主网实盘已经验证。

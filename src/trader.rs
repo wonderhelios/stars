@@ -75,7 +75,7 @@ pub struct Order {
     pub target: f64,
     pub size: f64,
     pub mid: f64,
-    pub sz_decimals: u32,
+    pub sz_decimals: i32,
     pub notional: f64,
     pub reason: String,
 }
@@ -570,6 +570,18 @@ pub fn build_plan(
 pub struct Outcome {
     pub prelim: Vec<String>,
     pub orders: Vec<String>,
+    pub aborted: bool,
+}
+
+impl Outcome {
+    fn abort(mut prelim: Vec<String>, mut orders: Vec<String>, index: Option<usize>, error: String) -> Self {
+        if let Some(i) = index { orders[i] = error.clone(); }
+        for line in &mut orders {
+            if line.is_empty() { *line = "未执行（前序操作失败）".into(); }
+        }
+        prelim.push(format!("调仓中止，请核对持仓: {error}"));
+        Self { prelim, orders, aborted: true }
+    }
 }
 
 /// Send the plan. `orders[i]` always corresponds to `plan.orders[i]`.
@@ -599,7 +611,7 @@ pub async fn execute(
                 o.reason
             );
         }
-        return Ok(Outcome { prelim, orders });
+        return Ok(Outcome { prelim, orders, aborted: false });
     }
 
     // ---- 1) 先平仓 ----
@@ -619,6 +631,7 @@ pub async fn execute(
                 crate::exchange::describe(&st),
                 o.reason
             ),
+            Err(e) if exec.is_txflow() => return Ok(Outcome::abort(prelim, orders, Some(i), format!("TxFlow 平仓失败: {e}"))),
             Err(e) => format!("{} {} 平仓失败: {e}", if o.buy { "买" } else { "卖" }, o.coin),
         };
         tokio::time::sleep(std::time::Duration::from_millis(150)).await;
@@ -631,6 +644,7 @@ pub async fn execute(
     // 而且止盈单还会挂到错误的一侧，把错误固定一整天。
     let after = match exec.account().await {
         Ok(a) => Some(a),
+        Err(e) if exec.is_txflow() => return Ok(Outcome::abort(prelim, orders, None, format!("TxFlow 重读账户失败: {e}"))),
         Err(e) => {
             prelim.push(format!("开仓前重读账户失败，出于安全跳过全部开仓: {e}"));
             None
@@ -657,6 +671,7 @@ pub async fn execute(
             let lev = want.clamp(1, max_lev.max(1));
             match exec.set_leverage(coin, lev).await {
                 Ok(_) => {}
+                Err(e) if exec.is_txflow() => return Ok(Outcome::abort(prelim, orders, None, format!("{coin} TxFlow 杠杆设置失败: {e}"))),
                 Err(e) => prelim.push(format!("{coin}: 设置杠杆失败 {e}")),
             }
             tokio::time::sleep(std::time::Duration::from_millis(120)).await;
@@ -692,6 +707,7 @@ pub async fn execute(
                         actual.abs(),
                         crate::exchange::describe(&st)
                     ),
+                    Err(e) if exec.is_txflow() => return Ok(Outcome::abort(prelim, orders, Some(i), format!("TxFlow 残余平仓失败: {e}"))),
                     Err(e) => format!("{} 纠正残余仓位失败: {e}", o.coin),
                 };
                 tokio::time::sleep(std::time::Duration::from_millis(150)).await;
@@ -733,6 +749,7 @@ pub async fn execute(
                         o.reason.clone()
                     }
                 ),
+                Err(e) if exec.is_txflow() => return Ok(Outcome::abort(prelim, orders, Some(i), format!("TxFlow 下单失败: {e}"))),
                 Err(e) => format!("{} 开仓失败: {e}", o.coin),
             };
             tokio::time::sleep(std::time::Duration::from_millis(150)).await;
@@ -740,11 +757,14 @@ pub async fn execute(
     }
 
 
-    Ok(Outcome { prelim, orders })
+    Ok(Outcome { prelim, orders, aborted: false })
 }
 
 /// Mids for the coins we care about, from one bulk request.
 pub async fn fetch_mids(exec: &Exec, coins: &[String]) -> HashMap<String, f64> {
+    if let Some(result) = exec.txflow_prices(coins).await {
+        return result.unwrap_or_else(|e| { tracing::warn!("TxFlow 盘口读取失败: {e}"); HashMap::new() });
+    }
     let all = match exec.all_mids().await {
         Ok(m) => m,
         Err(e) => {
@@ -972,4 +992,13 @@ mod slice_plan_tests {
         assert!(!today.is_empty(), "今天档位里一个币都没有，测试无意义");
         assert!(!not_today.is_empty(), "所有币都在今天档位，测不出过滤是否生效");
     }
+    #[test]
+    fn aborted_execution_keeps_receipts_and_marks_unsent_orders() {
+        let out = Outcome::abort(vec![], vec!["成交 10 @1".into(), String::new(), String::new()], Some(1), "结果未知".into());
+        assert!(out.aborted);
+        assert_eq!(out.orders[0], "成交 10 @1");
+        assert_eq!(out.orders[1], "结果未知");
+        assert_eq!(out.orders[2], "未执行（前序操作失败）");
+    }
+
 }

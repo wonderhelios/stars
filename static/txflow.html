@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#ffffff" />
-    <title>stars · 动量 alpha 研究台</title>
+    <title>TxFlow · stars · 动量 alpha 研究台</title>
     <style>
       :root { --blue:#137b70; --blue-ink:#0d6158; --blue-soft:#e7f4ef; --bg:#f3f5f7; --surface:#fff; --ink:#182b3a; --muted:#788592; --line:#e5eaee; --green:#138467; --green-soft:#eaf7f0; --red:#d35160; --red-soft:#fcedef; --amber:#a57721; --amber-soft:#fff6e6; --shadow:0 3px 16px #25364804; }
       * { box-sizing:border-box; }
@@ -123,7 +123,7 @@
     <header class="topbar">
       <div class="brand"><span class="dot" aria-hidden="true"></span><span>stars<small>动量 alpha 研究台</small></span></div>
       <nav class="nav">
-        <a class="btn ghost" href="/txflow">TxFlow 策略 →</a>
+        <a class="btn ghost" href="/">← Hyperliquid 策略</a>
         <button data-view="monitor" class="active"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg><span>实盘监控</span></button>
         <button data-view="live"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 7h16M4 17h16"/><circle cx="8" cy="7" r="3"/><circle cx="16" cy="17" r="3"/></svg><span>实盘设置</span></button>
       </nav>
@@ -141,7 +141,7 @@
         <div class="panel">
           <div class="panel-head">
             <div>
-              <div class="panel-kicker">LIVE SETUP · HYPERLIQUID</div>
+              <div class="panel-kicker">LIVE SETUP · TXFLOW</div>
               <h2>实盘设置</h2>
               <p class="sub">配置 + 启停。<b>只读观测请看「实盘监控」tab。</b>实盘与纸交易共用同一套排名代码，不会漂移。</p>
             </div>
@@ -155,15 +155,15 @@
 
           <div class="controls">
             <div class="field"><label>账户地址（主账户，不是 API 钱包）</label><input id="lv-account" placeholder="0x..." /></div>
-            <div class="field"><label>API 钱包密钥文件路径</label><input id="lv-key" placeholder="必填，例如 /etc/hyper-fly/api-wallet.key" /></div>
+            <div class="field"><label>API 钱包密钥文件路径</label><input id="lv-key" placeholder="必填，例如 /etc/stars/txflow-agent.key" /></div>
             <div class="field"><label>每腿仓位数</label><input id="lv-positions" type="number" value="8" min="1" max="30" /></div>
             <div class="field"><label>杠杆</label><input id="lv-leverage" type="number" value="3" min="1" max="20" step="0.5" /></div>
             <div class="field"><label>保证金缓冲 %</label><input id="lv-buffer" type="number" value="90" min="30" max="100" /></div>
             <div class="field"><label>滑点上限 %</label><input id="lv-slippage" type="number" value="0.5" min="0.05" max="5" step="0.05" /></div>
             <div class="field"><label>错峰调仓（档）</label><input id="lv-slices" type="number" value="3" min="1" max="10" step="1" /></div>
-            <div class="field"><label>止盈 % （0 = 关闭）</label><input id="lv-tp" type="number" value="10" min="0" max="50" step="1" /></div>
+            <div class="field"><label>止盈 % （0 = 关闭）</label><input id="lv-tp" type="number" value="0" min="0" max="50" step="1" /></div>
             <div class="field"><label>回看天数</label><input id="lv-lookback" type="number" value="14" min="2" max="120" /></div>
-            <div class="field"><label>多头比例</label><input id="lv-top" type="number" value="0.2" min="0.02" max="0.9" step="0.05" /></div>
+            <div class="field"><label>多头比例</label><input id="lv-top" type="number" value="0.2" min="0.02" max="0.5" step="0.05" /></div>
             <div class="field"><label>最低成交额(USD)</label>
               <select id="lv-minvol">
                 <option value="2000000">$2M</option>
@@ -180,46 +180,14 @@
             <div class="field"><label>&nbsp;</label><button class="btn ghost" id="lv-save">保存配置</button></div>
           </div>
 
-          <details class="note" style="margin:12px 0">
-            <summary style="cursor:pointer;font-weight:600;color:#617680">当前策略与已排除的边际（点击展开）</summary>
-            <div style="margin-top:8px">
-              <p><b>实盘信号：三个日频因子的组合</b>，各自选一个等权组合再把权重平均（权重会重新归一化到 Σ|w| = 1）：</p>
-              <p>① <b>波动调整动量</b> = 14 日收益 ÷ 20 日波动 —— 偏好稳定上涨，而非一根大阳线<br>
-                 ② <b>低波动</b> —— 做多低波动、做空高波动（与动量的相关性仅 −0.26）<br>
-                 ③ <b>成交量冲击</b> = 当日成交额 ÷ 30 日均值</p>
-              <p>回测（3.2 年）：Sharpe <b>2.14</b>、最大回撤 <b>−16.9%</b>、年化 +42%；2023-24 与 2025-26 两个子区间都为正。安全杠杆上限 ≈ <b>3.8x</b>。</p>
-              <p style="margin-top:10px"><b>已排除的方向</b>（都实测过，不必重试）：</p>
-              <p>· <b>4h 反转</b> —— 理想口径 +37.9%（t=0.41，不显著）；按<b>真实成交</b>测算是 <b>−57.6%/年</b>，taker 费率下 −186%/年。原因是<b>逆选择</b>：挂单成交往往正因为价格朝不利方向走。已从代码中移除。<br>
-                 · 动量 7/30/60/90 日 —— Sharpe 0.58 / 0.39 / 0.37 / −0.19，均不如 14 日<br>
-                 · 动量 3 日 —— Sharpe 1.24，但与 14 日相关性 +0.56，叠加无增益<br>
-                 · 日线反转（3~60 日）—— 全部负 Sharpe（日线上是动量不是反转）<br>
-                 · 逆波动加权 —— Sharpe 1.01 → 0.74，反而变差<br>
-                 · 横截面资金费率套利 —— 费率 +1.28% 被价格 −7.47% 淹没<br>
-                 · Delta 中性 carry —— Hyperliquid 上仅 10 个币有现货，收益 2~6.5%/年，太小<br>
-                 · 新币做空 —— 中位数占优但尾部致命，回测归零（−100% 回撤），加止损也救不回</p>
-            </div>
-          </details>
-          <p class="note"><b>止盈机制：</b>每次调仓后会为每个持仓挂一张<b>只减仓的被动限价单</b>（多头挂在 +10%、空头挂在 −10%，相对调仓时的中间价）。价格碰到就自动成交，成交是 <b>maker 费率 0.015%</b>，比市价平仓便宜 3 倍。下次调仓会先撤旧单再挂新单。<b>注意：这里的止盈默认关闭（0）。</b>早先"止盈把 Sharpe 从 2.14 提到 2.84"的结论基于一个错误假设（止盈后第二天自动重开），真实模型下止盈是中性偏负，且会打薄一侧腿造成漂移，因此默认关闭。</p>
-          <p class="note"><b>⚠ 保证金模式：</b>Hyperliquid <b>不允许在持仓时切换保证金模式</b>（报错 <code>Cannot switch leverage while a position is open</code>）。所以「执行调仓」只能给<b>没有持仓的币</b>设全仓；要把<b>已有仓位</b>转成全仓，必须点「<b>转为全仓</b>」——它会逐币「平掉 → 切全仓 → 按目标重开」，全程只有 1 个仓位短暂裸奔，其余保持对冲。成本约 $1~2 手续费。</p>
+          <div class="note"><b>复用同一策略：</b>波动调整动量、低波动与成交量冲击的组合，多空对冲，按设置错峰调仓。信号只使用 TxFlow 已收盘日线与滚动成交额。<b>所有交易请求串行执行，间隔至少 300ms。</b></div>
+          <p class="note"><b>止盈：</b>按调仓参考价挂只减仓限价单，默认关闭。仅撤销本程序记录的止盈订单。</p>
+          <p class="note">使用已授权的 Agent 钱包密钥文件，主钱包私钥不参与策略。账户需为单向持仓；资金、仓位和挂单均从 TxFlow 读取。维持保证金取自 TxFlow 账户接口；强平价以交易所返回值为准。</p>
           <div class="panel-head" style="margin-top:14px"><h2>计划 / 执行结果</h2></div>
           <div id="lv-plan-out"></div>
         </div>
 
-        <div class="panel" style="margin-top:16px">
-          <div class="panel-head"><div><div class="panel-kicker">GO / NO-GO</div><h2>上线检查清单</h2></div></div>
-          <ul class="checklist">
-            <li><span class="state">✅</span><div class="txt"><b>策略定义与实盘一致</b><span>实盘与纸交易共用同一套排名代码，不存在两套实现</span></div><span class="badge ok">已对齐</span></li>
-            <li><span class="state">✅</span><div class="txt"><b>幸存者偏差修正</b><span>回测纳入全部退市币</span></div><span class="badge ok">已通过</span></li>
-            <li><span class="state">✅</span><div class="txt"><b>点时间流动性过滤</b><span>只在滚动 30 日成交额达标的币上建仓，无前视</span></div><span class="badge ok">已通过</span></li>
-            <li><span class="state">✅</span><div class="txt"><b>市场中性</b><span>多空名义相等，净敞口 ≈ 0</span></div><span class="badge ok">已通过</span></li>
-            <li><span class="state">✅</span><div class="txt"><b>费率与爆仓已建模</b><span>费率取自 Hyperliquid 实时接口</span></div><span class="badge ok">已通过</span></li>
-            <li><span class="state" id="ck-slip-s">⬜</span><div class="txt"><b>真实滑点实测</b><span id="ck-slip-t">对比实际成交价与计划 mid 价，这是纸交易测不到的</span></div><span class="badge pending" id="ck-slip-b">待实测</span></li>
-            <li><span class="state" id="ck-buf-s">⬜</span><div class="txt"><b>强平缓冲始终 &gt; 40%</b><span id="ck-buf-t">低于此值需降杠杆或减少仓位</span></div><span class="badge pending" id="ck-buf-b">待验证</span></li>
-            <li><span class="state" id="ck-match-s">⬜</span><div class="txt"><b>实盘与纸交易逐日对上</b><span>方向一致、量级接近（需要几天数据）</span></div><span class="badge pending" id="ck-match-b">待验证</span></li>
-          </ul>
-          <p class="note"><b>必须用全仓保证金（Cross）。</b>3× 满仓时「初始保证金占用 ≈ 100% 净值」是数学必然，<b>不是爆仓线</b>；真正决定强平的是维持保证金。</p>
-          <p class="note">真正的尾部风险不是大盘涨跌（已被对冲），而是<b>动量崩盘</b>：赢家暴跌 + 输家暴涨同时发生，两条腿一起亏。</p>
-        </div>
+        <div class="panel" style="margin-top:16px"><h2>TxFlow 接入状态</h2><p class="note">行情接口已验证。策略逻辑复用 Hyperliquid；在 TxFlow 的历史表现和真实成交链路尚待验证。实盘默认关闭，可先生成调仓计划。</p></div>
       </section>
 
       <!-- ============ 实盘监控 ============ -->
@@ -246,7 +214,7 @@
           <div class="content-card"><div class="panel-head" style="margin-top:14px"><h2>盘口挂单（止盈）</h2></div>
           <div id="mo-orders"></div></div>
           <div class="content-card"><div class="panel-head" style="margin-top:14px"><h2>下单记录</h2></div>
-          <p class="note">只记录真实下单。修复前的版本曾把「设置杠杆失败」写到了错误的币上（用数组下标对应两个不同长度的列表）——那些是历史记录，无法追溯修正，可以点右上角「清空记录」清掉。</p>
+          <p class="note">记录本次策略发送的订单及交易所回执。网络超时结果未知时不会自动重发，请先核对持仓。</p>
           <div id="mo-records"></div></div>
         </div>
       </section>
@@ -255,6 +223,6 @@
 
     </main>
 
-    <script src="/app.js"></script>
+    <script src="/txflow/app.js"></script>
   </body>
 </html>

@@ -11,7 +11,7 @@ const BASE: &str = "https://api.hyperliquid.xyz/info";
 pub struct CoinMeta {
     pub name: String,
     #[serde(default = "default_sz_decimals", rename = "szDecimals")]
-    pub sz_decimals: u32,
+    pub sz_decimals: i32,
     #[serde(default = "default_max_lev", rename = "maxLeverage")]
     pub max_leverage: u32,
     #[serde(default, rename = "isDelisted")]
@@ -23,7 +23,7 @@ fn default_max_lev() -> u32 {
 }
 
 /// Fallback lot precision when the API omits it.
-fn default_sz_decimals() -> u32 {
+fn default_sz_decimals() -> i32 {
     4
 }
 

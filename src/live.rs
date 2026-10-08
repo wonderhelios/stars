@@ -30,6 +30,9 @@ pub fn markets_from_meta(universe: &[crate::hl::CoinMeta]) -> HashMap<String, Ma
 
 #[derive(Clone, Serialize, Deserialize)]
 pub struct LiveConfig {
+    /// Fixed by the server route; clients cannot choose the execution venue.
+    #[serde(default)]
+    pub txflow: bool,
     pub account: String,
     pub key_path: String,
     pub target_positions: usize,
@@ -58,6 +61,7 @@ pub struct LiveConfig {
 impl Default for LiveConfig {
     fn default() -> Self {
         Self {
+            txflow: false,
             account: String::new(),
             key_path: String::new(),
             target_positions: 8,
@@ -276,10 +280,12 @@ pub async fn snapshot(
         snap.error = Some("未配置账户地址".into());
         return snap;
     }
-    let exec_res = match http {
+    let exec_res = if cfg.txflow {
+        Exec::txflow(&cfg.account, None).await
+    } else { match http {
         Some(h) => Exec::reader_shared(h, Some(&cfg.account)).await,
         None => Exec::reader_for(Some(&cfg.account)).await,
-    };
+    }};
     let exec = match exec_res {
         Ok(e) => e,
         Err(e) => {
@@ -373,6 +379,15 @@ pub async fn snapshot(
     } else {
         0.0
     };
+    if let Some(result) = exec.txflow_maintenance_margin().await {
+        match result {
+            Ok(margin) => {
+                snap.maintenance_margin = margin;
+                snap.liq_buffer_pct = if snap.equity > 0. { ((snap.equity-margin)/snap.equity*100.).max(0.) } else { 0. };
+            },
+            Err(e) => { snap.error = Some(format!("读取 TxFlow 维持保证金失败: {e}")); snap.liq_buffer_pct = 0.; }
+        }
+    }
     snap.unpriced = unpriced;
     snap
 }
@@ -407,14 +422,17 @@ pub async fn run(
         anyhow::ensure!(cfg.armed, "实盘未启用（需先打开「启用实盘」开关）");
     }
 
-    let exec = if live {
+    let exec = if cfg.txflow {
+        Exec::txflow(&cfg.account, if live { Some(std::path::Path::new(&cfg.key_path)) } else { None }).await?
+    } else if live {
         Exec::signer(&cfg.account, std::path::Path::new(&cfg.key_path)).await?
     } else {
         Exec::reader_for(Some(&cfg.account)).await?
     };
     let tc = cfg.trade_config();
 
-    let panel = trader::load_panel(store)?;
+    let mut panel = trader::load_panel(store)?;
+    if cfg.txflow { panel.retain(|p| markets.contains_key(&p.coin)); }
     anyhow::ensure!(panel.len() >= 20, "K 线缓存不足（{} 币）", panel.len());
     let acct0 = exec.account().await?;
     let (weights, liquid) = trader::target_weights(&panel, &tc, acct0.equity, crate::live::now_ms_pub() as i64);
@@ -427,6 +445,10 @@ pub async fn run(
     coins.dedup();
     let mids = trader::fetch_mids(&exec, &coins).await;
 
+    if cfg.txflow {
+        anyhow::ensure!(coins.iter().all(|c| mids.contains_key(c)), "TxFlow 盘口不完整，已停止调仓");
+        anyhow::ensure!(weights.iter().all(|(c,_)| markets.get(c).map(|m| cfg.leverage <= m.max_leverage as f64).unwrap_or(false)), "TxFlow 所选市场杠杆上限低于组合杠杆，请降低杠杆");
+    }
     let plan = trader::build_plan(&weights, &acct, markets, &mids, &tc, None);
 
     let mut plan_lines = vec![format!(
@@ -522,9 +544,10 @@ pub async fn run(
             r.result = line.clone();
         }
     }
+    let aborted = outcome.aborted;
     let executed = outcome.orders;
     let mut tp_ref_out: HashMap<String, f64> = HashMap::new();
-    if live {
+    if live && !aborted {
         // 基准价用本次调仓的目标币中间价，而不是挂单时的实时价 ——
         // 后者会让手动「刷新止盈单」把止盈线随行情一起搬走。
         let tp_ref: HashMap<String, f64> = plan
@@ -546,7 +569,7 @@ pub async fn run(
             long_leg: plan.long_leg.clone(),
             short_leg: plan.short_leg.clone(),
             per_coin: plan.per_coin,
-            tp_ref: Some(tp_ref_out),
+            tp_ref: (!aborted).then_some(tp_ref_out),
             plan_lines,
             executed,
             live,
@@ -576,7 +599,7 @@ pub async fn rebuild_cross(
     let cfg = state.config.clone();
     anyhow::ensure!(cfg.armed, "实盘未启用（需先打开「启用实盘」开关）");
     anyhow::ensure!(cfg.can_sign(), "未配置 API 钱包密钥");
-    let exec = Exec::signer(&cfg.account, std::path::Path::new(&cfg.key_path)).await?;
+    let exec = if cfg.txflow { Exec::txflow(&cfg.account, Some(std::path::Path::new(&cfg.key_path))).await? } else { Exec::signer(&cfg.account, std::path::Path::new(&cfg.key_path)).await? };
     let tc = cfg.trade_config();
 
     // 先读账户：仓位数上限（cap）依赖净值，必须在算权重之前拿到。
@@ -781,6 +804,7 @@ pub async fn place_take_profits(
             // 这不是失败，但也不能报成「挂上」。
             Ok(0) => filled += 1,
             Ok(_) => placed += 1,
+            Err(e) if exec.is_txflow() => return Err(e.context("TxFlow 止盈挂单失败，已停止后续发单")),
             Err(e) => failed.push(format!("{coin}: {e}")),
         }
         tokio::time::sleep(std::time::Duration::from_millis(120)).await;
@@ -831,8 +855,8 @@ pub async fn refresh_take_profits(
 }
 
 /// 交易所允许的最小价位（和 `order_price` 的精度规则一致）。
-fn price_tick(px: f64, sz_decimals: u32) -> f64 {
-    let dp = (4 - px.log10().floor() as i32).min(6 - sz_decimals as i32);
+fn price_tick(px: f64, sz_decimals: i32) -> f64 {
+    let dp = (4 - px.log10().floor() as i32).min(6 - sz_decimals);
     10_f64.powi(-dp)
 }
 
@@ -841,7 +865,7 @@ fn price_tick(px: f64, sz_decimals: u32) -> f64 {
 ///
 /// 低价币的价位精度可能不够（一个 tick 就超过止盈幅度），取整会把价格推到
 /// 市价的错误一侧。这时至少推离一个 tick；推不动就返回 0，让调用方跳过该币。
-pub fn take_profit_order(is_long: bool, mid: f64, tp_pct: f64, sz_decimals: u32) -> (bool, f64) {
+pub fn take_profit_order(is_long: bool, mid: f64, tp_pct: f64, sz_decimals: i32) -> (bool, f64) {
     if !mid.is_finite() || mid <= 0.0 {
         return (true, 0.0);
     }
@@ -887,7 +911,7 @@ mod tests {
     #[test]
     fn take_profit_stays_on_the_correct_side_after_rounding() {
         for &mid in &[0.00001234_f64, 0.5, 3.14159, 87.65, 1234.5, 98765.4] {
-            for &sd in &[0u32, 1, 2, 4, 6] {
+            for &sd in &[0i32, 1, 2, 4, 6] {
                 let (buy, px) = take_profit_order(true, mid, 0.10, sd);
                 assert!(!buy);
                 assert!(px > mid, "多头 mid={mid} sd={sd} 得到 {px}");
@@ -902,7 +926,7 @@ mod tests {
     fn take_profit_price_is_never_zero_or_negative() {
         for &mid in &[0.000001_f64, 1.0, 100.0] {
             for &tp in &[0.01, 0.1, 0.5] {
-                for &sd in &[0u32, 2, 6] {
+                for &sd in &[0i32, 2, 6] {
                     let (_, up) = take_profit_order(true, mid, tp, sd);
                     let (_, dn) = take_profit_order(false, mid, tp, sd);
                     assert!(up >= 0.0 && dn >= 0.0, "mid={mid} tp={tp} sd={sd} 得到 {up}/{dn}");
