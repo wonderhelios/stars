@@ -93,9 +93,12 @@ pub struct Client {
     pnl_cache: tokio::sync::Mutex<Option<(std::time::Instant, i64, PnlSummary)>>,
 }
 
-/// 两次 TxFlow 请求之间的最小间隔。229 个市场 × 300ms ≈ 69 秒，刷新可以接受；
-/// 调仓只需约 20 个请求，约 6 秒。
-const MIN_GAP: std::time::Duration = std::time::Duration::from_millis(300);
+/// 两次 TxFlow 请求之间的最小间隔。
+///
+/// 300ms（3.3 req/s）实测仍然触发 429 —— TxFlow 的限制比这更严。放宽到 1s。
+/// 代价是刷新 223 个市场要 ~4 分钟，但那件事 30 分钟才做一次；
+/// 调仓只需约 20 个请求（~20 秒），可以接受。
+const MIN_GAP: std::time::Duration = std::time::Duration::from_millis(1000);
 
 fn number(v: &Value) -> Option<f64> {
     v.as_f64()
@@ -194,7 +197,7 @@ impl Client {
             *g = Some(std::time::Instant::now());
         }
         let mut last: Option<anyhow::Error> = None;
-        for attempt in 0..5u32 {
+        for attempt in 0..3u32 {
             let resp = match self
                 .http
                 .post(format!("{BASE}/info"))
@@ -210,7 +213,7 @@ impl Client {
                 }
             };
             let status = resp.status();
-            if status == reqwest::StatusCode::TOO_MANY_REQUESTS {
+            if status == reqwest::StatusCode::TOO_MANY_REQUESTS && attempt < 1 {
                 // Retry-After 优先（秒）
                 let hint = resp
                     .headers()
@@ -219,7 +222,7 @@ impl Client {
                     .and_then(|v| v.trim().parse::<u64>().ok());
                 let wait_ms = hint
                     .map(|s| (s * 1000).min(30_000))
-                    .unwrap_or(1_500 * (1u64 << attempt.min(4)));
+                    .unwrap_or(3_000);
                 tracing::warn!("TxFlow 限流(429)，等待 {wait_ms}ms 后重试（第 {} 次）", attempt + 1);
                 last = Some(anyhow::anyhow!("TxFlow 429 Too Many Requests"));
                 tokio::time::sleep(Duration::from_millis(wait_ms)).await;
@@ -233,7 +236,7 @@ impl Client {
                 Ok(v) => return Ok(v),
                 Err(e) => last = Some(e),
             }
-            if attempt < 4 {
+            if attempt < 2 {
                 tokio::time::sleep(Duration::from_millis(500 * (attempt as u64 + 1))).await;
             }
         }
