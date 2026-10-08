@@ -548,9 +548,17 @@ async fn live_run(State(state): State<AppState>, body: Option<Json<LiveRunBody>>
                 // 而且信号现在来自 Hyperliquid，TxFlow 的日线只影响页面展示，
                 // 对下单没有作用 —— 价格来自交易所的盘口/市值。
                 // 只有在完全没有市场元数据时才刷新，否则直接用缓存。
-                let need = { state.meta.lock().await.universe.is_empty() };
-                if need {
-                    crate::txflow::refresh(&state).await?;
+                // 只补**元数据**（1 个请求，很快），不跑日线回填（60 个 × 约 2 秒）。
+                //
+                // 之前改成"只在 meta 完全为空时才刷新"是错的：meta 非空但**残缺**时
+                // 永远不刷新，于是宇宙被过滤成十几个币、目标仓位变成净值的 30%。
+                // 元数据只有一个 perpMeta 请求，放在调仓路径上完全安全。
+                let stale = {
+                    let m = state.meta.lock().await;
+                    m.universe.is_empty() || crate::live::now_ms_pub() - m.refreshed_at > 10 * 60 * 1000
+                };
+                if stale {
+                    let _ = crate::txflow::refresh_meta_only(&state).await;
                 }
                 live_markets(&state).await
             } else { markets };

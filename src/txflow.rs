@@ -757,6 +757,33 @@ pub async fn refresh(state: &crate::web::AppState) -> Result<()> {
         .context("TxFlow 行情更新超过 3 分钟，请稍后重试")?
 }
 
+/// 只刷新市场元数据（一次 perpMeta 请求）。
+///
+/// 调仓路径上用它，不要用整轮 refresh —— 后者要遍历几十个市场拉日线，
+/// 在 1 秒限速下是分钟级，会把调仓拖到超时。元数据只有一个请求。
+pub async fn refresh_meta_only(state: &crate::web::AppState) -> Result<()> {
+    let client = Client::new("", None).await?;
+    let mut meta = state.meta.lock().await;
+    let mut markets: Vec<Market> = client.markets.values().cloned().collect();
+    markets.sort_by(|a, b| a.name.cmp(&b.name));
+    // 与 refresh_inner 用同一个结构：MetaCache.universe 存的是 hl::CoinMeta
+    let universe: Vec<crate::hl::CoinMeta> = markets
+        .iter()
+        .map(|m| crate::hl::CoinMeta {
+            name: m.name.clone(),
+            sz_decimals: m.decimals,
+            max_leverage: m.max_leverage,
+            is_delisted: false,
+        })
+        .collect();
+    meta.liquid = universe.iter().map(|m| m.name.clone()).collect();
+    meta.universe = universe;
+    meta.refreshed_at = crate::live::now_ms_pub();
+    meta.fee_taker = 0.00045;
+    meta.fee_maker = 0.00015;
+    Ok(())
+}
+
 async fn refresh_inner(state: &crate::web::AppState) -> Result<()> {
     let client = Client::new("", None).await?;
     let cfg = state.live.lock().await.config.clone();
