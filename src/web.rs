@@ -721,6 +721,7 @@ mod txflow_routes_tests {
         let root = std::env::temp_dir().join(format!("stars-routes-{}", uuid::Uuid::new_v4()));
         std::fs::create_dir_all(&root).unwrap();
         let base = AppState {
+            hl_store: None,
             store: Arc::new(Store::open(&root.join("hl.sqlite")).unwrap()),
             paper: Arc::new(Mutex::new(PaperState::default())),
             paper_path: Arc::new(root.join("paper.json")),

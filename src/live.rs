@@ -29,9 +29,14 @@ pub fn markets_from_meta(universe: &[crate::hl::CoinMeta]) -> HashMap<String, Ma
 }
 
 #[derive(Clone, Serialize, Deserialize)]
+// 结构体级别的 default：反序列化时**从 LiveConfig::default() 开始**，文件里有什么就覆盖什么。
+//
+// 这比逐字段 #[serde(default)] 正确得多 —— 后者用的是「字段类型的默认值」
+// （f64 → 0.0，bool → false），会让 leverage / margin_buffer 变成 0，
+// 而这里会用真正想要的 3.0 / 0.9。字段缺失再也不会毁掉整个配置。
+#[serde(default)]
 pub struct LiveConfig {
     /// Fixed by the server route; clients cannot choose the execution venue.
-    #[serde(default)]
     pub txflow: bool,
     pub account: String,
     pub key_path: String,
@@ -120,7 +125,6 @@ pub struct EquityPoint {
     ///
     /// 曲线必须画这个而不是净值：净值里混着入金/出金，一次充值会在图上显示成
     /// 一段陡峭的"盈利"，而那根本不是策略赚的。
-    #[serde(default)]
     pub pnl: f64,
 }
 
@@ -138,18 +142,14 @@ pub struct LiveRecord {
     pub live: bool,
     /// 该笔成交的已实现盈亏。来源有两个：调仓单由程序自己解析，止盈单则由
     /// 交易所的成交回执提供（程序没经手那笔单，算不出来）。
-    #[serde(default)]
     pub pnl: Option<f64>,
     /// 交易所成交号，用于对账去重。
-    #[serde(default)]
     pub tid: Option<u64>,
     /// Position entry price when this order closes/reduces, so the UI can show
     /// the realised P&L of the close. None for opening orders.
-    #[serde(default)]
     pub entry_px: Option<f64>,
     /// True when the order shrinks/closes a position (so the UI can label the
     /// row with the *position* direction rather than the order direction).
-    #[serde(default)]
     pub reduce_only: bool,
 }
 
@@ -162,13 +162,10 @@ pub struct LiveState {
     pub last_plan: Vec<String>,
     /// 上次调仓时各币的中间价。止盈幅度必须相对它计算，而不是相对当前价 ——
     /// 否则手动刷新会把止盈线随行情搬走（100 建仓、现价 80 的多头会被挂到 88）。
-    #[serde(default)]
     pub tp_ref: HashMap<String, f64>,
     /// 已对账到哪个成交时间戳，避免重复导入。
-    #[serde(default)]
     pub reconciled_to: i64,
     /// 上次向交易所对账的时间，用于节流。
-    #[serde(default)]
     pub last_reconcile_ms: i64,
     pub last_live: bool,
 }
@@ -225,26 +222,18 @@ pub struct LiveSnapshot {
     pub cumulative_pnl: f64,
     /// TxFlow：交易所口径的已实现盈亏、手续费、成交量、净入金。
     /// 页面以前只显示未实现，导致一个赚了钱的实际看起来在亏。
-    #[serde(default)]
     pub tx_realized: f64,
-    #[serde(default)]
     pub tx_fees: f64,
-    #[serde(default)]
     pub tx_volume: f64,
-    #[serde(default)]
     pub tx_fills: usize,
     /// 净入金（入金 − 出金）。流水接口可能截断，所以是下界。
-    #[serde(default)]
     pub tx_net_deposit: f64,
     /// 真实总盈亏 = 净值 − 净入金。这是唯一能把入金和盈亏分开的口径。
-    #[serde(default)]
     pub tx_total_pnl: f64,
     /// 拿不到行情、只能用交易所市值反推估值的币。非空时要显眼提示 ——
     /// 这些仓位的清算价、距离强平都算不出来，可能有隐藏风险。
-    #[serde(default)]
     pub unpriced: Vec<String>,
     /// 影子回测净值曲线（从实盘开始那天起，起点归一为 1.0），供页面与实盘并排对照。
-    #[serde(default)]
     pub shadow: Vec<(i64, f64)>,
     /// 盘口上挂着的止盈单
     pub tp_orders: Vec<crate::exchange::OpenOrder>,
@@ -255,7 +244,6 @@ pub struct LiveSnapshot {
     pub last_plan: Vec<String>,
     /// 上次调仓时各币的中间价。止盈幅度必须相对它计算，而不是相对当前价 ——
     /// 否则手动刷新会把止盈线随行情搬走（100 建仓、现价 80 的多头会被挂到 88）。
-    #[serde(default)]
     pub tp_ref: HashMap<String, f64>,
     pub last_live: bool,
 }
@@ -445,7 +433,6 @@ pub struct RunResult {
     pub per_coin: f64,
     pub plan_lines: Vec<String>,
     /// 本次调仓使用的参考价，供上层持久化（止盈幅度相对它计算）。
-    #[serde(default)]
     pub tp_ref: Option<HashMap<String, f64>>,
     pub executed: Vec<String>,
     pub live: bool,
@@ -1292,5 +1279,34 @@ mod config_parity_tests {
         assert_eq!(tc.slippage, 0.007, "slippage 没传");
         assert_eq!(tc.margin_buffer, 0.77, "margin_buffer 没传");
         assert_eq!(tc.rebalance_slices, 4, "rebalance_slices 没传（UI 会失效）");
+    }
+}
+
+
+#[cfg(test)]
+mod config_robustness {
+    use super::*;
+
+    /// 配置文件里缺字段时，**不能**把 account / key_path 静默清空。
+    ///
+    /// 真实事故：LiveConfig 里 11 个字段没有 #[serde(default)]，只要旧配置少任何一个，
+    /// 整个结构反序列化失败并回退默认值 —— 账户地址和密钥路径变成空字符串，
+    /// 页面显示"未启用 / 净值 $0.00"，而没有任何报错。
+    #[test]
+    fn missing_fields_do_not_wipe_the_account() {
+        // 只给必填的两个字段，其余全缺
+        let json = r#"{"account":"0xABC","key_path":"/tmp/k.key"}"#;
+        let cfg: LiveConfig = serde_json::from_str(json).expect("缺字段不应导致解析失败");
+        assert_eq!(cfg.account, "0xABC", "account 被清空了");
+        assert_eq!(cfg.key_path, "/tmp/k.key", "key_path 被清空了");
+        // 其余字段走默认值
+        assert_eq!(cfg.leverage, LiveConfig::default().leverage);
+        assert_eq!(cfg.rebalance_slices, 3);
+    }
+
+    #[test]
+    fn empty_object_still_parses() {
+        let cfg: LiveConfig = serde_json::from_str("{}").expect("空对象也应能解析");
+        assert_eq!(cfg.account, "");
     }
 }
