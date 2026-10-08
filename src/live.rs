@@ -464,8 +464,42 @@ fn ensure_candidates(weights: &[(String, f64)], liquid: &[String], cfg: &LiveCon
 
 /// Compute the target book and, when `live` is true and the config is armed,
 /// send the orders. Ranking is identical to the paper engine.
+/// 选出用来算因子的面板。
+///
+/// TxFlow 的盘口薄、历史短，用它自己的价量算信号等于用噪声算信号 —— 一个大单
+/// 就能推动 10~20%，而做市商都在币安/HL 对冲，那里的价格才是真实信息。所以
+/// TxFlow 用 Hyperliquid 的库做信号，只把币名映射成 TxFlow 的符号（加 -USDC），
+/// 并丢弃 TxFlow 上没有对应市场的币。
+fn signal_panel(
+    store: &crate::store::Store,
+    signal_store: Option<&crate::store::Store>,
+    cfg: &LiveConfig,
+    markets: &HashMap<String, MarketInfo>,
+) -> Result<Vec<crate::momentum::PanelEntry>> {
+    if cfg.txflow {
+        if let Some(hs) = signal_store {
+            let mapped: Vec<_> = trader::load_panel(hs)?
+                .into_iter()
+                .map(|mut e| {
+                    e.coin = format!("{}-USDC", e.coin);
+                    e
+                })
+                .filter(|e| markets.contains_key(&e.coin))
+                .collect();
+            return Ok(mapped);
+        }
+    }
+    let all = trader::load_panel(store)?;
+    Ok(if cfg.txflow {
+        all.into_iter().filter(|e| markets.contains_key(&e.coin)).collect()
+    } else {
+        all
+    })
+}
+
 pub async fn run(
     store: &crate::store::Store,
+    signal_store: Option<&crate::store::Store>,
     state: &LiveState,
     markets: &HashMap<String, MarketInfo>,
     live: bool,
@@ -487,9 +521,12 @@ pub async fn run(
     };
     let tc = cfg.trade_config();
 
-    let mut panel = trader::load_panel(store)?;
-    if cfg.txflow { panel.retain(|p| markets.contains_key(&p.coin)); }
-    anyhow::ensure!(panel.len() >= 20, "K 线缓存不足（{} 币）", panel.len());
+    let panel = signal_panel(store, signal_store, &cfg, markets)?;
+    anyhow::ensure!(
+        panel.len() >= 20,
+        "K 线缓存不足（{} 币）—— TxFlow 用 Hyperliquid 做信号源，请确认 HL 的日线缓存已就绪",
+        panel.len()
+    );
     let acct0 = exec.account().await?;
     let (mut weights, liquid) = trader::target_weights(&panel, &tc, acct0.equity, crate::live::now_ms_pub() as i64);
     ensure_candidates(&weights, &liquid, &cfg, panel.len())?;
@@ -697,6 +734,7 @@ pub fn now_ms_pub() -> i64 {
 /// 其余仓位始终保持对冲，任一时刻只有 1 个仓位处于裸奔状态。
 pub async fn rebuild_cross(
     store: &crate::store::Store,
+    signal_store: Option<&crate::store::Store>,
     state: &LiveState,
     markets: &HashMap<String, MarketInfo>,
 ) -> Result<Vec<String>> {
@@ -711,7 +749,7 @@ pub async fn rebuild_cross(
     if acct.positions.is_empty() {
         return Ok(vec!["账户没有持仓，无需转换".into()]);
     }
-    let panel = trader::load_panel(store)?;
+    let panel = signal_panel(store, signal_store, &cfg, markets)?;
     let (weights, liquid) = trader::target_weights(
         &panel,
         &tc,

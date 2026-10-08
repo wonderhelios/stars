@@ -56,6 +56,7 @@ async fn main() -> anyhow::Result<()> {
     let refresh = Arc::new(Mutex::new(RefreshStatus::default()));
 
     let state = AppState {
+        hl_store: None, // HL 自己就是信号源
         exec_gate: std::sync::Arc::new(tokio::sync::Mutex::new(())),
         refresh_gate: std::sync::Arc::new(tokio::sync::Mutex::new(())),
         run_gate: std::sync::Arc::new(tokio::sync::Mutex::new(())),
@@ -172,7 +173,7 @@ async fn main() -> anyhow::Result<()> {
                     let meta = st.meta.lock().await;
                     live::markets_from_meta(&meta.universe)
                 };
-                match live::run(&st.store, &snapshot, &markets, true).await {
+                match live::run(&st.store, st.hl_store.as_deref(), &snapshot, &markets, true).await {
                     Ok((result, records)) => {
                         let mut guard = st.live.lock().await;
                         guard.last_run_at = Some(now_ms());

@@ -1001,7 +1001,7 @@ async fn run_auto(state: &crate::web::AppState) -> Result<()> {
         st.clone()
     };
     let markets = crate::live::markets_from_meta(&state.meta.lock().await.universe);
-    let result = crate::live::run(&state.store, &snapshot, &markets, true).await;
+    let result = crate::live::run(&state.store, state.hl_store.as_deref(), &snapshot, &markets, true).await;
     let mut st = state.live.lock().await;
     match result {
         Ok((r, records)) => {

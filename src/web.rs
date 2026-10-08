@@ -19,6 +19,14 @@ use tower_http::{compression::CompressionLayer, cors::CorsLayer};
 #[derive(Clone)]
 pub struct AppState {
     pub store: Arc<Store>,
+    /// TxFlow 专用的「信号数据源」：用 Hyperliquid 的日线/成交量算因子，
+    /// 在 TxFlow 上执行。
+    ///
+    /// 为什么：TxFlow 盘口薄、历史短，用它自己的价量算信号等于用噪声算信号 ——
+    /// 一个大单就能推动 10~20%。做市商都在币安/HL 对冲，所以那里的价格才是
+    /// 真实信息。两个库的币名差一个 "-USDC" 后缀，用的时候映射。
+    /// Hyperliquid 自身的 state 这里为 None（它就直接用自己的库）。
+    pub hl_store: Option<Arc<Store>>,
     pub paper: Arc<Mutex<PaperState>>,
     pub paper_path: Arc<std::path::PathBuf>,
     pub live: Arc<Mutex<crate::live::LiveState>>,
@@ -509,6 +517,7 @@ async fn live_run(State(state): State<AppState>, body: Option<Json<LiveRunBody>>
         }
     } else { None };
     let store = state.store.clone();
+    let hl_store = state.hl_store.clone();
     let live_state = state.live.clone();
     let live_path = state.live_path.clone();
     let markets = live_markets(&state).await;
@@ -545,7 +554,7 @@ async fn live_run(State(state): State<AppState>, body: Option<Json<LiveRunBody>>
                 current.last_run_at = Some(crate::live::now_ms_pub());
                 current.save(&live_path)?;
             }
-            crate::live::run(&store, &st, &markets, live).await
+            crate::live::run(&store, hl_store.as_deref(), &st, &markets, live).await
         }.await;
         let mut g = live_state.lock().await;
         match outcome {
@@ -605,6 +614,7 @@ async fn live_rebuild(State(state): State<AppState>) -> Response {
     }
     let markets = live_markets(&state).await;
     let store = state.store.clone();
+    let hl_store = state.hl_store.clone();
     let live = state.live.clone();
     let path = state.live_path.clone();
     {
@@ -614,7 +624,7 @@ async fn live_rebuild(State(state): State<AppState>) -> Response {
     }
     tokio::spawn(async move {
         let _held = gate;
-        let outcome = crate::live::rebuild_cross(&store, &st, &markets).await;
+        let outcome = crate::live::rebuild_cross(&store, hl_store.as_deref(), &st, &markets).await;
         let mut g = live.lock().await;
         g.last_plan = match outcome {
             Ok(log) => log,
