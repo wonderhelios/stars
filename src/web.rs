@@ -101,7 +101,8 @@ async fn txflow_html() -> impl IntoResponse {
     ([(header::CONTENT_TYPE, "text/html; charset=utf-8")], include_str!("../static/txflow.html"))
 }
 async fn txflow_js() -> impl IntoResponse {
-    ([(header::CONTENT_TYPE, "text/javascript; charset=utf-8")], APP_JS.replace("/api/", "/api/txflow/"))
+    ([(header::CONTENT_TYPE, "text/javascript; charset=utf-8")], APP_JS.replace("/api/", "/api/txflow/")
+        .replace("const LIVE_EXCHANGE = \"Hyperliquid\";", "const LIVE_EXCHANGE = \"TxFlow\";"))
 }
 
 const INDEX_HTML: &str = include_str!("../static/index.html");
@@ -696,7 +697,11 @@ mod txflow_routes_tests {
             assert_eq!(response.status(), StatusCode::OK, "{path}");
             let body = String::from_utf8(to_bytes(response.into_body(), 1_000_000).await.unwrap().to_vec()).unwrap();
             if path == "/txflow" { assert!(body.contains("300ms") && body.contains("/txflow/app.js")); assert!(!body.contains("Sharpe <b>2.14")); }
-            if path == "/txflow/app.js" { assert!(body.contains("/api/txflow/live/run")); assert!(!body.contains("fetch(\"/api/live")); }
+            if path == "/txflow/app.js" {
+                assert!(body.contains("/api/txflow/live/run"));
+                assert!(!body.contains("fetch(\"/api/live"));
+                assert!(body.contains("const LIVE_EXCHANGE = \"TxFlow\";"));
+            }
         }
         let request = Request::builder().method("POST").uri("/api/txflow/live/config")
             .header("content-type", "application/json").body(Body::from(r#"{"lookback":21,"target_positions":4,"txflow":false}"#)).unwrap();

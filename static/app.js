@@ -1,5 +1,6 @@
 // stars · 动量 alpha 研究台 — 前端逻辑
 const $ = (id) => document.getElementById(id);
+const LIVE_EXCHANGE = "Hyperliquid";
 
 // ---------- 工具 ----------
 const pct = (v, d = 2) => `${(v >= 0 ? "+" : "")}${v.toFixed(d)}%`;
@@ -229,7 +230,7 @@ async function runLive(live) {
     alert("请先把「启用实盘」设为开启并保存配置，否则不会发送任何订单。");
     return;
   }
-  if (live && !confirm("确认执行真实调仓？会对 Hyperliquid 账户发送真实订单。")) return;
+  if (live && !confirm(`确认执行真实调仓？会对 ${LIVE_EXCHANGE} 账户发送真实订单。`)) return;
   liveBusy = true;
   const btn = live ? $("lv-run") : $("lv-plan");
   const label = btn.textContent;
