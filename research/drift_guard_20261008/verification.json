@@ -1,0 +1,8 @@
+{
+  "rust_source_sha256": "721cf37b51fbb21f53ea7501fcbcb865d9f6bde08ce379fb88c92374e73216fe",
+  "daily_weight_rows_compared": 1161,
+  "max_abs_weight_error": 8.326672684688674e-17,
+  "rust_equity_hint": 570,
+  "cap": 8,
+  "configs": "daily slices1; source defaults otherwise; min_position15 does not shrink cap8 at570"
+}

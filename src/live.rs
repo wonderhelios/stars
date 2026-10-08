@@ -545,8 +545,28 @@ pub async fn run(
         cfg.leverage,
         cfg.margin_buffer * 100.0
     )];
-    plan_lines.push(format!("多头腿: {}", plan.long_leg.join(" ")));
-    plan_lines.push(format!("空头腿: {}", plan.short_leg.join(" ")));
+    // 腿的名单**按权重强弱排序**并显示权重值。
+    //
+    // 原来直接用 Vec 的插入顺序 —— 那是三因子合并后的任意顺序，看不出谁强谁弱。
+    // 用户想知道"为什么某个币被做空、它排第几"，光有名字是答不了的。
+    {
+        let wmap: std::collections::HashMap<&str, f64> =
+            weights.iter().map(|(c, w)| (c.as_str(), *w)).collect();
+        let legs = |names: &[String]| -> String {
+            let mut v: Vec<(&String, f64)> = names
+                .iter()
+                .map(|c| (c, wmap.get(c.as_str()).copied().unwrap_or(0.0)))
+                .collect();
+            // 做多按权重从大到小，做空按 |权重| 从大到小 —— 最强的排最前
+            v.sort_by(|a, b| b.1.abs().partial_cmp(&a.1.abs()).unwrap_or(std::cmp::Ordering::Equal));
+            v.iter()
+                .map(|(c, w)| format!("{c}({:.3})", w.abs()))
+                .collect::<Vec<_>>()
+                .join(" ")
+        };
+        plan_lines.push(format!("多头腿（按权重降序）: {}", legs(&plan.long_leg)));
+        plan_lines.push(format!("空头腿（按权重降序）: {}", legs(&plan.short_leg)));
+    }
     for o in &plan.orders {
         plan_lines.push(format!(
             "{} {} {} {:.6} @≈{:.6} (${:.2}) · {}",
