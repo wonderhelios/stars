@@ -127,14 +127,14 @@ async fn schedule_request(execution: bool) {
         let now=Instant::now();
         let due=timing.0.into_iter().chain(timing.1).max().unwrap_or(now);
         if due>now { drop(timing);tokio::time::sleep_until(due).await;continue; }
-        timing.0=Some(now+MIN_GAP);
+        timing.0=Some(now+min_gap());
         return;
     }
 }
 async fn observe_rate_limit(response: &reqwest::Response) {
     if response.status()!=reqwest::StatusCode::TOO_MANY_REQUESTS {return;}
     let seconds=response.headers().get(reqwest::header::RETRY_AFTER)
-        .and_then(|v|v.to_str().ok()).and_then(|v|v.parse::<u64>().ok()).unwrap_or(3).min(86400);
+        .and_then(|v|v.to_str().ok()).and_then(|v|v.parse::<u64>().ok()).unwrap_or(30).max(30).min(86400);
     let mut timing=scheduler().timing.lock().await;
     let until=Instant::now()+Duration::from_secs(seconds);
     timing.1=Some(timing.1.map(|old|old.max(until)).unwrap_or(until));
@@ -160,7 +160,24 @@ fn pnl_cache() -> &'static Mutex<PnlCache> {
 /// 300ms（3.3 req/s）实测仍然触发 429 —— TxFlow 的限制比这更严。放宽到 1s。
 /// 代价是刷新 223 个市场要 ~4 分钟，但那件事 30 分钟才做一次；
 /// 调仓只需约 20 个请求（~20 秒），可以接受。
-const MIN_GAP: std::time::Duration = std::time::Duration::from_millis(1000);
+/// 两次 TxFlow 请求之间的默认最小间隔：20ms ≈ **50 QPS**。
+///
+/// 之前定成 1 秒是保守过头 —— 直接代价是 57 笔的调仓要 **4.7 分钟**，而中间那几分钟
+/// 组合是半成品（净敞口一度偏到 −81%，实测）。1 秒的依据只是"300ms 曾在回填 223 个
+/// 市场时撞过 429"，那是爆发场景，不该套用到几十个请求的调仓上。
+///
+/// 真正的保护不是慢，而是**自适应**：撞到 429 后 `observe_rate_limit` 会把闸门锁到
+/// `Retry-After`（至少 PENALTY_FLOOR），冷却期过后自动恢复。想要固定值可以用
+/// 环境变量 `STARS_TXFLOW_MIN_GAP_MS` 覆盖。
+fn min_gap() -> Duration {
+    static MS: std::sync::OnceLock<u64> = std::sync::OnceLock::new();
+    Duration::from_millis(*MS.get_or_init(|| {
+        std::env::var("STARS_TXFLOW_MIN_GAP_MS")
+            .ok()
+            .and_then(|v| v.trim().parse::<u64>().ok())
+            .unwrap_or(20)
+    }))
+}
 
 fn number(v: &Value) -> Option<f64> {
     v.as_f64()
@@ -897,10 +914,10 @@ async fn refresh_inner(state: &crate::web::AppState) -> Result<()> {
     // 硬超时，于是整轮被判失败、refreshed_at 不更新，页面永远显示"行情更新失败"。
     // 取 140 个（约 2.3 分钟）留出余量；起点每轮往后挪，所有币最终都会被覆盖，
     // 冷门币只是更新得慢一些（约 30~45 分钟一次），不会像"只刷流动币"那样丢历史。
-    // 每个请求的实际耗时 = max(MIN_GAP, 网络延迟)。实测延迟约 1 秒，
-    // 所以按 2 秒/请求估：60 个 ≈ 120 秒，稳稳落在 180 秒超时内。
-    // （之前取 140，只按 1 秒算，实际 280 秒，必然超时。）
-    const PER_CYCLE: usize = 60;
+    // 限速已降到 20ms（50 QPS），每轮不必再切 60 个。全量 223 个市场按
+    // 20ms 算约 5 秒（外加网络延迟），稳稳落在 180 秒超时内 —— 也就不再需要
+    // "轮换游标"那套（它曾因为取模共振长期漏掉部分市场）。
+    const PER_CYCLE: usize = 400;
     let total = markets.len();
     let start = rotation_start(&state.store,total,now)?;
     let picked: Vec<_> = if total <= PER_CYCLE {
@@ -1334,7 +1351,11 @@ mod public_tests {
  server.abort();let _=server.await;
  let times=arrivals.lock().await;
  assert_eq!(times.len(),3);
- assert!(times.windows(2).all(|w|w[1]-w[0]>=Duration::from_millis(990)),"read/write/approve did not share the one-second scheduler: {times:?}");
+ // 这条测的是**读/写/授权共用同一个调度器**（彼此串行、按配置间隔排队），
+ // 不是"间隔必须等于 1 秒" —— 那个值后来从 1000ms 调到了 20ms（50 QPS）。
+ // 断言改成对着**当前配置的间隔**，这样调参不会再误伤它。
+ assert!(times.windows(2).all(|w| w[1]-w[0] >= min_gap()),
+     "read/write/approve did not share the same scheduler (gap={:?}): {times:?}", min_gap());
  }
  #[tokio::test] async fn account_lock_child() {
      let Ok(key)=std::env::var("TXFLOW_FIX_CHILD_KEY") else {return;};
