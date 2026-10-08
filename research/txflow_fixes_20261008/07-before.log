@@ -1,0 +1,30 @@
+   Compiling stars v0.3.0 (/Users/wonder/Code/stars)
+warning: unused variable: `cfg`
+   --> src/trader.rs:864:13
+    |
+864 |         let cfg = TradeConfig {
+    |             ^^^ help: if this is intentional, prefix it with an underscore: `_cfg`
+    |
+    = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default
+
+warning: `stars` (bin "stars" test) generated 1 warning
+    Finished `release` profile [optimized] target(s) in 6.69s
+     Running unittests src/main.rs (target/release/deps/stars-7a9da671a4b16392)
+
+running 1 test
+
+thread 'live::txflow_fix_tests::txflow_fractional_leverage_uses_actual_integer_budget' (54981321) panicked at src/live.rs:1420:9:
+assertion `left == right` failed
+  left: 3.49
+ right: 3.0
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test live::txflow_fix_tests::txflow_fractional_leverage_uses_actual_integer_budget ... FAILED
+
+failures:
+
+failures:
+    live::txflow_fix_tests::txflow_fractional_leverage_uses_actual_integer_budget
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 29 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `--bin stars`

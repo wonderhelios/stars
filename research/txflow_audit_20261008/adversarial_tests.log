@@ -1,0 +1,25 @@
+   Compiling stars v0.3.0 (/Users/wonder/Code/stars/research/txflow_audit_20261008/snapshot)
+warning: unused variable: `cfg`
+   --> src/trader.rs:864:13
+    |
+864 |         let cfg = TradeConfig {
+    |             ^^^ help: if this is intentional, prefix it with an underscore: `_cfg`
+    |
+    = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default
+
+warning: `stars` (bin "stars" test) generated 1 warning
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 6.23s
+     Running unittests src/main.rs (target/debug/deps/stars-5e124cc3b84b30ce)
+
+running 4 tests
+test live::adversarial_audit::concurrent_equity_is_deduplicated ... ok
+test live::adversarial_audit::missing_config_fields_use_business_defaults ... partial JSON: leverage=3 buffer=0.9
+ok
+test txflow::adversarial_audit::cursor_can_permanently_starve ... 240 markets, 1920-second cycles: only 60 covered after 1000 cycles
+ok
+test txflow::adversarial_audit::real_refresh_and_partial_execution_with_local_mock ... full meta 80 -> backfill meta 0, status ready
+requested 78.3 filled 2, aborted=false receipts=["买 C0-USDC 开仓 78.300000 · 成交 2@100 · 开多"]
+ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 28 filtered out; finished in 63.69s
+

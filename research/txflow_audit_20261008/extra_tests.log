@@ -1,0 +1,23 @@
+   Compiling stars v0.3.0 (/Users/wonder/Code/stars/research/txflow_audit_20261008/snapshot)
+warning: unused variable: `cfg`
+   --> src/trader.rs:864:13
+    |
+864 |         let cfg = TradeConfig {
+    |             ^^^ help: if this is intentional, prefix it with an underscore: `_cfg`
+    |
+    = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default
+
+warning: `stars` (bin "stars" test) generated 1 warning
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2.37s
+     Running unittests src/main.rs (target/debug/deps/stars-5e124cc3b84b30ce)
+
+running 3 tests
+test live::audit_extra::corrupt_state_silently_blanks_account ... valid partial outer LiveState silently loads empty account
+ok
+test live::audit_extra::nonempty_weights_bypass_candidate_floor ... nonempty weights bypass liquid>=8 check
+ok
+test web::audit_extra::unauthenticated_config_can_arm ... no auth / no Origin -> config armed=true leverage=20
+ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 32 filtered out; finished in 0.16s
+

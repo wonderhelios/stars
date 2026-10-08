@@ -1,0 +1,27 @@
+warning: unused variable: `cfg`
+   --> src/trader.rs:995:13
+    |
+995 |         let cfg = TradeConfig {
+    |             ^^^ help: if this is intentional, prefix it with an underscore: `_cfg`
+    |
+    = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default
+
+warning: `stars` (bin "stars" test) generated 1 warning
+    Finished `release` profile [optimized] target(s) in 0.24s
+     Running unittests src/main.rs (target/release/deps/stars-7a9da671a4b16392)
+
+running 1 test
+
+thread 'web::report5_unavailable_tests::report5_corrupt_txflow_routes_reject_every_operation' (55068330) panicked at src/web.rs:127:10:
+Invalid route "/txflow/{*path}": catch-all parameters are only allowed at the end of a route
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test web::report5_unavailable_tests::report5_corrupt_txflow_routes_reject_every_operation ... FAILED
+
+failures:
+
+failures:
+    web::report5_unavailable_tests::report5_corrupt_txflow_routes_reject_every_operation
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 63 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `--bin stars`

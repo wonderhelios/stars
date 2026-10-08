@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#ffffff" />
+    <title>TxFlow · stars · 动量 alpha 研究台</title>
+    <style>
+      :root { --blue:#137b70; --blue-ink:#0d6158; --blue-soft:#e7f4ef; --bg:#f3f5f7; --surface:#fff; --ink:#182b3a; --muted:#788592; --line:#e5eaee; --green:#138467; --green-soft:#eaf7f0; --red:#d35160; --red-soft:#fcedef; --amber:#a57721; --amber-soft:#fff6e6; --shadow:0 3px 16px #25364804; }
+      * { box-sizing:border-box; }
+      body { margin:0; background:var(--bg); color:var(--ink); font:14px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif; font-variant-numeric:tabular-nums; -webkit-font-smoothing:antialiased; }
+      button,input,select { font:inherit; } button { cursor:pointer; } a { color:inherit; text-decoration:none; }
+      button,input,select { transition:background .15s,border-color .15s,box-shadow .15s; }
+      :focus-visible { outline:3px solid #5fbeab66; outline-offset:3px; }
+      .topbar { position:fixed; inset:0 auto 0 0; width:232px; padding:35px 20px 24px; display:flex; flex-direction:column; align-items:stretch; gap:36px; background:#142b2a; color:#f3f9f6; z-index:10; border-right:1px solid #223c38; }
+      .brand { display:flex; align-items:center; gap:12px; padding:0 8px; font-size:25px; font-weight:750; letter-spacing:-.9px; }
+      .brand .dot { display:grid; place-items:center; width:34px; height:34px; flex-shrink:0; border-radius:11px; background:#88d7b6; color:#123d32; }
+      .brand .dot::before { content:'✦'; font-size:26px; line-height:1; }
+      .brand small { display:block; font-size:10px; font-weight:500; letter-spacing:1px; color:#8daaa0; margin-top:1px; }
+      .nav { display:flex; flex-direction:column; gap:7px; }
+      .nav::before { content:'工作空间'; font-size:10px; color:#78988d; padding:0 14px 12px; letter-spacing:2px; }
+      .nav button { display:flex; align-items:center; gap:12px; width:100%; padding:13px 15px; border:1px solid transparent; border-radius:10px; text-align:left; color:#a9bdb5; background:transparent; font-weight:550; }
+      .nav button svg { width:18px; height:18px; flex-shrink:0; opacity:.8; }
+      .nav button:hover { color:#fff; background:#203b35; }
+      .nav button.active { background:#244b3d; border-color:#33594a; color:#a3e4bf; }
+      .status-pill { margin-top:auto; display:flex; align-items:flex-start; gap:9px; border-top:1px solid #2b443d; padding:20px 7px 0; color:#91aaa0; font-size:11px; line-height:1.8; }
+      .status-pill .led { width:7px; height:7px; flex-shrink:0; margin-top:6px; border-radius:50%; background:#7cd7a4; box-shadow:0 0 0 4px #7cd7a40c; }
+      .status-pill .led.warn { background:#e7b567; } .status-pill .led.off { background:#f18c94; }
+      main { margin-left:232px; max-width:1800px; padding:38px clamp(22px,3vw,52px) 64px; }
+      .view { display:none; } .view.active { display:block; }
+      .panel { min-width:0; background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:25px 28px; margin-bottom:22px; box-shadow:var(--shadow); }
+      .view>.panel:first-child { padding:0; border:none; background:transparent; box-shadow:none; }
+      .panel-head { display:flex; align-items:center; justify-content:space-between; gap:20px; margin-bottom:17px; }
+      .panel-head h2 { margin:0; font-size:17px; font-weight:650; letter-spacing:-.35px; }
+      .view>.panel:first-child>.panel-head:first-child { margin-bottom:26px; }
+      .view>.panel:first-child>.panel-head:first-child h2 { font-size:30px; font-weight:730; letter-spacing:-1px; margin:4px 0 8px; }
+      .panel-kicker { color:var(--blue); font-size:10px; letter-spacing:2.2px; text-transform:uppercase; font-weight:700; }
+      .sub { color:var(--muted); font-size:12px; margin:0; max-width:840px; line-height:1.8; }
+      .sub b { font-weight:500; }
+      .actions { display:flex; flex-wrap:wrap; align-items:center; gap:8px; flex-shrink:0; }
+      .controls { display:flex; flex-wrap:wrap; align-items:flex-end; gap:18px 20px; background:#fff; border:1px solid var(--line); border-radius:14px; padding:24px; margin:20px 0; }
+      .field { display:flex; flex-direction:column; gap:8px; flex:1 1 170px; min-width:0; }
+      .field label { color:#61737e; font-size:12px; font-weight:600; }
+      .field input,.field select { width:100%; border:1px solid #dce4e8; border-radius:8px; background:#fafcfd; color:var(--ink); padding:10px 12px; min-width:0; height:42px; }
+      .field input:hover,.field select:hover { border-color:#b5c8c3; }
+      .field input:focus,.field select:focus { border-color:var(--blue); background:#fff; }
+      #lv-account,#lv-key { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12px; }
+      .field:has(#lv-account),.field:has(#lv-key) { flex-basis:calc(50% - 12px); }
+      .btn { display:inline-flex; align-items:center; justify-content:center; border:1px solid transparent; border-radius:8px; padding:9px 16px; min-height:38px; background:var(--blue); color:#fff; font-size:12px; font-weight:600; white-space:nowrap; }
+      .btn:hover { background:var(--blue-ink); }
+      .btn.ghost { background:#fff; border-color:#dce4e8; color:#42645c; }
+      .btn.ghost:hover { border-color:#a8c4ba; background:#f1f8f4; }
+      .btn.danger { background:var(--red-soft); color:var(--red); border-color:#f4d8dd; }
+      .btn.danger:hover { background:#f9e0e4; }
+      .btn:disabled { opacity:.45; cursor:not-allowed; }
+      .metric-group { min-width:0; margin:0; padding:20px 24px; background:white; border:1px solid var(--line); border-radius:14px; }
+      .metric-group>.g-title { font-size:10px; font-weight:650; color:var(--muted); letter-spacing:1.8px; margin-bottom:16px; }
+      .metrics { display:grid; grid-template-columns:repeat(auto-fit,minmax(155px,1fr)); gap:14px; margin:18px 0; }
+      .metric-group .metrics { grid-template-columns:repeat(4,minmax(0,1fr)); }
+      #mo-metrics { display:block; margin:22px 0; }
+      #mo-metrics>.metric-group { margin-bottom:14px; }
+      .metric-group .metrics { grid-template-columns:repeat(4,minmax(0,1fr)); gap:20px; margin:0; }
+      .metric-group:last-child .metrics { grid-template-columns:repeat(5,minmax(0,1fr)); }
+      .metric { min-width:0; padding:18px 20px; border:1px solid var(--line); border-radius:12px; background:#fff; }
+      .metric-group .metric { border:none; border-radius:0; background:transparent; padding:0 20px 0 0; border-right:1px solid var(--line); }
+      .metric-group .metric:last-child { border:none; padding-right:0; }
+      .metric .k { color:var(--muted); font-size:11px; margin-bottom:6px; }
+      .metric .v { font-size:clamp(18px,1.65vw,26px); font-weight:650; letter-spacing:-.6px; overflow-wrap:anywhere; line-height:1.5; }
+      .metric-group:first-child .v { font-size:clamp(23px,2.25vw,34px); font-weight:690; }
+      .metric .v.sm,.metric .v .sm { font-size:14px; letter-spacing:0; }
+      .metric-group:nth-child(2) .v,.metric-group:nth-child(3) .v { font-size:clamp(15px,1.35vw,22px); }
+      .metric .v.pos,.pos { color:var(--green); } .metric .v.neg,.neg { color:var(--red); }
+      .content-card { padding:23px 25px; margin:18px 0; background:#fff; border:1px solid var(--line); border-radius:14px; min-width:0; }
+      .content-card>.panel-head { margin-top:0!important; padding-bottom:14px; border-bottom:1px solid #edf1f3; }
+      table { width:100%; border-collapse:collapse; font-size:12px; }
+      th,td { text-align:right; padding:13px 14px; border-bottom:1px solid #edf1f3; white-space:nowrap; }
+      th:first-child,td:first-child { text-align:left; } th { font-size:10px; font-weight:600; color:#7c8b96; background:#f8fafb; }
+      tbody tr:last-child td { border-bottom:0; } tbody tr:hover { background:#f7fbf9; }
+      .table-scroll { overflow:auto; -webkit-overflow-scrolling:touch; border:1px solid #edf1f3; border-radius:9px; }
+      .table-scroll table { min-width:600px; }
+      #mo-orders { overflow-x:auto; border-radius:9px; }
+      .chart { width:100%; overflow-x:auto; } .chart svg { width:100%; height:auto; display:block; }
+      .chart svg polyline[stroke="#2d6df6"] { stroke:var(--blue); stroke-width:2.5; }
+      .chart .legend { display:flex; flex-wrap:wrap; gap:16px; font-size:11px; color:var(--muted); margin-top:12px; }
+      .note { font-size:12px; color:var(--muted); line-height:1.85; margin:12px 0; }
+      .note b { font-weight:600; color:#617680; } .note code { color:#596d75; background:#eef2f4; border-radius:4px; padding:2px 4px; }
+      .live-status { display:flex; flex-wrap:wrap; align-items:center; gap:7px 16px; font-size:12px; padding:13px 18px; border:1px solid; border-radius:9px; margin:14px 0; }
+      .live-status .tag { font-weight:650; } .live-status.run { color:#28674d; background:#eaf6ee; border-color:#d4e9dc; }
+      .live-status.idle { color:#8a692c; background:#fff6e7; border-color:#f0e3c9; } .live-status.off { color:var(--muted); background:#edf1f4; border-color:#dfe7eb; }
+      .live-status.err { color:var(--red); background:var(--red-soft); border-color:#f0d5db; }
+      .badge,.badge-mini { display:inline-block; font-size:10px; font-weight:600; padding:3px 8px; border-radius:5px; white-space:nowrap; }
+      .direction-label { min-width:32px; text-align:center; line-height:1.6; }
+      .badge.ok,.badge-mini.ok { background:var(--green-soft); color:var(--green); }
+      .badge.neg-badge,.badge-mini.err { background:var(--red-soft); color:var(--red); }
+      .badge.pending,.badge-mini.warn { background:var(--amber-soft); color:var(--amber); }
+      .badge.todo,.badge-mini.mute { color:var(--muted); background:#f0f3f5; }
+      .logbox { background:#152d2c; color:#c9e1d8; font:12px/1.8 ui-monospace,SFMono-Regular,Menlo,monospace; padding:20px; border-radius:12px; overflow-x:auto; white-space:pre-wrap; overflow-wrap:anywhere; }
+      .logbox.neg { color:#ffb4bd; }
+      .pager { display:flex; align-items:center; gap:12px; margin-top:16px; } .pager .info { color:var(--muted); font-size:11px; }
+      .checklist { list-style:none; margin:0; padding:0; }
+      .checklist li { display:flex; align-items:flex-start; gap:13px; padding:15px 0; border-bottom:1px solid var(--line); }
+      .checklist li:last-child { border:none; } .checklist .state { font-size:14px; } .checklist .txt { flex:1; } .checklist .txt b { display:block; font-size:12px; font-weight:600; }
+      .checklist .txt span { display:block; font-size:11px; color:var(--muted); margin-top:4px; }
+      .muted { color:var(--muted); } .empty { padding:38px 16px; text-align:center; font-size:12px; color:var(--muted); background:#fbfcfd; border-radius:10px; }
+      .error { padding:12px 16px; font-size:12px; background:var(--red-soft); color:var(--red); border-radius:8px; margin:12px 0; }
+      @media(min-width:1280px) { #mo-metrics { display:grid; grid-template-columns:1fr 1fr; gap:16px; } #mo-metrics>.metric-group { margin:0; } #mo-metrics>.metric-group:first-child { grid-column:1/-1; } .metric-group:nth-child(2) .metrics { grid-template-columns:repeat(2,minmax(0,1fr)); } .metric-group:nth-child(2) .metric:nth-child(2n) { border:0; } .metric-group:last-child .metrics { grid-template-columns:repeat(3,minmax(0,1fr)); row-gap:20px; } .metric-group:last-child .metric:nth-child(3n) { border:0; } }
+      @media(max-width:1100px) { .metric-group .metrics { grid-template-columns:repeat(2,minmax(0,1fr)); } .topbar { width:196px; padding:30px 14px 20px; } main { margin-left:196px; padding:28px 22px 44px; } .metric-group .metrics,.metric-group:last-child .metrics { grid-template-columns:repeat(2,minmax(0,1fr)); row-gap:20px; } .metric-group .metric:nth-child(2n) { border:none; } .actions { max-width:350px; } }
+      @media(max-width:760px) { .topbar { position:sticky; inset:auto; top:0; width:100%; height:auto; padding:14px 16px 10px; display:grid; grid-template-columns:1fr auto; gap:14px; background:#142b2a; } .brand { padding:0; font-size:21px; } .brand small { font-size:9px; } .brand .dot { width:30px; height:30px; } .status-pill { margin:0; padding:0; border:0; font-size:10px; max-width:160px; align-self:center; } #statusText { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; } .nav { flex-direction:row; grid-column:1/-1; gap:6px; overflow:auto; } .nav::before { display:none; } .nav button { width:auto; flex:1 0 auto; padding:9px 12px; justify-content:center; font-size:12px; } .nav button svg { width:15px; height:15px; } main { margin:0; padding:24px 14px 36px; } .view>.panel:first-child>.panel-head:first-child { align-items:flex-start; flex-wrap:wrap; gap:12px; margin-bottom:18px; } .view>.panel:first-child>.panel-head:first-child h2 { font-size:26px; } .panel,.content-card { padding:18px 16px; border-radius:12px; } .panel-head { gap:12px; flex-wrap:wrap; } .controls { padding:18px 16px; gap:14px; } .field { flex-basis:calc(50% - 10px); } .field:has(#lv-account),.field:has(#lv-key) { flex-basis:100%; } .metric-group { padding:18px 16px; } .metric-group .metrics,.metric-group:last-child .metrics { gap:16px; } .metric-group:first-child .v { font-size:26px; } .metric-group:nth-child(2) .v,.metric-group:nth-child(3) .v { font-size:16px; } .metrics { grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; } .metric { padding:14px; } .metric .v { font-size:21px; } .chart svg { min-width:560px; } .chart { margin:0 -5px; } .btn { padding:8px 12px; font-size:11px; } th,td { padding:10px 12px; } .checklist li { flex-wrap:wrap; gap:8px; } .checklist .txt { min-width:180px; } .pager { flex-wrap:wrap; } }
+      @media(prefers-reduced-motion:reduce) { * { transition:none!important; scroll-behavior:auto!important; } }
+    .warn-banner {
+      margin: 10px 0;
+      padding: 10px 14px;
+      border-radius: 8px;
+      background: var(--warn-bg, #fdf3e3);
+      border: 1px solid #f0d3a0;
+      color: #8a5a12;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+      /* 业绩组数据有 6 项，半宽会在右侧留一大片空白 —— 让它跨满整行。
+         必须写在 media query 之后才能覆盖 :last-child 的 3 列规则。 */
+      @media(min-width:1280px) {
+        #mo-metrics>.metric-group.tx-perf { grid-column:1/-1; }
+        .metric-group.tx-perf .metrics { grid-template-columns:repeat(6,minmax(0,1fr)); }
+      }
+      .metric-group.tx-perf .metrics { grid-template-columns:repeat(3,minmax(0,1fr)); row-gap:18px; }
+    </style>
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="brand"><span class="dot" aria-hidden="true"></span><span>stars<small>动量 alpha 研究台</small></span></div>
+      <nav class="nav">
+        <a class="btn ghost" href="/">← Hyperliquid 策略</a>
+        <button data-view="monitor" class="active"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg><span>实盘监控</span></button>
+        <button data-view="live"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 7h16M4 17h16"/><circle cx="8" cy="7" r="3"/><circle cx="16" cy="17" r="3"/></svg><span>实盘设置</span></button>
+      </nav>
+      <div class="status-pill">
+        <span class="led" id="led"></span>
+        <span id="statusText">连接中…</span>
+      </div>
+    </header>
+
+    <main>
+
+
+      <!-- ============ 实盘设置 ============ -->
+      <section id="view-live" class="view">
+        <div class="panel">
+          <div class="panel-head">
+            <div>
+              <div class="panel-kicker">LIVE SETUP · TXFLOW</div>
+              <h2>实盘设置</h2>
+              <p class="sub">配置 + 启停。<b>只读观测请看「实盘监控」tab。</b>实盘与纸交易共用同一套排名代码，不会漂移。</p>
+            </div>
+            <div class="actions">
+              <button class="btn ghost" id="lv-plan">生成计划（不下单）</button>
+              <button class="btn ghost" id="lv-tp-btn">刷新止盈单</button>
+              <button class="btn ghost" id="lv-rebuild">转为全仓</button>
+              <button class="btn danger" id="lv-run">执行调仓</button>
+            </div>
+          </div>
+
+          <div class="controls" style="margin-bottom:16px">
+            <div class="field"><label>主钱包（仅用于签名授权）</label><select id="tx-wallet"><option value="">检测浏览器钱包…</option></select></div>
+            <div class="field"><label>&nbsp;</label><button class="btn ghost" id="tx-agent-prepare">连接钱包并生成 Agent</button></div>
+            <div class="field"><label>&nbsp;</label><button class="btn" id="tx-agent-approve" disabled>签名授权 Agent</button></div>
+            <p class="note" id="tx-agent-status" role="status" aria-live="polite" style="flex-basis:100%;overflow-wrap:anywhere">先连接你在 TxFlow 使用的主钱包。Agent 密钥会自动保存在服务器，主钱包只需签名一次；不会自动开启实盘。</p>
+          </div>
+          <div class="controls">
+            <div class="field"><label>账户地址（主账户，不是 API 钱包）</label><input id="lv-account" placeholder="0x..." /></div>
+            <div class="field"><label>API 钱包密钥文件路径</label><input id="lv-key" placeholder="必填，例如 /etc/stars/txflow-agent.key" /></div>
+            <div class="field"><label>每腿仓位数</label><input id="lv-positions" type="number" value="8" min="1" max="30" /></div>
+            <div class="field"><label>杠杆</label><input id="lv-leverage" type="number" value="3" min="1" max="20" step="0.5" /></div>
+            <div class="field"><label>保证金缓冲 %</label><input id="lv-buffer" type="number" value="90" min="30" max="100" /></div>
+            <div class="field"><label>滑点上限 %</label><input id="lv-slippage" type="number" value="0.5" min="0.05" max="5" step="0.05" /></div>
+            <div class="field"><label>错峰调仓（档）</label><input id="lv-slices" type="number" value="3" min="1" max="10" step="1" /></div>
+            <div class="field"><label>止盈 % （0 = 关闭）</label><input id="lv-tp" type="number" value="0" min="0" max="50" step="1" /></div>
+            <div class="field"><label>回看天数</label><input id="lv-lookback" type="number" value="14" min="2" max="120" /></div>
+            <div class="field"><label>多头比例</label><input id="lv-top" type="number" value="0.2" min="0.02" max="0.5" step="0.05" /></div>
+            <div class="field"><label>近 30 日日均成交额门槛</label>
+              <select id="lv-minvol">
+                <option value="100000">$100K</option>
+                <option value="200000">$200K</option>
+                <option value="500000" selected>$500K</option>
+                <option value="1000000">$1M</option>
+                <option value="2000000">$2M</option>
+                <option value="5000000">$5M</option>
+                <option value="10000000">$10M</option>
+              </select>
+            </div>
+            <div class="field"><label>启用实盘（允许发单）</label>
+              <select id="lv-armed"><option value="false" selected>关闭（只生成计划）</option><option value="true">开启（可发真单）</option></select>
+            </div>
+            <div class="field"><label>每日自动调仓（UTC 00:05）</label>
+              <select id="lv-auto"><option value="false" selected>关闭</option><option value="true">开启</option></select>
+            </div>
+            <div class="field"><label>&nbsp;</label><button class="btn ghost" id="lv-save">保存配置</button></div>
+            <p class="note" id="lv-save-status" role="status" aria-live="polite" style="flex-basis:100%"></p>
+          </div>
+
+          <div class="note"><b>复用同一策略：</b>波动调整动量、低波动与成交量冲击的组合，多空对冲，按设置错峰调仓。信号只使用 TxFlow 已收盘日线与滚动成交额。<b>所有交易请求串行执行，间隔至少 300ms。</b></div>
+          <p class="note"><b>止盈：</b>按调仓参考价挂只减仓限价单，默认关闭。仅撤销本程序记录的止盈订单。</p>
+          <p class="note"><b>流动性：</b>按近 30 个已收盘日的平均成交额筛选，策略至少需要 8 个候选市场。TxFlow 新配置默认 $500K；已有配置保持原值，候选不足时可调整门槛并保存后再生成计划。</p>
+          <p class="note">可在上方生成并授权策略专用 Agent，成功后自动填写主账户和密钥路径。也可手动使用已有的已授权 Agent 文件。主钱包私钥不参与策略。账户需为单向持仓；资金、仓位和挂单均从 TxFlow 读取。维持保证金取自 TxFlow 账户接口；强平价以交易所返回值为准。</p>
+          <div class="panel-head" style="margin-top:14px"><h2>计划 / 执行结果</h2></div>
+          <div id="lv-plan-out"></div>
+        </div>
+
+        <div class="panel" style="margin-top:16px"><h2>TxFlow 接入状态</h2><p class="note">行情接口已验证。策略逻辑复用 Hyperliquid；在 TxFlow 的历史表现和真实成交链路尚待验证。实盘默认关闭，可先生成调仓计划。</p></div>
+      </section>
+
+      <!-- ============ 实盘监控 ============ -->
+      <section id="view-monitor" class="view active">
+        <div class="panel">
+          <div class="panel-head">
+            <div>
+              <div class="panel-kicker">LIVE MONITOR</div>
+              <h2>实盘监控</h2>
+              <p class="sub">只读观测。<b>配置与启停在「实盘设置」。</b></p>
+            </div>
+            <div class="actions">
+              <button class="btn ghost" id="mo-clear">清空记录</button>
+              <button class="btn ghost" id="mo-refresh">刷新</button>
+            </div>
+          </div>
+          <div id="mo-status"></div>
+          <div id="mo-warn"></div>
+          <div class="metrics" id="mo-metrics"></div>
+          <div class="content-card"><div class="panel-head" style="margin-top:14px"><h2>净值曲线</h2></div>
+          <div class="chart" id="mo-chart"></div></div>
+          <div class="content-card"><div class="panel-head" style="margin-top:14px"><h2>当前持仓</h2></div>
+          <div id="mo-positions"></div></div>
+          <div class="content-card"><div class="panel-head" style="margin-top:14px"><h2>盘口挂单（止盈）</h2></div>
+          <div id="mo-orders"></div></div>
+          <div class="content-card"><div class="panel-head" style="margin-top:14px"><h2>下单记录</h2></div>
+          <p class="note">记录本次策略发送的订单及交易所回执。网络超时结果未知时不会自动重发，请先核对持仓。</p>
+          <div id="mo-records"></div></div>
+        </div>
+      </section>
+
+
+
+    </main>
+
+    <script src="/txflow/app.js"></script>
+    <script src="/txflow/agent.js"></script>
+  </body>
+</html>

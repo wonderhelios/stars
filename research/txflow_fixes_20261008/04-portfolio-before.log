@@ -1,0 +1,39 @@
+   Compiling stars v0.3.0 (/Users/wonder/Code/stars)
+warning: unused variable: `cfg`
+   --> src/trader.rs:906:13
+    |
+906 |         let cfg = TradeConfig {
+    |             ^^^ help: if this is intentional, prefix it with an underscore: `_cfg`
+    |
+    = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default
+
+warning: `stars` (bin "stars" test) generated 1 warning
+    Finished `release` profile [optimized] target(s) in 7.65s
+     Running unittests src/main.rs (target/release/deps/stars-7a9da671a4b16392)
+
+running 4 tests
+
+thread 'trader::txflow_portfolio_tests::txflow_retained_slot_position_cannot_exceed_risk_budget' (55007936) panicked at src/trader.rs:1067:9:
+retained slot risk must not bypass admission
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test trader::txflow_portfolio_tests::txflow_balanced_portfolio_without_resting_orders_is_admitted ... ok
+
+thread 'trader::txflow_portfolio_tests::txflow_actual_low_leverage_or_isolated_positions_fail_admission' (55007933) panicked at src/trader.rs:1072:9:
+actual low leverage consumes more margin
+
+thread 'trader::txflow_portfolio_tests::txflow_possible_open_orders_cannot_exceed_final_margin' (55007935) panicked at src/trader.rs:1060:9:
+possible resting fills must consume risk budget
+test trader::txflow_portfolio_tests::txflow_retained_slot_position_cannot_exceed_risk_budget ... FAILED
+test trader::txflow_portfolio_tests::txflow_actual_low_leverage_or_isolated_positions_fail_admission ... FAILED
+test trader::txflow_portfolio_tests::txflow_possible_open_orders_cannot_exceed_final_margin ... FAILED
+
+failures:
+
+failures:
+    trader::txflow_portfolio_tests::txflow_actual_low_leverage_or_isolated_positions_fail_admission
+    trader::txflow_portfolio_tests::txflow_possible_open_orders_cannot_exceed_final_margin
+    trader::txflow_portfolio_tests::txflow_retained_slot_position_cannot_exceed_risk_budget
+
+test result: FAILED. 1 passed; 3 failed; 0 ignored; 0 measured; 43 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `--bin stars`

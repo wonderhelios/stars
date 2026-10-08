@@ -1,0 +1,29 @@
+[package]
+name = "stars"
+version = "0.3.0"
+edition = "2021"
+
+[dependencies]
+tokio = { version = "1", features = ["full"] }
+reqwest = { version = "0.12", features = ["json", "rustls-tls"], default-features = false }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+anyhow = "1"
+axum = "0.7"
+tower-http = { version = "0.5", features = ["fs", "cors", "compression-gzip"] }
+rusqlite = { version = "0.32", features = ["bundled"] }
+# Live execution (only used by the `trade` subcommand)
+hyperliquid_rust_sdk = { git = "https://github.com/hyperliquid-dex/hyperliquid-rust-sdk", rev = "aac75585daf12d0a3761126cc7da7a5e035b5853" }
+alloy = { version = "1", default-features = false, features = ["signer-local"] }
+uuid = { version = "1", features = ["v4"] }
+
+# TxFlow wire signing (ordered MessagePack + EIP-712).
+rmp-serde = "1"
+alloy-sol-types = "1"
+futures = "0.3"
+
+[dev-dependencies]
+tokio = { version = "1", features = ["test-util"] }
+tower = { version = "0.5", features = ["util"] }

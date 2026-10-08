@@ -1,0 +1,18 @@
+{
+  "head": "3ff5c7fb3ab4c82f5cf2ba7a9c0317a1871f4baf",
+  "production_sha256": {
+    "src/txflow.rs": "089d4719b85b9a6f7ed59b70b5ea481413da269aaf93269943c67c20aec76646",
+    "src/txflow_agent.rs": "c4f2c1f07bb4baff1995cc2f2ba8d5c93432bb35ff7e8e9e7b3e052da8f08249",
+    "src/live.rs": "1ac82b5dc133f61a958fea4609792052360681d2ee4873814e453bd0d45f5d83",
+    "src/web.rs": "16e4e35235d4eae18ba9553d284fb3c5cbfdae1e1a0f662fabe1a5f992f1c3d4",
+    "src/main.rs": "c15c63e20c2fcb2d1cc46c2aab8fc70d13b623a70f7dd916a30d3a5fb172cae1",
+    "src/trader.rs": "721cf37b51fbb21f53ea7501fcbcb865d9f6bde08ce379fb88c92374e73216fe",
+    "src/exchange.rs": "6e49ced501acea3c62a4bc7e1fe68c8e945e6dcc108f210674b85f51fe597f99"
+  },
+  "network": "local mock only; no production API calls",
+  "tests": {
+    "adversarial_audit": 4,
+    "audit_extra": 3
+  },
+  "production_diff": ""
+}

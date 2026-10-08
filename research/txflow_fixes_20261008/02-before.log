@@ -1,0 +1,44 @@
+   Compiling stars v0.3.0 (/Users/wonder/Code/stars)
+warning: unused variable: `cfg`
+   --> src/trader.rs:864:13
+    |
+864 |         let cfg = TradeConfig {
+    |             ^^^ help: if this is intentional, prefix it with an underscore: `_cfg`
+    |
+    = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default
+
+warning: `stars` (bin "stars" test) generated 1 warning
+    Finished `release` profile [optimized] target(s) in 6.40s
+     Running unittests src/main.rs (target/release/deps/stars-7a9da671a4b16392)
+
+running 5 tests
+test trader::slice_plan_tests::aborted_execution_keeps_receipts_and_marks_unsent_orders ... ok
+
+thread 'txflow::fix_regressions::execution_residual_reverse_position_is_not_success' (54989533) panicked at src/txflow.rs:1205:5:
+residual opposite position is not success
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test txflow::fix_regressions::execution_residual_reverse_position_is_not_success ... FAILED
+
+thread 'txflow::fix_regressions::execution_partial_fill_requires_final_account_verification' (54989532) panicked at src/txflow.rs:1193:5:
+partial IOC is not a completed risk target
+test txflow::fix_regressions::execution_partial_fill_requires_final_account_verification ... FAILED
+
+thread 'txflow::fix_regressions::execution_second_leg_429_requires_final_account_verification' (54989534) panicked at src/txflow.rs:1197:25:
+missing final account verification after first leg filled
+test txflow::fix_regressions::execution_second_leg_429_requires_final_account_verification ... FAILED
+
+thread 'txflow::fix_regressions::execution_timeout_already_filled_is_confirmed_from_account' (54989535) panicked at src/txflow.rs:1201:5:
+account confirms both targets despite transport timeout
+test txflow::fix_regressions::execution_timeout_already_filled_is_confirmed_from_account ... FAILED
+
+failures:
+
+failures:
+    txflow::fix_regressions::execution_partial_fill_requires_final_account_verification
+    txflow::fix_regressions::execution_residual_reverse_position_is_not_success
+    txflow::fix_regressions::execution_second_leg_429_requires_final_account_verification
+    txflow::fix_regressions::execution_timeout_already_filled_is_confirmed_from_account
+
+test result: FAILED. 1 passed; 4 failed; 0 ignored; 0 measured; 33 filtered out; finished in 4.64s
+
+error: test failed, to rerun pass `--bin stars`

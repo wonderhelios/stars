@@ -409,7 +409,7 @@ mod tests {
             live_path: Arc::new(root.join("txflow-live.json")),
             meta: Arc::new(Mutex::new(crate::web::MetaCache::default())),
             refresh: Arc::new(Mutex::new(crate::web::RefreshStatus::default())),
-            http: reqwest::Client::new(),
+            http: reqwest::Client::builder().no_proxy().build().unwrap(),
             exec_gate: Arc::new(Mutex::new(())),
             refresh_gate: Arc::new(Mutex::new(())),
             run_gate: Arc::new(Mutex::new(())),

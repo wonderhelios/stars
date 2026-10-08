@@ -1,0 +1,20 @@
+   Compiling stars v0.3.0 (/Users/wonder/Code/stars)
+warning: unused variable: `cfg`
+   --> src/trader.rs:973:13
+    |
+973 |         let cfg = TradeConfig {
+    |             ^^^ help: if this is intentional, prefix it with an underscore: `_cfg`
+    |
+    = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default
+
+warning: `stars` (bin "stars" test) generated 1 warning
+    Finished `release` profile [optimized] target(s) in 7.06s
+     Running unittests src/main.rs (target/release/deps/stars-7a9da671a4b16392)
+
+running 3 tests
+test txflow::fix_regressions::pnl_ledger_failure_recovery_and_venue_interval_isolation ... ok
+test txflow::fix_regressions::pnl_cache_is_account_scoped ... ok
+test txflow::fix_regressions::pnl_read_errors_are_not_zero_profit ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 55 filtered out; finished in 25.05s
+

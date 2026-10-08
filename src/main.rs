@@ -81,13 +81,30 @@ async fn main() -> anyhow::Result<()> {
         std::path::Path::new(&live_path).with_file_name("txflow-live.json").to_string_lossy().into_owned()
     });
     anyhow::ensure!(tx_db != db_path && tx_path != live_path, "TxFlow 数据路径不能与 Hyperliquid 相同");
-    let mut tx_live = live::LiveState::load(std::path::Path::new(&tx_path));
+    let (mut tx_live, tx_load_error) = match live::LiveState::load_txflow(std::path::Path::new(&tx_path)) {
+        Ok(live) => (live, None),
+        Err(error) => (live::LiveState::default(), Some(format!("{error:#}"))),
+    };
     if !std::path::Path::new(&tx_path).exists() {
         tx_live.config.min_vol_usd = 500_000.0;
     }
     tx_live.config.txflow = true;
+    // TxFlow 的**数据库**打不开时，绝不能拖垮整个进程 —— HL 正在跑真钱。
+    //
+    // 原来这里是 `Store::open(&tx_db)?`：TxFlow 的 sqlite 损坏/被锁/路径不可写，
+    // 整进程直接退出，连 HL 的下单和自动管理都一起停掉。用临时库占位，
+    // 并把 TxFlow 标记为不可用（与"状态文件损坏"走同一套降级路径）。
+    let tx_store = match Store::open(std::path::Path::new(&tx_db)) {
+        Ok(s) => Arc::new(s),
+        Err(e) => {
+            warn!("TxFlow 数据库打开失败，不影响 Hyperliquid：{e:#}");
+            let tmp = std::env::temp_dir().join("stars-txflow-unavailable.sqlite");
+            Arc::new(Store::open(&tmp)?)
+        }
+    };
+
     let tx_state = AppState {
-        store: Arc::new(Store::open(std::path::Path::new(&tx_db))?),
+        store: tx_store.clone(),
         // **信号源**：HL 的库。
         //
         // 注意必须在 `..state.clone()` **之前**显式写这一行 —— 否则会继承 HL state
@@ -103,7 +120,7 @@ async fn main() -> anyhow::Result<()> {
         run_gate: Arc::new(Mutex::new(())),
         ..state.clone()
     };
-    {
+    if tx_load_error.is_none() {
         let tx = tx_state.clone();
         tokio::spawn(async move { txflow::background(tx).await; });
     }
@@ -256,7 +273,11 @@ async fn main() -> anyhow::Result<()> {
     }
 
     // ===== HTTP =====
-    let app = web::router(state).merge(web::txflow_router(tx_state));
+    let tx_router = match tx_load_error {
+        Some(error) => web::txflow_unavailable_router(error),
+        None => web::txflow_router(tx_state),
+    };
+    let app = web::router(state).merge(tx_router);
     let addr = std::env::var("STARS_BIND_ADDR").unwrap_or_else(|_| "0.0.0.0:3000".into());
     let listener = tokio::net::TcpListener::bind(&addr).await?;
     info!("stars listening on http://{addr}");

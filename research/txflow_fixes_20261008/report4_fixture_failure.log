@@ -1,0 +1,33 @@
+   Compiling stars v0.3.0 (/Users/wonder/Code/stars)
+warning: unused variable: `cfg`
+   --> src/trader.rs:973:13
+    |
+973 |         let cfg = TradeConfig {
+    |             ^^^ help: if this is intentional, prefix it with an underscore: `_cfg`
+    |
+    = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default
+
+warning: `stars` (bin "stars" test) generated 1 warning
+    Finished `release` profile [optimized] target(s) in 7.06s
+     Running unittests src/main.rs (target/release/deps/stars-7a9da671a4b16392)
+
+running 3 tests
+test txflow::fix_regressions::pnl_read_errors_are_not_zero_profit ... ok
+test txflow::fix_regressions::pnl_ledger_failure_recovery_and_venue_interval_isolation ... FAILED
+test txflow::fix_regressions::pnl_cache_is_account_scoped ... ok
+
+failures:
+
+---- txflow::fix_regressions::pnl_ledger_failure_recovery_and_venue_interval_isolation stdout ----
+
+thread 'txflow::fix_regressions::pnl_ledger_failure_recovery_and_venue_interval_isolation' (55031585) panicked at src/txflow.rs:1393:6:
+assertion failed: client.pnl_summary(9000).await.unwrap_err().to_string().contains("ledger 格式错误")
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    txflow::fix_regressions::pnl_ledger_failure_recovery_and_venue_interval_isolation
+
+test result: FAILED. 2 passed; 1 failed; 0 ignored; 0 measured; 54 filtered out; finished in 15.06s
+
+error: test failed, to rerun pass `--bin stars`

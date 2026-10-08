@@ -1,0 +1,57 @@
+   Compiling stars v0.3.0 (/Users/wonder/Code/stars)
+warning: unused variable: `cfg`
+   --> src/trader.rs:897:13
+    |
+897 |         let cfg = TradeConfig {
+    |             ^^^ help: if this is intentional, prefix it with an underscore: `_cfg`
+    |
+    = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default
+
+warning: `stars` (bin "stars" test) generated 1 warning
+    Finished `release` profile [optimized] target(s) in 6.89s
+     Running unittests src/main.rs (target/release/deps/stars-7a9da671a4b16392)
+
+running 39 tests
+test live::config_parity_tests::every_live_field_reaches_trade_config ... ok
+test live::config_robustness::empty_object_still_parses ... ok
+test hl::tests::coin_meta_reads_is_delisted ... ok
+test live::config_robustness::missing_fields_do_not_wipe_the_account ... ok
+test hl::tests::coin_meta_reads_sz_decimals ... ok
+test live::tests::take_profit_buys_below_market_for_shorts ... ok
+test live::tests::take_profit_price_is_never_zero_or_negative ... ok
+test live::tests::take_profit_sells_above_market_for_longs ... ok
+test live::tests::take_profit_stays_on_the_correct_side_after_rounding ... ok
+test live::txflow_fix_tests::txflow_fractional_leverage_uses_actual_integer_budget ... ok
+test live::txflow_fix_tests::txflow_concentration_and_net_exposure_are_hard_limits ... ok
+test live::txflow_fix_tests::txflow_nonempty_weights_still_require_factor_universe_and_two_legs ... ok
+test trader::slice_plan_tests::aborted_execution_keeps_receipts_and_marks_unsent_orders ... ok
+test trader::slice_tests::slice_of_is_deterministic_and_spreads_coins ... ok
+test trader::slice_plan_tests::non_slot_positions_are_left_alone ... ok
+test trader::tests::long_and_short_legs_are_balanced ... ok
+test trader::tests::k_never_exceeds_half_the_universe ... ok
+test trader::tests::weights_are_normalised_to_unit_gross ... ok
+test trader::tests::only_closed_bars_are_used ... ok
+test txflow::public_tests::mainnet_public_reads ... ignored, read-only mainnet integration; requires network
+test txflow::fix_regressions::pending_recovery_takes_priority_over_today_success_timestamp ... ok
+test txflow::tests::every_submission_waits_300ms_even_after_failure ... ok
+test txflow::tests::signatures_match_browser_wire_fixtures ... ok
+test txflow::tests::signing_nonce_and_order_key_order_are_binding ... ok
+test txflow::tests::tick_rounding_respects_slippage_and_decimal_normalization ... ok
+test txflow::tests::concurrent_clients_share_submission_spacing ... ok
+test txflow_agent::tests::authorization_rejects_cross_origin ... ok
+test txflow_agent::tests::signature_binds_account_agent_nonce_and_wallet_chain ... ok
+test txflow_agent::tests::server_key_is_private_and_never_in_public_challenge ... ok
+test web::txflow_routes_tests::txflow_page_and_configuration_are_isolated_from_hyperliquid ... ok
+test txflow_agent::tests::approval_receipt_persists_configuration_and_does_not_resubmit ... ok
+test txflow_agent::tests::unknown_or_expired_approval_cannot_be_replayed ... ok
+test txflow::fix_regressions::execution_residual_reverse_position_is_not_success ... ok
+test txflow::fix_regressions::incomplete_metadata_is_rejected_atomically ... ok
+test txflow::fix_regressions::execution_second_leg_429_requires_final_account_verification ... ok
+test txflow::fix_regressions::execution_timeout_already_filled_is_confirmed_from_account ... ok
+test txflow::fix_regressions::partial_books_preserve_successful_prices ... ok
+test txflow::fix_regressions::execution_partial_fill_requires_final_account_verification ... ok
+test txflow::fix_regressions::backfill_preserves_complete_metadata has been running for over 60 seconds
+test txflow::fix_regressions::backfill_preserves_complete_metadata ... ok
+
+test result: ok. 38 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 72.91s
+

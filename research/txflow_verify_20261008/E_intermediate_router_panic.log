@@ -1,0 +1,49 @@
+warning: unused variable: `cfg`
+   --> src/trader.rs:973:13
+    |
+973 |         let cfg = TradeConfig {
+    |             ^^^ help: if this is intentional, prefix it with an underscore: `_cfg`
+    |
+    = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default
+
+warning: variable does not need to be mutable
+    --> src/trader.rs:1126:20
+     |
+1126 |       let (mut w,a,mut m,mut p,mut c)=fixture();c.margin_buffer=1.;
+     |                    ----^
+     |                    |
+     |                    help: remove this `mut`
+     |
+     = note: `#[warn(unused_mut)]` (part of `#[warn(unused)]`) on by default
+
+warning: variable does not need to be mutable
+    --> src/trader.rs:1126:26
+     |
+1126 |       let (mut w,a,mut m,mut p,mut c)=fixture();c.margin_buffer=1.;
+     |                          ----^
+     |                          |
+     |                          help: remove this `mut`
+
+warning: `stars` (bin "stars" test) generated 3 warnings (run `cargo fix --bin "stars" --tests` to apply 2 suggestions)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.23s
+     Running unittests src/main.rs (target/debug/deps/stars-5e124cc3b84b30ce)
+
+running 3 tests
+test live::report5_state_tests::report5_corrupt_state_fails_closed ... 警告: TxFlow 状态文件损坏或不可读取 /var/folders/dm/94d112b17bgfmrlby9bxmd9r0000gn/T/report5-5ba0c62b-c16c-4dc0-9b25-08ccb6a1e0b7/state.json；拒绝启动实盘，请修复状态文件（恢复记录不得丢弃）: key must be a string at line 1 column 2
+ok
+test live::report5_state_tests::report5_required_fields_and_unknown_fields ... 警告: TxFlow 状态文件损坏或不可读取 /var/folders/dm/94d112b17bgfmrlby9bxmd9r0000gn/T/report5-05a76314-c5b0-462c-9ffc-544bd96ee469/state.json；拒绝启动实盘，请修复状态文件（恢复记录不得丢弃）: 缺失必填 config.account
+ok
+test web::report5_unavailable_tests::report5_corrupt_txflow_routes_reject_every_operation ... 
+thread 'web::report5_unavailable_tests::report5_corrupt_txflow_routes_reject_every_operation' (55071767) panicked at src/web.rs:127:10:
+Invalid route "/txflow/{*path}": catch-all parameters are only allowed at the end of a route
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+FAILED
+
+failures:
+
+failures:
+    web::report5_unavailable_tests::report5_corrupt_txflow_routes_reject_every_operation
+
+test result: FAILED. 2 passed; 1 failed; 0 ignored; 0 measured; 69 filtered out; finished in 0.01s
+
+error: test failed, to rerun pass `--bin stars`

@@ -92,6 +92,8 @@ pub struct Plan {
     pub notes: Vec<String>,
     /// 下单前已持有仓位的币（这些币无法切换保证金模式）
     pub held: Vec<String>,
+    /// Admitted TxFlow final book, including positions retained by slicing/bands.
+    pub txflow_targets: HashMap<String, (f64, f64, i32)>,
 }
 
 /// 共享的因子面板：把各币的收盘价与成交额对齐到统一时间轴。
@@ -565,6 +567,89 @@ pub fn build_plan(
     plan
 }
 
+/// TxFlow planning entry point; extracted from live::run to test portfolio admission offline.
+pub fn build_txflow_plan(
+    weights: &[(String,f64)], acct: &Acct, open_orders: &[crate::exchange::OpenOrder],
+    markets: &HashMap<String,MarketInfo>, mids: &HashMap<String,f64>, cfg: &TradeConfig,
+) -> Result<Plan> {
+    anyhow::ensure!(acct.equity.is_finite() && acct.equity>0. && cfg.leverage.is_finite()
+        && cfg.leverage>=1. && cfg.leverage.fract()==0. && cfg.margin_buffer.is_finite()
+        && cfg.margin_buffer>0. && cfg.margin_buffer<=1., "TxFlow 风险预算非法");
+    // Reject incomplete inputs instead of letting build_plan silently drop names.
+    let mut names = BTreeSet::new();
+    for (coin, weight) in weights {
+        anyhow::ensure!(weight.is_finite() && names.insert(coin), "TxFlow 权重非法或币名重复");
+        let mid = mids.get(coin).context("TxFlow 目标缺价格")?;
+        anyhow::ensure!(mid.is_finite() && *mid > 0. && markets.contains_key(coin),
+            "TxFlow 目标价格/市场元数据非法");
+    }
+    for position in acct.positions.values() {
+        anyhow::ensure!(position.size.is_finite(), "TxFlow 实际仓位数量非法");
+        if position.size.abs() > 1e-12 {
+            anyhow::ensure!(position.is_cross && position.leverage > 0,
+                "TxFlow 已有逐仓或杠杆未知，必须先显式重建");
+        }
+    }
+    let mut plan=build_plan(weights,acct,markets,mids,cfg,None);
+    let mut final_sizes:HashMap<String,f64>=acct.positions.iter().map(|(c,p)|(c.clone(),p.size)).collect();
+    for o in &plan.orders {final_sizes.insert(o.coin.clone(),o.target);}
+    for (coin,size) in &final_sizes {
+        if size.abs() > 1e-12 {
+            let mid=*mids.get(coin).context("TxFlow 保留目标缺价格")?;
+            let decimals=markets.get(coin).context("TxFlow 保留目标缺市场")?.sz_decimals;
+            plan.txflow_targets.insert(coin.clone(),(*size,mid,decimals));
+        }
+    }
+    let mut ranges:HashMap<String,(f64,f64)>=final_sizes.iter().map(|(c,s)|(c.clone(),(*s,*s))).collect();
+    // Resting orders may fill in any order, or not fill. Sum non-reduce
+    // orders first; reduce-only fills may move either endpoint toward zero,
+    // but must never be credited as guaranteed margin relief.
+    let mut risk_prices = mids.clone();
+    let mut reductions: HashMap<String, (f64, f64)> = HashMap::new();
+    for o in open_orders {
+        anyhow::ensure!(o.sz.is_finite() && o.sz>=0. && o.px.is_finite() && o.px>0., "TxFlow 挂单字段非法");
+        anyhow::ensure!(o.side == "B" || o.side == "A", "TxFlow 挂单方向未知，拒绝计划");
+        let mid = risk_prices.get_mut(&o.coin).context("TxFlow 挂单缺价格")?;
+        anyhow::ensure!(mid.is_finite() && *mid > 0., "TxFlow 挂单风险价格非法");
+        *mid = mid.max(o.px);
+        let range = ranges.entry(o.coin.clone()).or_insert((0., 0.));
+        if o.reduce_only {
+            let reduction = reductions.entry(o.coin.clone()).or_default();
+            if o.side == "B" { reduction.0 += o.sz; } else { reduction.1 += o.sz; }
+        } else if o.side == "B" { range.1 += o.sz; } else { range.0 -= o.sz; }
+    }
+    for (coin, (buys, sells)) in reductions {
+        let (low, high) = ranges.get_mut(&coin).expect("resting order range");
+        if *high < 0. { *high = (*high + buys).min(0.); }
+        if *low > 0. { *low = (*low - sells).max(0.); }
+    }
+    let mut margin=0.;let mut long=0.;let mut short=0.;let mut net_low=0.;let mut net_high=0.;
+    let mut long_names=0;let mut short_names=0;
+    for (coin,(low,high)) in ranges {
+        let mid=*risk_prices.get(&coin).with_context(||format!("TxFlow 缺价风险 {coin}"))?;
+        anyhow::ensure!(mid.is_finite() && mid>0. && low.is_finite() && high.is_finite(),"TxFlow 风险价格/数量非法");
+        let market=markets.get(&coin).context("TxFlow 风险市场元数据缺失")?;
+        anyhow::ensure!(cfg.leverage<=market.max_leverage as f64,"TxFlow 市场杠杆上限不足");
+        let worst=low.abs().max(high.abs())*mid;
+        if worst<=1e-8 {continue;}
+        let leverage=if let Some(p)=acct.positions.get(&coin).filter(|p|p.size.abs()>1e-12) {
+            anyhow::ensure!(p.is_cross && p.leverage>0,"TxFlow 保留仓为逐仓或杠杆未知，必须先显式重建");
+            (p.leverage as f64).min(cfg.leverage)
+        } else {cfg.leverage};
+        margin+=worst/leverage;
+        anyhow::ensure!(worst<=acct.equity*0.5+1e-8,"TxFlow 最终单币名义超净值 50%");
+        long+=high.max(0.)*mid;short+=(-low).max(0.)*mid;
+        net_low+=low*mid;net_high+=high*mid;
+        let target=final_sizes.get(&coin).copied().unwrap_or(0.);
+        if target>1e-12 {long_names+=1;} else if target< -1e-12 {short_names+=1;}
+    }
+    anyhow::ensure!(long_names>=3 && short_names>=3,"TxFlow 最终组合每腿不足 3 个名字");
+    anyhow::ensure!(long<=acct.equity*1.5+1e-8 && short<=acct.equity*1.5+1e-8
+        && net_low.abs().max(net_high.abs())<=acct.equity*0.1+1e-8,"TxFlow 最终两腿/可能净敞口超限");
+    anyhow::ensure!(margin<=acct.equity*cfg.margin_buffer+1e-8,"TxFlow 保留仓＋可能成交挂单＋计划保证金超预算");
+    Ok(plan)
+}
+
 /// 执行结果：前置日志（设杠杆等）与**逐条对应 plan.orders 的结果**分开返回，
 /// 避免用下标对应时错位（曾经导致失败信息挂到别的币上）。
 pub struct Outcome {
@@ -589,6 +674,52 @@ impl Outcome {
 /// 顺序很重要：先平仓 → 重新读账户 → 给已经空仓的币设杠杆（Hyperliquid
 /// 不允许持仓时切换保证金模式）→ 再开仓。这样反手的币也能切成全仓。
 pub async fn execute(
+    exec: &Exec, plan: &Plan, cfg: &TradeConfig,
+    markets: &HashMap<String, MarketInfo>, live: bool,
+) -> Result<Outcome> {
+    let mut outcome = execute_inner(exec, plan, cfg, markets, live).await?;
+    if !live || !exec.is_txflow() { return Ok(outcome); }
+    // A receipt is not a position. Always reconcile, including unknown write results.
+    match exec.account().await {
+        Ok(account) => {
+            let mut targets = plan.txflow_targets.clone();
+            for o in &plan.orders { targets.insert(o.coin.clone(), (o.target, o.mid, o.sz_decimals)); }
+            let reached = targets.iter().all(|(coin,(target,mid,decimals))| {
+                let actual=account.positions.get(coin).map(|p|p.size).unwrap_or(0.);
+                let tolerance=(10f64.powi(-decimals)).max(1e-10);
+                (actual-target).abs() <= tolerance && (actual*target >= 0. || actual.abs() <= tolerance)
+                    && (actual-target).abs()*mid <= cfg.min_order_usd
+            });
+            // Relative upper bounds: 1% allows small fill/rounding/valuation drift,
+            // without granting an absolute allowance to zero/unplanned targets.
+            const EXPOSURE_TOLERANCE: f64 = 0.01;
+            let target_gross: f64 = targets.values().map(|(size,mid,_)| size.abs()*mid).sum();
+            let actual_gross: f64 = account.positions.values().map(|p| p.position_value.abs()).sum();
+            let exposure_safe = target_gross.is_finite() && actual_gross.is_finite()
+                && actual_gross <= target_gross*(1.+EXPOSURE_TOLERANCE)+1e-8
+                && account.positions.iter().all(|(coin,p)| {
+                    let (target,mid,_) = targets.get(coin).copied().unwrap_or((0.,0.,0));
+                    p.size.is_finite() && p.position_value.is_finite()
+                        && p.size.abs() <= target.abs()*(1.+EXPOSURE_TOLERANCE)+1e-10
+                        && p.position_value.abs() <= target.abs()*mid*(1.+EXPOSURE_TOLERANCE)+1e-8
+                });
+            let net:f64=account.positions.values().map(|p|p.position_value*p.size.signum()).sum();
+            let safe=account.equity.is_finite() && account.equity>0. && net.is_finite()
+                && net.abs() <= account.equity*0.1 + 1e-8;
+            outcome.aborted = !(reached && safe && exposure_safe);
+            outcome.prelim.push(if outcome.aborted {
+                "TxFlow 最终账户未达到逐币目标、逐币敞口、总敞口或净敞口门槛，必须受控恢复".into()
+            } else { "TxFlow 最终账户已核验逐币目标、逐币敞口、总敞口及净敞口".into() });
+        }
+        Err(e) => {
+            outcome.aborted=true;
+            outcome.prelim.push(format!("TxFlow 最终账户结果未知，必须受控恢复: {e}"));
+        }
+    }
+    Ok(outcome)
+}
+
+async fn execute_inner(
     exec: &Exec,
     plan: &Plan,
     cfg: &TradeConfig,
@@ -1001,4 +1132,67 @@ mod slice_plan_tests {
         assert_eq!(out.orders[2], "未执行（前序操作失败）");
     }
 
+}
+
+#[cfg(test)]
+mod txflow_portfolio_tests {
+    use super::*;
+    fn fixture() -> (Vec<(String,f64)>,Acct,HashMap<String,MarketInfo>,HashMap<String,f64>,TradeConfig) {
+        let weights=(0..6).map(|i|(format!("C{i}"),if i<3 {1./6.}else{-1./6.})).collect();
+        let markets=(0..6).map(|i|(format!("C{i}"),MarketInfo{sz_decimals:2,max_leverage:10})).collect();
+        let mids=(0..6).map(|i|(format!("C{i}"),100.)).collect();
+        (weights,Acct{equity:1000.,..Default::default()},markets,mids,TradeConfig{rebalance_slices:1,..Default::default()})
+    }
+    #[test] fn txflow_possible_open_orders_cannot_exceed_final_margin() {
+        let (w,a,m,p,c)=fixture();
+        let orders=vec![crate::exchange::OpenOrder{oid:1,coin:"C0".into(),side:"B".into(),px:100.,sz:30.,reduce_only:false,cloid:None}];
+        assert!(build_txflow_plan(&w,&a,&orders,&m,&p,&c).is_err(),"possible resting fills must consume risk budget");
+    }
+    #[test] fn txflow_retained_slot_position_cannot_exceed_risk_budget() {
+        let (w,mut a,m,p,mut c)=fixture();c.rebalance_slices=3;
+        let day=(crate::live::now_ms_pub()/86_400_000) as u32;
+        let retained=w.iter().find(|(coin,_)|(day+slice_of(coin,3))%3!=0).unwrap().0.clone();
+        a.positions.insert(retained,crate::exchange::Pos{size:100.,position_value:10000.,leverage:3,is_cross:true,..Default::default()});
+        assert!(build_txflow_plan(&w,&a,&[],&m,&p,&c).is_err(),"retained slot risk must not bypass admission");
+    }
+    #[test] fn txflow_actual_low_leverage_or_isolated_positions_fail_admission() {
+        let (w,mut a,m,p,c)=fixture();
+        a.positions.insert("C0".into(),crate::exchange::Pos{size:4.5,position_value:450.,leverage:1,is_cross:true,..Default::default()});
+        assert!(build_txflow_plan(&w,&a,&[],&m,&p,&c).is_err(),"actual low leverage consumes more margin");
+        a.positions.get_mut("C0").unwrap().leverage=3;
+        a.positions.get_mut("C0").unwrap().is_cross=false;
+        assert!(build_txflow_plan(&w,&a,&[],&m,&p,&c).is_err(),"isolated positions require explicit rebuild");
+    }
+    #[test]
+    fn txflow_margin_gate_rejects_small_balanced_resting_fills() {
+        let (w, a, m, p, c) = fixture();
+        let orders = vec![
+            crate::exchange::OpenOrder { oid: 1, coin: "C0".into(), side: "B".into(),
+                px: 100., sz: 0.1, reduce_only: false, cloid: None },
+            crate::exchange::OpenOrder { oid: 2, coin: "C3".into(), side: "A".into(),
+                px: 100., sz: 0.1, reduce_only: false, cloid: None },
+        ];
+        let error = build_txflow_plan(&w, &a, &orders, &m, &p, &c).unwrap_err();
+        assert!(error.to_string().contains("保证金超预算"), "{error}");
+    }
+    #[test]
+    fn txflow_reduce_only_fill_can_break_neutrality() {
+        let (w, a, m, p, c) = fixture();
+        let orders = vec![crate::exchange::OpenOrder { oid: 1, coin: "C3".into(),
+            side: "B".into(), px: 100., sz: 4.5, reduce_only: true, cloid: None }];
+        let error = build_txflow_plan(&w, &a, &orders, &m, &p, &c).unwrap_err();
+        assert!(error.to_string().contains("净敞口超限"), "{error}");
+    }
+    #[test]
+    fn txflow_invalid_weight_and_missing_target_price_fail_closed() {
+        let (mut w, a, m, mut p, c) = fixture();
+        w[0].1 = f64::NAN;
+        assert!(build_txflow_plan(&w, &a, &[], &m, &p, &c).is_err());
+        w[0].1 = 1. / 6.;
+        p.remove("C0");
+        assert!(build_txflow_plan(&w, &a, &[], &m, &p, &c).is_err());
+    }
+    #[test] fn txflow_balanced_portfolio_without_resting_orders_is_admitted() {
+        let (w,a,m,p,c)=fixture();assert!(build_txflow_plan(&w,&a,&[],&m,&p,&c).is_ok());
+    }
 }

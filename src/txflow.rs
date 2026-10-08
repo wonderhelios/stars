@@ -19,7 +19,14 @@ use std::{
 };
 use tokio::{sync::Mutex, time::Instant};
 
+#[cfg(not(test))]
 const BASE: &str = "https://api.txflow.com";
+#[cfg(test)]
+static MOCK_PORT: std::sync::atomic::AtomicU16 = std::sync::atomic::AtomicU16::new(0);
+fn base_url() -> String {
+    #[cfg(not(test))] { BASE.into() }
+    #[cfg(test)] { format!("http://127.0.0.1:{}", MOCK_PORT.load(std::sync::atomic::Ordering::SeqCst)) }
+}
 const DAY: i64 = 86_400_000;
 pub const ORDER_INTERVAL: Duration = Duration::from_millis(300);
 
@@ -81,6 +88,7 @@ pub struct Client {
     signer: Option<PrivateKeySigner>,
     pub markets: HashMap<String, Market>,
     owned_path: PathBuf,
+    _account_lock: Option<std::fs::File>,
 }
 
 /// 进程级限速闸门与业绩缓存。
@@ -89,17 +97,61 @@ pub struct Client {
 /// （`Exec::reader_for` → `Client::new`），所以每个实例都带着一个全新的空闸门、
 /// 空缓存 —— 限速等于没做，缓存永远不命中。实测总流量因此到 1.5~2 次/秒且
 /// 不可控（回填 + 页面轮询各算各的）。放到进程级之后总速率硬顶在 MIN_GAP。
-static GATE: std::sync::OnceLock<tokio::sync::Mutex<Option<std::time::Instant>>> =
-    std::sync::OnceLock::new();
-static PNL_CACHE: std::sync::OnceLock<
-    tokio::sync::Mutex<Option<(std::time::Instant, i64, PnlSummary)>>,
-> = std::sync::OnceLock::new();
-
-fn rate_gate() -> &'static tokio::sync::Mutex<Option<std::time::Instant>> {
-    GATE.get_or_init(|| tokio::sync::Mutex::new(None))
+struct RequestScheduler {
+    timing: Mutex<(Option<Instant>, Option<Instant>)>,
+    execution_waiters: std::sync::atomic::AtomicUsize,
+}
+fn scheduler() -> &'static RequestScheduler {
+    static SCHEDULER: OnceLock<RequestScheduler> = OnceLock::new();
+    SCHEDULER.get_or_init(|| RequestScheduler {
+        timing: Mutex::new((None,None)), execution_waiters: std::sync::atomic::AtomicUsize::new(0),
+    })
+}
+struct PriorityTicket(Option<&'static RequestScheduler>);
+impl Drop for PriorityTicket {
+    fn drop(&mut self) {
+        if let Some(s)=self.0 { s.execution_waiters.fetch_sub(1,std::sync::atomic::Ordering::SeqCst); }
+    }
+}
+async fn schedule_request(execution: bool) {
+    let s=scheduler();
+    let _ticket=if execution {
+        s.execution_waiters.fetch_add(1,std::sync::atomic::Ordering::SeqCst);
+        PriorityTicket(Some(s))
+    } else { PriorityTicket(None) };
+    loop {
+        let mut timing=s.timing.lock().await;
+        if !execution && s.execution_waiters.load(std::sync::atomic::Ordering::SeqCst)>0 {
+            drop(timing); tokio::time::sleep(Duration::from_millis(1)).await; continue;
+        }
+        let now=Instant::now();
+        let due=timing.0.into_iter().chain(timing.1).max().unwrap_or(now);
+        if due>now { drop(timing);tokio::time::sleep_until(due).await;continue; }
+        timing.0=Some(now+MIN_GAP);
+        return;
+    }
+}
+async fn observe_rate_limit(response: &reqwest::Response) {
+    if response.status()!=reqwest::StatusCode::TOO_MANY_REQUESTS {return;}
+    let seconds=response.headers().get(reqwest::header::RETRY_AFTER)
+        .and_then(|v|v.to_str().ok()).and_then(|v|v.parse::<u64>().ok()).unwrap_or(3).min(86400);
+    let mut timing=scheduler().timing.lock().await;
+    let until=Instant::now()+Duration::from_secs(seconds);
+    timing.1=Some(timing.1.map(|old|old.max(until)).unwrap_or(until));
 }
 
-fn pnl_cache() -> &'static tokio::sync::Mutex<Option<(std::time::Instant, i64, PnlSummary)>> {
+#[derive(Clone, Debug, PartialEq, Eq)]
+struct PnlCacheKey {
+    // The endpoint identifies the venue/network. This cache belongs only to TxFlow.
+    venue: String,
+    account: String,
+    // The interval is [since_ms, latest]; its rolling end is bounded by the TTL.
+    since_ms: i64,
+}
+type PnlCache = Option<(std::time::Instant, PnlCacheKey, PnlSummary)>;
+static PNL_CACHE: OnceLock<Mutex<PnlCache>> = OnceLock::new();
+
+fn pnl_cache() -> &'static Mutex<PnlCache> {
     PNL_CACHE.get_or_init(|| tokio::sync::Mutex::new(None))
 }
 
@@ -133,8 +185,10 @@ pub async fn approve_agent(http: &reqwest::Client, body: &Value, endpoint: &str)
     guard.next().await;
     guard.completed = Some(Instant::now());
     let result = async {
+        schedule_request(true).await;
         let response = http.post(endpoint).json(body)
             .timeout(Duration::from_secs(25)).send().await?;
+        observe_rate_limit(&response).await;
         let response = data(response.error_for_status()?.json::<Value>().await?)?;
         anyhow::ensure!(response["status"] == "ok", "TxFlow 拒绝授权: {response}");
         Ok(())
@@ -165,14 +219,18 @@ impl Client {
         } else {
             None
         };
-        let mut client = Self {
-            http: reqwest::Client::builder()
+        let http = reqwest::Client::builder()
                 .user_agent("Mozilla/5.0 stars/0.3")
-                .timeout(Duration::from_secs(25))
-                .build()?,
+                .timeout(Duration::from_secs(25));
+        // Tests use loopback mocks; a system proxy must not route them externally.
+        #[cfg(test)]
+        let http = http.no_proxy();
+        let mut client = Self {
+            http: http.build()?,
             account,
             signer,
             markets: HashMap::new(),
+            _account_lock: None,
             owned_path: std::env::var("STARS_TXFLOW_ORDERS")
                 .map(PathBuf::from)
                 .unwrap_or_else(|_| {
@@ -182,33 +240,27 @@ impl Client {
                     PathBuf::from(live_path).with_file_name("txflow-orders.json")
                 }),
         };
+        if client.signer.is_some() {
+            let dir=Path::new("/var/tmp/stars-txflow-account-locks");
+            std::fs::create_dir_all(dir).context("无法创建 TxFlow 账户锁目录")?;
+            let lock=std::fs::OpenOptions::new().read(true).write(true).create(true)
+                .open(dir.join(format!("{}.lock",client.account.to_ascii_lowercase())))
+                .context("无法打开 TxFlow 账户锁")?;
+            lock.try_lock().map_err(|e|anyhow::anyhow!("TxFlow 账户锁被其他实例占用或不可用: {e}"))?;
+            client._account_lock=Some(lock);
+        }
         client.markets = client.load_markets().await?;
         Ok(client)
     }
 
     pub async fn info(&self, payload: Value) -> Result<Value> {
-        // Reads can be retried; signed writes are deliberately never auto-retried.
-        //
-        // 429 必须用**秒级**退避。之前所有错误一律 0.5s/1s 重试，遇到限流时
-        // 三次都在限流窗口内打完，调仓直接失败（实盘报过
-        // "429 Too Many Requests for https://api.txflow.com/info"）。
-        // 这里把 429 单独拎出来：退避更长，并且尊重 Retry-After。
-        // 全局限速：所有 TxFlow 请求都从这里出去，先排队保证最小间隔。
-        {
-            let mut g = rate_gate().lock().await;
-            if let Some(t) = *g {
-                let elapsed = t.elapsed();
-                if elapsed < MIN_GAP {
-                    tokio::time::sleep(MIN_GAP - elapsed).await;
-                }
-            }
-            *g = Some(std::time::Instant::now());
-        }
         let mut last: Option<anyhow::Error> = None;
+        let mut retried_429=false;
         for attempt in 0..3u32 {
+            schedule_request(self.signer.is_some()).await;
             let resp = match self
                 .http
-                .post(format!("{BASE}/info"))
+                .post(format!("{}/info", base_url()))
                 .json(&payload)
                 .send()
                 .await
@@ -220,20 +272,11 @@ impl Client {
                     continue;
                 }
             };
-            let status = resp.status();
-            if status == reqwest::StatusCode::TOO_MANY_REQUESTS && attempt < 1 {
-                // Retry-After 优先（秒）
-                let hint = resp
-                    .headers()
-                    .get(reqwest::header::RETRY_AFTER)
-                    .and_then(|v| v.to_str().ok())
-                    .and_then(|v| v.trim().parse::<u64>().ok());
-                let wait_ms = hint
-                    .map(|s| (s * 1000).min(30_000))
-                    .unwrap_or(3_000);
-                tracing::warn!("TxFlow 限流(429)，等待 {wait_ms}ms 后重试（第 {} 次）", attempt + 1);
-                last = Some(anyhow::anyhow!("TxFlow 429 Too Many Requests"));
-                tokio::time::sleep(Duration::from_millis(wait_ms)).await;
+            if resp.status()==reqwest::StatusCode::TOO_MANY_REQUESTS {
+                observe_rate_limit(&resp).await;
+                if retried_429 { bail!("TxFlow 429 Too Many Requests（已重试一次）"); }
+                retried_429=true;
+                last=Some(anyhow::anyhow!("TxFlow 429 Too Many Requests"));
                 continue;
             }
             let result = async {
@@ -302,18 +345,19 @@ impl Client {
         Ok((coin, (bid + ask) / 2.))
     }
     pub async fn prices(&self, coins: &[String]) -> Result<HashMap<String, f64>> {
-        use futures::{stream, StreamExt, TryStreamExt};
-        let requests: Vec<_> = coins
-            .iter()
-            .map(|coin| self.book_price(coin.clone()))
-            .collect();
-        // 并发 4 对 229 个市场来说太猛，容易触发限流。降到 2。
-        // （不要在中间插 map(|fut| async move ...)：那会让请求 future 的生命周期
-        //   推断失败，编译报 "implementation of FnOnce is not general enough"。）
-        stream::iter(requests)
-            .buffer_unordered(2)
-            .try_collect()
-            .await
+        let results = self.price_results(coins).await;
+        Ok(results.into_iter().filter_map(|(coin, result)| match result {
+            Ok(mid) => Some((coin, mid)),
+            Err(e) => { tracing::warn!("TxFlow {coin} 无盘口: {e}"); None }
+        }).collect())
+    }
+
+    pub async fn price_results(&self, coins: &[String]) -> Vec<(String, Result<f64>)> {
+        use futures::{stream, StreamExt};
+        stream::iter(coins.iter().cloned().map(|coin| async move {
+            let result = self.book_price(coin.clone()).await.map(|(_, mid)| mid);
+            (coin, result)
+        })).buffer_unordered(2).collect().await
     }
 
     /// 存取款流水。用于算「净入金」—— 没有它就没法把入金和盈亏分开。
@@ -322,7 +366,7 @@ impl Client {
         let v = self
             .info(json!({"type":"userNonFundingLedgerUpdates","user":self.account}))
             .await?;
-        Ok(v.as_array().cloned().unwrap_or_default())
+        v.as_array().cloned().context("TxFlow ledger 格式错误")
     }
 
     /// 真实业绩汇总：已实现盈亏、手续费、成交量、净入金。
@@ -336,16 +380,21 @@ impl Client {
         //
         // 60 秒缓存：页面轮询很密，每次都拉两次接口会触发限流。
         const TTL: std::time::Duration = std::time::Duration::from_secs(60);
+        let key = PnlCacheKey {
+            venue: base_url(),
+            account: self.account.clone(),
+            since_ms,
+        };
         {
             let c = pnl_cache().lock().await;
-            if let Some((t, since, v)) = c.as_ref() {
-                if t.elapsed() < TTL && *since == since_ms {
+            if let Some((t, cached_key, v)) = c.as_ref() {
+                if t.elapsed() < TTL && cached_key == &key {
                     return Ok(v.clone());
                 }
             }
         }
-        let raw = self.user_fills(1000).await.unwrap_or(Value::Null);
-        let fills: Vec<Value> = raw.as_array().cloned().unwrap_or_default();
+        let raw = self.user_fills(1000).await?;
+        let fills: Vec<Value> = raw.as_array().context("TxFlow fills 格式错误")?.clone();
         let mut realized = 0.0;
         let mut fees = 0.0;
         let mut volume = 0.0;
@@ -361,7 +410,7 @@ impl Client {
             volume += number(&f["px"]).unwrap_or(0.0).abs() * number(&f["sz"]).unwrap_or(0.0).abs();
         }
         // 流水接口可能只返回最近若干条；入金合计因此是**下界**，页面要标注。
-        let led = self.ledger().await.unwrap_or_default();
+        let led = self.ledger().await?;
         let mut net_deposit = 0.0;
         for l in &led {
             let d = &l["delta"];
@@ -380,7 +429,8 @@ impl Client {
             net_deposit,
             ledger_rows: led.len(),
         };
-        *pnl_cache().lock().await = Some((std::time::Instant::now(), since_ms, out.clone()));
+        // Only a complete successful read may replace the cached summary.
+        *pnl_cache().lock().await = Some((std::time::Instant::now(), key, out.clone()));
         Ok(out)
     }
 
@@ -468,13 +518,18 @@ impl Client {
             "signature":{"r":format!("{:#066x}",sig.r()),"s":format!("{:#066x}",sig.s()),"v":27 + u8::from(sig.v())}});
         // Hold the shared gate through the response, including transport failures.
         guard.completed = Some(Instant::now());
+        schedule_request(true).await;
         let result = self
             .http
-            .post(format!("{BASE}/exchange"))
+            .post(format!("{}/exchange", base_url()))
             .json(&body)
             .send()
             .await;
-        let result = async { data(result?.error_for_status()?.json::<Value>().await?) }.await;
+        let result = async {
+            let response=result?;
+            observe_rate_limit(&response).await;
+            data(response.error_for_status()?.json::<Value>().await?)
+        }.await;
         guard.completed = Some(Instant::now());
         let response =
             result.context("TxFlow 发单结果未知；请核对账户后再操作，系统不会自动重发")?;
@@ -762,20 +817,26 @@ pub async fn refresh(state: &crate::web::AppState) -> Result<()> {
 /// 调仓路径上用它，不要用整轮 refresh —— 后者要遍历几十个市场拉日线，
 /// 在 1 秒限速下是分钟级，会把调仓拖到超时。元数据只有一个请求。
 pub async fn refresh_meta_only(state: &crate::web::AppState) -> Result<()> {
+    let _refresh = state.refresh_gate.lock().await;
     let client = Client::new("", None).await?;
-    let mut meta = state.meta.lock().await;
-    let mut markets: Vec<Market> = client.markets.values().cloned().collect();
+    publish_metadata(state, &client).await
+}
+
+async fn publish_metadata(state: &crate::web::AppState, client: &Client) -> Result<()> {
+    let mut markets: Vec<_> = client.markets.values().cloned().collect();
     markets.sort_by(|a, b| a.name.cmp(&b.name));
-    // 与 refresh_inner 用同一个结构：MetaCache.universe 存的是 hl::CoinMeta
-    let universe: Vec<crate::hl::CoinMeta> = markets
-        .iter()
-        .map(|m| crate::hl::CoinMeta {
-            name: m.name.clone(),
-            sz_decimals: m.decimals,
-            max_leverage: m.max_leverage,
-            is_delisted: false,
-        })
-        .collect();
+    let universe: Vec<_> = markets.iter().map(|m| crate::hl::CoinMeta {
+        name: m.name.clone(), sz_decimals: m.decimals,
+        max_leverage: m.max_leverage, is_delisted: false,
+    }).collect();
+    let mut meta = state.meta.lock().await;
+    // A shrinking listing requires explicit review: never accept a silent partial response.
+    anyhow::ensure!(universe.len() >= 20 && universe.len() >= meta.universe.len(),
+        "TxFlow 元数据不完整：{} 个市场，之前 {} 个；拒绝交易", universe.len(), meta.universe.len());
+    anyhow::ensure!(markets.iter().all(|m| !m.name.is_empty() && m.max_leverage > 0
+        && (-8..=8).contains(&m.decimals)), "TxFlow 元数据字段非法");
+    let mut indices = std::collections::HashSet::new();
+    anyhow::ensure!(markets.iter().all(|m| indices.insert(m.index)), "TxFlow 重复市场索引");
     meta.liquid = universe.iter().map(|m| m.name.clone()).collect();
     meta.universe = universe;
     meta.refreshed_at = crate::live::now_ms_pub();
@@ -784,8 +845,16 @@ pub async fn refresh_meta_only(state: &crate::web::AppState) -> Result<()> {
     Ok(())
 }
 
+fn rotation_start(store: &crate::store::Store, total: usize, _now: i64) -> Result<usize> {
+    store.txflow_cursor(total,0)
+}
+fn advance_rotation(store: &crate::store::Store, total: usize, processed: usize) -> Result<()> {
+    store.txflow_cursor(total,processed)?;Ok(())
+}
+
 async fn refresh_inner(state: &crate::web::AppState) -> Result<()> {
     let client = Client::new("", None).await?;
+    publish_metadata(state, &client).await?;
     let cfg = state.live.lock().await.config.clone();
     let now = crate::live::now_ms_pub();
     let yesterday = now / DAY * DAY - DAY;
@@ -810,12 +879,7 @@ async fn refresh_inner(state: &crate::web::AppState) -> Result<()> {
     // （之前取 140，只按 1 秒算，实际 280 秒，必然超时。）
     const PER_CYCLE: usize = 60;
     let total = markets.len();
-    let start = if total <= PER_CYCLE {
-        0
-    } else {
-        // 用时间做轮换游标，无需额外持久化状态
-        ((now / 1000) as usize) % total
-    };
+    let start = rotation_start(&state.store,total,now)?;
     let picked: Vec<_> = if total <= PER_CYCLE {
         markets.clone()
     } else {
@@ -851,7 +915,9 @@ async fn refresh_inner(state: &crate::web::AppState) -> Result<()> {
         // 60 秒判定"数据过期"再重来一次，页面看起来**永远停在"回填数据"**。
         // （和调仓里"一个市场没盘口就整轮放弃"是同一个毛病。）
         let body = json!({"type":"candleSnapshot","req":{"coin":m.index.to_string(),"interval":"1d","startTime":yesterday - (cfg.lookback.max(30) as i64 + 5)*DAY,"endTime":now}});
-        let raw = match client.info(body).await {
+        let result=client.info(body).await;
+        advance_rotation(&state.store,total,1)?;
+        let raw = match result {
             Ok(v) => v,
             Err(e) => {
                 failed += 1;
@@ -893,11 +959,7 @@ async fn refresh_inner(state: &crate::web::AppState) -> Result<()> {
         tokio::time::sleep(Duration::from_millis(40)).await;
     }
     let mut meta = state.meta.lock().await;
-    meta.liquid = universe.iter().map(|m| m.name.clone()).collect();
-    meta.universe = universe;
-    // 即使部分币失败也标记本轮已刷新：否则 background 会每 60 秒重来一次，
-    // 变成持续的"回填中"。失败数记在日志里，下一轮（30 分钟后）自然补上。
-    meta.refreshed_at = now;
+    meta.candle_available = universe.iter().map(|m| m.name.clone()).collect();
     if failed > 0 {
         tracing::warn!("TxFlow 回填完成，{failed}/{} 个市场失败（已跳过）", markets.len());
     }
@@ -1008,7 +1070,10 @@ pub async fn background(state: crate::web::AppState) {
         let now = crate::live::now_ms_pub();
         let due = auto_due(&*state.live.lock().await, now);
         let stale = now - state.meta.lock().await.refreshed_at > 30 * 60 * 1000;
-        if due || stale {
+        let recovering = state.live.lock().await.pending_recovery.is_some();
+        if due && recovering {
+            if let Err(e)=run_auto(&state).await { tracing::warn!("TxFlow 优先恢复失败: {e}"); }
+        } else if due || stale {
             // Read-only backfill must not block saving settings or creating an Agent.
             match refresh(&state).await {
                 Ok(()) if due => {
@@ -1031,8 +1096,9 @@ pub async fn background(state: crate::web::AppState) {
 }
 
 fn auto_due(st: &crate::live::LiveState, now: i64) -> bool {
-    st.config.armed && st.config.auto_run && now % DAY >= 5 * 60 * 1000
-        && st.last_run_at.map(|t| t / DAY < now / DAY).unwrap_or(true)
+    st.config.armed && (st.pending_recovery.is_some() || (st.config.auto_run
+        && now % DAY >= 5 * 60 * 1000
+        && st.last_run_at.map(|t| t / DAY < now / DAY).unwrap_or(true)))
 }
 
 async fn run_auto(state: &crate::web::AppState) -> Result<()> {
@@ -1044,25 +1110,27 @@ async fn run_auto(state: &crate::web::AppState) -> Result<()> {
         // Settings may have been disabled while public candles were refreshing.
         if !auto_due(&st, now) { return Ok(()); }
         let previous = st.clone();
-        st.last_run_at = Some(now);
+        st.begin_txflow_execution(&state.live_path)?;
         st.last_plan = vec!["TxFlow 自动调仓执行中…".into()];
         if let Err(e) = st.save(&state.live_path) {
             *st = previous;
             anyhow::bail!("无法保存自动调仓记录，未开始下单: {e}");
         }
-        st.clone()
+        previous
     };
+    refresh_meta_only(state).await?;
     let markets = crate::live::markets_from_meta(&state.meta.lock().await.universe);
     let result = crate::live::run(&state.store, state.hl_store.as_deref(), &snapshot, &markets, true).await;
     let mut st = state.live.lock().await;
     match result {
         Ok((r, records)) => {
+            st.complete_txflow_execution(r.aborted, now);
             st.last_plan = r.plan_lines;
             st.records.extend(records);
             st.last_live = true;
             if let Some(r) = r.tp_ref { st.tp_ref = r; }
         }
-        Err(e) => st.last_plan = vec![format!("TxFlow 自动调仓失败（本日不自动重试）: {e}")],
+        Err(e) => st.last_plan = vec![format!("TxFlow 自动调仓失败（等待优先恢复）: {e}")],
     }
     st.save(&state.live_path)
 }
@@ -1093,4 +1161,318 @@ mod public_tests {
             .is_empty());
         assert_eq!(client.maintenance_margin().await.unwrap(), 0.);
     }
+}
+
+#[cfg(test)] mod fix_regressions {
+ use super::*;
+ use axum::{Router,routing::post,Json};
+ use std::sync::atomic::{AtomicUsize,Ordering};
+ static MOCK_LOCK: Mutex<()> = Mutex::const_new(());
+ #[tokio::test] async fn backfill_preserves_complete_metadata() {
+ let _mock = MOCK_LOCK.lock().await;
+ let writes=Arc::new(AtomicUsize::new(0)); let w=writes.clone();
+ let app=Router::new().route("/info",post(|Json(v):Json<Value>| async move {
+ match v["type"].as_str().unwrap() {
+ "perpMeta"=>Json(json!({"universe":(0..80).map(|i|json!({"name":format!("C{i}-USDC"),"index":i,"priceTick":0.01,"szDecimals":2,"maxLeverage":10})).collect::<Vec<_>>()})),
+ "candleSnapshot"=>Json(json!([])),
+ "clearinghouseState"=>Json(json!({"marginSummary":{"accountValue":"2900"},"assetPositions":[]})),
+ _=>panic!("unexpected read {v}")
+ }
+ })).route("/exchange",post(move |Json(v):Json<Value>| {let w=w.clone(); async move {
+ if v["action"]["type"]=="order" {w.fetch_add(1,Ordering::SeqCst); Json(json!({"status":"ok","response":{"data":{"statuses":[{"filled":{"totalSz":"2","avgPx":"100","oid":1}}]}}}))}
+ else {Json(json!({"status":"ok"}))}
+ }}));
+ let listener=tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+ MOCK_PORT.store(listener.local_addr().unwrap().port(), Ordering::SeqCst);
+ let server=tokio::spawn(async move {axum::serve(listener,app).await.unwrap()});
+ let root=std::env::temp_dir().join(format!("stars-audit-{}",uuid::Uuid::new_v4()));std::fs::create_dir_all(&root).unwrap();
+ let state=crate::web::AppState {
+ store:Arc::new(crate::store::Store::open(&root.join("db")).unwrap()),hl_store:None,
+ paper:Arc::new(Mutex::new(Default::default())),paper_path:Arc::new(root.join("paper")),
+ live:Arc::new(Mutex::new(Default::default())),live_path:Arc::new(root.join("live")),
+ meta:Arc::new(Mutex::new(Default::default())),refresh:Arc::new(Mutex::new(Default::default())),http:reqwest::Client::builder().no_proxy().build().unwrap(),
+ exec_gate:Arc::new(Mutex::new(())),refresh_gate:Arc::new(Mutex::new(())),run_gate:Arc::new(Mutex::new(()))};
+ refresh_meta_only(&state).await.unwrap(); assert_eq!(state.meta.lock().await.universe.len(),80);
+ refresh_inner(&state).await.unwrap(); assert_eq!(state.meta.lock().await.universe.len(),80);
+ assert_eq!(state.refresh.lock().await.phase,"ready"); println!("full meta 80 -> backfill meta 0, status ready");
+ server.abort(); let _=server.await; std::fs::remove_dir_all(root).unwrap();
+ }
+ #[tokio::test] async fn partial_books_preserve_successful_prices() {
+ let _mock = MOCK_LOCK.lock().await;
+ let app=Router::new().route("/info",post(|Json(v):Json<Value>| async move {
+     Json(if v["coin"] == "0" { json!({"levels":[[{"px":"99"}],[{"px":"101"}]]}) } else { json!({"levels":[[],[]]}) })
+ }));
+ let listener=tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+ MOCK_PORT.store(listener.local_addr().unwrap().port(), Ordering::SeqCst);
+ let server=tokio::spawn(async move {axum::serve(listener,app).await.unwrap()});
+ let markets = (0..2).map(|i| { let name=format!("C{i}-USDC"); (name.clone(), Market { name,index:i,decimals:2,max_leverage:10,tick:0.01,max_order_size:1000. }) }).collect();
+ let client=Client { http:reqwest::Client::builder().no_proxy().build().unwrap(),account:String::new(),signer:None,markets,owned_path:PathBuf::new(),_account_lock:None };
+ let result=client.prices(&["C0-USDC".into(),"C1-USDC".into()]).await;
+ server.abort(); let _=server.await;
+ let prices=result.expect("one failed book must not erase the successful book");
+ assert_eq!(prices.len(),1); assert_eq!(prices["C0-USDC"],100.);
+ }
+ async fn execution_scenario(mode: &str) -> (crate::trader::Outcome, usize) {
+ let _mock = MOCK_LOCK.lock().await;
+ let sizes=Arc::new(Mutex::new(HashMap::<String,f64>::new()));
+ if mode == "residual" { sizes.lock().await.insert("C0-USDC".into(),10.); }
+ let reads=Arc::new(AtomicUsize::new(0)); let r=reads.clone(); let a=sizes.clone();
+ let writes=Arc::new(AtomicUsize::new(0)); let w=writes.clone(); let b=sizes.clone();
+ let scenario=mode.to_string();
+ let app=Router::new().route("/info",post(move |Json(v):Json<Value>| {let a=a.clone(); let r=r.clone(); async move {
+     assert_eq!(v["type"],"clearinghouseState"); r.fetch_add(1,Ordering::SeqCst);
+     let ps:Vec<_>=a.lock().await.iter().filter(|(_,sz)|sz.abs()>1e-9).map(|(coin,sz)|json!({"position":{"coin":coin,"szi":sz.to_string(),"entryPx":"100","positionValue":(sz.abs()*100.).to_string(),"unrealizedPnl":"0","leverage":{"type":"cross","value":3}}})).collect();
+     Json(json!({"marginSummary":{"accountValue":"2900"},"assetPositions":ps}))
+ }})).route("/exchange",post(move |Json(v):Json<Value>| {let b=b.clone();let w=w.clone();let scenario=scenario.clone(); async move {
+     use axum::response::IntoResponse;
+     if v["action"]["type"] != "order" { return Json(json!({"status":"ok"})).into_response(); }
+     let n=w.fetch_add(1,Ordering::SeqCst);
+     if scenario=="429" && n==1 {return (axum::http::StatusCode::TOO_MANY_REQUESTS,"limited").into_response();}
+     let o=&v["action"]["orders"][0]; let requested=o["s"].as_str().unwrap().parse::<f64>().unwrap();
+     let filled=if scenario=="amplified" {requested*1000.} else if scenario=="rounding" {requested+0.009} else if scenario=="partial" || scenario=="residual" { requested.min(2.) } else {requested};
+     let coin=format!("C{}-USDC",o["a"].as_u64().unwrap());
+     *b.lock().await.entry(coin).or_default() += if o["b"]==true {filled} else {-filled};
+     if scenario=="extra_balanced" && n==1 {let mut positions=b.lock().await;positions.insert("C6-USDC".into(),100.);positions.insert("C7-USDC".into(),-100.);}
+     if scenario=="timeout_filled" && n==1 {tokio::time::sleep(Duration::from_millis(200)).await;}
+     Json(json!({"status":"ok","response":{"data":{"statuses":[{"filled":{"totalSz":filled.to_string(),"avgPx":"100","oid":n+1}}]}}})).into_response()
+ }}));
+ let listener=tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+ MOCK_PORT.store(listener.local_addr().unwrap().port(), Ordering::SeqCst);
+ let server=tokio::spawn(async move {axum::serve(listener,app).await.unwrap()});
+ let markets=(0..8).map(|i| {let name=format!("C{i}-USDC"); (name.clone(),Market{name,index:i,decimals:2,max_leverage:10,tick:0.01,max_order_size:1000.})}).collect();
+ let client=Client {http:reqwest::Client::builder().no_proxy().timeout(Duration::from_millis(100)).build().unwrap(),account:"mock".into(),signer:Some(PrivateKeySigner::random()),markets,owned_path:PathBuf::new(),_account_lock:None};
+ let exec=crate::exchange::Exec::test_txflow(client);
+ let mut acct=Acct {equity:if mode=="amplified" {2000./2.7} else {2900.},..Default::default()};
+ if mode=="residual" {acct.positions.insert("C0-USDC".into(),Pos{size:10.,..Default::default()});}
+ let cfg=crate::trader::TradeConfig{rebalance_slices:1,..Default::default()};
+ let weights=vec![("C0-USDC".into(),if mode=="residual" {-0.5} else {0.5}),("C1-USDC".into(),-0.5)];
+ let ms=(0..2).map(|i|(format!("C{i}-USDC"),crate::exchange::MarketInfo{sz_decimals:2,max_leverage:10})).collect();
+ let mids=(0..2).map(|i|(format!("C{i}-USDC"),100.)).collect();
+ let mut plan=crate::trader::build_plan(&weights,&acct,&ms,&mids,&cfg,None);
+ if mode=="amplified" || mode=="rounding" {for order in &mut plan.orders {order.target=if order.buy {10.}else{-10.};order.size=10.;order.notional=1000.;}assert_eq!(plan.orders.len(),2);}
+
+ let outcome=crate::trader::execute(&exec,&plan,&cfg,&ms,true).await.unwrap();
+ server.abort(); let _=server.await; (outcome,reads.load(Ordering::SeqCst))
+ }
+ #[tokio::test] async fn report5_realistic_rounding_is_accepted() {let(o,_)=execution_scenario("rounding").await;assert!(!o.aborted,"0.009 unit / $0.90 rounding drift must be accepted");}
+ #[tokio::test] async fn report5_unplanned_balanced_gross_must_abort() {let(o,reads)=execution_scenario("extra_balanced").await;println!("prelim={:?} orders={:?}",o.prelim,o.orders);assert!(o.aborted,"extra +/-$10000 must abort despite zero net");assert!(reads>=2);}
+ #[tokio::test] async fn report5_balanced_1000x_must_abort_and_recover() {
+    let (o,reads)=execution_scenario("amplified").await;
+    assert!(o.aborted,"targets +10/-10, actual +10000/-10000 must abort");assert!(reads>=2);
+    let mut state=crate::live::LiveState::default();state.pending_recovery=Some(crate::live::RecoveryState{account:"mock".into(),started_at:1,reason:"in progress".into()});state.complete_txflow_execution(o.aborted,2);assert!(state.pending_recovery.is_some());assert!(state.last_run_at.is_none());
+ }
+ #[tokio::test] async fn execution_partial_fill_requires_final_account_verification() {
+    let (o,reads)=execution_scenario("partial").await;
+    assert!(o.aborted,"partial IOC is not a completed risk target"); assert!(reads>=2,"missing final account verification");
+ }
+ #[tokio::test] async fn execution_second_leg_429_requires_final_account_verification() {
+    let (o,reads)=execution_scenario("429").await;
+    assert!(o.aborted); assert!(reads>=2,"missing final account verification after first leg filled");
+ }
+ #[tokio::test] async fn execution_timeout_already_filled_is_confirmed_from_account() {
+    let (o,reads)=execution_scenario("timeout_filled").await;
+    assert!(!o.aborted,"account confirms both targets despite transport timeout"); assert!(reads>=2);
+ }
+ #[tokio::test] async fn execution_residual_reverse_position_is_not_success() {
+    let (o,reads)=execution_scenario("residual").await;
+    assert!(o.aborted,"residual opposite position is not success"); assert!(reads>=2);
+ }
+ #[test] fn pending_recovery_takes_priority_over_today_success_timestamp() {
+    let now=10*DAY+6*60*1000;
+    let mut st=crate::live::LiveState::default();
+    st.config.armed=true; st.config.auto_run=true; st.last_run_at=Some(now);
+    st.pending_recovery=Some(crate::live::RecoveryState{account:String::new(),started_at:now,reason:"partial".into()});
+    assert!(auto_due(&st,now),"pending recovery must not wait until tomorrow or next slice");
+ }
+ #[tokio::test] async fn scheduler_reads_retry_429_only_once() {
+ let _mock=MOCK_LOCK.lock().await;
+ let calls=Arc::new(AtomicUsize::new(0));let c=calls.clone();
+ let app=Router::new().route("/info",post(move || {let c=c.clone();async move {
+     c.fetch_add(1,Ordering::SeqCst); (axum::http::StatusCode::TOO_MANY_REQUESTS,[("retry-after","1")],"limited")
+ }}));
+ let listener=tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap(); MOCK_PORT.store(listener.local_addr().unwrap().port(),Ordering::SeqCst);
+ let server=tokio::spawn(async move {axum::serve(listener,app).await.unwrap()});
+ let client=Client{http:reqwest::Client::builder().no_proxy().build().unwrap(),account:String::new(),signer:None,markets:HashMap::new(),owned_path:PathBuf::new(),_account_lock:None};
+ assert!(client.info(json!({"type":"test"})).await.is_err());
+ server.abort();let _=server.await;
+ assert_eq!(calls.load(Ordering::SeqCst),2,"429 permits exactly one retry");
+ }
+ #[tokio::test] async fn scheduler_info_submit_approve_share_spacing() {
+ let _mock=MOCK_LOCK.lock().await;
+ let arrivals=Arc::new(Mutex::new(Vec::<Instant>::new()));let a=arrivals.clone();let b=arrivals.clone();
+ let app=Router::new().route("/info",post(move ||{let a=a.clone();async move{a.lock().await.push(Instant::now());Json(json!({}))}}))
+ .route("/exchange",post(move ||{let b=b.clone();async move{b.lock().await.push(Instant::now());Json(json!({"status":"ok"}))}}));
+ let listener=tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap(); MOCK_PORT.store(listener.local_addr().unwrap().port(),Ordering::SeqCst);
+ let server=tokio::spawn(async move {axum::serve(listener,app).await.unwrap()});
+ let client=Client{http:reqwest::Client::builder().no_proxy().build().unwrap(),account:"mock".into(),signer:Some(PrivateKeySigner::random()),markets:HashMap::new(),owned_path:PathBuf::new(),_account_lock:None};
+ client.info(json!({"type":"test"})).await.unwrap();
+ client.submit("test", &json!({})).await.unwrap();
+ approve_agent(&client.http,&json!({}),&format!("{}/exchange",base_url())).await.unwrap();
+ server.abort();let _=server.await;
+ let times=arrivals.lock().await;
+ assert_eq!(times.len(),3);
+ assert!(times.windows(2).all(|w|w[1]-w[0]>=Duration::from_millis(990)),"read/write/approve did not share the one-second scheduler: {times:?}");
+ }
+ #[tokio::test] async fn account_lock_child() {
+     let Ok(key)=std::env::var("TXFLOW_FIX_CHILD_KEY") else {return;};
+     MOCK_PORT.store(std::env::var("TXFLOW_FIX_CHILD_PORT").unwrap().parse().unwrap(),Ordering::SeqCst);
+     let result=Client::new(&std::env::var("TXFLOW_FIX_CHILD_ACCOUNT").unwrap(),Some(Path::new(&key))).await;
+     assert!(result.err().map(|e|e.to_string().contains("账户锁")).unwrap_or(false),"second process must fail at account lock");
+ }
+ #[tokio::test] async fn account_lock_excludes_a_second_process_and_releases_on_drop() {
+     let _mock=MOCK_LOCK.lock().await;
+     let app=Router::new().route("/info",post(|| async {Json(json!({"universe":(0..80).map(|i|json!({"name":format!("C{i}-USDC"),"index":i,"priceTick":0.01,"szDecimals":2,"maxLeverage":10})).collect::<Vec<_>>()}))}));
+     let listener=tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();let port=listener.local_addr().unwrap().port();MOCK_PORT.store(port,Ordering::SeqCst);
+     let server=tokio::spawn(async move {axum::serve(listener,app).await.unwrap()});
+     let root=std::env::temp_dir().join(format!("stars-lock-{}",uuid::Uuid::new_v4()));std::fs::create_dir_all(&root).unwrap();
+     let key=root.join("key");std::fs::write(&key,format!("{:#x}",PrivateKeySigner::random().to_bytes())).unwrap();
+     let owned=root.join("orders.json");let old=std::env::var_os("STARS_TXFLOW_ORDERS");std::env::set_var("STARS_TXFLOW_ORDERS",&owned);
+     let account=PrivateKeySigner::random().address().to_string();
+     let first=Client::new(&account,Some(&key)).await.unwrap();
+     let child=tokio::process::Command::new(std::env::current_exe().unwrap())
+         .arg("--exact").arg("txflow::fix_regressions::account_lock_child").arg("--nocapture")
+         .env("TXFLOW_FIX_CHILD_ACCOUNT",&account).env("TXFLOW_FIX_CHILD_KEY",&key).env("TXFLOW_FIX_CHILD_PORT",port.to_string()).env("STARS_TXFLOW_ORDERS",&owned)
+         .output().await.unwrap();
+     drop(first);
+     let next=Client::new(&account,Some(&key)).await;
+     if let Some(old)=old {std::env::set_var("STARS_TXFLOW_ORDERS",old);} else {std::env::remove_var("STARS_TXFLOW_ORDERS");}
+     let released=next.is_ok();drop(next);
+     let _=std::fs::remove_file(Path::new("/var/tmp/stars-txflow-account-locks").join(format!("{}.lock",account.to_ascii_lowercase())));
+     server.abort();let _=server.await;std::fs::remove_dir_all(root).unwrap();
+     assert!(child.status.success(),"child stdout: {} stderr: {}",String::from_utf8_lossy(&child.stdout),String::from_utf8_lossy(&child.stderr));
+     assert!(released,"lock must release when owner exits");
+ }
+ async fn pnl_scenario() -> (f64,f64,bool) {
+ let _mock=MOCK_LOCK.lock().await;
+ *pnl_cache().lock().await=None;
+ let app=Router::new().route("/info",post(|Json(v):Json<Value>| async move {
+     use axum::response::IntoResponse;
+     if v["type"]=="userFills" && v["user"]=="bad" {return (axum::http::StatusCode::SERVICE_UNAVAILABLE,"failed").into_response();}
+     if v["type"]=="userFills" {return Json(json!([{"coin":"C0-USDC","time":9001,"closedPnl":if v["user"]=="A" {"1"}else{"2"},"fee":"0","px":"100","sz":"1"}])).into_response();}
+     assert_eq!(v["type"],"userNonFundingLedgerUpdates");Json(json!([])).into_response()
+ }));
+ let listener=tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();MOCK_PORT.store(listener.local_addr().unwrap().port(),Ordering::SeqCst);
+ let server=tokio::spawn(async move {axum::serve(listener,app).await.unwrap()});
+ let mut client=Client{http:reqwest::Client::builder().no_proxy().build().unwrap(),account:"A".into(),signer:None,markets:HashMap::from([("C0-USDC".into(),Market{name:"C0-USDC".into(),index:0,decimals:2,max_leverage:10,tick:0.01,max_order_size:1000.})]),owned_path:PathBuf::new(),_account_lock:None};
+ let a=client.pnl_summary(9000).await.unwrap();client.account="B".into();let b=client.pnl_summary(9000).await.unwrap();
+ client.account="bad".into();let error=client.pnl_summary(8999).await;
+ server.abort();let _=server.await;
+ (a.realized,b.realized,error.is_err())
+ }
+ #[tokio::test] async fn pnl_cache_is_account_scoped() {
+     let (a,b,_)=pnl_scenario().await;assert_eq!(a,1.);assert_eq!(b,2.,"same interval must not reuse another account PNL");
+ }
+ #[tokio::test] async fn pnl_read_errors_are_not_zero_profit() {
+     let (_,_,failed)=pnl_scenario().await;assert!(failed,"read errors must not become cached zero profit");
+ }
+ #[tokio::test]
+ async fn pnl_ledger_failure_recovery_and_venue_interval_isolation() {
+     let _mock = MOCK_LOCK.lock().await;
+     *pnl_cache().lock().await = None;
+     let mode = Arc::new(AtomicUsize::new(0));
+     let calls = Arc::new(AtomicUsize::new(0));
+     let handler_mode = mode.clone();
+     let handler_calls = calls.clone();
+     let app = Router::new().route("/info", post(move |Json(v): Json<Value>| {
+         let mode = handler_mode.clone();
+         let calls = handler_calls.clone();
+         async move {
+             use axum::response::IntoResponse;
+             if v["type"] == "userFills" {
+                 calls.fetch_add(1, Ordering::SeqCst);
+                 return Json(json!([{"coin":"C0-USDC","time":9001,"closedPnl":"7"}])).into_response();
+             }
+             match mode.load(Ordering::SeqCst) {
+                 0 => (axum::http::StatusCode::SERVICE_UNAVAILABLE, "ledger failed").into_response(),
+                 1 => Json(json!({"unexpected":"not an array"})).into_response(),
+                 _ => Json(json!([{"delta":{"type":"deposit","amount":"12"}}])).into_response(),
+             }
+         }
+     }));
+     let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+     MOCK_PORT.store(listener.local_addr().unwrap().port(), Ordering::SeqCst);
+     let server = tokio::spawn(async move { axum::serve(listener, app).await.unwrap() });
+     let client = Client {
+         http: reqwest::Client::builder().no_proxy().build().unwrap(),
+         account: "pnl-recovery".into(), signer: None,
+         markets: HashMap::from([("C0-USDC".into(), Market {
+             name: "C0-USDC".into(), index: 0, decimals: 2,
+             max_leverage: 10, tick: 0.01, max_order_size: 1000.,
+         })]),
+         owned_path: PathBuf::new(), _account_lock: None,
+     };
+     assert!(client.pnl_summary(9000).await.is_err());
+     assert!(pnl_cache().lock().await.is_none());
+     mode.store(1, Ordering::SeqCst);
+     assert!(client.pnl_summary(9000).await.unwrap_err().to_string().contains("ledger 格式错误"));
+     assert!(pnl_cache().lock().await.is_none());
+     mode.store(2, Ordering::SeqCst);
+     let recovered = client.pnl_summary(9000).await.unwrap();
+     assert_eq!(recovered.realized, 7.);
+     assert_eq!(recovered.net_deposit, 12.);
+     let successful_calls = calls.load(Ordering::SeqCst);
+     client.pnl_summary(9000).await.unwrap();
+     assert_eq!(calls.load(Ordering::SeqCst), successful_calls);
+     // Simulate a cache entry belonging to a different venue/network.
+     pnl_cache().lock().await.as_mut().unwrap().1.venue = "other-venue".into();
+     assert_eq!(client.pnl_summary(9000).await.unwrap().realized, 7.);
+     assert_eq!(calls.load(Ordering::SeqCst), successful_calls + 1);
+     assert_eq!(client.pnl_summary(9002).await.unwrap().realized, 0.);
+     assert_eq!(calls.load(Ordering::SeqCst), successful_calls + 2);
+     server.abort();
+     let _ = server.await;
+ }
+ #[test] fn persistent_rotation_covers_resonant_universe_and_survives_restart() {
+     let root=std::env::temp_dir().join(format!("stars-cursor-{}",uuid::Uuid::new_v4()));let path=root.join("db");
+     let store=crate::store::Store::open(&path).unwrap();let mut seen=std::collections::HashSet::new();
+     for cycle in 0..1000 {
+         let start=rotation_start(&store,240,cycle*1920*1000).unwrap();
+         for k in 0..60 {seen.insert((start+k)%240);}
+         advance_rotation(&store,240,60).unwrap();
+     }
+     assert_eq!(seen.len(),240,"resonant wall clock must not starve 180 markets");
+     advance_rotation(&store,240,7).unwrap();let cursor=rotation_start(&store,240,0).unwrap();drop(store);
+     let restarted=crate::store::Store::open(&path).unwrap();assert_eq!(rotation_start(&restarted,240,0).unwrap(),cursor);
+     drop(restarted);std::fs::remove_dir_all(root).unwrap();
+ }
+ #[tokio::test] async fn equity_and_pnl_reader_select_txflow_without_signing_key() {
+     let _mock=MOCK_LOCK.lock().await;
+     let app=Router::new().route("/info",post(|| async {Json(json!({"universe":(0..80).map(|i|json!({"name":format!("C{i}-USDC"),"index":i,"priceTick":0.01,"szDecimals":2,"maxLeverage":10})).collect::<Vec<_>>()}))}));
+     let listener=tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();MOCK_PORT.store(listener.local_addr().unwrap().port(),Ordering::SeqCst);
+     let server=tokio::spawn(async move {axum::serve(listener,app).await.unwrap()});
+     let mut cfg=crate::live::LiveConfig{txflow:true,account:"0x0707070707070707070707070707070707070707".into(),..Default::default()};
+     let tx=crate::exchange::Exec::reader_config(&cfg).await.unwrap();cfg.txflow=false;
+     let hl=crate::exchange::Exec::reader_config(&cfg).await.unwrap();
+     server.abort();let _=server.await;
+     assert!(tx.is_txflow(),"TxFlow equity/PNL factory selected Hyperliquid");assert!(!hl.is_txflow());
+ }
+ #[tokio::test] async fn incomplete_metadata_is_rejected_atomically() {
+ let _mock = MOCK_LOCK.lock().await;
+ let w=Arc::new(AtomicUsize::new(0));
+ let app=Router::new().route("/info",post(|Json(v):Json<Value>| async move {
+ match v["type"].as_str().unwrap() {
+ "perpMeta"=>Json(json!({"universe":(0..5).map(|i|json!({"name":format!("C{i}-USDC"),"index":i,"priceTick":0.01,"szDecimals":2,"maxLeverage":10})).collect::<Vec<_>>()})),
+ "candleSnapshot"=>Json(json!([])),
+ "clearinghouseState"=>Json(json!({"marginSummary":{"accountValue":"2900"},"assetPositions":[]})),
+ _=>panic!("unexpected read {v}")
+ }
+ })).route("/exchange",post(move |Json(v):Json<Value>| {let w=w.clone(); async move {
+ if v["action"]["type"]=="order" {w.fetch_add(1,Ordering::SeqCst); Json(json!({"status":"ok","response":{"data":{"statuses":[{"filled":{"totalSz":"2","avgPx":"100","oid":1}}]}}}))}
+ else {Json(json!({"status":"ok"}))}
+ }}));
+ let listener=tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+ MOCK_PORT.store(listener.local_addr().unwrap().port(), Ordering::SeqCst);
+ let server=tokio::spawn(async move {axum::serve(listener,app).await.unwrap()});
+ let root=std::env::temp_dir().join(format!("stars-audit-{}",uuid::Uuid::new_v4()));std::fs::create_dir_all(&root).unwrap();
+ let state=crate::web::AppState {
+ store:Arc::new(crate::store::Store::open(&root.join("db")).unwrap()),hl_store:None,
+ paper:Arc::new(Mutex::new(Default::default())),paper_path:Arc::new(root.join("paper")),
+ live:Arc::new(Mutex::new(Default::default())),live_path:Arc::new(root.join("live")),
+ meta:Arc::new(Mutex::new(Default::default())),refresh:Arc::new(Mutex::new(Default::default())),http:reqwest::Client::builder().no_proxy().build().unwrap(),
+ exec_gate:Arc::new(Mutex::new(())),refresh_gate:Arc::new(Mutex::new(())),run_gate:Arc::new(Mutex::new(()))};
+ let result = refresh_meta_only(&state).await;
+ server.abort(); let _=server.await; std::fs::remove_dir_all(root).unwrap();
+ assert!(result.is_err(), "five-market partial metadata must fail closed");
+ assert!(state.meta.lock().await.universe.is_empty());
+ }
 }
