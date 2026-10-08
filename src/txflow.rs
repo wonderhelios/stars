@@ -81,16 +81,26 @@ pub struct Client {
     signer: Option<PrivateKeySigner>,
     pub markets: HashMap<String, Market>,
     owned_path: PathBuf,
-    /// 全局限速闸门：记录上次请求时刻，保证任意两次请求之间至少间隔 MIN_GAP。
-    ///
-    /// 必须做在这里而不是调用方：日线刷新会**遍历全部 229 个市场、逐个发请求、
-    /// 中间没有任何间隔**，瞬间就把 TxFlow 的限流打爆（实测调仓因此报
-    /// "TxFlow 429 Too Many Requests"）。限速放在唯一的出口 info() 上，
-    /// 任何调用路径都自动受约束。
-    gate: tokio::sync::Mutex<Option<std::time::Instant>>,
-    /// 业绩汇总缓存。pnl_summary 要拉两次接口，而页面每隔几秒就轮询一次状态 ——
-    /// 不缓存的话会把刚修好的限流重新打爆。
-    pnl_cache: tokio::sync::Mutex<Option<(std::time::Instant, i64, PnlSummary)>>,
+}
+
+/// 进程级限速闸门与业绩缓存。
+///
+/// **必须是全局的**：限速原本挂在 Client 实例上，而 Client 每次访问都会重建
+/// （`Exec::reader_for` → `Client::new`），所以每个实例都带着一个全新的空闸门、
+/// 空缓存 —— 限速等于没做，缓存永远不命中。实测总流量因此到 1.5~2 次/秒且
+/// 不可控（回填 + 页面轮询各算各的）。放到进程级之后总速率硬顶在 MIN_GAP。
+static GATE: std::sync::OnceLock<tokio::sync::Mutex<Option<std::time::Instant>>> =
+    std::sync::OnceLock::new();
+static PNL_CACHE: std::sync::OnceLock<
+    tokio::sync::Mutex<Option<(std::time::Instant, i64, PnlSummary)>>,
+> = std::sync::OnceLock::new();
+
+fn rate_gate() -> &'static tokio::sync::Mutex<Option<std::time::Instant>> {
+    GATE.get_or_init(|| tokio::sync::Mutex::new(None))
+}
+
+fn pnl_cache() -> &'static tokio::sync::Mutex<Option<(std::time::Instant, i64, PnlSummary)>> {
+    PNL_CACHE.get_or_init(|| tokio::sync::Mutex::new(None))
 }
 
 /// 两次 TxFlow 请求之间的最小间隔。
@@ -171,8 +181,6 @@ impl Client {
                         .unwrap_or_else(|_| "/var/lib/stars/live.json".into());
                     PathBuf::from(live_path).with_file_name("txflow-orders.json")
                 }),
-            gate: tokio::sync::Mutex::new(None),
-            pnl_cache: tokio::sync::Mutex::new(None),
         };
         client.markets = client.load_markets().await?;
         Ok(client)
@@ -187,7 +195,7 @@ impl Client {
         // 这里把 429 单独拎出来：退避更长，并且尊重 Retry-After。
         // 全局限速：所有 TxFlow 请求都从这里出去，先排队保证最小间隔。
         {
-            let mut g = self.gate.lock().await;
+            let mut g = rate_gate().lock().await;
             if let Some(t) = *g {
                 let elapsed = t.elapsed();
                 if elapsed < MIN_GAP {
@@ -329,7 +337,7 @@ impl Client {
         // 60 秒缓存：页面轮询很密，每次都拉两次接口会触发限流。
         const TTL: std::time::Duration = std::time::Duration::from_secs(60);
         {
-            let c = self.pnl_cache.lock().await;
+            let c = pnl_cache().lock().await;
             if let Some((t, since, v)) = c.as_ref() {
                 if t.elapsed() < TTL && *since == since_ms {
                     return Ok(v.clone());
@@ -372,8 +380,7 @@ impl Client {
             net_deposit,
             ledger_rows: led.len(),
         };
-        *self.pnl_cache.lock().await =
-            Some((std::time::Instant::now(), since_ms, out.clone()));
+        *pnl_cache().lock().await = Some((std::time::Instant::now(), since_ms, out.clone()));
         Ok(out)
     }
 
