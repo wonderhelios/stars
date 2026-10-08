@@ -438,13 +438,32 @@ pub struct RunResult {
     pub live: bool,
 }
 
-fn ensure_candidates(weights: &[(String, f64)], liquid: &[String], cfg: &LiveConfig, panel_count: usize) -> Result<()> {
-    if !weights.is_empty() { return Ok(()); }
+fn ensure_candidates(
+    weights: &[(String, f64)],
+    liquid: &[String],
+    cfg: &LiveConfig,
+    panel_count: usize,
+    source: &str,
+) -> Result<()> {
+    if !weights.is_empty() {
+        return Ok(());
+    }
+    // 消息里必须说清**用的是哪个数据源** —— 信号来自 Hyperliquid、执行在 TxFlow，
+    // 之前一律写"TxFlow 有效日线"，排查时分不清是哪个库的币不够。
     if cfg.txflow && liquid.len() < 8 {
-        anyhow::bail!("TxFlow 有效日线 {} 个市场；近 30 日日均成交额达到 ${:.0} 的只有 {} 个，策略至少需要 8 个候选。请降低成交额门槛并保存配置后重试", panel_count, cfg.min_vol_usd, liquid.len());
+        anyhow::bail!(
+            "候选不足：信号源【{source}】共 {} 个可用日线市场，近 30 日日均成交额达到 ${:.0} 的只有 {} 个，策略至少需要 8 个。请降低成交额门槛（当前 ${:.0}）或检查该数据源的回填情况",
+            panel_count,
+            cfg.min_vol_usd,
+            liquid.len(),
+            cfg.min_vol_usd
+        );
     }
     if cfg.txflow {
-        anyhow::bail!("TxFlow 成交额达标 {} 个市场，但未能生成目标权重；请检查回看期日线和因子数据", liquid.len());
+        anyhow::bail!(
+            "信号源【{source}】成交额达标 {} 个市场，但未能生成目标权重；请检查回看期日线和因子数据",
+            liquid.len()
+        );
     }
     anyhow::bail!("流动性过滤后没有候选")
 }
@@ -508,6 +527,7 @@ pub async fn run(
     };
     let tc = cfg.trade_config();
 
+    let using_hl = cfg.txflow && signal_store.is_some();
     let panel = signal_panel(store, signal_store, &cfg, markets)?;
     anyhow::ensure!(
         panel.len() >= 20,
@@ -516,7 +536,8 @@ pub async fn run(
     );
     let acct0 = exec.account().await?;
     let (mut weights, liquid) = trader::target_weights(&panel, &tc, acct0.equity, crate::live::now_ms_pub() as i64);
-    ensure_candidates(&weights, &liquid, &cfg, panel.len())?;
+    let source = if using_hl { "Hyperliquid（替代 TxFlow 做信号）" } else if cfg.txflow { "TxFlow 自身" } else { "Hyperliquid" };
+    ensure_candidates(&weights, &liquid, &cfg, panel.len(), source)?;
 
     let acct = exec.account().await?;
     let mut coins: Vec<String> = weights.iter().map(|(c, _)| c.clone()).collect();
@@ -743,7 +764,13 @@ pub async fn rebuild_cross(
         acct.equity,
         crate::live::now_ms_pub() as i64,
     );
-    ensure_candidates(&weights, &liquid, &cfg, panel.len())?;
+    ensure_candidates(
+        &weights,
+        &liquid,
+        &cfg,
+        panel.len(),
+        if cfg.txflow { "Hyperliquid（替代 TxFlow 做信号）" } else { "Hyperliquid" },
+    )?;
     let coins: Vec<String> = acct.positions.keys().cloned().collect();
     let mids = trader::fetch_mids(&exec, &coins).await;
     // 按各自权重还原仓位。之前用「净值×杠杆÷仓位数」等权重建，会把权重抹平，
