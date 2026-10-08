@@ -202,6 +202,9 @@ $("lv-save").addEventListener("click", async () => {
     auto_run: $("lv-auto").value === "true",
   };
   $("lv-save").textContent = "保存中…";
+  const saveStatus = $("lv-save-status");
+  saveStatus.textContent = "";
+  $("lv-save").disabled = true;
   try {
     const res = await fetch("/api/live/config", {
       method: "POST",
@@ -209,10 +212,14 @@ $("lv-save").addEventListener("click", async () => {
       body: JSON.stringify(body),
     });
     const d = await res.json();
-    if (!d.ok) throw new Error(d.error || "保存失败");
+    if (!res.ok || !d.ok) throw new Error(d.error || "保存失败");
     $("lv-save").textContent = "已保存 ✓";
+    saveStatus.textContent = "配置已保存。";
   } catch (e) {
     $("lv-save").textContent = "保存失败";
+    saveStatus.textContent = e.message || String(e);
+  } finally {
+    $("lv-save").disabled = false;
   }
   setTimeout(() => ($("lv-save").textContent = "保存配置"), 1500);
 });

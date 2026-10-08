@@ -30,6 +30,10 @@ pub struct AppState {
     /// 调仓/止盈的执行闸门。互斥锁只保护状态、不覆盖下单过程，所以自动调仓
     /// 和手动点击可能同时进入 —— 两笔调仓交错会下重复单、把仓位搞乱。
     pub exec_gate: Arc<tokio::sync::Mutex<()>>,
+    /// Public candle refreshes serialize separately from trading and wallet/config operations.
+    pub refresh_gate: Arc<tokio::sync::Mutex<()>>,
+    /// Prevent duplicate manual/automatic jobs while their public-data preparation runs.
+    pub run_gate: Arc<tokio::sync::Mutex<()>>,
 }
 
 #[derive(Clone, Default)]
@@ -457,7 +461,7 @@ async fn live_run(State(state): State<AppState>, body: Option<Json<LiveRunBody>>
     // 仓位建了一半、组合失去对冲，而且前端只看到一个空响应。这个坑真实发生过。
     //
     // 现在立刻返回「已开始」，执行结果写进 LiveState，页面轮询取回。
-    let _gate = match state.exec_gate.clone().try_lock_owned() {
+    let job = match state.run_gate.clone().try_lock_owned() {
         Ok(g) => g,
         Err(_) => {
             return Json(json!({
@@ -468,14 +472,23 @@ async fn live_run(State(state): State<AppState>, body: Option<Json<LiveRunBody>>
         }
     };
 
+    let txflow = state.live.lock().await.config.txflow;
+    let execution = if !txflow {
+        match state.exec_gate.clone().try_lock_owned() {
+            Ok(g) => Some(g),
+            Err(_) => return (StatusCode::CONFLICT, Json(json!({"ok":false,"error":"有订单操作正在执行，请稍后重试"}))).into_response(),
+        }
+    } else { None };
     let store = state.store.clone();
     let live_state = state.live.clone();
     let live_path = state.live_path.clone();
     let markets = live_markets(&state).await;
     let st = state.live.lock().await.clone();
+    if live && (!st.config.armed || !st.config.can_sign()) {
+        return (StatusCode::BAD_REQUEST, Json(json!({"ok":false,"error":"请先完成钱包授权并保存实盘配置，再执行调仓"}))).into_response();
+    }
     let mut guard = state.live.lock().await;
-    guard.last_plan = vec!["调仓执行中…（页面会自动刷新结果）".into()];
-    if live && st.config.txflow { guard.last_run_at = Some(crate::live::now_ms_pub()); }
+    guard.last_plan = vec![if txflow { "计划任务执行中：正在准备 TxFlow 行情…（期间可以保存配置）".into() } else { "调仓执行中…（页面会自动刷新结果）".into() }];
     if let Err(e) = guard.save(&live_path) {
         if st.config.txflow {
             *guard = st.clone();
@@ -486,12 +499,23 @@ async fn live_run(State(state): State<AppState>, body: Option<Json<LiveRunBody>>
 
     tokio::spawn(async move {
         // gate 的所有权跟着任务走，任务结束才释放
-        let _held = _gate;
+        let _job = job;
+        let _held = execution;
         let outcome = async {
             let markets = if st.config.txflow {
                 crate::txflow::refresh(&state).await?;
                 live_markets(&state).await
             } else { markets };
+            let _tx_execution = if txflow && live {
+                Some(state.exec_gate.clone().try_lock_owned().map_err(|_| anyhow::anyhow!("有订单或授权操作正在执行，请稍后重试"))?)
+            } else { None };
+            let st = if txflow { live_state.lock().await.clone() } else { st.clone() };
+            if txflow && live {
+                anyhow::ensure!(st.config.armed && st.config.can_sign(), "实盘配置已关闭或变更，未开始下单");
+                let mut current = live_state.lock().await;
+                current.last_run_at = Some(crate::live::now_ms_pub());
+                current.save(&live_path)?;
+            }
             crate::live::run(&store, &st, &markets, live).await
         }.await;
         let mut g = live_state.lock().await;
@@ -656,6 +680,8 @@ mod txflow_routes_tests {
             meta: Arc::new(Mutex::new(MetaCache::default())),
             refresh: Arc::new(Mutex::new(RefreshStatus::default())),
             http: reqwest::Client::new(), exec_gate: Arc::new(Mutex::new(())),
+            refresh_gate: Arc::new(Mutex::new(())),
+            run_gate: Arc::new(Mutex::new(())),
         };
         let mut tx_live = crate::live::LiveState::default();
         tx_live.config.txflow = true;
@@ -674,7 +700,7 @@ mod txflow_routes_tests {
         }
         let request = Request::builder().method("POST").uri("/api/txflow/live/config")
             .header("content-type", "application/json").body(Body::from(r#"{"lookback":21,"target_positions":4,"txflow":false}"#)).unwrap();
-        let response = app.oneshot(request).await.unwrap();
+        let response = app.clone().oneshot(request).await.unwrap();
         assert_eq!(response.status(), StatusCode::OK);
         assert_eq!(tx.live.lock().await.config.lookback, 21);
         assert!(tx.live.lock().await.config.txflow);
@@ -687,6 +713,26 @@ mod txflow_routes_tests {
         let response = live_config(State(failing), Json(serde_json::from_value(json!({"armed":true})).unwrap())).await;
         assert_eq!(response.status(), StatusCode::INTERNAL_SERVER_ERROR);
         assert!(!tx.live.lock().await.config.armed);
+        // A public refresh or queued plan must not prevent disabling settings or preparing a wallet.
+        let refreshing = tx.refresh_gate.lock().await;
+        let planning = tx.run_gate.lock().await;
+        let request = Request::builder().method("POST").uri("/api/txflow/live/config")
+            .header("content-type", "application/json").body(Body::from(r#"{"armed":false,"auto_run":false,"min_vol_usd":1000000}"#)).unwrap();
+        assert_eq!(app.clone().oneshot(request).await.unwrap().status(), StatusCode::OK);
+        let prepare_request = || Request::builder().method("POST").uri("/api/txflow/agent/prepare")
+            .header("content-type", "application/json").header("host", "stars.example")
+            .header("origin", "https://stars.example").header("sec-fetch-site", "same-origin")
+            .body(Body::from(r#"{"account":"0x0000000000000000000000000000000000000001","signature_chain_id":42161}"#)).unwrap();
+        assert_eq!(app.clone().oneshot(prepare_request()).await.unwrap().status(), StatusCode::OK);
+        drop(refreshing); drop(planning);
+        // Actual order execution still excludes both operations.
+        let executing = tx.exec_gate.lock().await;
+        let request = Request::builder().method("POST").uri("/api/txflow/live/config")
+            .header("content-type", "application/json").body(Body::from(r#"{"armed":true}"#)).unwrap();
+        assert_eq!(app.clone().oneshot(request).await.unwrap().status(), StatusCode::CONFLICT);
+        assert_eq!(app.clone().oneshot(prepare_request()).await.unwrap().status(), StatusCode::CONFLICT);
+        assert!(!tx.live.lock().await.config.armed);
+        drop(executing);
         drop(base); drop(tx);
         std::fs::remove_dir_all(root).unwrap();
     }

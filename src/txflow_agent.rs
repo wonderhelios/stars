@@ -410,6 +410,8 @@ mod tests {
             refresh: Arc::new(Mutex::new(crate::web::RefreshStatus::default())),
             http: reqwest::Client::new(),
             exec_gate: Arc::new(Mutex::new(())),
+            refresh_gate: Arc::new(Mutex::new(())),
+            run_gate: Arc::new(Mutex::new(())),
         }
     }
     #[tokio::test]

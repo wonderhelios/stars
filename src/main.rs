@@ -57,6 +57,8 @@ async fn main() -> anyhow::Result<()> {
 
     let state = AppState {
         exec_gate: std::sync::Arc::new(tokio::sync::Mutex::new(())),
+        refresh_gate: std::sync::Arc::new(tokio::sync::Mutex::new(())),
+        run_gate: std::sync::Arc::new(tokio::sync::Mutex::new(())),
         store: store.clone(),
         paper: paper.clone(),
         paper_path: Arc::new(std::path::PathBuf::from(&paper_path)),
@@ -90,6 +92,8 @@ async fn main() -> anyhow::Result<()> {
         meta: Arc::new(Mutex::new(MetaCache::default())),
         refresh: Arc::new(Mutex::new(RefreshStatus::default())),
         exec_gate: Arc::new(Mutex::new(())),
+        refresh_gate: Arc::new(Mutex::new(())),
+        run_gate: Arc::new(Mutex::new(())),
         ..state.clone()
     };
     {

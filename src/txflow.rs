@@ -599,6 +599,14 @@ fn signing_hash(encoded: &[u8], nonce: u64) -> B256 {
 
 /// Refresh all TxFlow markets before calculating a signal; reject stale/gapped daily data.
 pub async fn refresh(state: &crate::web::AppState) -> Result<()> {
+    tokio::time::timeout(Duration::from_secs(180), async {
+        let _refresh = state.refresh_gate.lock().await;
+        refresh_inner(state).await
+    }).await
+        .context("TxFlow 行情更新超过 3 分钟，请稍后重试")?
+}
+
+async fn refresh_inner(state: &crate::web::AppState) -> Result<()> {
     let client = Client::new("", None).await?;
     let cfg = state.live.lock().await.config.clone();
     let now = crate::live::now_ms_pub();
@@ -747,56 +755,63 @@ mod tests {
 
 pub async fn background(state: crate::web::AppState) {
     loop {
-        // Same gate as manual runs: refresh and auto-rebalance cannot interleave.
-        if let Ok(_held) = state.exec_gate.try_lock() {
-            let now = crate::live::now_ms_pub();
-            let snapshot = state.live.lock().await.clone();
-            let due = snapshot.config.armed
-                && snapshot.config.auto_run
-                && now % DAY >= 5 * 60 * 1000
-                && snapshot
-                    .last_run_at
-                    .map(|t| t / DAY < now / DAY)
-                    .unwrap_or(true);
-            let stale = now - state.meta.lock().await.refreshed_at > 30 * 60 * 1000;
-            if due || stale {
-                match refresh(&state).await {
-                    Ok(()) if due => {
-                        let markets =
-                            crate::live::markets_from_meta(&state.meta.lock().await.universe);
-                        let result =
-                            crate::live::run(&state.store, &snapshot, &markets, true).await;
-                        let mut st = state.live.lock().await;
-                        // Even a failed run can have partial fills: never automatically retry it.
-                        st.last_run_at = Some(now);
-                        match result {
-                            Ok((r, records)) => {
-                                st.last_plan = r.plan_lines;
-                                st.records.extend(records);
-                                st.last_live = true;
-                                if let Some(r) = r.tp_ref {
-                                    st.tp_ref = r;
-                                }
-                            }
-                            Err(e) => {
-                                st.last_plan =
-                                    vec![format!("TxFlow 自动调仓失败（本日不自动重试）: {e}")]
-                            }
-                        }
-                        if let Err(e) = st.save(&state.live_path) {
-                            tracing::error!("TxFlow 状态保存失败: {e}");
-                        }
+        let now = crate::live::now_ms_pub();
+        let due = auto_due(&*state.live.lock().await, now);
+        let stale = now - state.meta.lock().await.refreshed_at > 30 * 60 * 1000;
+        if due || stale {
+            // Read-only backfill must not block saving settings or creating an Agent.
+            match refresh(&state).await {
+                Ok(()) if due => {
+                    if let Err(e) = run_auto(&state).await {
+                        tracing::warn!("TxFlow 自动调仓未完成: {e}");
                     }
-                    Ok(()) => {}
-                    Err(e) => {
-                        state.refresh.lock().await.phase = format!("error: {e}");
-                        tracing::warn!("TxFlow 日线更新失败: {e}");
-                    }
+                }
+                Ok(()) => {}
+                Err(e) => {
+                    state.refresh.lock().await.phase = format!("error: {e}");
+                    tracing::warn!("TxFlow 日线更新失败: {e}");
                 }
             }
         }
         tokio::time::sleep(Duration::from_secs(60)).await;
     }
+}
+
+fn auto_due(st: &crate::live::LiveState, now: i64) -> bool {
+    st.config.armed && st.config.auto_run && now % DAY >= 5 * 60 * 1000
+        && st.last_run_at.map(|t| t / DAY < now / DAY).unwrap_or(true)
+}
+
+async fn run_auto(state: &crate::web::AppState) -> Result<()> {
+    let _job = match state.run_gate.try_lock() { Ok(g) => g, Err(_) => return Ok(()) };
+    let _execution = match state.exec_gate.try_lock() { Ok(g) => g, Err(_) => return Ok(()) };
+    let now = crate::live::now_ms_pub();
+    let snapshot = {
+        let mut st = state.live.lock().await;
+        // Settings may have been disabled while public candles were refreshing.
+        if !auto_due(&st, now) { return Ok(()); }
+        let previous = st.clone();
+        st.last_run_at = Some(now);
+        st.last_plan = vec!["TxFlow 自动调仓执行中…".into()];
+        if let Err(e) = st.save(&state.live_path) {
+            *st = previous;
+            anyhow::bail!("无法保存自动调仓记录，未开始下单: {e}");
+        }
+        st.clone()
+    };
+    let markets = crate::live::markets_from_meta(&state.meta.lock().await.universe);
+    let result = crate::live::run(&state.store, &snapshot, &markets, true).await;
+    let mut st = state.live.lock().await;
+    match result {
+        Ok((r, records)) => {
+            st.last_plan = r.plan_lines;
+            st.records.extend(records);
+            st.last_live = true;
+            if let Some(r) = r.tp_ref { st.tp_ref = r; }
+        }
+        Err(e) => st.last_plan = vec![format!("TxFlow 自动调仓失败（本日不自动重试）: {e}")],
+    }
+    st.save(&state.live_path)
 }
 
 #[cfg(test)]
