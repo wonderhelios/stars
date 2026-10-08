@@ -618,7 +618,20 @@ pub async fn run(
                 .collect::<Vec<_>>()
                 .join(" ")
         };
-        plan_lines.push(format!("多头腿（按权重降序）: {}", legs(&plan.long_leg)));
+        // 把信号源写进计划里 —— 否则"宇宙只有 41 个币"这种事没法判断是
+    // 数据源问题、门槛问题还是回填问题。真实事故：hl_store 没接上，
+    // 偷偷退回 TxFlow 自己的价量，而计划里看不出任何异常。
+    plan_lines.push(format!(
+        "信号源: {}",
+        if using_hl {
+            "Hyperliquid（TxFlow 只负责执行）"
+        } else if cfg.txflow {
+            "⚠ TxFlow 自身（hl_store 未接上，结果不可信）"
+        } else {
+            "Hyperliquid"
+        }
+    ));
+    plan_lines.push(format!("多头腿（按权重降序）: {}", legs(&plan.long_leg)));
         plan_lines.push(format!("空头腿（按权重降序）: {}", legs(&plan.short_leg)));
     }
     for o in &plan.orders {
