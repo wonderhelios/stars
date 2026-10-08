@@ -86,6 +86,23 @@ fn data(v: Value) -> Result<Value> {
     Ok(v)
 }
 
+/// Main-wallet authorization shares the trading throttle. Never retry a signed write.
+pub async fn approve_agent(http: &reqwest::Client, body: &Value, endpoint: &str) -> Result<()> {
+    let gate = gate();
+    let mut guard = gate.lock().await;
+    guard.next().await;
+    guard.completed = Some(Instant::now());
+    let result = async {
+        let response = http.post(endpoint).json(body)
+            .timeout(Duration::from_secs(25)).send().await?;
+        let response = data(response.error_for_status()?.json::<Value>().await?)?;
+        anyhow::ensure!(response["status"] == "ok", "TxFlow 拒绝授权: {response}");
+        Ok(())
+    }.await;
+    guard.completed = Some(Instant::now());
+    result
+}
+
 impl Client {
     pub async fn new(account: &str, key_path: Option<&Path>) -> Result<Self> {
         let account = if account.is_empty() {

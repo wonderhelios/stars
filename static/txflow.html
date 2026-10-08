@@ -153,6 +153,12 @@
             </div>
           </div>
 
+          <div class="controls" style="margin-bottom:16px">
+            <div class="field"><label>主钱包（仅用于签名授权）</label><select id="tx-wallet"><option value="">检测浏览器钱包…</option></select></div>
+            <div class="field"><label>&nbsp;</label><button class="btn ghost" id="tx-agent-prepare">连接钱包并生成 Agent</button></div>
+            <div class="field"><label>&nbsp;</label><button class="btn" id="tx-agent-approve" disabled>签名授权 Agent</button></div>
+            <p class="note" id="tx-agent-status" role="status" aria-live="polite" style="flex-basis:100%;overflow-wrap:anywhere">先连接你在 TxFlow 使用的主钱包。Agent 密钥会自动保存在服务器，主钱包只需签名一次；不会自动开启实盘。</p>
+          </div>
           <div class="controls">
             <div class="field"><label>账户地址（主账户，不是 API 钱包）</label><input id="lv-account" placeholder="0x..." /></div>
             <div class="field"><label>API 钱包密钥文件路径</label><input id="lv-key" placeholder="必填，例如 /etc/stars/txflow-agent.key" /></div>
@@ -182,7 +188,7 @@
 
           <div class="note"><b>复用同一策略：</b>波动调整动量、低波动与成交量冲击的组合，多空对冲，按设置错峰调仓。信号只使用 TxFlow 已收盘日线与滚动成交额。<b>所有交易请求串行执行，间隔至少 300ms。</b></div>
           <p class="note"><b>止盈：</b>按调仓参考价挂只减仓限价单，默认关闭。仅撤销本程序记录的止盈订单。</p>
-          <p class="note">使用已授权的 Agent 钱包密钥文件，主钱包私钥不参与策略。账户需为单向持仓；资金、仓位和挂单均从 TxFlow 读取。维持保证金取自 TxFlow 账户接口；强平价以交易所返回值为准。</p>
+          <p class="note">可在上方生成并授权策略专用 Agent，成功后自动填写主账户和密钥路径。也可手动使用已有的已授权 Agent 文件。主钱包私钥不参与策略。账户需为单向持仓；资金、仓位和挂单均从 TxFlow 读取。维持保证金取自 TxFlow 账户接口；强平价以交易所返回值为准。</p>
           <div class="panel-head" style="margin-top:14px"><h2>计划 / 执行结果</h2></div>
           <div id="lv-plan-out"></div>
         </div>
@@ -224,5 +230,6 @@
     </main>
 
     <script src="/txflow/app.js"></script>
+    <script src="/txflow/agent.js"></script>
   </body>
 </html>

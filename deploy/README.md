@@ -121,4 +121,14 @@ curl --fail --silent --show-error http://127.0.0.1:3000/api/txflow/status
 
 可通过 `STARS_TXFLOW_DB`、`STARS_TXFLOW_LIVE`、`STARS_TXFLOW_ORDERS` 指定文件路径；实际运行服务的用户需有对应目录的写权限。
 
-实盘默认关闭。要启用时，在 TxFlow 先授权 Agent 钱包，将该 Agent 的密钥保存到服务器仅运行用户可读的文件，在页面填写主账户地址和密钥文件路径。先生成计划核对，再由操作者启用实盘。所有 TxFlow 交易请求共用后端队列，间隔至少 300ms。
+实盘默认关闭。在装有钱包扩展的浏览器打开 `/txflow` →「实盘设置」→「连接钱包并生成 Agent」→ 核对地址 →「签名授权 Agent」。主钱包只签名授权，Agent 密钥自动保存到服务器，授权成功后主账户和密钥路径会自动填写并保存。先生成计划核对，再由操作者启用实盘。所有 TxFlow 交易请求（包括授权）共用后端队列，间隔至少 300ms。
+
+新增持久化目录 `/var/lib/stars/txflow-agents/`（默认位于 `STARS_TXFLOW_LIVE` 同目录），保存 Agent 密钥及授权回执。由服务运行用户创建，目录权限 `700`、文件权限 `600`，须备份且不能删除正在使用的密钥。无需在 systemd 中配置私钥。
+
+授权接口校验同源浏览器请求。现有 Nginx 的 `location` 代理配置需要保留访问域名与端口：
+
+```nginx
+proxy_set_header Host $http_host;
+```
+
+若修改 Nginx 配置，执行 `sudo nginx -t && sudo systemctl reload nginx`。通过已有受保护的管理入口和 HTTPS 域名访问。没有检测到钱包时，请换用装有 MetaMask 等扩展的浏览器。

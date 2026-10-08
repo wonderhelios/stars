@@ -7,6 +7,7 @@ mod store;
 mod trader;
 mod web;
 mod txflow;
+mod txflow_agent;
 
 use anyhow::Context;
 use crate::hl::{CoinMeta, HlClient, MarketCtx};

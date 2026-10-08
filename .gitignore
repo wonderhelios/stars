@@ -1,5 +1,6 @@
 /target
 **/target/
+txflow-agents/
 
 # 研究过程的原始数据不进仓库：把结论（REPORT.md）和脚本（*.py）留下就够了，
 # 中间的 CSV/JSON 动辄几十 MB，会把仓库和每次 pull 都撑爆。

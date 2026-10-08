@@ -41,7 +41,7 @@ STARS_DB=/var/lib/stars/candles.sqlite STARS_PAPER=/var/lib/stars/paper.json ./t
 
 - 支持生成计划、Agent 钱包签名调仓、只减仓止盈、撤单和每日自动调仓。
 - 所有 TxFlow `/exchange` 请求共用后端串行队列，上一请求结束后至少等待 **300ms**，包括拒单和网络失败。交易请求不自动重试；结果未知时停止后续发单，先在交易所核对持仓。
-- 账户需使用单向持仓；主钱包先在 TxFlow 授权 Agent，服务器仅读取 Agent 密钥文件。实盘及自动调仓默认关闭。
+- 账户需使用单向持仓。在 `/txflow` 的「实盘设置」选择浏览器钱包，点击「连接钱包并生成 Agent」，核对主账户与 Agent 地址后点击「签名授权 Agent」。主钱包只签名 `ApproveAgent`，私钥不交给服务器；成功后自动保存主账户和 Agent 密钥路径，实盘及自动调仓保持关闭。也支持手动填写已有的已授权 Agent 文件。
 - 数量支持负数精度（例如 DOGE 的 10 个数量步长），价格按市场 `priceTick` 向滑点上限内取整。
 - 启动时后台读取日线，每 30 分钟刷新；调仓前再次刷新。历史不足或缺失昨天收盘数据的市场不进入信号宇宙。
 
@@ -55,3 +55,7 @@ STARS_DB=/var/lib/stars/candles.sqlite STARS_PAPER=/var/lib/stars/paper.json ./t
 | `STARS_BIND_ADDR` | `0.0.0.0:3000`，服务监听地址 |
 
 TxFlow 接入采用当前交易页面的协议适配，官方 API 文档尚未发布完整说明。只读行情/账户接口可运行 `cargo test mainnet_public_reads -- --ignored` 验证；实际授权账户的成交与撤单仍需小额验证，不能把默认测试通过理解为主网实盘已经验证。
+
+Agent 私钥保存在 `STARS_TXFLOW_LIVE` 文件同目录的 `txflow-agents/<授权编号>.key`，目录权限 `700`、文件权限 `600`（Unix）。旁边的 JSON 只记录地址、授权进度和回执，不含私钥。此目录须持久化并妥善备份，不要提交到 Git。待签名请求 10 分钟内有效；授权请求不自动重发，未知结果需先核对账户。钱包拒绝签名时可重试；交易所已接受授权但配置保存失败时，可修复权限后重试保存，无需重复授权。生成新 Agent 前先关闭实盘和自动调仓并保存。
+
+授权使用浏览器钱包扩展（支持 EIP-6963 / EIP-1193），请在装有钱包的浏览器打开页面。反向代理须保留原始 Host（Nginx：`proxy_set_header Host $http_host;`），授权接口只接受同源浏览器请求。服务的配置和实盘接口应继续使用受保护的管理入口。
