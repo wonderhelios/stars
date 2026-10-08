@@ -52,6 +52,19 @@ fn gate() -> Arc<Mutex<SubmissionGate>> {
         .clone()
 }
 
+/// TxFlow 的真实业绩汇总（全部来自交易所流水，不依赖我们自己的记账）。
+#[derive(Clone, Debug, Default, serde::Serialize)]
+pub struct PnlSummary {
+    pub fills: usize,
+    /// 已实现盈亏（交易所口径，不含手续费）
+    pub realized: f64,
+    pub fees: f64,
+    pub volume: f64,
+    /// 净入金（入金 − 出金）。流水接口可能截断，因此是下界。
+    pub net_deposit: f64,
+    pub ledger_rows: usize,
+}
+
 #[derive(Clone, Debug)]
 pub struct Market {
     pub name: String,
@@ -75,6 +88,9 @@ pub struct Client {
     /// "TxFlow 429 Too Many Requests"）。限速放在唯一的出口 info() 上，
     /// 任何调用路径都自动受约束。
     gate: tokio::sync::Mutex<Option<std::time::Instant>>,
+    /// 业绩汇总缓存。pnl_summary 要拉两次接口，而页面每隔几秒就轮询一次状态 ——
+    /// 不缓存的话会把刚修好的限流重新打爆。
+    pnl_cache: tokio::sync::Mutex<Option<(std::time::Instant, PnlSummary)>>,
 }
 
 /// 两次 TxFlow 请求之间的最小间隔。229 个市场 × 300ms ≈ 69 秒，刷新可以接受；
@@ -153,6 +169,7 @@ impl Client {
                     PathBuf::from(live_path).with_file_name("txflow-orders.json")
                 }),
             gate: tokio::sync::Mutex::new(None),
+            pnl_cache: tokio::sync::Mutex::new(None),
         };
         client.markets = client.load_markets().await?;
         Ok(client)
@@ -286,6 +303,64 @@ impl Client {
             .buffer_unordered(2)
             .try_collect()
             .await
+    }
+
+    /// 存取款流水。用于算「净入金」—— 没有它就没法把入金和盈亏分开。
+    pub async fn ledger(&self) -> Result<Vec<Value>> {
+        anyhow::ensure!(!self.account.is_empty(), "未配置 TxFlow 账户");
+        let v = self
+            .info(json!({"type":"userNonFundingLedgerUpdates","user":self.account}))
+            .await?;
+        Ok(v.as_array().cloned().unwrap_or_default())
+    }
+
+    /// 真实业绩汇总：已实现盈亏、手续费、成交量、净入金。
+    ///
+    /// 页面之前只显示未实现盈亏，于是一个赚了 $1,945 的账户看起来像在亏钱。
+    /// `net_deposit` 单独记账，才能把「入金」和「策略赚的钱」分开。
+    pub async fn pnl_summary(&self) -> Result<PnlSummary> {
+        // 60 秒缓存：页面轮询很密，每次都拉两次接口会触发限流。
+        const TTL: std::time::Duration = std::time::Duration::from_secs(60);
+        {
+            let c = self.pnl_cache.lock().await;
+            if let Some((t, v)) = c.as_ref() {
+                if t.elapsed() < TTL {
+                    return Ok(v.clone());
+                }
+            }
+        }
+        let raw = self.user_fills(1000).await.unwrap_or(Value::Null);
+        let fills: Vec<Value> = raw.as_array().cloned().unwrap_or_default();
+        let mut realized = 0.0;
+        let mut fees = 0.0;
+        let mut volume = 0.0;
+        for f in &fills {
+            realized += number(&f["closedPnl"]).unwrap_or(0.0);
+            fees += number(&f["fee"]).unwrap_or(0.0);
+            volume += number(&f["px"]).unwrap_or(0.0).abs() * number(&f["sz"]).unwrap_or(0.0).abs();
+        }
+        // 流水接口可能只返回最近若干条；入金合计因此是**下界**，页面要标注。
+        let led = self.ledger().await.unwrap_or_default();
+        let mut net_deposit = 0.0;
+        for l in &led {
+            let d = &l["delta"];
+            let amt = number(&d["amount"]).unwrap_or(0.0);
+            match d["type"].as_str().unwrap_or("") {
+                "deposit" => net_deposit += amt,
+                "withdraw" => net_deposit -= amt,
+                _ => {}
+            }
+        }
+        let out = PnlSummary {
+            fills: fills.len(),
+            realized,
+            fees,
+            volume,
+            net_deposit,
+            ledger_rows: led.len(),
+        };
+        *self.pnl_cache.lock().await = Some((std::time::Instant::now(), out.clone()));
+        Ok(out)
     }
 
     pub async fn all_mids(&self) -> Result<HashMap<String, f64>> {

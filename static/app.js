@@ -536,7 +536,28 @@ function renderMonitor(d) {
         metric("总名义敞口", "$" + fmt(d.gross_notional || 0, 0)) +
         metric("止盈挂单", (d.tp_orders || []).length + " / " + nPos, (d.tp_orders || []).length >= nPos ? "pos" : "") +
         metric("最后调仓", d.last_run_at ? `<span class="sm">${ts2m(d.last_run_at)}</span>` : "—")
-    );
+    ) +
+    // TxFlow 的业绩快照。以前页面只显示未实现盈亏，一个赚了钱的账户看起来像在亏，
+    // 因为已实现和手续费根本没进页面。这几个数全部来自交易所流水。
+    (d.tx_fills
+      ? metricGroup(
+          "业绩（交易所口径）",
+          metric(
+            "真实总盈亏",
+            (d.tx_total_pnl >= 0 ? "+" : "") + "$" + fmt(d.tx_total_pnl, 2),
+            d.tx_total_pnl >= 0 ? "pos" : "neg"
+          ) +
+            metric(
+              "已实现盈亏",
+              (d.tx_realized >= 0 ? "+" : "") + "$" + fmt(d.tx_realized, 2),
+              d.tx_realized >= 0 ? "pos" : "neg"
+            ) +
+            metric("手续费", "$" + fmt(d.tx_fees, 2), "neg") +
+            metric("累计成交量", "$" + fmt(d.tx_volume, 0)) +
+            metric("净入金", "$" + fmt(d.tx_net_deposit, 2)) +
+            metric("成交笔数", String(d.tx_fills))
+        )
+      : "");
 
   // 检查清单按实测结果自动打勾
   const sl = slippageStats(d.records || []);

@@ -223,6 +223,22 @@ pub struct LiveSnapshot {
     pub isolated_count: usize,
     /// 策略累计盈亏（已实现 + 未实现），与入金无关。
     pub cumulative_pnl: f64,
+    /// TxFlow：交易所口径的已实现盈亏、手续费、成交量、净入金。
+    /// 页面以前只显示未实现，导致一个赚了钱的实际看起来在亏。
+    #[serde(default)]
+    pub tx_realized: f64,
+    #[serde(default)]
+    pub tx_fees: f64,
+    #[serde(default)]
+    pub tx_volume: f64,
+    #[serde(default)]
+    pub tx_fills: usize,
+    /// 净入金（入金 − 出金）。流水接口可能截断，所以是下界。
+    #[serde(default)]
+    pub tx_net_deposit: f64,
+    /// 真实总盈亏 = 净值 − 净入金。这是唯一能把入金和盈亏分开的口径。
+    #[serde(default)]
+    pub tx_total_pnl: f64,
     /// 拿不到行情、只能用交易所市值反推估值的币。非空时要显眼提示 ——
     /// 这些仓位的清算价、距离强平都算不出来，可能有隐藏风险。
     #[serde(default)]
@@ -268,6 +284,12 @@ pub async fn snapshot(
         cumulative_pnl: 0.0,
         shadow: Vec::new(),
         unpriced: Vec::new(),
+        tx_realized: 0.0,
+        tx_fees: 0.0,
+        tx_volume: 0.0,
+        tx_fills: 0,
+        tx_net_deposit: 0.0,
+        tx_total_pnl: 0.0,
         tp_ref: HashMap::new(),
         config: cfg.clone(),
         history: state.history.clone(),
@@ -389,6 +411,22 @@ pub async fn snapshot(
         }
     }
     snap.unpriced = unpriced;
+    // TxFlow：把交易所口径的真实盈亏填进去。页面以前只显示未实现，
+    // 一个赚了 $1,945 的账户看起来像在亏钱 —— 这里补上已实现和净入金。
+    if cfg.txflow {
+        if let Some(Ok(p)) = exec.txflow_pnl().await {
+            snap.tx_realized = p.realized;
+            snap.tx_fees = p.fees;
+            snap.tx_volume = p.volume;
+            snap.tx_fills = p.fills;
+            snap.tx_net_deposit = p.net_deposit;
+            snap.tx_total_pnl = if p.net_deposit.abs() > 0.0 {
+                snap.equity - p.net_deposit
+            } else {
+                0.0
+            };
+        }
+    }
     snap
 }
 

@@ -388,6 +388,14 @@ impl Exec {
         }
     }
 
+    /// TxFlow 的真实业绩汇总（已实现/手续费/净入金）。非 TxFlow 时返回 None。
+    pub async fn txflow_pnl(&self) -> Option<anyhow::Result<crate::txflow::PnlSummary>> {
+        match &self.txflow {
+            Some(tx) => Some(tx.pnl_summary().await),
+            None => None,
+        }
+    }
+
     /// 最近的成交明细。止盈单是被动挂单、由交易所自动成交的，程序不经手，
     /// 所以必须回头拉成交才能把这块盈亏算进来。
     pub async fn user_fills(&self, limit: usize) -> Result<serde_json::Value> {
