@@ -778,7 +778,10 @@ async fn refresh_inner(state: &crate::web::AppState) -> Result<()> {
     // 硬超时，于是整轮被判失败、refreshed_at 不更新，页面永远显示"行情更新失败"。
     // 取 140 个（约 2.3 分钟）留出余量；起点每轮往后挪，所有币最终都会被覆盖，
     // 冷门币只是更新得慢一些（约 30~45 分钟一次），不会像"只刷流动币"那样丢历史。
-    const PER_CYCLE: usize = 140;
+    // 每个请求的实际耗时 = max(MIN_GAP, 网络延迟)。实测延迟约 1 秒，
+    // 所以按 2 秒/请求估：60 个 ≈ 120 秒，稳稳落在 180 秒超时内。
+    // （之前取 140，只按 1 秒算，实际 280 秒，必然超时。）
+    const PER_CYCLE: usize = 60;
     let total = markets.len();
     let start = if total <= PER_CYCLE {
         0
@@ -793,7 +796,20 @@ async fn refresh_inner(state: &crate::web::AppState) -> Result<()> {
     };
     let markets = picked;
     let mut failed = 0usize;
+    let started = std::time::Instant::now();
+    // 留 20 秒余量给收尾；超了就主动停止本轮（而不是让外层超时把整轮判失败，
+    // 那样 refreshed_at 不会更新，页面会一直显示"行情更新失败"）。
+    let budget = std::time::Duration::from_secs(155);
+    let mut done = 0usize;
     for (i, m) in markets.iter().enumerate() {
+        if started.elapsed() > budget {
+            tracing::warn!(
+                "TxFlow 回填达时间预算（{}/{}），本轮提前收尾，剩余下轮继续",
+                done, markets.len()
+            );
+            break;
+        }
+        done += 1;
         state.refresh.lock().await.current = m.name.clone();
         // 单个币失败**不能**中止整轮回填。
         //

@@ -541,7 +541,17 @@ async fn live_run(State(state): State<AppState>, body: Option<Json<LiveRunBody>>
         let _held = execution;
         let outcome = async {
             let markets = if st.config.txflow {
-                crate::txflow::refresh(&state).await?;
+                // **不要**在调仓路径上强制全量回填。
+                //
+                // 之前每次都同步 refresh()：一次 200+ 市场、1 秒限速的回填要几分钟，
+                // 外层 180 秒超时直接把调仓判失败（"TxFlow 行情更新超过 3 分钟"）。
+                // 而且信号现在来自 Hyperliquid，TxFlow 的日线只影响页面展示，
+                // 对下单没有作用 —— 价格来自交易所的盘口/市值。
+                // 只有在完全没有市场元数据时才刷新，否则直接用缓存。
+                let need = { state.meta.lock().await.universe.is_empty() };
+                if need {
+                    crate::txflow::refresh(&state).await?;
+                }
                 live_markets(&state).await
             } else { markets };
             let _tx_execution = if txflow && live {
