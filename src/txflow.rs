@@ -762,7 +762,7 @@ async fn refresh_inner(state: &crate::web::AppState) -> Result<()> {
     let cfg = state.live.lock().await.config.clone();
     let now = crate::live::now_ms_pub();
     let yesterday = now / DAY * DAY - DAY;
-    let count = client.markets.len();
+    let count = client.markets.len().min(140); // 与 PER_CYCLE 一致：显示本轮要刷多少
     *state.refresh.lock().await = crate::web::RefreshStatus {
         phase: "backfill".into(),
         coins_total: count,
@@ -771,6 +771,27 @@ async fn refresh_inner(state: &crate::web::AppState) -> Result<()> {
     let mut universe = Vec::new();
     let mut markets: Vec<_> = client.markets.values().cloned().collect();
     markets.sort_by(|a, b| a.name.cmp(&b.name));
+
+    // 每轮只刷一部分，并逐轮轮换起点。
+    //
+    // 全量 223 个市场在 1 次/秒的限速下要 3.7 分钟，超过本函数外层 180 秒的
+    // 硬超时，于是整轮被判失败、refreshed_at 不更新，页面永远显示"行情更新失败"。
+    // 取 140 个（约 2.3 分钟）留出余量；起点每轮往后挪，所有币最终都会被覆盖，
+    // 冷门币只是更新得慢一些（约 30~45 分钟一次），不会像"只刷流动币"那样丢历史。
+    const PER_CYCLE: usize = 140;
+    let total = markets.len();
+    let start = if total <= PER_CYCLE {
+        0
+    } else {
+        // 用时间做轮换游标，无需额外持久化状态
+        ((now / 1000) as usize) % total
+    };
+    let picked: Vec<_> = if total <= PER_CYCLE {
+        markets.clone()
+    } else {
+        (0..PER_CYCLE).map(|k| markets[(start + k) % total].clone()).collect()
+    };
+    let markets = picked;
     let mut failed = 0usize;
     for (i, m) in markets.iter().enumerate() {
         state.refresh.lock().await.current = m.name.clone();
