@@ -602,8 +602,31 @@ impl Client {
             .as_array()
             .context("TxFlow 缺少逐单回执，不能确认成交")?;
         anyhow::ensure!(statuses.len() == 1, "TxFlow 逐单回执数量错误");
+        let raw = &statuses[0];
+
+        // **先直接从原始回执里取成交明细。**
+        //
+        // TxFlow 的回执是 `{"filled":{"totalSz":"7444","avgPx":"0.058205","oid":…}}`
+        // 这种形态，跟 SDK 里 `ExchangeDataStatus`（`#[serde(tag="status")]`）对不上，
+        // 于是反序列化会退化成 `Success` —— 程序只知道"被接受了"，**不知道成交了多少、
+        // 什么价**。后果正是页面上的现象：成交价/滑点/盈亏全是空的，而且无法据实判断
+        // 是否达成目标（只能靠事后读账户）。
+        if let Some(f) = raw.get("filled") {
+            let total_sz = number(&f["totalSz"]).unwrap_or(0.0);
+            let avg_px = number(&f["avgPx"]).unwrap_or(0.0);
+            let oid = f["oid"].as_u64().unwrap_or(0);
+            if total_sz.is_finite() && total_sz > 0.0 && avg_px.is_finite() && avg_px > 0.0 {
+                // FilledOrder 的字段是 String（SDK 就是这么定的）
+                return Ok(ExchangeDataStatus::Filled(hyperliquid_rust_sdk::FilledOrder {
+                    total_sz: total_sz.to_string(),
+                    avg_px: avg_px.to_string(),
+                    oid,
+                }));
+            }
+        }
+        // 挂单 / 等待触发 / 错误：这些 SDK 类型是能对上的
         let status: ExchangeDataStatus =
-            serde_json::from_value(statuses[0].clone()).context("未知 TxFlow 订单回执")?;
+            serde_json::from_value(raw.clone()).context("未知 TxFlow 订单回执")?;
         if let ExchangeDataStatus::Error(ref e) = status {
             bail!("TxFlow 订单拒绝: {e}");
         }
