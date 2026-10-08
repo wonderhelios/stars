@@ -148,15 +148,44 @@ impl Client {
 
     pub async fn info(&self, payload: Value) -> Result<Value> {
         // Reads can be retried; signed writes are deliberately never auto-retried.
-        let mut last = None;
-        for attempt in 0..3 {
+        //
+        // 429 必须用**秒级**退避。之前所有错误一律 0.5s/1s 重试，遇到限流时
+        // 三次都在限流窗口内打完，调仓直接失败（实盘报过
+        // "429 Too Many Requests for https://api.txflow.com/info"）。
+        // 这里把 429 单独拎出来：退避更长，并且尊重 Retry-After。
+        let mut last: Option<anyhow::Error> = None;
+        for attempt in 0..5u32 {
+            let resp = match self
+                .http
+                .post(format!("{BASE}/info"))
+                .json(&payload)
+                .send()
+                .await
+            {
+                Ok(r) => r,
+                Err(e) => {
+                    last = Some(e.into());
+                    tokio::time::sleep(Duration::from_millis(300 * (attempt as u64 + 1))).await;
+                    continue;
+                }
+            };
+            let status = resp.status();
+            if status == reqwest::StatusCode::TOO_MANY_REQUESTS {
+                // Retry-After 优先（秒）
+                let hint = resp
+                    .headers()
+                    .get(reqwest::header::RETRY_AFTER)
+                    .and_then(|v| v.to_str().ok())
+                    .and_then(|v| v.trim().parse::<u64>().ok());
+                let wait_ms = hint
+                    .map(|s| (s * 1000).min(30_000))
+                    .unwrap_or(1_500 * (1u64 << attempt.min(4)));
+                tracing::warn!("TxFlow 限流(429)，等待 {wait_ms}ms 后重试（第 {} 次）", attempt + 1);
+                last = Some(anyhow::anyhow!("TxFlow 429 Too Many Requests"));
+                tokio::time::sleep(Duration::from_millis(wait_ms)).await;
+                continue;
+            }
             let result = async {
-                let resp = self
-                    .http
-                    .post(format!("{BASE}/info"))
-                    .json(&payload)
-                    .send()
-                    .await?;
                 data(resp.error_for_status()?.json::<Value>().await?)
             }
             .await;
@@ -164,11 +193,11 @@ impl Client {
                 Ok(v) => return Ok(v),
                 Err(e) => last = Some(e),
             }
-            if attempt < 2 {
-                tokio::time::sleep(Duration::from_millis(500 * (attempt + 1))).await;
+            if attempt < 4 {
+                tokio::time::sleep(Duration::from_millis(500 * (attempt as u64 + 1))).await;
             }
         }
-        Err(last.unwrap())
+        Err(last.unwrap_or_else(|| anyhow::anyhow!("TxFlow 请求失败")))
     }
 
     async fn load_markets(&self) -> Result<HashMap<String, Market>> {
@@ -227,8 +256,11 @@ impl Client {
             .iter()
             .map(|coin| self.book_price(coin.clone()))
             .collect();
+        // 并发 4 对 229 个市场来说太猛，容易触发限流。降到 2。
+        // （不要在中间插 map(|fut| async move ...)：那会让请求 future 的生命周期
+        //   推断失败，编译报 "implementation of FnOnce is not general enough"。）
         stream::iter(requests)
-            .buffer_unordered(4)
+            .buffer_unordered(2)
             .try_collect()
             .await
     }
