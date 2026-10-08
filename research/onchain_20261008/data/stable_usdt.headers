@@ -1,7 +1,7 @@
 HTTP/1.1 200 Connection established
 
 HTTP/2 200 
-date: Wed, 07 Oct 2026 17:27:13 GMT
+date: Wed, 07 Oct 2026 17:31:39 GMT
 content-type: application/json
 access-control-allow-methods: GET,PUT,POST,DELETE,OPTIONS
 access-control-allow-origin: *
@@ -10,21 +10,8 @@ etag: W/"6ac671f7-14992c2"
 last-modified: Wed, 07 Oct 2026 16:23:19 GMT
 server: cloudflare
 vary: Accept-Encoding
-age: 54
+age: 320
 cf-cache-status: HIT
-cf-ray: a46e9d883d255a63-ICN
-
-HTTP/2 200 
-date: Wed, 07 Oct 2026 17:27:49 GMT
-content-type: application/json
-access-control-allow-methods: GET,PUT,POST,DELETE,OPTIONS
-access-control-allow-origin: *
-cache-control: public, max-age=1798
-etag: W/"6ac671f7-14992c2"
-last-modified: Wed, 07 Oct 2026 16:23:19 GMT
-server: cloudflare
-vary: Accept-Encoding
-age: 90
-cf-cache-status: HIT
-cf-ray: a46e9e63fa605a63-ICN
+content-encoding: gzip
+cf-ray: a46ea4050bc25a63-ICN
 

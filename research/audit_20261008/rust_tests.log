@@ -1,6 +1,6 @@
    Compiling stars-audit v0.3.0 (/Users/wonder/Code/stars/research/audit_20261008)
 warning: unused variable: `cfg`
-   --> ../../src/trader.rs:844:13
+   --> src_snapshot/trader.rs:844:13
     |
 844 |         let cfg = TradeConfig {
     |             ^^^ help: if this is intentional, prefix it with an underscore: `_cfg`
@@ -21,7 +21,7 @@ note: but type `reconcile_audit::Exec` is only usable at visibility `pub(self)`
    = note: `#[warn(private_interfaces)]` on by default
 
 warning: field `max_leverage` is never read
-  --> ../../src/exchange.rs:23:9
+  --> src_snapshot/exchange.rs:23:9
    |
 21 | pub struct MarketInfo {
    |            ---------- field in this struct
@@ -33,7 +33,7 @@ warning: field `max_leverage` is never read
    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
 
 warning: fields `entry_px`, `liq_px`, `is_cross`, `leverage`, `position_value`, and `unrealized_pnl` are never read
-  --> ../../src/exchange.rs:30:9
+  --> src_snapshot/exchange.rs:30:9
    |
 27 | pub struct Pos {
    |            --- fields in this struct
@@ -58,37 +58,37 @@ warning: fields `entry_px`, `liq_px`, `is_cross`, `leverage`, `position_value`, 
    = note: `Pos` has derived impls for the traits `Debug` and `Clone`, but these are intentionally ignored during dead code analysis
 
 warning: struct `OpenOrder` is never constructed
-  --> ../../src/exchange.rs:44:12
+  --> src_snapshot/exchange.rs:44:12
    |
 44 | pub struct OpenOrder {
    |            ^^^^^^^^^
 
 warning: constant `STARS_CLOID_PREFIX` is never used
-  --> ../../src/exchange.rs:57:7
+  --> src_snapshot/exchange.rs:57:7
    |
 57 | const STARS_CLOID_PREFIX: &str = "0x5741";
    |       ^^^^^^^^^^^^^^^^^^
 
 warning: function `stars_cloid` is never used
-  --> ../../src/exchange.rs:61:4
+  --> src_snapshot/exchange.rs:61:4
    |
 61 | fn stars_cloid() -> Uuid {
    |    ^^^^^^^^^^^
 
 warning: function `is_ours` is never used
-  --> ../../src/exchange.rs:69:8
+  --> src_snapshot/exchange.rs:69:8
    |
 69 | pub fn is_ours(cloid: Option<&str>) -> bool {
    |        ^^^^^^^
 
 warning: struct `Exec` is never constructed
-  --> ../../src/exchange.rs:79:12
+  --> src_snapshot/exchange.rs:79:12
    |
 79 | pub struct Exec {
    |            ^^^^
 
 warning: multiple associated items are never used
-   --> ../../src/exchange.rs:86:14
+   --> src_snapshot/exchange.rs:86:14
     |
  85 | impl Exec {
     | --------- associated items in this implementation
@@ -135,31 +135,31 @@ warning: multiple associated items are never used
     |                  ^^^
 
 warning: function `sdk_retry` is never used
-   --> ../../src/exchange.rs:513:10
+   --> src_snapshot/exchange.rs:513:10
     |
 513 | async fn sdk_retry<T, F, Fut>(label: &str, mut f: F) -> Result<T>
     |          ^^^^^^^^^
 
 warning: function `one_status` is never used
-   --> ../../src/exchange.rs:537:4
+   --> src_snapshot/exchange.rs:537:4
     |
 537 | fn one_status(value: ExchangeResponseStatus) -> Result<ExchangeDataStatus> {
     |    ^^^^^^^^^^
 
 warning: function `describe` is never used
-   --> ../../src/exchange.rs:556:8
+   --> src_snapshot/exchange.rs:556:8
     |
 556 | pub fn describe(status: &ExchangeDataStatus) -> String {
     |        ^^^^^^^^
 
 warning: constant `BASE` is never used
- --> ../../src/hl.rs:8:7
+ --> src_snapshot/hl.rs:8:7
   |
 8 | const BASE: &str = "https://api.hyperliquid.xyz/info";
   |       ^^^^
 
 warning: field `name` is never read
-  --> ../../src/hl.rs:12:9
+  --> src_snapshot/hl.rs:12:9
    |
 11 | pub struct CoinMeta {
    |            -------- field in this struct
@@ -169,19 +169,19 @@ warning: field `name` is never read
    = note: `CoinMeta` has derived impls for the traits `Clone` and `Debug`, but these are intentionally ignored during dead code analysis
 
 warning: function `maintenance_margin_rate` is never used
-  --> ../../src/hl.rs:32:8
+  --> src_snapshot/hl.rs:32:8
    |
 32 | pub fn maintenance_margin_rate(max_leverage: u32) -> f64 {
    |        ^^^^^^^^^^^^^^^^^^^^^^^
 
 warning: struct `MarketCtx` is never constructed
-  --> ../../src/hl.rs:38:12
+  --> src_snapshot/hl.rs:38:12
    |
 38 | pub struct MarketCtx {
    |            ^^^^^^^^^
 
 warning: method `prior_24h_pct` is never used
-  --> ../../src/hl.rs:48:12
+  --> src_snapshot/hl.rs:48:12
    |
 47 | impl MarketCtx {
    | -------------- method in this implementation
@@ -189,7 +189,7 @@ warning: method `prior_24h_pct` is never used
    |            ^^^^^^^^^^^^^
 
 warning: fields `o`, `h`, and `l` are never read
-  --> ../../src/hl.rs:61:9
+  --> src_snapshot/hl.rs:61:9
    |
 58 | pub struct Candle {
    |            ------ fields in this struct
@@ -206,13 +206,13 @@ warning: fields `o`, `h`, and `l` are never read
    = note: `Candle` has derived impls for the traits `Clone` and `Debug`, but these are intentionally ignored during dead code analysis
 
 warning: struct `HlClient` is never constructed
-  --> ../../src/hl.rs:85:12
+  --> src_snapshot/hl.rs:85:12
    |
 85 | pub struct HlClient {
    |            ^^^^^^^^
 
 warning: multiple associated items are never used
-   --> ../../src/hl.rs:90:12
+   --> src_snapshot/hl.rs:90:12
     |
  89 | impl HlClient {
     | ------------- associated items in this implementation
@@ -238,13 +238,13 @@ warning: multiple associated items are never used
     |                  ^^^^^^^^^^^^
 
 warning: struct `Store` is never constructed
- --> ../../src/store.rs:9:12
+ --> src_snapshot/store.rs:9:12
   |
 9 | pub struct Store {
   |            ^^^^^
 
 warning: multiple associated items are never used
-   --> ../../src/store.rs:14:12
+   --> src_snapshot/store.rs:14:12
     |
  13 | impl Store {
     | ---------- associated items in this implementation
@@ -272,19 +272,8 @@ warning: multiple associated items are never used
 133 |     pub fn cached_coins(&self) -> Result<Vec<String>> {
     |            ^^^^^^^^^^^^
 
-warning: field `slippage` is never read
-  --> ../../src/trader.rs:33:9
-   |
-26 | pub struct TradeConfig {
-   |            ----------- field in this struct
-...
-33 |     pub slippage: f64,
-   |         ^^^^^^^^
-   |
-   = note: `TradeConfig` has derived impls for the traits `Debug` and `Clone`, but these are intentionally ignored during dead code analysis
-
 warning: fields `size`, `mid`, `sz_decimals`, `notional`, and `reason` are never read
-  --> ../../src/trader.rs:76:9
+  --> src_snapshot/trader.rs:76:9
    |
 69 | pub struct Order {
    |            ----- fields in this struct
@@ -303,7 +292,7 @@ warning: fields `size`, `mid`, `sz_decimals`, `notional`, and `reason` are never
    = note: `Order` has derived impls for the traits `Debug` and `Clone`, but these are intentionally ignored during dead code analysis
 
 warning: fields `equity`, `per_coin`, `long_leg`, `short_leg`, and `held` are never read
-  --> ../../src/trader.rs:85:9
+  --> src_snapshot/trader.rs:85:9
    |
 84 | pub struct Plan {
    |            ---- fields in this struct
@@ -323,7 +312,7 @@ warning: fields `equity`, `per_coin`, `long_leg`, `short_leg`, and `held` are ne
    = note: `Plan` has a derived impl for the trait `Debug`, but this is intentionally ignored during dead code analysis
 
 warning: method `close_at` is never used
-   --> ../../src/trader.rs:131:12
+   --> src_snapshot/trader.rs:131:12
     |
 105 | impl FactorPanel {
     | ---------------- method in this implementation
@@ -332,37 +321,37 @@ warning: method `close_at` is never used
     |            ^^^^^^^^
 
 warning: struct `Outcome` is never constructed
-   --> ../../src/trader.rs:570:12
+   --> src_snapshot/trader.rs:570:12
     |
 570 | pub struct Outcome {
     |            ^^^^^^^
 
 warning: function `execute` is never used
-   --> ../../src/trader.rs:579:14
+   --> src_snapshot/trader.rs:579:14
     |
 579 | pub async fn execute(
     |              ^^^^^^^
 
 warning: function `fetch_mids` is never used
-   --> ../../src/trader.rs:747:14
+   --> src_snapshot/trader.rs:747:14
     |
 747 | pub async fn fetch_mids(exec: &Exec, coins: &[String]) -> HashMap<String, f64> {
     |              ^^^^^^^^^^
 
 warning: function `load_panel` is never used
-   --> ../../src/trader.rs:761:8
+   --> src_snapshot/trader.rs:761:8
     |
 761 | pub fn load_panel(store: &crate::store::Store) -> Result<Vec<PanelEntry>> {
     |        ^^^^^^^^^^
 
 warning: function `markets_from_meta` is never used
-  --> ../../src/live.rs:15:8
+  --> src_snapshot/live.rs:15:8
    |
 15 | pub fn markets_from_meta(universe: &[crate::hl::CoinMeta]) -> HashMap<String, MarketInfo> {
    |        ^^^^^^^^^^^^^^^^^
 
 warning: method `can_sign` is never used
-   --> ../../src/live.rs:106:12
+   --> src_snapshot/live.rs:106:12
     |
  89 | impl LiveConfig {
     | --------------- method in this implementation
@@ -371,7 +360,7 @@ warning: method `can_sign` is never used
     |            ^^^^^^^^
 
 warning: associated items `load` and `save` are never used
-   --> ../../src/live.rs:173:12
+   --> src_snapshot/live.rs:173:12
     |
 172 | impl LiveState {
     | -------------- associated items in this implementation
@@ -382,67 +371,67 @@ warning: associated items `load` and `save` are never used
     |            ^^^^
 
 warning: struct `LivePosition` is never constructed
-   --> ../../src/live.rs:190:12
+   --> src_snapshot/live.rs:190:12
     |
 190 | pub struct LivePosition {
     |            ^^^^^^^^^^^^
 
 warning: struct `LiveSnapshot` is never constructed
-   --> ../../src/live.rs:206:12
+   --> src_snapshot/live.rs:206:12
     |
 206 | pub struct LiveSnapshot {
     |            ^^^^^^^^^^^^
 
 warning: function `snapshot` is never used
-   --> ../../src/live.rs:244:14
+   --> src_snapshot/live.rs:244:14
     |
 244 | pub async fn snapshot(
     |              ^^^^^^^^
 
 warning: struct `RunResult` is never constructed
-   --> ../../src/live.rs:381:12
+   --> src_snapshot/live.rs:381:12
     |
 381 | pub struct RunResult {
     |            ^^^^^^^^^
 
 warning: function `run` is never used
-   --> ../../src/live.rs:396:14
+   --> src_snapshot/live.rs:396:14
     |
 396 | pub async fn run(
     |              ^^^
 
 warning: function `now_ms_pub` is never used
-   --> ../../src/live.rs:558:8
+   --> src_snapshot/live.rs:558:8
     |
 558 | pub fn now_ms_pub() -> i64 {
     |        ^^^^^^^^^^
 
 warning: function `rebuild_cross` is never used
-   --> ../../src/live.rs:571:14
+   --> src_snapshot/live.rs:571:14
     |
 571 | pub async fn rebuild_cross(
     |              ^^^^^^^^^^^^^
 
 warning: function `cancel_our_take_profits` is never used
-   --> ../../src/live.rs:679:14
+   --> src_snapshot/live.rs:679:14
     |
 679 | pub async fn cancel_our_take_profits(exec: &Exec) -> Result<usize> {
     |              ^^^^^^^^^^^^^^^^^^^^^^^
 
 warning: function `place_take_profits` is never used
-   --> ../../src/live.rs:698:14
+   --> src_snapshot/live.rs:698:14
     |
 698 | pub async fn place_take_profits(
     |              ^^^^^^^^^^^^^^^^^^
 
 warning: function `refresh_take_profits` is never used
-   --> ../../src/live.rs:780:14
+   --> src_snapshot/live.rs:780:14
     |
 780 | pub async fn refresh_take_profits(
     |              ^^^^^^^^^^^^^^^^^^^^
 
 warning: method `unrealized_pnl` is never used
-   --> ../../src/live.rs:898:12
+   --> src_snapshot/live.rs:898:12
     |
 892 | impl LiveState {
     | -------------- method in this implementation
@@ -451,73 +440,73 @@ warning: method `unrealized_pnl` is never used
     |            ^^^^^^^^^^^^^^
 
 warning: function `reconcile_fills` is never used
-   --> ../../src/live.rs:909:14
+   --> src_snapshot/live.rs:909:14
     |
 909 | pub async fn reconcile_fills(exec: &Exec, state: &mut LiveState) -> Result<usize> {
     |              ^^^^^^^^^^^^^^^
 
 warning: function `shadow_curve` is never used
-   --> ../../src/live.rs:990:8
+   --> src_snapshot/live.rs:990:8
     |
 990 | pub fn shadow_curve(store: &crate::store::Store, from_ts: i64, cfg: &LiveConfig) -> Vec<(i64, f64)> {
     |        ^^^^^^^^^^^^
 
 warning: constant `MARGIN_BUFFER` is never used
-  --> ../../src/paper.rs:18:7
+  --> src_snapshot/paper.rs:18:7
    |
 18 | const MARGIN_BUFFER: f64 = 0.90;
    |       ^^^^^^^^^^^^^
 
 warning: enum `Side` is never used
-  --> ../../src/paper.rs:25:10
+  --> src_snapshot/paper.rs:25:10
    |
 25 | pub enum Side {
    |          ^^^^
 
 warning: struct `PaperConfig` is never constructed
-  --> ../../src/paper.rs:31:12
+  --> src_snapshot/paper.rs:31:12
    |
 31 | pub struct PaperConfig {
    |            ^^^^^^^^^^^
 
 warning: function `d_replay` is never used
-  --> ../../src/paper.rs:49:4
+  --> src_snapshot/paper.rs:49:4
    |
 49 | fn d_replay() -> usize {
    |    ^^^^^^^^
 
 warning: function `d_target_pos` is never used
-  --> ../../src/paper.rs:52:4
+  --> src_snapshot/paper.rs:52:4
    |
 52 | fn d_target_pos() -> usize {
    |    ^^^^^^^^^^^^
 
 warning: struct `PaperPosition` is never constructed
-  --> ../../src/paper.rs:72:12
+  --> src_snapshot/paper.rs:72:12
    |
 72 | pub struct PaperPosition {
    |            ^^^^^^^^^^^^^
 
 warning: struct `Trade` is never constructed
-  --> ../../src/paper.rs:97:12
+  --> src_snapshot/paper.rs:97:12
    |
 97 | pub struct Trade {
    |            ^^^^^
 
 warning: struct `EquityPoint` is never constructed
-   --> ../../src/paper.rs:119:12
+   --> src_snapshot/paper.rs:119:12
     |
 119 | pub struct EquityPoint {
     |            ^^^^^^^^^^^
 
 warning: struct `PaperState` is never constructed
-   --> ../../src/paper.rs:126:12
+   --> src_snapshot/paper.rs:126:12
     |
 126 | pub struct PaperState {
     |            ^^^^^^^^^^
 
 warning: associated items `load` and `save` are never used
-   --> ../../src/paper.rs:144:12
+   --> src_snapshot/paper.rs:144:12
     |
 143 | impl PaperState {
     | --------------- associated items in this implementation
@@ -528,43 +517,43 @@ warning: associated items `load` and `save` are never used
     |            ^^^^
 
 warning: function `cum_pnl` is never used
-   --> ../../src/paper.rs:160:4
+   --> src_snapshot/paper.rs:160:4
     |
 160 | fn cum_pnl(side: Side, notional: f64, entry: f64, px: f64) -> f64 {
     |    ^^^^^^^
 
 warning: function `position_pnl` is never used
-   --> ../../src/paper.rs:171:4
+   --> src_snapshot/paper.rs:171:4
     |
 171 | fn position_pnl(pos: &PaperPosition, px: f64) -> f64 {
     |    ^^^^^^^^^^^^
 
 warning: function `liq_price` is never used
-   --> ../../src/paper.rs:176:8
+   --> src_snapshot/paper.rs:176:8
     |
 176 | pub fn liq_price(side: Side, entry: f64, leverage: f64, max_leverage: u32) -> f64 {
     |        ^^^^^^^^^
 
 warning: function `mark` is never used
-   --> ../../src/paper.rs:185:4
+   --> src_snapshot/paper.rs:185:4
     |
 185 | fn mark(pos: &mut PaperPosition, px: f64, leverage: f64) {
     |    ^^^^
 
 warning: function `resize` is never used
-   --> ../../src/paper.rs:199:4
+   --> src_snapshot/paper.rs:199:4
     |
 199 | fn resize(pos: &mut PaperPosition, target: f64, px: f64, leverage: f64) {
     |    ^^^^^^
 
 warning: struct `Panel` is never constructed
-   --> ../../src/paper.rs:220:8
+   --> src_snapshot/paper.rs:220:8
     |
 220 | struct Panel {
     |        ^^^^^
 
 warning: associated items `build` and `px` are never used
-   --> ../../src/paper.rs:226:8
+   --> src_snapshot/paper.rs:226:8
     |
 225 | impl Panel {
     | ---------- associated items in this implementation
@@ -575,49 +564,45 @@ warning: associated items `build` and `px` are never used
     |        ^^
 
 warning: function `step` is never used
-   --> ../../src/paper.rs:258:8
+   --> src_snapshot/paper.rs:258:8
     |
 258 | pub fn step(state: &mut PaperState, panel: &[PanelEntry], max_lev: &HashMap<String, u32>) {
     |        ^^^^
 
 warning: function `advance` is never used
-   --> ../../src/paper.rs:301:4
+   --> src_snapshot/paper.rs:301:4
     |
 301 | fn advance(
     |    ^^^^^^^
 
 warning: struct `PaperSnapshot` is never constructed
-   --> ../../src/paper.rs:620:12
+   --> src_snapshot/paper.rs:620:12
     |
 620 | pub struct PaperSnapshot {
     |            ^^^^^^^^^^^^^
 
 warning: function `snapshot` is never used
-   --> ../../src/paper.rs:652:8
+   --> src_snapshot/paper.rs:652:8
     |
 652 | pub fn snapshot(state: &PaperState) -> PaperSnapshot {
     |        ^^^^^^^^
 
-warning: `stars-audit` (bin "audit" test) generated 68 warnings
-    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.54s
+warning: `stars-audit` (bin "audit" test) generated 67 warnings
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.93s
      Running unittests harness.rs (target/debug/deps/audit-ac2aeca0a25a6429)
 
-running 16 tests
-
-thread 'audit::rollback_config_is_ignored' (53901306) panicked at harness.rs:13:2:
-assertion `left == right` failed
-  left: 1
- right: 3
-note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+running 17 tests
+saved slices=1 actual slices=1
 one slice: all six names; long/short add/reduce PASS
-test live::tests::take_profit_buys_below_market_for_shorts ... ok
+test live::config_parity_tests::every_live_field_reaches_trade_config ... ok
+test audit::rollback_config_is_now_propagated ... ok
 test live::tests::take_profit_price_is_never_zero_or_negative ... ok
-test hl::tests::coin_meta_reads_is_delisted ... ok
-test live::tests::take_profit_sells_above_market_for_longs ... ok
-test live::tests::take_profit_stays_on_the_correct_side_after_rounding ... ok
 test hl::tests::coin_meta_reads_sz_decimals ... ok
+test live::tests::take_profit_sells_above_market_for_longs ... ok
+test hl::tests::coin_meta_reads_is_delisted ... ok
+test live::tests::take_profit_buys_below_market_for_shorts ... ok
+test live::tests::take_profit_stays_on_the_correct_side_after_rounding ... ok
 test audit::one_slice_reaches_every_coin_and_directions_are_correct ... ok
-test audit::rollback_config_is_ignored ... FAILED
 test trader::slice_plan_tests::non_slot_positions_are_left_alone ... ok
 test trader::slice_tests::slice_of_is_deterministic_and_spreads_coins ... ok
 same active close now has two PnL records
@@ -625,15 +610,9 @@ new tid at watermark timestamp is lost
 test reconcile_audit::active_close_is_imported_again ... ok
 test reconcile_audit::timestamp_watermark_loses_late_equal_time_fill ... ok
 test trader::tests::only_closed_bars_are_used ... ok
-test trader::tests::long_and_short_legs_are_balanced ... ok
 test trader::tests::k_never_exceeds_half_the_universe ... ok
+test trader::tests::long_and_short_legs_are_balanced ... ok
 test trader::tests::weights_are_normalised_to_unit_gross ... ok
 
-failures:
+test result: ok. 17 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
 
-failures:
-    audit::rollback_config_is_ignored
-
-test result: FAILED. 15 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
-
-error: test failed, to rerun pass `--bin audit`

@@ -1,0 +1,44 @@
+{
+  "rebuild_partial_same_side": {
+    "original": 10,
+    "close_filled": 2,
+    "target": 10,
+    "actual_final": 18
+  },
+  "rebuild_partial_flip": {
+    "original": 10,
+    "close_filled": 2,
+    "target": -5,
+    "actual_final": 3
+  },
+  "classic_balance": {
+    "perp_account_value": 100,
+    "spot_USDC": 1000,
+    "reported_equity": 1000,
+    "reported_target": 2700.0,
+    "correct_target": 270.0
+  },
+  "status_initial_watermark": {
+    "cloned_initial": 0,
+    "local_after_reconcile": 10000,
+    "added": 0,
+    "persisted_after_Ok_zero_branch": 0
+  },
+  "lost_update": {
+    "before": [
+      "old"
+    ],
+    "run_appends": [
+      "old",
+      "new_trade"
+    ],
+    "status_clone_plus_fill": [
+      "old",
+      "fill"
+    ],
+    "after_status_assignment": [
+      "old",
+      "fill"
+    ]
+  }
+}

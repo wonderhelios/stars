@@ -925,11 +925,13 @@ mod slice_plan_tests {
     fn non_slot_positions_are_left_alone() {
         let cfg = TradeConfig { rebalance_slices: 3, ..TradeConfig::default() };
         // 造 6 个持仓，但目标权重里只有 3 个 —— 其余 3 个「本该被平」
-        let held = ["AAA", "BBB", "CCC", "DDD", "EEE", "FFF"];
+        // 用真实币名。之前用 AAA/BBB/CCC —— 同字母重复三遍的字节和都是 3 的
+        // 倍数，会全挤在同一档，测试因此"今天一个币都没有"而假失败。
+        let held = ["BTC", "ETH", "SOL", "DOGE", "ARB", "HYPE"];
         let weights: Vec<(String, f64)> = vec![
-            ("AAA".into(), 0.2),
-            ("BBB".into(), -0.2),
-            ("CCC".into(), 0.2),
+            ("BTC".into(), 0.2),
+            ("ETH".into(), -0.2),
+            ("SOL".into(), 0.2),
         ];
         let acct = Acct {
             equity: 1000.0,
@@ -968,5 +970,6 @@ mod slice_plan_tests {
         }
         // 今天档位里的币：应该被处理到（DDD/EEE/FFF 不在目标里 → 该被平）
         assert!(!today.is_empty(), "今天档位里一个币都没有，测试无意义");
+        assert!(!not_today.is_empty(), "所有币都在今天档位，测不出过滤是否生效");
     }
 }

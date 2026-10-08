@@ -1,0 +1,4046 @@
+{
+  "net": {
+    "7": {
+      "all16_daily_XYZ100_lb1_h1:path0": {
+        "p_fwer": 1.0,
+        "t_block": -2.584112427815708,
+        "mean_ci_low": -0.0017906581088469402,
+        "mean_ci_high": -0.00023636526977567662
+      },
+      "all16_daily_XYZ100_lb1_h1": {
+        "p_fwer": 1.0,
+        "t_block": -2.584112427815708,
+        "mean_ci_low": -0.0017906581088469402,
+        "mean_ci_high": -0.00023636526977567662
+      },
+      "all16_daily_XYZ100_lb1_h3:path0": {
+        "p_fwer": 1.0,
+        "t_block": -0.13838752587795425,
+        "mean_ci_low": -0.0009124638134814249,
+        "mean_ci_high": 0.0007970102040444804
+      },
+      "all16_daily_XYZ100_lb1_h3:path1": {
+        "p_fwer": 1.0,
+        "t_block": 0.778302283000803,
+        "mean_ci_low": -0.0004693622972659044,
+        "mean_ci_high": 0.0011945746623036235
+      },
+      "all16_daily_XYZ100_lb1_h3:path2": {
+        "p_fwer": 1.0,
+        "t_block": -1.0655709846357946,
+        "mean_ci_low": -0.0010837413633609356,
+        "mean_ci_high": 0.0003326877959062385
+      },
+      "all16_daily_XYZ100_lb1_h3": {
+        "p_fwer": 1.0,
+        "t_block": -0.2073129889857223,
+        "mean_ci_low": -0.0004028947548123342,
+        "mean_ci_high": 0.00034556059967378764
+      },
+      "all16_daily_XYZ100_lb3_h1:path0": {
+        "p_fwer": 1.0,
+        "t_block": -4.614201462581023,
+        "mean_ci_low": -0.0021642565082893926,
+        "mean_ci_high": -0.0008767011478944577
+      },
+      "all16_daily_XYZ100_lb3_h1": {
+        "p_fwer": 1.0,
+        "t_block": -4.614201462581023,
+        "mean_ci_low": -0.0021642565082893926,
+        "mean_ci_high": -0.0008767011478944577
+      },
+      "all16_daily_XYZ100_lb3_h3:path0": {
+        "p_fwer": 1.0,
+        "t_block": -0.8443655484512816,
+        "mean_ci_low": -0.0010954521660816855,
+        "mean_ci_high": 0.0004489319617669903
+      },
+      "all16_daily_XYZ100_lb3_h3:path1": {
+        "p_fwer": 1.0,
+        "t_block": -0.35465569891895604,
+        "mean_ci_low": -0.0009465048645727339,
+        "mean_ci_high": 0.0007039987048183668
+      },
+      "all16_daily_XYZ100_lb3_h3:path2": {
+        "p_fwer": 1.0,
+        "t_block": -1.9476426651839083,
+        "mean_ci_low": -0.0015006065718938168,
+        "mean_ci_high": 2.65625546188175e-05
+      },
+      "all16_daily_XYZ100_lb3_h3": {
+        "p_fwer": 1.0,
+        "t_block": -1.5001200140578115,
+        "mean_ci_low": -0.0009389873750047487,
+        "mean_ci_high": 0.0001462151770821694
+      },
+      "all16_daily_XYZ100_lb5_h1:path0": {
+        "p_fwer": 1.0,
+        "t_block": -2.9669759741896864,
+        "mean_ci_low": -0.0018307362240947353,
+        "mean_ci_high": -0.00039096933067647277
+      },
+      "all16_daily_XYZ100_lb5_h1": {
+        "p_fwer": 1.0,
+        "t_block": -2.9669759741896864,
+        "mean_ci_low": -0.0018307362240947353,
+        "mean_ci_high": -0.00039096933067647277
+      },
+      "all16_daily_XYZ100_lb5_h3:path0": {
+        "p_fwer": 1.0,
+        "t_block": -1.5947325401172798,
+        "mean_ci_low": -0.001463281311282396,
+        "mean_ci_high": 0.00015612291481842335
+      },
+      "all16_daily_XYZ100_lb5_h3:path1": {
+        "p_fwer": 1.0,
+        "t_block": -0.2110758962023234,
+        "mean_ci_low": -0.0007961033424901975,
+        "mean_ci_high": 0.0006328629905779286
+      },
+      "all16_daily_XYZ100_lb5_h3:path2": {
+        "p_fwer": 1.0,
+        "t_block": -1.8567138676954298,
+        "mean_ci_low": -0.0018063300600860656,
+        "mean_ci_high": 2.39175252708144e-05
+      },
+      "all16_daily_XYZ100_lb5_h3": {
+        "p_fwer": 1.0,
+        "t_block": -1.609758316474557,
+        "mean_ci_low": -0.0011824746327617527,
+        "mean_ci_high": 0.00010260903889481557
+      },
+      "all16_daily_SP500_lb1_h1:path0": {
+        "p_fwer": 1.0,
+        "t_block": -1.0312293317567727,
+        "mean_ci_low": -0.0016739479119228886,
+        "mean_ci_high": 0.0006050077634312292
+      },
+      "all16_daily_SP500_lb1_h1": {
+        "p_fwer": 1.0,
+        "t_block": -1.0312293317567727,
+        "mean_ci_low": -0.0016739479119228886,
+        "mean_ci_high": 0.0006050077634312292
+      },
+      "all16_daily_SP500_lb1_h3:path0": {
+        "p_fwer": 1.0,
+        "t_block": -0.2649691579197853,
+        "mean_ci_low": -0.001361352339252368,
+        "mean_ci_high": 0.001043892544839626
+      },
+      "all16_daily_SP500_lb1_h3:path1": {
+        "p_fwer": 1.0,
+        "t_block": 0.6327415061221706,
+        "mean_ci_low": -0.0007689966785224263,
+        "mean_ci_high": 0.001702062606156422
+      },
+      "all16_daily_SP500_lb1_h3:path2": {
+        "p_fwer": 1.0,
+        "t_block": 0.10059453109079475,
+        "mean_ci_low": -0.0011016163912224858,
+        "mean_ci_high": 0.0011943626073549107
+      },
+      "all16_daily_SP500_lb1_h3": {
+        "p_fwer": 1.0,
+        "t_block": 0.3655730789496664,
+        "mean_ci_low": -0.00042545432830813905,
+        "mean_ci_high": 0.0006597874576858849
+      },
+      "all16_daily_SP500_lb3_h1:path0": {
+        "p_fwer": 1.0,
+        "t_block": -2.7010499072383856,
+        "mean_ci_low": -0.002161587799350322,
+        "mean_ci_high": -0.00031876929807154444
+      },
+      "all16_daily_SP500_lb3_h1": {
+        "p_fwer": 1.0,
+        "t_block": -2.7010499072383856,
+        "mean_ci_low": -0.002161587799350322,
+        "mean_ci_high": -0.00031876929807154444
+      },
+      "all16_daily_SP500_lb3_h3:path0": {
+        "p_fwer": 1.0,
+        "t_block": -1.2329808564912856,
+        "mean_ci_low": -0.0014606030702654566,
+        "mean_ci_high": 0.00033004304233020415
+      },
+      "all16_daily_SP500_lb3_h3:path1": {
+        "p_fwer": 1.0,
+        "t_block": -1.0864670338704878,
+        "mean_ci_low": -0.0015761063367688206,
+        "mean_ci_high": 0.0004474060996987754
+      },
+      "all16_daily_SP500_lb3_h3:path2": {
+        "p_fwer": 1.0,
+        "t_block": -0.7811985167876425,
+        "mean_ci_low": -0.0017177146845400101,
+        "mean_ci_high": 0.0006923304561724738
+      },
+      "all16_daily_SP500_lb3_h3": {
+        "p_fwer": 1.0,
+        "t_block": -1.56636185868684,
+        "mean_ci_low": -0.001206915943088231,
+        "mean_ci_high": 0.0001408071983411281
+      },
+      "all16_daily_SP500_lb5_h1:path0": {
+        "p_fwer": 1.0,
+        "t_block": -2.95428884488512,
+        "mean_ci_low": -0.002226352714558546,
+        "mean_ci_high": -0.0004464905352619383
+      },
+      "all16_daily_SP500_lb5_h1": {
+        "p_fwer": 1.0,
+        "t_block": -2.95428884488512,
+        "mean_ci_low": -0.002226352714558546,
+        "mean_ci_high": -0.0004464905352619383
+      },
+      "all16_daily_SP500_lb5_h3:path0": {
+        "p_fwer": 1.0,
+        "t_block": -1.5554766658913306,
+        "mean_ci_low": -0.0018691918643764748,
+        "mean_ci_high": 0.00019057618382564657
+      },
+      "all16_daily_SP500_lb5_h3:path1": {
+        "p_fwer": 1.0,
+        "t_block": -0.512195082212572,
+        "mean_ci_low": -0.0012696865748085444,
+        "mean_ci_high": 0.000731855967876356
+      },
+      "all16_daily_SP500_lb5_h3:path2": {
+        "p_fwer": 1.0,
+        "t_block": -0.9697175312453841,
+        "mean_ci_low": -0.0017520180755659538,
+        "mean_ci_high": 0.0006011280912463538
+      },
+      "all16_daily_SP500_lb5_h3": {
+        "p_fwer": 1.0,
+        "t_block": -1.3707617536282635,
+        "mean_ci_low": -0.0013684843159839084,
+        "mean_ci_high": 0.00022907493408779519
+      },
+      "all16_overnight_none_1h:path0": {
+        "p_fwer": 1.0,
+        "t_block": -3.919017541445895,
+        "mean_ci_low": -0.002014279177422265,
+        "mean_ci_high": -0.0006873799515695812
+      },
+      "all16_overnight_none_1h:path1": {
+        "p_fwer": 1.0,
+        "t_block": -2.313459263849097,
+        "mean_ci_low": -0.0019892964564073756,
+        "mean_ci_high": -0.00012189134806457223
+      },
+      "all16_overnight_none_1h:path2": {
+        "p_fwer": 1.0,
+        "t_block": -2.202048129236849,
+        "mean_ci_low": -0.0010333177538806113,
+        "mean_ci_high": -4.34116585646602e-05
+      },
+      "all16_overnight_none_1h": {
+        "p_fwer": 1.0,
+        "t_block": -3.473753403616635,
+        "mean_ci_low": -0.0015402675140026717,
+        "mean_ci_high": -0.0004184309362705382
+      },
+      "all16_overnight_none_3h:path0": {
+        "p_fwer": 1.0,
+        "t_block": -1.9352892765316172,
+        "mean_ci_low": -0.0018896182714692805,
+        "mean_ci_high": -1.5981454075093913e-05
+      },
+      "all16_overnight_none_3h:path1": {
+        "p_fwer": 1.0,
+        "t_block": -1.1923594207539356,
+        "mean_ci_low": -0.0015846816337249843,
+        "mean_ci_high": 0.00040471646634050447
+      },
+      "all16_overnight_none_3h:path2": {
+        "p_fwer": 1.0,
+        "t_block": -1.8836647121588714,
+        "mean_ci_low": -0.0011639475333689287,
+        "mean_ci_high": 5.814877827462557e-05
+      },
+      "all16_overnight_none_3h": {
+        "p_fwer": 1.0,
+        "t_block": -1.8147526485189969,
+        "mean_ci_low": -0.0014590907793092694,
+        "mean_ci_high": 6.64635949131667e-05
+      },
+      "all16_overnight_none_close:path0": {
+        "p_fwer": 1.0,
+        "t_block": -2.161125992979159,
+        "mean_ci_low": -0.0024869278847744272,
+        "mean_ci_high": -7.43405374925045e-05
+      },
+      "all16_overnight_none_close:path1": {
+        "p_fwer": 1.0,
+        "t_block": -1.743700068137992,
+        "mean_ci_low": -0.0022953188013358113,
+        "mean_ci_high": 0.00022033086838413535
+      },
+      "all16_overnight_none_close:path2": {
+        "p_fwer": 1.0,
+        "t_block": -1.6452281994843727,
+        "mean_ci_low": -0.0016917148378991563,
+        "mean_ci_high": 0.0001793500908591197
+      },
+      "all16_overnight_none_close": {
+        "p_fwer": 1.0,
+        "t_block": -1.95851921518969,
+        "mean_ci_low": -0.002096772850734594,
+        "mean_ci_high": 4.89742135462727e-05
+      },
+      "all16_overnight_XYZ100_1h:path0": {
+        "p_fwer": 1.0,
+        "t_block": -4.89384257117017,
+        "mean_ci_low": -0.0016260080138555146,
+        "mean_ci_high": -0.0007043228780207853
+      },
+      "all16_overnight_XYZ100_1h:path1": {
+        "p_fwer": 1.0,
+        "t_block": -3.2568606304661687,
+        "mean_ci_low": -0.0015164666355921724,
+        "mean_ci_high": -0.0003614756832630504
+      },
+      "all16_overnight_XYZ100_1h:path2": {
+        "p_fwer": 1.0,
+        "t_block": -3.8946213981897024,
+        "mean_ci_low": -0.0010014536573510566,
+        "mean_ci_high": -0.0003355386284929244
+      },
+      "all16_overnight_XYZ100_1h": {
+        "p_fwer": 1.0,
+        "t_block": -4.823371355865397,
+        "mean_ci_low": -0.001285931244890313,
+        "mean_ci_high": -0.0005347526264733856
+      },
+      "all16_overnight_XYZ100_3h:path0": {
+        "p_fwer": 1.0,
+        "t_block": -2.8431726918007905,
+        "mean_ci_low": -0.001625559576172737,
+        "mean_ci_high": -0.00028786101929981515
+      },
+      "all16_overnight_XYZ100_3h:path1": {
+        "p_fwer": 1.0,
+        "t_block": -1.8271263729466407,
+        "mean_ci_low": -0.001398622488030658,
+        "mean_ci_high": 6.731988392788535e-05
+      },
+      "all16_overnight_XYZ100_3h:path2": {
+        "p_fwer": 1.0,
+        "t_block": -2.994736078776104,
+        "mean_ci_low": -0.001111331865844952,
+        "mean_ci_high": -0.0002313332475965739
+      },
+      "all16_overnight_XYZ100_3h": {
+        "p_fwer": 1.0,
+        "t_block": -2.6741939241769317,
+        "mean_ci_low": -0.0013202196113190076,
+        "mean_ci_high": -0.00018644789893792026
+      },
+      "all16_overnight_XYZ100_close:path0": {
+        "p_fwer": 1.0,
+        "t_block": -2.384381249628739,
+        "mean_ci_low": -0.002127396941588705,
+        "mean_ci_high": -0.0001810572177287145
+      },
+      "all16_overnight_XYZ100_close:path1": {
+        "p_fwer": 1.0,
+        "t_block": -2.002481521584393,
+        "mean_ci_low": -0.0019162360398521775,
+        "mean_ci_high": 1.3246231234802534e-05
+      },
+      "all16_overnight_XYZ100_close:path2": {
+        "p_fwer": 1.0,
+        "t_block": -2.4059252825716193,
+        "mean_ci_low": -0.001505413323294885,
+        "mean_ci_high": -0.0001577123099473775
+      },
+      "all16_overnight_XYZ100_close": {
+        "p_fwer": 1.0,
+        "t_block": -2.325401311450103,
+        "mean_ci_low": -0.00182476712078139,
+        "mean_ci_high": -0.00014831529994475002
+      },
+      "all16_overnight_SP500_1h:path0": {
+        "p_fwer": 1.0,
+        "t_block": -5.2214630739545544,
+        "mean_ci_low": -0.0016103715429456682,
+        "mean_ci_high": -0.0007247340238766815
+      },
+      "all16_overnight_SP500_1h:path1": {
+        "p_fwer": 1.0,
+        "t_block": -3.084649530247224,
+        "mean_ci_low": -0.0015160233594852398,
+        "mean_ci_high": -0.0003221107000494842
+      },
+      "all16_overnight_SP500_1h:path2": {
+        "p_fwer": 1.0,
+        "t_block": -3.678751747261958,
+        "mean_ci_low": -0.0010203924826476531,
+        "mean_ci_high": -0.0003161506976823333
+      },
+      "all16_overnight_SP500_1h": {
+        "p_fwer": 1.0,
+        "t_block": -5.1328227944708,
+        "mean_ci_low": -0.0012620107008558177,
+        "mean_ci_high": -0.0005550928227292138
+      },
+      "all16_overnight_SP500_3h:path0": {
+        "p_fwer": 1.0,
+        "t_block": -3.2343278154919055,
+        "mean_ci_low": -0.0014947607471928947,
+        "mean_ci_high": -0.0003601387799651091
+      },
+      "all16_overnight_SP500_3h:path1": {
+        "p_fwer": 1.0,
+        "t_block": -1.8746346491100419,
+        "mean_ci_low": -0.001310502997786532,
+        "mean_ci_high": 5.6538392338602544e-05
+      },
+      "all16_overnight_SP500_3h:path2": {
+        "p_fwer": 1.0,
+        "t_block": -3.2221871299396927,
+        "mean_ci_low": -0.0010828294938867754,
+        "mean_ci_high": -0.00025694967840088443
+      },
+      "all16_overnight_SP500_3h": {
+        "p_fwer": 1.0,
+        "t_block": -2.969872774133433,
+        "mean_ci_low": -0.0012394946348745647,
+        "mean_ci_high": -0.00023651442458044335
+      },
+      "all16_overnight_SP500_close:path0": {
+        "p_fwer": 1.0,
+        "t_block": -2.6943807816045826,
+        "mean_ci_low": -0.0019975415707343663,
+        "mean_ci_high": -0.00027747445072082795
+      },
+      "all16_overnight_SP500_close:path1": {
+        "p_fwer": 1.0,
+        "t_block": -2.0441401539697144,
+        "mean_ci_low": -0.0018493606516609027,
+        "mean_ci_high": 5.4220941007794045e-06
+      },
+      "all16_overnight_SP500_close:path2": {
+        "p_fwer": 1.0,
+        "t_block": -2.350254613566828,
+        "mean_ci_low": -0.0014736033611765654,
+        "mean_ci_high": -0.00011117196186796936
+      },
+      "all16_overnight_SP500_close": {
+        "p_fwer": 1.0,
+        "t_block": -2.4566087915422723,
+        "mean_ci_low": -0.0017293979982738801,
+        "mean_ci_high": -0.0001677431758424461
+      },
+      "all16_weekend_none_1h:path0": {
+        "p_fwer": 1.0,
+        "t_block": -0.14192447099215388,
+        "mean_ci_low": -0.0003515747055082964,
+        "mean_ci_high": 0.0003488129937797854
+      },
+      "all16_weekend_none_1h:path1": {
+        "p_fwer": 1.0,
+        "t_block": -2.766987860375906,
+        "mean_ci_low": -0.000392889079237832,
+        "mean_ci_high": -6.395609472247872e-05
+      },
+      "all16_weekend_none_1h:path2": {
+        "p_fwer": 1.0,
+        "t_block": -2.3622165449867483,
+        "mean_ci_low": -0.0005061930079334049,
+        "mean_ci_high": -6.514394926984593e-05
+      },
+      "all16_weekend_none_1h": {
+        "p_fwer": 1.0,
+        "t_block": -2.304268406781065,
+        "mean_ci_low": -0.00033130756148773064,
+        "mean_ci_high": -2.9523274292144792e-05
+      },
+      "all16_weekend_none_3h:path0": {
+        "p_fwer": 1.0,
+        "t_block": -1.0388237487731227,
+        "mean_ci_low": -0.0005068798648854316,
+        "mean_ci_high": 0.0001592257391270012
+      },
+      "all16_weekend_none_3h:path1": {
+        "p_fwer": 1.0,
+        "t_block": -1.720977265310937,
+        "mean_ci_low": -0.000624497053974046,
+        "mean_ci_high": 3.601486706944246e-05
+      },
+      "all16_weekend_none_3h:path2": {
+        "p_fwer": 1.0,
+        "t_block": -2.3618865788173227,
+        "mean_ci_low": -0.0007284455483549542,
+        "mean_ci_high": -8.74668665456799e-05
+      },
+      "all16_weekend_none_3h": {
+        "p_fwer": 1.0,
+        "t_block": -2.045015646332719,
+        "mean_ci_low": -0.0005638662781827784,
+        "mean_ci_high": -2.553924958547635e-05
+      },
+      "all16_weekend_none_close:path0": {
+        "p_fwer": 1.0,
+        "t_block": -1.6265868492585058,
+        "mean_ci_low": -0.0006642261224276488,
+        "mean_ci_high": 6.079925017905775e-05
+      },
+      "all16_weekend_none_close:path1": {
+        "p_fwer": 1.0,
+        "t_block": -2.0536527552004005,
+        "mean_ci_low": -0.0008238937684218298,
+        "mean_ci_high": -1.0898091853071932e-05
+      },
+      "all16_weekend_none_close:path2": {
+        "p_fwer": 1.0,
+        "t_block": -2.671954142209609,
+        "mean_ci_low": -0.0007873762863354527,
+        "mean_ci_high": -0.0001250574635430119
+      },
+      "all16_weekend_none_close": {
+        "p_fwer": 1.0,
+        "t_block": -2.359712749145706,
+        "mean_ci_low": -0.0007263373582420508,
+        "mean_ci_high": -6.060004808136388e-05
+      },
+      "all16_weekend_XYZ100_1h:path0": {
+        "p_fwer": 1.0,
+        "t_block": 0.3302071230388989,
+        "mean_ci_low": -0.0001599504683076646,
+        "mean_ci_high": 0.00032588451401938877
+      },
+      "all16_weekend_XYZ100_1h:path1": {
+        "p_fwer": 1.0,
+        "t_block": -0.573609706059249,
+        "mean_ci_low": -0.00022263544715906165,
+        "mean_ci_high": 0.00014754825305289104
+      },
+      "all16_weekend_XYZ100_1h:path2": {
+        "p_fwer": 1.0,
+        "t_block": -1.9723333282867082,
+        "mean_ci_low": -0.00029693495286198116,
+        "mean_ci_high": -2.91576579141789e-06
+      },
+      "all16_weekend_XYZ100_1h": {
+        "p_fwer": 1.0,
+        "t_block": -0.8693544556458073,
+        "mean_ci_low": -0.00016080627925702535,
+        "mean_ci_high": 7.505282798821525e-05
+      },
+      "all16_weekend_XYZ100_3h:path0": {
+        "p_fwer": 1.0,
+        "t_block": 0.374079765118338,
+        "mean_ci_low": -0.00020914686488002934,
+        "mean_ci_high": 0.00037828850339907314
+      },
+      "all16_weekend_XYZ100_3h:path1": {
+        "p_fwer": 1.0,
+        "t_block": 0.31779425914365556,
+        "mean_ci_low": -0.0002495254963590636,
+        "mean_ci_high": 0.0004009351566837469
+      },
+      "all16_weekend_XYZ100_3h:path2": {
+        "p_fwer": 1.0,
+        "t_block": -1.151992890278198,
+        "mean_ci_low": -0.0003479395739684665,
+        "mean_ci_high": 8.638291922484476e-05
+      },
+      "all16_weekend_XYZ100_3h": {
+        "p_fwer": 1.0,
+        "t_block": -0.04982344420687919,
+        "mean_ci_low": -0.0002506117505386635,
+        "mean_ci_high": 0.00027192187874083086
+      },
+      "all16_weekend_XYZ100_close:path0": {
+        "p_fwer": 1.0,
+        "t_block": 0.7365487715835248,
+        "mean_ci_low": -0.00020209099467716305,
+        "mean_ci_high": 0.0005319892033407655
+      },
+      "all16_weekend_XYZ100_close:path1": {
+        "p_fwer": 1.0,
+        "t_block": 0.4955955856180749,
+        "mean_ci_low": -0.00024691578952151924,
+        "mean_ci_high": 0.0005098933301802815
+      },
+      "all16_weekend_XYZ100_close:path2": {
+        "p_fwer": 1.0,
+        "t_block": -0.4991570649156721,
+        "mean_ci_low": -0.0003631053129720688,
+        "mean_ci_high": 0.00024192593650555224
+      },
+      "all16_weekend_XYZ100_close": {
+        "p_fwer": 1.0,
+        "t_block": 0.3111117678638821,
+        "mean_ci_low": -0.00025028964032958965,
+        "mean_ci_high": 0.0004188506733279524
+      },
+      "all16_weekend_SP500_1h:path0": {
+        "p_fwer": 1.0,
+        "t_block": 0.28435707672940436,
+        "mean_ci_low": -0.00019164513003640284,
+        "mean_ci_high": 0.00035668390096307433
+      },
+      "all16_weekend_SP500_1h:path1": {
+        "p_fwer": 1.0,
+        "t_block": -1.3186882612519009,
+        "mean_ci_low": -0.00025352760858272477,
+        "mean_ci_high": 6.211657931460143e-05
+      },
+      "all16_weekend_SP500_1h:path2": {
+        "p_fwer": 1.0,
+        "t_block": -2.350849077634323,
+        "mean_ci_low": -0.0003258209374241474,
+        "mean_ci_high": -3.489935970929544e-05
+      },
+      "all16_weekend_SP500_1h": {
+        "p_fwer": 1.0,
+        "t_block": -1.5400212451895297,
+        "mean_ci_low": -0.0001800385166970721,
+        "mean_ci_high": 2.191283642291936e-05
+      },
+      "all16_weekend_SP500_3h:path0": {
+        "p_fwer": 1.0,
+        "t_block": 0.20964225927661273,
+        "mean_ci_low": -0.00020746649602238035,
+        "mean_ci_high": 0.0002988802323405278
+      },
+      "all16_weekend_SP500_3h:path1": {
+        "p_fwer": 1.0,
+        "t_block": -0.2193443186577721,
+        "mean_ci_low": -0.0003304748427536738,
+        "mean_ci_high": 0.00028429795810210566
+      },
+      "all16_weekend_SP500_3h:path2": {
+        "p_fwer": 1.0,
+        "t_block": -1.5949099353208969,
+        "mean_ci_low": -0.0004110567636130137,
+        "mean_ci_high": 2.8442977259716696e-05
+      },
+      "all16_weekend_SP500_3h": {
+        "p_fwer": 1.0,
+        "t_block": -0.5209633902228037,
+        "mean_ci_low": -0.00028959756286152404,
+        "mean_ci_high": 0.00017745369404962194
+      },
+      "all16_weekend_SP500_close:path0": {
+        "p_fwer": 1.0,
+        "t_block": -0.14975861490155,
+        "mean_ci_low": -0.0003251419311976712,
+        "mean_ci_high": 0.00033253694054496003
+      },
+      "all16_weekend_SP500_close:path1": {
+        "p_fwer": 1.0,
+        "t_block": -0.5859450994688471,
+        "mean_ci_low": -0.00047068076511431664,
+        "mean_ci_high": 0.00030204832963381543
+      },
+      "all16_weekend_SP500_close:path2": {
+        "p_fwer": 1.0,
+        "t_block": -1.5075530781612119,
+        "mean_ci_low": -0.0005522306570461263,
+        "mean_ci_high": 8.611887380184305e-05
+      },
+      "all16_weekend_SP500_close": {
+        "p_fwer": 1.0,
+        "t_block": -0.781208469166254,
+        "mean_ci_low": -0.0004218182085668413,
+        "mean_ci_high": 0.0002244841627103028
+      },
+      "all16_external_weekend_none_1h:path0": {
+        "p_fwer": 1.0,
+        "t_block": -1.462762060761293,
+        "mean_ci_low": -0.00030791979250519664,
+        "mean_ci_high": 6.183716038872639e-05
+      },
+      "all16_external_weekend_none_1h:path1": {
+        "p_fwer": 1.0,
+        "t_block": -1.1069966551606203,
+        "mean_ci_low": -0.00016978633027167378,
+        "mean_ci_high": 4.728157252772866e-05
+      },
+      "all16_external_weekend_none_1h:path2": {
+        "p_fwer": 1.0,
+        "t_block": -1.0654389193077682,
+        "mean_ci_low": -0.0002795178535046209,
+        "mean_ci_high": 8.027684692236523e-05
+      },
+      "all16_external_weekend_none_1h": {
+        "p_fwer": 1.0,
+        "t_block": -1.6534514103294207,
+        "mean_ci_low": -0.00021332221329246328,
+        "mean_ci_high": 2.080917173297354e-05
+      },
+      "all16_external_weekend_none_3h:path0": {
+        "p_fwer": 1.0,
+        "t_block": -0.5691390478718099,
+        "mean_ci_low": -0.0003685158570747824,
+        "mean_ci_high": 0.00022402895170008953
+      },
+      "all16_external_weekend_none_3h:path1": {
+        "p_fwer": 1.0,
+        "t_block": -1.3746646541200926,
+        "mean_ci_low": -0.0003360592907622272,
+        "mean_ci_high": 5.87592892702622e-05
+      },
+      "all16_external_weekend_none_3h:path2": {
+        "p_fwer": 1.0,
+        "t_block": -1.617997323660945,
+        "mean_ci_low": -0.00041566739170080606,
+        "mean_ci_high": 3.725666754582203e-05
+      },
+      "all16_external_weekend_none_3h": {
+        "p_fwer": 1.0,
+        "t_block": -1.2372286014709655,
+        "mean_ci_low": -0.0003497269466524327,
+        "mean_ci_high": 8.086448349770516e-05
+      },
+      "all16_external_weekend_XYZ100_1h:path0": {
+        "p_fwer": 1.0,
+        "t_block": -2.5417553197321077,
+        "mean_ci_low": -0.00018020559937810657,
+        "mean_ci_high": -1.9412003215480057e-05
+      },
+      "all16_external_weekend_XYZ100_1h:path1": {
+        "p_fwer": 1.0,
+        "t_block": -3.9158688551525036,
+        "mean_ci_low": -0.0001624343455738766,
+        "mean_ci_high": -5.659529225351659e-05
+      },
+      "all16_external_weekend_XYZ100_1h:path2": {
+        "p_fwer": 1.0,
+        "t_block": -2.7557538757649547,
+        "mean_ci_low": -0.0002136461682885572,
+        "mean_ci_high": -3.675228354885771e-05
+      },
+      "all16_external_weekend_XYZ100_1h": {
+        "p_fwer": 1.0,
+        "t_block": -4.0074447228890415,
+        "mean_ci_low": -0.00016498596547844194,
+        "mean_ci_high": -5.5448838426979274e-05
+      },
+      "all16_external_weekend_XYZ100_3h:path0": {
+        "p_fwer": 1.0,
+        "t_block": -0.025962517784910523,
+        "mean_ci_low": -0.00012883246455381062,
+        "mean_ci_high": 0.0001453754260648565
+      },
+      "all16_external_weekend_XYZ100_3h:path1": {
+        "p_fwer": 1.0,
+        "t_block": -1.5675144548746933,
+        "mean_ci_low": -0.00017313600126953586,
+        "mean_ci_high": 2.1214902946744044e-05
+      },
+      "all16_external_weekend_XYZ100_3h:path2": {
+        "p_fwer": 1.0,
+        "t_block": -1.9476016443038409,
+        "mean_ci_low": -0.00023527241477904045,
+        "mean_ci_high": -4.1123594529261955e-06
+      },
+      "all16_external_weekend_XYZ100_3h": {
+        "p_fwer": 1.0,
+        "t_block": -1.1771498487747538,
+        "mean_ci_low": -0.00017074163022582126,
+        "mean_ci_high": 4.63714137839233e-05
+      },
+      "all16_external_weekend_SP500_1h:path0": {
+        "p_fwer": 1.0,
+        "t_block": -2.671409183532187,
+        "mean_ci_low": -0.00020636350771266622,
+        "mean_ci_high": -2.887632859328778e-05
+      },
+      "all16_external_weekend_SP500_1h:path1": {
+        "p_fwer": 1.0,
+        "t_block": -4.047107737168213,
+        "mean_ci_low": -0.00016436868035638312,
+        "mean_ci_high": -5.8200913184438506e-05
+      },
+      "all16_external_weekend_SP500_1h:path2": {
+        "p_fwer": 1.0,
+        "t_block": -2.6795160755472804,
+        "mean_ci_low": -0.0002276062474664076,
+        "mean_ci_high": -3.708572431599851e-05
+      },
+      "all16_external_weekend_SP500_1h": {
+        "p_fwer": 1.0,
+        "t_block": -3.9574086603625056,
+        "mean_ci_low": -0.00017750649711710173,
+        "mean_ci_high": -5.911748570245624e-05
+      },
+      "all16_external_weekend_SP500_3h:path0": {
+        "p_fwer": 1.0,
+        "t_block": -0.6362606048530134,
+        "mean_ci_low": -0.00017883535719003917,
+        "mean_ci_high": 0.00011429441582483137
+      },
+      "all16_external_weekend_SP500_3h:path1": {
+        "p_fwer": 1.0,
+        "t_block": -1.7237084770192104,
+        "mean_ci_low": -0.00019414001050039058,
+        "mean_ci_high": 1.548101520931262e-05
+      },
+      "all16_external_weekend_SP500_3h:path2": {
+        "p_fwer": 1.0,
+        "t_block": -2.2017734362682337,
+        "mean_ci_low": -0.00025253269986861616,
+        "mean_ci_high": -1.530448124927119e-05
+      },
+      "all16_external_weekend_SP500_3h": {
+        "p_fwer": 1.0,
+        "t_block": -1.5695629545803447,
+        "mean_ci_low": -0.00019716678462632916,
+        "mean_ci_high": 2.7223990881843408e-05
+      },
+      "cross9_daily_XYZ100_lb1_h1:path0": {
+        "p_fwer": 1.0,
+        "t_block": -2.116204075115955,
+        "mean_ci_low": -0.00170972511503434,
+        "mean_ci_high": -5.5775852762071014e-05
+      },
+      "cross9_daily_XYZ100_lb1_h1": {
+        "p_fwer": 1.0,
+        "t_block": -2.116204075115955,
+        "mean_ci_low": -0.00170972511503434,
+        "mean_ci_high": -5.5775852762071014e-05
+      },
+      "cross9_daily_XYZ100_lb1_h3:path0": {
+        "p_fwer": 1.0,
+        "t_block": 0.20337670298564992,
+        "mean_ci_low": -0.0007374723283076429,
+        "mean_ci_high": 0.0009461910088839147
+      },
+      "cross9_daily_XYZ100_lb1_h3:path1": {
+        "p_fwer": 0.9605,
+        "t_block": 1.4083863029250838,
+        "mean_ci_low": -0.0002032051031932671,
+        "mean_ci_high": 0.0012610275255875696
+      },
+      "cross9_daily_XYZ100_lb1_h3:path2": {
+        "p_fwer": 1.0,
+        "t_block": -0.805498138393508,
+        "mean_ci_low": -0.0013276795485451538,
+        "mean_ci_high": 0.0005056111627582836
+      },
+      "cross9_daily_XYZ100_lb1_h3": {
+        "p_fwer": 1.0,
+        "t_block": 0.3422953485801241,
+        "mean_ci_low": -0.00035800106257672873,
+        "mean_ci_high": 0.0005215859827653543
+      },
+      "cross9_daily_XYZ100_lb3_h1:path0": {
+        "p_fwer": 1.0,
+        "t_block": -3.445014753538372,
+        "mean_ci_low": -0.002065142453509555,
+        "mean_ci_high": -0.0005668173803779144
+      },
+      "cross9_daily_XYZ100_lb3_h1": {
+        "p_fwer": 1.0,
+        "t_block": -3.445014753538372,
+        "mean_ci_low": -0.002065142453509555,
+        "mean_ci_high": -0.0005668173803779144
+      },
+      "cross9_daily_XYZ100_lb3_h3:path0": {
+        "p_fwer": 1.0,
+        "t_block": -1.9378785142863642,
+        "mean_ci_low": -0.0015928473958323618,
+        "mean_ci_high": -2.5776190696502783e-06
+      },
+      "cross9_daily_XYZ100_lb3_h3:path1": {
+        "p_fwer": 1.0,
+        "t_block": -1.5069474768872786,
+        "mean_ci_low": -0.0012556497250032711,
+        "mean_ci_high": 0.00017869158931391475
+      },
+      "cross9_daily_XYZ100_lb3_h3:path2": {
+        "p_fwer": 1.0,
+        "t_block": -1.8257441548754656,
+        "mean_ci_low": -0.0014883237220507687,
+        "mean_ci_high": 5.3784703389433584e-05
+      },
+      "cross9_daily_XYZ100_lb3_h3": {
+        "p_fwer": 1.0,
+        "t_block": -2.302607969578655,
+        "mean_ci_low": -0.001285859970652239,
+        "mean_ci_high": -0.00010870107107491451
+      },
+      "cross9_daily_XYZ100_lb5_h1:path0": {
+        "p_fwer": 1.0,
+        "t_block": -3.7256331684716555,
+        "mean_ci_low": -0.0023164921332010186,
+        "mean_ci_high": -0.0007204829337353971
+      },
+      "cross9_daily_XYZ100_lb5_h1": {
+        "p_fwer": 1.0,
+        "t_block": -3.7256331684716555,
+        "mean_ci_low": -0.0023164921332010186,
+        "mean_ci_high": -0.0007204829337353971
+      },
+      "cross9_daily_XYZ100_lb5_h3:path0": {
+        "p_fwer": 1.0,
+        "t_block": -2.0771783766693432,
+        "mean_ci_low": -0.001733931191154174,
+        "mean_ci_high": -8.500537638973316e-05
+      },
+      "cross9_daily_XYZ100_lb5_h3:path1": {
+        "p_fwer": 1.0,
+        "t_block": -2.447218077613409,
+        "mean_ci_low": -0.0016600342968178079,
+        "mean_ci_high": -0.00021645379257034998
+      },
+      "cross9_daily_XYZ100_lb5_h3:path2": {
+        "p_fwer": 1.0,
+        "t_block": -1.9260377246757376,
+        "mean_ci_low": -0.0018030270423932248,
+        "mean_ci_high": -2.9452024139362616e-05
+      },
+      "cross9_daily_XYZ100_lb5_h3": {
+        "p_fwer": 1.0,
+        "t_block": -2.56670905284613,
+        "mean_ci_low": -0.001598377360599324,
+        "mean_ci_high": -0.00023202170904627027
+      },
+      "cross9_daily_SP500_lb1_h1:path0": {
+        "p_fwer": 1.0,
+        "t_block": -1.5895307400774037,
+        "mean_ci_low": -0.001977117702275108,
+        "mean_ci_high": 0.00023597068678200893
+      },
+      "cross9_daily_SP500_lb1_h1": {
+        "p_fwer": 1.0,
+        "t_block": -1.5895307400774037,
+        "mean_ci_low": -0.001977117702275108,
+        "mean_ci_high": 0.00023597068678200893
+      },
+      "cross9_daily_SP500_lb1_h3:path0": {
+        "p_fwer": 1.0,
+        "t_block": 0.08903485377051122,
+        "mean_ci_low": -0.0010584979509851219,
+        "mean_ci_high": 0.0012529868372959374
+      },
+      "cross9_daily_SP500_lb1_h3:path1": {
+        "p_fwer": 1.0,
+        "t_block": 0.029878419533492264,
+        "mean_ci_low": -0.0009820022690085735,
+        "mean_ci_high": 0.0010343328311173674
+      },
+      "cross9_daily_SP500_lb1_h3:path2": {
+        "p_fwer": 1.0,
+        "t_block": -0.2803857709143626,
+        "mean_ci_low": -0.001443359892911229,
+        "mean_ci_high": 0.0010567349847235988
+      },
+      "cross9_daily_SP500_lb1_h3": {
+        "p_fwer": 1.0,
+        "t_block": -0.11753932545048947,
+        "mean_ci_low": -0.0006627555710137016,
+        "mean_ci_high": 0.0005804062166871563
+      },
+      "cross9_daily_SP500_lb3_h1:path0": {
+        "p_fwer": 1.0,
+        "t_block": -2.7063737358304842,
+        "mean_ci_low": -0.002255126054399499,
+        "mean_ci_high": -0.00034995662987764213
+      },
+      "cross9_daily_SP500_lb3_h1": {
+        "p_fwer": 1.0,
+        "t_block": -2.7063737358304842,
+        "mean_ci_low": -0.002255126054399499,
+        "mean_ci_high": -0.00034995662987764213
+      },
+      "cross9_daily_SP500_lb3_h3:path0": {
+        "p_fwer": 1.0,
+        "t_block": -1.5817291000591833,
+        "mean_ci_low": -0.0018473488532440852,
+        "mean_ci_high": 0.00016686995876198207
+      },
+      "cross9_daily_SP500_lb3_h3:path1": {
+        "p_fwer": 1.0,
+        "t_block": -2.232529792518268,
+        "mean_ci_low": -0.001944547045556662,
+        "mean_ci_high": -0.00013326106524699484
+      },
+      "cross9_daily_SP500_lb3_h3:path2": {
+        "p_fwer": 1.0,
+        "t_block": -1.8114179551961582,
+        "mean_ci_low": -0.002054282106498929,
+        "mean_ci_high": 5.7992062156306235e-05
+      },
+      "cross9_daily_SP500_lb3_h3": {
+        "p_fwer": 1.0,
+        "t_block": -2.42293397797117,
+        "mean_ci_low": -0.001707784416171786,
+        "mean_ci_high": -0.000191121022325719
+      },
+      "cross9_daily_SP500_lb5_h1:path0": {
+        "p_fwer": 1.0,
+        "t_block": -3.421917030867309,
+        "mean_ci_low": -0.002699023268833454,
+        "mean_ci_high": -0.0007410949591350597
+      },
+      "cross9_daily_SP500_lb5_h1": {
+        "p_fwer": 1.0,
+        "t_block": -3.421917030867309,
+        "mean_ci_low": -0.002699023268833454,
+        "mean_ci_high": -0.0007410949591350597
+      },
+      "cross9_daily_SP500_lb5_h3:path0": {
+        "p_fwer": 1.0,
+        "t_block": -1.6923385009972005,
+        "mean_ci_low": -0.0019664665550202637,
+        "mean_ci_high": 9.822258395276572e-05
+      },
+      "cross9_daily_SP500_lb5_h3:path1": {
+        "p_fwer": 1.0,
+        "t_block": -2.3593181479416083,
+        "mean_ci_low": -0.00220276931991785,
+        "mean_ci_high": -0.0001961530299057438
+      },
+      "cross9_daily_SP500_lb5_h3:path2": {
+        "p_fwer": 1.0,
+        "t_block": -2.250766623919042,
+        "mean_ci_low": -0.0026409967243565596,
+        "mean_ci_high": -0.00022917287125777462
+      },
+      "cross9_daily_SP500_lb5_h3": {
+        "p_fwer": 1.0,
+        "t_block": -2.470670202059036,
+        "mean_ci_low": -0.0021137300881169437,
+        "mean_ci_high": -0.0002768068921294646
+      },
+      "cross9_overnight_none_1h:path0": {
+        "p_fwer": 1.0,
+        "t_block": -4.26346978702396,
+        "mean_ci_low": -0.0015750049913501355,
+        "mean_ci_high": -0.0005729307681447847
+      },
+      "cross9_overnight_none_1h:path1": {
+        "p_fwer": 1.0,
+        "t_block": -3.1088105843055533,
+        "mean_ci_low": -0.00172672326708463,
+        "mean_ci_high": -0.00037996060997065237
+      },
+      "cross9_overnight_none_1h:path2": {
+        "p_fwer": 1.0,
+        "t_block": -2.699561009138648,
+        "mean_ci_low": -0.0009847939048927968,
+        "mean_ci_high": -0.00014683874304705877
+      },
+      "cross9_overnight_none_1h": {
+        "p_fwer": 1.0,
+        "t_block": -5.410756148470911,
+        "mean_ci_low": -0.001220635595205631,
+        "mean_ci_high": -0.0005703820923746612
+      },
+      "cross9_overnight_none_3h:path0": {
+        "p_fwer": 1.0,
+        "t_block": -2.023906664594181,
+        "mean_ci_low": -0.0012091301499843156,
+        "mean_ci_high": -2.6673966474291284e-05
+      },
+      "cross9_overnight_none_3h:path1": {
+        "p_fwer": 1.0,
+        "t_block": -1.438009140685384,
+        "mean_ci_low": -0.0009640542361746664,
+        "mean_ci_high": 0.00019446939313336854
+      },
+      "cross9_overnight_none_3h:path2": {
+        "p_fwer": 1.0,
+        "t_block": -2.1338541318457427,
+        "mean_ci_low": -0.001051921270313292,
+        "mean_ci_high": -3.372522149086652e-05
+      },
+      "cross9_overnight_none_3h": {
+        "p_fwer": 1.0,
+        "t_block": -2.183294420228651,
+        "mean_ci_low": -0.0009838930757606033,
+        "mean_ci_high": -2.1273288638270116e-05
+      },
+      "cross9_overnight_none_close:path0": {
+        "p_fwer": 1.0,
+        "t_block": -1.5928335179704736,
+        "mean_ci_low": -0.0016902712271723692,
+        "mean_ci_high": 0.00020083954472982718
+      },
+      "cross9_overnight_none_close:path1": {
+        "p_fwer": 1.0,
+        "t_block": -1.2398243098207036,
+        "mean_ci_low": -0.0015533457799184057,
+        "mean_ci_high": 0.0004223169056185381
+      },
+      "cross9_overnight_none_close:path2": {
+        "p_fwer": 1.0,
+        "t_block": -1.2106292081894292,
+        "mean_ci_low": -0.001290378610356176,
+        "mean_ci_high": 0.0003765906448857223
+      },
+      "cross9_overnight_none_close": {
+        "p_fwer": 1.0,
+        "t_block": -1.4139172399694822,
+        "mean_ci_low": -0.0014666158355549318,
+        "mean_ci_high": 0.0002866276010183727
+      },
+      "cross9_overnight_XYZ100_1h:path0": {
+        "p_fwer": 1.0,
+        "t_block": -5.327792979574104,
+        "mean_ci_low": -0.0014540056943632036,
+        "mean_ci_high": -0.0006721324494058623
+      },
+      "cross9_overnight_XYZ100_1h:path1": {
+        "p_fwer": 1.0,
+        "t_block": -4.262753634147028,
+        "mean_ci_low": -0.0013547586380914557,
+        "mean_ci_high": -0.0005016649546030812
+      },
+      "cross9_overnight_XYZ100_1h:path2": {
+        "p_fwer": 1.0,
+        "t_block": -4.141596174989047,
+        "mean_ci_low": -0.0008983889911120981,
+        "mean_ci_high": -0.00032515652549661313
+      },
+      "cross9_overnight_XYZ100_1h": {
+        "p_fwer": 1.0,
+        "t_block": -6.808742533181276,
+        "mean_ci_low": -0.0011088508361762897,
+        "mean_ci_high": -0.0006131644263697332
+      },
+      "cross9_overnight_XYZ100_3h:path0": {
+        "p_fwer": 1.0,
+        "t_block": -2.2957779239857894,
+        "mean_ci_low": -0.0012040813857079847,
+        "mean_ci_high": -8.58074714562096e-05
+      },
+      "cross9_overnight_XYZ100_3h:path1": {
+        "p_fwer": 1.0,
+        "t_block": -1.414136879620387,
+        "mean_ci_low": -0.0009012855478805818,
+        "mean_ci_high": 0.00015366556770845884
+      },
+      "cross9_overnight_XYZ100_3h:path2": {
+        "p_fwer": 1.0,
+        "t_block": -2.0802652765852976,
+        "mean_ci_low": -0.0009616203796910347,
+        "mean_ci_high": -1.626456335162581e-05
+      },
+      "cross9_overnight_XYZ100_3h": {
+        "p_fwer": 1.0,
+        "t_block": -2.106530546914041,
+        "mean_ci_low": -0.0009815952367906629,
+        "mean_ci_high": -1.1593043182117776e-05
+      },
+      "cross9_overnight_XYZ100_close:path0": {
+        "p_fwer": 1.0,
+        "t_block": -1.3753113553074936,
+        "mean_ci_low": -0.0014913167227146086,
+        "mean_ci_high": 0.00029523006344595786
+      },
+      "cross9_overnight_XYZ100_close:path1": {
+        "p_fwer": 1.0,
+        "t_block": -0.9593304204072786,
+        "mean_ci_low": -0.0012891651553387665,
+        "mean_ci_high": 0.0004905776502865634
+      },
+      "cross9_overnight_XYZ100_close:path2": {
+        "p_fwer": 1.0,
+        "t_block": -1.089912491580908,
+        "mean_ci_low": -0.001073327515622366,
+        "mean_ci_high": 0.00033764861599421567
+      },
+      "cross9_overnight_XYZ100_close": {
+        "p_fwer": 1.0,
+        "t_block": -1.177501659580701,
+        "mean_ci_low": -0.0012587924769975525,
+        "mean_ci_high": 0.0003551645709059681
+      },
+      "cross9_overnight_SP500_1h:path0": {
+        "p_fwer": 1.0,
+        "t_block": -5.426379353284199,
+        "mean_ci_low": -0.001312417022444902,
+        "mean_ci_high": -0.0006233359017016165
+      },
+      "cross9_overnight_SP500_1h:path1": {
+        "p_fwer": 1.0,
+        "t_block": -3.5366613564603715,
+        "mean_ci_low": -0.0013378452170885132,
+        "mean_ci_high": -0.00038718314514707
+      },
+      "cross9_overnight_SP500_1h:path2": {
+        "p_fwer": 1.0,
+        "t_block": -3.7751861263295687,
+        "mean_ci_low": -0.0010196961289478366,
+        "mean_ci_high": -0.0003295502817443235
+      },
+      "cross9_overnight_SP500_1h": {
+        "p_fwer": 1.0,
+        "t_block": -5.978641395246431,
+        "mean_ci_low": -0.0011090508185950018,
+        "mean_ci_high": -0.0005650513835882498
+      },
+      "cross9_overnight_SP500_3h:path0": {
+        "p_fwer": 1.0,
+        "t_block": -2.5749201408390805,
+        "mean_ci_low": -0.0011013826360536144,
+        "mean_ci_high": -0.00015269288292321052
+      },
+      "cross9_overnight_SP500_3h:path1": {
+        "p_fwer": 1.0,
+        "t_block": -1.6321422780428338,
+        "mean_ci_low": -0.0009005970727484123,
+        "mean_ci_high": 7.756091171494129e-05
+      },
+      "cross9_overnight_SP500_3h:path2": {
+        "p_fwer": 1.0,
+        "t_block": -2.827460264987608,
+        "mean_ci_low": -0.001058835106003974,
+        "mean_ci_high": -0.00018728450025709087
+      },
+      "cross9_overnight_SP500_3h": {
+        "p_fwer": 1.0,
+        "t_block": -2.6085359363823883,
+        "mean_ci_low": -0.0009744178013345762,
+        "mean_ci_high": -0.00013797152100139342
+      },
+      "cross9_overnight_SP500_close:path0": {
+        "p_fwer": 1.0,
+        "t_block": -1.9721183090284893,
+        "mean_ci_low": -0.0014468725738564267,
+        "mean_ci_high": -2.1755412701151937e-06
+      },
+      "cross9_overnight_SP500_close:path1": {
+        "p_fwer": 1.0,
+        "t_block": -1.4362631161980264,
+        "mean_ci_low": -0.0013140879200685416,
+        "mean_ci_high": 0.0002484933582612166
+      },
+      "cross9_overnight_SP500_close:path2": {
+        "p_fwer": 1.0,
+        "t_block": -1.8876674795395156,
+        "mean_ci_low": -0.0012088203683715886,
+        "mean_ci_high": 3.63072962055994e-05
+      },
+      "cross9_overnight_SP500_close": {
+        "p_fwer": 1.0,
+        "t_block": -1.8213326741305609,
+        "mean_ci_low": -0.0012822664916553855,
+        "mean_ci_high": 6.159260935392752e-05
+      },
+      "cross9_weekend_none_1h:path0": {
+        "p_fwer": 1.0,
+        "t_block": -0.0029120983147846637,
+        "mean_ci_low": -0.00031419507368989026,
+        "mean_ci_high": 0.00036980497327652757
+      },
+      "cross9_weekend_none_1h:path1": {
+        "p_fwer": 1.0,
+        "t_block": -3.1648374423817387,
+        "mean_ci_low": -0.0003777645333098851,
+        "mean_ci_high": -8.964556840199015e-05
+      },
+      "cross9_weekend_none_1h:path2": {
+        "p_fwer": 1.0,
+        "t_block": -1.9605601228504506,
+        "mean_ci_low": -0.00044165830039697286,
+        "mean_ci_high": -1.0158018565454912e-05
+      },
+      "cross9_weekend_none_1h": {
+        "p_fwer": 1.0,
+        "t_block": -2.255272411096598,
+        "mean_ci_low": -0.00028647853030688104,
+        "mean_ci_high": -2.5875597559093833e-05
+      },
+      "cross9_weekend_none_3h:path0": {
+        "p_fwer": 1.0,
+        "t_block": -0.3557916446953837,
+        "mean_ci_low": -0.00042143848249185425,
+        "mean_ci_high": 0.0003031136529648607
+      },
+      "cross9_weekend_none_3h:path1": {
+        "p_fwer": 1.0,
+        "t_block": -0.8049903730973654,
+        "mean_ci_low": -0.0003655279367377334,
+        "mean_ci_high": 0.00011772840202424649
+      },
+      "cross9_weekend_none_3h:path2": {
+        "p_fwer": 1.0,
+        "t_block": -1.2327728306196837,
+        "mean_ci_low": -0.000462748418772323,
+        "mean_ci_high": 7.430265574537732e-05
+      },
+      "cross9_weekend_none_3h": {
+        "p_fwer": 1.0,
+        "t_block": -0.8514997187971615,
+        "mean_ci_low": -0.0003952392200199952,
+        "mean_ci_high": 0.00012205809895422688
+      },
+      "cross9_weekend_none_close:path0": {
+        "p_fwer": 1.0,
+        "t_block": -0.4113530078736375,
+        "mean_ci_low": -0.0005472379050285433,
+        "mean_ci_high": 0.0003564515367061598
+      },
+      "cross9_weekend_none_close:path1": {
+        "p_fwer": 1.0,
+        "t_block": -1.1718967170377863,
+        "mean_ci_low": -0.0006049153814488061,
+        "mean_ci_high": 0.00016117976794686762
+      },
+      "cross9_weekend_none_close:path2": {
+        "p_fwer": 1.0,
+        "t_block": -1.9306437571080421,
+        "mean_ci_low": -0.0005820388874152801,
+        "mean_ci_high": -1.2264866006869626e-05
+      },
+      "cross9_weekend_none_close": {
+        "p_fwer": 1.0,
+        "t_block": -1.1482043062606917,
+        "mean_ci_low": -0.0005512535879108475,
+        "mean_ci_high": 0.00013195946742422193
+      },
+      "cross9_weekend_XYZ100_1h:path0": {
+        "p_fwer": 1.0,
+        "t_block": 0.2752622619781166,
+        "mean_ci_low": -0.00023879366146006898,
+        "mean_ci_high": 0.00037777715146579963
+      },
+      "cross9_weekend_XYZ100_1h:path1": {
+        "p_fwer": 1.0,
+        "t_block": -1.4206867846658393,
+        "mean_ci_low": -0.00029938790813483645,
+        "mean_ci_high": 7.039937747013839e-05
+      },
+      "cross9_weekend_XYZ100_1h:path2": {
+        "p_fwer": 1.0,
+        "t_block": -1.9434196174445875,
+        "mean_ci_low": -0.00036215411930567184,
+        "mean_ci_high": 1.514728393965393e-05
+      },
+      "cross9_weekend_XYZ100_1h": {
+        "p_fwer": 1.0,
+        "t_block": -1.2084303441222286,
+        "mean_ci_low": -0.00022935648507346529,
+        "mean_ci_high": 7.091829259662701e-05
+      },
+      "cross9_weekend_XYZ100_3h:path0": {
+        "p_fwer": 1.0,
+        "t_block": 0.5934793836984177,
+        "mean_ci_low": -0.00023209535809241507,
+        "mean_ci_high": 0.0005859517356686573
+      },
+      "cross9_weekend_XYZ100_3h:path1": {
+        "p_fwer": 1.0,
+        "t_block": 0.6946002045681715,
+        "mean_ci_low": -0.0001724014520747042,
+        "mean_ci_high": 0.0006476195572767434
+      },
+      "cross9_weekend_XYZ100_3h:path2": {
+        "p_fwer": 1.0,
+        "t_block": 0.1499354362356438,
+        "mean_ci_low": -0.00021666230467781779,
+        "mean_ci_high": 0.0003857946633708172
+      },
+      "cross9_weekend_XYZ100_3h": {
+        "p_fwer": 1.0,
+        "t_block": 0.5372283779240828,
+        "mean_ci_low": -0.00017867405400596808,
+        "mean_ci_high": 0.0005227745562594449
+      },
+      "cross9_weekend_XYZ100_close:path0": {
+        "p_fwer": 0.98375,
+        "t_block": 1.2386991790826662,
+        "mean_ci_low": -0.00013398272538255295,
+        "mean_ci_high": 0.0009996505207104287
+      },
+      "cross9_weekend_XYZ100_close:path1": {
+        "p_fwer": 0.9935,
+        "t_block": 1.065409435175703,
+        "mean_ci_low": -0.00013435596850185978,
+        "mean_ci_high": 0.0009021596875879909
+      },
+      "cross9_weekend_XYZ100_close:path2": {
+        "p_fwer": 1.0,
+        "t_block": 0.6234855390701906,
+        "mean_ci_low": -0.00018272177472220395,
+        "mean_ci_high": 0.0006271481549099091
+      },
+      "cross9_weekend_XYZ100_close": {
+        "p_fwer": 0.995,
+        "t_block": 1.0380273360711605,
+        "mean_ci_low": -0.0001306486823445477,
+        "mean_ci_high": 0.000828257783074673
+      },
+      "cross9_weekend_SP500_1h:path0": {
+        "p_fwer": 1.0,
+        "t_block": 0.4755894378594712,
+        "mean_ci_low": -0.0001846168507367853,
+        "mean_ci_high": 0.00036208688087247177
+      },
+      "cross9_weekend_SP500_1h:path1": {
+        "p_fwer": 1.0,
+        "t_block": -1.9001785666309932,
+        "mean_ci_low": -0.0002878956070589467,
+        "mean_ci_high": 1.0139245334094503e-05
+      },
+      "cross9_weekend_SP500_1h:path2": {
+        "p_fwer": 1.0,
+        "t_block": -1.8156020908374182,
+        "mean_ci_low": -0.00038251585838858986,
+        "mean_ci_high": 1.7195648305872813e-05
+      },
+      "cross9_weekend_SP500_1h": {
+        "p_fwer": 1.0,
+        "t_block": -1.4618680319330108,
+        "mean_ci_low": -0.0002032086322058268,
+        "mean_ci_high": 3.584625846874166e-05
+      },
+      "cross9_weekend_SP500_3h:path0": {
+        "p_fwer": 1.0,
+        "t_block": 0.7115211758137943,
+        "mean_ci_low": -0.0001909492143499401,
+        "mean_ci_high": 0.0004823480527877639
+      },
+      "cross9_weekend_SP500_3h:path1": {
+        "p_fwer": 1.0,
+        "t_block": 0.4776654653874798,
+        "mean_ci_low": -0.00023254869550156336,
+        "mean_ci_high": 0.0004818151533998388
+      },
+      "cross9_weekend_SP500_3h:path2": {
+        "p_fwer": 1.0,
+        "t_block": -0.2677924034479501,
+        "mean_ci_low": -0.00031434825894558605,
+        "mean_ci_high": 0.00029890684588921375
+      },
+      "cross9_weekend_SP500_3h": {
+        "p_fwer": 1.0,
+        "t_block": 0.34512902390462824,
+        "mean_ci_low": -0.00022236530210282082,
+        "mean_ci_high": 0.00040460203151897965
+      },
+      "cross9_weekend_SP500_close:path0": {
+        "p_fwer": 0.99975,
+        "t_block": 0.8139607351725598,
+        "mean_ci_low": -0.00023598592185525562,
+        "mean_ci_high": 0.0007365993254023614
+      },
+      "cross9_weekend_SP500_close:path1": {
+        "p_fwer": 1.0,
+        "t_block": 0.4186138688031124,
+        "mean_ci_low": -0.0002977695463745223,
+        "mean_ci_high": 0.0006171028398127247
+      },
+      "cross9_weekend_SP500_close:path2": {
+        "p_fwer": 1.0,
+        "t_block": -0.2372678607250497,
+        "mean_ci_low": -0.0003611300483620846,
+        "mean_ci_high": 0.0003904398080997149
+      },
+      "cross9_weekend_SP500_close": {
+        "p_fwer": 1.0,
+        "t_block": 0.38321568455987703,
+        "mean_ci_low": -0.000274304846902567,
+        "mean_ci_high": 0.000562033055179305
+      },
+      "cross9_external_weekend_none_1h:path0": {
+        "p_fwer": 1.0,
+        "t_block": -1.915720848652439,
+        "mean_ci_low": -0.00036428787542286075,
+        "mean_ci_high": 1.3388382477473793e-05
+      },
+      "cross9_external_weekend_none_1h:path1": {
+        "p_fwer": 1.0,
+        "t_block": -1.0930203540229566,
+        "mean_ci_low": -0.0001783152303457517,
+        "mean_ci_high": 5.993341905783776e-05
+      },
+      "cross9_external_weekend_none_1h:path2": {
+        "p_fwer": 1.0,
+        "t_block": -1.877137990504078,
+        "mean_ci_low": -0.00030950043097973366,
+        "mean_ci_high": 1.2607385991004441e-06
+      },
+      "cross9_external_weekend_none_1h": {
+        "p_fwer": 1.0,
+        "t_block": -2.360261239036496,
+        "mean_ci_low": -0.0002408223333529708,
+        "mean_ci_high": -1.948497685140092e-05
+      },
+      "cross9_external_weekend_none_3h:path0": {
+        "p_fwer": 1.0,
+        "t_block": -1.375176886851116,
+        "mean_ci_low": -0.00046124300608969295,
+        "mean_ci_high": 8.646218368395857e-05
+      },
+      "cross9_external_weekend_none_3h:path1": {
+        "p_fwer": 1.0,
+        "t_block": -1.428868653800731,
+        "mean_ci_low": -0.00034713559487942506,
+        "mean_ci_high": 7.138728999863948e-05
+      },
+      "cross9_external_weekend_none_3h:path2": {
+        "p_fwer": 1.0,
+        "t_block": -1.9347438959107195,
+        "mean_ci_low": -0.00043480562411974733,
+        "mean_ci_high": 3.6737765976938843e-06
+      },
+      "cross9_external_weekend_none_3h": {
+        "p_fwer": 1.0,
+        "t_block": -1.754033325880497,
+        "mean_ci_low": -0.00039478957639668385,
+        "mean_ci_high": 2.722305591938484e-05
+      },
+      "cross9_external_weekend_XYZ100_1h:path0": {
+        "p_fwer": 1.0,
+        "t_block": -2.9662860316216357,
+        "mean_ci_low": -0.00022310875316323845,
+        "mean_ci_high": -4.2439922054007885e-05
+      },
+      "cross9_external_weekend_XYZ100_1h:path1": {
+        "p_fwer": 1.0,
+        "t_block": -4.25280628878482,
+        "mean_ci_low": -0.00018165793695435693,
+        "mean_ci_high": -6.87132325598106e-05
+      },
+      "cross9_external_weekend_XYZ100_1h:path2": {
+        "p_fwer": 1.0,
+        "t_block": -3.6699054474777935,
+        "mean_ci_low": -0.00024971319040005676,
+        "mean_ci_high": -7.83972084548304e-05
+      },
+      "cross9_external_weekend_XYZ100_1h": {
+        "p_fwer": 1.0,
+        "t_block": -4.468564471521495,
+        "mean_ci_low": -0.00019768126355220546,
+        "mean_ci_high": -7.592946251419339e-05
+      },
+      "cross9_external_weekend_XYZ100_3h:path0": {
+        "p_fwer": 1.0,
+        "t_block": -1.587946429015732,
+        "mean_ci_low": -0.00020665717460392134,
+        "mean_ci_high": 3.7939735608868825e-05
+      },
+      "cross9_external_weekend_XYZ100_3h:path1": {
+        "p_fwer": 1.0,
+        "t_block": -2.49089154261895,
+        "mean_ci_low": -0.00022230325929855477,
+        "mean_ci_high": -2.360916293431842e-05
+      },
+      "cross9_external_weekend_XYZ100_3h:path2": {
+        "p_fwer": 1.0,
+        "t_block": -3.529176032401531,
+        "mean_ci_low": -0.000293241392092773,
+        "mean_ci_high": -8.699513905065191e-05
+      },
+      "cross9_external_weekend_XYZ100_3h": {
+        "p_fwer": 1.0,
+        "t_block": -2.8625508135072772,
+        "mean_ci_low": -0.00022106958081827792,
+        "mean_ci_high": -3.6733527044767924e-05
+      },
+      "cross9_external_weekend_SP500_1h:path0": {
+        "p_fwer": 1.0,
+        "t_block": -3.4593334707575227,
+        "mean_ci_low": -0.0002372280579077,
+        "mean_ci_high": -6.474707981818815e-05
+      },
+      "cross9_external_weekend_SP500_1h:path1": {
+        "p_fwer": 1.0,
+        "t_block": -4.632763145231735,
+        "mean_ci_low": -0.00017512253124743148,
+        "mean_ci_high": -7.092859779598418e-05
+      },
+      "cross9_external_weekend_SP500_1h:path2": {
+        "p_fwer": 1.0,
+        "t_block": -3.6873285653931993,
+        "mean_ci_low": -0.0002498946034237181,
+        "mean_ci_high": -7.867807447589916e-05
+      },
+      "cross9_external_weekend_SP500_1h": {
+        "p_fwer": 1.0,
+        "t_block": -5.210855470704113,
+        "mean_ci_low": -0.00019942749233136926,
+        "mean_ci_high": -9.030813933191671e-05
+      },
+      "cross9_external_weekend_SP500_3h:path0": {
+        "p_fwer": 1.0,
+        "t_block": -2.0712245740505724,
+        "mean_ci_low": -0.0002471515908896889,
+        "mean_ci_high": 4.9110629043237525e-06
+      },
+      "cross9_external_weekend_SP500_3h:path1": {
+        "p_fwer": 1.0,
+        "t_block": -2.7012406219419143,
+        "mean_ci_low": -0.00022613305267291833,
+        "mean_ci_high": -3.12328190244508e-05
+      },
+      "cross9_external_weekend_SP500_3h:path2": {
+        "p_fwer": 1.0,
+        "t_block": -3.195722797925044,
+        "mean_ci_low": -0.00028961073591189396,
+        "mean_ci_high": -7.058390748628467e-05
+      },
+      "cross9_external_weekend_SP500_3h": {
+        "p_fwer": 1.0,
+        "t_block": -2.965585386958872,
+        "mean_ci_low": -0.0002399779165358981,
+        "mean_ci_high": -4.4990604436654334e-05
+      }
+    },
+    "14": {
+      "all16_daily_XYZ100_lb1_h1:path0": {
+        "p_fwer": 1.0,
+        "t_block": -2.6146772807699037,
+        "mean_ci_low": -0.0017558575398579873,
+        "mean_ci_high": -0.0002209889425947493
+      },
+      "all16_daily_XYZ100_lb1_h1": {
+        "p_fwer": 1.0,
+        "t_block": -2.6146772807699037,
+        "mean_ci_low": -0.0017558575398579873,
+        "mean_ci_high": -0.0002209889425947493
+      },
+      "all16_daily_XYZ100_lb1_h3:path0": {
+        "p_fwer": 1.0,
+        "t_block": -0.14180769660484097,
+        "mean_ci_low": -0.0008764368945032124,
+        "mean_ci_high": 0.0007810804462633208
+      },
+      "all16_daily_XYZ100_lb1_h3:path1": {
+        "p_fwer": 0.9995,
+        "t_block": 0.8155750198723336,
+        "mean_ci_low": -0.0004231434031281875,
+        "mean_ci_high": 0.0011449018339911544
+      },
+      "all16_daily_XYZ100_lb1_h3:path2": {
+        "p_fwer": 1.0,
+        "t_block": -1.1458197463737299,
+        "mean_ci_low": -0.0010365194003681545,
+        "mean_ci_high": 0.00029008455230807105
+      },
+      "all16_daily_XYZ100_lb1_h3": {
+        "p_fwer": 1.0,
+        "t_block": -0.21917372542061309,
+        "mean_ci_low": -0.00037631962262143955,
+        "mean_ci_high": 0.0003130930644163834
+      },
+      "all16_daily_XYZ100_lb3_h1:path0": {
+        "p_fwer": 1.0,
+        "t_block": -5.124193858003276,
+        "mean_ci_low": -0.0021287542128743857,
+        "mean_ci_high": -0.0009442842518296584
+      },
+      "all16_daily_XYZ100_lb3_h1": {
+        "p_fwer": 1.0,
+        "t_block": -5.124193858003276,
+        "mean_ci_low": -0.0021287542128743857,
+        "mean_ci_high": -0.0009442842518296584
+      },
+      "all16_daily_XYZ100_lb3_h3:path0": {
+        "p_fwer": 1.0,
+        "t_block": -0.8681867254986881,
+        "mean_ci_low": -0.0010970436352052853,
+        "mean_ci_high": 0.0004398374436496945
+      },
+      "all16_daily_XYZ100_lb3_h3:path1": {
+        "p_fwer": 1.0,
+        "t_block": -0.3902440291054538,
+        "mean_ci_low": -0.000864681516483595,
+        "mean_ci_high": 0.0006071939464485595
+      },
+      "all16_daily_XYZ100_lb3_h3:path2": {
+        "p_fwer": 1.0,
+        "t_block": -1.9969265236462832,
+        "mean_ci_low": -0.0015032390583822326,
+        "mean_ci_high": -1.1370993855424412e-05
+      },
+      "all16_daily_XYZ100_lb3_h3": {
+        "p_fwer": 1.0,
+        "t_block": -1.703184034081051,
+        "mean_ci_low": -0.0008885047002655703,
+        "mean_ci_high": 6.0462300657842215e-05
+      },
+      "all16_daily_XYZ100_lb5_h1:path0": {
+        "p_fwer": 1.0,
+        "t_block": -3.4524593177933713,
+        "mean_ci_low": -0.001724400713820535,
+        "mean_ci_high": -0.0004770926782671482
+      },
+      "all16_daily_XYZ100_lb5_h1": {
+        "p_fwer": 1.0,
+        "t_block": -3.4524593177933713,
+        "mean_ci_low": -0.001724400713820535,
+        "mean_ci_high": -0.0004770926782671482
+      },
+      "all16_daily_XYZ100_lb5_h3:path0": {
+        "p_fwer": 1.0,
+        "t_block": -1.7241797581824132,
+        "mean_ci_low": -0.0014140857150342569,
+        "mean_ci_high": 9.558140432565972e-05
+      },
+      "all16_daily_XYZ100_lb5_h3:path1": {
+        "p_fwer": 1.0,
+        "t_block": -0.2122019262103036,
+        "mean_ci_low": -0.0007940695123055812,
+        "mean_ci_high": 0.0006519908912570951
+      },
+      "all16_daily_XYZ100_lb5_h3:path2": {
+        "p_fwer": 1.0,
+        "t_block": -1.9412089769109595,
+        "mean_ci_low": -0.0017128869376667655,
+        "mean_ci_high": 4.337214015943361e-05
+      },
+      "all16_daily_XYZ100_lb5_h3": {
+        "p_fwer": 1.0,
+        "t_block": -1.7379769174617203,
+        "mean_ci_low": -0.0011335583291801313,
+        "mean_ci_high": 8.153871197345939e-05
+      },
+      "all16_daily_SP500_lb1_h1:path0": {
+        "p_fwer": 1.0,
+        "t_block": -1.0199955450228486,
+        "mean_ci_low": -0.0016915315353706107,
+        "mean_ci_high": 0.0005908692571772784
+      },
+      "all16_daily_SP500_lb1_h1": {
+        "p_fwer": 1.0,
+        "t_block": -1.0199955450228486,
+        "mean_ci_low": -0.0016915315353706107,
+        "mean_ci_high": 0.0005908692571772784
+      },
+      "all16_daily_SP500_lb1_h3:path0": {
+        "p_fwer": 1.0,
+        "t_block": -0.2855379227977674,
+        "mean_ci_low": -0.0012368141699712152,
+        "mean_ci_high": 0.0009772559944990701
+      },
+      "all16_daily_SP500_lb1_h3:path1": {
+        "p_fwer": 0.99975,
+        "t_block": 0.651445131495034,
+        "mean_ci_low": -0.0008268905465349636,
+        "mean_ci_high": 0.001632110066830017
+      },
+      "all16_daily_SP500_lb1_h3:path2": {
+        "p_fwer": 1.0,
+        "t_block": 0.09972497875907611,
+        "mean_ci_low": -0.001105644318327941,
+        "mean_ci_high": 0.0012185092898225212
+      },
+      "all16_daily_SP500_lb1_h3": {
+        "p_fwer": 1.0,
+        "t_block": 0.35695117149280503,
+        "mean_ci_low": -0.0004512672096285208,
+        "mean_ci_high": 0.0006723970263416728
+      },
+      "all16_daily_SP500_lb3_h1:path0": {
+        "p_fwer": 1.0,
+        "t_block": -2.8293575788425764,
+        "mean_ci_low": -0.0021070336571137925,
+        "mean_ci_high": -0.00036555928893978063
+      },
+      "all16_daily_SP500_lb3_h1": {
+        "p_fwer": 1.0,
+        "t_block": -2.8293575788425764,
+        "mean_ci_low": -0.0021070336571137925,
+        "mean_ci_high": -0.00036555928893978063
+      },
+      "all16_daily_SP500_lb3_h3:path0": {
+        "p_fwer": 1.0,
+        "t_block": -1.4541669000778947,
+        "mean_ci_low": -0.0013462812701517139,
+        "mean_ci_high": 0.00018203598670823648
+      },
+      "all16_daily_SP500_lb3_h3:path1": {
+        "p_fwer": 1.0,
+        "t_block": -1.302284905433408,
+        "mean_ci_low": -0.0013583106965773598,
+        "mean_ci_high": 0.00034206990001302317
+      },
+      "all16_daily_SP500_lb3_h3:path2": {
+        "p_fwer": 1.0,
+        "t_block": -0.726891473411818,
+        "mean_ci_low": -0.0017718164990745801,
+        "mean_ci_high": 0.0008217075343890606
+      },
+      "all16_daily_SP500_lb3_h3": {
+        "p_fwer": 1.0,
+        "t_block": -1.6911410188342988,
+        "mean_ci_low": -0.0011710504332296332,
+        "mean_ci_high": 9.201044482703654e-05
+      },
+      "all16_daily_SP500_lb5_h1:path0": {
+        "p_fwer": 1.0,
+        "t_block": -3.3827402391019805,
+        "mean_ci_low": -0.002093472909050967,
+        "mean_ci_high": -0.0005555971107863442
+      },
+      "all16_daily_SP500_lb5_h1": {
+        "p_fwer": 1.0,
+        "t_block": -3.3827402391019805,
+        "mean_ci_low": -0.002093472909050967,
+        "mean_ci_high": -0.0005555971107863442
+      },
+      "all16_daily_SP500_lb5_h3:path0": {
+        "p_fwer": 1.0,
+        "t_block": -1.7496572939843826,
+        "mean_ci_low": -0.0017379041021080696,
+        "mean_ci_high": 0.00011662470251315243
+      },
+      "all16_daily_SP500_lb5_h3:path1": {
+        "p_fwer": 1.0,
+        "t_block": -0.5278011163230368,
+        "mean_ci_low": -0.0012380163595916514,
+        "mean_ci_high": 0.0007251271087812837
+      },
+      "all16_daily_SP500_lb5_h3:path2": {
+        "p_fwer": 1.0,
+        "t_block": -0.9832175188917899,
+        "mean_ci_low": -0.001732209162265496,
+        "mean_ci_high": 0.0006092888534506083
+      },
+      "all16_daily_SP500_lb5_h3": {
+        "p_fwer": 1.0,
+        "t_block": -1.4629484095962648,
+        "mean_ci_low": -0.001323091792445043,
+        "mean_ci_high": 0.00018005429608282787
+      },
+      "all16_overnight_none_1h:path0": {
+        "p_fwer": 1.0,
+        "t_block": -4.617261877517046,
+        "mean_ci_low": -0.0019414534908997597,
+        "mean_ci_high": -0.0007850324250099008
+      },
+      "all16_overnight_none_1h:path1": {
+        "p_fwer": 1.0,
+        "t_block": -2.2393613195675677,
+        "mean_ci_low": -0.002029375173116559,
+        "mean_ci_high": -0.00010651162008247397
+      },
+      "all16_overnight_none_1h:path2": {
+        "p_fwer": 1.0,
+        "t_block": -2.0342168353337766,
+        "mean_ci_low": -0.0010751146807083355,
+        "mean_ci_high": -7.642844449179615e-06
+      },
+      "all16_overnight_none_1h": {
+        "p_fwer": 1.0,
+        "t_block": -3.423746238099111,
+        "mean_ci_low": -0.0015603809495407495,
+        "mean_ci_high": -0.00041709131935876466
+      },
+      "all16_overnight_none_3h:path0": {
+        "p_fwer": 1.0,
+        "t_block": -1.9274647817399002,
+        "mean_ci_low": -0.0019570278777984946,
+        "mean_ci_high": -2.3398020079915373e-05
+      },
+      "all16_overnight_none_3h:path1": {
+        "p_fwer": 1.0,
+        "t_block": -1.1452997527588435,
+        "mean_ci_low": -0.0016561912586020367,
+        "mean_ci_high": 0.00041504837943492196
+      },
+      "all16_overnight_none_3h:path2": {
+        "p_fwer": 1.0,
+        "t_block": -1.8084886131008917,
+        "mean_ci_low": -0.00118657119671919,
+        "mean_ci_high": 5.3102969674656184e-05
+      },
+      "all16_overnight_none_3h": {
+        "p_fwer": 1.0,
+        "t_block": -1.7051620978425002,
+        "mean_ci_low": -0.0015288344511720825,
+        "mean_ci_high": 9.522309741031372e-05
+      },
+      "all16_overnight_none_close:path0": {
+        "p_fwer": 1.0,
+        "t_block": -2.290190339278141,
+        "mean_ci_low": -0.0024277764702535995,
+        "mean_ci_high": -0.00022490088542111999
+      },
+      "all16_overnight_none_close:path1": {
+        "p_fwer": 1.0,
+        "t_block": -1.812571165349565,
+        "mean_ci_low": -0.002310692364945025,
+        "mean_ci_high": 8.030474013176556e-05
+      },
+      "all16_overnight_none_close:path2": {
+        "p_fwer": 1.0,
+        "t_block": -1.6390011888017553,
+        "mean_ci_low": -0.0016920664854965296,
+        "mean_ci_high": 0.00017287079163507606
+      },
+      "all16_overnight_none_close": {
+        "p_fwer": 1.0,
+        "t_block": -2.017967987906401,
+        "mean_ci_low": -0.002092677772780532,
+        "mean_ci_high": -2.3995537952186665e-05
+      },
+      "all16_overnight_XYZ100_1h:path0": {
+        "p_fwer": 1.0,
+        "t_block": -4.900224937471072,
+        "mean_ci_low": -0.0016285916850771447,
+        "mean_ci_high": -0.0007023608881180648
+      },
+      "all16_overnight_XYZ100_1h:path1": {
+        "p_fwer": 1.0,
+        "t_block": -2.871184271134476,
+        "mean_ci_low": -0.0016235397055077956,
+        "mean_ci_high": -0.0002912956750731701
+      },
+      "all16_overnight_XYZ100_1h:path2": {
+        "p_fwer": 1.0,
+        "t_block": -3.850478414223732,
+        "mean_ci_low": -0.000995036308985807,
+        "mean_ci_high": -0.0003327220627532768
+      },
+      "all16_overnight_XYZ100_1h": {
+        "p_fwer": 1.0,
+        "t_block": -4.332586153305453,
+        "mean_ci_low": -0.0013562227513678581,
+        "mean_ci_high": -0.0005013761312031221
+      },
+      "all16_overnight_XYZ100_3h:path0": {
+        "p_fwer": 1.0,
+        "t_block": -2.829313554989928,
+        "mean_ci_low": -0.0016351321876456695,
+        "mean_ci_high": -0.00029922347608323636
+      },
+      "all16_overnight_XYZ100_3h:path1": {
+        "p_fwer": 1.0,
+        "t_block": -1.7931434967293576,
+        "mean_ci_low": -0.0014041151905078725,
+        "mean_ci_high": 8.639610075590566e-05
+      },
+      "all16_overnight_XYZ100_3h:path2": {
+        "p_fwer": 1.0,
+        "t_block": -3.2453651930529044,
+        "mean_ci_low": -0.0010632193462731079,
+        "mean_ci_high": -0.000262294789990471
+      },
+      "all16_overnight_XYZ100_3h": {
+        "p_fwer": 1.0,
+        "t_block": -2.6651854313253427,
+        "mean_ci_low": -0.0013211584037779679,
+        "mean_ci_high": -0.0001864882962030901
+      },
+      "all16_overnight_XYZ100_close:path0": {
+        "p_fwer": 1.0,
+        "t_block": -2.3653256693541143,
+        "mean_ci_low": -0.002148463872728904,
+        "mean_ci_high": -0.0002300697922582841
+      },
+      "all16_overnight_XYZ100_close:path1": {
+        "p_fwer": 1.0,
+        "t_block": -1.9738560507294103,
+        "mean_ci_low": -0.00195543739334284,
+        "mean_ci_high": 2.612408446138817e-06
+      },
+      "all16_overnight_XYZ100_close:path2": {
+        "p_fwer": 1.0,
+        "t_block": -2.381833665388661,
+        "mean_ci_low": -0.0015308986280607288,
+        "mean_ci_high": -0.00017159636109842253
+      },
+      "all16_overnight_XYZ100_close": {
+        "p_fwer": 1.0,
+        "t_block": -2.3078415144346405,
+        "mean_ci_low": -0.0018423920705806576,
+        "mean_ci_high": -0.00016805029559976482
+      },
+      "all16_overnight_SP500_1h:path0": {
+        "p_fwer": 1.0,
+        "t_block": -6.097029791134153,
+        "mean_ci_low": -0.001572370394329031,
+        "mean_ci_high": -0.0008071733705853348
+      },
+      "all16_overnight_SP500_1h:path1": {
+        "p_fwer": 1.0,
+        "t_block": -2.839511413034682,
+        "mean_ci_low": -0.0015957971312478506,
+        "mean_ci_high": -0.00028154830882126344
+      },
+      "all16_overnight_SP500_1h:path2": {
+        "p_fwer": 1.0,
+        "t_block": -3.6170073578755866,
+        "mean_ci_low": -0.0010277230998755593,
+        "mean_ci_high": -0.0003030925398507685
+      },
+      "all16_overnight_SP500_1h": {
+        "p_fwer": 1.0,
+        "t_block": -4.9571412338980565,
+        "mean_ci_low": -0.0013052480773409324,
+        "mean_ci_high": -0.0005615006726043325
+      },
+      "all16_overnight_SP500_3h:path0": {
+        "p_fwer": 1.0,
+        "t_block": -3.6589811515019757,
+        "mean_ci_low": -0.0014474010126228954,
+        "mean_ci_high": -0.0004337864772227236
+      },
+      "all16_overnight_SP500_3h:path1": {
+        "p_fwer": 1.0,
+        "t_block": -1.932685212602733,
+        "mean_ci_low": -0.0012873440633104625,
+        "mean_ci_high": 8.55625909138328e-06
+      },
+      "all16_overnight_SP500_3h:path2": {
+        "p_fwer": 1.0,
+        "t_block": -3.410372887959489,
+        "mean_ci_low": -0.0010623975912651031,
+        "mean_ci_high": -0.0002898288821376181
+      },
+      "all16_overnight_SP500_3h": {
+        "p_fwer": 1.0,
+        "t_block": -3.1265610446641543,
+        "mean_ci_low": -0.0012167946454787074,
+        "mean_ci_high": -0.0002793006512924428
+      },
+      "all16_overnight_SP500_close:path0": {
+        "p_fwer": 1.0,
+        "t_block": -2.9743338305764424,
+        "mean_ci_low": -0.0019493169609328678,
+        "mean_ci_high": -0.0004108436283870446
+      },
+      "all16_overnight_SP500_close:path1": {
+        "p_fwer": 1.0,
+        "t_block": -2.1920783968399857,
+        "mean_ci_low": -0.001850837035883027,
+        "mean_ci_high": -0.00010869349790134134
+      },
+      "all16_overnight_SP500_close:path2": {
+        "p_fwer": 1.0,
+        "t_block": -2.445275240938958,
+        "mean_ci_low": -0.001474068190044485,
+        "mean_ci_high": -0.00015700002183057437
+      },
+      "all16_overnight_SP500_close": {
+        "p_fwer": 1.0,
+        "t_block": -2.6529585068023227,
+        "mean_ci_low": -0.00172157676740229,
+        "mean_ci_high": -0.0002657062604711041
+      },
+      "all16_weekend_none_1h:path0": {
+        "p_fwer": 1.0,
+        "t_block": -0.11905028804557942,
+        "mean_ci_low": -0.00043643681068255066,
+        "mean_ci_high": 0.00040788116724982496
+      },
+      "all16_weekend_none_1h:path1": {
+        "p_fwer": 1.0,
+        "t_block": -2.7371133433630055,
+        "mean_ci_low": -0.0003974272452454905,
+        "mean_ci_high": -5.9346958050131114e-05
+      },
+      "all16_weekend_none_1h:path2": {
+        "p_fwer": 1.0,
+        "t_block": -2.5279610065936047,
+        "mean_ci_low": -0.0005092504871350469,
+        "mean_ci_high": -8.487582837579099e-05
+      },
+      "all16_weekend_none_1h": {
+        "p_fwer": 1.0,
+        "t_block": -2.2163148411296505,
+        "mean_ci_low": -0.0003395035662234993,
+        "mean_ci_high": -2.9847679534927406e-05
+      },
+      "all16_weekend_none_3h:path0": {
+        "p_fwer": 1.0,
+        "t_block": -0.919102147587603,
+        "mean_ci_low": -0.0005594777224199945,
+        "mean_ci_high": 0.00020036343130917444
+      },
+      "all16_weekend_none_3h:path1": {
+        "p_fwer": 1.0,
+        "t_block": -1.6453226841917912,
+        "mean_ci_low": -0.0006347300839719333,
+        "mean_ci_high": 5.111169069632382e-05
+      },
+      "all16_weekend_none_3h:path2": {
+        "p_fwer": 1.0,
+        "t_block": -2.1911115875690084,
+        "mean_ci_low": -0.0007469576838186125,
+        "mean_ci_high": -4.985998243257873e-05
+      },
+      "all16_weekend_none_3h": {
+        "p_fwer": 1.0,
+        "t_block": -1.8830390138898043,
+        "mean_ci_low": -0.0005950344211570473,
+        "mean_ci_high": 6.403801145229136e-07
+      },
+      "all16_weekend_none_close:path0": {
+        "p_fwer": 1.0,
+        "t_block": -1.5167497391312588,
+        "mean_ci_low": -0.0007123689806429034,
+        "mean_ci_high": 6.010134094943753e-05
+      },
+      "all16_weekend_none_close:path1": {
+        "p_fwer": 1.0,
+        "t_block": -2.4431242798267663,
+        "mean_ci_low": -0.0007495268969471632,
+        "mean_ci_high": -8.889676987077931e-05
+      },
+      "all16_weekend_none_close:path2": {
+        "p_fwer": 1.0,
+        "t_block": -3.078229595765585,
+        "mean_ci_low": -0.000750517144126038,
+        "mean_ci_high": -0.0001721086934016561
+      },
+      "all16_weekend_none_close": {
+        "p_fwer": 1.0,
+        "t_block": -2.6891830485137693,
+        "mean_ci_low": -0.0006892780786365348,
+        "mean_ci_high": -0.00011172980802617345
+      },
+      "all16_weekend_XYZ100_1h:path0": {
+        "p_fwer": 1.0,
+        "t_block": 0.3282294419529746,
+        "mean_ci_low": -0.00018554121857279854,
+        "mean_ci_high": 0.00030550190857980136
+      },
+      "all16_weekend_XYZ100_1h:path1": {
+        "p_fwer": 1.0,
+        "t_block": -0.5312999620695958,
+        "mean_ci_low": -0.0002235279574028859,
+        "mean_ci_high": 0.0001785515679707106
+      },
+      "all16_weekend_XYZ100_1h:path2": {
+        "p_fwer": 1.0,
+        "t_block": -1.7813819669748632,
+        "mean_ci_low": -0.00031605229983235804,
+        "mean_ci_high": 1.1647118513182522e-05
+      },
+      "all16_weekend_XYZ100_1h": {
+        "p_fwer": 1.0,
+        "t_block": -0.8431506486643635,
+        "mean_ci_low": -0.00016181905809743152,
+        "mean_ci_high": 8.616198242723713e-05
+      },
+      "all16_weekend_XYZ100_3h:path0": {
+        "p_fwer": 1.0,
+        "t_block": 0.39938641243640627,
+        "mean_ci_low": -0.00018125336416547415,
+        "mean_ci_high": 0.0003605466515809239
+      },
+      "all16_weekend_XYZ100_3h:path1": {
+        "p_fwer": 1.0,
+        "t_block": 0.3481026409630968,
+        "mean_ci_low": -0.00020851607917956615,
+        "mean_ci_high": 0.0003803158150358087
+      },
+      "all16_weekend_XYZ100_3h:path2": {
+        "p_fwer": 1.0,
+        "t_block": -1.3923495959169732,
+        "mean_ci_low": -0.0003145985999041167,
+        "mean_ci_high": 5.918325471658976e-05
+      },
+      "all16_weekend_XYZ100_3h": {
+        "p_fwer": 1.0,
+        "t_block": -0.056989435470031,
+        "mean_ci_low": -0.00020528628312502408,
+        "mean_ci_high": 0.0002542393372753614
+      },
+      "all16_weekend_XYZ100_close:path0": {
+        "p_fwer": 0.9995,
+        "t_block": 0.8150263857644495,
+        "mean_ci_low": -0.00014702427413846713,
+        "mean_ci_high": 0.0005035018520975383
+      },
+      "all16_weekend_XYZ100_close:path1": {
+        "p_fwer": 0.99975,
+        "t_block": 0.5007239818602721,
+        "mean_ci_low": -0.0002262665499611488,
+        "mean_ci_high": 0.0005197269022196031
+      },
+      "all16_weekend_XYZ100_close:path2": {
+        "p_fwer": 1.0,
+        "t_block": -0.4922562105358678,
+        "mean_ci_low": -0.00037216806115414835,
+        "mean_ci_high": 0.000247942224915714
+      },
+      "all16_weekend_XYZ100_close": {
+        "p_fwer": 1.0,
+        "t_block": 0.3232694814866772,
+        "mean_ci_low": -0.0002174412846336129,
+        "mean_ci_high": 0.0004176037449728472
+      },
+      "all16_weekend_SP500_1h:path0": {
+        "p_fwer": 1.0,
+        "t_block": 0.25042882510550735,
+        "mean_ci_low": -0.00024939852509519515,
+        "mean_ci_high": 0.000370776044856417
+      },
+      "all16_weekend_SP500_1h:path1": {
+        "p_fwer": 1.0,
+        "t_block": -1.3460459565462715,
+        "mean_ci_low": -0.0002404246396272573,
+        "mean_ci_high": 6.381493783145133e-05
+      },
+      "all16_weekend_SP500_1h:path2": {
+        "p_fwer": 1.0,
+        "t_block": -2.029788774074339,
+        "mean_ci_low": -0.000346181943103267,
+        "mean_ci_high": -8.845704078495756e-06
+      },
+      "all16_weekend_SP500_1h": {
+        "p_fwer": 1.0,
+        "t_block": -1.4209731866502966,
+        "mean_ci_low": -0.00018742541422039292,
+        "mean_ci_high": 3.2055247609111116e-05
+      },
+      "all16_weekend_SP500_3h:path0": {
+        "p_fwer": 1.0,
+        "t_block": 0.20116354696383865,
+        "mean_ci_low": -0.0002206116072766296,
+        "mean_ci_high": 0.0003057668231452081
+      },
+      "all16_weekend_SP500_3h:path1": {
+        "p_fwer": 1.0,
+        "t_block": -0.25751647623855817,
+        "mean_ci_low": -0.0002667116585203229,
+        "mean_ci_high": 0.0002588391772179817
+      },
+      "all16_weekend_SP500_3h:path2": {
+        "p_fwer": 1.0,
+        "t_block": -1.683514549700127,
+        "mean_ci_low": -0.00037052809740514944,
+        "mean_ci_high": 5.0190738584507985e-05
+      },
+      "all16_weekend_SP500_3h": {
+        "p_fwer": 1.0,
+        "t_block": -0.585100172833358,
+        "mean_ci_low": -0.00024137156504669074,
+        "mean_ci_high": 0.0001798210133780953
+      },
+      "all16_weekend_SP500_close:path0": {
+        "p_fwer": 1.0,
+        "t_block": -0.15607054348520916,
+        "mean_ci_low": -0.00030068647451992334,
+        "mean_ci_high": 0.0003227180711490511
+      },
+      "all16_weekend_SP500_close:path1": {
+        "p_fwer": 1.0,
+        "t_block": -0.6511062192580693,
+        "mean_ci_low": -0.00040481807935086446,
+        "mean_ci_high": 0.00028260842839031167
+      },
+      "all16_weekend_SP500_close:path2": {
+        "p_fwer": 1.0,
+        "t_block": -1.497143662534365,
+        "mean_ci_low": -0.0005491555090239852,
+        "mean_ci_high": 0.0001081806852027495
+      },
+      "all16_weekend_SP500_close": {
+        "p_fwer": 1.0,
+        "t_block": -0.8413732969668817,
+        "mean_ci_low": -0.00037057081556436666,
+        "mean_ci_high": 0.00021964272147455228
+      },
+      "all16_external_weekend_none_1h:path0": {
+        "p_fwer": 1.0,
+        "t_block": -1.3906740321895248,
+        "mean_ci_low": -0.00031425936636091627,
+        "mean_ci_high": 6.900312789942116e-05
+      },
+      "all16_external_weekend_none_1h:path1": {
+        "p_fwer": 1.0,
+        "t_block": -0.9117662710905817,
+        "mean_ci_low": -0.0001865356720843485,
+        "mean_ci_high": 7.808827859749982e-05
+      },
+      "all16_external_weekend_none_1h:path2": {
+        "p_fwer": 1.0,
+        "t_block": -0.9378154046128274,
+        "mean_ci_low": -0.0003063021835320195,
+        "mean_ci_high": 0.00010806861128756906
+      },
+      "all16_external_weekend_none_1h": {
+        "p_fwer": 1.0,
+        "t_block": -1.4563445187503967,
+        "mean_ci_low": -0.00022686879785816042,
+        "mean_ci_high": 3.775274137109585e-05
+      },
+      "all16_external_weekend_none_3h:path0": {
+        "p_fwer": 1.0,
+        "t_block": -0.5159683418325325,
+        "mean_ci_low": -0.0003874433104530093,
+        "mean_ci_high": 0.000250999015434432
+      },
+      "all16_external_weekend_none_3h:path1": {
+        "p_fwer": 1.0,
+        "t_block": -1.1998239107675182,
+        "mean_ci_low": -0.00036430364915701694,
+        "mean_ci_high": 9.783734551639735e-05
+      },
+      "all16_external_weekend_none_3h:path2": {
+        "p_fwer": 1.0,
+        "t_block": -1.3435429324711354,
+        "mean_ci_low": -0.0004650323029399007,
+        "mean_ci_high": 7.610854518026104e-05
+      },
+      "all16_external_weekend_none_3h": {
+        "p_fwer": 1.0,
+        "t_block": -1.0701153657234521,
+        "mean_ci_low": -0.000375375678031211,
+        "mean_ci_high": 0.00013148339722060344
+      },
+      "all16_external_weekend_XYZ100_1h:path0": {
+        "p_fwer": 1.0,
+        "t_block": -2.6057453379551307,
+        "mean_ci_low": -0.0001738288666766418,
+        "mean_ci_high": -1.838835639917741e-05
+      },
+      "all16_external_weekend_XYZ100_1h:path1": {
+        "p_fwer": 1.0,
+        "t_block": -3.176731144843162,
+        "mean_ci_low": -0.00017584806026538813,
+        "mean_ci_high": -4.148688559820176e-05
+      },
+      "all16_external_weekend_XYZ100_1h:path2": {
+        "p_fwer": 1.0,
+        "t_block": -2.643105529003221,
+        "mean_ci_low": -0.00021852545720748721,
+        "mean_ci_high": -2.642698932973564e-05
+      },
+      "all16_external_weekend_XYZ100_1h": {
+        "p_fwer": 1.0,
+        "t_block": -3.463169374522386,
+        "mean_ci_low": -0.00017524735453349467,
+        "mean_ci_high": -4.469910894597614e-05
+      },
+      "all16_external_weekend_XYZ100_3h:path0": {
+        "p_fwer": 1.0,
+        "t_block": -0.02312230393910345,
+        "mean_ci_low": -0.00014289600567646144,
+        "mean_ci_high": 0.00016402804593913057
+      },
+      "all16_external_weekend_XYZ100_3h:path1": {
+        "p_fwer": 1.0,
+        "t_block": -1.3443113389569932,
+        "mean_ci_low": -0.0001906579846828144,
+        "mean_ci_high": 4.046952143493224e-05
+      },
+      "all16_external_weekend_XYZ100_3h:path2": {
+        "p_fwer": 1.0,
+        "t_block": -1.6213678320891909,
+        "mean_ci_low": -0.0002597676777717654,
+        "mean_ci_high": 2.0250439836726073e-05
+      },
+      "all16_external_weekend_XYZ100_3h": {
+        "p_fwer": 1.0,
+        "t_block": -1.0023886505447588,
+        "mean_ci_low": -0.00018680051607269802,
+        "mean_ci_high": 6.78624996723602e-05
+      },
+      "all16_external_weekend_SP500_1h:path0": {
+        "p_fwer": 1.0,
+        "t_block": -2.656585656059383,
+        "mean_ci_low": -0.00020296200176908954,
+        "mean_ci_high": -2.5923116545998684e-05
+      },
+      "all16_external_weekend_SP500_1h:path1": {
+        "p_fwer": 1.0,
+        "t_block": -3.434565300963864,
+        "mean_ci_low": -0.0001730384503338615,
+        "mean_ci_high": -4.689719111408443e-05
+      },
+      "all16_external_weekend_SP500_1h:path2": {
+        "p_fwer": 1.0,
+        "t_block": -2.35453574568712,
+        "mean_ci_low": -0.00024029770497146553,
+        "mean_ci_high": -1.9940002998972804e-05
+      },
+      "all16_external_weekend_SP500_1h": {
+        "p_fwer": 1.0,
+        "t_block": -3.4704630827390743,
+        "mean_ci_low": -0.0001862970555861979,
+        "mean_ci_high": -4.800755220444111e-05
+      },
+      "all16_external_weekend_SP500_3h:path0": {
+        "p_fwer": 1.0,
+        "t_block": -0.5435012558814295,
+        "mean_ci_low": -0.00019463588013282987,
+        "mean_ci_high": 0.00014142313263834584
+      },
+      "all16_external_weekend_SP500_3h:path1": {
+        "p_fwer": 1.0,
+        "t_block": -1.4876656732698683,
+        "mean_ci_low": -0.00020706708300736646,
+        "mean_ci_high": 3.364634305312243e-05
+      },
+      "all16_external_weekend_SP500_3h:path2": {
+        "p_fwer": 1.0,
+        "t_block": -1.8592789980551492,
+        "mean_ci_low": -0.0002764178646932937,
+        "mean_ci_high": 6.191784214566043e-06
+      },
+      "all16_external_weekend_SP500_3h": {
+        "p_fwer": 1.0,
+        "t_block": -1.320187756088429,
+        "mean_ci_low": -0.0002155293828243658,
+        "mean_ci_high": 5.6396432672206026e-05
+      },
+      "cross9_daily_XYZ100_lb1_h1:path0": {
+        "p_fwer": 1.0,
+        "t_block": -2.087701354637202,
+        "mean_ci_low": -0.001711141504569409,
+        "mean_ci_high": -4.931513098960715e-05
+      },
+      "cross9_daily_XYZ100_lb1_h1": {
+        "p_fwer": 1.0,
+        "t_block": -2.087701354637202,
+        "mean_ci_low": -0.001711141504569409,
+        "mean_ci_high": -4.931513098960715e-05
+      },
+      "cross9_daily_XYZ100_lb1_h3:path0": {
+        "p_fwer": 1.0,
+        "t_block": 0.22441265227563692,
+        "mean_ci_low": -0.0007001165621879267,
+        "mean_ci_high": 0.0008189735576243042
+      },
+      "cross9_daily_XYZ100_lb1_h3:path1": {
+        "p_fwer": 0.94,
+        "t_block": 1.4401068119706872,
+        "mean_ci_low": -0.0001673112012274253,
+        "mean_ci_high": 0.0012255280224020716
+      },
+      "cross9_daily_XYZ100_lb1_h3:path2": {
+        "p_fwer": 1.0,
+        "t_block": -0.7358263262505118,
+        "mean_ci_low": -0.001400143955872797,
+        "mean_ci_high": 0.0005977191313133807
+      },
+      "cross9_daily_XYZ100_lb1_h3": {
+        "p_fwer": 1.0,
+        "t_block": 0.326673789480012,
+        "mean_ci_low": -0.0003915406110735791,
+        "mean_ci_high": 0.0005336274523312779
+      },
+      "cross9_daily_XYZ100_lb3_h1:path0": {
+        "p_fwer": 1.0,
+        "t_block": -3.4626854792191004,
+        "mean_ci_low": -0.002084382345080812,
+        "mean_ci_high": -0.0006066905104237863
+      },
+      "cross9_daily_XYZ100_lb3_h1": {
+        "p_fwer": 1.0,
+        "t_block": -3.4626854792191004,
+        "mean_ci_low": -0.002084382345080812,
+        "mean_ci_high": -0.0006066905104237863
+      },
+      "cross9_daily_XYZ100_lb3_h3:path0": {
+        "p_fwer": 1.0,
+        "t_block": -2.0684801098745886,
+        "mean_ci_low": -0.0015574600957679017,
+        "mean_ci_high": -6.920532256358676e-05
+      },
+      "cross9_daily_XYZ100_lb3_h3:path1": {
+        "p_fwer": 1.0,
+        "t_block": -1.5765506964929348,
+        "mean_ci_low": -0.001206638553329574,
+        "mean_ci_high": 0.00011944355246972199
+      },
+      "cross9_daily_XYZ100_lb3_h3:path2": {
+        "p_fwer": 1.0,
+        "t_block": -1.8220474263445423,
+        "mean_ci_low": -0.0015275952095972472,
+        "mean_ci_high": 4.6140715432970206e-05
+      },
+      "cross9_daily_XYZ100_lb3_h3": {
+        "p_fwer": 1.0,
+        "t_block": -2.419551463609331,
+        "mean_ci_low": -0.0012702816738482618,
+        "mean_ci_high": -0.000157654585726678
+      },
+      "cross9_daily_XYZ100_lb5_h1:path0": {
+        "p_fwer": 1.0,
+        "t_block": -3.939031156764568,
+        "mean_ci_low": -0.0022662116877535635,
+        "mean_ci_high": -0.0007622665110744106
+      },
+      "cross9_daily_XYZ100_lb5_h1": {
+        "p_fwer": 1.0,
+        "t_block": -3.939031156764568,
+        "mean_ci_low": -0.0022662116877535635,
+        "mean_ci_high": -0.0007622665110744106
+      },
+      "cross9_daily_XYZ100_lb5_h3:path0": {
+        "p_fwer": 1.0,
+        "t_block": -2.153822255297096,
+        "mean_ci_low": -0.0017075938668147587,
+        "mean_ci_high": -0.00012550861181973255
+      },
+      "cross9_daily_XYZ100_lb5_h3:path1": {
+        "p_fwer": 1.0,
+        "t_block": -2.4512802228268056,
+        "mean_ci_low": -0.0016437823466448995,
+        "mean_ci_high": -0.00020788014121080392
+      },
+      "cross9_daily_XYZ100_lb5_h3:path2": {
+        "p_fwer": 1.0,
+        "t_block": -2.0269621844189465,
+        "mean_ci_low": -0.001737994732166217,
+        "mean_ci_high": -6.193076477825361e-05
+      },
+      "cross9_daily_XYZ100_lb5_h3": {
+        "p_fwer": 1.0,
+        "t_block": -2.7043443688929307,
+        "mean_ci_low": -0.0015486122089832302,
+        "mean_ci_high": -0.00027368609253857455
+      },
+      "cross9_daily_SP500_lb1_h1:path0": {
+        "p_fwer": 1.0,
+        "t_block": -1.5059223887971043,
+        "mean_ci_low": -0.00201187948357983,
+        "mean_ci_high": 0.0002917765007370847
+      },
+      "cross9_daily_SP500_lb1_h1": {
+        "p_fwer": 1.0,
+        "t_block": -1.5059223887971043,
+        "mean_ci_low": -0.00201187948357983,
+        "mean_ci_high": 0.0002917765007370847
+      },
+      "cross9_daily_SP500_lb1_h3:path0": {
+        "p_fwer": 1.0,
+        "t_block": 0.09069922439188592,
+        "mean_ci_low": -0.0010402517582250757,
+        "mean_ci_high": 0.0012273329098960357
+      },
+      "cross9_daily_SP500_lb1_h3:path1": {
+        "p_fwer": 1.0,
+        "t_block": 0.029712991518227958,
+        "mean_ci_low": -0.0010167735225516691,
+        "mean_ci_high": 0.0010343879315827143
+      },
+      "cross9_daily_SP500_lb1_h3:path2": {
+        "p_fwer": 1.0,
+        "t_block": -0.24452131152392112,
+        "mean_ci_low": -0.0016472587508012631,
+        "mean_ci_high": 0.001232469042097806
+      },
+      "cross9_daily_SP500_lb1_h3": {
+        "p_fwer": 1.0,
+        "t_block": -0.10400289735369427,
+        "mean_ci_low": -0.0007550565125304472,
+        "mean_ci_high": 0.0006372834043387178
+      },
+      "cross9_daily_SP500_lb3_h1:path0": {
+        "p_fwer": 1.0,
+        "t_block": -2.754903122682992,
+        "mean_ci_low": -0.0022647028347120342,
+        "mean_ci_high": -0.0003871792825922381
+      },
+      "cross9_daily_SP500_lb3_h1": {
+        "p_fwer": 1.0,
+        "t_block": -2.754903122682992,
+        "mean_ci_low": -0.0022647028347120342,
+        "mean_ci_high": -0.0003871792825922381
+      },
+      "cross9_daily_SP500_lb3_h3:path0": {
+        "p_fwer": 1.0,
+        "t_block": -1.7171108187824804,
+        "mean_ci_low": -0.0017650876161351792,
+        "mean_ci_high": 9.879949017804095e-05
+      },
+      "cross9_daily_SP500_lb3_h3:path1": {
+        "p_fwer": 1.0,
+        "t_block": -2.494916071106962,
+        "mean_ci_low": -0.0018601283826047562,
+        "mean_ci_high": -0.0002336230916867993
+      },
+      "cross9_daily_SP500_lb3_h3:path2": {
+        "p_fwer": 1.0,
+        "t_block": -1.9261185242151606,
+        "mean_ci_low": -0.0019885000048485927,
+        "mean_ci_high": 1.2260457539082083e-05
+      },
+      "cross9_daily_SP500_lb3_h3": {
+        "p_fwer": 1.0,
+        "t_block": -2.6218480315387915,
+        "mean_ci_low": -0.0016706114947311757,
+        "mean_ci_high": -0.000254461091052816
+      },
+      "cross9_daily_SP500_lb5_h1:path0": {
+        "p_fwer": 1.0,
+        "t_block": -3.632864811902252,
+        "mean_ci_low": -0.0026622416242371785,
+        "mean_ci_high": -0.0007839930792958865
+      },
+      "cross9_daily_SP500_lb5_h1": {
+        "p_fwer": 1.0,
+        "t_block": -3.632864811902252,
+        "mean_ci_low": -0.0026622416242371785,
+        "mean_ci_high": -0.0007839930792958865
+      },
+      "cross9_daily_SP500_lb5_h3:path0": {
+        "p_fwer": 1.0,
+        "t_block": -1.922939511346141,
+        "mean_ci_low": -0.0018489676953470395,
+        "mean_ci_high": 2.1459024005389296e-05
+      },
+      "cross9_daily_SP500_lb5_h3:path1": {
+        "p_fwer": 1.0,
+        "t_block": -2.580171407428375,
+        "mean_ci_low": -0.0021131390347995946,
+        "mean_ci_high": -0.0002782067327792094
+      },
+      "cross9_daily_SP500_lb5_h3:path2": {
+        "p_fwer": 1.0,
+        "t_block": -2.21305323356766,
+        "mean_ci_low": -0.0026823317608205078,
+        "mean_ci_high": -0.00021270860509837292
+      },
+      "cross9_daily_SP500_lb5_h3": {
+        "p_fwer": 1.0,
+        "t_block": -2.6746925941846085,
+        "mean_ci_low": -0.002048806618413606,
+        "mean_ci_high": -0.00032342988265271803
+      },
+      "cross9_overnight_none_1h:path0": {
+        "p_fwer": 1.0,
+        "t_block": -4.367437415899848,
+        "mean_ci_low": -0.0015810985790333785,
+        "mean_ci_high": -0.0006036924477055766
+      },
+      "cross9_overnight_none_1h:path1": {
+        "p_fwer": 1.0,
+        "t_block": -3.0136277212824734,
+        "mean_ci_low": -0.0017724050699006808,
+        "mean_ci_high": -0.00032271412816320465
+      },
+      "cross9_overnight_none_1h:path2": {
+        "p_fwer": 1.0,
+        "t_block": -2.652045313287698,
+        "mean_ci_low": -0.0009858513115165372,
+        "mean_ci_high": -0.0001526417686919107
+      },
+      "cross9_overnight_none_1h": {
+        "p_fwer": 1.0,
+        "t_block": -5.071387973582564,
+        "mean_ci_low": -0.0012660718790653968,
+        "mean_ci_high": -0.0005627386707132604
+      },
+      "cross9_overnight_none_3h:path0": {
+        "p_fwer": 1.0,
+        "t_block": -1.8453087318471526,
+        "mean_ci_low": -0.0012507497919672767,
+        "mean_ci_high": 4.966385552242171e-06
+      },
+      "cross9_overnight_none_3h:path1": {
+        "p_fwer": 1.0,
+        "t_block": -1.4271443883040948,
+        "mean_ci_low": -0.0009597479571431193,
+        "mean_ci_high": 0.00018945622806229475
+      },
+      "cross9_overnight_none_3h:path2": {
+        "p_fwer": 1.0,
+        "t_block": -2.0135843550124712,
+        "mean_ci_low": -0.0010411456190218427,
+        "mean_ci_high": 2.970748115940585e-05
+      },
+      "cross9_overnight_none_3h": {
+        "p_fwer": 1.0,
+        "t_block": -1.962038703581136,
+        "mean_ci_low": -0.0010172139966288696,
+        "mean_ci_high": 2.4923184838050727e-05
+      },
+      "cross9_overnight_none_close:path0": {
+        "p_fwer": 1.0,
+        "t_block": -1.5094463129638727,
+        "mean_ci_low": -0.0016905484637824277,
+        "mean_ci_high": 0.00024309383871300822
+      },
+      "cross9_overnight_none_close:path1": {
+        "p_fwer": 1.0,
+        "t_block": -1.2922150201836826,
+        "mean_ci_low": -0.001541303734352787,
+        "mean_ci_high": 0.00031879513893033975
+      },
+      "cross9_overnight_none_close:path2": {
+        "p_fwer": 1.0,
+        "t_block": -1.1242373366628355,
+        "mean_ci_low": -0.0013298374600485747,
+        "mean_ci_high": 0.0004273723504813893
+      },
+      "cross9_overnight_none_close": {
+        "p_fwer": 1.0,
+        "t_block": -1.3706197513120837,
+        "mean_ci_low": -0.0014869761042531663,
+        "mean_ci_high": 0.00030454640738794255
+      },
+      "cross9_overnight_XYZ100_1h:path0": {
+        "p_fwer": 1.0,
+        "t_block": -5.576061883089486,
+        "mean_ci_low": -0.0014457176256325286,
+        "mean_ci_high": -0.000689616606531818
+      },
+      "cross9_overnight_XYZ100_1h:path1": {
+        "p_fwer": 1.0,
+        "t_block": -3.9011927149275696,
+        "mean_ci_low": -0.0014125073138504154,
+        "mean_ci_high": -0.0004741382316755071
+      },
+      "cross9_overnight_XYZ100_1h:path2": {
+        "p_fwer": 1.0,
+        "t_block": -4.173461941170506,
+        "mean_ci_low": -0.0008843958777488311,
+        "mean_ci_high": -0.0003210357042022267
+      },
+      "cross9_overnight_XYZ100_1h": {
+        "p_fwer": 1.0,
+        "t_block": -6.248372407755082,
+        "mean_ci_low": -0.0011426861261044153,
+        "mean_ci_high": -0.000602060405176241
+      },
+      "cross9_overnight_XYZ100_3h:path0": {
+        "p_fwer": 1.0,
+        "t_block": -2.1749996870313795,
+        "mean_ci_low": -0.0012503711590669375,
+        "mean_ci_high": -6.413731713473549e-05
+      },
+      "cross9_overnight_XYZ100_3h:path1": {
+        "p_fwer": 1.0,
+        "t_block": -1.4525196313406437,
+        "mean_ci_low": -0.0009385467647942715,
+        "mean_ci_high": 0.00010557916940077803
+      },
+      "cross9_overnight_XYZ100_3h:path2": {
+        "p_fwer": 1.0,
+        "t_block": -1.8411286951320092,
+        "mean_ci_low": -0.0010219833679041296,
+        "mean_ci_high": 4.577699616675518e-05
+      },
+      "cross9_overnight_XYZ100_3h": {
+        "p_fwer": 1.0,
+        "t_block": -1.9816534589667842,
+        "mean_ci_low": -0.001020794535725917,
+        "mean_ci_high": 6.7450927966911794e-06
+      },
+      "cross9_overnight_XYZ100_close:path0": {
+        "p_fwer": 1.0,
+        "t_block": -1.285080465881217,
+        "mean_ci_low": -0.0015558358749429477,
+        "mean_ci_high": 0.0003431749816213697
+      },
+      "cross9_overnight_XYZ100_close:path1": {
+        "p_fwer": 1.0,
+        "t_block": -1.015866517982389,
+        "mean_ci_low": -0.001264847487310602,
+        "mean_ci_high": 0.0003892692349687186
+      },
+      "cross9_overnight_XYZ100_close:path2": {
+        "p_fwer": 1.0,
+        "t_block": -1.045784053073577,
+        "mean_ci_low": -0.0011054221728370546,
+        "mean_ci_high": 0.0003703302923974607
+      },
+      "cross9_overnight_XYZ100_close": {
+        "p_fwer": 1.0,
+        "t_block": -1.1547327915755863,
+        "mean_ci_low": -0.0012869684478299189,
+        "mean_ci_high": 0.0003426086498232517
+      },
+      "cross9_overnight_SP500_1h:path0": {
+        "p_fwer": 1.0,
+        "t_block": -6.332426464156394,
+        "mean_ci_low": -0.001277247647466729,
+        "mean_ci_high": -0.0006903117634881108
+      },
+      "cross9_overnight_SP500_1h:path1": {
+        "p_fwer": 1.0,
+        "t_block": -3.237997158852714,
+        "mean_ci_low": -0.0014061290647219915,
+        "mean_ci_high": -0.0003497177262122757
+      },
+      "cross9_overnight_SP500_1h:path2": {
+        "p_fwer": 1.0,
+        "t_block": -3.9637717163320882,
+        "mean_ci_low": -0.0009926526767058963,
+        "mean_ci_high": -0.0003360209251626231
+      },
+      "cross9_overnight_SP500_1h": {
+        "p_fwer": 1.0,
+        "t_block": -5.6989769491926445,
+        "mean_ci_low": -0.0011323967261112824,
+        "mean_ci_high": -0.0005610916717613259
+      },
+      "cross9_overnight_SP500_3h:path0": {
+        "p_fwer": 1.0,
+        "t_block": -2.632871852201328,
+        "mean_ci_low": -0.001093464550632787,
+        "mean_ci_high": -0.000165843281365339
+      },
+      "cross9_overnight_SP500_3h:path1": {
+        "p_fwer": 1.0,
+        "t_block": -1.7967558121452818,
+        "mean_ci_low": -0.0008711748831298481,
+        "mean_ci_high": 2.1120404934357327e-05
+      },
+      "cross9_overnight_SP500_3h:path2": {
+        "p_fwer": 1.0,
+        "t_block": -2.665460850014161,
+        "mean_ci_low": -0.001054649560346855,
+        "mean_ci_high": -0.00012664477524593296
+      },
+      "cross9_overnight_SP500_3h": {
+        "p_fwer": 1.0,
+        "t_block": -2.6195902074172293,
+        "mean_ci_low": -0.0009588485429245889,
+        "mean_ci_high": -0.000126876459244599
+      },
+      "cross9_overnight_SP500_close:path0": {
+        "p_fwer": 1.0,
+        "t_block": -1.8785896453820357,
+        "mean_ci_low": -0.0014860217858332346,
+        "mean_ci_high": 3.9759898470953124e-05
+      },
+      "cross9_overnight_SP500_close:path1": {
+        "p_fwer": 1.0,
+        "t_block": -1.5409710508159544,
+        "mean_ci_low": -0.0012989969955691928,
+        "mean_ci_high": 0.0001434304032885091
+      },
+      "cross9_overnight_SP500_close:path2": {
+        "p_fwer": 1.0,
+        "t_block": -1.7767830767546169,
+        "mean_ci_low": -0.0012430088230315946,
+        "mean_ci_high": 0.00010017510098903721
+      },
+      "cross9_overnight_SP500_close": {
+        "p_fwer": 1.0,
+        "t_block": -1.7973236111013067,
+        "mean_ci_low": -0.0013308648612989672,
+        "mean_ci_high": 7.350564565253227e-05
+      },
+      "cross9_weekend_none_1h:path0": {
+        "p_fwer": 1.0,
+        "t_block": -0.002639816170838223,
+        "mean_ci_low": -0.000376743868856215,
+        "mean_ci_high": 0.0003929064228694971
+      },
+      "cross9_weekend_none_1h:path1": {
+        "p_fwer": 1.0,
+        "t_block": -3.1421799223001248,
+        "mean_ci_low": -0.00038304502401877096,
+        "mean_ci_high": -9.513346620469514e-05
+      },
+      "cross9_weekend_none_1h:path2": {
+        "p_fwer": 1.0,
+        "t_block": -2.409214317954516,
+        "mean_ci_low": -0.0004161990874690262,
+        "mean_ci_high": -6.245606718796159e-05
+      },
+      "cross9_weekend_none_1h": {
+        "p_fwer": 1.0,
+        "t_block": -2.0986801886848223,
+        "mean_ci_low": -0.0003040132789868562,
+        "mean_ci_high": -2.5119132713549014e-05
+      },
+      "cross9_weekend_none_3h:path0": {
+        "p_fwer": 1.0,
+        "t_block": -0.3276982842902866,
+        "mean_ci_low": -0.0004418551114216801,
+        "mean_ci_high": 0.00034238299544722103
+      },
+      "cross9_weekend_none_3h:path1": {
+        "p_fwer": 1.0,
+        "t_block": -0.8059510059471533,
+        "mean_ci_low": -0.0003581047696222762,
+        "mean_ci_high": 0.0001288859166694233
+      },
+      "cross9_weekend_none_3h:path2": {
+        "p_fwer": 1.0,
+        "t_block": -1.367097592681108,
+        "mean_ci_low": -0.0004263221903454331,
+        "mean_ci_high": 5.671487761107623e-05
+      },
+      "cross9_weekend_none_3h": {
+        "p_fwer": 1.0,
+        "t_block": -0.8512072430594544,
+        "mean_ci_low": -0.000382174712126321,
+        "mean_ci_high": 0.00012775683082319174
+      },
+      "cross9_weekend_none_close:path0": {
+        "p_fwer": 1.0,
+        "t_block": -0.3843390477127045,
+        "mean_ci_low": -0.0005863360475243749,
+        "mean_ci_high": 0.0003966238957083926
+      },
+      "cross9_weekend_none_close:path1": {
+        "p_fwer": 1.0,
+        "t_block": -1.385842195433787,
+        "mean_ci_low": -0.0005744790060110833,
+        "mean_ci_high": 6.396367015731538e-05
+      },
+      "cross9_weekend_none_close:path2": {
+        "p_fwer": 1.0,
+        "t_block": -2.4576665648692035,
+        "mean_ci_low": -0.0005081799884521115,
+        "mean_ci_high": -6.434805579864835e-05
+      },
+      "cross9_weekend_none_close": {
+        "p_fwer": 1.0,
+        "t_block": -1.242222312662174,
+        "mean_ci_low": -0.000530311050095769,
+        "mean_ci_high": 9.291541034651585e-05
+      },
+      "cross9_weekend_XYZ100_1h:path0": {
+        "p_fwer": 1.0,
+        "t_block": 0.27570916828768033,
+        "mean_ci_low": -0.0002583339445020684,
+        "mean_ci_high": 0.00036591361337325235
+      },
+      "cross9_weekend_XYZ100_1h:path1": {
+        "p_fwer": 1.0,
+        "t_block": -1.256992999814762,
+        "mean_ci_low": -0.0003119429929354365,
+        "mean_ci_high": 0.00011060958986530524
+      },
+      "cross9_weekend_XYZ100_1h:path2": {
+        "p_fwer": 1.0,
+        "t_block": -1.6663218716601107,
+        "mean_ci_low": -0.000386472808617787,
+        "mean_ci_high": 5.1558841993536386e-05
+      },
+      "cross9_weekend_XYZ100_1h": {
+        "p_fwer": 1.0,
+        "t_block": -1.0902401232058927,
+        "mean_ci_low": -0.00024406585452667643,
+        "mean_ci_high": 9.729307319801836e-05
+      },
+      "cross9_weekend_XYZ100_3h:path0": {
+        "p_fwer": 0.99975,
+        "t_block": 0.5526092613076402,
+        "mean_ci_low": -0.00025549464232532015,
+        "mean_ci_high": 0.0006281338948750628
+      },
+      "cross9_weekend_XYZ100_3h:path1": {
+        "p_fwer": 0.99975,
+        "t_block": 0.6459549631384421,
+        "mean_ci_low": -0.00016913004960757784,
+        "mean_ci_high": 0.0007248871124003507
+      },
+      "cross9_weekend_XYZ100_3h:path2": {
+        "p_fwer": 1.0,
+        "t_block": 0.13470985472251884,
+        "mean_ci_low": -0.00023194837544312187,
+        "mean_ci_high": 0.00044218556875736477
+      },
+      "cross9_weekend_XYZ100_3h": {
+        "p_fwer": 0.99975,
+        "t_block": 0.49819254190667284,
+        "mean_ci_low": -0.00017654596198613405,
+        "mean_ci_high": 0.0005856802090014508
+      },
+      "cross9_weekend_XYZ100_close:path0": {
+        "p_fwer": 0.9845,
+        "t_block": 1.208840373799807,
+        "mean_ci_low": -0.0001130846706483009,
+        "mean_ci_high": 0.00102540745639382
+      },
+      "cross9_weekend_XYZ100_close:path1": {
+        "p_fwer": 0.99775,
+        "t_block": 0.9930031174066282,
+        "mean_ci_low": -0.000143371967372232,
+        "mean_ci_high": 0.0009909262554217394
+      },
+      "cross9_weekend_XYZ100_close:path2": {
+        "p_fwer": 0.99975,
+        "t_block": 0.5758254524458583,
+        "mean_ci_low": -0.00017295313730909538,
+        "mean_ci_high": 0.0007030056533927797
+      },
+      "cross9_weekend_XYZ100_close": {
+        "p_fwer": 0.9985,
+        "t_block": 0.9777394328286071,
+        "mean_ci_low": -0.000121856940457308,
+        "mean_ci_high": 0.0008925838183864955
+      },
+      "cross9_weekend_SP500_1h:path0": {
+        "p_fwer": 0.99975,
+        "t_block": 0.5034140818203112,
+        "mean_ci_low": -0.00018794255243170918,
+        "mean_ci_high": 0.0003386269243407841
+      },
+      "cross9_weekend_SP500_1h:path1": {
+        "p_fwer": 1.0,
+        "t_block": -1.796937532450885,
+        "mean_ci_low": -0.0002848017204063684,
+        "mean_ci_high": 3.204843984935154e-05
+      },
+      "cross9_weekend_SP500_1h:path2": {
+        "p_fwer": 1.0,
+        "t_block": -1.5634378386012258,
+        "mean_ci_low": -0.00041127841884750936,
+        "mean_ci_high": 5.372868027196968e-05
+      },
+      "cross9_weekend_SP500_1h": {
+        "p_fwer": 1.0,
+        "t_block": -1.3760277662510885,
+        "mean_ci_low": -0.00020959489107073284,
+        "mean_ci_high": 4.499141359867799e-05
+      },
+      "cross9_weekend_SP500_3h:path0": {
+        "p_fwer": 0.99975,
+        "t_block": 0.702430539688819,
+        "mean_ci_low": -0.00017715695060978057,
+        "mean_ci_high": 0.0005023019098966539
+      },
+      "cross9_weekend_SP500_3h:path1": {
+        "p_fwer": 0.99975,
+        "t_block": 0.4669780555151205,
+        "mean_ci_low": -0.00020270518734780818,
+        "mean_ci_high": 0.0005377300781453471
+      },
+      "cross9_weekend_SP500_3h:path2": {
+        "p_fwer": 1.0,
+        "t_block": -0.2441671870058298,
+        "mean_ci_low": -0.00031763666180145505,
+        "mean_ci_high": 0.00035775050040973556
+      },
+      "cross9_weekend_SP500_3h": {
+        "p_fwer": 1.0,
+        "t_block": 0.33271053862191297,
+        "mean_ci_low": -0.00019731503541677194,
+        "mean_ci_high": 0.0004532144282733127
+      },
+      "cross9_weekend_SP500_close:path0": {
+        "p_fwer": 0.9995,
+        "t_block": 0.7970894240907841,
+        "mean_ci_low": -0.0002084050629353892,
+        "mean_ci_high": 0.0007538341581311771
+      },
+      "cross9_weekend_SP500_close:path1": {
+        "p_fwer": 1.0,
+        "t_block": 0.40041704146464885,
+        "mean_ci_low": -0.00027551355307105897,
+        "mean_ci_high": 0.0006810848945401917
+      },
+      "cross9_weekend_SP500_close:path2": {
+        "p_fwer": 1.0,
+        "t_block": -0.21991168607996395,
+        "mean_ci_low": -0.0003301703716163928,
+        "mean_ci_high": 0.0004755345863901568
+      },
+      "cross9_weekend_SP500_close": {
+        "p_fwer": 1.0,
+        "t_block": 0.36374804099412195,
+        "mean_ci_low": -0.0002517843345918833,
+        "mean_ci_high": 0.00063258917629361
+      },
+      "cross9_external_weekend_none_1h:path0": {
+        "p_fwer": 1.0,
+        "t_block": -1.9074561867207098,
+        "mean_ci_low": -0.0003578658741024231,
+        "mean_ci_high": 1.564306699378907e-05
+      },
+      "cross9_external_weekend_none_1h:path1": {
+        "p_fwer": 1.0,
+        "t_block": -1.2088197056639916,
+        "mean_ci_low": -0.00017443388260195364,
+        "mean_ci_high": 3.988261528701033e-05
+      },
+      "cross9_external_weekend_none_1h:path2": {
+        "p_fwer": 1.0,
+        "t_block": -1.7133616648201873,
+        "mean_ci_low": -0.00033030538326490926,
+        "mean_ci_high": 8.52353394074676e-06
+      },
+      "cross9_external_weekend_none_1h": {
+        "p_fwer": 1.0,
+        "t_block": -2.4471473378826722,
+        "mean_ci_low": -0.00023966984222988346,
+        "mean_ci_high": -2.9046920009720363e-05
+      },
+      "cross9_external_weekend_none_3h:path0": {
+        "p_fwer": 1.0,
+        "t_block": -1.3891721780396165,
+        "mean_ci_low": -0.0004569336661457505,
+        "mean_ci_high": 7.203220075532773e-05
+      },
+      "cross9_external_weekend_none_3h:path1": {
+        "p_fwer": 1.0,
+        "t_block": -1.4020023882113626,
+        "mean_ci_low": -0.0003677562862620601,
+        "mean_ci_high": 6.565344942526197e-05
+      },
+      "cross9_external_weekend_none_3h:path2": {
+        "p_fwer": 1.0,
+        "t_block": -1.7525581730502764,
+        "mean_ci_low": -0.00046888844555766345,
+        "mean_ci_high": 1.809374956699203e-05
+      },
+      "cross9_external_weekend_none_3h": {
+        "p_fwer": 1.0,
+        "t_block": -1.716167652857981,
+        "mean_ci_low": -0.0004005234891103136,
+        "mean_ci_high": 2.5421172608827214e-05
+      },
+      "cross9_external_weekend_XYZ100_1h:path0": {
+        "p_fwer": 1.0,
+        "t_block": -3.2092240393301856,
+        "mean_ci_low": -0.00020985711803101338,
+        "mean_ci_high": -4.5158437791376234e-05
+      },
+      "cross9_external_weekend_XYZ100_1h:path1": {
+        "p_fwer": 1.0,
+        "t_block": -4.263283592501582,
+        "mean_ci_low": -0.00017916339143151945,
+        "mean_ci_high": -6.535178803913277e-05
+      },
+      "cross9_external_weekend_XYZ100_1h:path2": {
+        "p_fwer": 1.0,
+        "t_block": -4.08979412547203,
+        "mean_ci_low": -0.00023821164764606926,
+        "mean_ci_high": -8.434756772515778e-05
+      },
+      "cross9_external_weekend_XYZ100_1h": {
+        "p_fwer": 1.0,
+        "t_block": -4.845920266041423,
+        "mean_ci_low": -0.00019339484703905673,
+        "mean_ci_high": -8.046594815957697e-05
+      },
+      "cross9_external_weekend_XYZ100_3h:path0": {
+        "p_fwer": 1.0,
+        "t_block": -1.6269369834636627,
+        "mean_ci_low": -0.00020178407274544003,
+        "mean_ci_high": 4.0213227773365384e-05
+      },
+      "cross9_external_weekend_XYZ100_3h:path1": {
+        "p_fwer": 1.0,
+        "t_block": -2.3590223061750026,
+        "mean_ci_low": -0.00023145631868147162,
+        "mean_ci_high": -1.6483580088104882e-05
+      },
+      "cross9_external_weekend_XYZ100_3h:path2": {
+        "p_fwer": 1.0,
+        "t_block": -3.2105318569858694,
+        "mean_ci_low": -0.0003099865243442189,
+        "mean_ci_high": -8.323753393015641e-05
+      },
+      "cross9_external_weekend_XYZ100_3h": {
+        "p_fwer": 1.0,
+        "t_block": -2.787723302546017,
+        "mean_ci_low": -0.00022626748999720323,
+        "mean_ci_high": -3.453244554181804e-05
+      },
+      "cross9_external_weekend_SP500_1h:path0": {
+        "p_fwer": 1.0,
+        "t_block": -3.5907255847421995,
+        "mean_ci_low": -0.00023200799110129606,
+        "mean_ci_high": -6.81069924573906e-05
+      },
+      "cross9_external_weekend_SP500_1h:path1": {
+        "p_fwer": 1.0,
+        "t_block": -5.146269614627629,
+        "mean_ci_low": -0.00017203596079912897,
+        "mean_ci_high": -7.994926439847266e-05
+      },
+      "cross9_external_weekend_SP500_1h:path2": {
+        "p_fwer": 1.0,
+        "t_block": -3.5096641266243944,
+        "mean_ci_low": -0.00025416230157174435,
+        "mean_ci_high": -7.404263792090721e-05
+      },
+      "cross9_external_weekend_SP500_1h": {
+        "p_fwer": 1.0,
+        "t_block": -5.552956742270799,
+        "mean_ci_low": -0.00019631573213700637,
+        "mean_ci_high": -9.470436650605837e-05
+      },
+      "cross9_external_weekend_SP500_3h:path0": {
+        "p_fwer": 1.0,
+        "t_block": -2.0246806548032312,
+        "mean_ci_low": -0.00024522717283864096,
+        "mean_ci_high": 1.0308055342099064e-05
+      },
+      "cross9_external_weekend_SP500_3h:path1": {
+        "p_fwer": 1.0,
+        "t_block": -2.672366191833685,
+        "mean_ci_low": -0.00023023862866147977,
+        "mean_ci_high": -3.625898892031782e-05
+      },
+      "cross9_external_weekend_SP500_3h:path2": {
+        "p_fwer": 1.0,
+        "t_block": -3.0687155791107195,
+        "mean_ci_low": -0.0002943389517323151,
+        "mean_ci_high": -6.967810894120518e-05
+      },
+      "cross9_external_weekend_SP500_3h": {
+        "p_fwer": 1.0,
+        "t_block": -2.9437726620993194,
+        "mean_ci_low": -0.00024136995844087458,
+        "mean_ci_high": -4.391514763083658e-05
+      }
+    }
+  },
+  "blend": {
+    "7": {
+      "all16_daily_XYZ100_lb1_h1": {
+        "p_fwer": 1.0,
+        "delta": -0.15169677871573853,
+        "ci_low": -0.28002501188084705,
+        "ci_high": -0.033293245146595526
+      },
+      "all16_daily_XYZ100_lb1_h3": {
+        "p_fwer": 1.0,
+        "delta": -0.004728166819035688,
+        "ci_low": -0.0653499246867052,
+        "ci_high": 0.05697654981710572
+      },
+      "all16_daily_XYZ100_lb3_h1": {
+        "p_fwer": 1.0,
+        "delta": -0.2387429066617608,
+        "ci_low": -0.3358698418780999,
+        "ci_high": -0.13441888021843193
+      },
+      "all16_daily_XYZ100_lb3_h3": {
+        "p_fwer": 1.0,
+        "delta": -0.06536458765080894,
+        "ci_low": -0.14034995614954313,
+        "ci_high": 0.021234254580764233
+      },
+      "all16_daily_XYZ100_lb5_h1": {
+        "p_fwer": 1.0,
+        "delta": -0.1611633014944102,
+        "ci_low": -0.2765456802049356,
+        "ci_high": -0.05429518013899595
+      },
+      "all16_daily_XYZ100_lb5_h3": {
+        "p_fwer": 1.0,
+        "delta": -0.08289894720674959,
+        "ci_low": -0.18956975413424798,
+        "ci_high": 0.012577950106155998
+      },
+      "all16_daily_SP500_lb1_h1": {
+        "p_fwer": 1.0,
+        "delta": -0.08167887095664102,
+        "ci_low": -0.2619755471893348,
+        "ci_high": 0.09121742131867058
+      },
+      "all16_daily_SP500_lb1_h3": {
+        "p_fwer": 0.997,
+        "delta": 0.01837886174815674,
+        "ci_low": -0.062245600386579836,
+        "ci_high": 0.0964381030764138
+      },
+      "all16_daily_SP500_lb3_h1": {
+        "p_fwer": 1.0,
+        "delta": -0.18834374235535725,
+        "ci_low": -0.3317047141057145,
+        "ci_high": -0.05143019353692074
+      },
+      "all16_daily_SP500_lb3_h3": {
+        "p_fwer": 1.0,
+        "delta": -0.08319025609596456,
+        "ci_low": -0.18334333219494933,
+        "ci_high": 0.01428635536835541
+      },
+      "all16_daily_SP500_lb5_h1": {
+        "p_fwer": 1.0,
+        "delta": -0.18825853883280963,
+        "ci_low": -0.32673337726628066,
+        "ci_high": -0.0617443747176422
+      },
+      "all16_daily_SP500_lb5_h3": {
+        "p_fwer": 1.0,
+        "delta": -0.08454588040483728,
+        "ci_low": -0.21565434716602958,
+        "ci_high": 0.02996456990971837
+      },
+      "all16_overnight_none_1h": {
+        "p_fwer": 1.0,
+        "delta": -0.12761488168119037,
+        "ci_low": -0.23602732992390235,
+        "ci_high": -0.04429598339900358
+      },
+      "all16_overnight_none_3h": {
+        "p_fwer": 1.0,
+        "delta": -0.09136425290608338,
+        "ci_low": -0.21838080318863898,
+        "ci_high": 0.011208536504256735
+      },
+      "all16_overnight_none_close": {
+        "p_fwer": 1.0,
+        "delta": -0.13633349581567225,
+        "ci_low": -0.3021860096913434,
+        "ci_high": 0.00978701281335293
+      },
+      "all16_overnight_XYZ100_1h": {
+        "p_fwer": 1.0,
+        "delta": -0.11803668125772965,
+        "ci_low": -0.20473061990997315,
+        "ci_high": -0.060944916627278654
+      },
+      "all16_overnight_XYZ100_3h": {
+        "p_fwer": 1.0,
+        "delta": -0.09849919730379278,
+        "ci_low": -0.2054636525779231,
+        "ci_high": -0.020029041092059205
+      },
+      "all16_overnight_XYZ100_close": {
+        "p_fwer": 1.0,
+        "delta": -0.12618800067028052,
+        "ci_low": -0.26438190405529605,
+        "ci_high": -0.015459790208988479
+      },
+      "all16_overnight_SP500_1h": {
+        "p_fwer": 1.0,
+        "delta": -0.11785755767431781,
+        "ci_low": -0.197888716356727,
+        "ci_high": -0.06142744259442324
+      },
+      "all16_overnight_SP500_3h": {
+        "p_fwer": 1.0,
+        "delta": -0.0959864238897579,
+        "ci_low": -0.19124865552153994,
+        "ci_high": -0.024790445535853797
+      },
+      "all16_overnight_SP500_close": {
+        "p_fwer": 1.0,
+        "delta": -0.12482925272920935,
+        "ci_low": -0.24709075012252557,
+        "ci_high": -0.017916854590884344
+      },
+      "all16_weekend_none_1h": {
+        "p_fwer": 1.0,
+        "delta": -0.02314150344287358,
+        "ci_low": -0.06034594039099951,
+        "ci_high": -0.003867205402588288
+      },
+      "all16_weekend_none_3h": {
+        "p_fwer": 1.0,
+        "delta": -0.03739885510493976,
+        "ci_low": -0.10301744632945395,
+        "ci_high": -0.003744572837716644
+      },
+      "all16_weekend_none_close": {
+        "p_fwer": 1.0,
+        "delta": -0.05159718753456402,
+        "ci_low": -0.11537172430506587,
+        "ci_high": -0.008431053663066278
+      },
+      "all16_weekend_XYZ100_1h": {
+        "p_fwer": 1.0,
+        "delta": -0.006538327735219402,
+        "ci_low": -0.022830190196617663,
+        "ci_high": 0.011081250218967035
+      },
+      "all16_weekend_XYZ100_3h": {
+        "p_fwer": 1.0,
+        "delta": 0.0004536591197437841,
+        "ci_low": -0.03261291085423409,
+        "ci_high": 0.0416770139629377
+      },
+      "all16_weekend_XYZ100_close": {
+        "p_fwer": 0.9985,
+        "delta": 0.007981075274329353,
+        "ci_low": -0.03221310579081929,
+        "ci_high": 0.06560234000610345
+      },
+      "all16_weekend_SP500_1h": {
+        "p_fwer": 1.0,
+        "delta": -0.010397044020130222,
+        "ci_low": -0.029602880901746734,
+        "ci_high": 0.0024946688843314672
+      },
+      "all16_weekend_SP500_3h": {
+        "p_fwer": 1.0,
+        "delta": -0.0071522017942220835,
+        "ci_low": -0.046826686257764816,
+        "ci_high": 0.02406730489338706
+      },
+      "all16_weekend_SP500_close": {
+        "p_fwer": 1.0,
+        "delta": -0.016828851773924656,
+        "ci_low": -0.061378845266596524,
+        "ci_high": 0.03421477716021317
+      },
+      "all16_external_weekend_none_1h": {
+        "p_fwer": 1.0,
+        "delta": -0.013558875729387817,
+        "ci_low": -0.029754719247172896,
+        "ci_high": 0.003481877378354577
+      },
+      "all16_external_weekend_none_3h": {
+        "p_fwer": 1.0,
+        "delta": -0.018303453924097712,
+        "ci_low": -0.05001933106604505,
+        "ci_high": 0.012321227225034098
+      },
+      "all16_external_weekend_XYZ100_1h": {
+        "p_fwer": 1.0,
+        "delta": -0.015291661929234344,
+        "ci_low": -0.024050899426871837,
+        "ci_high": -0.008229453778844464
+      },
+      "all16_external_weekend_XYZ100_3h": {
+        "p_fwer": 1.0,
+        "delta": -0.00901911587137336,
+        "ci_low": -0.02205826054839882,
+        "ci_high": 0.006679586008009374
+      },
+      "all16_external_weekend_SP500_1h": {
+        "p_fwer": 1.0,
+        "delta": -0.01627727695387092,
+        "ci_low": -0.027045074011041677,
+        "ci_high": -0.008467177357178507
+      },
+      "all16_external_weekend_SP500_3h": {
+        "p_fwer": 1.0,
+        "delta": -0.012101426975916171,
+        "ci_low": -0.027804472124489304,
+        "ci_high": 0.004051406999593302
+      },
+      "cross9_daily_XYZ100_lb1_h1": {
+        "p_fwer": 1.0,
+        "delta": -0.13409097792785332,
+        "ci_low": -0.27055091402368503,
+        "ci_high": -0.010393204696028942
+      },
+      "cross9_daily_XYZ100_lb1_h3": {
+        "p_fwer": 0.9985,
+        "delta": 0.011349022075429982,
+        "ci_low": -0.0554478496647854,
+        "ci_high": 0.07835798630733709
+      },
+      "cross9_daily_XYZ100_lb3_h1": {
+        "p_fwer": 1.0,
+        "delta": -0.20542640347154895,
+        "ci_low": -0.3177378191619917,
+        "ci_high": -0.09235353024617883
+      },
+      "cross9_daily_XYZ100_lb3_h3": {
+        "p_fwer": 1.0,
+        "delta": -0.10779596422220042,
+        "ci_low": -0.19588876305545194,
+        "ci_high": -0.020735809033606955
+      },
+      "cross9_daily_XYZ100_lb5_h1": {
+        "p_fwer": 1.0,
+        "delta": -0.2277435838803319,
+        "ci_low": -0.35485257019274963,
+        "ci_high": -0.1123732210204418
+      },
+      "cross9_daily_XYZ100_lb5_h3": {
+        "p_fwer": 1.0,
+        "delta": -0.13760646529574905,
+        "ci_low": -0.2488384209792794,
+        "ci_high": -0.039689497196014625
+      },
+      "cross9_daily_SP500_lb1_h1": {
+        "p_fwer": 1.0,
+        "delta": -0.12489675904869017,
+        "ci_low": -0.3135033649577371,
+        "ci_high": 0.03909002761230483
+      },
+      "cross9_daily_SP500_lb1_h3": {
+        "p_fwer": 1.0,
+        "delta": -0.001726437965627609,
+        "ci_low": -0.09783837473913184,
+        "ci_high": 0.0855011923028531
+      },
+      "cross9_daily_SP500_lb3_h1": {
+        "p_fwer": 1.0,
+        "delta": -0.1931205495814138,
+        "ci_low": -0.3369280064267308,
+        "ci_high": -0.05390121860212496
+      },
+      "cross9_daily_SP500_lb3_h3": {
+        "p_fwer": 1.0,
+        "delta": -0.13771923646974338,
+        "ci_low": -0.25360756459320416,
+        "ci_high": -0.027329067584700724
+      },
+      "cross9_daily_SP500_lb5_h1": {
+        "p_fwer": 1.0,
+        "delta": -0.2429042765105556,
+        "ci_low": -0.39638706083442604,
+        "ci_high": -0.10340309564106716
+      },
+      "cross9_daily_SP500_lb5_h3": {
+        "p_fwer": 1.0,
+        "delta": -0.1679142490573857,
+        "ci_low": -0.3182709890282126,
+        "ci_high": -0.03806827941188723
+      },
+      "cross9_overnight_none_1h": {
+        "p_fwer": 1.0,
+        "delta": -0.11710336581252127,
+        "ci_low": -0.19690585834981442,
+        "ci_high": -0.06628147867480615
+      },
+      "cross9_overnight_none_3h": {
+        "p_fwer": 1.0,
+        "delta": -0.06941855223181131,
+        "ci_low": -0.13768114511713453,
+        "ci_high": -0.009627163542861163
+      },
+      "cross9_overnight_none_close": {
+        "p_fwer": 1.0,
+        "delta": -0.08048163946721296,
+        "ci_low": -0.20490291463305568,
+        "ci_high": 0.03710867023002847
+      },
+      "cross9_overnight_XYZ100_1h": {
+        "p_fwer": 1.0,
+        "delta": -0.10982658416913317,
+        "ci_low": -0.17465113671273708,
+        "ci_high": -0.07110805161429104
+      },
+      "cross9_overnight_XYZ100_3h": {
+        "p_fwer": 1.0,
+        "delta": -0.06732441938886238,
+        "ci_low": -0.14035592178698172,
+        "ci_high": -0.005521129184803234
+      },
+      "cross9_overnight_XYZ100_close": {
+        "p_fwer": 1.0,
+        "delta": -0.06295902462712404,
+        "ci_low": -0.17785787000801342,
+        "ci_high": 0.04653384622035791
+      },
+      "cross9_overnight_SP500_1h": {
+        "p_fwer": 1.0,
+        "delta": -0.10502163330485086,
+        "ci_low": -0.16874472652993605,
+        "ci_high": -0.06483705395981933
+      },
+      "cross9_overnight_SP500_3h": {
+        "p_fwer": 1.0,
+        "delta": -0.07106651679488062,
+        "ci_low": -0.13408705379179645,
+        "ci_high": -0.020714815501167848
+      },
+      "cross9_overnight_SP500_close": {
+        "p_fwer": 1.0,
+        "delta": -0.08099849762836009,
+        "ci_low": -0.17634827306747428,
+        "ci_high": 0.009258069714617564
+      },
+      "cross9_weekend_none_1h": {
+        "p_fwer": 1.0,
+        "delta": -0.019743359028971605,
+        "ci_low": -0.050412298150066134,
+        "ci_high": -0.003446217905777558
+      },
+      "cross9_weekend_none_3h": {
+        "p_fwer": 1.0,
+        "delta": -0.015597525103773102,
+        "ci_low": -0.06648371859335965,
+        "ci_high": 0.013986630803934192
+      },
+      "cross9_weekend_none_close": {
+        "p_fwer": 1.0,
+        "delta": -0.026203262515897146,
+        "ci_low": -0.08858985278397702,
+        "ci_high": 0.01820827079318674
+      },
+      "cross9_weekend_XYZ100_1h": {
+        "p_fwer": 1.0,
+        "delta": -0.0121411929490559,
+        "ci_low": -0.0340060415879882,
+        "ci_high": 0.01037579537430539
+      },
+      "cross9_weekend_XYZ100_3h": {
+        "p_fwer": 0.996,
+        "delta": 0.01368480252049626,
+        "ci_low": -0.02468958571723812,
+        "ci_high": 0.07767111369441035
+      },
+      "cross9_weekend_XYZ100_close": {
+        "p_fwer": 0.9445,
+        "delta": 0.035596245564581276,
+        "ci_low": -0.018291856790131664,
+        "ci_high": 0.12478406385244069
+      },
+      "cross9_weekend_SP500_1h": {
+        "p_fwer": 1.0,
+        "delta": -0.011755964659376918,
+        "ci_low": -0.031124876932294605,
+        "ci_high": 0.005043910897728842
+      },
+      "cross9_weekend_SP500_3h": {
+        "p_fwer": 0.99925,
+        "delta": 0.007251470964256897,
+        "ci_low": -0.034443800513607785,
+        "ci_high": 0.060392240523773524
+      },
+      "cross9_weekend_SP500_close": {
+        "p_fwer": 0.9985,
+        "delta": 0.010765428069108093,
+        "ci_low": -0.04100573778372703,
+        "ci_high": 0.08538235404674162
+      },
+      "cross9_external_weekend_none_1h": {
+        "p_fwer": 1.0,
+        "delta": -0.017940161055672407,
+        "ci_low": -0.03548869247383837,
+        "ci_high": -0.002623096149101474
+      },
+      "cross9_external_weekend_none_3h": {
+        "p_fwer": 1.0,
+        "delta": -0.024428204864799748,
+        "ci_low": -0.05816739420061569,
+        "ci_high": 0.004124760167210824
+      },
+      "cross9_external_weekend_XYZ100_1h": {
+        "p_fwer": 1.0,
+        "delta": -0.018908535194430684,
+        "ci_low": -0.030900654109971358,
+        "ci_high": -0.010808533551738123
+      },
+      "cross9_external_weekend_XYZ100_3h": {
+        "p_fwer": 1.0,
+        "delta": -0.0182504814800756,
+        "ci_low": -0.0349239034984063,
+        "ci_high": -0.004733559763719881
+      },
+      "cross9_external_weekend_SP500_1h": {
+        "p_fwer": 1.0,
+        "delta": -0.01945994174741588,
+        "ci_low": -0.032616036699068464,
+        "ci_high": -0.011674308284551514
+      },
+      "cross9_external_weekend_SP500_3h": {
+        "p_fwer": 1.0,
+        "delta": -0.01923940531688706,
+        "ci_low": -0.03632686922248378,
+        "ci_high": -0.005738395559430838
+      }
+    },
+    "14": {
+      "all16_daily_XYZ100_lb1_h1": {
+        "p_fwer": 1.0,
+        "delta": -0.15169677871573853,
+        "ci_low": -0.28190769793382686,
+        "ci_high": -0.028639943986112634
+      },
+      "all16_daily_XYZ100_lb1_h3": {
+        "p_fwer": 1.0,
+        "delta": -0.004728166819035688,
+        "ci_low": -0.06325155229496794,
+        "ci_high": 0.05212969673349896
+      },
+      "all16_daily_XYZ100_lb3_h1": {
+        "p_fwer": 1.0,
+        "delta": -0.2387429066617608,
+        "ci_low": -0.3278056943545455,
+        "ci_high": -0.15081273730940573
+      },
+      "all16_daily_XYZ100_lb3_h3": {
+        "p_fwer": 1.0,
+        "delta": -0.06536458765080894,
+        "ci_low": -0.13360180295075352,
+        "ci_high": 0.009468097214915863
+      },
+      "all16_daily_XYZ100_lb5_h1": {
+        "p_fwer": 1.0,
+        "delta": -0.1611633014944102,
+        "ci_low": -0.26327997820533966,
+        "ci_high": -0.067202559392364
+      },
+      "all16_daily_XYZ100_lb5_h3": {
+        "p_fwer": 1.0,
+        "delta": -0.08289894720674959,
+        "ci_low": -0.19032120192146063,
+        "ci_high": 0.00912058952132314
+      },
+      "all16_daily_SP500_lb1_h1": {
+        "p_fwer": 1.0,
+        "delta": -0.08167887095664102,
+        "ci_low": -0.27247169488638395,
+        "ci_high": 0.0962261309283745
+      },
+      "all16_daily_SP500_lb1_h3": {
+        "p_fwer": 0.998,
+        "delta": 0.01837886174815674,
+        "ci_low": -0.0703792290926396,
+        "ci_high": 0.0949912612837138
+      },
+      "all16_daily_SP500_lb3_h1": {
+        "p_fwer": 1.0,
+        "delta": -0.18834374235535725,
+        "ci_low": -0.3331516912223208,
+        "ci_high": -0.05481322788784047
+      },
+      "all16_daily_SP500_lb3_h3": {
+        "p_fwer": 1.0,
+        "delta": -0.08319025609596456,
+        "ci_low": -0.18482314267260253,
+        "ci_high": 0.00614208058442935
+      },
+      "all16_daily_SP500_lb5_h1": {
+        "p_fwer": 1.0,
+        "delta": -0.18825853883280963,
+        "ci_low": -0.32482436051730335,
+        "ci_high": -0.07849324267636273
+      },
+      "all16_daily_SP500_lb5_h3": {
+        "p_fwer": 1.0,
+        "delta": -0.08454588040483728,
+        "ci_low": -0.22482000417361037,
+        "ci_high": 0.022282616354730778
+      },
+      "all16_overnight_none_1h": {
+        "p_fwer": 1.0,
+        "delta": -0.12761488168119037,
+        "ci_low": -0.25659303847033654,
+        "ci_high": -0.04803432133735288
+      },
+      "all16_overnight_none_3h": {
+        "p_fwer": 1.0,
+        "delta": -0.09136425290608338,
+        "ci_low": -0.22112330478513081,
+        "ci_high": 0.00958040638797103
+      },
+      "all16_overnight_none_close": {
+        "p_fwer": 1.0,
+        "delta": -0.13633349581567225,
+        "ci_low": -0.294910029503988,
+        "ci_high": -0.0036109601891861766
+      },
+      "all16_overnight_XYZ100_1h": {
+        "p_fwer": 1.0,
+        "delta": -0.11803668125772965,
+        "ci_low": -0.22433332736986947,
+        "ci_high": -0.057867767275049095
+      },
+      "all16_overnight_XYZ100_3h": {
+        "p_fwer": 1.0,
+        "delta": -0.09849919730379278,
+        "ci_low": -0.21081022392891982,
+        "ci_high": -0.02265114433383756
+      },
+      "all16_overnight_XYZ100_close": {
+        "p_fwer": 1.0,
+        "delta": -0.12618800067028052,
+        "ci_low": -0.26293288190730824,
+        "ci_high": -0.02198237897014535
+      },
+      "all16_overnight_SP500_1h": {
+        "p_fwer": 1.0,
+        "delta": -0.11785755767431781,
+        "ci_low": -0.218746177052525,
+        "ci_high": -0.0641120055872659
+      },
+      "all16_overnight_SP500_3h": {
+        "p_fwer": 1.0,
+        "delta": -0.0959864238897579,
+        "ci_low": -0.19158408592848886,
+        "ci_high": -0.03200770662566186
+      },
+      "all16_overnight_SP500_close": {
+        "p_fwer": 1.0,
+        "delta": -0.12482925272920935,
+        "ci_low": -0.24293552387401599,
+        "ci_high": -0.031807550195007306
+      },
+      "all16_weekend_none_1h": {
+        "p_fwer": 1.0,
+        "delta": -0.02314150344287358,
+        "ci_low": -0.0639750660772341,
+        "ci_high": -0.0034178553983322062
+      },
+      "all16_weekend_none_3h": {
+        "p_fwer": 1.0,
+        "delta": -0.03739885510493976,
+        "ci_low": -0.12337574258502114,
+        "ci_high": -0.00019307103841241746
+      },
+      "all16_weekend_none_close": {
+        "p_fwer": 1.0,
+        "delta": -0.05159718753456402,
+        "ci_low": -0.13033611581915813,
+        "ci_high": -0.013985017774623878
+      },
+      "all16_weekend_XYZ100_1h": {
+        "p_fwer": 1.0,
+        "delta": -0.006538327735219402,
+        "ci_low": -0.023003349407884448,
+        "ci_high": 0.01375107059564546
+      },
+      "all16_weekend_XYZ100_3h": {
+        "p_fwer": 1.0,
+        "delta": 0.0004536591197437841,
+        "ci_low": -0.026983629936401233,
+        "ci_high": 0.043740866530936034
+      },
+      "all16_weekend_XYZ100_close": {
+        "p_fwer": 0.99925,
+        "delta": 0.007981075274329353,
+        "ci_low": -0.02792206031913118,
+        "ci_high": 0.07469772517746048
+      },
+      "all16_weekend_SP500_1h": {
+        "p_fwer": 1.0,
+        "delta": -0.010397044020130222,
+        "ci_low": -0.02986527780267722,
+        "ci_high": 0.004452984812888615
+      },
+      "all16_weekend_SP500_3h": {
+        "p_fwer": 1.0,
+        "delta": -0.0071522017942220835,
+        "ci_low": -0.04329948835027936,
+        "ci_high": 0.02594955577046142
+      },
+      "all16_weekend_SP500_close": {
+        "p_fwer": 1.0,
+        "delta": -0.016828851773924656,
+        "ci_low": -0.050637832945002285,
+        "ci_high": 0.03760649184424936
+      },
+      "all16_external_weekend_none_1h": {
+        "p_fwer": 1.0,
+        "delta": -0.013558875729387817,
+        "ci_low": -0.030951944019622146,
+        "ci_high": 0.005778556202676183
+      },
+      "all16_external_weekend_none_3h": {
+        "p_fwer": 1.0,
+        "delta": -0.018303453924097712,
+        "ci_low": -0.05355314886373165,
+        "ci_high": 0.018620642882754043
+      },
+      "all16_external_weekend_XYZ100_1h": {
+        "p_fwer": 1.0,
+        "delta": -0.015291661929234344,
+        "ci_low": -0.024227295660592212,
+        "ci_high": -0.007372216702742637
+      },
+      "all16_external_weekend_XYZ100_3h": {
+        "p_fwer": 1.0,
+        "delta": -0.00901911587137336,
+        "ci_low": -0.02465561150920474,
+        "ci_high": 0.010542856429420419
+      },
+      "all16_external_weekend_SP500_1h": {
+        "p_fwer": 1.0,
+        "delta": -0.01627727695387092,
+        "ci_low": -0.028068463403561495,
+        "ci_high": -0.007571659163893921
+      },
+      "all16_external_weekend_SP500_3h": {
+        "p_fwer": 1.0,
+        "delta": -0.012101426975916171,
+        "ci_low": -0.02955932780358624,
+        "ci_high": 0.00803343200021674
+      },
+      "cross9_daily_XYZ100_lb1_h1": {
+        "p_fwer": 1.0,
+        "delta": -0.13409097792785332,
+        "ci_low": -0.26845918361148885,
+        "ci_high": -0.00726101625101133
+      },
+      "cross9_daily_XYZ100_lb1_h3": {
+        "p_fwer": 0.99925,
+        "delta": 0.011349022075429982,
+        "ci_low": -0.05985681624325988,
+        "ci_high": 0.07808921791198542
+      },
+      "cross9_daily_XYZ100_lb3_h1": {
+        "p_fwer": 1.0,
+        "delta": -0.20542640347154895,
+        "ci_low": -0.31680019053042013,
+        "ci_high": -0.10032154044390001
+      },
+      "cross9_daily_XYZ100_lb3_h3": {
+        "p_fwer": 1.0,
+        "delta": -0.10779596422220042,
+        "ci_low": -0.19252327790711676,
+        "ci_high": -0.030842318535987484
+      },
+      "cross9_daily_XYZ100_lb5_h1": {
+        "p_fwer": 1.0,
+        "delta": -0.2277435838803319,
+        "ci_low": -0.3486225265999169,
+        "ci_high": -0.1178532797966388
+      },
+      "cross9_daily_XYZ100_lb5_h3": {
+        "p_fwer": 1.0,
+        "delta": -0.13760646529574905,
+        "ci_low": -0.25035877824057284,
+        "ci_high": -0.045516361959873616
+      },
+      "cross9_daily_SP500_lb1_h1": {
+        "p_fwer": 1.0,
+        "delta": -0.12489675904869017,
+        "ci_low": -0.325633934388698,
+        "ci_high": 0.04841922029640325
+      },
+      "cross9_daily_SP500_lb1_h3": {
+        "p_fwer": 1.0,
+        "delta": -0.001726437965627609,
+        "ci_low": -0.11410571210980397,
+        "ci_high": 0.0905005649345298
+      },
+      "cross9_daily_SP500_lb3_h1": {
+        "p_fwer": 1.0,
+        "delta": -0.1931205495814138,
+        "ci_low": -0.3397389645535816,
+        "ci_high": -0.06089631653795956
+      },
+      "cross9_daily_SP500_lb3_h3": {
+        "p_fwer": 1.0,
+        "delta": -0.13771923646974338,
+        "ci_low": -0.2534304628232784,
+        "ci_high": -0.037736751349492344
+      },
+      "cross9_daily_SP500_lb5_h1": {
+        "p_fwer": 1.0,
+        "delta": -0.2429042765105556,
+        "ci_low": -0.39408484264323307,
+        "ci_high": -0.1135309073726798
+      },
+      "cross9_daily_SP500_lb5_h3": {
+        "p_fwer": 1.0,
+        "delta": -0.1679142490573857,
+        "ci_low": -0.32532102249915507,
+        "ci_high": -0.04431349694649896
+      },
+      "cross9_overnight_none_1h": {
+        "p_fwer": 1.0,
+        "delta": -0.11710336581252127,
+        "ci_low": -0.2180392498343701,
+        "ci_high": -0.06244915281532284
+      },
+      "cross9_overnight_none_3h": {
+        "p_fwer": 1.0,
+        "delta": -0.06941855223181131,
+        "ci_low": -0.14464505460678612,
+        "ci_high": -0.006835001584693096
+      },
+      "cross9_overnight_none_close": {
+        "p_fwer": 1.0,
+        "delta": -0.08048163946721296,
+        "ci_low": -0.20306613858840272,
+        "ci_high": 0.040557949966561826
+      },
+      "cross9_overnight_XYZ100_1h": {
+        "p_fwer": 1.0,
+        "delta": -0.10982658416913317,
+        "ci_low": -0.19074858332669428,
+        "ci_high": -0.06796856843971916
+      },
+      "cross9_overnight_XYZ100_3h": {
+        "p_fwer": 1.0,
+        "delta": -0.06732441938886238,
+        "ci_low": -0.14294849278059704,
+        "ci_high": -0.004319278708336113
+      },
+      "cross9_overnight_XYZ100_close": {
+        "p_fwer": 1.0,
+        "delta": -0.06295902462712404,
+        "ci_low": -0.1772978726725376,
+        "ci_high": 0.04685247545584581
+      },
+      "cross9_overnight_SP500_1h": {
+        "p_fwer": 1.0,
+        "delta": -0.10502163330485086,
+        "ci_low": -0.1851071247623686,
+        "ci_high": -0.06212037227351773
+      },
+      "cross9_overnight_SP500_3h": {
+        "p_fwer": 1.0,
+        "delta": -0.07106651679488062,
+        "ci_low": -0.13372196211352652,
+        "ci_high": -0.020797463622825866
+      },
+      "cross9_overnight_SP500_close": {
+        "p_fwer": 1.0,
+        "delta": -0.08099849762836009,
+        "ci_low": -0.1755666818093085,
+        "ci_high": 0.01379356039296612
+      },
+      "cross9_weekend_none_1h": {
+        "p_fwer": 1.0,
+        "delta": -0.019743359028971605,
+        "ci_low": -0.057185484596587496,
+        "ci_high": -0.0030518918863602067
+      },
+      "cross9_weekend_none_3h": {
+        "p_fwer": 1.0,
+        "delta": -0.015597525103773102,
+        "ci_low": -0.07599210424051742,
+        "ci_high": 0.014953048123337493
+      },
+      "cross9_weekend_none_close": {
+        "p_fwer": 1.0,
+        "delta": -0.026203262515897146,
+        "ci_low": -0.09787830976441687,
+        "ci_high": 0.010206009780798385
+      },
+      "cross9_weekend_XYZ100_1h": {
+        "p_fwer": 1.0,
+        "delta": -0.0121411929490559,
+        "ci_low": -0.034762020167694134,
+        "ci_high": 0.014972196293276618
+      },
+      "cross9_weekend_XYZ100_3h": {
+        "p_fwer": 0.9985,
+        "delta": 0.01368480252049626,
+        "ci_low": -0.02554717724836866,
+        "ci_high": 0.09207902166327583
+      },
+      "cross9_weekend_XYZ100_close": {
+        "p_fwer": 0.9745,
+        "delta": 0.035596245564581276,
+        "ci_low": -0.016342499435503786,
+        "ci_high": 0.14347282897407712
+      },
+      "cross9_weekend_SP500_1h": {
+        "p_fwer": 1.0,
+        "delta": -0.011755964659376918,
+        "ci_low": -0.0319256694734064,
+        "ci_high": 0.006589279399217397
+      },
+      "cross9_weekend_SP500_3h": {
+        "p_fwer": 0.9995,
+        "delta": 0.007251470964256897,
+        "ci_low": -0.03402925344037002,
+        "ci_high": 0.06946925208761111
+      },
+      "cross9_weekend_SP500_close": {
+        "p_fwer": 0.99925,
+        "delta": 0.010765428069108093,
+        "ci_low": -0.037281255561770754,
+        "ci_high": 0.10116715429681622
+      },
+      "cross9_external_weekend_none_1h": {
+        "p_fwer": 1.0,
+        "delta": -0.017940161055672407,
+        "ci_low": -0.03581377410580353,
+        "ci_high": -0.004300030095810606
+      },
+      "cross9_external_weekend_none_3h": {
+        "p_fwer": 1.0,
+        "delta": -0.024428204864799748,
+        "ci_low": -0.06130115636309197,
+        "ci_high": 0.005034210592521178
+      },
+      "cross9_external_weekend_XYZ100_1h": {
+        "p_fwer": 1.0,
+        "delta": -0.018908535194430684,
+        "ci_low": -0.02954189770564606,
+        "ci_high": -0.011859984424990623
+      },
+      "cross9_external_weekend_XYZ100_3h": {
+        "p_fwer": 1.0,
+        "delta": -0.0182504814800756,
+        "ci_low": -0.035412053153788765,
+        "ci_high": -0.004456436294034905
+      },
+      "cross9_external_weekend_SP500_1h": {
+        "p_fwer": 1.0,
+        "delta": -0.01945994174741588,
+        "ci_low": -0.0323928993100308,
+        "ci_high": -0.013308805242863203
+      },
+      "cross9_external_weekend_SP500_3h": {
+        "p_fwer": 1.0,
+        "delta": -0.01923940531688706,
+        "ci_low": -0.03639424063280613,
+        "ci_high": -0.006087305809748161
+      }
+    }
+  }
+}

@@ -1,0 +1,508 @@
+{
+  "economic_candidates": 72,
+  "phase_latency_paths": 192,
+  "fwer_mean_tests": 264,
+  "bootstrap_replicates": 3999,
+  "bootstrap_blocks": [
+    7,
+    14
+  ],
+  "full_baseline": {
+    "full": [
+      {
+        "sharpe": 1.7756674067395675,
+        "annual_arithmetic": 1.4125129736416866,
+        "cagr": 1.9880062312505222,
+        "max_drawdown": -0.575833870830998
+      },
+      {
+        "sharpe": 1.1208501067276653,
+        "annual_arithmetic": 0.9084455333051674,
+        "cagr": 0.7776817522245774,
+        "max_drawdown": -0.8320710830823816
+      },
+      {
+        "sharpe": 1.737546088534421,
+        "annual_arithmetic": 1.3912714580878844,
+        "cagr": 1.9109332049728631,
+        "max_drawdown": -0.492938629302315
+      }
+    ],
+    "2023-24": [
+      {
+        "sharpe": 0.9005765976825759,
+        "annual_arithmetic": 0.6662351092446909,
+        "cagr": 0.485541181152803,
+        "max_drawdown": -0.575833870830998
+      },
+      {
+        "sharpe": -0.560837621182955,
+        "annual_arithmetic": -0.42901229731050955,
+        "cagr": -0.5189822907012498,
+        "max_drawdown": -0.8320710830823816
+      },
+      {
+        "sharpe": 0.9306259169902695,
+        "annual_arithmetic": 0.639199633900243,
+        "cagr": 0.4955027344800613,
+        "max_drawdown": -0.4839382606147844
+      }
+    ],
+    "2025-26": [
+      {
+        "sharpe": 2.395115438187951,
+        "annual_arithmetic": 2.00278267293853,
+        "cagr": 4.193173024918328,
+        "max_drawdown": -0.5656253292522624
+      },
+      {
+        "sharpe": 2.3373495591616003,
+        "annual_arithmetic": 1.9663099952741974,
+        "cagr": 3.9988681514435056,
+        "max_drawdown": -0.38602853712474117
+      },
+      {
+        "sharpe": 2.257756279922663,
+        "annual_arithmetic": 1.9861238993720256,
+        "cagr": 3.9295930574509628,
+        "max_drawdown": -0.492938629302315
+      }
+    ]
+  },
+  "dates": {
+    "TSLA": {
+      "n": 5007,
+      "start": "2026-06-25 10:00:00+00:00",
+      "end": "2026-10-07 17:00:00+00:00",
+      "non30m_boundaries": 0,
+      "missing_30m": 0
+    },
+    "NVDA": {
+      "n": 5007,
+      "start": "2026-06-25 10:00:00+00:00",
+      "end": "2026-10-07 17:00:00+00:00",
+      "non30m_boundaries": 0,
+      "missing_30m": 0
+    },
+    "AAPL": {
+      "n": 5006,
+      "start": "2026-06-25 10:30:00+00:00",
+      "end": "2026-10-07 17:00:00+00:00",
+      "non30m_boundaries": 0,
+      "missing_30m": 0
+    },
+    "MSFT": {
+      "n": 5006,
+      "start": "2026-06-25 10:30:00+00:00",
+      "end": "2026-10-07 17:00:00+00:00",
+      "non30m_boundaries": 0,
+      "missing_30m": 0
+    },
+    "GOOGL": {
+      "n": 5006,
+      "start": "2026-06-25 10:30:00+00:00",
+      "end": "2026-10-07 17:00:00+00:00",
+      "non30m_boundaries": 0,
+      "missing_30m": 0
+    },
+    "META": {
+      "n": 5006,
+      "start": "2026-06-25 10:30:00+00:00",
+      "end": "2026-10-07 17:00:00+00:00",
+      "non30m_boundaries": 0,
+      "missing_30m": 0
+    },
+    "AMZN": {
+      "n": 5006,
+      "start": "2026-06-25 10:30:00+00:00",
+      "end": "2026-10-07 17:00:00+00:00",
+      "non30m_boundaries": 0,
+      "missing_30m": 0
+    },
+    "AMD": {
+      "n": 5006,
+      "start": "2026-06-25 10:30:00+00:00",
+      "end": "2026-10-07 17:00:00+00:00",
+      "non30m_boundaries": 0,
+      "missing_30m": 0
+    },
+    "PLTR": {
+      "n": 5006,
+      "start": "2026-06-25 10:30:00+00:00",
+      "end": "2026-10-07 17:00:00+00:00",
+      "non30m_boundaries": 0,
+      "missing_30m": 0
+    },
+    "INTC": {
+      "n": 5006,
+      "start": "2026-06-25 10:30:00+00:00",
+      "end": "2026-10-07 17:00:00+00:00",
+      "non30m_boundaries": 0,
+      "missing_30m": 0
+    },
+    "NFLX": {
+      "n": 5005,
+      "start": "2026-06-25 11:00:00+00:00",
+      "end": "2026-10-07 17:00:00+00:00",
+      "non30m_boundaries": 0,
+      "missing_30m": 0
+    },
+    "ORCL": {
+      "n": 5006,
+      "start": "2026-06-25 10:30:00+00:00",
+      "end": "2026-10-07 17:00:00+00:00",
+      "non30m_boundaries": 0,
+      "missing_30m": 0
+    },
+    "MU": {
+      "n": 5006,
+      "start": "2026-06-25 10:30:00+00:00",
+      "end": "2026-10-07 17:00:00+00:00",
+      "non30m_boundaries": 0,
+      "missing_30m": 0
+    },
+    "COIN": {
+      "n": 5006,
+      "start": "2026-06-25 10:30:00+00:00",
+      "end": "2026-10-07 17:00:00+00:00",
+      "non30m_boundaries": 0,
+      "missing_30m": 0
+    },
+    "HOOD": {
+      "n": 5007,
+      "start": "2026-06-25 10:00:00+00:00",
+      "end": "2026-10-07 17:00:00+00:00",
+      "non30m_boundaries": 0,
+      "missing_30m": 0
+    },
+    "MSTR": {
+      "n": 5006,
+      "start": "2026-06-25 10:30:00+00:00",
+      "end": "2026-10-07 17:00:00+00:00",
+      "non30m_boundaries": 0,
+      "missing_30m": 0
+    },
+    "XYZ100": {
+      "n": 5007,
+      "start": "2026-06-25 10:00:00+00:00",
+      "end": "2026-10-07 17:00:00+00:00",
+      "non30m_boundaries": 0,
+      "missing_30m": 0
+    },
+    "SP500": {
+      "n": 5003,
+      "start": "2026-06-25 12:00:00+00:00",
+      "end": "2026-10-07 17:00:00+00:00",
+      "non30m_boundaries": 0,
+      "missing_30m": 0
+    },
+    "GOLD": {
+      "n": 5007,
+      "start": "2026-06-25 10:00:00+00:00",
+      "end": "2026-10-07 17:00:00+00:00",
+      "non30m_boundaries": 0,
+      "missing_30m": 0
+    },
+    "SILVER": {
+      "n": 5005,
+      "start": "2026-06-25 11:00:00+00:00",
+      "end": "2026-10-07 17:00:00+00:00",
+      "non30m_boundaries": 0,
+      "missing_30m": 0
+    },
+    "CL": {
+      "n": 5005,
+      "start": "2026-06-25 11:00:00+00:00",
+      "end": "2026-10-07 17:00:00+00:00",
+      "non30m_boundaries": 0,
+      "missing_30m": 0
+    },
+    "EUR": {
+      "n": 5005,
+      "start": "2026-06-25 11:00:00+00:00",
+      "end": "2026-10-07 17:00:00+00:00",
+      "non30m_boundaries": 0,
+      "missing_30m": 0
+    },
+    "JPY": {
+      "n": 5005,
+      "start": "2026-06-25 11:00:00+00:00",
+      "end": "2026-10-07 17:00:00+00:00",
+      "non30m_boundaries": 0,
+      "missing_30m": 0
+    }
+  },
+  "funding": {
+    "TSLA": {
+      "n": 7875,
+      "start": "2025-11-13 15:00:00.014000+00:00",
+      "end": "2026-10-07 17:00:00.024000+00:00"
+    },
+    "NVDA": {
+      "n": 7893,
+      "start": "2025-11-12 21:00:00.057000+00:00",
+      "end": "2026-10-07 17:00:00.024000+00:00"
+    },
+    "AAPL": {
+      "n": 7683,
+      "start": "2025-11-21 15:00:00.047000+00:00",
+      "end": "2026-10-07 17:00:00.024000+00:00"
+    },
+    "MSFT": {
+      "n": 7731,
+      "start": "2025-11-19 15:00:00.004000+00:00",
+      "end": "2026-10-07 17:00:00.024000+00:00"
+    },
+    "GOOGL": {
+      "n": 7753,
+      "start": "2025-11-18 17:00:00.013000+00:00",
+      "end": "2026-10-07 17:00:00.024000+00:00"
+    },
+    "META": {
+      "n": 7707,
+      "start": "2025-11-20 15:00:00.022000+00:00",
+      "end": "2026-10-07 17:00:00.024000+00:00"
+    },
+    "AMZN": {
+      "n": 7752,
+      "start": "2025-11-18 18:00:00.026000+00:00",
+      "end": "2026-10-07 17:00:00.024000+00:00"
+    },
+    "AMD": {
+      "n": 7371,
+      "start": "2025-12-04 15:00:00.047000+00:00",
+      "end": "2026-10-07 17:00:00.024000+00:00"
+    },
+    "PLTR": {
+      "n": 7850,
+      "start": "2025-11-14 16:00:00.014000+00:00",
+      "end": "2026-10-07 17:00:00.024000+00:00"
+    },
+    "INTC": {
+      "n": 7395,
+      "start": "2025-12-03 15:00:00.020000+00:00",
+      "end": "2026-10-07 17:00:00.024000+00:00"
+    },
+    "NFLX": {
+      "n": 7275,
+      "start": "2025-12-08 15:00:00.011000+00:00",
+      "end": "2026-10-07 17:00:00.024000+00:00"
+    },
+    "ORCL": {
+      "n": 7347,
+      "start": "2025-12-05 15:00:00.036000+00:00",
+      "end": "2026-10-07 17:00:00.024000+00:00"
+    },
+    "MU": {
+      "n": 7009,
+      "start": "2025-12-19 17:00:00.109000+00:00",
+      "end": "2026-10-07 17:00:00.024000+00:00"
+    },
+    "COIN": {
+      "n": 7584,
+      "start": "2025-11-25 18:00:00.054000+00:00",
+      "end": "2026-10-07 17:00:00.024000+00:00"
+    },
+    "HOOD": {
+      "n": 7563,
+      "start": "2025-11-26 15:00:00.012000+00:00",
+      "end": "2026-10-07 17:00:00.024000+00:00"
+    },
+    "MSTR": {
+      "n": 7418,
+      "start": "2025-12-02 16:00:00.048000+00:00",
+      "end": "2026-10-07 17:00:00.024000+00:00"
+    },
+    "XYZ100": {
+      "n": 8621,
+      "start": "2025-10-13 13:00:00.067000+00:00",
+      "end": "2026-10-07 17:00:00.024000+00:00"
+    },
+    "SP500": {
+      "n": 4876,
+      "start": "2026-03-18 14:00:00.026000+00:00",
+      "end": "2026-10-07 17:00:00.024000+00:00"
+    },
+    "GOLD": {
+      "n": 6939,
+      "start": "2025-12-22 15:00:00.012000+00:00",
+      "end": "2026-10-07 17:00:00.024000+00:00"
+    },
+    "SILVER": {
+      "n": 6857,
+      "start": "2025-12-26 01:00:00.008000+00:00",
+      "end": "2026-10-07 17:00:00.024000+00:00"
+    },
+    "CL": {
+      "n": 6579,
+      "start": "2026-01-06 15:00:00.076000+00:00",
+      "end": "2026-10-07 17:00:00.024000+00:00"
+    },
+    "EUR": {
+      "n": 6913,
+      "start": "2025-12-23 17:00:00.118000+00:00",
+      "end": "2026-10-07 17:00:00.024000+00:00"
+    },
+    "JPY": {
+      "n": 6915,
+      "start": "2025-12-23 15:00:00.117000+00:00",
+      "end": "2026-10-07 17:00:00.024000+00:00"
+    }
+  },
+  "calendar_open_utc_hours": [
+    13,
+    14
+  ],
+  "vix_meta": {
+    "szDecimals": 2,
+    "name": "xyz:VIX",
+    "maxLeverage": 3,
+    "marginTableId": 3,
+    "onlyIsolated": true,
+    "isDelisted": true,
+    "marginMode": "strictIsolated",
+    "growthMode": "enabled",
+    "lastFeeScaleChangeTime": "2026-03-09T19:53:24.389395191",
+    "deployerFeeScale": "1.0"
+  },
+  "input_sha256": {
+    "/Users/wonder/Code/stars/research/hip3_20261008/raw/SP500_book.json": "2107e5a9f2bff05d6cc97ca04f4ea77a56239069d3cd87cbd51cfc5f96e87eb4",
+    "/Users/wonder/Code/stars/research/hip3_20261008/raw/AMZN_30m.json": "aa3318f0a4bb6755c33a23a2cdfe4e23d221fe8a924bee3c61781f6c22021640",
+    "/Users/wonder/Code/stars/research/hip3_20261008/raw/PLTR_funding.json": "828cc79b7ca326618b785cc5b8507a544dd4f240398e72cc81a974a91f3f8b28",
+    "/Users/wonder/Code/stars/research/hip3_20261008/raw/AMZN_funding.json": "ff79afe484c4dfdddeaad8c942ae0e3d1259e6237abca6b8e48f3930973ca57d",
+    "/Users/wonder/Code/stars/research/hip3_20261008/raw/META_30m.json": "20347e5616c2bcec924b52ca84316a219d1af5a901b571866022e2d92766121c",
+    "/Users/wonder/Code/stars/research/hip3_20261008/raw/PLTR_30m.json": "bc4b449fb97150b148688cc156fdd83c633d9aa828ee6e2640040acfcdb23469",
+    "/Users/wonder/Code/stars/research/hip3_20261008/raw/XYZ100_30m.json": "260c6b52ad918f8f2f1bfa4ac3acb4773b6d91a22d379106dd9e4cb59eb2973c",
+    "/Users/wonder/Code/stars/research/hip3_20261008/raw/MU_funding.json": "fb3bdd87cc2d9f6e1cd9ad1571a1dc3be5488cd748f70b24b102c4df5a0b0242",
+    "/Users/wonder/Code/stars/research/hip3_20261008/raw/GOOGL_30m.json": "0c511b52f5d05032bb2278e7939f0e1034a2dda8a265ed3098eb51d9ca77ac47",
+    "/Users/wonder/Code/stars/research/hip3_20261008/raw/TSLA_funding.json": "5e3277a39af5144904bb6214e6837f5527201c1ff05631634464deee9ec57247",
+    "/Users/wonder/Code/stars/research/hip3_20261008/raw/HOOD_30m.json": "91abd4985a94762875d481e2fd3233c579a6841e438677b3a63b4c6b3b70fd25",
+    "/Users/wonder/Code/stars/research/hip3_20261008/raw/EUR_funding.json": "e0047545314345ffdafab4f4096bd5a1360eed277d061b7d90fb4a21fa4051db",
+    "/Users/wonder/Code/stars/research/hip3_20261008/raw/GOOGL_funding.json": "d3e09942b8c651c82b494d0bea41cad2cb6bb091cb604b2f88e1b1af1b695a6c",
+    "/Users/wonder/Code/stars/research/hip3_20261008/raw/META_funding.json": "7d992bfd809aa50bc833b759f97e520156970d980fbd6bf20d23ebfe609ed206",
+    "/Users/wonder/Code/stars/research/hip3_20261008/raw/HOOD_funding.json": "199844dfa3755b050b1069286eacbf44c7cec4f31e36291c9bc5014ee201183f",
+    "/Users/wonder/Code/stars/research/hip3_20261008/raw/TSLA_book.json": "0f10c22c65fa3cf8ace390e7a326df98225081804da8a68c3b88b7882b350826",
+    "/Users/wonder/Code/stars/research/hip3_20261008/raw/AMD_30m.json": "67aa8a1ad5918cbc2cebe7cbefc428c4532aeef6e5c4dfd4ce126ec3a2bff0af",
+    "/Users/wonder/Code/stars/research/hip3_20261008/raw/CL_funding.json": "0c036262725187d5eec77904b84d7b0d90f7cb47b1abe8a54b4dd2179adbaad4",
+    "/Users/wonder/Code/stars/research/hip3_20261008/raw/INTC_funding.json": "fd685f951a6bb44b9a5cf8073c191fb4eb290949ce918ec7d44caf021b10c61d",
+    "/Users/wonder/Code/stars/research/hip3_20261008/raw/TSLA_30m.json": "806b253474a8e607374dd6c5b57d534ffcd335e2c22a5b05c375611429cfffed",
+    "/Users/wonder/Code/stars/research/hip3_20261008/raw/CL_30m.json": "d0f384bf2f64c39860d0656df015ce13422f88413120f77d8202bdf230ec1981",
+    "/Users/wonder/Code/stars/research/hip3_20261008/raw/GOLD_funding.json": "b9113240ecc306bd7905cccaa0b4abfd5d6584d9a1aa9201440364df6f800754",
+    "/Users/wonder/Code/stars/research/hip3_20261008/raw/SP500_30m.json": "8f9f285d05789d6f201e4c6a1ee3f70105671cf2f3b3c1a92b9b51cc4c56acea",
+    "/Users/wonder/Code/stars/research/hip3_20261008/raw/EUR_30m.json": "8011f4868909ffabb1b501e644c639950e60e0a611c0583eb202448d01d63ead",
+    "/Users/wonder/Code/stars/research/hip3_20261008/raw/XYZ100_book.json": "e98b351821157be446c46e4542005b0894f8b804a5a75f9d9819b622897713a9",
+    "/Users/wonder/Code/stars/research/hip3_20261008/raw/MSTR_30m.json": "fff8b9c418fd5f0cae957ade0c9754f4955ea5bca8390cf00efb5805d49bf8ef",
+    "/Users/wonder/Code/stars/research/hip3_20261008/raw/AAPL_30m.json": "70df8b08ae6f85caf4c22e70e11046f7c49cf63464a89b1442da6f1fa8eee964",
+    "/Users/wonder/Code/stars/research/hip3_20261008/raw/SILVER_30m.json": "0752390add7466dd94d6bee085f0ac60c401b161e87dfec997e4f8d20ed76612",
+    "/Users/wonder/Code/stars/research/hip3_20261008/raw/COIN_funding.json": "c60183b8ad7eb8b67ff7be7b9e63e7d1aa87982ec33b031acaac6c27ee5e107e",
+    "/Users/wonder/Code/stars/research/hip3_20261008/raw/MSFT_30m.json": "08776ff37cfa59ad2949c3e3f199aad78e61cc2c6a24ef3a42a77eea8581f3c6",
+    "/Users/wonder/Code/stars/research/hip3_20261008/raw/NVDA_book.json": "c494c5ff941d4491dd9e6bc6f7383abebe6168b775a7811860cf07c75fd1cd59",
+    "/Users/wonder/Code/stars/research/hip3_20261008/raw/XYZ100_funding.json": "7f9f879f5eea526deecad3b58e25fe16cbe798b8b650883a3514ee8952ae69fe",
+    "/Users/wonder/Code/stars/research/hip3_20261008/raw/NVDA_30m.json": "917adf07eeba34e00cc431245cd052086b68bd0e65497ce374eaf29841fe78aa",
+    "/Users/wonder/Code/stars/research/hip3_20261008/raw/ORCL_funding.json": "4c0c4d6f4396809cc2047bcbb021a93a3774dd0a10f4b1a8363e80bf1f1a1d92",
+    "/Users/wonder/Code/stars/research/hip3_20261008/raw/MSFT_funding.json": "454f31396c93a8c6122f0efb47ab2a55a1ad4820ae72b8d4be61f3daf693146c",
+    "/Users/wonder/Code/stars/research/hip3_20261008/raw/MSTR_funding.json": "1d8d49892a3cbf9fefbecb8efff16e9a846feb7da8c18d0be95c094ec14d8376",
+    "/Users/wonder/Code/stars/research/hip3_20261008/raw/ORCL_30m.json": "9cdf85f0c71d24bc1f1a7fa97ffc20d9789777c6affe96a768ad47cdd2dd5206",
+    "/Users/wonder/Code/stars/research/hip3_20261008/raw/COIN_30m.json": "843c8b56a07d3f7fdaaab8c7a0a7dae6923c8bcb83cde04bfc1d1625f0b1e637",
+    "/Users/wonder/Code/stars/research/hip3_20261008/raw/GOLD_book.json": "abe53499867729fc9363db6d9339ef565dffcf3bceae502c478d3c3c87e28b51",
+    "/Users/wonder/Code/stars/research/hip3_20261008/raw/AAPL_funding.json": "50b79f9783fc8debf56653976c09b36a2e7fa256c8e7ccbfcce989f92dd51277",
+    "/Users/wonder/Code/stars/research/hip3_20261008/raw/NFLX_30m.json": "56dd7272a9bccaa4cf961847ab7a2496741420aaaa0135a0ecafa6041e31194e",
+    "/Users/wonder/Code/stars/research/hip3_20261008/raw/SP500_funding.json": "827fe58a3be56d62f74cab027c6854ea18d5976f54ac40842724c672c1a44b48",
+    "/Users/wonder/Code/stars/research/hip3_20261008/raw/GOLD_30m.json": "aae1907d5ba3e06c219059258fbc3b3606b995e3bcd8003820ed34750ed8cad8",
+    "/Users/wonder/Code/stars/research/hip3_20261008/raw/JPY_30m.json": "fc619e59f6b82820b31ab3c4a1db1b247c0c8f53ec5833eca401fa797edc36d3",
+    "/Users/wonder/Code/stars/research/hip3_20261008/raw/NFLX_funding.json": "f2e9a036f9e4e013b55f959de664a9d63addb7ea83968b8e66120900fed5c8b2",
+    "/Users/wonder/Code/stars/research/hip3_20261008/raw/AMD_funding.json": "14627e228038d4c71a11ee6d3b2c9b0a65889439e9c5056cbac74703eb133f65",
+    "/Users/wonder/Code/stars/research/hip3_20261008/raw/INTC_30m.json": "cee1a9a5c385f4e61d1ea67b6117f23c4f39b6b3ece8f6aeefa264895af8eebe",
+    "/Users/wonder/Code/stars/research/hip3_20261008/raw/JPY_funding.json": "bb53348a2422ed4164ffa67f8268c99115afc7ee1a2881e03af14a0aa444924c",
+    "/Users/wonder/Code/stars/research/hip3_20261008/raw/SILVER_funding.json": "493c31a3dda0abc2cfede0f1e9a23d343713e0d38669bd382f24dd43b6cc3def",
+    "/Users/wonder/Code/stars/research/hip3_20261008/raw/NVDA_funding.json": "ae5b736ebf953f2ace8a5957693d1bb608517bea26f8212d029797c736101663",
+    "/Users/wonder/Code/stars/research/hip3_20261008/raw/MU_30m.json": "507af557809fb24a560fb485feae006b31df8dd150728da66bb12fd0901efcd5",
+    "/tmp/xyz/xyz_AAPL.json": "fea011a2fdf2111cd8b03253ec8a685eaaaca3692265c25c78f4f8087d830f2d",
+    "/tmp/xyz/xyz_MRVL.json": "df0fb9c45460a842bc72c2168d004798d75bc5f51ce8b78032ebfff766dbd1b9",
+    "/tmp/xyz/xyz_TSLA.json": "a6e83076c6d74e3eda1299c8c3e1af4430f4ec20038948288ed9df1d1dcd8573",
+    "/tmp/xyz/xyz_GBP.json": "f4a06045dcecc9df135f7e47e3e119a6f65ce962b80ea5ba51f0a421c4792d60",
+    "/tmp/xyz/xyz_BRENTOIL.json": "13581656179a91c3ff9840197029a1f98964bfe05de9687d179a4fff21e765d1",
+    "/tmp/xyz/xyz_EUR.json": "a86b23db26407cb7f660dddb1c58c618e4a3c79535fe0ef68f2afae8cf26b41e",
+    "/tmp/xyz/xyz_AMZN.json": "ebcda6829ed216917429e4d5ed36ae54cace2c667d303410f95f9eafec51ccf9",
+    "/tmp/xyz/xyz_HIMS.json": "3723d6d382a196723fa3dc4d4a77acf3765f2a9b0e85e10e0c594603680a8a8f",
+    "/tmp/xyz/xyz_WDC.json": "369a17dae976931fec187b892c0fcc4b13b0d22fef9082504f0b1ead0f506701",
+    "/tmp/xyz/xyz_SMSN.json": "2e21ea56af4b5bdbf353f2697c718d75cbc2b1a150fd060164eaf324fffee1d0",
+    "/tmp/xyz/xyz_PLTR.json": "698877ac79a66f95b1f001d8cdc788906437692e497984ea496d345ce35c4711",
+    "/tmp/xyz/xyz_BX.json": "b2ae8e53f399377713cc4ef8096b7f1a5e34617622d75428077cae524d0f3ebf",
+    "/tmp/xyz/xyz_RIVN.json": "18348e8084c87c92061e6771dc7cfe34384994e25fd6156baff8f5a5d90fc9d6",
+    "/tmp/xyz/xyz_KIOXIA.json": "d75d4db5ea6331690081c47d3167de7ddab1357655381799647bfa79bd89bf82",
+    "/tmp/xyz/xyz_XYZ100.json": "82ef4b2ffd41ac919bc0f9fe91a941ee21c63a06f0c221412689ebdd8bb9e279",
+    "/tmp/xyz/xyz_PLATINUM.json": "c4996e10f64dc3087734a0cf852d4ea25774c595af1548ef3b38d0abd94ea11c",
+    "/tmp/xyz/xyz_XLE.json": "b4a69847a5f3670b5f24f47b86437ef6ae4692db33f1e6107d2235c4dc39408f",
+    "/tmp/xyz/xyz_COPPER.json": "54426b74180682742e3038735a72b0bc4099f3b208965083bad0503d0937b06d",
+    "/tmp/xyz/xyz_EWJ.json": "a41e08cab72d4f0180a3ecb7f19831958e44e81121b69839999bf6ed03fdeaa4",
+    "/tmp/xyz/xyz_CRWV.json": "41bc16b0af604c2a964dc82ec332fdb8a6d9122e83ed12c5fa412e2fa7af081f",
+    "/tmp/xyz/xyz_PURRDAT.json": "9b76ffd2bc23affc0c27dea4d3f599eee2b8f98f03d0262084acc2e820714f35",
+    "/tmp/xyz/xyz_MSFT.json": "48d79f92e137d9a21208875b95a452b3a9475a663c37f15b26975264bed7e69a",
+    "/tmp/xyz/xyz_NFLX.json": "c0eb5f7d574699b3e3f5e45258d832bd3de0caab949e0eda00bc20689618f20e",
+    "/tmp/xyz/xyz_COST.json": "454c1eb5415314ba461fcce86f856b25cdbf8dceeb12cf262263b6119670ed34",
+    "/tmp/xyz/xyz_NOW.json": "0df8e4fba70239619f1afc93060cd1fc200b28d33b7049784f29b7cf3e61f6cd",
+    "/tmp/xyz/xyz_LITE.json": "c0af5eb6d545f29e0ceb2576e5216c92551e8edb8239aea61f73a0091b3db93e",
+    "/tmp/xyz/xyz_EWT.json": "a4069efae5a3158ed4f0b0cdbda6223bba6b276e5787a2fc4b70acdab8b0d753",
+    "/tmp/xyz/xyz_NBIS.json": "430d7b246d900149be331d995257956aeb5178ec3e893166f39ca25179373721",
+    "/tmp/xyz/xyz_HYUNDAI.json": "94df546b4599161dbcdab49718128f6cb6abc9328eea3527de20d1099be6d103",
+    "/tmp/xyz/xyz_SP500.json": "368d6dc0944c747ad199832c81a0972d9190b9069476ba9b9a91422e566603f7",
+    "/tmp/xyz/xyz_ZHIPU.json": "657324b951d250c4baeff8f208617144867ce6a2b19bd706f960ef3935291460",
+    "/tmp/xyz/xyz_QNT.json": "9fddb73ff84cbc3c6f0ba221fb7352309229f23bb8d4b51d6cb16956c111412d",
+    "/tmp/xyz/xyz_INTC.json": "15fa3050e85fbf3fe245abb3a5f5db12abcbb3085c307b37f9e115ca32385876",
+    "/tmp/xyz/xyz_ZM.json": "17dcaf7cdc00d578e1f82e2853565b69b8191d378c62f3d78640ffe6dedd9c1d",
+    "/tmp/xyz/xyz_RKLB.json": "c64d8921973cef479ebdf52cebd9b1e01812101903b32282ed291efe76a7a0c9",
+    "/tmp/xyz/xyz_SOFTBANK.json": "fb191c783ac9a76b1647d53ef379d51340981c7c903f7327a18a978b74a01b97",
+    "/tmp/xyz/xyz_ARM.json": "8cdf3f77b2b49e53c83efbb3c97fc72cf871af860746ba2593fcfc1d157e7c69",
+    "/tmp/xyz/xyz_GOLD.json": "84f778181e7a453f9a38d375310d5768cb33c0f9991ec05e54625b97ab69c8e0",
+    "/tmp/xyz/xyz_CRCL.json": "065c705f643a0e7b49b065bf024599178427d258895021ac5d93c0627a985f2c",
+    "/tmp/xyz/xyz_EWY.json": "c99fbff61c5dd21a1b8066441a81e849b97d74ca99adc09e176c07dce27bfa7b",
+    "/tmp/xyz/xyz_JP225.json": "79ae35801cb011859d9ef4c996fa47f87146ecda14442bae4f0aa5e7726ee43f",
+    "/tmp/xyz/xyz_ASML.json": "01064632122b52bdb07c1b4548a3b941b1d08edd9df037015d93919d07e5ec69",
+    "/tmp/xyz/xyz_CL.json": "dce6d39765a568bb80f3dbf1fef5fafcc2fc6919b5d6740135ab35cca99e940f",
+    "/tmp/xyz/xyz_NOK.json": "c462712fa44d4d5f324aa8ecc62d35a4e758d516a2a0ea46f84c064345a97f47",
+    "/tmp/xyz/xyz_MU.json": "3360e7d92aac8db5bcc16616e4fc3e52dba0ccfd23a29525ca91b2b8d74c5573",
+    "/tmp/xyz/xyz_COIN.json": "d75c43f48f6c5002e7d89ef7c62a9c5e8d0809066ae701190d0b0f6403154823",
+    "/tmp/xyz/xyz_ORCL.json": "6acf75a353731d9acc6b96eb9cc449d5bd059794c2240e7131cf58d92da38511",
+    "/tmp/xyz/xyz_NVDA.json": "ba686871318798336ffab39d79c018a078ec3302972f45ee3430dc031852a465",
+    "/tmp/xyz/xyz_MINIMAX.json": "e0b25f9298e9c8ebc4cf359e4f6c3ec9b929356e8ac579f36d42e289ccb6073b",
+    "/tmp/xyz/xyz_NATGAS.json": "eec92dd3a953082ba416aaf8577008fbd1ec1e94a7240dcf83e60a67c66ce9c8",
+    "/tmp/xyz/xyz_SPCX.json": "c391b2b78e5e8f9fad55bcc51713be22dbd8e5114af2888853e4b49dade3f7bb",
+    "/tmp/xyz/xyz_HOOD.json": "4c724d518f281da35963788039c4d1e021f1167cd8e322482f9be21202243733",
+    "/tmp/xyz/xyz_META.json": "f143e6c7543e5f4d3ecfe8d8028a1a7c0a4b514d3d628b500394025366f952af",
+    "/tmp/xyz/xyz_SMH.json": "e265869708fbcffb16ab35a75e8cf2d93f4e19f884c5673327788f793d814f03",
+    "/tmp/xyz/xyz_CBRS.json": "9ced01e94f359183109ffc3a40dd8184c4fc6f2d477fecfd8c62bfe2a2a5414d",
+    "/tmp/xyz/xyz_TSM.json": "00e375e6c3c8e8bbd29e2ac65c8f117bfa31bb751acf3ca56e764c178a66d67a",
+    "/tmp/xyz/xyz_LLY.json": "79cf3bed0ac2c07a09b9e93169ecce51f40a514bf0e1dbd93c0629ccfe9a7b52",
+    "/tmp/xyz/xyz_EWZ.json": "4d65f018ff34f9ee02e1e516ddc8cc916290a89c03caf3cb98ea92b5947e883a",
+    "/tmp/xyz/xyz_BE.json": "f3fa5cbd732b6f3bcb509bca32c0a3f698cdc82f158a810be3db7242bd3ffb1b",
+    "/tmp/xyz/xyz_AVGO.json": "a1fb606707190695eb42e991a9f7fe9dbfcc6bc96a95192f33b065e293cdbd47",
+    "/tmp/xyz/xyz_URNM.json": "7614c6f005eefb2b836646bf7ade5effae30284aea91a3e87fb67b67e4f41cf4",
+    "/tmp/xyz/xyz_BIRD.json": "0d7418f309d1e2f7342a8dc045cea766652f8a65f44a043f8c47cf5824d14928",
+    "/tmp/xyz/xyz_GME.json": "45d903fa4644ac252f68e94b5014cbf6b0b3295e27d943708fc006de0afb2823",
+    "/tmp/xyz/xyz_EBAY.json": "f14d1b570efeef10f249da989a52ef85a214032e0a6bdafb41bdfa17a9439b57",
+    "/tmp/xyz/xyz_JPY.json": "4f439ceb703e86f1bbb9a53f6e0f84855012ea644b0f0283b854b71ea521d6be",
+    "/tmp/xyz/xyz_DKNG.json": "fc3a23a7160173640a0aac2b759a8f06bed9c2db6464d8ee3a188078a3a31a1f",
+    "/tmp/xyz/xyz_KR200.json": "4ece2de9e55a51c80fc8e5aa1413e5d5ba13fdd3302f83adff41afd4178a8160",
+    "/tmp/xyz/xyz_IBM.json": "de3bcd2dc1e8390760e515d73f96f754f2056c0589e7e2d064c2f233c0453436",
+    "/tmp/xyz/xyz_SKHX.json": "11f10585672a86c90226984c765c019135349d61f39610b266c0b842c8ab9ed8",
+    "/tmp/xyz/xyz_BOT.json": "3cb276dfd3c3c46efacbc3ecdbbd771473bdb4283a0cce82e7179e56de548160",
+    "/tmp/xyz/xyz_QCOM.json": "479baf06e2e341bae335dcfca41f14d86f1afbd49ef9a005b1a7f34ccfc74a81",
+    "/tmp/xyz/xyz_USAR.json": "fc275de603b20f75b39712fd23221acbe9e99235cd34a2076c6f8c3fb80e90b5",
+    "/tmp/xyz/xyz_AMD.json": "1d0e6773241ca0ba7c48c13c2cb412bb99b2e459daa7aee90c5e538262a40639",
+    "/tmp/xyz/xyz_DRAM.json": "ca3dde9d699556cc37ed10ee3f9267d14da59e6947d78d70cbc2a0858b12ba73",
+    "/tmp/xyz/xyz_DELL.json": "a1ddf6c22dba8b0a3ff56aa9da43eca8b7fbe4d8643d9a9b0feb4be37c9a2ccf",
+    "/tmp/xyz/xyz_SNDK.json": "5029344fc0e70db51646aa544a54afb6fdee3d1b3377a7c7d09ee54e5f729be2",
+    "/tmp/xyz/xyz_BABA.json": "73da2bb4195f17be3a27b074013c72908d9371a0e57aaf79e491fab16ed1daba",
+    "/tmp/xyz/xyz_BB.json": "8a1ac3894108bb8ac61c3d6480ab462a2872913d5ab21f8fc9c04934487bd02c",
+    "/tmp/xyz/xyz_STRC.json": "264bdf9ef5d66329941cbd31e466033fb004059b2b009dcb62e1dae56c88b857",
+    "/tmp/xyz/xyz_SILVER.json": "c3581e4c19468ce7c3cfd7d0d165d6e3c75b456962ca5e50fef70b863d27c21b",
+    "/tmp/xyz/xyz_MSTR.json": "35784c56fca00217051b6f8d9482dd9c8f770077ce9292b1b62d3b30ccc23ed1",
+    "/tmp/xyz/xyz_PALLADIUM.json": "794c92be60a27b5f7de1b35b2c2ce0ed52bf4b17f632a6cd127b7ce75af36ef2",
+    "/tmp/xyz/xyz_AMAT.json": "aa3e896f1c878a4dfcddd0df1bbb091a200d035ecd448451dc6b4156820536d0",
+    "/tmp/xyz/xyz_GOOGL.json": "df11d7291bdfdccb96ae92c047776473ffe29a409554f3e8f1248f746b5d4a97",
+    "/Users/wonder/Code/stars/research/hip3_20261008/DESIGN.md": "5608b20e3ce11b569dfb3797f5a27e6d4b8cc3af3bcc118328a6915375943e04",
+    "/Users/wonder/Code/stars/src/trader.rs": "1b119469aaa9e81cbcaee876a14026be2aeb23392196bfed6e2b9672a9a40378",
+    "/Users/wonder/Code/stars/docs/validation-protocol.md": "a4346f3ad6e841c8c87739c093737de3b653a059da1f7bed9284c7edce34d685"
+  }
+}

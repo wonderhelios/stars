@@ -1,0 +1,18 @@
+{
+  "checks": [
+    {
+      "currency": "BTC",
+      "dvol_daily_contiguous": true,
+      "future_label_manual_checks": 15,
+      "all_30_phases_count_reconciled": true
+    },
+    {
+      "currency": "ETH",
+      "dvol_daily_contiguous": true,
+      "future_label_manual_checks": 15,
+      "all_30_phases_count_reconciled": true
+    }
+  ],
+  "maxT_family_and_pvalues_valid": true,
+  "note": "Data/accounting integrity checks only; no executable-strategy validation."
+}

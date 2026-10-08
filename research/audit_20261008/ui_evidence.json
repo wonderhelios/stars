@@ -1,0 +1,12 @@
+{
+  "partial_fill": {
+    "planned": 10,
+    "filled": 2,
+    "true_pnl": 20,
+    "displayed_pnl": 100
+  },
+  "duplicate_close": {
+    "true_pnl": 10,
+    "displayed_pnl": 20
+  }
+}

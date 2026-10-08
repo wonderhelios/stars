@@ -1,0 +1,15 @@
+{
+  "overlap_violations": 0,
+  "gross_weight_max_error": 1.2212453270876722e-15,
+  "hedged_net_weight_max_error": 7.771561172376096e-16,
+  "cross_universe_invalid_margin_assets": [],
+  "gross_accounting_max_error": 1.4311468676808659e-16,
+  "external_weekend_independent_dates": 12,
+  "cash_open_unique_utc_clock_times": [
+    "13:30"
+  ],
+  "direct_funding_max_error": 1.3457659465976324e-17,
+  "paths_observed": 192,
+  "event_book_count": 10230,
+  "leg_count": 126006
+}

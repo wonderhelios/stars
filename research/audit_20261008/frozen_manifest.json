@@ -1,0 +1,11 @@
+{
+  "research/audit_20261008/src_snapshot/exchange.rs": "63a4fc240a3919cbbca74f0b5008c8155145c8fb66abe8c61f2e835cafc676f8",
+  "research/audit_20261008/src_snapshot/hl.rs": "25317153a2eabb7fe5571b856a0f7106aecca5f10e2831fccfb0e2b1f2f4ec57",
+  "research/audit_20261008/src_snapshot/live.rs": "6f3a02ea599d89ae6dee51eb0a1f3985927368da7aa1c68b2d50511f01b63c56",
+  "research/audit_20261008/src_snapshot/main.rs": "408998836f0afb8c5044b9cba984b1c45ac89a70e7f8705fd473f7bf2015a166",
+  "research/audit_20261008/src_snapshot/momentum.rs": "31d0e2fbc3c4851f74330184702221453846471bd893293b3f2ba796710aa372",
+  "research/audit_20261008/src_snapshot/paper.rs": "356144f206cdf4f7dbf4cdf5085e70b34ff437129eb89f8abc2426cf33bdbfb4",
+  "research/audit_20261008/src_snapshot/store.rs": "d3bcdb86ab20e070ed218005a0e080b2d0814ae341c44786cf97e6c2f43e02d6",
+  "research/audit_20261008/src_snapshot/trader.rs": "1b119469aaa9e81cbcaee876a14026be2aeb23392196bfed6e2b9672a9a40378",
+  "research/audit_20261008/src_snapshot/web.rs": "ac0c7aac9aa2a06c9122f0f9578c975b6e88e3f630da758ff94ece6109dca5d5"
+}

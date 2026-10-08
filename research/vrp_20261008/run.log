@@ -1,0 +1,192 @@
+{
+  "BTC": {
+    "full": {
+      "n": 1164,
+      "start": "2023-06-30 00:00:00+00:00",
+      "last": "2026-09-05 00:00:00+00:00",
+      "iv_pct": 49.15778350515464,
+      "future_rv_pct": 44.10585136100526,
+      "vol_gap_pp": 5.051932144149373,
+      "variance_gap": 0.038899023203680355,
+      "positive_vol_gap_fraction": 0.6890034364261168,
+      "positive_variance_gap_fraction": 0.6890034364261168,
+      "phase_vol_gap_mean_pp": 5.052852470303554,
+      "phase_vol_gap_sd_pp": 0.39857190752701116,
+      "phase_vol_gap_minmax_pp": [
+        4.295903853532698,
+        6.025391675749814
+      ]
+    },
+    "2023-24": {
+      "n": 521,
+      "start": "2023-06-30 00:00:00+00:00",
+      "last": "2024-12-01 00:00:00+00:00",
+      "iv_pct": 53.37758157389635,
+      "future_rv_pct": 47.205627417353085,
+      "vol_gap_pp": 6.171954156543262,
+      "variance_gap": 0.05614165636695835,
+      "positive_vol_gap_fraction": 0.7063339731285988,
+      "positive_variance_gap_fraction": 0.7063339731285988,
+      "phase_vol_gap_mean_pp": 6.178033877527977,
+      "phase_vol_gap_sd_pp": 0.5245623962725232,
+      "phase_vol_gap_minmax_pp": [
+        5.299386440294924,
+        7.531886268568537
+      ]
+    },
+    "2025-26": {
+      "n": 613,
+      "start": "2025-01-01 00:00:00+00:00",
+      "last": "2026-09-05 00:00:00+00:00",
+      "iv_pct": 45.072349102773245,
+      "future_rv_pct": 41.47469628134581,
+      "vol_gap_pp": 3.5976528214274412,
+      "variance_gap": 0.018397168879088894,
+      "positive_vol_gap_fraction": 0.6590538336052202,
+      "positive_variance_gap_fraction": 0.6590538336052202,
+      "phase_vol_gap_mean_pp": 3.594181511889959,
+      "phase_vol_gap_sd_pp": 0.6389492416154653,
+      "phase_vol_gap_minmax_pp": [
+        2.442055014718345,
+        5.824098143851227
+      ]
+    }
+  },
+  "ETH": {
+    "full": {
+      "n": 1164,
+      "start": "2023-06-30 00:00:00+00:00",
+      "last": "2026-09-05 00:00:00+00:00",
+      "iv_pct": 62.40926975945017,
+      "future_rv_pct": 62.01764328145397,
+      "vol_gap_pp": 0.3916264779962042,
+      "variance_gap": -0.0171311157832964,
+      "positive_vol_gap_fraction": 0.570446735395189,
+      "positive_variance_gap_fraction": 0.570446735395189,
+      "phase_vol_gap_mean_pp": 0.3923798573772081,
+      "phase_vol_gap_sd_pp": 0.4782334378260457,
+      "phase_vol_gap_minmax_pp": [
+        -0.47467905842748653,
+        1.5745783413360408
+      ]
+    },
+    "2023-24": {
+      "n": 521,
+      "start": "2023-06-30 00:00:00+00:00",
+      "last": "2024-12-01 00:00:00+00:00",
+      "iv_pct": 57.94072936660268,
+      "future_rv_pct": 55.620887283061634,
+      "vol_gap_pp": 2.3198420835410536,
+      "variance_gap": 0.014604765083801511,
+      "positive_vol_gap_fraction": 0.5796545105566219,
+      "positive_variance_gap_fraction": 0.5796545105566219,
+      "phase_vol_gap_mean_pp": 2.3288637024699814,
+      "phase_vol_gap_sd_pp": 0.9302275855917893,
+      "phase_vol_gap_minmax_pp": [
+        0.8576418032719761,
+        5.16138438948313
+      ]
+    },
+    "2025-26": {
+      "n": 613,
+      "start": "2025-01-01 00:00:00+00:00",
+      "last": "2026-09-05 00:00:00+00:00",
+      "iv_pct": 65.67358890701469,
+      "future_rv_pct": 67.42663789511185,
+      "vol_gap_pp": -1.7530489880971616,
+      "variance_gap": -0.052071883776300426,
+      "positive_vol_gap_fraction": 0.5415986949429038,
+      "positive_variance_gap_fraction": 0.5415986949429038,
+      "phase_vol_gap_mean_pp": -1.7518466631499081,
+      "phase_vol_gap_sd_pp": 0.9756151277849056,
+      "phase_vol_gap_minmax_pp": [
+        -2.929329065276573,
+        1.2633872377574693
+      ]
+    }
+  }
+}
+FWER {
+  "BTC_vol_gap": {
+    "n_common": 1134,
+    "statistic": 3.32597280582177,
+    "p_fwer": 0.006248437890527368,
+    "mean": 0.04751816343561925,
+    "block_percentile_95_ci": [
+      0.01909859765902395,
+      0.07451122992407554
+    ]
+  },
+  "BTC_var_gap": {
+    "n_common": 1134,
+    "statistic": 2.3130296046707755,
+    "p_fwer": 0.06473381654586353,
+    "mean": 0.03697185618121144,
+    "block_percentile_95_ci": [
+      0.004244257723870421,
+      0.06688742189587814
+    ]
+  },
+  "BTC_predict_futurevar": {
+    "n_common": 1134,
+    "statistic": 2.726381009901109,
+    "p_fwer": 0.025243689077730568,
+    "mean": 0.0038575685150762816,
+    "block_percentile_95_ci": [
+      0.001598823346198722,
+      0.0070726038504517145
+    ]
+  },
+  "BTC_mean_reversion": {
+    "n_common": 1134,
+    "statistic": 3.6523674346251784,
+    "p_fwer": 0.00424893776555861,
+    "mean": 0.006313720789744743,
+    "block_percentile_95_ci": [
+      0.003565993074957268,
+      0.010137338995946014
+    ]
+  },
+  "ETH_vol_gap": {
+    "n_common": 1134,
+    "statistic": 0.026246442537865924,
+    "p_fwer": 0.8937765558610348,
+    "mean": 0.0005225849353293122,
+    "block_percentile_95_ci": [
+      -0.040187822765537146,
+      0.03813220657893776
+    ]
+  },
+  "ETH_var_gap": {
+    "n_common": 1134,
+    "statistic": -0.6971568512742361,
+    "p_fwer": 0.9860034991252187,
+    "mean": -0.02000454253876012,
+    "block_percentile_95_ci": [
+      -0.08025614400082672,
+      0.03134778439987136
+    ]
+  },
+  "ETH_predict_futurevar": {
+    "n_common": 1134,
+    "statistic": 1.8342191591119834,
+    "p_fwer": 0.15846038490377407,
+    "mean": 0.005534353944036539,
+    "block_percentile_95_ci": [
+      -0.00010021512946937736,
+      0.011727743839144312
+    ]
+  },
+  "ETH_mean_reversion": {
+    "n_common": 1134,
+    "statistic": 3.4335872086195223,
+    "p_fwer": 0.005498625343664084,
+    "mean": 0.011042431276962696,
+    "block_percentile_95_ci": [
+      0.0052788739236795295,
+      0.017865987866327784
+    ]
+  }
+}
+COST {'BTC': [{'instrument': 'BTC-30OCT26-84000-P', 'bid': 0.036, 'ask': 0.037, 'index_price': 83224.43, 'half_spread_underlying': 0.0005000000000000004, 'entry_fee_underlying': 0.0003, 'entry_cost_vol_points': 0.8030752032368329, 'roundtrip_cost_vol_points': 1.6061504064736658, 'bid_depth_first20': 227.9, 'ask_depth_first20': 253.8, 'snapshot_only': True}, {'instrument': 'BTC-30OCT26-84000-C', 'bid': 0.0305, 'ask': 0.0315, 'index_price': 83226.25, 'half_spread_underlying': 0.0005000000000000004, 'entry_fee_underlying': 0.0003, 'entry_cost_vol_points': 0.8030701956998882, 'roundtrip_cost_vol_points': 1.6061403913997765, 'bid_depth_first20': 302.5, 'ask_depth_first20': 267.8, 'snapshot_only': True}], 'ETH': [{'instrument': 'ETH-30OCT26-2550-C', 'bid': 0.0455, 'ask': 0.047, 'index_price': 2560.21, 'half_spread_underlying': 0.0007500000000000007, 'entry_fee_underlying': 0.0003, 'entry_cost_vol_points': 1.0618116860802698, 'roundtrip_cost_vol_points': 2.1236233721605395, 'bid_depth_first20': 3886.0, 'ask_depth_first20': 3729.0, 'snapshot_only': True}, {'instrument': 'ETH-30OCT26-2550-P', 'bid': 0.04, 'ask': 0.0405, 'index_price': 2560.21, 'half_spread_underlying': 0.0002500000000000002, 'entry_fee_underlying': 0.0003, 'entry_cost_vol_points': 0.5561870736610935, 'roundtrip_cost_vol_points': 1.112374147322187, 'bid_depth_first20': 4827.0, 'ask_depth_first20': 4839.0, 'snapshot_only': True}]}
+CORR {'BTC': {'full': [{'baseline_phase': 'baseline_phase0', 'n': 1147, 'daily_proxy_correlation': -0.06896276000663815, 'baseline_sharpe': 1.7759558350380746}, {'baseline_phase': 'baseline_phase1', 'n': 1147, 'daily_proxy_correlation': -0.01635530143400292, 'baseline_sharpe': 1.1196563118905245}, {'baseline_phase': 'baseline_phase2', 'n': 1147, 'daily_proxy_correlation': -0.11203700390605698, 'baseline_sharpe': 1.737589161815861}], '2023-24': [{'baseline_phase': 'baseline_phase0', 'n': 505, 'daily_proxy_correlation': -0.10806254303270044, 'baseline_sharpe': 0.9293294944868465}, {'baseline_phase': 'baseline_phase1', 'n': 505, 'daily_proxy_correlation': -0.001611008878046176, 'baseline_sharpe': -0.5440466252903945}, {'baseline_phase': 'baseline_phase2', 'n': 505, 'daily_proxy_correlation': -0.13627040255971132, 'baseline_sharpe': 0.9538732130023861}], '2025-26': [{'baseline_phase': 'baseline_phase0', 'n': 642, 'daily_proxy_correlation': -0.039173689642175644, 'baseline_sharpe': 2.3731549969009706}, {'baseline_phase': 'baseline_phase1', 'n': 642, 'daily_proxy_correlation': -0.023170200902467707, 'baseline_sharpe': 2.3193397731360217}, {'baseline_phase': 'baseline_phase2', 'n': 642, 'daily_proxy_correlation': -0.09639114219285361, 'baseline_sharpe': 2.241169365483041}]}, 'ETH': {'full': [{'baseline_phase': 'baseline_phase0', 'n': 1147, 'daily_proxy_correlation': -0.04550884748094151, 'baseline_sharpe': 1.7759558350380746}, {'baseline_phase': 'baseline_phase1', 'n': 1147, 'daily_proxy_correlation': 0.0011780811581304238, 'baseline_sharpe': 1.1196563118905245}, {'baseline_phase': 'baseline_phase2', 'n': 1147, 'daily_proxy_correlation': -0.09718704008811802, 'baseline_sharpe': 1.737589161815861}], '2023-24': [{'baseline_phase': 'baseline_phase0', 'n': 505, 'daily_proxy_correlation': -0.06636246909471843, 'baseline_sharpe': 0.9293294944868465}, {'baseline_phase': 'baseline_phase1', 'n': 505, 'daily_proxy_correlation': 0.019625857393772816, 'baseline_sharpe': -0.5440466252903945}, {'baseline_phase': 'baseline_phase2', 'n': 505, 'daily_proxy_correlation': -0.09367292988958577, 'baseline_sharpe': 0.9538732130023861}], '2025-26': [{'baseline_phase': 'baseline_phase0', 'n': 642, 'daily_proxy_correlation': -0.03393470576750045, 'baseline_sharpe': 2.3731549969009706}, {'baseline_phase': 'baseline_phase1', 'n': 642, 'daily_proxy_correlation': -0.005154996953841287, 'baseline_sharpe': 2.3193397731360217}, {'baseline_phase': 'baseline_phase2', 'n': 642, 'daily_proxy_correlation': -0.09741038599646255, 'baseline_sharpe': 2.241169365483041}]}}

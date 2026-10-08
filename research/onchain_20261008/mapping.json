@@ -1,0 +1,74 @@
+{
+  "Ethereum": [
+    "ETH",
+    "AAVE",
+    "UNI",
+    "LDO",
+    "CRV",
+    "ENS",
+    "MKR",
+    "COMP"
+  ],
+  "Solana": [
+    "SOL",
+    "JUP",
+    "JTO",
+    "RAY"
+  ],
+  "Arbitrum": [
+    "ARB",
+    "GMX"
+  ],
+  "Optimism": [
+    "OP"
+  ],
+  "Avalanche": [
+    "AVAX",
+    "JOE"
+  ],
+  "BSC": [
+    "BNB",
+    "CAKE",
+    "XVS"
+  ],
+  "Polygon": [
+    "MATIC",
+    "POL",
+    "QUICK"
+  ],
+  "Sui": [
+    "SUI",
+    "CETUS"
+  ],
+  "Aptos": [
+    "APT"
+  ],
+  "Near": [
+    "NEAR"
+  ],
+  "Cosmos": [
+    "ATOM",
+    "OSMO"
+  ],
+  "Cardano": [
+    "ADA"
+  ],
+  "Fantom": [
+    "FTM"
+  ],
+  "Tron": [
+    "TRX"
+  ],
+  "Injective": [
+    "INJ"
+  ],
+  "Sei": [
+    "SEI"
+  ],
+  "Mantle": [
+    "MNT"
+  ],
+  "Ton": [
+    "TON"
+  ]
+}

@@ -1,0 +1,46 @@
+{
+  "BTC": {
+    "legs": [
+      {
+        "instrument": "BTC-30OCT26-89000-C",
+        "approx_selection_delta": 0.24435091699918093,
+        "actual_delta": 0.2424,
+        "mark_iv": 34.68,
+        "bid_iv": 34.23,
+        "ask_iv": 35.51
+      },
+      {
+        "instrument": "BTC-30OCT26-79000-P",
+        "approx_selection_delta": -0.24801673485941889,
+        "actual_delta": -0.25008,
+        "mark_iv": 35.17,
+        "bid_iv": 34.34,
+        "ask_iv": 35.6
+      }
+    ],
+    "call_minus_put_mark_iv_points": -0.490000000000002,
+    "warning": "single-date mark snapshot; not predictive evidence"
+  },
+  "ETH": {
+    "legs": [
+      {
+        "instrument": "ETH-30OCT26-2800-C",
+        "approx_selection_delta": 0.2292781139079465,
+        "actual_delta": 0.22874,
+        "mark_iv": 44.32,
+        "bid_iv": 43.8,
+        "ask_iv": 45.13
+      },
+      {
+        "instrument": "ETH-30OCT26-2400-P",
+        "approx_selection_delta": -0.2599412481266584,
+        "actual_delta": -0.26069,
+        "mark_iv": 45.46,
+        "bid_iv": 44.95,
+        "ask_iv": 45.57
+      }
+    ],
+    "call_minus_put_mark_iv_points": -1.1400000000000006,
+    "warning": "single-date mark snapshot; not predictive evidence"
+  }
+}

@@ -3,7 +3,8 @@ ROOT=pathlib.Path(__file__).parent; RAW=ROOT/'raw';RAW.mkdir(exist_ok=True)
 # Fixed liquid large US single-name universe, not selected on returns.
 STOCKS='TSLA NVDA AAPL MSFT GOOGL META AMZN AMD PLTR INTC NFLX ORCL MU COIN HOOD MSTR'.split()
 COINS=STOCKS+['XYZ100','SP500','GOLD','SILVER','CL','EUR','JPY']
-END=int(datetime.datetime(2026,10,8,tzinfo=datetime.timezone.utc).timestamp()*1000)
+# Immutable research as-of; actual UTC clock, not future Asia/Shanghai calendar date.
+END=int(datetime.datetime(2026,10,7,17,30,tzinfo=datetime.timezone.utc).timestamp()*1000)
 def call(payload):
  for k in range(5):
   try:

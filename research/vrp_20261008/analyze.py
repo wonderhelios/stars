@@ -36,7 +36,7 @@ for coin in ['BTC','ETH']:
    a=z.loc[((z.index.view('i8')//(DAY*1000000))%30)==phase]
    phases.append({'phase':phase,'n':len(a),'vol_gap_pp':float(a.vol_gap.mean()*100),'var_gap':float(a.var_gap.mean())})
   return {'n':len(z),'start':str(z.index.min()),'last':str(z.index.max()),'iv_pct':float(z.iv.mean()*100),'future_rv_pct':float(np.sqrt(z.futurevar).mean()*100),'vol_gap_pp':float(z.vol_gap.mean()*100),'variance_gap':float(z.var_gap.mean()),'positive_vol_gap_fraction':float((z.vol_gap>0).mean()),'positive_variance_gap_fraction':float((z.var_gap>0).mean()),'phase_vol_gap_mean_pp':float(np.mean([a['vol_gap_pp'] for a in phases])),'phase_vol_gap_sd_pp':float(np.std([a['vol_gap_pp'] for a in phases],ddof=1)),'phase_vol_gap_minmax_pp':[float(min(a['vol_gap_pp'] for a in phases)),float(max(a['vol_gap_pp'] for a in phases))],'phases':phases}
- z=f.dropna(subset=['vol_gap','var_gap']);results[coin]={period:summary(a) for period,a in [('full',z),('2023-24',z[z.index.year<=2024]),('2025-26',z[z.index.year>=2025])]}
+ z=f.dropna(subset=['vol_gap','var_gap']);results[coin]={period:summary(a) for period,a in [('full',z),('2023-24',z[(z.index+pd.Timedelta(days=30)).year<=2024]),('2025-26',z[z.index.year>=2025])]}
 # Joint circular moving-block bootstrap, common dates and synchronized resampling.
 A=pd.concat({name:s for name,_,s in tests},axis=1).dropna();X=A.values;n=len(X);B=4000
 bootout={}

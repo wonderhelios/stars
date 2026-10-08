@@ -607,6 +607,12 @@ pub async fn rebuild_cross(
     )];
     for coin in &coins {
         let pos = &acct.positions[coin];
+        // 0) 已经是全仓的不要动。审计指出：原来的代码会把已有全仓仓也平掉重建，
+        //    白付两次成本，而且重建期间组合是裸的。
+        if pos.is_cross {
+            log.push(format!("{coin}: 已是全仓，跳过"));
+            continue;
+        }
         let Some(&mid) = mids.get(coin) else {
             log.push(format!("{coin}: 取价失败，跳过"));
             continue;
@@ -634,29 +640,49 @@ pub async fn rebuild_cross(
         }
         tokio::time::sleep(std::time::Duration::from_millis(200)).await;
 
-        // 2) 切全仓
-        match exec.set_leverage(coin, lev).await {
-            Ok(_) => log.push(format!("{coin}: 已切 {lev}x 全仓")),
-            Err(e) => log.push(format!("{coin}: 切全仓失败 {e}")),
+        // 1b) **必须确认真的平掉了**。IOC 可能只成交一部分，而返回仍然是 Ok；
+        //     旧代码把任何 Ok 当"平完了"，然后按完整目标开仓 —— 审计给的反例是
+        //     原多 10 只平掉 2 又买 10，最终多 18（超额 80%）；目标反向时甚至会
+        //     做成和目标相反的净方向。用 200ms 睡眠代替确认是不成立的。
+        let after = exec.account().await?;
+        let residual = after.positions.get(coin).map(|p| p.size).unwrap_or(0.0);
+        let mid_now = trader::fetch_mids(&exec, std::slice::from_ref(coin))
+            .await
+            .get(coin)
+            .copied()
+            .unwrap_or(mid);
+        if (residual * mid_now).abs() >= 10.0 {
+            log.push(format!(
+                "{coin}: 平仓未完成（残留 {residual}），跳过该币 —— 继续开仓会变成反手加仓"
+            ));
+            continue;
         }
-        tokio::time::sleep(std::time::Duration::from_millis(200)).await;
 
-        // 3) 若仍在目标腿里，按目标重新开仓
+        // 2) 切全仓。**失败必须停手**：带着逐仓继续开，等于给单币强平敞口。
+        if let Err(e) = exec.set_leverage(coin, lev).await {
+            log.push(format!("{coin}: 切全仓失败 {e}，跳过该币（不开仓）"));
+            continue;
+        }
+        log.push(format!("{coin}: 已切 {lev}x 全仓"));
+
+        // 3) 按 target − actual 开仓，而不是按完整目标
         let w = weights.iter().find(|(c, _)| c == coin).map(|(_, w)| *w).unwrap_or(0.0);
         let want_long = w > 0.0;
-        let want_short = w < 0.0;
-        if want_long || want_short {
-            // 每个币按自己的 |w| 还原，而不是等权
-            let w = wmap.get(coin).map(|x| x.abs()).unwrap_or(0.0);
-            let notional = w * deployable * cfg.leverage;
-            let tsize = crate::exchange::round_size(notional / mid, m.sz_decimals);
-            if tsize * mid >= 10.0 {
+        if want_long || w < 0.0 {
+            let notional = wmap.get(coin).map(|x| x.abs()).unwrap_or(0.0)
+                * deployable
+                * cfg.leverage;
+            let tsize = crate::exchange::round_size(notional / mid_now, m.sz_decimals);
+            let want = if want_long { tsize } else { -tsize };
+            let delta = want - residual;
+            let dsize = crate::exchange::round_size(delta.abs(), m.sz_decimals);
+            if dsize * mid_now >= 10.0 {
                 match exec
-                    .ioc(coin, want_long, false, tsize, mid, cfg.slippage, m.sz_decimals)
+                    .ioc(coin, delta > 0.0, false, dsize, mid_now, cfg.slippage, m.sz_decimals)
                     .await
                 {
                     Ok(s) => log.push(format!(
-                        "重开 {coin} {tsize} · {}",
+                        "重开 {coin} {dsize} · {}",
                         crate::exchange::describe(&s)
                     )),
                     Err(e) => log.push(format!("重开 {coin} 失败：{e}")),
@@ -924,6 +950,15 @@ pub async fn reconcile_fills(exec: &Exec, state: &mut LiveState) -> Result<usize
     }
     let known: std::collections::HashSet<u64> =
         state.records.iter().filter_map(|r| r.tid).collect();
+    // 我们自己下的单在记录里没有 tid（下单回执里就没有），所以**只靠 tid 去重
+    // 不够** —— 每次调仓的平仓都会被当成"被动成交"再导入一遍，盈亏双计，
+    // 前端也会把换仓写成"止盈"。这里用 (币, 数量, 时间) 再兜一层。
+    let ours: Vec<(String, f64, i64)> = state
+        .records
+        .iter()
+        .filter(|r| r.tid.is_none())
+        .map(|r| (r.coin.clone(), r.size.abs(), r.ts))
+        .collect();
     let watermark = state.reconciled_to;
     let mut added = 0usize;
     let mut max_ts = watermark;
@@ -949,6 +984,15 @@ pub async fn reconcile_fills(exec: &Exec, state: &mut LiveState) -> Result<usize
         // 判断依据：成交方向是平仓、且当前记录里没有同一时刻的这笔。
         let is_close = dir.contains("Close");
         if !is_close {
+            continue;
+        }
+        // 已经由我们自己记录过的成交，跳过（容差 1% 数量、±3 分钟）
+        let dupe = ours.iter().any(|(c, s, t)| {
+            c == &coin
+                && (s - sz.abs()).abs() <= 1e-9_f64.max(sz.abs() * 0.01)
+                && (t - ts).abs() <= 180_000
+        });
+        if dupe {
             continue;
         }
         state.records.push(LiveRecord {

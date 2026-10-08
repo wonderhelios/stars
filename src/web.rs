@@ -487,7 +487,10 @@ async fn live_reset(State(state): State<AppState>) -> Response {
 
 /// 逐币把现有仓位转成全仓（平→切→重开）。
 async fn live_rebuild(State(state): State<AppState>) -> Response {
-    let _gate = match state.exec_gate.try_lock() {
+    // 和调仓一样必须跑在脱离请求的后台任务里。转全仓是「逐币平仓 → 切模式 →
+    // 重新开仓」的多步流程，中途如果 axum 因为客户端断开而丢弃 future，
+    // 就会停在只剩半边的状态：一部分币平了、一部分还开着，组合裸着没人管。
+    let gate = match state.exec_gate.clone().try_lock_owned() {
         Ok(g) => g,
         Err(_) => {
             return Json(json!({"ok": false, "error": "有订单操作正在执行中，请稍候"})).into_response()
@@ -498,10 +501,25 @@ async fn live_rebuild(State(state): State<AppState>) -> Response {
         return Json(json!({"ok": false, "error": "实盘未启用，请先在「实盘设置」打开开关"})).into_response();
     }
     let markets = live_markets(&state).await;
-    match crate::live::rebuild_cross(&state.store, &st, &markets).await {
-        Ok(log) => Json(json!({"ok": true, "log": log})).into_response(),
-        Err(e) => Json(json!({"ok": false, "error": format!("{e}")})).into_response(),
+    let store = state.store.clone();
+    let live = state.live.clone();
+    let path = state.live_path.clone();
+    {
+        let mut g = state.live.lock().await;
+        g.last_plan = vec!["转全仓执行中…（页面会自动刷新结果）".into()];
+        let _ = g.save(&path);
     }
+    tokio::spawn(async move {
+        let _held = gate;
+        let outcome = crate::live::rebuild_cross(&store, &st, &markets).await;
+        let mut g = live.lock().await;
+        g.last_plan = match outcome {
+            Ok(log) => log,
+            Err(e) => vec![format!("转全仓失败：{e}")],
+        };
+        let _ = g.save(&path);
+    });
+    Json(json!({"ok": true, "started": true})).into_response()
 }
 
 /// 只清空下单记录（保留净值曲线和配置）。用于清掉旧版本写下的错位记录。

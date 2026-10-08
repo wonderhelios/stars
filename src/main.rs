@@ -15,7 +15,7 @@ use crate::web::{AppState, MetaCache, RefreshStatus};
 use std::sync::Arc;
 use std::time::Duration;
 use tokio::sync::Mutex;
-use tracing::{error, info};
+use tracing::{error, info, warn};
 
 /// Start of daily-candle backfill (Hyperliquid perp launch era).
 const CANDLE_START_MS: i64 = 1688000000000; // 2023-06-29
@@ -69,6 +69,7 @@ async fn main() -> anyhow::Result<()> {
     // ===== daily live rebalance task =====
     {
         let st = state.clone();
+        let client = client.clone();
         tokio::spawn(async move {
             const DAY: i64 = 86_400_000;
             loop {
@@ -98,6 +99,39 @@ async fn main() -> anyhow::Result<()> {
                         continue;
                     }
                 };
+                // 调仓前**强制刷新一次日线**。
+                //
+                // 审计指出：30 分钟一次的刷新可能在 23:30 跑过，而 00:05 的调仓
+                // 早于下一次刷新 —— 缓存里昨天那根只更新到 23:30，但它的 open
+                // timestamp 已满足「已收盘」，于是被 last_closed_index 当成完整
+                // 日线使用，量冲击/动量/波动都用的是残缺数据。
+                info!("调仓前强制刷新日线…");
+                if let Err(e) = refresh_liquid(&st.store, &client, &st.meta).await {
+                    warn!("调仓前刷新失败：{e} —— 为避免用残缺日线，本次跳过调仓");
+                    continue;
+                }
+                // 刷新后再确认最新一根已收盘日线确实是「昨天」，而不是更早
+                // （否则说明刷新没拿到新数据，信号会是旧的）。
+                {
+                    let panel = match trader::load_panel(&st.store) {
+                        Ok(p) => p,
+                        Err(e) => {
+                            warn!("调仓前读面板失败：{e}，跳过");
+                            continue;
+                        }
+                    };
+                    let fp = trader::FactorPanel::build(&panel);
+                    let i = fp.last_closed_index(now_ms());
+                    let last = fp.ts.get(i).copied().unwrap_or(0);
+                    let expect = now_ms() / 86_400_000 * 86_400_000 - 86_400_000;
+                    if last < expect {
+                        warn!(
+                            "最新已收盘日线是 {}，早于预期的 {} —— 数据不新鲜，跳过本次调仓",
+                            last, expect
+                        );
+                        continue;
+                    }
+                }
                 info!("实盘自动调仓开始");
                 let markets = {
                     let meta = st.meta.lock().await;

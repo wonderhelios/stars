@@ -281,12 +281,14 @@ $("lv-rebuild").addEventListener("click", async () => {
   const label = btn.textContent;
   btn.textContent = "转换中…";
   btn.disabled = true;
-  $("lv-plan-out").innerHTML = '<pre class="logbox">正在逐币转换，请勿关闭页面…</pre>';
+  $("lv-plan-out").innerHTML =
+    '<pre class="logbox">已提交后台执行。可以关闭页面 —— 过程不会中断，结果会写进状态。</pre>';
   try {
     const res = await fetch("/api/live/rebuild", { method: "POST" });
     const d = await res.json();
     if (!d.ok) throw new Error(d.error || "失败");
-    $("lv-plan-out").innerHTML = `<pre class="logbox">${(d.log || []).join("\n")}</pre>`;
+    // 后台任务：轮询状态拿结果，而不是等这个请求返回
+    await pollPlanOut(6000);
   } catch (e) {
     $("lv-plan-out").innerHTML = `<pre class="logbox neg">${e}</pre>`;
   }

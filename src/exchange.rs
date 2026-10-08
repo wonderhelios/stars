@@ -431,7 +431,39 @@ impl Exec {
             })
             .await?;
             match resp {
-                ExchangeResponseStatus::Ok(_) => n += chunk.len(),
+                // 顶层 Ok 不代表每个撤单都成功：官方文档明确说订单/撤单的错误
+                // 放在逐项向量里。只看顶层会把"没撤掉"当成"撤掉了"，然后继续
+                // 挂新单 —— 旧止盈单还留在盘口，会在新仓建好后被触发、破坏对冲。
+                ExchangeResponseStatus::Ok(r) => {
+                    let Some(d) = r.data else {
+                        bail!("撤单响应缺少 data，无法确认 {} 笔是否已撤", chunk.len());
+                    };
+                    if d.statuses.len() != chunk.len() {
+                        bail!(
+                            "撤单响应条数不符：请求 {} 笔、返回 {} 条",
+                            chunk.len(),
+                            d.statuses.len()
+                        );
+                    }
+                    let mut bad: Vec<String> = Vec::new();
+                    let mut ok = 0usize;
+                    for (i, st) in d.statuses.iter().enumerate() {
+                        match st {
+                            ExchangeDataStatus::Success => ok += 1,
+                            // MissingOrder：已成交或已被撤，不是失败，但也不算成功
+                            ExchangeDataStatus::Error(e)
+                                if e.to_ascii_lowercase().contains("missing") => {}
+                            ExchangeDataStatus::Error(e) => {
+                                bad.push(format!("{}: {e}", chunk[i].0));
+                            }
+                            other => bad.push(format!("{}: 意外状态 {other:?}", chunk[i].0)),
+                        }
+                    }
+                    if !bad.is_empty() {
+                        bail!("部分撤单失败（{} 笔）: {}", bad.len(), bad.join("; "));
+                    }
+                    n += ok;
+                }
                 ExchangeResponseStatus::Err(e) => bail!("撤单失败: {e}"),
             }
         }

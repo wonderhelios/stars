@@ -1,7 +1,8 @@
 """Archive immutable API bodies plus retrieval times/headers; historical timestamps are NOT availability timestamps."""
 from pathlib import Path
-import subprocess,json,hashlib,datetime,concurrent.futures
-OUT=Path(__file__).resolve().parent;D=OUT/'data';D.mkdir(exist_ok=True)
+import subprocess,json,hashlib,datetime,concurrent.futures,os
+OUT=Path(os.environ.get('ONCHAIN_ARCHIVE_DIR',str(Path(__file__).resolve().parent)));OUT.mkdir(parents=True,exist_ok=True);D=OUT/'data';D.mkdir(exist_ok=True)
+previous=json.load(open(OUT/'api_audit.json')) if (OUT/'api_audit.json').exists() else {}
 chains=['Ethereum','Solana','Arbitrum','Optimism','Avalanche','BSC','Polygon','Sui','Aptos','Near','Cosmos','Cardano','Fantom','Tron','Injective','Sei','Mantle','Ton']
 jobs={'stable_usdt':'https://stablecoins.llama.fi/stablecoin/1','stable_usdc':'https://stablecoins.llama.fi/stablecoin/2','stable_all':'https://stablecoins.llama.fi/stablecoincharts/all','stable_list':'https://stablecoins.llama.fi/stablecoins','chains':'https://api.llama.fi/v2/chains','etherscan_no_key':'https://api.etherscan.io/v2/api?chainid=1&module=account&action=txlist&address=0x28C6c06298d514Db089934071355E5743bf21d60&startblock=0&endblock=99999999&page=1&offset=1&sort=desc&apikey='}
 for c in chains:
@@ -13,7 +14,7 @@ def get(item):
  if body.exists():
   try:
    json.loads(body.read_text())
-   return key,{'url':url,'cached':True,'sha256':hashlib.sha256(body.read_bytes()).hexdigest()}
+   return key,{**previous.get(key,{}),'url':url,'cached':True,'sha256':hashlib.sha256(body.read_bytes()).hexdigest()}
   except Exception:pass
  r=subprocess.run(['curl','--silent','--show-error','--location','--compressed','--retry','1','--max-time','120','--proxy','http://127.0.0.1:7897','-D',str(h),'-o',str(body),url],capture_output=True,text=True)
  m={'url':url,'retrieved_start_utc':start,'retrieved_end_utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'returncode':r.returncode,'error':r.stderr[:300]}

@@ -1,16 +1,16 @@
-#[path="../../src/exchange.rs"] mod exchange;
-#[path="../../src/hl.rs"] mod hl;
-#[path="../../src/momentum.rs"] mod momentum;
-#[path="../../src/store.rs"] mod store;
-#[path="../../src/trader.rs"] mod trader;
-#[path="../../src/live.rs"] mod live;
-#[path="../../src/paper.rs"] mod paper;
+#[path="src_snapshot/exchange.rs"] mod exchange;
+#[path="src_snapshot/hl.rs"] mod hl;
+#[path="src_snapshot/momentum.rs"] mod momentum;
+#[path="src_snapshot/store.rs"] mod store;
+#[path="src_snapshot/trader.rs"] mod trader;
+#[path="src_snapshot/live.rs"] mod live;
+#[path="src_snapshot/paper.rs"] mod paper;
 fn main() {}
 #[cfg(test)] mod audit {
 use super::*;
-#[test] fn rollback_config_is_ignored(){
+#[test] fn rollback_config_is_now_propagated(){
  let c=live::LiveConfig {rebalance_slices:1,..Default::default()};
- assert_eq!(c.trade_config().rebalance_slices,3);
+ assert_eq!(c.trade_config().rebalance_slices,1);
  println!("saved slices=1 actual slices={}",c.trade_config().rebalance_slices);
 }
 #[test] fn one_slice_reaches_every_coin_and_directions_are_correct(){
