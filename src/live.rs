@@ -1359,3 +1359,54 @@ mod config_robustness {
         assert_eq!(cfg.account, "");
     }
 }
+
+
+/// 记录一个净值点。**判重和写入必须在同一把锁里**。
+///
+/// 之前是在页面 handler 里用「进入 handler 时拿到的克隆」判断这个小时是否已记录，
+/// 然后才加锁写入 —— 两个并发请求都会认为"该小时还没记"，于是同一分钟写进两三个点。
+/// 而且它只在页面被访问时才写，不看页面就不记，曲线缺失掉整段时间。
+/// 现在统一走这里：锁内判重、写入、裁剪、落盘。
+pub async fn record_equity(
+    live: &std::sync::Arc<tokio::sync::Mutex<LiveState>>,
+    path: &std::path::Path,
+    equity: f64,
+    pnl: f64,
+) {
+    if !(equity > 0.0) {
+        return;
+    }
+    let now = now_ms_pub();
+    let hour = now / 3_600_000;
+    let mut g = live.lock().await;
+    // 锁内判重：同一小时内已有记录就不再写。
+    if g.history.last().map(|p| p.ts / 3_600_000) == Some(hour) {
+        return;
+    }
+    g.history.push(EquityPoint { ts: now, equity, pnl });
+    let len = g.history.len();
+    if len > 6000 {
+        g.history.drain(0..len - 6000);
+    }
+    let _ = g.save(path);
+}
+
+
+/// 从交易所读一次账户并记一个净值点 —— 给后台定时器用，与页面是否打开无关。
+///
+/// 这是净值曲线**唯一可靠的来源**：只靠 handler 记录的话，不看页面就不记，
+/// 曲线会缺掉整段时间，而它恰恰是判断策略赚亏的唯一视图。
+pub async fn record_equity_now(
+    live: &std::sync::Arc<tokio::sync::Mutex<LiveState>>,
+    path: &std::path::Path,
+) -> Result<()> {
+    let st = live.lock().await.clone();
+    if st.config.account.is_empty() {
+        return Ok(());
+    }
+    let exec = Exec::reader_for(Some(&st.config.account)).await?;
+    let acct = exec.account().await?;
+    let unreal: f64 = acct.positions.values().map(|p| p.unrealized_pnl).sum();
+    record_equity(live, path, acct.equity, unreal).await;
+    Ok(())
+}

@@ -380,27 +380,10 @@ async fn live_status(State(state): State<AppState>) -> Response {
         .first()
         .map(|p| crate::live::shadow_curve(&state.store, p.ts, &st.config))
         .unwrap_or_default();
-    // Record at most one equity point per hour so the monitoring curve appears
-    // the same day instead of after a couple of daily closes.
-    if snap.equity > 0.0 {
-        let now = crate::live::now_ms_pub();
-        let hour = now / 3_600_000;
-        let last = st.history.last().map(|p| p.ts / 3_600_000);
-        if last != Some(hour) {
-            let mut guard = state.live.lock().await;
-            guard.history.push(crate::live::EquityPoint {
-                ts: now,
-                equity: snap.equity,
-                pnl: snap.cumulative_pnl,
-            });
-            // Keep the file bounded (about 8 months of hourly points).
-            let len = guard.history.len();
-            if len > 6000 {
-                guard.history.drain(0..len - 6000);
-            }
-            let _ = guard.save(&state.live_path);
-        }
-    }
+    // 页面访问时也补一个点（方便刚打开就能看到），但判重和写入都在锁内完成 ——
+    // 原来的写法用进入 handler 时的克隆判断，并发请求会写出重复时间戳。
+    // 后台任务才是主要的记录者，见 main.rs 的 record_equity 定时器。
+    crate::live::record_equity(&state.live, &state.live_path, snap.equity, snap.cumulative_pnl).await;
     snap.shadow = shadow;
     Json(json!(snap)).into_response()
 }

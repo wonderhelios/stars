@@ -108,6 +108,28 @@ async fn main() -> anyhow::Result<()> {
         tokio::spawn(async move { txflow::background(tx).await; });
     }
 
+    // ===== 净值曲线记录器（Hyperliquid）=====
+    //
+    // 曲线以前只在页面 handler 里记点：不看页面就不记，断档几小时；并发请求还会
+    // 写出重复时间戳。改成后台定时器，与页面无关。record_equity 内部按小时去重，
+    // 所以每 5 分钟跑一次、实际一小时只落一个点。
+    {
+        let st = state.clone();
+        tokio::spawn(async move {
+            loop {
+                tokio::time::sleep(Duration::from_secs(300)).await;
+                if st.live.lock().await.config.account.is_empty() {
+                    continue;
+                }
+                if let Err(e) =
+                    live::record_equity_now(&st.live, &st.live_path).await
+                {
+                    warn!("记录净值点失败: {e}");
+                }
+            }
+        });
+    }
+
     // ===== daily live rebalance task =====
     {
         let st = state.clone();

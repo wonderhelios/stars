@@ -1023,6 +1023,9 @@ pub async fn background(state: crate::web::AppState) {
                 }
             }
         }
+        // 每个循环补一个净值点（record_equity 内部按小时去重，所以一小时只会写一次）。
+        // 这样曲线与页面是否打开无关 —— 之前只在 handler 里记，不看页面就断档。
+        let _ = crate::live::record_equity_now(&state.live, &state.live_path).await;
         tokio::time::sleep(Duration::from_secs(60)).await;
     }
 }
