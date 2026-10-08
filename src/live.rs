@@ -324,7 +324,18 @@ pub async fn snapshot(
     };
     snap.equity = acct.equity;
     let coins: Vec<String> = acct.positions.keys().cloned().collect();
-    let mids = trader::fetch_mids(&exec, &coins).await;
+    // TxFlow：**不拉盘口**。
+    //
+    // 这里的 mids 只用来给持仓估值，而 TxFlow 的 clearinghouseState 已经返回了
+    // `positionValue`（= |size| × 标记价），交易所口径、永远存在。
+    // 逐个拉盘口要为每个持仓发一次请求 —— 30 个持仓在 1 次/秒的限速下就是 30 秒，
+    // 直接超过 nginx 超时，页面报 502。Hyperliquid 那边一次批量请求就能拿到全部，
+    // 所以没有这个问题。
+    let mids = if cfg.txflow {
+        HashMap::new()
+    } else {
+        trader::fetch_mids(&exec, &coins).await
+    };
     let mut unpriced: Vec<String> = Vec::new();
 
     for (coin, pos) in acct.positions.iter() {
@@ -334,13 +345,19 @@ pub async fn snapshot(
         let (mark, price_known) = match mids.get(coin).copied() {
             Some(m) if m > 0.0 => (m, true),
             _ => {
-                let m = if pos.size.abs() > 1e-12 && pos.position_value > 0.0 {
+                let known = pos.size.abs() > 1e-12 && pos.position_value > 0.0;
+                let m = if known {
                     pos.position_value / pos.size.abs()
                 } else {
                     pos.entry_px
                 };
-                unpriced.push(coin.clone());
-                (m, false)
+                // 只有**连交易所市值都没有**才算真的定价不了。
+                // TxFlow 状态页本来就不拉盘口（为省掉每个持仓一次请求），
+                // 如果这里把所有持仓都推进 unpriced，页面会弹一屏假警告。
+                if !known {
+                    unpriced.push(coin.clone());
+                }
+                (m, known)
             }
         };
         let notional = (pos.size * mark).abs();
