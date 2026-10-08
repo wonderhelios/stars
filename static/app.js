@@ -78,8 +78,8 @@ function metric(k, v, cls) {
   return `<div class="metric"><div class="k">${k}</div><div class="v ${cls || ""}">${v}</div></div>`;
 }
 
-function metricGroup(title, html) {
-  return `<div class="metric-group"><div class="g-title">${title}</div><div class="metrics">${html}</div></div>`;
+function metricGroup(title, html, cls) {
+  return `<div class="metric-group${cls ? " " + cls : ""}"><div class="g-title">${title}</div><div class="metrics">${html}</div></div>`;
 }
 
 // 轮询后台调仓结果（每 3 秒一次，最多 tries 次）
@@ -555,7 +555,8 @@ function renderMonitor(d) {
             metric("手续费", "$" + fmt(d.tx_fees, 2), "neg") +
             metric("累计成交量", "$" + fmt(d.tx_volume, 0)) +
             metric("净入金", "$" + fmt(d.tx_net_deposit, 2)) +
-            metric("成交笔数", String(d.tx_fills))
+            metric("成交笔数", String(d.tx_fills)),
+          "tx-perf"
         )
       : "");
 

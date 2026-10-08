@@ -117,6 +117,14 @@
       font-size: 13px;
       line-height: 1.6;
     }
+
+      /* 业绩组数据有 6 项，半宽会在右侧留一大片空白 —— 让它跨满整行。
+         必须写在 media query 之后才能覆盖 :last-child 的 3 列规则。 */
+      @media(min-width:1280px) {
+        #mo-metrics>.metric-group.tx-perf { grid-column:1/-1; }
+        .metric-group.tx-perf .metrics { grid-template-columns:repeat(6,minmax(0,1fr)); }
+      }
+      .metric-group.tx-perf .metrics { grid-template-columns:repeat(3,minmax(0,1fr)); row-gap:18px; }
     </style>
   </head>
   <body>
