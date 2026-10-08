@@ -90,7 +90,7 @@ pub struct Client {
     gate: tokio::sync::Mutex<Option<std::time::Instant>>,
     /// 业绩汇总缓存。pnl_summary 要拉两次接口，而页面每隔几秒就轮询一次状态 ——
     /// 不缓存的话会把刚修好的限流重新打爆。
-    pnl_cache: tokio::sync::Mutex<Option<(std::time::Instant, PnlSummary)>>,
+    pnl_cache: tokio::sync::Mutex<Option<(std::time::Instant, i64, PnlSummary)>>,
 }
 
 /// 两次 TxFlow 请求之间的最小间隔。229 个市场 × 300ms ≈ 69 秒，刷新可以接受；
@@ -318,13 +318,17 @@ impl Client {
     ///
     /// 页面之前只显示未实现盈亏，于是一个赚了 $1,945 的账户看起来像在亏钱。
     /// `net_deposit` 单独记账，才能把「入金」和「策略赚的钱」分开。
-    pub async fn pnl_summary(&self) -> Result<PnlSummary> {
+    pub async fn pnl_summary(&self, since_ms: i64) -> Result<PnlSummary> {
+        // 只统计**策略上线之后**的成交。账户在策略之前就有自己的交易，
+        // 把它们算进来会把用户自己赚的钱记成策略业绩（真实发生过：
+        // 显示 +$1,945，全部来自部署前的手动下单）。
+        //
         // 60 秒缓存：页面轮询很密，每次都拉两次接口会触发限流。
         const TTL: std::time::Duration = std::time::Duration::from_secs(60);
         {
             let c = self.pnl_cache.lock().await;
-            if let Some((t, v)) = c.as_ref() {
-                if t.elapsed() < TTL {
+            if let Some((t, since, v)) = c.as_ref() {
+                if t.elapsed() < TTL && *since == since_ms {
                     return Ok(v.clone());
                 }
             }
@@ -334,7 +338,13 @@ impl Client {
         let mut realized = 0.0;
         let mut fees = 0.0;
         let mut volume = 0.0;
+        let mut used = 0usize;
         for f in &fills {
+            let t = f["time"].as_i64().unwrap_or(0);
+            if since_ms > 0 && t < since_ms {
+                continue; // 策略上线前的成交，不计入策略业绩
+            }
+            used += 1;
             realized += number(&f["closedPnl"]).unwrap_or(0.0);
             fees += number(&f["fee"]).unwrap_or(0.0);
             volume += number(&f["px"]).unwrap_or(0.0).abs() * number(&f["sz"]).unwrap_or(0.0).abs();
@@ -352,14 +362,15 @@ impl Client {
             }
         }
         let out = PnlSummary {
-            fills: fills.len(),
+            fills: used,
             realized,
             fees,
             volume,
             net_deposit,
             ledger_rows: led.len(),
         };
-        *self.pnl_cache.lock().await = Some((std::time::Instant::now(), out.clone()));
+        *self.pnl_cache.lock().await =
+            Some((std::time::Instant::now(), since_ms, out.clone()));
         Ok(out)
     }
 
@@ -750,10 +761,34 @@ async fn refresh_inner(state: &crate::web::AppState) -> Result<()> {
     let mut universe = Vec::new();
     let mut markets: Vec<_> = client.markets.values().cloned().collect();
     markets.sort_by(|a, b| a.name.cmp(&b.name));
+    let mut failed = 0usize;
     for (i, m) in markets.iter().enumerate() {
         state.refresh.lock().await.current = m.name.clone();
-        let raw = client.info(json!({"type":"candleSnapshot","req":{"coin":m.index.to_string(),"interval":"1d","startTime":yesterday - (cfg.lookback.max(30) as i64 + 5)*DAY,"endTime":now}})).await?;
-        let mut candles: Vec<crate::hl::Candle> = serde_json::from_value(raw)?;
+        // 单个币失败**不能**中止整轮回填。
+        //
+        // 之前用 `?` 直接冒泡：任何一个币拉到限流或空数据，整轮就断在那里，
+        // 后面的 `meta.refreshed_at = now` 永远执行不到 —— 于是 background 每
+        // 60 秒判定"数据过期"再重来一次，页面看起来**永远停在"回填数据"**。
+        // （和调仓里"一个市场没盘口就整轮放弃"是同一个毛病。）
+        let body = json!({"type":"candleSnapshot","req":{"coin":m.index.to_string(),"interval":"1d","startTime":yesterday - (cfg.lookback.max(30) as i64 + 5)*DAY,"endTime":now}});
+        let raw = match client.info(body).await {
+            Ok(v) => v,
+            Err(e) => {
+                failed += 1;
+                tracing::warn!("TxFlow 回填 {} 失败，跳过: {e}", m.name);
+                state.refresh.lock().await.coins_done = i + 1;
+                continue;
+            }
+        };
+        let mut candles: Vec<crate::hl::Candle> = match serde_json::from_value(raw) {
+            Ok(c) => c,
+            Err(e) => {
+                failed += 1;
+                tracing::warn!("TxFlow 回填 {} 解析失败，跳过: {e}", m.name);
+                state.refresh.lock().await.coins_done = i + 1;
+                continue;
+            }
+        };
         candles.retain(|c| {
             c.t <= yesterday && c.c.is_finite() && c.c > 0. && c.v.is_finite() && c.v >= 0.
         });
@@ -780,7 +815,12 @@ async fn refresh_inner(state: &crate::web::AppState) -> Result<()> {
     let mut meta = state.meta.lock().await;
     meta.liquid = universe.iter().map(|m| m.name.clone()).collect();
     meta.universe = universe;
+    // 即使部分币失败也标记本轮已刷新：否则 background 会每 60 秒重来一次，
+    // 变成持续的"回填中"。失败数记在日志里，下一轮（30 分钟后）自然补上。
     meta.refreshed_at = now;
+    if failed > 0 {
+        tracing::warn!("TxFlow 回填完成，{failed}/{} 个市场失败（已跳过）", markets.len());
+    }
     meta.fee_taker = 0.00045;
     meta.fee_maker = 0.00015;
     state.refresh.lock().await.phase = "ready".into();

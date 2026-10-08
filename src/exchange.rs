@@ -389,9 +389,9 @@ impl Exec {
     }
 
     /// TxFlow 的真实业绩汇总（已实现/手续费/净入金）。非 TxFlow 时返回 None。
-    pub async fn txflow_pnl(&self) -> Option<anyhow::Result<crate::txflow::PnlSummary>> {
+    pub async fn txflow_pnl(&self, since_ms: i64) -> Option<anyhow::Result<crate::txflow::PnlSummary>> {
         match &self.txflow {
-            Some(tx) => Some(tx.pnl_summary().await),
+            Some(tx) => Some(tx.pnl_summary(since_ms).await),
             None => None,
         }
     }

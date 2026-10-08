@@ -414,7 +414,15 @@ pub async fn snapshot(
     // TxFlow：把交易所口径的真实盈亏填进去。页面以前只显示未实现，
     // 一个赚了 $1,945 的账户看起来像在亏钱 —— 这里补上已实现和净入金。
     if cfg.txflow {
-        if let Some(Ok(p)) = exec.txflow_pnl().await {
+        // 边界 = 本策略最早一条下单记录。账户在策略之前有自己的交易历史，
+        // 不切开会把用户自己赚的钱算成策略业绩。
+        let since = state
+            .records
+            .iter()
+            .map(|r| r.ts)
+            .min()
+            .unwrap_or(0);
+        if let Some(Ok(p)) = exec.txflow_pnl(since).await {
             snap.tx_realized = p.realized;
             snap.tx_fees = p.fees;
             snap.tx_volume = p.volume;
