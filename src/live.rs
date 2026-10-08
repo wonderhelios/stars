@@ -406,6 +406,17 @@ pub struct RunResult {
     pub live: bool,
 }
 
+fn ensure_candidates(weights: &[(String, f64)], liquid: &[String], cfg: &LiveConfig, panel_count: usize) -> Result<()> {
+    if !weights.is_empty() { return Ok(()); }
+    if cfg.txflow && liquid.len() < 8 {
+        anyhow::bail!("TxFlow 有效日线 {} 个市场；近 30 日日均成交额达到 ${:.0} 的只有 {} 个，策略至少需要 8 个候选。请降低成交额门槛并保存配置后重试", panel_count, cfg.min_vol_usd, liquid.len());
+    }
+    if cfg.txflow {
+        anyhow::bail!("TxFlow 成交额达标 {} 个市场，但未能生成目标权重；请检查回看期日线和因子数据", liquid.len());
+    }
+    anyhow::bail!("流动性过滤后没有候选")
+}
+
 /// Compute the target book and, when `live` is true and the config is armed,
 /// send the orders. Ranking is identical to the paper engine.
 pub async fn run(
@@ -436,7 +447,7 @@ pub async fn run(
     anyhow::ensure!(panel.len() >= 20, "K 线缓存不足（{} 币）", panel.len());
     let acct0 = exec.account().await?;
     let (weights, liquid) = trader::target_weights(&panel, &tc, acct0.equity, crate::live::now_ms_pub() as i64);
-    anyhow::ensure!(!weights.is_empty(), "流动性过滤后没有候选");
+    ensure_candidates(&weights, &liquid, &cfg, panel.len())?;
 
     let acct = exec.account().await?;
     let mut coins: Vec<String> = weights.iter().map(|(c, _)| c.clone()).collect();
@@ -608,13 +619,13 @@ pub async fn rebuild_cross(
         return Ok(vec!["账户没有持仓，无需转换".into()]);
     }
     let panel = trader::load_panel(store)?;
-    let (weights, _) = trader::target_weights(
+    let (weights, liquid) = trader::target_weights(
         &panel,
         &tc,
         acct.equity,
         crate::live::now_ms_pub() as i64,
     );
-    anyhow::ensure!(!weights.is_empty(), "流动性过滤后没有候选");
+    ensure_candidates(&weights, &liquid, &cfg, panel.len())?;
     let coins: Vec<String> = acct.positions.keys().cloned().collect();
     let mids = trader::fetch_mids(&exec, &coins).await;
     // 按各自权重还原仓位。之前用「净值×杠杆÷仓位数」等权重建，会把权重抹平，

@@ -170,10 +170,14 @@
             <div class="field"><label>止盈 % （0 = 关闭）</label><input id="lv-tp" type="number" value="0" min="0" max="50" step="1" /></div>
             <div class="field"><label>回看天数</label><input id="lv-lookback" type="number" value="14" min="2" max="120" /></div>
             <div class="field"><label>多头比例</label><input id="lv-top" type="number" value="0.2" min="0.02" max="0.5" step="0.05" /></div>
-            <div class="field"><label>最低成交额(USD)</label>
+            <div class="field"><label>近 30 日日均成交额门槛</label>
               <select id="lv-minvol">
+                <option value="100000">$100K</option>
+                <option value="200000">$200K</option>
+                <option value="500000" selected>$500K</option>
+                <option value="1000000">$1M</option>
                 <option value="2000000">$2M</option>
-                <option value="5000000" selected>$5M</option>
+                <option value="5000000">$5M</option>
                 <option value="10000000">$10M</option>
               </select>
             </div>
@@ -188,6 +192,7 @@
 
           <div class="note"><b>复用同一策略：</b>波动调整动量、低波动与成交量冲击的组合，多空对冲，按设置错峰调仓。信号只使用 TxFlow 已收盘日线与滚动成交额。<b>所有交易请求串行执行，间隔至少 300ms。</b></div>
           <p class="note"><b>止盈：</b>按调仓参考价挂只减仓限价单，默认关闭。仅撤销本程序记录的止盈订单。</p>
+          <p class="note"><b>流动性：</b>按近 30 个已收盘日的平均成交额筛选，策略至少需要 8 个候选市场。TxFlow 新配置默认 $500K；已有配置保持原值，候选不足时可调整门槛并保存后再生成计划。</p>
           <p class="note">可在上方生成并授权策略专用 Agent，成功后自动填写主账户和密钥路径。也可手动使用已有的已授权 Agent 文件。主钱包私钥不参与策略。账户需为单向持仓；资金、仓位和挂单均从 TxFlow 读取。维持保证金取自 TxFlow 账户接口；强平价以交易所返回值为准。</p>
           <div class="panel-head" style="margin-top:14px"><h2>计划 / 执行结果</h2></div>
           <div id="lv-plan-out"></div>

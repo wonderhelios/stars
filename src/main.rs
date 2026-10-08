@@ -79,6 +79,9 @@ async fn main() -> anyhow::Result<()> {
     });
     anyhow::ensure!(tx_db != db_path && tx_path != live_path, "TxFlow 数据路径不能与 Hyperliquid 相同");
     let mut tx_live = live::LiveState::load(std::path::Path::new(&tx_path));
+    if !std::path::Path::new(&tx_path).exists() {
+        tx_live.config.min_vol_usd = 500_000.0;
+    }
     tx_live.config.txflow = true;
     let tx_state = AppState {
         store: Arc::new(Store::open(std::path::Path::new(&tx_db))?),
