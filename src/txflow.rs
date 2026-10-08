@@ -762,7 +762,7 @@ async fn refresh_inner(state: &crate::web::AppState) -> Result<()> {
     let cfg = state.live.lock().await.config.clone();
     let now = crate::live::now_ms_pub();
     let yesterday = now / DAY * DAY - DAY;
-    let count = client.markets.len().min(140); // 与 PER_CYCLE 一致：显示本轮要刷多少
+    let count = client.markets.len();
     *state.refresh.lock().await = crate::web::RefreshStatus {
         phase: "backfill".into(),
         coins_total: count,
@@ -795,6 +795,12 @@ async fn refresh_inner(state: &crate::web::AppState) -> Result<()> {
         (0..PER_CYCLE).map(|k| markets[(start + k) % total].clone()).collect()
     };
     let markets = picked;
+    // 进度总数必须等于**本轮实际要刷的数量**，否则 60 个刷完显示成
+    // "60/140"，看起来像卡住/失败。上面那句只是在裁剪前占位。
+    {
+        let mut r = state.refresh.lock().await;
+        r.coins_total = markets.len();
+    }
     let mut failed = 0usize;
     let started = std::time::Instant::now();
     // 留 20 秒余量给收尾；超了就主动停止本轮（而不是让外层超时把整轮判失败，
