@@ -446,7 +446,7 @@ pub async fn run(
     if cfg.txflow { panel.retain(|p| markets.contains_key(&p.coin)); }
     anyhow::ensure!(panel.len() >= 20, "K 线缓存不足（{} 币）", panel.len());
     let acct0 = exec.account().await?;
-    let (weights, liquid) = trader::target_weights(&panel, &tc, acct0.equity, crate::live::now_ms_pub() as i64);
+    let (mut weights, liquid) = trader::target_weights(&panel, &tc, acct0.equity, crate::live::now_ms_pub() as i64);
     ensure_candidates(&weights, &liquid, &cfg, panel.len())?;
 
     let acct = exec.account().await?;
@@ -457,8 +457,36 @@ pub async fn run(
     let mids = trader::fetch_mids(&exec, &coins).await;
 
     if cfg.txflow {
-        anyhow::ensure!(coins.iter().all(|c| mids.contains_key(c)), "TxFlow 盘口不完整，已停止调仓");
-        anyhow::ensure!(weights.iter().all(|(c,_)| markets.get(c).map(|m| cfg.leverage <= m.max_leverage as f64).unwrap_or(false)), "TxFlow 所选市场杠杆上限低于组合杠杆，请降低杠杆");
+        // 不要因为个别市场没有盘口就**整体中止**：TxFlow 是个很薄的场所，
+        // 229 个市场里有一批根本没有买卖盘（新上市/无人做市），它们本来就
+        // 不可交易。以前只要有一个缺盘口就整轮放弃 —— 实盘表现就是"永远在
+        // 失败"。改成：把缺盘口的从**目标权重**里剔除，剩下的照常调仓。
+        //
+        // 注意不能剔除持仓里缺盘口的币：那会让 build_plan 按"目标 0"去平仓，
+        // 而它同样拿不到价格、平不掉，只会白记一条 note。让 build_plan 自己
+        // 跳过它们（它会写 note）更诚实。
+        let before = weights.len();
+        weights.retain(|(c, _)| mids.contains_key(c));
+        let dropped = before - weights.len();
+        if dropped > 0 {
+            tracing::warn!(
+                "TxFlow: {dropped} 个目标市场没有盘口，已从目标中剔除（剩余 {}）",
+                weights.len()
+            );
+        }
+        // 剔完还要够做横截面才继续；太少说明盘口大面积缺失，那才是真该停。
+        anyhow::ensure!(
+            weights.len() >= 6,
+            "TxFlow 可用市场不足（剔除无盘口后只剩 {} 个），已停止调仓",
+            weights.len()
+        );
+        anyhow::ensure!(
+            weights.iter().all(|(c, _)| markets
+                .get(c)
+                .map(|m| cfg.leverage <= m.max_leverage as f64)
+                .unwrap_or(false)),
+            "TxFlow 所选市场杠杆上限低于组合杠杆，请降低杠杆"
+        );
     }
     let plan = trader::build_plan(&weights, &acct, markets, &mids, &tc, None);
 
