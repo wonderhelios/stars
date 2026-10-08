@@ -68,7 +68,18 @@ pub struct Client {
     signer: Option<PrivateKeySigner>,
     pub markets: HashMap<String, Market>,
     owned_path: PathBuf,
+    /// 全局限速闸门：记录上次请求时刻，保证任意两次请求之间至少间隔 MIN_GAP。
+    ///
+    /// 必须做在这里而不是调用方：日线刷新会**遍历全部 229 个市场、逐个发请求、
+    /// 中间没有任何间隔**，瞬间就把 TxFlow 的限流打爆（实测调仓因此报
+    /// "TxFlow 429 Too Many Requests"）。限速放在唯一的出口 info() 上，
+    /// 任何调用路径都自动受约束。
+    gate: tokio::sync::Mutex<Option<std::time::Instant>>,
 }
+
+/// 两次 TxFlow 请求之间的最小间隔。229 个市场 × 300ms ≈ 69 秒，刷新可以接受；
+/// 调仓只需约 20 个请求，约 6 秒。
+const MIN_GAP: std::time::Duration = std::time::Duration::from_millis(300);
 
 fn number(v: &Value) -> Option<f64> {
     v.as_f64()
@@ -141,6 +152,7 @@ impl Client {
                         .unwrap_or_else(|_| "/var/lib/stars/live.json".into());
                     PathBuf::from(live_path).with_file_name("txflow-orders.json")
                 }),
+            gate: tokio::sync::Mutex::new(None),
         };
         client.markets = client.load_markets().await?;
         Ok(client)
@@ -153,6 +165,17 @@ impl Client {
         // 三次都在限流窗口内打完，调仓直接失败（实盘报过
         // "429 Too Many Requests for https://api.txflow.com/info"）。
         // 这里把 429 单独拎出来：退避更长，并且尊重 Retry-After。
+        // 全局限速：所有 TxFlow 请求都从这里出去，先排队保证最小间隔。
+        {
+            let mut g = self.gate.lock().await;
+            if let Some(t) = *g {
+                let elapsed = t.elapsed();
+                if elapsed < MIN_GAP {
+                    tokio::time::sleep(MIN_GAP - elapsed).await;
+                }
+            }
+            *g = Some(std::time::Instant::now());
+        }
         let mut last: Option<anyhow::Error> = None;
         for attempt in 0..5u32 {
             let resp = match self
