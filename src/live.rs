@@ -483,6 +483,15 @@ fn signal_panel(
     markets: &HashMap<String, MarketInfo>,
 ) -> Result<Vec<crate::momentum::PanelEntry>> {
     if cfg.txflow {
+        if signal_store.is_none() {
+            // 这条会让"TxFlow 开着但没接上 HL 信号源"立刻暴露。
+            // 真实事故：tx_state 用 `..state.clone()` 继承了 HL 的 hl_store: None，
+            // 于是偷偷退回用 TxFlow 自己的价量算因子，报错只说"信号源【TxFlow 自身】"。
+            tracing::warn!(
+                "TxFlow 已启用，但没有配 HL 信号源（hl_store 为 None）—— \
+                 将退回用 TxFlow 自身的价量算因子，结果不可信"
+            );
+        }
         if let Some(hs) = signal_store {
             let mapped: Vec<_> = trader::load_panel(hs)?
                 .into_iter()

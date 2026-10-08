@@ -88,6 +88,12 @@ async fn main() -> anyhow::Result<()> {
     tx_live.config.txflow = true;
     let tx_state = AppState {
         store: Arc::new(Store::open(std::path::Path::new(&tx_db))?),
+        // **信号源**：HL 的库。
+        //
+        // 注意必须在 `..state.clone()` **之前**显式写这一行 —— 否则会继承 HL state
+        // 里的 `hl_store: None`，signal_panel 就退回用 TxFlow 自己的价量算因子，
+        // 报错还会显示"信号源【TxFlow 自身】"。
+        hl_store: Some(state.store.clone()),
         live: Arc::new(Mutex::new(tx_live)),
         live_path: Arc::new(std::path::PathBuf::from(tx_path)),
         meta: Arc::new(Mutex::new(MetaCache::default())),
