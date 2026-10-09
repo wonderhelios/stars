@@ -1,0 +1,337 @@
+{
+  "status": "coverage audit only; trailing execution count zero",
+  "phases": [
+    {
+      "rebalance_hour_utc": 0,
+      "eligible_days": 92,
+      "fully_synchronous_days": 91,
+      "failed_days": [
+        {
+          "day": 1783468800000,
+          "missing": [
+            "ADA",
+            "VVV"
+          ]
+        }
+      ]
+    },
+    {
+      "rebalance_hour_utc": 1,
+      "eligible_days": 92,
+      "fully_synchronous_days": 91,
+      "failed_days": [
+        {
+          "day": 1783468800000,
+          "missing": [
+            "ADA",
+            "VVV"
+          ]
+        }
+      ]
+    },
+    {
+      "rebalance_hour_utc": 2,
+      "eligible_days": 92,
+      "fully_synchronous_days": 91,
+      "failed_days": [
+        {
+          "day": 1783468800000,
+          "missing": [
+            "ADA",
+            "VVV"
+          ]
+        }
+      ]
+    },
+    {
+      "rebalance_hour_utc": 3,
+      "eligible_days": 92,
+      "fully_synchronous_days": 91,
+      "failed_days": [
+        {
+          "day": 1783468800000,
+          "missing": [
+            "ADA",
+            "VVV"
+          ]
+        }
+      ]
+    },
+    {
+      "rebalance_hour_utc": 4,
+      "eligible_days": 92,
+      "fully_synchronous_days": 91,
+      "failed_days": [
+        {
+          "day": 1783468800000,
+          "missing": [
+            "ADA",
+            "VVV"
+          ]
+        }
+      ]
+    },
+    {
+      "rebalance_hour_utc": 5,
+      "eligible_days": 92,
+      "fully_synchronous_days": 91,
+      "failed_days": [
+        {
+          "day": 1783468800000,
+          "missing": [
+            "ADA",
+            "VVV"
+          ]
+        }
+      ]
+    },
+    {
+      "rebalance_hour_utc": 6,
+      "eligible_days": 92,
+      "fully_synchronous_days": 91,
+      "failed_days": [
+        {
+          "day": 1783468800000,
+          "missing": [
+            "ADA",
+            "VVV"
+          ]
+        }
+      ]
+    },
+    {
+      "rebalance_hour_utc": 7,
+      "eligible_days": 92,
+      "fully_synchronous_days": 91,
+      "failed_days": [
+        {
+          "day": 1783468800000,
+          "missing": [
+            "ADA",
+            "VVV"
+          ]
+        }
+      ]
+    },
+    {
+      "rebalance_hour_utc": 8,
+      "eligible_days": 92,
+      "fully_synchronous_days": 91,
+      "failed_days": [
+        {
+          "day": 1783468800000,
+          "missing": [
+            "ADA",
+            "VVV"
+          ]
+        }
+      ]
+    },
+    {
+      "rebalance_hour_utc": 9,
+      "eligible_days": 92,
+      "fully_synchronous_days": 91,
+      "failed_days": [
+        {
+          "day": 1783468800000,
+          "missing": [
+            "ADA",
+            "VVV"
+          ]
+        }
+      ]
+    },
+    {
+      "rebalance_hour_utc": 10,
+      "eligible_days": 92,
+      "fully_synchronous_days": 91,
+      "failed_days": [
+        {
+          "day": 1783468800000,
+          "missing": [
+            "ADA",
+            "VVV"
+          ]
+        }
+      ]
+    },
+    {
+      "rebalance_hour_utc": 11,
+      "eligible_days": 92,
+      "fully_synchronous_days": 91,
+      "failed_days": [
+        {
+          "day": 1783468800000,
+          "missing": [
+            "ADA",
+            "VVV"
+          ]
+        }
+      ]
+    },
+    {
+      "rebalance_hour_utc": 12,
+      "eligible_days": 92,
+      "fully_synchronous_days": 91,
+      "failed_days": [
+        {
+          "day": 1783468800000,
+          "missing": [
+            "ADA",
+            "VVV"
+          ]
+        }
+      ]
+    },
+    {
+      "rebalance_hour_utc": 13,
+      "eligible_days": 92,
+      "fully_synchronous_days": 91,
+      "failed_days": [
+        {
+          "day": 1783468800000,
+          "missing": [
+            "ADA",
+            "VVV"
+          ]
+        }
+      ]
+    },
+    {
+      "rebalance_hour_utc": 14,
+      "eligible_days": 92,
+      "fully_synchronous_days": 91,
+      "failed_days": [
+        {
+          "day": 1783468800000,
+          "missing": [
+            "ADA",
+            "VVV"
+          ]
+        }
+      ]
+    },
+    {
+      "rebalance_hour_utc": 15,
+      "eligible_days": 92,
+      "fully_synchronous_days": 91,
+      "failed_days": [
+        {
+          "day": 1783468800000,
+          "missing": [
+            "ADA",
+            "VVV"
+          ]
+        }
+      ]
+    },
+    {
+      "rebalance_hour_utc": 16,
+      "eligible_days": 92,
+      "fully_synchronous_days": 91,
+      "failed_days": [
+        {
+          "day": 1783468800000,
+          "missing": [
+            "ADA",
+            "VVV"
+          ]
+        }
+      ]
+    },
+    {
+      "rebalance_hour_utc": 17,
+      "eligible_days": 91,
+      "fully_synchronous_days": 91,
+      "failed_days": []
+    },
+    {
+      "rebalance_hour_utc": 18,
+      "eligible_days": 92,
+      "fully_synchronous_days": 91,
+      "failed_days": [
+        {
+          "day": 1783382400000,
+          "missing": [
+            "ADA",
+            "VVV"
+          ]
+        }
+      ]
+    },
+    {
+      "rebalance_hour_utc": 19,
+      "eligible_days": 92,
+      "fully_synchronous_days": 91,
+      "failed_days": [
+        {
+          "day": 1783382400000,
+          "missing": [
+            "ADA",
+            "VVV"
+          ]
+        }
+      ]
+    },
+    {
+      "rebalance_hour_utc": 20,
+      "eligible_days": 92,
+      "fully_synchronous_days": 91,
+      "failed_days": [
+        {
+          "day": 1783382400000,
+          "missing": [
+            "ADA",
+            "VVV"
+          ]
+        }
+      ]
+    },
+    {
+      "rebalance_hour_utc": 21,
+      "eligible_days": 92,
+      "fully_synchronous_days": 91,
+      "failed_days": [
+        {
+          "day": 1783382400000,
+          "missing": [
+            "ADA",
+            "VVV"
+          ]
+        }
+      ]
+    },
+    {
+      "rebalance_hour_utc": 22,
+      "eligible_days": 92,
+      "fully_synchronous_days": 91,
+      "failed_days": [
+        {
+          "day": 1783382400000,
+          "missing": [
+            "ADA",
+            "VVV"
+          ]
+        }
+      ]
+    },
+    {
+      "rebalance_hour_utc": 23,
+      "eligible_days": 92,
+      "fully_synchronous_days": 91,
+      "failed_days": [
+        {
+          "day": 1783382400000,
+          "missing": [
+            "ADA",
+            "VVV"
+          ]
+        }
+      ]
+    }
+  ],
+  "mean_full_days": 91.0,
+  "min_full_days": 91,
+  "max_full_days": 91,
+  "definition": "for each scheduled day and phase, all 25 completed hourly candles exist for union of that day and prior day source target names; sufficient price availability only, not proof of actual fills or continuous intrabar order"
+}

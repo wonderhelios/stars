@@ -1,0 +1,79 @@
+{
+  "audited_at_utc": "2026-10-08T17:42:44.290970+00:00",
+  "inputs": {
+    "/tmp/hl-daily-full": {
+      "exists": true,
+      "json_files": 0,
+      "rows": 0,
+      "first_utc": null,
+      "last_utc": null,
+      "sha256": {},
+      "errors": []
+    },
+    "/tmp/hl-hist": {
+      "exists": true,
+      "json_files": 0,
+      "rows": 0,
+      "first_utc": null,
+      "last_utc": null,
+      "sha256": {},
+      "errors": []
+    },
+    "/tmp/m15": {
+      "exists": true,
+      "json_files": 40,
+      "rows": 198102,
+      "first_utc": "2026-08-16T10:45:00+00:00",
+      "last_utc": "2026-10-07T16:30:00+00:00",
+      "sha256": {
+        "ADA.json": "20d3e7ea0cc8cac99870c3c7246cfe4381ac74e98684175c635203b1b6ccc82e",
+        "APE.json": "f871e5daeea6f870354aca49a74648cd53109a549326a27a6c3a072f6bb93d87",
+        "ARB.json": "f22098b20cc754ad43c469fc21f0823e8db6fda85dd12d70a7e9c419b7ca96ef",
+        "ASTER.json": "59bf821f79869b7b3d4e6b94c5b3c66a7dc4985e93d999a1da122ec974929ed5",
+        "AVAX.json": "b7b266d15088dff4bcfed420626baea02128b804ff2cca6549beae32a9c8e963",
+        "BCH.json": "e230fa15c0c1d9a2c4feb96391bf734c9cf33ce02767e643d2fe76467e644e8f",
+        "CC.json": "750a7edbc6bfa61d33d0f632782602d81c7ed271cd51a7a9c824d00aaf2383b3",
+        "CRV.json": "e9c489d3fcee98aab63921774467abfbbfe2cee9a2a416457ba6d1a906d78ad0",
+        "DOT.json": "489118ff5538fa86a7878800a92d7ad42a5f90dcc13f5a5749ef8d7046ab1345",
+        "ETH.json": "e5444bd738d6c82afee5c7323d2d118f0ff4e59b0fbdcf564f764ff8e098cfb1",
+        "FARTCOIN.json": "da29937a90f1076311e24d60f2b3b33d7957eb4166eecb7bfe07a23442e9fe24",
+        "FIL.json": "b5a0e65130a9bd68bd21b7ade439fdb4f975c688520551f5716e4cb1e17b4369",
+        "GRASS.json": "487eae52a72d3864092d2f926179dc27519f84d57531240ed670faaf6b793905",
+        "LDO.json": "6aff6201c797e4a666ed933f63530dfcb50eda482e724203c51c9667e26db6bf",
+        "LIT.json": "d21bc1bfacfe4606d00984aceb6f86f36aba9f313d3d9131ed8661aabd8f16e9",
+        "MEGA.json": "4ef9e62ba6d7cf57fdd42755490727526961387ab9ce17373b16e5507ff2e437",
+        "MET.json": "00ab65998247c8ee529b59efaba498d7ce4d521e9487ff0e788c6980c01e0ba8",
+        "MON.json": "5684162d59632b3079f00535a9694ae35b63c367bae1e5a1a4303b3d65201bf9",
+        "MORPHO.json": "92ad00700857b234f5130efde9fbfd82455d0bf22671fdde8fc16d4d6a478781",
+        "NEAR.json": "1b333faa2838779fc37520e2e3a86e4e771ac79d16bcdcbc84527faf1b4e2a6d",
+        "NIL.json": "a7d5aef9b9c6efd01eeaf7a7dae928af7a4f3a1990620ad73ace22453cf354ed",
+        "ONDO.json": "e2183009b2be33ae98618e4403b3a03052d0c3b39e8031722e2dae469b83a2d5",
+        "PAXG.json": "b6f23b1f2294d2d0975e64d3444708ee10e02fb521946b6f7ec76ae423ee2c67",
+        "PUMP.json": "99f482755b5e1f062b38e0ef92b94c5a273c71888569f4130f1e0f67d18f7d61",
+        "RENDER.json": "5f56397c75a32833c4919767b318b3d7c0afd8ef3c815626a35d1390cc7fb863",
+        "RUNE.json": "1cb0ec9b9745ea8e5e0db50d740f61e6b7354d3f5b17623bdd412c4f10b5e044",
+        "SAND.json": "7481055a46fcc421641d85010552eb8ff830222218c2ef47efe5ee1567184db4",
+        "STRK.json": "0c1a1d9f88f43f0e4a9de0e075098e5ad8a953f4940540730165d766535baa24",
+        "SUI.json": "f5e198a653bc40b4d413877a84fde41a824a14605a061970698c74490bd6aabc",
+        "SYRUP.json": "ed78d30cdb6d0b96720ce3c03b2391e84f818a14dd6b3286b5137310068041da",
+        "TAO.json": "53d0448391cc4e1abe7b91b9199de7dc1479af9811be791d9233d63e44e27a75",
+        "TIA.json": "0e6514016a7540bc8b173e65752ad7108f63b0e49dc2f5269a8cc17411582bba",
+        "TRX.json": "248be65d91f4074e3a4e41f62de0f4c02999cd6e046ef72bbae37cc67d4ff140",
+        "UNI.json": "907d7b00a4e82364d33f3d611439f4c5f2fdf57fda7a0d54540528eb21eee997",
+        "USELESS.json": "0acb5aaa9c69fd79d13f718416f0fc2872878f0bb8fa15df830efd2adba64377",
+        "WLD.json": "ff2334cc7ee113ab82d47c36643fe3bc65f0e4afb472fce6e00bc22f300164be",
+        "XLM.json": "f22ede29794bdf07ccb6824db19bac89888b0e258a3788981a29f0a785188db1",
+        "XMR.json": "cbd2a8b65e43806d5d8f465381ce2c7834ce610ab847a4df66b74331e3d6e910",
+        "XPL.json": "499bdf86fe8ee518992790886eabea8765e552b4f69bc1c72725dd2f76822a0f",
+        "ZEC.json": "02afa9edb578af468ecff3d95a060f8328f62de902285399d52a826d34263f63"
+      },
+      "errors": []
+    }
+  },
+  "baseline_status": "not_reproduced_missing_daily_data",
+  "candidate_runs": 0,
+  "source_sha256": {
+    "/Users/wonder/Code/stars/src/trader.rs": "c5654a05198573cb6ffd4e2290fa2d5a53758f5944066c9238b56d53bc38da7f",
+    "/Users/wonder/Code/stars/docs/validation-protocol.md": "a4346f3ad6e841c8c87739c093737de3b653a059da1f7bed9284c7edce34d685"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "compared_to": "alternate_batch/src_hashes_before.json",
+  "all_match": true,
+  "files": {
+    "stars/src/exchange.rs": true,
+    "stars/src/paper.rs": true,
+    "stars/src/store.rs": true,
+    "stars/src/web.rs": true,
+    "stars/src/momentum.rs": true,
+    "stars/src/main.rs": true,
+    "stars/src/txflow.rs": true,
+    "stars/src/live.rs": true,
+    "stars/src/hl.rs": true,
+    "stars/src/txflow_agent.rs": true,
+    "stars/src/trader.rs": true
+  }
+}

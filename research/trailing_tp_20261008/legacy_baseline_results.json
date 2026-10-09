@@ -1,0 +1,44 @@
+{
+  "legacy_stag2_snapshot.py|fee=0.00045|slip=0.0003": {
+    "sharpe": 1.1667050443648113,
+    "days": 1180,
+    "sub_2023_24": -0.395156732656038,
+    "sub_2025_26": 2.500775200466243,
+    "source_hash": "f9b612dd93a6336363c0fd4a5f6e835b507eb75b064165e58fcc79101548d480"
+  },
+  "legacy_stag2_snapshot.py|fee=0.00045|slip=0.00025": {
+    "sharpe": 1.2055466094578497,
+    "days": 1180,
+    "sub_2023_24": -0.3621106505661344,
+    "sub_2025_26": 2.544716255402284,
+    "source_hash": "f9b612dd93a6336363c0fd4a5f6e835b507eb75b064165e58fcc79101548d480"
+  },
+  "legacy_stag2_snapshot.py|fee=0.00045|slip=0": {
+    "sharpe": 1.3998497776143781,
+    "days": 1180,
+    "sub_2023_24": -0.1967375611830548,
+    "sub_2025_26": 2.7645410179289813,
+    "source_hash": "f9b612dd93a6336363c0fd4a5f6e835b507eb75b064165e58fcc79101548d480"
+  },
+  "legacy_honest_snapshot.py|fee=0.00045|slip=0.0003": {
+    "sharpe": 1.1667050443648113,
+    "days": 1180,
+    "sub_2023_24": -0.39515673265603796,
+    "sub_2025_26": 2.500775200466243,
+    "source_hash": "bdb0b8b1216f20cec6f8fa06b0547240ba0af09539eb89f7bcefced0e0a16cc8"
+  },
+  "legacy_honest_snapshot.py|fee=0.00045|slip=0.00025": {
+    "sharpe": 1.2055466094578497,
+    "days": 1180,
+    "sub_2023_24": -0.36211065056613423,
+    "sub_2025_26": 2.544716255402284,
+    "source_hash": "bdb0b8b1216f20cec6f8fa06b0547240ba0af09539eb89f7bcefced0e0a16cc8"
+  },
+  "legacy_honest_snapshot.py|fee=0.00045|slip=0": {
+    "sharpe": 1.3998497776143788,
+    "days": 1180,
+    "sub_2023_24": -0.19673756118305472,
+    "sub_2025_26": 2.7645410179289813,
+    "source_hash": "bdb0b8b1216f20cec6f8fa06b0547240ba0af09539eb89f7bcefced0e0a16cc8"
+  }
+}

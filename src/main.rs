@@ -1,3 +1,4 @@
+mod binance;
 mod exchange;
 mod hl;
 mod live;
@@ -42,6 +43,12 @@ async fn main() -> anyhow::Result<()> {
 
     // ===== trade subcommand (live execution) =====
     let args: Vec<String> = std::env::args().collect();
+    if args.get(1).map(|s| s.as_str()) == Some("import-binance") {
+        return binance::command(&args, std::path::Path::new(&db_path));
+    }
+    if args.get(1).map(|s| s.as_str()) == Some("fetch-binance") {
+        return binance::fetch_command(&args).await;
+    }
     if args.get(1).map(|s| s.as_str()) == Some("trade") {
         return run_trade(&args, &db_path).await;
     }
@@ -56,6 +63,7 @@ async fn main() -> anyhow::Result<()> {
     let refresh = Arc::new(Mutex::new(RefreshStatus::default()));
 
     let state = AppState {
+        binance_store: None,
         hl_store: None, // HL 自己就是信号源
         exec_gate: std::sync::Arc::new(tokio::sync::Mutex::new(())),
         refresh_gate: std::sync::Arc::new(tokio::sync::Mutex::new(())),
@@ -105,11 +113,7 @@ async fn main() -> anyhow::Result<()> {
 
     let tx_state = AppState {
         store: tx_store.clone(),
-        // **信号源**：HL 的库。
-        //
-        // 注意必须在 `..state.clone()` **之前**显式写这一行 —— 否则会继承 HL state
-        // 里的 `hl_store: None`，signal_panel 就退回用 TxFlow 自己的价量算因子，
-        // 报错还会显示"信号源【TxFlow 自身】"。
+        binance_store: binance::open_signal_store(&db_path, &tx_db),
         hl_store: Some(state.store.clone()),
         live: Arc::new(Mutex::new(tx_live)),
         live_path: Arc::new(std::path::PathBuf::from(tx_path)),

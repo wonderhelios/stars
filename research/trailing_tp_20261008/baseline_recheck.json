@@ -1,0 +1,70 @@
+{
+  "full": {
+    "sharpe": 1.2878131561449646,
+    "days": 1192,
+    "annual_return": 1.0287360376209362,
+    "annual_cost": 0.4058449586392258,
+    "daily_turnover": 1.5884342803883593,
+    "max_drawdown": -0.8589548446518858
+  },
+  "sub_2023_24": {
+    "sharpe": -0.21491408636165701,
+    "days": 547,
+    "annual_return": -0.1648120328059641,
+    "annual_cost": 0.34978897565814043,
+    "daily_turnover": 1.36903708672462,
+    "max_drawdown": -0.8589548446518858
+  },
+  "sub_2025_26": {
+    "sharpe": 2.483423511006363,
+    "days": 645,
+    "annual_return": 2.040938819827936,
+    "annual_cost": 0.45338390854721594,
+    "daily_turnover": 1.774496706642724,
+    "max_drawdown": -0.4492294720921589
+  },
+  "start": "2023-07-04 00:00:00+00:00",
+  "end": "2026-10-07 00:00:00+00:00",
+  "scalar_checks": [
+    {
+      "t": 1689465600000,
+      "error": 0.0
+    },
+    {
+      "t": 1701129600000,
+      "error": 0.0
+    },
+    {
+      "t": 1717113600000,
+      "error": 0.0
+    },
+    {
+      "t": 1733097600000,
+      "error": 0.0
+    },
+    {
+      "t": 1750377600000,
+      "error": 0.0
+    },
+    {
+      "t": 1771977600000,
+      "error": 0.0
+    },
+    {
+      "t": 1791244800000,
+      "error": 0.0
+    }
+  ],
+  "missing_events": 2,
+  "missing_max": 0.1259530034176451,
+  "configuration": {
+    "cap": 5,
+    "top_frac": 0.2,
+    "gross": 2.7,
+    "cost": 0.0007,
+    "band": 0.02,
+    "rebalance_slices": 1,
+    "execution": "prior closed daily signal -> next UTC open; large-account approximation; stale missing exit"
+  },
+  "source_sha256": "c5654a05198573cb6ffd4e2290fa2d5a53758f5944066c9238b56d53bc38da7f"
+}

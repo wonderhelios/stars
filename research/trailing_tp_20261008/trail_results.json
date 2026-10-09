@@ -1,0 +1,3172 @@
+{
+  "config": {
+    "initial_equity": 1000000.0,
+    "cap": 5,
+    "top_frac": 0.2,
+    "lookback": 14,
+    "vol": 20,
+    "liquidity": 30,
+    "rebalance_slices": 1,
+    "gross": 2.7,
+    "fee": 0.0007,
+    "rebalance_band": 0.02,
+    "size_rounding": "floor to current meta szDecimals",
+    "funding": false,
+    "terminal_liquidation": false,
+    "missing_quote_policy": "retain held quantity at last observed price; diagnostic only, any unresolved event blocks gate"
+  },
+  "runs": {
+    "baseline": {
+      "full": {
+        "days": 1192,
+        "sharpe": 1.2885948241474923,
+        "annual_arithmetic": 1.0293785302606038,
+        "annual_cost": 0.40521572082687146,
+        "daily_turnover": 1.5859715100856027
+      },
+      "2023-24": {
+        "days": 547,
+        "sharpe": -0.21490875276354018,
+        "annual_arithmetic": -0.164807718821333,
+        "annual_cost": 0.3497878296817204,
+        "daily_turnover": 1.3690326014940133
+      },
+      "2025-26": {
+        "days": 645,
+        "sharpe": 2.484797167452912,
+        "annual_arithmetic": 2.0421225275440444,
+        "annual_cost": 0.4522220099065577,
+        "daily_turnover": 1.769949158146997
+      },
+      "missing_held_quotes": [
+        {
+          "t": 1757116800000,
+          "coins": [
+            "MKR"
+          ],
+          "stale_notional_equity": 0.12290030332216195
+        },
+        {
+          "t": 1757203200000,
+          "coins": [
+            "MKR"
+          ],
+          "stale_notional_equity": 0.1260928659717176
+        },
+        {
+          "t": 1757289600000,
+          "coins": [
+            "MKR"
+          ],
+          "stale_notional_equity": 0.12934603108311402
+        },
+        {
+          "t": 1757376000000,
+          "coins": [
+            "MKR"
+          ],
+          "stale_notional_equity": 0.12663396792281176
+        },
+        {
+          "t": 1757462400000,
+          "coins": [
+            "MKR"
+          ],
+          "stale_notional_equity": 0.12109665470281115
+        },
+        {
+          "t": 1757548800000,
+          "coins": [
+            "MKR"
+          ],
+          "stale_notional_equity": 0.10582983267146727
+        },
+        {
+          "t": 1757635200000,
+          "coins": [
+            "MKR"
+          ],
+          "stale_notional_equity": 0.09881920970851926
+        },
+        {
+          "t": 1757721600000,
+          "coins": [
+            "MKR"
+          ],
+          "stale_notional_equity": 0.09954133580287232
+        },
+        {
+          "t": 1757808000000,
+          "coins": [
+            "MKR"
+          ],
+          "stale_notional_equity": 0.09786639298017664
+        },
+        {
+          "t": 1757894400000,
+          "coins": [
+            "MKR"
+          ],
+          "stale_notional_equity": 0.09938533557298054
+        },
+        {
+          "t": 1757980800000,
+          "coins": [
+            "MKR"
+          ],
+          "stale_notional_equity": 0.09499371380591369
+        },
+        {
+          "t": 1758067200000,
+          "coins": [
+            "MKR"
+          ],
+          "stale_notional_equity": 0.09740982176720701
+        },
+        {
+          "t": 1758153600000,
+          "coins": [
+            "MKR"
+          ],
+          "stale_notional_equity": 0.09559354544017604
+        },
+        {
+          "t": 1758240000000,
+          "coins": [
+            "MKR"
+          ],
+          "stale_notional_equity": 0.09565870492656048
+        },
+        {
+          "t": 1758326400000,
+          "coins": [
+            "MKR"
+          ],
+          "stale_notional_equity": 0.09664199638127331
+        },
+        {
+          "t": 1758412800000,
+          "coins": [
+            "MKR"
+          ],
+          "stale_notional_equity": 0.09923122605216807
+        },
+        {
+          "t": 1758499200000,
+          "coins": [
+            "MKR"
+          ],
+          "stale_notional_equity": 0.10451717247283765
+        },
+        {
+          "t": 1758585600000,
+          "coins": [
+            "MKR"
+          ],
+          "stale_notional_equity": 0.1036513227424572
+        },
+        {
+          "t": 1758672000000,
+          "coins": [
+            "MKR"
+          ],
+          "stale_notional_equity": 0.10145737263571375
+        },
+        {
+          "t": 1758758400000,
+          "coins": [
+            "MKR"
+          ],
+          "stale_notional_equity": 0.09989676796346275
+        },
+        {
+          "t": 1758844800000,
+          "coins": [
+            "MKR"
+          ],
+          "stale_notional_equity": 0.10210492397892365
+        },
+        {
+          "t": 1758931200000,
+          "coins": [
+            "MKR"
+          ],
+          "stale_notional_equity": 0.10540620033658701
+        },
+        {
+          "t": 1759017600000,
+          "coins": [
+            "MKR"
+          ],
+          "stale_notional_equity": 0.10940463288339078
+        },
+        {
+          "t": 1759104000000,
+          "coins": [
+            "MKR"
+          ],
+          "stale_notional_equity": 0.1061277784102994
+        },
+        {
+          "t": 1759190400000,
+          "coins": [
+            "MKR"
+          ],
+          "stale_notional_equity": 0.11115014687926218
+        },
+        {
+          "t": 1759276800000,
+          "coins": [
+            "MKR"
+          ],
+          "stale_notional_equity": 0.11172621703259428
+        },
+        {
+          "t": 1759363200000,
+          "coins": [
+            "MKR"
+          ],
+          "stale_notional_equity": 0.11968622554443539
+        },
+        {
+          "t": 1759449600000,
+          "coins": [
+            "MKR"
+          ],
+          "stale_notional_equity": 0.12444537404895631
+        },
+        {
+          "t": 1759536000000,
+          "coins": [
+            "MKR"
+          ],
+          "stale_notional_equity": 0.12432001122944683
+        },
+        {
+          "t": 1759622400000,
+          "coins": [
+            "MKR"
+          ],
+          "stale_notional_equity": 0.12138468301891664
+        },
+        {
+          "t": 1759708800000,
+          "coins": [
+            "MKR"
+          ],
+          "stale_notional_equity": 0.11840190894943857
+        },
+        {
+          "t": 1759795200000,
+          "coins": [
+            "MKR"
+          ],
+          "stale_notional_equity": 0.1176599852671454
+        },
+        {
+          "t": 1759881600000,
+          "coins": [
+            "MKR"
+          ],
+          "stale_notional_equity": 0.11951557342707306
+        },
+        {
+          "t": 1759968000000,
+          "coins": [
+            "MKR"
+          ],
+          "stale_notional_equity": 0.11537776603308697
+        },
+        {
+          "t": 1760054400000,
+          "coins": [
+            "MKR"
+          ],
+          "stale_notional_equity": 0.10511310073460378
+        },
+        {
+          "t": 1760140800000,
+          "coins": [
+            "MKR"
+          ],
+          "stale_notional_equity": 0.09297479688144519
+        },
+        {
+          "t": 1760227200000,
+          "coins": [
+            "MKR"
+          ],
+          "stale_notional_equity": 0.07240462972446428
+        },
+        {
+          "t": 1760313600000,
+          "coins": [
+            "MKR"
+          ],
+          "stale_notional_equity": 0.07274109619164218
+        },
+        {
+          "t": 1760400000000,
+          "coins": [
+            "MKR"
+          ],
+          "stale_notional_equity": 0.07685453776483096
+        },
+        {
+          "t": 1760486400000,
+          "coins": [
+            "MKR"
+          ],
+          "stale_notional_equity": 0.07956596735599285
+        },
+        {
+          "t": 1760572800000,
+          "coins": [
+            "MKR"
+          ],
+          "stale_notional_equity": 0.07623314177418891
+        },
+        {
+          "t": 1760659200000,
+          "coins": [
+            "MKR"
+          ],
+          "stale_notional_equity": 0.07599905188913014
+        },
+        {
+          "t": 1760745600000,
+          "coins": [
+            "MKR"
+          ],
+          "stale_notional_equity": 0.07604817999619932
+        },
+        {
+          "t": 1760832000000,
+          "coins": [
+            "MKR"
+          ],
+          "stale_notional_equity": 0.0708699653952637
+        },
+        {
+          "t": 1760918400000,
+          "coins": [
+            "MKR"
+          ],
+          "stale_notional_equity": 0.06975673963303848
+        },
+        {
+          "t": 1761004800000,
+          "coins": [
+            "MKR"
+          ],
+          "stale_notional_equity": 0.07344021854140524
+        },
+        {
+          "t": 1761091200000,
+          "coins": [
+            "MKR"
+          ],
+          "stale_notional_equity": 0.07931641433059602
+        },
+        {
+          "t": 1761177600000,
+          "coins": [
+            "MKR"
+          ],
+          "stale_notional_equity": 0.08275992989307214
+        },
+        {
+          "t": 1761264000000,
+          "coins": [
+            "MKR"
+          ],
+          "stale_notional_equity": 0.08005833237299667
+        },
+        {
+          "t": 1761350400000,
+          "coins": [
+            "MKR"
+          ],
+          "stale_notional_equity": 0.08346684110130488
+        },
+        {
+          "t": 1761436800000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.19101592096533562
+        },
+        {
+          "t": 1761523200000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.1936283512592801
+        },
+        {
+          "t": 1761609600000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.19251195434496987
+        },
+        {
+          "t": 1761696000000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.18485238004740465
+        },
+        {
+          "t": 1761782400000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.18415896583008873
+        },
+        {
+          "t": 1761868800000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.17380375794235536
+        },
+        {
+          "t": 1761955200000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.1715332574498246
+        },
+        {
+          "t": 1762041600000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.1648145728634082
+        },
+        {
+          "t": 1762128000000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.15730969923719182
+        },
+        {
+          "t": 1762214400000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.1533143256374982
+        },
+        {
+          "t": 1762300800000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.14399493817465242
+        },
+        {
+          "t": 1762387200000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.15638782763760362
+        },
+        {
+          "t": 1762473600000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.15436938175063988
+        },
+        {
+          "t": 1762560000000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.1436956429383018
+        },
+        {
+          "t": 1762646400000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.15202259724793424
+        },
+        {
+          "t": 1762732800000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.1556721581884888
+        },
+        {
+          "t": 1762819200000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.15421223233875903
+        },
+        {
+          "t": 1762905600000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.1557879902483198
+        },
+        {
+          "t": 1762992000000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.15272292198475504
+        },
+        {
+          "t": 1763078400000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.14704523686088014
+        },
+        {
+          "t": 1763164800000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.14182710238841023
+        },
+        {
+          "t": 1763251200000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.13686601185315475
+        },
+        {
+          "t": 1763337600000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.12659523639442416
+        },
+        {
+          "t": 1763424000000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.12148493968646426
+        },
+        {
+          "t": 1763510400000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.12861913939557756
+        },
+        {
+          "t": 1763596800000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.13153998179119755
+        },
+        {
+          "t": 1763683200000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.13082529633728393
+        },
+        {
+          "t": 1763769600000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.1302136593436179
+        },
+        {
+          "t": 1763856000000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.12942091940162878
+        },
+        {
+          "t": 1763942400000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.13015899983662313
+        },
+        {
+          "t": 1764028800000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.12650491229230149
+        },
+        {
+          "t": 1764115200000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.12954551942896625
+        },
+        {
+          "t": 1764201600000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.13027303039852525
+        },
+        {
+          "t": 1764288000000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.12127570926940093
+        },
+        {
+          "t": 1764374400000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.12172483061828937
+        },
+        {
+          "t": 1764460800000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.118652937261847
+        },
+        {
+          "t": 1764547200000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.1187693520690254
+        },
+        {
+          "t": 1764633600000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.11693936966506199
+        },
+        {
+          "t": 1764720000000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.11702402125689049
+        },
+        {
+          "t": 1764806400000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.11206592907362228
+        },
+        {
+          "t": 1764892800000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.11508507609479371
+        },
+        {
+          "t": 1764979200000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.11166213853531998
+        },
+        {
+          "t": 1765065600000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.10846421956019912
+        },
+        {
+          "t": 1765152000000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.10727165241350888
+        },
+        {
+          "t": 1765238400000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.10409947465938625
+        },
+        {
+          "t": 1765324800000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.1080480950026412
+        },
+        {
+          "t": 1765411200000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.10939651745404785
+        },
+        {
+          "t": 1765497600000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.10571721152209837
+        },
+        {
+          "t": 1765584000000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.10516815935548791
+        },
+        {
+          "t": 1765670400000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.10622699645431116
+        },
+        {
+          "t": 1765756800000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.10934285751117018
+        },
+        {
+          "t": 1765843200000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.1065200053751686
+        },
+        {
+          "t": 1765929600000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.10623752781306486
+        },
+        {
+          "t": 1766016000000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.10917000531473653
+        },
+        {
+          "t": 1766102400000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.10286929553549676
+        },
+        {
+          "t": 1766188800000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.09778596367839497
+        },
+        {
+          "t": 1766275200000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.1030681146375578
+        },
+        {
+          "t": 1766361600000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.10187346206385696
+        },
+        {
+          "t": 1766448000000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.10416196830413897
+        },
+        {
+          "t": 1766534400000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.1028851542390854
+        },
+        {
+          "t": 1766620800000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.10113413046173697
+        },
+        {
+          "t": 1766707200000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.10738701417397972
+        },
+        {
+          "t": 1766793600000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.10972831304362063
+        },
+        {
+          "t": 1766880000000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.11374340532522038
+        },
+        {
+          "t": 1766966400000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.11766414148365661
+        },
+        {
+          "t": 1767052800000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.115123191226221
+        },
+        {
+          "t": 1767139200000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.11514924455999835
+        },
+        {
+          "t": 1767225600000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.11449647675399538
+        },
+        {
+          "t": 1767312000000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.11380138337281208
+        },
+        {
+          "t": 1767398400000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.12117096000861341
+        },
+        {
+          "t": 1767484800000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.1282639262001165
+        },
+        {
+          "t": 1767571200000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.1316621024514824
+        },
+        {
+          "t": 1767657600000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.1342160049214547
+        },
+        {
+          "t": 1767744000000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.13803272049157359
+        },
+        {
+          "t": 1767830400000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.14221355126050927
+        },
+        {
+          "t": 1767916800000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.14586769896255458
+        },
+        {
+          "t": 1768003200000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.14561585645781697
+        },
+        {
+          "t": 1768089600000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.14289490461702262
+        },
+        {
+          "t": 1768176000000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.13426402161022316
+        },
+        {
+          "t": 1768262400000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.13260463791327678
+        },
+        {
+          "t": 1768348800000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.12136238785747974
+        },
+        {
+          "t": 1768435200000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.1266124403600157
+        },
+        {
+          "t": 1768521600000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.12479400053260595
+        },
+        {
+          "t": 1768608000000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.11578859066323748
+        },
+        {
+          "t": 1768694400000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.11354702170650087
+        },
+        {
+          "t": 1768780800000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.11294982090562228
+        },
+        {
+          "t": 1768867200000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.10939065750244675
+        },
+        {
+          "t": 1768953600000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.10826759680972631
+        },
+        {
+          "t": 1769040000000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.11112152693558262
+        },
+        {
+          "t": 1769126400000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.11406638058127179
+        },
+        {
+          "t": 1769212800000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.11269186035648399
+        },
+        {
+          "t": 1769299200000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.11297420206083233
+        },
+        {
+          "t": 1769385600000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.11386464653351519
+        },
+        {
+          "t": 1769472000000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.10947516109746465
+        },
+        {
+          "t": 1769558400000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.11023221650189374
+        },
+        {
+          "t": 1769644800000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.1091268974245644
+        },
+        {
+          "t": 1769731200000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.10298904342437729
+        },
+        {
+          "t": 1769817600000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.09888549068958563
+        },
+        {
+          "t": 1769904000000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.1017828667921049
+        },
+        {
+          "t": 1769990400000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.09387079543272517
+        },
+        {
+          "t": 1770076800000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.0921897694914798
+        },
+        {
+          "t": 1770163200000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.09145411160777106
+        },
+        {
+          "t": 1770249600000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.08759394575042599
+        },
+        {
+          "t": 1770336000000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.08543318943231913
+        },
+        {
+          "t": 1770422400000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.08261223037757467
+        },
+        {
+          "t": 1770508800000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.09025924101770477
+        },
+        {
+          "t": 1770595200000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.08720038601204229
+        },
+        {
+          "t": 1770681600000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.08588772123990261
+        },
+        {
+          "t": 1770768000000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.08978334736674203
+        },
+        {
+          "t": 1770854400000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.08574549525763961
+        },
+        {
+          "t": 1770940800000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.07805902108354848
+        },
+        {
+          "t": 1771027200000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.08168373449991768
+        },
+        {
+          "t": 1771113600000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.08288446154037306
+        },
+        {
+          "t": 1771200000000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.0877962752896888
+        },
+        {
+          "t": 1771286400000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.08257861110466229
+        },
+        {
+          "t": 1771372800000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.08189424339622367
+        },
+        {
+          "t": 1771459200000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.08528362181371313
+        },
+        {
+          "t": 1771545600000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.08431773462056136
+        },
+        {
+          "t": 1771632000000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.082864360953628
+        },
+        {
+          "t": 1771718400000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.08457282171288598
+        },
+        {
+          "t": 1771804800000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.08327046634953583
+        },
+        {
+          "t": 1771891200000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.08318420459788611
+        },
+        {
+          "t": 1771977600000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.07894504621725013
+        },
+        {
+          "t": 1772064000000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.0838965396143152
+        },
+        {
+          "t": 1772150400000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.08620625395723429
+        },
+        {
+          "t": 1772236800000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.08746205082958644
+        },
+        {
+          "t": 1772323200000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.08707189444929325
+        },
+        {
+          "t": 1772409600000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.0871486425508002
+        },
+        {
+          "t": 1772496000000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.0849123621268983
+        },
+        {
+          "t": 1772582400000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.08454808542680174
+        },
+        {
+          "t": 1772668800000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.08397414789357403
+        },
+        {
+          "t": 1772755200000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.08664410893082636
+        },
+        {
+          "t": 1772841600000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.0847883941404612
+        },
+        {
+          "t": 1772928000000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.08556849701124367
+        },
+        {
+          "t": 1773014400000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.08321406843213107
+        },
+        {
+          "t": 1773100800000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.08201015942956003
+        },
+        {
+          "t": 1773187200000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.07918706749947657
+        },
+        {
+          "t": 1773273600000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.08089286051635926
+        },
+        {
+          "t": 1773360000000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.08179041958062634
+        },
+        {
+          "t": 1773446400000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.08026823485408645
+        },
+        {
+          "t": 1773532800000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.08110408813715675
+        },
+        {
+          "t": 1773619200000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.07871322447968969
+        },
+        {
+          "t": 1773705600000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.07600174903326126
+        },
+        {
+          "t": 1773792000000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.08058645414254745
+        },
+        {
+          "t": 1773878400000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.0813252098473287
+        },
+        {
+          "t": 1773964800000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.08351709993374375
+        },
+        {
+          "t": 1774051200000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.08343463006142332
+        },
+        {
+          "t": 1774137600000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.08281179893945488
+        },
+        {
+          "t": 1774224000000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.08639380405568829
+        },
+        {
+          "t": 1774310400000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.08465006711228061
+        },
+        {
+          "t": 1774396800000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.08318318386890336
+        },
+        {
+          "t": 1774483200000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.08123223882070618
+        },
+        {
+          "t": 1774569600000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.08144979922287311
+        },
+        {
+          "t": 1774656000000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.08078929876112759
+        },
+        {
+          "t": 1774742400000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.08041732196132705
+        },
+        {
+          "t": 1774828800000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.07846813181146096
+        },
+        {
+          "t": 1774915200000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.07838472890169466
+        },
+        {
+          "t": 1775001600000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.07976100529660783
+        },
+        {
+          "t": 1775088000000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.08159698884915086
+        },
+        {
+          "t": 1775174400000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.0831239282244977
+        },
+        {
+          "t": 1775260800000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.0804602678106902
+        },
+        {
+          "t": 1775347200000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.08286533392718062
+        },
+        {
+          "t": 1775433600000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.08529766589675103
+        },
+        {
+          "t": 1775520000000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.08308502098642102
+        },
+        {
+          "t": 1775606400000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.08402144266153395
+        },
+        {
+          "t": 1775692800000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.08834171721032895
+        },
+        {
+          "t": 1775779200000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.08664113887242252
+        },
+        {
+          "t": 1775865600000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.0858310137911368
+        },
+        {
+          "t": 1775952000000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.08265259391190188
+        },
+        {
+          "t": 1776038400000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.08156511106677979
+        },
+        {
+          "t": 1776124800000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.08346449625116993
+        },
+        {
+          "t": 1776211200000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.07958292270096376
+        },
+        {
+          "t": 1776297600000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.07742061734155593
+        },
+        {
+          "t": 1776384000000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.07951518662519506
+        },
+        {
+          "t": 1776470400000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.0804079519868329
+        },
+        {
+          "t": 1776556800000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.07600114050466512
+        },
+        {
+          "t": 1776643200000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.07137453715733662
+        },
+        {
+          "t": 1776729600000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.07058053792872393
+        },
+        {
+          "t": 1776816000000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.0716036012022512
+        },
+        {
+          "t": 1776902400000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.07177505906316696
+        },
+        {
+          "t": 1776988800000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.07050099771498414
+        },
+        {
+          "t": 1777075200000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.07291288379090012
+        },
+        {
+          "t": 1777161600000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.07235666474260306
+        },
+        {
+          "t": 1777248000000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.07160997828429147
+        },
+        {
+          "t": 1777334400000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.07158371557906579
+        },
+        {
+          "t": 1777420800000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.07072010370643454
+        },
+        {
+          "t": 1777507200000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.07158793659829268
+        },
+        {
+          "t": 1777593600000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.07021257511177727
+        },
+        {
+          "t": 1777680000000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.06742089610131671
+        },
+        {
+          "t": 1777766400000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.06554046732731404
+        },
+        {
+          "t": 1777852800000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.06573916079620086
+        },
+        {
+          "t": 1777939200000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.06386246825995671
+        },
+        {
+          "t": 1778025600000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.06321791699335358
+        },
+        {
+          "t": 1778112000000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.06359778999294646
+        },
+        {
+          "t": 1778198400000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.06731256306019806
+        },
+        {
+          "t": 1778284800000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.06808684574853822
+        },
+        {
+          "t": 1778371200000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.07429365325819245
+        },
+        {
+          "t": 1778457600000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.07103436103228421
+        },
+        {
+          "t": 1778544000000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.06848819235572651
+        },
+        {
+          "t": 1778630400000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.06675782924623656
+        },
+        {
+          "t": 1778716800000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.06679133557360876
+        },
+        {
+          "t": 1778803200000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.06467937824289177
+        },
+        {
+          "t": 1778889600000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.06551776791189995
+        },
+        {
+          "t": 1778976000000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.06308380843010866
+        },
+        {
+          "t": 1779062400000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.06116391130463959
+        },
+        {
+          "t": 1779148800000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.057227705849993295
+        },
+        {
+          "t": 1779235200000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.05654756439391415
+        },
+        {
+          "t": 1779321600000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.05420831719218829
+        },
+        {
+          "t": 1779408000000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.05328634486744288
+        },
+        {
+          "t": 1779494400000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.05035330931630758
+        },
+        {
+          "t": 1779580800000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.04924034591608997
+        },
+        {
+          "t": 1779667200000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.04680170236807225
+        },
+        {
+          "t": 1779753600000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.04519909188715547
+        },
+        {
+          "t": 1779840000000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.04301397780656426
+        },
+        {
+          "t": 1779926400000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.041885523989560886
+        },
+        {
+          "t": 1780012800000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.04308892181688819
+        },
+        {
+          "t": 1780099200000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.04247694799725087
+        },
+        {
+          "t": 1780185600000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.041466310161318326
+        },
+        {
+          "t": 1780272000000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.04102843668207298
+        },
+        {
+          "t": 1780358400000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.041470814272908774
+        },
+        {
+          "t": 1780444800000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.04105478906070713
+        },
+        {
+          "t": 1780531200000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.04143122073124117
+        },
+        {
+          "t": 1780617600000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.03819636477499158
+        },
+        {
+          "t": 1780704000000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.040588870243603706
+        },
+        {
+          "t": 1780790400000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.0401248552662068
+        },
+        {
+          "t": 1780876800000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.04583594455894915
+        },
+        {
+          "t": 1780963200000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.04878371459065104
+        },
+        {
+          "t": 1781049600000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.04894426867902
+        },
+        {
+          "t": 1781136000000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.05056022317498955
+        },
+        {
+          "t": 1781222400000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.052473733294523116
+        },
+        {
+          "t": 1781308800000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.05150078407226969
+        },
+        {
+          "t": 1781395200000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.05296253721632159
+        },
+        {
+          "t": 1781481600000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.055026594333997904
+        },
+        {
+          "t": 1781568000000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.055676915192315685
+        },
+        {
+          "t": 1781654400000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.059024077825078125
+        },
+        {
+          "t": 1781740800000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.05964593104319673
+        },
+        {
+          "t": 1781827200000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.061120030163752975
+        },
+        {
+          "t": 1781913600000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.062239429790207246
+        },
+        {
+          "t": 1782000000000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.0625020853210421
+        },
+        {
+          "t": 1782086400000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.06315414864015537
+        },
+        {
+          "t": 1782172800000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.0635548632046871
+        },
+        {
+          "t": 1782259200000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.06416557766138085
+        },
+        {
+          "t": 1782345600000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.06341738041833947
+        },
+        {
+          "t": 1782432000000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.061417906995146834
+        },
+        {
+          "t": 1782518400000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.06144456864677103
+        },
+        {
+          "t": 1782604800000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.0581511850379167
+        },
+        {
+          "t": 1782691200000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.05732824328633714
+        },
+        {
+          "t": 1782777600000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.05629825698386788
+        },
+        {
+          "t": 1782864000000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.056363541966181166
+        },
+        {
+          "t": 1782950400000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.05806287052318019
+        },
+        {
+          "t": 1783036800000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.05667484136662063
+        },
+        {
+          "t": 1783123200000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.05733651269272422
+        },
+        {
+          "t": 1783209600000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.05854533577828812
+        },
+        {
+          "t": 1783296000000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.05846924712954884
+        },
+        {
+          "t": 1783382400000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.05805590805397121
+        },
+        {
+          "t": 1783468800000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.058637156830492775
+        },
+        {
+          "t": 1783555200000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.05794690677345718
+        },
+        {
+          "t": 1783641600000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.05888503270778346
+        },
+        {
+          "t": 1783728000000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.059233233401275405
+        },
+        {
+          "t": 1783814400000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.055912798305126174
+        },
+        {
+          "t": 1783900800000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.055067256432597585
+        },
+        {
+          "t": 1783987200000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.05543821128940423
+        },
+        {
+          "t": 1784073600000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.05852278803325616
+        },
+        {
+          "t": 1784160000000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.05601446559792662
+        },
+        {
+          "t": 1784246400000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.054369816968824744
+        },
+        {
+          "t": 1784332800000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.05302797549143959
+        },
+        {
+          "t": 1784419200000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.05348290498941392
+        },
+        {
+          "t": 1784505600000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.05205547832944319
+        },
+        {
+          "t": 1784592000000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.051239279351561785
+        },
+        {
+          "t": 1784678400000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.05298888877913235
+        },
+        {
+          "t": 1784764800000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.05360498936091288
+        },
+        {
+          "t": 1784851200000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.053546902555012335
+        },
+        {
+          "t": 1784937600000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.05314124217189929
+        },
+        {
+          "t": 1785024000000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.05354461845450801
+        },
+        {
+          "t": 1785110400000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.05502363386887651
+        },
+        {
+          "t": 1785196800000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.05212805870218817
+        },
+        {
+          "t": 1785283200000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.048806909367326956
+        },
+        {
+          "t": 1785369600000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.0588392763423127
+        },
+        {
+          "t": 1785456000000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.05599089031367318
+        },
+        {
+          "t": 1785542400000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.05603115488979975
+        },
+        {
+          "t": 1785628800000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.056126155609602185
+        },
+        {
+          "t": 1785715200000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.05702472900492232
+        },
+        {
+          "t": 1785801600000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.06010091343430933
+        },
+        {
+          "t": 1785888000000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.06693245571521998
+        },
+        {
+          "t": 1785974400000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.06856728682998602
+        },
+        {
+          "t": 1786060800000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.06746831509811933
+        },
+        {
+          "t": 1786147200000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.06741473983817953
+        },
+        {
+          "t": 1786233600000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.06637863863184712
+        },
+        {
+          "t": 1786320000000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.06583959315727016
+        },
+        {
+          "t": 1786406400000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.06605662529182654
+        },
+        {
+          "t": 1786492800000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.06670619158103205
+        },
+        {
+          "t": 1786579200000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.06599433630804136
+        },
+        {
+          "t": 1786665600000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.061696963023485714
+        },
+        {
+          "t": 1786752000000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.060933497700057425
+        },
+        {
+          "t": 1786838400000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.05737593146518779
+        },
+        {
+          "t": 1786924800000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.05497069139755382
+        },
+        {
+          "t": 1787011200000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.05469479431227927
+        },
+        {
+          "t": 1787097600000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.055071858094444405
+        },
+        {
+          "t": 1787184000000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.05348144678620821
+        },
+        {
+          "t": 1787270400000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.053434984547363534
+        },
+        {
+          "t": 1787356800000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.055311304776065606
+        },
+        {
+          "t": 1787443200000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.05617660589506438
+        },
+        {
+          "t": 1787529600000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.05390432474989349
+        },
+        {
+          "t": 1787616000000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.0599256769259769
+        },
+        {
+          "t": 1787702400000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.06608726555272038
+        },
+        {
+          "t": 1787788800000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.06396919905909412
+        },
+        {
+          "t": 1787875200000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.0685803486316586
+        },
+        {
+          "t": 1787961600000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.06883807389442415
+        },
+        {
+          "t": 1788048000000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.06836336654112339
+        },
+        {
+          "t": 1788134400000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.0693507953408541
+        },
+        {
+          "t": 1788220800000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.06669039573667379
+        },
+        {
+          "t": 1788307200000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.0659270627189349
+        },
+        {
+          "t": 1788393600000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.0658267990216336
+        },
+        {
+          "t": 1788480000000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.06534320767935621
+        },
+        {
+          "t": 1788566400000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.06476329655838596
+        },
+        {
+          "t": 1788652800000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.06212030856528025
+        },
+        {
+          "t": 1788739200000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.06140114723847088
+        },
+        {
+          "t": 1788825600000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.06262398765720856
+        },
+        {
+          "t": 1788912000000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.06682488350045926
+        },
+        {
+          "t": 1788998400000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.06692416559681935
+        },
+        {
+          "t": 1789084800000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.06523919319295966
+        },
+        {
+          "t": 1789171200000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.0633106358156358
+        },
+        {
+          "t": 1789257600000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.06321917758021812
+        },
+        {
+          "t": 1789344000000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.06256752340235097
+        },
+        {
+          "t": 1789430400000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.06281039312295965
+        },
+        {
+          "t": 1789516800000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.06194932897988881
+        },
+        {
+          "t": 1789603200000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.06362044803159073
+        },
+        {
+          "t": 1789689600000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.0634224211298956
+        },
+        {
+          "t": 1789776000000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.06352986543884329
+        },
+        {
+          "t": 1789862400000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.05937220167590559
+        },
+        {
+          "t": 1789948800000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.0560906735239166
+        },
+        {
+          "t": 1790035200000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.053487026335534996
+        },
+        {
+          "t": 1790121600000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.05405094587127805
+        },
+        {
+          "t": 1790208000000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.0588204863029496
+        },
+        {
+          "t": 1790294400000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.055018185498906996
+        },
+        {
+          "t": 1790380800000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.05381879921532276
+        },
+        {
+          "t": 1790467200000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.05697986732933683
+        },
+        {
+          "t": 1790553600000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.056331422885460496
+        },
+        {
+          "t": 1790640000000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.052225160987494836
+        },
+        {
+          "t": 1790726400000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.05471317321346323
+        },
+        {
+          "t": 1790812800000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.05504232168539023
+        },
+        {
+          "t": 1790899200000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.054613043489100926
+        },
+        {
+          "t": 1790985600000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.053681706800524316
+        },
+        {
+          "t": 1791072000000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.050061742002823886
+        },
+        {
+          "t": 1791158400000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.04893981655175196
+        },
+        {
+          "t": 1791244800000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.05061696432095068
+        },
+        {
+          "t": 1791331200000,
+          "coins": [
+            "LAUNCHCOIN",
+            "MKR"
+          ],
+          "stale_notional_equity": 0.050872885639933356
+        }
+      ],
+      "ending_equity": 10298433.122333394
+    }
+  }
+}

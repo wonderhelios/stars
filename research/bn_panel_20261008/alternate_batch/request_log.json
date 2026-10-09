@@ -1,0 +1,2430 @@
+[
+  {
+    "time": "2026-10-08T17:53:47.836138+00:00",
+    "name": "bn_BTCUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=BTCUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:53:48.820111+00:00",
+    "name": "hl_BTC",
+    "url": "https://api.hyperliquid.xyz/info",
+    "body": {
+      "type": "candleSnapshot",
+      "req": {
+        "coin": "BTC",
+        "interval": "1d",
+        "startTime": 1790726400000,
+        "endTime": 1791417599999
+      }
+    },
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:53:50.425018+00:00",
+    "name": "bn_ETHUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=ETHUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:53:51.602520+00:00",
+    "name": "hl_ETH",
+    "url": "https://api.hyperliquid.xyz/info",
+    "body": {
+      "type": "candleSnapshot",
+      "req": {
+        "coin": "ETH",
+        "interval": "1d",
+        "startTime": 1790726400000,
+        "endTime": 1791417599999
+      }
+    },
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:53:52.900742+00:00",
+    "name": "bn_BNBUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=BNBUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:53:53.841204+00:00",
+    "name": "hl_BNB",
+    "url": "https://api.hyperliquid.xyz/info",
+    "body": {
+      "type": "candleSnapshot",
+      "req": {
+        "coin": "BNB",
+        "interval": "1d",
+        "startTime": 1790726400000,
+        "endTime": 1791417599999
+      }
+    },
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:53:54.941900+00:00",
+    "name": "bn_BCHUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=BCHUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:53:55.729101+00:00",
+    "name": "hl_BCH",
+    "url": "https://api.hyperliquid.xyz/info",
+    "body": {
+      "type": "candleSnapshot",
+      "req": {
+        "coin": "BCH",
+        "interval": "1d",
+        "startTime": 1790726400000,
+        "endTime": 1791417599999
+      }
+    },
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:53:56.770822+00:00",
+    "name": "bn_LTCUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=LTCUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:53:57.536995+00:00",
+    "name": "hl_LTC",
+    "url": "https://api.hyperliquid.xyz/info",
+    "body": {
+      "type": "candleSnapshot",
+      "req": {
+        "coin": "LTC",
+        "interval": "1d",
+        "startTime": 1790726400000,
+        "endTime": 1791417599999
+      }
+    },
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:53:58.472922+00:00",
+    "name": "bn_ETCUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=ETCUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:53:59.248772+00:00",
+    "name": "hl_ETC",
+    "url": "https://api.hyperliquid.xyz/info",
+    "body": {
+      "type": "candleSnapshot",
+      "req": {
+        "coin": "ETC",
+        "interval": "1d",
+        "startTime": 1790726400000,
+        "endTime": 1791417599999
+      }
+    },
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:54:00.510349+00:00",
+    "name": "bn_LINKUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=LINKUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:54:01.382793+00:00",
+    "name": "hl_LINK",
+    "url": "https://api.hyperliquid.xyz/info",
+    "body": {
+      "type": "candleSnapshot",
+      "req": {
+        "coin": "LINK",
+        "interval": "1d",
+        "startTime": 1790726400000,
+        "endTime": 1791417599999
+      }
+    },
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:54:02.347097+00:00",
+    "name": "bn_ADAUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=ADAUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:54:03.105088+00:00",
+    "name": "hl_ADA",
+    "url": "https://api.hyperliquid.xyz/info",
+    "body": {
+      "type": "candleSnapshot",
+      "req": {
+        "coin": "ADA",
+        "interval": "1d",
+        "startTime": 1790726400000,
+        "endTime": 1791417599999
+      }
+    },
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:54:04.584954+00:00",
+    "name": "bn_ATOMUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=ATOMUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:54:05.712445+00:00",
+    "name": "hl_ATOM",
+    "url": "https://api.hyperliquid.xyz/info",
+    "body": {
+      "type": "candleSnapshot",
+      "req": {
+        "coin": "ATOM",
+        "interval": "1d",
+        "startTime": 1790726400000,
+        "endTime": 1791417599999
+      }
+    },
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:54:06.592405+00:00",
+    "name": "bn_DOGEUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=DOGEUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:54:07.563790+00:00",
+    "name": "hl_DOGE",
+    "url": "https://api.hyperliquid.xyz/info",
+    "body": {
+      "type": "candleSnapshot",
+      "req": {
+        "coin": "DOGE",
+        "interval": "1d",
+        "startTime": 1790726400000,
+        "endTime": 1791417599999
+      }
+    },
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:54:08.474459+00:00",
+    "name": "bn_DOTUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=DOTUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:54:09.407148+00:00",
+    "name": "hl_DOT",
+    "url": "https://api.hyperliquid.xyz/info",
+    "body": {
+      "type": "candleSnapshot",
+      "req": {
+        "coin": "DOT",
+        "interval": "1d",
+        "startTime": 1790726400000,
+        "endTime": 1791417599999
+      }
+    },
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:54:10.339492+00:00",
+    "name": "bn_CRVUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=CRVUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:54:11.104934+00:00",
+    "name": "hl_CRV",
+    "url": "https://api.hyperliquid.xyz/info",
+    "body": {
+      "type": "candleSnapshot",
+      "req": {
+        "coin": "CRV",
+        "interval": "1d",
+        "startTime": 1790726400000,
+        "endTime": 1791417599999
+      }
+    },
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:54:12.003902+00:00",
+    "name": "bn_SOLUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=SOLUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:54:12.798241+00:00",
+    "name": "hl_SOL",
+    "url": "https://api.hyperliquid.xyz/info",
+    "body": {
+      "type": "candleSnapshot",
+      "req": {
+        "coin": "SOL",
+        "interval": "1d",
+        "startTime": 1790726400000,
+        "endTime": 1791417599999
+      }
+    },
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:54:14.363713+00:00",
+    "name": "bn_UNIUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=UNIUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:54:15.318847+00:00",
+    "name": "hl_UNI",
+    "url": "https://api.hyperliquid.xyz/info",
+    "body": {
+      "type": "candleSnapshot",
+      "req": {
+        "coin": "UNI",
+        "interval": "1d",
+        "startTime": 1790726400000,
+        "endTime": 1791417599999
+      }
+    },
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:54:16.218754+00:00",
+    "name": "bn_AVAXUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=AVAXUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:54:17.650517+00:00",
+    "name": "hl_AVAX",
+    "url": "https://api.hyperliquid.xyz/info",
+    "body": {
+      "type": "candleSnapshot",
+      "req": {
+        "coin": "AVAX",
+        "interval": "1d",
+        "startTime": 1790726400000,
+        "endTime": 1791417599999
+      }
+    },
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:54:18.602290+00:00",
+    "name": "bn_FILUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=FILUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:54:19.348821+00:00",
+    "name": "hl_FIL",
+    "url": "https://api.hyperliquid.xyz/info",
+    "body": {
+      "type": "candleSnapshot",
+      "req": {
+        "coin": "FIL",
+        "interval": "1d",
+        "startTime": 1790726400000,
+        "endTime": 1791417599999
+      }
+    },
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:54:20.411234+00:00",
+    "name": "bn_AAVEUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=AAVEUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:54:21.278988+00:00",
+    "name": "hl_AAVE",
+    "url": "https://api.hyperliquid.xyz/info",
+    "body": {
+      "type": "candleSnapshot",
+      "req": {
+        "coin": "AAVE",
+        "interval": "1d",
+        "startTime": 1790726400000,
+        "endTime": 1791417599999
+      }
+    },
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:54:22.294167+00:00",
+    "name": "bn_XRPUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=XRPUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:54:23.374129+00:00",
+    "name": "hl_XRP",
+    "url": "https://api.hyperliquid.xyz/info",
+    "body": {
+      "type": "candleSnapshot",
+      "req": {
+        "coin": "XRP",
+        "interval": "1d",
+        "startTime": 1790726400000,
+        "endTime": 1791417599999
+      }
+    },
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:54:24.237094+00:00",
+    "name": "bn_APTUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=APTUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:54:25.094317+00:00",
+    "name": "hl_APT",
+    "url": "https://api.hyperliquid.xyz/info",
+    "body": {
+      "type": "candleSnapshot",
+      "req": {
+        "coin": "APT",
+        "interval": "1d",
+        "startTime": 1790726400000,
+        "endTime": 1791417599999
+      }
+    },
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:54:26.260989+00:00",
+    "name": "bn_TRXUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=TRXUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:54:27.182109+00:00",
+    "name": "hl_TRX",
+    "url": "https://api.hyperliquid.xyz/info",
+    "body": {
+      "type": "candleSnapshot",
+      "req": {
+        "coin": "TRX",
+        "interval": "1d",
+        "startTime": 1790726400000,
+        "endTime": 1791417599999
+      }
+    },
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:54:28.144276+00:00",
+    "name": "bn_ARBUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=ARBUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:54:29.984172+00:00",
+    "name": "hl_ARB",
+    "url": "https://api.hyperliquid.xyz/info",
+    "body": {
+      "type": "candleSnapshot",
+      "req": {
+        "coin": "ARB",
+        "interval": "1d",
+        "startTime": 1790726400000,
+        "endTime": 1791417599999
+      }
+    },
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:54:31.039193+00:00",
+    "name": "bn_OPUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=OPUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:54:31.873113+00:00",
+    "name": "hl_OP",
+    "url": "https://api.hyperliquid.xyz/info",
+    "body": {
+      "type": "candleSnapshot",
+      "req": {
+        "coin": "OP",
+        "interval": "1d",
+        "startTime": 1790726400000,
+        "endTime": 1791417599999
+      }
+    },
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:54:32.925226+00:00",
+    "name": "bn_LDOUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=LDOUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:54:33.952582+00:00",
+    "name": "hl_LDO",
+    "url": "https://api.hyperliquid.xyz/info",
+    "body": {
+      "type": "candleSnapshot",
+      "req": {
+        "coin": "LDO",
+        "interval": "1d",
+        "startTime": 1790726400000,
+        "endTime": 1791417599999
+      }
+    },
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:54:34.823133+00:00",
+    "name": "bn_NEARUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=NEARUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:54:36.329529+00:00",
+    "name": "hl_NEAR",
+    "url": "https://api.hyperliquid.xyz/info",
+    "body": {
+      "type": "candleSnapshot",
+      "req": {
+        "coin": "NEAR",
+        "interval": "1d",
+        "startTime": 1790726400000,
+        "endTime": 1791417599999
+      }
+    },
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:54:37.803042+00:00",
+    "name": "bn_SUIUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=SUIUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:54:38.570175+00:00",
+    "name": "hl_SUI",
+    "url": "https://api.hyperliquid.xyz/info",
+    "body": {
+      "type": "candleSnapshot",
+      "req": {
+        "coin": "SUI",
+        "interval": "1d",
+        "startTime": 1790726400000,
+        "endTime": 1791417599999
+      }
+    },
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:54:39.459165+00:00",
+    "name": "bn_WLDUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=WLDUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:54:40.222997+00:00",
+    "name": "hl_WLD",
+    "url": "https://api.hyperliquid.xyz/info",
+    "body": {
+      "type": "candleSnapshot",
+      "req": {
+        "coin": "WLD",
+        "interval": "1d",
+        "startTime": 1790726400000,
+        "endTime": 1791417599999
+      }
+    },
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:54:41.455792+00:00",
+    "name": "bn_XLMUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=XLMUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:54:42.279537+00:00",
+    "name": "hl_XLM",
+    "url": "https://api.hyperliquid.xyz/info",
+    "body": {
+      "type": "candleSnapshot",
+      "req": {
+        "coin": "XLM",
+        "interval": "1d",
+        "startTime": 1790726400000,
+        "endTime": 1791417599999
+      }
+    },
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:54:43.218819+00:00",
+    "name": "bn_ICPUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=ICPUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:54:44.317792+00:00",
+    "name": "hl_ICP",
+    "url": "https://api.hyperliquid.xyz/info",
+    "body": {
+      "type": "candleSnapshot",
+      "req": {
+        "coin": "ICP",
+        "interval": "1d",
+        "startTime": 1790726400000,
+        "endTime": 1791417599999
+      }
+    },
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:54:45.562283+00:00",
+    "name": "bn_SEIUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=SEIUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:54:46.523506+00:00",
+    "name": "hl_SEI",
+    "url": "https://api.hyperliquid.xyz/info",
+    "body": {
+      "type": "candleSnapshot",
+      "req": {
+        "coin": "SEI",
+        "interval": "1d",
+        "startTime": 1790726400000,
+        "endTime": 1791417599999
+      }
+    },
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:54:48.109514+00:00",
+    "name": "bn_HBARUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=HBARUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:54:49.028467+00:00",
+    "name": "hl_HBAR",
+    "url": "https://api.hyperliquid.xyz/info",
+    "body": {
+      "type": "candleSnapshot",
+      "req": {
+        "coin": "HBAR",
+        "interval": "1d",
+        "startTime": 1790726400000,
+        "endTime": 1791417599999
+      }
+    },
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:54:50.019743+00:00",
+    "name": "bn_CAKEUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=CAKEUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:54:51.996493+00:00",
+    "name": "hl_CAKE",
+    "url": "https://api.hyperliquid.xyz/info",
+    "body": {
+      "type": "candleSnapshot",
+      "req": {
+        "coin": "CAKE",
+        "interval": "1d",
+        "startTime": 1790726400000,
+        "endTime": 1791417599999
+      }
+    },
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:54:54.242555+00:00",
+    "name": "bn_BONKUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=BONKUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:54:55.053322+00:00",
+    "name": "hl_kBONK",
+    "url": "https://api.hyperliquid.xyz/info",
+    "body": {
+      "type": "candleSnapshot",
+      "req": {
+        "coin": "kBONK",
+        "interval": "1d",
+        "startTime": 1790726400000,
+        "endTime": 1791417599999
+      }
+    },
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:54:55.888467+00:00",
+    "name": "bn_ONDOUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=ONDOUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:54:56.640293+00:00",
+    "name": "hl_ONDO",
+    "url": "https://api.hyperliquid.xyz/info",
+    "body": {
+      "type": "candleSnapshot",
+      "req": {
+        "coin": "ONDO",
+        "interval": "1d",
+        "startTime": 1790726400000,
+        "endTime": 1791417599999
+      }
+    },
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:54:57.572257+00:00",
+    "name": "bn_TAOUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=TAOUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:54:58.741356+00:00",
+    "name": "hl_TAO",
+    "url": "https://api.hyperliquid.xyz/info",
+    "body": {
+      "type": "candleSnapshot",
+      "req": {
+        "coin": "TAO",
+        "interval": "1d",
+        "startTime": 1790726400000,
+        "endTime": 1791417599999
+      }
+    },
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:54:59.720534+00:00",
+    "name": "bn_JUPUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=JUPUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:55:00.536402+00:00",
+    "name": "hl_JUP",
+    "url": "https://api.hyperliquid.xyz/info",
+    "body": {
+      "type": "candleSnapshot",
+      "req": {
+        "coin": "JUP",
+        "interval": "1d",
+        "startTime": 1790726400000,
+        "endTime": 1791417599999
+      }
+    },
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:55:02.368473+00:00",
+    "name": "bn_STRKUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=STRKUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:55:03.129787+00:00",
+    "name": "hl_STRK",
+    "url": "https://api.hyperliquid.xyz/info",
+    "body": {
+      "type": "candleSnapshot",
+      "req": {
+        "coin": "STRK",
+        "interval": "1d",
+        "startTime": 1790726400000,
+        "endTime": 1791417599999
+      }
+    },
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:55:04.339905+00:00",
+    "name": "bn_ENAUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=ENAUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:55:05.666912+00:00",
+    "name": "hl_ENA",
+    "url": "https://api.hyperliquid.xyz/info",
+    "body": {
+      "type": "candleSnapshot",
+      "req": {
+        "coin": "ENA",
+        "interval": "1d",
+        "startTime": 1790726400000,
+        "endTime": 1791417599999
+      }
+    },
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:55:07.204503+00:00",
+    "name": "bn_POLUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=POLUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:55:08.351585+00:00",
+    "name": "hl_POL",
+    "url": "https://api.hyperliquid.xyz/info",
+    "body": {
+      "type": "candleSnapshot",
+      "req": {
+        "coin": "POL",
+        "interval": "1d",
+        "startTime": 1790726400000,
+        "endTime": 1791417599999
+      }
+    },
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:55:09.283795+00:00",
+    "name": "bn_VIRTUALUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=VIRTUALUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:55:10.696101+00:00",
+    "name": "hl_VIRTUAL",
+    "url": "https://api.hyperliquid.xyz/info",
+    "body": {
+      "type": "candleSnapshot",
+      "req": {
+        "coin": "VIRTUAL",
+        "interval": "1d",
+        "startTime": 1790726400000,
+        "endTime": 1791417599999
+      }
+    },
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:55:11.534556+00:00",
+    "name": "bn_PENGUUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=PENGUUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:55:12.607549+00:00",
+    "name": "hl_PENGU",
+    "url": "https://api.hyperliquid.xyz/info",
+    "body": {
+      "type": "candleSnapshot",
+      "req": {
+        "coin": "PENGU",
+        "interval": "1d",
+        "startTime": 1790726400000,
+        "endTime": 1791417599999
+      }
+    },
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:55:13.692073+00:00",
+    "name": "bn_HYPEUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=HYPEUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:55:14.987768+00:00",
+    "name": "hl_HYPE",
+    "url": "https://api.hyperliquid.xyz/info",
+    "body": {
+      "type": "candleSnapshot",
+      "req": {
+        "coin": "HYPE",
+        "interval": "1d",
+        "startTime": 1790726400000,
+        "endTime": 1791417599999
+      }
+    },
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:55:16.430597+00:00",
+    "name": "bn_TRUMPUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=TRUMPUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:55:17.207386+00:00",
+    "name": "hl_TRUMP",
+    "url": "https://api.hyperliquid.xyz/info",
+    "body": {
+      "type": "candleSnapshot",
+      "req": {
+        "coin": "TRUMP",
+        "interval": "1d",
+        "startTime": 1790726400000,
+        "endTime": 1791417599999
+      }
+    },
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:55:18.079249+00:00",
+    "name": "bn_XAUTUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=XAUTUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:55:19.103374+00:00",
+    "name": "bn_PUMPUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=PUMPUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:55:20.831040+00:00",
+    "name": "hl_PUMP",
+    "url": "https://api.hyperliquid.xyz/info",
+    "body": {
+      "type": "candleSnapshot",
+      "req": {
+        "coin": "PUMP",
+        "interval": "1d",
+        "startTime": 1790726400000,
+        "endTime": 1791417599999
+      }
+    },
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:55:21.764887+00:00",
+    "name": "bn_SKYUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=SKYUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:55:22.595238+00:00",
+    "name": "hl_SKY",
+    "url": "https://api.hyperliquid.xyz/info",
+    "body": {
+      "type": "candleSnapshot",
+      "req": {
+        "coin": "SKY",
+        "interval": "1d",
+        "startTime": 1790726400000,
+        "endTime": 1791417599999
+      }
+    },
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:55:23.481128+00:00",
+    "name": "bn_WLFIUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=WLFIUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:55:24.266198+00:00",
+    "name": "hl_WLFI",
+    "url": "https://api.hyperliquid.xyz/info",
+    "body": {
+      "type": "candleSnapshot",
+      "req": {
+        "coin": "WLFI",
+        "interval": "1d",
+        "startTime": 1790726400000,
+        "endTime": 1791417599999
+      }
+    },
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:55:25.251194+00:00",
+    "name": "bn_ASTERUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=ASTERUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:55:26.055884+00:00",
+    "name": "hl_ASTER",
+    "url": "https://api.hyperliquid.xyz/info",
+    "body": {
+      "type": "candleSnapshot",
+      "req": {
+        "coin": "ASTER",
+        "interval": "1d",
+        "startTime": 1790726400000,
+        "endTime": 1791417599999
+      }
+    },
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:55:26.881524+00:00",
+    "name": "bn_AEROUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=AEROUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:55:27.825397+00:00",
+    "name": "hl_AERO",
+    "url": "https://api.hyperliquid.xyz/info",
+    "body": {
+      "type": "candleSnapshot",
+      "req": {
+        "coin": "AERO",
+        "interval": "1d",
+        "startTime": 1790726400000,
+        "endTime": 1791417599999
+      }
+    },
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:55:29.335471+00:00",
+    "name": "bn_1INCHUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=1INCHUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:55:29.653892+00:00",
+    "name": "bn_ANKRUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=ANKRUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:55:30.435021+00:00",
+    "name": "bn_AXLUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=AXLUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:55:31.233073+00:00",
+    "name": "bn_BLURUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=BLURUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:55:31.355596+00:00",
+    "name": "bn_CELRUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=CELRUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:55:32.205899+00:00",
+    "name": "hl_BLUR",
+    "url": "https://api.hyperliquid.xyz/info",
+    "body": {
+      "type": "candleSnapshot",
+      "req": {
+        "coin": "BLUR",
+        "interval": "1d",
+        "startTime": 1790726400000,
+        "endTime": 1791417599999
+      }
+    },
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:55:32.290486+00:00",
+    "name": "bn_COTIUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=COTIUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:55:33.128163+00:00",
+    "name": "bn_ETHFIUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=ETHFIUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:55:33.165271+00:00",
+    "name": "bn_GMXUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=GMXUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:55:33.955407+00:00",
+    "name": "hl_ETHFI",
+    "url": "https://api.hyperliquid.xyz/info",
+    "body": {
+      "type": "candleSnapshot",
+      "req": {
+        "coin": "ETHFI",
+        "interval": "1d",
+        "startTime": 1790726400000,
+        "endTime": 1791417599999
+      }
+    },
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:55:34.318864+00:00",
+    "name": "hl_GMX",
+    "url": "https://api.hyperliquid.xyz/info",
+    "body": {
+      "type": "candleSnapshot",
+      "req": {
+        "coin": "GMX",
+        "interval": "1d",
+        "startTime": 1790726400000,
+        "endTime": 1791417599999
+      }
+    },
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:55:35.062595+00:00",
+    "name": "bn_INJUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=INJUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:55:35.581778+00:00",
+    "name": "bn_JASMYUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=JASMYUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:55:36.802956+00:00",
+    "name": "hl_INJ",
+    "url": "https://api.hyperliquid.xyz/info",
+    "body": {
+      "type": "candleSnapshot",
+      "req": {
+        "coin": "INJ",
+        "interval": "1d",
+        "startTime": 1790726400000,
+        "endTime": 1791417599999
+      }
+    },
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:55:36.900724+00:00",
+    "name": "bn_LINEAUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=LINEAUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:55:37.746735+00:00",
+    "name": "hl_LINEA",
+    "url": "https://api.hyperliquid.xyz/info",
+    "body": {
+      "type": "candleSnapshot",
+      "req": {
+        "coin": "LINEA",
+        "interval": "1d",
+        "startTime": 1790726400000,
+        "endTime": 1791417599999
+      }
+    },
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:55:38.456389+00:00",
+    "name": "bn_ALICEUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=ALICEUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:55:39.533276+00:00",
+    "name": "bn_API3USDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=API3USDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:55:39.600188+00:00",
+    "name": "bn_ARUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=ARUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:55:40.443267+00:00",
+    "name": "hl_AR",
+    "url": "https://api.hyperliquid.xyz/info",
+    "body": {
+      "type": "candleSnapshot",
+      "req": {
+        "coin": "AR",
+        "interval": "1d",
+        "startTime": 1790726400000,
+        "endTime": 1791417599999
+      }
+    },
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:55:40.463686+00:00",
+    "name": "bn_ARKMUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=ARKMUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:55:41.402924+00:00",
+    "name": "bn_AXSUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=AXSUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:55:41.867816+00:00",
+    "name": "bn_BANDUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=BANDUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:55:42.479113+00:00",
+    "name": "hl_AXS",
+    "url": "https://api.hyperliquid.xyz/info",
+    "body": {
+      "type": "candleSnapshot",
+      "req": {
+        "coin": "AXS",
+        "interval": "1d",
+        "startTime": 1790726400000,
+        "endTime": 1791417599999
+      }
+    },
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:55:42.804034+00:00",
+    "name": "bn_BATUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=BATUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:55:43.340494+00:00",
+    "name": "bn_CELOUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=CELOUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:55:44.111602+00:00",
+    "name": "hl_CELO",
+    "url": "https://api.hyperliquid.xyz/info",
+    "body": {
+      "type": "candleSnapshot",
+      "req": {
+        "coin": "CELO",
+        "interval": "1d",
+        "startTime": 1790726400000,
+        "endTime": 1791417599999
+      }
+    },
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:55:44.243326+00:00",
+    "name": "bn_CETUSUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=CETUSUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:55:45.080268+00:00",
+    "name": "bn_CHZUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=CHZUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:55:45.233696+00:00",
+    "name": "bn_COMPUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=COMPUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:55:45.952076+00:00",
+    "name": "bn_CYBERUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=CYBERUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:55:45.999919+00:00",
+    "name": "hl_COMP",
+    "url": "https://api.hyperliquid.xyz/info",
+    "body": {
+      "type": "candleSnapshot",
+      "req": {
+        "coin": "COMP",
+        "interval": "1d",
+        "startTime": 1790726400000,
+        "endTime": 1791417599999
+      }
+    },
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:55:47.722707+00:00",
+    "name": "hl_CYBER",
+    "url": "https://api.hyperliquid.xyz/info",
+    "body": {
+      "type": "candleSnapshot",
+      "req": {
+        "coin": "CYBER",
+        "interval": "1d",
+        "startTime": 1790726400000,
+        "endTime": 1791417599999
+      }
+    },
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:55:47.760783+00:00",
+    "name": "bn_DYDXUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=DYDXUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:55:48.536929+00:00",
+    "name": "hl_DYDX",
+    "url": "https://api.hyperliquid.xyz/info",
+    "body": {
+      "type": "candleSnapshot",
+      "req": {
+        "coin": "DYDX",
+        "interval": "1d",
+        "startTime": 1790726400000,
+        "endTime": 1791417599999
+      }
+    },
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:55:48.625979+00:00",
+    "name": "bn_FETUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=FETUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:55:49.376495+00:00",
+    "name": "hl_FET",
+    "url": "https://api.hyperliquid.xyz/info",
+    "body": {
+      "type": "candleSnapshot",
+      "req": {
+        "coin": "FET",
+        "interval": "1d",
+        "startTime": 1790726400000,
+        "endTime": 1791417599999
+      }
+    },
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:55:49.406590+00:00",
+    "name": "bn_FLOWUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=FLOWUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:55:50.272219+00:00",
+    "name": "bn_GRTUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=GRTUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:55:50.298969+00:00",
+    "name": "bn_GASUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=GASUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:55:51.240263+00:00",
+    "name": "hl_GAS",
+    "url": "https://api.hyperliquid.xyz/info",
+    "body": {
+      "type": "candleSnapshot",
+      "req": {
+        "coin": "GAS",
+        "interval": "1d",
+        "startTime": 1790726400000,
+        "endTime": 1791417599999
+      }
+    },
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:55:51.274587+00:00",
+    "name": "bn_HOTUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=HOTUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:55:52.171750+00:00",
+    "name": "bn_IDUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=IDUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:55:52.463020+00:00",
+    "name": "bn_IMXUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=IMXUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:55:53.369203+00:00",
+    "name": "bn_IOTAUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=IOTAUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:55:54.127769+00:00",
+    "name": "hl_IMX",
+    "url": "https://api.hyperliquid.xyz/info",
+    "body": {
+      "type": "candleSnapshot",
+      "req": {
+        "coin": "IMX",
+        "interval": "1d",
+        "startTime": 1790726400000,
+        "endTime": 1791417599999
+      }
+    },
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:55:54.133126+00:00",
+    "name": "hl_IOTA",
+    "url": "https://api.hyperliquid.xyz/info",
+    "body": {
+      "type": "candleSnapshot",
+      "req": {
+        "coin": "IOTA",
+        "interval": "1d",
+        "startTime": 1790726400000,
+        "endTime": 1791417599999
+      }
+    },
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:55:55.004253+00:00",
+    "name": "bn_IOTXUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=IOTXUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:55:55.520656+00:00",
+    "name": "bn_JTOUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=JTOUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:55:55.891248+00:00",
+    "name": "bn_KITEUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=KITEUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:55:56.296412+00:00",
+    "name": "hl_JTO",
+    "url": "https://api.hyperliquid.xyz/info",
+    "body": {
+      "type": "candleSnapshot",
+      "req": {
+        "coin": "JTO",
+        "interval": "1d",
+        "startTime": 1790726400000,
+        "endTime": 1791417599999
+      }
+    },
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:55:56.798993+00:00",
+    "name": "bn_LUNAUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=LUNAUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:55:57.218298+00:00",
+    "name": "bn_MANAUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=MANAUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:55:57.754150+00:00",
+    "name": "bn_MANTAUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=MANTAUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:55:58.504612+00:00",
+    "name": "hl_MANTA",
+    "url": "https://api.hyperliquid.xyz/info",
+    "body": {
+      "type": "candleSnapshot",
+      "req": {
+        "coin": "MANTA",
+        "interval": "1d",
+        "startTime": 1790726400000,
+        "endTime": 1791417599999
+      }
+    },
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:55:58.766499+00:00",
+    "name": "bn_MINAUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=MINAUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:55:59.595738+00:00",
+    "name": "hl_MINA",
+    "url": "https://api.hyperliquid.xyz/info",
+    "body": {
+      "type": "candleSnapshot",
+      "req": {
+        "coin": "MINA",
+        "interval": "1d",
+        "startTime": 1790726400000,
+        "endTime": 1791417599999
+      }
+    },
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:55:59.699257+00:00",
+    "name": "bn_MORPHOUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=MORPHOUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:56:00.453554+00:00",
+    "name": "bn_MTLUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=MTLUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:56:00.574090+00:00",
+    "name": "hl_MORPHO",
+    "url": "https://api.hyperliquid.xyz/info",
+    "body": {
+      "type": "candleSnapshot",
+      "req": {
+        "coin": "MORPHO",
+        "interval": "1d",
+        "startTime": 1790726400000,
+        "endTime": 1791417599999
+      }
+    },
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:56:01.327843+00:00",
+    "name": "bn_NIGHTUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=NIGHTUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:56:01.380233+00:00",
+    "name": "bn_NEOUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=NEOUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:56:02.176116+00:00",
+    "name": "bn_ONTUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=ONTUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:56:02.179952+00:00",
+    "name": "hl_NEO",
+    "url": "https://api.hyperliquid.xyz/info",
+    "body": {
+      "type": "candleSnapshot",
+      "req": {
+        "coin": "NEO",
+        "interval": "1d",
+        "startTime": 1790726400000,
+        "endTime": 1791417599999
+      }
+    },
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:56:03.116499+00:00",
+    "name": "bn_DASHUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=DASHUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:56:03.220861+00:00",
+    "name": "bn_ZECUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=ZECUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:56:03.984571+00:00",
+    "name": "hl_ZEC",
+    "url": "https://api.hyperliquid.xyz/info",
+    "body": {
+      "type": "candleSnapshot",
+      "req": {
+        "coin": "ZEC",
+        "interval": "1d",
+        "startTime": 1790726400000,
+        "endTime": 1791417599999
+      }
+    },
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:56:04.011204+00:00",
+    "name": "hl_DASH",
+    "url": "https://api.hyperliquid.xyz/info",
+    "body": {
+      "type": "candleSnapshot",
+      "req": {
+        "coin": "DASH",
+        "interval": "1d",
+        "startTime": 1790726400000,
+        "endTime": 1791417599999
+      }
+    },
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:56:04.845411+00:00",
+    "name": "bn_TIAUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=TIAUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:56:04.860567+00:00",
+    "name": "bn_WIFUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=WIFUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:56:05.607669+00:00",
+    "name": "hl_TIA",
+    "url": "https://api.hyperliquid.xyz/info",
+    "body": {
+      "type": "candleSnapshot",
+      "req": {
+        "coin": "TIA",
+        "interval": "1d",
+        "startTime": 1790726400000,
+        "endTime": 1791417599999
+      }
+    },
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:56:05.613378+00:00",
+    "name": "hl_WIF",
+    "url": "https://api.hyperliquid.xyz/info",
+    "body": {
+      "type": "candleSnapshot",
+      "req": {
+        "coin": "WIF",
+        "interval": "1d",
+        "startTime": 1790726400000,
+        "endTime": 1791417599999
+      }
+    },
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:56:06.582359+00:00",
+    "name": "bn_RENDERUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=RENDERUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:56:06.801368+00:00",
+    "name": "bn_PEPEUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=PEPEUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:56:07.633136+00:00",
+    "name": "hl_kPEPE",
+    "url": "https://api.hyperliquid.xyz/info",
+    "body": {
+      "type": "candleSnapshot",
+      "req": {
+        "coin": "kPEPE",
+        "interval": "1d",
+        "startTime": 1790726400000,
+        "endTime": 1791417599999
+      }
+    },
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:56:09.309734+00:00",
+    "name": "bn_SHIBUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=SHIBUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:56:09.390092+00:00",
+    "name": "hl_RENDER",
+    "url": "https://api.hyperliquid.xyz/info",
+    "body": {
+      "type": "candleSnapshot",
+      "req": {
+        "coin": "RENDER",
+        "interval": "1d",
+        "startTime": 1790726400000,
+        "endTime": 1791417599999
+      }
+    },
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:56:10.071569+00:00",
+    "name": "hl_kSHIB",
+    "url": "https://api.hyperliquid.xyz/info",
+    "body": {
+      "type": "candleSnapshot",
+      "req": {
+        "coin": "kSHIB",
+        "interval": "1d",
+        "startTime": 1790726400000,
+        "endTime": 1791417599999
+      }
+    },
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:56:10.443798+00:00",
+    "name": "bn_GRAMUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=GRAMUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:56:10.988070+00:00",
+    "name": "bn_TURBOUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=TURBOUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:56:11.413954+00:00",
+    "name": "hl_GRAM",
+    "url": "https://api.hyperliquid.xyz/info",
+    "body": {
+      "type": "candleSnapshot",
+      "req": {
+        "coin": "GRAM",
+        "interval": "1d",
+        "startTime": 1790726400000,
+        "endTime": 1791417599999
+      }
+    },
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:56:11.860466+00:00",
+    "name": "hl_TURBO",
+    "url": "https://api.hyperliquid.xyz/info",
+    "body": {
+      "type": "candleSnapshot",
+      "req": {
+        "coin": "TURBO",
+        "interval": "1d",
+        "startTime": 1790726400000,
+        "endTime": 1791417599999
+      }
+    },
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:56:12.260515+00:00",
+    "name": "bn_KAITOUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=KAITOUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:56:12.680018+00:00",
+    "name": "bn_ZAMAUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=ZAMAUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:56:13.355025+00:00",
+    "name": "hl_KAITO",
+    "url": "https://api.hyperliquid.xyz/info",
+    "body": {
+      "type": "candleSnapshot",
+      "req": {
+        "coin": "KAITO",
+        "interval": "1d",
+        "startTime": 1790726400000,
+        "endTime": 1791417599999
+      }
+    },
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:56:13.509910+00:00",
+    "name": "bn_XPLUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=XPLUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:56:14.447092+00:00",
+    "name": "hl_XPL",
+    "url": "https://api.hyperliquid.xyz/info",
+    "body": {
+      "type": "candleSnapshot",
+      "req": {
+        "coin": "XPL",
+        "interval": "1d",
+        "startTime": 1790726400000,
+        "endTime": 1791417599999
+      }
+    },
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:56:15.004922+00:00",
+    "name": "bn_PENDLEUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=PENDLEUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:56:15.510018+00:00",
+    "name": "bn_EIGENUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=EIGENUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:56:15.794410+00:00",
+    "name": "hl_PENDLE",
+    "url": "https://api.hyperliquid.xyz/info",
+    "body": {
+      "type": "candleSnapshot",
+      "req": {
+        "coin": "PENDLE",
+        "interval": "1d",
+        "startTime": 1790726400000,
+        "endTime": 1791417599999
+      }
+    },
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:56:16.274099+00:00",
+    "name": "hl_EIGEN",
+    "url": "https://api.hyperliquid.xyz/info",
+    "body": {
+      "type": "candleSnapshot",
+      "req": {
+        "coin": "EIGEN",
+        "interval": "1d",
+        "startTime": 1790726400000,
+        "endTime": 1791417599999
+      }
+    },
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:56:16.884403+00:00",
+    "name": "bn_PLUMEUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=PLUMEUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:56:17.133288+00:00",
+    "name": "bn_RAYUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=RAYUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:56:17.675929+00:00",
+    "name": "bn_METUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=METUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:56:17.945189+00:00",
+    "name": "bn_NILUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=NILUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:56:18.420587+00:00",
+    "name": "hl_MET",
+    "url": "https://api.hyperliquid.xyz/info",
+    "body": {
+      "type": "candleSnapshot",
+      "req": {
+        "coin": "MET",
+        "interval": "1d",
+        "startTime": 1790726400000,
+        "endTime": 1791417599999
+      }
+    },
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:56:18.797781+00:00",
+    "name": "hl_NIL",
+    "url": "https://api.hyperliquid.xyz/info",
+    "body": {
+      "type": "candleSnapshot",
+      "req": {
+        "coin": "NIL",
+        "interval": "1d",
+        "startTime": 1790726400000,
+        "endTime": 1791417599999
+      }
+    },
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:56:19.318555+00:00",
+    "name": "bn_GUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=GUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:56:19.813056+00:00",
+    "name": "bn_ZROUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=ZROUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:56:20.258246+00:00",
+    "name": "bn_QNTUSDT",
+    "url": "https://api.binance.com/api/v3/klines?symbol=QNTUSDT&interval=1d&limit=1000&endTime=1791417599999",
+    "body": null,
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  },
+  {
+    "time": "2026-10-08T17:56:20.786831+00:00",
+    "name": "hl_ZRO",
+    "url": "https://api.hyperliquid.xyz/info",
+    "body": {
+      "type": "candleSnapshot",
+      "req": {
+        "coin": "ZRO",
+        "interval": "1d",
+        "startTime": 1790726400000,
+        "endTime": 1791417599999
+      }
+    },
+    "http_status": 200,
+    "curl_exit": 0,
+    "error": ""
+  }
+]

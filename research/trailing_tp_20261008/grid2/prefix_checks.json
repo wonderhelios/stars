@@ -1,0 +1,26 @@
+[
+  {
+    "mode": "coin",
+    "path": "pess",
+    "prefix_days": 170,
+    "max_error": 0.0
+  },
+  {
+    "mode": "coin",
+    "path": "opt",
+    "prefix_days": 172,
+    "max_error": 0.0
+  },
+  {
+    "mode": "portfolio",
+    "path": "pess",
+    "prefix_days": 197,
+    "max_error": 0.0
+  },
+  {
+    "mode": "portfolio",
+    "path": "opt",
+    "prefix_days": 197,
+    "max_error": 0.0
+  }
+]

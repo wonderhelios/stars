@@ -1,0 +1,13 @@
+{
+  "stars/src/exchange.rs": "b0ec87e43878058f8ea676b702aa7f4dc3598342780eb609e6677f21ca791266",
+  "stars/src/paper.rs": "356144f206cdf4f7dbf4cdf5085e70b34ff437129eb89f8abc2426cf33bdbfb4",
+  "stars/src/store.rs": "f937590c4aad183dc43319f2d19dc9f752fb26d2d7aaa24c1e08c09788af635d",
+  "stars/src/web.rs": "cf43a600b790cc2cdf6a3711bcb837a48d921e773308f010e34ba27200180410",
+  "stars/src/momentum.rs": "31d0e2fbc3c4851f74330184702221453846471bd893293b3f2ba796710aa372",
+  "stars/src/main.rs": "89b75f539d674b0a10b3f7304adaf7448810cacaf61e8c790786bf74018388a3",
+  "stars/src/txflow.rs": "cdb4cad54a85a7bde07e074cd7dfd339b96bd6b8085392723b512d216bdde57a",
+  "stars/src/live.rs": "7c1211a75c1565b5c1a9cd9d3fbe04e8167be4c08928f658b323cee12b2cda32",
+  "stars/src/hl.rs": "d0b5495bb52f98d8fc37e5b31ade11d91849d079b768ab38587416f321121c36",
+  "stars/src/txflow_agent.rs": "12cf56b0bbc63c1a4b664153a441f6769b71f448cb1795d822ac5eb618b04a5a",
+  "stars/src/trader.rs": "c5654a05198573cb6ffd4e2290fa2d5a53758f5944066c9238b56d53bc38da7f"
+}

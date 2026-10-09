@@ -1,0 +1,15 @@
+{
+  "full": {
+    "sharpe": 1.1765615313093514,
+    "days": 1343
+  },
+  "2023-24": {
+    "sharpe": -0.24660194991506962,
+    "days": 698
+  },
+  "2025-26": {
+    "sharpe": 2.4847968404186545,
+    "days": 645
+  },
+  "provenance": "baseline_results.json read at start of turn; original 1343-day NPZ subsequently overwritten by concurrent writer"
+}

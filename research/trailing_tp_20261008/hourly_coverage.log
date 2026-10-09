@@ -1,0 +1,1 @@
+{'status': 'coverage audit only; trailing execution count zero', 'mean_full_days': 91.0, 'min_full_days': 91, 'max_full_days': 91, 'definition': 'for each scheduled day and phase, all 25 completed hourly candles exist for union of that day and prior day source target names; sufficient price availability only, not proof of actual fills or continuous intrabar order'}

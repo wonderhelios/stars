@@ -1,0 +1,133 @@
+"""Frozen daily reconstruction of trader.rs. No trailing tests unless reference gate passes."""
+# Optional trailing grid; default frozen baseline execution remains unchanged.
+import sys, runpy
+from pathlib import Path
+if Path(__file__).name == 'baseline.py' and '--trailing-grid' in sys.argv:
+ runpy.run_path(str(Path(__file__).with_name('grid2.py')), run_name='__main__')
+ sys.exit(0)
+import json,hashlib,glob,os,datetime,warnings
+import numpy as np,pandas as pd
+from pathlib import Path
+warnings.filterwarnings('ignore',category=RuntimeWarning)
+OUT=Path(__file__).resolve().parent
+req=json.load(open(OUT/'retrieval/request.json'));end=req['end_ms']
+files=sorted(glob.glob('/tmp/hl-daily-v2/*.json'));names=[Path(f).stem for f in files]
+raw={Path(f).stem:[x for x in json.load(open(f)) if req['daily_start_ms']<=x['t'] and x['T']<end and float(x['c'])>0] for f in files}
+ts=sorted({x['t'] for d in raw.values() for x in d});ti={t:i for i,t in enumerate(ts)};n=len(ts);k=len(names)
+a={z:np.full((n,k),np.nan) for z in ['o','c','v','h','l']}
+for j,c in enumerate(names):
+ for x in raw[c]:
+  for z in a:a[z][ti[x['t']],j]=float(x[z])
+P=a['c'];Q=P*a['v'];R=P/np.roll(P,1,axis=0)-1;R[0]=np.nan
+V=pd.DataFrame(Q).rolling(30,min_periods=5).mean().shift(1).values
+SD=pd.DataFrame(R).rolling(20,min_periods=5).std(ddof=1).values
+M=P/np.roll(P,14,axis=0)-1
+meta={x['name']:x for x in json.load(open(OUT/'retrieval/meta.json'))['universe']}
+
+def target(i,equity,cap=5):
+ cap=min(cap,max(1,int(np.floor(equity*2.7/15))//4))
+ w=np.zeros(k)
+ if i<32:return w
+ idx=np.flatnonzero((V[i]>=5e6)&np.isfinite(P[i])&np.isfinite(P[i-14])&np.isfinite(SD[i])&np.array([':' not in c for c in names]))
+ if len(idx)<8:return w
+ kk=min(max(1,int(np.floor(len(idx)*.2+.5))),cap,len(idx)//2)
+ for s in [M[i]/np.maximum(SD[i],1e-9),-SD[i],Q[i]/V[i]]:
+  order=idx[np.lexsort((np.array(names)[idx],s[idx]))];w[order[:kk]]-=.5/kk/3;w[order[-kk:]]+=.5/kk/3
+ g=np.abs(w).sum()
+ return w/g if g>0 else w
+
+def sh(r):return float(np.mean(r)/np.std(r,ddof=1)*np.sqrt(365)) if len(r)>1 else None
+
+def run(cap=5,clock='open',fee=.0007,trail=None,pessimistic=True):
+ # large initial capital; exchange size decimals/minimum/band applied at every order
+ prices=a['o'] if clock=='open' else P
+ eq=1e6;qty=np.zeros(k);last=np.full(k,np.nan);rets=[];turn=[];missing=[];dates=[]
+ pk=np.full(k,np.nan);ent=np.full(k,np.nan)   # ★ 移动止盈用；trail=None 时不被引用
+ for i in range(33,n):
+  px=prices[i];held=np.abs(qty)>1e-12
+  miss=held&~np.isfinite(px);missing.append(dict(t=ts[i],coins=np.array(names)[miss].tolist(),stale_notional_equity=float(np.nansum(abs(qty[miss])*last[miss])/eq))) if miss.any() else None
+  mark=np.where(np.isfinite(px),px,last)
+  gain=np.nansum(qty*(mark-last));before=eq;eq+=gain
+  if eq<=0:raise ValueError('insolvent')
+  if trail is not None:
+   act,dist=trail
+   for j in range(k):
+    if abs(qty[j])<1e-12: continue
+    hi=a['h'][i][j];lo=a['l'][i][j];cl=P[i][j]
+    if not (np.isfinite(hi) and np.isfinite(lo)): continue
+    if abs(qty[j])>1e-12 and not np.isfinite(ent[j]):
+     ent[j]=last[j];pk[j]=last[j]
+    if not np.isfinite(ent[j]): continue
+    if qty[j]>0:
+     pk[j]=max(pk[j],hi)
+     gain=pk[j]/ent[j]-1.0
+     obs=lo if pessimistic else cl          # 悲观=先看最低价，乐观=看收盘
+     trig=gain>=act and obs<=pk[j]*(1.0-dist)
+    else:
+     pk[j]=min(pk[j],lo)
+     gain=ent[j]/pk[j]-1.0
+     obs=hi if pessimistic else cl
+     trig=gain>=act and obs>=pk[j]*(1.0+dist)
+    if trig:
+     pxj=px[j]
+     if np.isfinite(pxj):
+      eq-=fee*abs(qty[j])*pxj; qty[j]=0.0; ent[j]=np.nan; pk[j]=np.nan
+  w=target(i-1 if clock=='open' else i,eq,cap)
+  wanted=np.zeros(k)
+  for j,c in enumerate(names):
+   if not np.isfinite(px[j]) or abs(w[j])<1e-12:continue
+   f=10**meta[c]['szDecimals'];size=np.floor(abs(w[j])*eq*2.7/px[j]*f)/f
+   if size*px[j]>=10:wanted[j]=np.sign(w[j])*size
+  delta=np.zeros(k)
+  for j in range(k):
+   if not np.isfinite(px[j]):continue  # cannot liquidate stale missing quote
+   f=10**meta[names[j]]['szDecimals'];d=wanted[j]-qty[j]
+   if qty[j]*wanted[j]<0: # closing plus reopening charged both sides, equivalent abs delta
+    delta[j]=d
+   elif wanted[j]==0:
+    if abs(qty[j])*px[j]>=10:delta[j]=-qty[j]
+   elif np.floor(abs(d)*f)/f*px[j]>=max(10,abs(wanted[j])*px[j]*.02):
+    delta[j]=np.sign(d)*np.floor(abs(d)*f)/f
+  cost=fee*np.sum(abs(delta)*np.nan_to_num(px));tr=np.sum(abs(delta)*np.nan_to_num(px))/eq
+  eq-=cost;qty+=delta
+  if trail is not None:
+   for j in range(k):
+    if abs(qty[j])<1e-12: ent[j]=np.nan;pk[j]=np.nan
+    elif not np.isfinite(ent[j]):
+     ent[j]=np.nan_to_num(px[j],nan=last[j]); pk[j]=ent[j]
+  last=mark;rets.append(eq/before-1);turn.append(tr);dates.append(ts[i])
+ rr=np.array(rets);dd=pd.to_datetime(dates,unit='ms',utc=True)
+ results={}
+ for label,mask in [('full',np.ones(len(rr),bool)),('2023-24',dd.year<=2024),('2025-26',dd.year>=2025)]:
+  r=rr[mask];t=np.array(turn)[mask]
+  results[label]=dict(days=len(r),sharpe=sh(r),annual_arithmetic=float(r.mean()*365) if len(r) else None,annual_cost=float(t.mean()*fee*365) if len(t) else None,daily_turnover=float(t.mean()) if len(t) else None)
+ results['missing_held_quotes']=missing;results['ending_equity']=eq
+ np.savez_compressed(OUT/f'baseline_cap{cap}_{clock}_{fee}.npz',r=rr,t=dates,turn=turn)
+ return results
+out=dict(config=dict(initial_equity=1e6,cap=5,top_frac=.2,lookback=14,vol=20,liquidity=30,rebalance_slices=1,gross=2.7,fee=.0007,rebalance_band=.02,size_rounding='floor to current meta szDecimals',funding=False,terminal_liquidation=False,missing_quote_policy='retain held quantity at last observed price; diagnostic only, any unresolved event blocks gate'),runs={})
+# ===== 第 0 步：自证基线。对不上就停下，绝不用被污染的版本做对照 =====
+EXPECT=float(os.environ.get('TRAIL_EXPECT','1.1293'))  # 同一份数据上原版 baseline.py 的数字，由外部传入
+base=run(5,'open',.0007)
+got=base['full']['sharpe']
+print(f"[自证] 本版 trail=None 的基线 {got:.4f}（原版同数据 {EXPECT}）",flush=True)
+if abs(got-EXPECT)>0.005:
+ print(f"[停止] 基线没复现（{got:.4f} vs {EXPECT}）—— 改动污染了基线，不做后续对照",flush=True)
+ raise SystemExit(1)
+print("[自证通过] 基线未被污染，开始移动止盈网格",flush=True)
+out['runs']['baseline']=base
+bf=base['full']
+
+for act in [0.10,0.20,0.30]:
+ for dist in [0.05,0.10,0.15]:
+  for pes in [True,False]:
+   label=f"act{act}_d{dist}_{'悲观' if pes else '乐观'}"
+   try:
+    r=run(5,'open',.0007,trail=(act,dist),pessimistic=pes)
+    fu=r['full'];s1=r['2023-24'];s2=r['2025-26']
+    out['runs'][label]=r
+    print(f"{label}: Sharpe {fu['sharpe']:.4f} (Δ{fu['sharpe']-bf['sharpe']:+.4f}) | 换手 {fu['daily_turnover']:.3f} | 2023-24 {s1['sharpe']:.3f} | 2025-26 {s2['sharpe']:.3f}",flush=True)
+   except Exception as e:
+    print(f"{label}: 失败 {type(e).__name__} {e}",flush=True)
+   (OUT/'trail2_results.json').write_text(json.dumps(out,indent=2,default=str))
+manifest={str(p):hashlib.sha256(Path(p).read_bytes()).hexdigest() for p in files+['src/trader.rs','docs/validation-protocol.md',str(OUT/'baseline.py')]}
+(OUT/'baseline_manifest.json').write_text(json.dumps(manifest,indent=2))

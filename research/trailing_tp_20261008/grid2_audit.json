@@ -1,0 +1,38 @@
+{
+  "days": 1225,
+  "coins": 234,
+  "start": "2023-06-01 00:00:00+00:00",
+  "end": "2026-10-07 00:00:00+00:00",
+  "short": {
+    "CASHCAT": {
+      "count": 89,
+      "gaps": 0
+    },
+    "GRAM": {
+      "count": 98,
+      "gaps": 0
+    },
+    "JELLY": {
+      "count": 56,
+      "gaps": 0
+    },
+    "PONS": {
+      "count": 38,
+      "gaps": 0
+    },
+    "USELESS": {
+      "count": 30,
+      "gaps": 0
+    }
+  },
+  "gap_coins": {},
+  "controls": [
+    1.2951718125813978,
+    1.2850071759055153,
+    1.285925122280669
+  ],
+  "hashes": {
+    "src/trader.rs": "c5654a05198573cb6ffd4e2290fa2d5a53758f5944066c9238b56d53bc38da7f",
+    "/Users/wonder/Code/stars/research/trailing_tp_20261008/grid2.py": "a9db4143242ff4f709df33e20953458184fe70f96a0c129545e97f0d59036379"
+  }
+}

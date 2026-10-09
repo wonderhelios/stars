@@ -401,6 +401,7 @@ mod tests {
         let mut live = crate::live::LiveState::default();
         live.config.txflow = true;
         AppState {
+            binance_store: None,
             hl_store: None,
             store: Arc::new(crate::store::Store::open(&root.join("tx.sqlite")).unwrap()),
             paper: Arc::new(Mutex::new(crate::paper::PaperState::default())),

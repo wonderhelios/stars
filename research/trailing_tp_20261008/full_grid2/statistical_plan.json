@@ -1,0 +1,9 @@
+{
+  "block": 30,
+  "B": 9999,
+  "seed": 20261009,
+  "family": 288,
+  "explanation": "144 initially planned tests on changed 1192-day snapshot plus 144 original-panel tests; missing original baseline series means daily full-panel p unavailable; three-slice phase tests paired to contemporaneous controls",
+  "gate_unchanged": true,
+  "distance": "fraction of favorable peak price"
+}

@@ -1,0 +1,3722 @@
+{
+  "/tmp/hl-daily-full": {
+    "files": 234,
+    "bars": 188833,
+    "at_least100": 229,
+    "short": [
+      {
+        "coin": "CASHCAT",
+        "bars": 89,
+        "gaps": 0,
+        "first": 1783728000000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "GRAM",
+        "bars": 98,
+        "gaps": 0,
+        "first": 1782950400000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "JELLY",
+        "bars": 56,
+        "gaps": 0,
+        "first": 1738195200000,
+        "last": 1742947200000
+      },
+      {
+        "coin": "PONS",
+        "bars": 38,
+        "gaps": 0,
+        "first": 1788134400000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "USELESS",
+        "bars": 30,
+        "gaps": 0,
+        "first": 1788825600000,
+        "last": 1791331200000
+      }
+    ],
+    "gaps": 0,
+    "first": 1672531200000,
+    "last": 1791331200000,
+    "rows": [
+      {
+        "coin": "0G",
+        "bars": 386,
+        "gaps": 0,
+        "first": 1758067200000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "2Z",
+        "bars": 371,
+        "gaps": 0,
+        "first": 1759363200000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "AAVE",
+        "bars": 1225,
+        "gaps": 0,
+        "first": 1685577600000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "ACE",
+        "bars": 1025,
+        "gaps": 0,
+        "first": 1702857600000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "ADA",
+        "bars": 1225,
+        "gaps": 0,
+        "first": 1685577600000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "AERO",
+        "bars": 673,
+        "gaps": 0,
+        "first": 1733270400000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "AI",
+        "bars": 460,
+        "gaps": 0,
+        "first": 1704672000000,
+        "last": 1744329600000
+      },
+      {
+        "coin": "AI16Z",
+        "bars": 310,
+        "gaps": 0,
+        "first": 1735689600000,
+        "last": 1762387200000
+      },
+      {
+        "coin": "AIXBT",
+        "bars": 657,
+        "gaps": 0,
+        "first": 1734652800000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "ALGO",
+        "bars": 1225,
+        "gaps": 0,
+        "first": 1685577600000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "ALT",
+        "bars": 987,
+        "gaps": 0,
+        "first": 1706140800000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "ANIME",
+        "bars": 625,
+        "gaps": 0,
+        "first": 1737417600000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "APE",
+        "bars": 1225,
+        "gaps": 0,
+        "first": 1685577600000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "APEX",
+        "bars": 376,
+        "gaps": 0,
+        "first": 1758931200000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "APT",
+        "bars": 1225,
+        "gaps": 0,
+        "first": 1685577600000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "AR",
+        "bars": 1225,
+        "gaps": 0,
+        "first": 1685577600000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "ARB",
+        "bars": 1225,
+        "gaps": 0,
+        "first": 1685577600000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "ARK",
+        "bars": 1011,
+        "gaps": 0,
+        "first": 1695081600000,
+        "last": 1782345600000
+      },
+      {
+        "coin": "ASTER",
+        "bars": 384,
+        "gaps": 0,
+        "first": 1758240000000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "ATOM",
+        "bars": 1225,
+        "gaps": 0,
+        "first": 1685577600000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "AVAX",
+        "bars": 1225,
+        "gaps": 0,
+        "first": 1685577600000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "AVNT",
+        "bars": 394,
+        "gaps": 0,
+        "first": 1757376000000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "AXS",
+        "bars": 1225,
+        "gaps": 0,
+        "first": 1685577600000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "AZTEC",
+        "bars": 238,
+        "gaps": 0,
+        "first": 1770854400000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "BABY",
+        "bars": 551,
+        "gaps": 0,
+        "first": 1743811200000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "BADGER",
+        "bars": 520,
+        "gaps": 0,
+        "first": 1699488000000,
+        "last": 1744329600000
+      },
+      {
+        "coin": "BANANA",
+        "bars": 1120,
+        "gaps": 0,
+        "first": 1694649600000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "BCH",
+        "bars": 1225,
+        "gaps": 0,
+        "first": 1685577600000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "BERA",
+        "bars": 609,
+        "gaps": 0,
+        "first": 1738800000000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "BIGTIME",
+        "bars": 1093,
+        "gaps": 0,
+        "first": 1696982400000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "BIO",
+        "bars": 643,
+        "gaps": 0,
+        "first": 1735862400000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "BLAST",
+        "bars": 699,
+        "gaps": 0,
+        "first": 1719360000000,
+        "last": 1779667200000
+      },
+      {
+        "coin": "BLUR",
+        "bars": 1225,
+        "gaps": 0,
+        "first": 1685577600000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "BLZ",
+        "bars": 571,
+        "gaps": 0,
+        "first": 1685577600000,
+        "last": 1734825600000
+      },
+      {
+        "coin": "BNB",
+        "bars": 1225,
+        "gaps": 0,
+        "first": 1685577600000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "BNT",
+        "bars": 604,
+        "gaps": 0,
+        "first": 1691625600000,
+        "last": 1743724800000
+      },
+      {
+        "coin": "BOME",
+        "bars": 937,
+        "gaps": 0,
+        "first": 1710460800000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "BRETT",
+        "bars": 849,
+        "gaps": 0,
+        "first": 1718064000000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "BSV",
+        "bars": 1084,
+        "gaps": 0,
+        "first": 1697760000000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "BTC",
+        "bars": 1225,
+        "gaps": 0,
+        "first": 1685577600000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "CAKE",
+        "bars": 1071,
+        "gaps": 0,
+        "first": 1698883200000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "CANTO",
+        "bars": 310,
+        "gaps": 0,
+        "first": 1696809600000,
+        "last": 1723507200000
+      },
+      {
+        "coin": "CASHCAT",
+        "bars": 89,
+        "gaps": 0,
+        "first": 1783728000000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "CATI",
+        "bars": 204,
+        "gaps": 0,
+        "first": 1726790400000,
+        "last": 1744329600000
+      },
+      {
+        "coin": "CC",
+        "bars": 342,
+        "gaps": 0,
+        "first": 1761868800000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "CELO",
+        "bars": 1225,
+        "gaps": 0,
+        "first": 1685577600000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "CFX",
+        "bars": 1225,
+        "gaps": 0,
+        "first": 1685577600000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "CHILLGUY",
+        "bars": 547,
+        "gaps": 0,
+        "first": 1732492800000,
+        "last": 1779667200000
+      },
+      {
+        "coin": "CHIP",
+        "bars": 169,
+        "gaps": 0,
+        "first": 1776816000000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "COMP",
+        "bars": 1225,
+        "gaps": 0,
+        "first": 1685577600000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "CRV",
+        "bars": 1225,
+        "gaps": 0,
+        "first": 1685577600000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "CYBER",
+        "bars": 600,
+        "gaps": 0,
+        "first": 1692576000000,
+        "last": 1744329600000
+      },
+      {
+        "coin": "DASH",
+        "bars": 1225,
+        "gaps": 0,
+        "first": 1685577600000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "DOGE",
+        "bars": 1225,
+        "gaps": 0,
+        "first": 1685577600000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "DOOD",
+        "bars": 413,
+        "gaps": 0,
+        "first": 1746748800000,
+        "last": 1782345600000
+      },
+      {
+        "coin": "DOT",
+        "bars": 1225,
+        "gaps": 0,
+        "first": 1685577600000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "DYDX",
+        "bars": 1225,
+        "gaps": 0,
+        "first": 1685577600000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "DYM",
+        "bars": 975,
+        "gaps": 0,
+        "first": 1707177600000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "EIGEN",
+        "bars": 891,
+        "gaps": 0,
+        "first": 1714435200000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "ENA",
+        "bars": 919,
+        "gaps": 0,
+        "first": 1712016000000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "ENS",
+        "bars": 1225,
+        "gaps": 0,
+        "first": 1685577600000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "ETC",
+        "bars": 1225,
+        "gaps": 0,
+        "first": 1685577600000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "ETH",
+        "bars": 1225,
+        "gaps": 0,
+        "first": 1685577600000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "ETHFI",
+        "bars": 934,
+        "gaps": 0,
+        "first": 1710720000000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "FARTCOIN",
+        "bars": 657,
+        "gaps": 0,
+        "first": 1734652800000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "FET",
+        "bars": 1225,
+        "gaps": 0,
+        "first": 1685577600000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "FIL",
+        "bars": 1225,
+        "gaps": 0,
+        "first": 1685577600000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "FOGO",
+        "bars": 301,
+        "gaps": 0,
+        "first": 1765411200000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "FRIEND",
+        "bars": 256,
+        "gaps": 0,
+        "first": 1692576000000,
+        "last": 1714608000000
+      },
+      {
+        "coin": "FTM",
+        "bars": 592,
+        "gaps": 0,
+        "first": 1685577600000,
+        "last": 1736640000000
+      },
+      {
+        "coin": "FTT",
+        "bars": 974,
+        "gaps": 0,
+        "first": 1695600000000,
+        "last": 1779667200000
+      },
+      {
+        "coin": "FXS",
+        "bars": 951,
+        "gaps": 0,
+        "first": 1685577600000,
+        "last": 1767657600000
+      },
+      {
+        "coin": "GALA",
+        "bars": 1376,
+        "gaps": 0,
+        "first": 1672531200000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "GAS",
+        "bars": 1080,
+        "gaps": 0,
+        "first": 1698105600000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "GMT",
+        "bars": 1225,
+        "gaps": 0,
+        "first": 1685577600000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "GMX",
+        "bars": 1225,
+        "gaps": 0,
+        "first": 1685577600000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "GOAT",
+        "bars": 715,
+        "gaps": 0,
+        "first": 1729641600000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "GRAM",
+        "bars": 98,
+        "gaps": 0,
+        "first": 1782950400000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "GRASS",
+        "bars": 710,
+        "gaps": 0,
+        "first": 1730073600000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "GRIFFAIN",
+        "bars": 644,
+        "gaps": 0,
+        "first": 1735776000000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "HBAR",
+        "bars": 1225,
+        "gaps": 0,
+        "first": 1685577600000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "HEMI",
+        "bars": 405,
+        "gaps": 0,
+        "first": 1756425600000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "HMSTR",
+        "bars": 742,
+        "gaps": 0,
+        "first": 1727308800000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "HPOS",
+        "bars": 674,
+        "gaps": 0,
+        "first": 1685577600000,
+        "last": 1743724800000
+      },
+      {
+        "coin": "HYPE",
+        "bars": 672,
+        "gaps": 0,
+        "first": 1733356800000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "HYPER",
+        "bars": 534,
+        "gaps": 0,
+        "first": 1745280000000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "ICP",
+        "bars": 1225,
+        "gaps": 0,
+        "first": 1685577600000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "ILV",
+        "bars": 512,
+        "gaps": 0,
+        "first": 1699574400000,
+        "last": 1743724800000
+      },
+      {
+        "coin": "IMX",
+        "bars": 1225,
+        "gaps": 0,
+        "first": 1685577600000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "INIT",
+        "bars": 540,
+        "gaps": 0,
+        "first": 1744761600000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "INJ",
+        "bars": 1225,
+        "gaps": 0,
+        "first": 1685577600000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "IO",
+        "bars": 849,
+        "gaps": 0,
+        "first": 1718064000000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "IOTA",
+        "bars": 1225,
+        "gaps": 0,
+        "first": 1685577600000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "IP",
+        "bars": 502,
+        "gaps": 0,
+        "first": 1739404800000,
+        "last": 1782691200000
+      },
+      {
+        "coin": "JELLY",
+        "bars": 56,
+        "gaps": 0,
+        "first": 1738195200000,
+        "last": 1742947200000
+      },
+      {
+        "coin": "JTO",
+        "bars": 1036,
+        "gaps": 0,
+        "first": 1701907200000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "JUP",
+        "bars": 1040,
+        "gaps": 0,
+        "first": 1701561600000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "KAITO",
+        "bars": 595,
+        "gaps": 0,
+        "first": 1740009600000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "KAS",
+        "bars": 1092,
+        "gaps": 0,
+        "first": 1697068800000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "LAUNCHCOIN",
+        "bars": 165,
+        "gaps": 0,
+        "first": 1747180800000,
+        "last": 1761350400000
+      },
+      {
+        "coin": "LAYER",
+        "bars": 604,
+        "gaps": 0,
+        "first": 1739232000000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "LDO",
+        "bars": 1225,
+        "gaps": 0,
+        "first": 1685577600000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "LINEA",
+        "bars": 402,
+        "gaps": 0,
+        "first": 1756684800000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "LINK",
+        "bars": 1225,
+        "gaps": 0,
+        "first": 1685577600000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "LISTA",
+        "bars": 296,
+        "gaps": 0,
+        "first": 1718841600000,
+        "last": 1744329600000
+      },
+      {
+        "coin": "LIT",
+        "bars": 290,
+        "gaps": 0,
+        "first": 1766361600000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "LOOM",
+        "bars": 442,
+        "gaps": 0,
+        "first": 1695859200000,
+        "last": 1733961600000
+      },
+      {
+        "coin": "LTC",
+        "bars": 1225,
+        "gaps": 0,
+        "first": 1685577600000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "MANTA",
+        "bars": 994,
+        "gaps": 0,
+        "first": 1705536000000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "MATIC",
+        "bars": 467,
+        "gaps": 0,
+        "first": 1685577600000,
+        "last": 1725840000000
+      },
+      {
+        "coin": "MAV",
+        "bars": 1042,
+        "gaps": 0,
+        "first": 1687996800000,
+        "last": 1777939200000
+      },
+      {
+        "coin": "MAVIA",
+        "bars": 820,
+        "gaps": 0,
+        "first": 1707177600000,
+        "last": 1777939200000
+      },
+      {
+        "coin": "ME",
+        "bars": 667,
+        "gaps": 0,
+        "first": 1733788800000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "MEGA",
+        "bars": 351,
+        "gaps": 0,
+        "first": 1761091200000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "MELANIA",
+        "bars": 626,
+        "gaps": 0,
+        "first": 1737331200000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "MEME",
+        "bars": 1070,
+        "gaps": 0,
+        "first": 1698969600000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "MERL",
+        "bars": 898,
+        "gaps": 0,
+        "first": 1713830400000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "MET",
+        "bars": 363,
+        "gaps": 0,
+        "first": 1760054400000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "MEW",
+        "bars": 688,
+        "gaps": 0,
+        "first": 1718582400000,
+        "last": 1777939200000
+      },
+      {
+        "coin": "MINA",
+        "bars": 1225,
+        "gaps": 0,
+        "first": 1685577600000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "MKR",
+        "bars": 828,
+        "gaps": 0,
+        "first": 1685577600000,
+        "last": 1757030400000
+      },
+      {
+        "coin": "MNT",
+        "bars": 916,
+        "gaps": 0,
+        "first": 1712275200000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "MON",
+        "bars": 365,
+        "gaps": 0,
+        "first": 1759881600000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "MOODENG",
+        "bars": 713,
+        "gaps": 0,
+        "first": 1729814400000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "MORPHO",
+        "bars": 680,
+        "gaps": 0,
+        "first": 1732665600000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "MOVE",
+        "bars": 668,
+        "gaps": 0,
+        "first": 1733702400000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "MYRO",
+        "bars": 390,
+        "gaps": 0,
+        "first": 1709596800000,
+        "last": 1743206400000
+      },
+      {
+        "coin": "NEAR",
+        "bars": 1376,
+        "gaps": 0,
+        "first": 1672531200000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "NEIROETH",
+        "bars": 385,
+        "gaps": 0,
+        "first": 1725580800000,
+        "last": 1758758400000
+      },
+      {
+        "coin": "NEO",
+        "bars": 1225,
+        "gaps": 0,
+        "first": 1685577600000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "NFTI",
+        "bars": 209,
+        "gaps": 0,
+        "first": 1701302400000,
+        "last": 1719273600000
+      },
+      {
+        "coin": "NIL",
+        "bars": 563,
+        "gaps": 0,
+        "first": 1742774400000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "NOT",
+        "bars": 875,
+        "gaps": 0,
+        "first": 1715817600000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "NTRN",
+        "bars": 508,
+        "gaps": 0,
+        "first": 1699920000000,
+        "last": 1743724800000
+      },
+      {
+        "coin": "NXPC",
+        "bars": 511,
+        "gaps": 0,
+        "first": 1747267200000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "OGN",
+        "bars": 796,
+        "gaps": 0,
+        "first": 1685577600000,
+        "last": 1754265600000
+      },
+      {
+        "coin": "OM",
+        "bars": 742,
+        "gaps": 0,
+        "first": 1707782400000,
+        "last": 1771804800000
+      },
+      {
+        "coin": "OMNI",
+        "bars": 527,
+        "gaps": 0,
+        "first": 1713312000000,
+        "last": 1758758400000
+      },
+      {
+        "coin": "ONDO",
+        "bars": 992,
+        "gaps": 0,
+        "first": 1705708800000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "OP",
+        "bars": 1225,
+        "gaps": 0,
+        "first": 1685577600000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "ORBS",
+        "bars": 540,
+        "gaps": 0,
+        "first": 1697155200000,
+        "last": 1743724800000
+      },
+      {
+        "coin": "ORDI",
+        "bars": 1066,
+        "gaps": 0,
+        "first": 1699315200000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "OX",
+        "bars": 393,
+        "gaps": 0,
+        "first": 1685577600000,
+        "last": 1719446400000
+      },
+      {
+        "coin": "PANDORA",
+        "bars": 147,
+        "gaps": 0,
+        "first": 1706832000000,
+        "last": 1719446400000
+      },
+      {
+        "coin": "PAXG",
+        "bars": 560,
+        "gaps": 0,
+        "first": 1743033600000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "PENDLE",
+        "bars": 1168,
+        "gaps": 0,
+        "first": 1690502400000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "PENGU",
+        "bars": 660,
+        "gaps": 0,
+        "first": 1734393600000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "PEOPLE",
+        "bars": 1225,
+        "gaps": 0,
+        "first": 1685577600000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "PIXEL",
+        "bars": 418,
+        "gaps": 0,
+        "first": 1708300800000,
+        "last": 1744329600000
+      },
+      {
+        "coin": "PNUT",
+        "bars": 696,
+        "gaps": 0,
+        "first": 1731283200000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "POL",
+        "bars": 755,
+        "gaps": 0,
+        "first": 1726185600000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "POLYX",
+        "bars": 1080,
+        "gaps": 0,
+        "first": 1698105600000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "PONS",
+        "bars": 38,
+        "gaps": 0,
+        "first": 1788134400000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "POPCAT",
+        "bars": 893,
+        "gaps": 0,
+        "first": 1714262400000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "PROMPT",
+        "bars": 390,
+        "gaps": 0,
+        "first": 1744329600000,
+        "last": 1777939200000
+      },
+      {
+        "coin": "PROVE",
+        "bars": 429,
+        "gaps": 0,
+        "first": 1754352000000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "PUMP",
+        "bars": 455,
+        "gaps": 0,
+        "first": 1752105600000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "PURR",
+        "bars": 703,
+        "gaps": 0,
+        "first": 1730678400000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "PYTH",
+        "bars": 1059,
+        "gaps": 0,
+        "first": 1699920000000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "RDNT",
+        "bars": 681,
+        "gaps": 0,
+        "first": 1685577600000,
+        "last": 1744329600000
+      },
+      {
+        "coin": "RENDER",
+        "bars": 804,
+        "gaps": 0,
+        "first": 1721952000000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "REQ",
+        "bars": 664,
+        "gaps": 0,
+        "first": 1696982400000,
+        "last": 1754265600000
+      },
+      {
+        "coin": "RESOLV",
+        "bars": 485,
+        "gaps": 0,
+        "first": 1749513600000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "REZ",
+        "bars": 891,
+        "gaps": 0,
+        "first": 1714435200000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "RLB",
+        "bars": 645,
+        "gaps": 0,
+        "first": 1687910400000,
+        "last": 1743552000000
+      },
+      {
+        "coin": "RNDR",
+        "bars": 417,
+        "gaps": 0,
+        "first": 1685577600000,
+        "last": 1721520000000
+      },
+      {
+        "coin": "RSR",
+        "bars": 1225,
+        "gaps": 0,
+        "first": 1685577600000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "RUNE",
+        "bars": 1225,
+        "gaps": 0,
+        "first": 1685577600000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "S",
+        "bars": 630,
+        "gaps": 0,
+        "first": 1736985600000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "SAGA",
+        "bars": 912,
+        "gaps": 0,
+        "first": 1712620800000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "SAND",
+        "bars": 1225,
+        "gaps": 0,
+        "first": 1685577600000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "SCR",
+        "bars": 574,
+        "gaps": 0,
+        "first": 1728432000000,
+        "last": 1777939200000
+      },
+      {
+        "coin": "SEI",
+        "bars": 1150,
+        "gaps": 0,
+        "first": 1692057600000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "SHIA",
+        "bars": 312,
+        "gaps": 0,
+        "first": 1692662400000,
+        "last": 1719532800000
+      },
+      {
+        "coin": "SKR",
+        "bars": 259,
+        "gaps": 0,
+        "first": 1769040000000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "SKY",
+        "bars": 394,
+        "gaps": 0,
+        "first": 1757376000000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "SNX",
+        "bars": 1225,
+        "gaps": 0,
+        "first": 1685577600000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "SOL",
+        "bars": 1225,
+        "gaps": 0,
+        "first": 1685577600000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "SOPH",
+        "bars": 498,
+        "gaps": 0,
+        "first": 1748390400000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "SPX",
+        "bars": 667,
+        "gaps": 0,
+        "first": 1733788800000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "STABLE",
+        "bars": 336,
+        "gaps": 0,
+        "first": 1762387200000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "STBL",
+        "bars": 386,
+        "gaps": 0,
+        "first": 1758067200000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "STG",
+        "bars": 796,
+        "gaps": 0,
+        "first": 1685577600000,
+        "last": 1754265600000
+      },
+      {
+        "coin": "STRAX",
+        "bars": 157,
+        "gaps": 0,
+        "first": 1696982400000,
+        "last": 1710460800000
+      },
+      {
+        "coin": "STRK",
+        "bars": 967,
+        "gaps": 0,
+        "first": 1707868800000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "STX",
+        "bars": 1225,
+        "gaps": 0,
+        "first": 1685577600000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "SUI",
+        "bars": 1225,
+        "gaps": 0,
+        "first": 1685577600000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "SUPER",
+        "bars": 1047,
+        "gaps": 0,
+        "first": 1700956800000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "SUSHI",
+        "bars": 1225,
+        "gaps": 0,
+        "first": 1685577600000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "SYRUP",
+        "bars": 519,
+        "gaps": 0,
+        "first": 1746576000000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "TAO",
+        "bars": 962,
+        "gaps": 0,
+        "first": 1708300800000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "TIA",
+        "bars": 1085,
+        "gaps": 0,
+        "first": 1697673600000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "TNSR",
+        "bars": 913,
+        "gaps": 0,
+        "first": 1712534400000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "TON",
+        "bars": 968,
+        "gaps": 0,
+        "first": 1697932800000,
+        "last": 1781481600000
+      },
+      {
+        "coin": "TRB",
+        "bars": 1225,
+        "gaps": 0,
+        "first": 1685577600000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "TRUMP",
+        "bars": 628,
+        "gaps": 0,
+        "first": 1737158400000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "TRX",
+        "bars": 1225,
+        "gaps": 0,
+        "first": 1685577600000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "TST",
+        "bars": 471,
+        "gaps": 0,
+        "first": 1739059200000,
+        "last": 1779667200000
+      },
+      {
+        "coin": "TURBO",
+        "bars": 861,
+        "gaps": 0,
+        "first": 1717027200000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "UMA",
+        "bars": 1247,
+        "gaps": 0,
+        "first": 1683676800000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "UNI",
+        "bars": 1225,
+        "gaps": 0,
+        "first": 1685577600000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "UNIBOT",
+        "bars": 380,
+        "gaps": 0,
+        "first": 1686700800000,
+        "last": 1719446400000
+      },
+      {
+        "coin": "USELESS",
+        "bars": 30,
+        "gaps": 0,
+        "first": 1788825600000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "USTC",
+        "bars": 891,
+        "gaps": 0,
+        "first": 1701043200000,
+        "last": 1777939200000
+      },
+      {
+        "coin": "USUAL",
+        "bars": 659,
+        "gaps": 0,
+        "first": 1734480000000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "VINE",
+        "bars": 581,
+        "gaps": 0,
+        "first": 1737590400000,
+        "last": 1787702400000
+      },
+      {
+        "coin": "VIRTUAL",
+        "bars": 667,
+        "gaps": 0,
+        "first": 1733788800000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "VVV",
+        "bars": 618,
+        "gaps": 0,
+        "first": 1738022400000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "W",
+        "bars": 974,
+        "gaps": 0,
+        "first": 1707264000000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "WCT",
+        "bars": 541,
+        "gaps": 0,
+        "first": 1744675200000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "WIF",
+        "bars": 1021,
+        "gaps": 0,
+        "first": 1703203200000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "WLD",
+        "bars": 1172,
+        "gaps": 0,
+        "first": 1690156800000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "WLFI",
+        "bars": 411,
+        "gaps": 0,
+        "first": 1755907200000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "XAI",
+        "bars": 1003,
+        "gaps": 0,
+        "first": 1704758400000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "XLM",
+        "bars": 1225,
+        "gaps": 0,
+        "first": 1685577600000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "XMR",
+        "bars": 1225,
+        "gaps": 0,
+        "first": 1685577600000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "XPL",
+        "bars": 412,
+        "gaps": 0,
+        "first": 1755820800000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "XRP",
+        "bars": 1225,
+        "gaps": 0,
+        "first": 1685577600000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "YGG",
+        "bars": 1160,
+        "gaps": 0,
+        "first": 1691193600000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "YZY",
+        "bars": 258,
+        "gaps": 0,
+        "first": 1755734400000,
+        "last": 1777939200000
+      },
+      {
+        "coin": "ZEC",
+        "bars": 1225,
+        "gaps": 0,
+        "first": 1685577600000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "ZEN",
+        "bars": 1225,
+        "gaps": 0,
+        "first": 1685577600000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "ZEREBRO",
+        "bars": 489,
+        "gaps": 0,
+        "first": 1735776000000,
+        "last": 1777939200000
+      },
+      {
+        "coin": "ZETA",
+        "bars": 979,
+        "gaps": 0,
+        "first": 1706832000000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "ZK",
+        "bars": 848,
+        "gaps": 0,
+        "first": 1718150400000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "ZORA",
+        "bars": 533,
+        "gaps": 0,
+        "first": 1745366400000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "ZRO",
+        "bars": 1127,
+        "gaps": 0,
+        "first": 1694044800000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "kBONK",
+        "bars": 1054,
+        "gaps": 0,
+        "first": 1700352000000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "kDOGS",
+        "bars": 336,
+        "gaps": 0,
+        "first": 1725321600000,
+        "last": 1754265600000
+      },
+      {
+        "coin": "kFLOKI",
+        "bars": 1225,
+        "gaps": 0,
+        "first": 1685577600000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "kLUNC",
+        "bars": 1225,
+        "gaps": 0,
+        "first": 1685577600000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "kNEIRO",
+        "bars": 715,
+        "gaps": 0,
+        "first": 1729641600000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "kPEPE",
+        "bars": 1225,
+        "gaps": 0,
+        "first": 1685577600000,
+        "last": 1791331200000
+      },
+      {
+        "coin": "kSHIB",
+        "bars": 1225,
+        "gaps": 0,
+        "first": 1685577600000,
+        "last": 1791331200000
+      }
+    ]
+  },
+  "/tmp/hl-hist": {
+    "files": 234,
+    "bars": 395206,
+    "at_least100": 179,
+    "short": [
+      {
+        "coin": "AI",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "AI16Z",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "ARK",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "BADGER",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "BLAST",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "BLZ",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "BNT",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "CANTO",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "CATI",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "CHILLGUY",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "CYBER",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "DOOD",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "FRIEND",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "FTM",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "FTT",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "FXS",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "HPOS",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "ILV",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "IP",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "JELLY",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "LAUNCHCOIN",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "LISTA",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "LOOM",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "MATIC",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "MAV",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "MAVIA",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "MEW",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "MKR",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "MYRO",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "NEIROETH",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "NFTI",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "NTRN",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "OGN",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "OM",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "OMNI",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "ORBS",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "OX",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "PANDORA",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "PIXEL",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "PROMPT",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "RDNT",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "REQ",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "RLB",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "RNDR",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "SCR",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "SHIA",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "STG",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "STRAX",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "TON",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "TST",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "UNIBOT",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "USTC",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "YZY",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "ZEREBRO",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "kDOGS",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      }
+    ],
+    "gaps": 0,
+    "first": 1783443600000,
+    "last": 1791475200000,
+    "rows": [
+      {
+        "coin": "0G",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "2Z",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "AAVE",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "ACE",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "ADA",
+        "bars": 2208,
+        "gaps": 0,
+        "first": 1783530000000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "AERO",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "AI",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "AI16Z",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "AIXBT",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "ALGO",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "ALT",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "ANIME",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "APE",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "APEX",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "APT",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "AR",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "ARB",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "ARK",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "ASTER",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "ATOM",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "AVAX",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "AVNT",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "AXS",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "AZTEC",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "BABY",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "BADGER",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "BANANA",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "BCH",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "BERA",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "BIGTIME",
+        "bars": 2208,
+        "gaps": 0,
+        "first": 1783530000000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "BIO",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "BLAST",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "BLUR",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "BLZ",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "BNB",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "BNT",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "BOME",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "BRETT",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "BSV",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "BTC",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "CAKE",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "CANTO",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "CASHCAT",
+        "bars": 2149,
+        "gaps": 0,
+        "first": 1783742400000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "CATI",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "CC",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "CELO",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "CFX",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "CHILLGUY",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "CHIP",
+        "bars": 2208,
+        "gaps": 0,
+        "first": 1783530000000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "COMP",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "CRV",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "CYBER",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "DASH",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "DOGE",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "DOOD",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "DOT",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "DYDX",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "DYM",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "EIGEN",
+        "bars": 2208,
+        "gaps": 0,
+        "first": 1783530000000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "ENA",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "ENS",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "ETC",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "ETH",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "ETHFI",
+        "bars": 2208,
+        "gaps": 0,
+        "first": 1783530000000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "FARTCOIN",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "FET",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "FIL",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "FOGO",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "FRIEND",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "FTM",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "FTT",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "FXS",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "GALA",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "GAS",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "GMT",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "GMX",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "GOAT",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "GRAM",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "GRASS",
+        "bars": 2208,
+        "gaps": 0,
+        "first": 1783530000000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "GRIFFAIN",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "HBAR",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "HEMI",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "HMSTR",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "HPOS",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "HYPE",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "HYPER",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "ICP",
+        "bars": 2208,
+        "gaps": 0,
+        "first": 1783530000000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "ILV",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "IMX",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "INIT",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "INJ",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "IO",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "IOTA",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "IP",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "JELLY",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "JTO",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "JUP",
+        "bars": 2208,
+        "gaps": 0,
+        "first": 1783530000000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "KAITO",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "KAS",
+        "bars": 2208,
+        "gaps": 0,
+        "first": 1783530000000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "LAUNCHCOIN",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "LAYER",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "LDO",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "LINEA",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "LINK",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "LISTA",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "LIT",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "LOOM",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "LTC",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "MANTA",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "MATIC",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "MAV",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "MAVIA",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "ME",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "MEGA",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "MELANIA",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "MEME",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "MERL",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "MET",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "MEW",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "MINA",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "MKR",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "MNT",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "MON",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "MOODENG",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "MORPHO",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "MOVE",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "MYRO",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "NEAR",
+        "bars": 2208,
+        "gaps": 0,
+        "first": 1783530000000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "NEIROETH",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "NEO",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "NFTI",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "NIL",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "NOT",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "NTRN",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "NXPC",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "OGN",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "OM",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "OMNI",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "ONDO",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "OP",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "ORBS",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "ORDI",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "OX",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "PANDORA",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "PAXG",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "PENDLE",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "PENGU",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "PEOPLE",
+        "bars": 2208,
+        "gaps": 0,
+        "first": 1783530000000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "PIXEL",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "PNUT",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "POL",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "POLYX",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "PONS",
+        "bars": 926,
+        "gaps": 0,
+        "first": 1788145200000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "POPCAT",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "PROMPT",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "PROVE",
+        "bars": 2208,
+        "gaps": 0,
+        "first": 1783530000000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "PUMP",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "PURR",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "PYTH",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "RDNT",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "RENDER",
+        "bars": 2208,
+        "gaps": 0,
+        "first": 1783530000000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "REQ",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "RESOLV",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "REZ",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "RLB",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "RNDR",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "RSR",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "RUNE",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "S",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "SAGA",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "SAND",
+        "bars": 2208,
+        "gaps": 0,
+        "first": 1783530000000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "SCR",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "SEI",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "SHIA",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "SKR",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "SKY",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "SNX",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "SOL",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "SOPH",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "SPX",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "STABLE",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "STBL",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "STG",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "STRAX",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "STRK",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "STX",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "SUI",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "SUPER",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "SUSHI",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "SYRUP",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "TAO",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "TIA",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "TNSR",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "TON",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "TRB",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "TRUMP",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "TRX",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "TST",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "TURBO",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "UMA",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "UNI",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "UNIBOT",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "USELESS",
+        "bars": 721,
+        "gaps": 0,
+        "first": 1788883200000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "USTC",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "USUAL",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "VINE",
+        "bars": 1194,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1787738400000
+      },
+      {
+        "coin": "VIRTUAL",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "VVV",
+        "bars": 2208,
+        "gaps": 0,
+        "first": 1783530000000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "W",
+        "bars": 2208,
+        "gaps": 0,
+        "first": 1783530000000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "WCT",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "WIF",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "WLD",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "WLFI",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "XAI",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "XLM",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "XMR",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "XPL",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "XRP",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "YGG",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "YZY",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "ZEC",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "ZEN",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "ZEREBRO",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "ZETA",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "ZK",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "ZORA",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "ZRO",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "kBONK",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "kDOGS",
+        "bars": 0,
+        "gaps": 0,
+        "first": null,
+        "last": null
+      },
+      {
+        "coin": "kFLOKI",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "kLUNC",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "kNEIRO",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "kPEPE",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      },
+      {
+        "coin": "kSHIB",
+        "bars": 2232,
+        "gaps": 0,
+        "first": 1783443600000,
+        "last": 1791475200000
+      }
+    ]
+  }
+}

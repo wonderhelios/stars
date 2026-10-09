@@ -1,0 +1,27 @@
+{
+  "decision": "Only run trailing grid after source-consistent baseline reproduces either 1.62 or 2.14 under identified equivalent configuration; numerical coincidence from legacy incompatible engine is not acceptance. No tuning to references.",
+  "criteria": [
+    "p_fwer < 0.05",
+    "both subperiod improvements positive",
+    "improvement greater than phase noise",
+    "pessimistic improvement positive"
+  ],
+  "grid": {
+    "activation": [
+      0.1,
+      0.2,
+      0.3
+    ],
+    "distance": [
+      0.05,
+      0.1,
+      0.15
+    ],
+    "modes": [
+      "per_coin",
+      "portfolio"
+    ]
+  },
+  "source_sha256": "c5654a05198573cb6ffd4e2290fa2d5a53758f5944066c9238b56d53bc38da7f",
+  "reference_match_rule": "Main source-consistent cap5, next-open, 7bp model must round to 1.62 or 2.14 at two decimal places and have no unresolved held-price gaps. Sensitivities and incompatible legacy runs cannot open gate."
+}

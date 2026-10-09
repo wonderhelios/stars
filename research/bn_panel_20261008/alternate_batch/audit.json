@@ -1,0 +1,15 @@
+{
+  "markets": 227,
+  "downloaded": 113,
+  "rows": 97154,
+  "status_counts": {
+    "validated": 82,
+    "no_data": 114,
+    "unvalidated": 31
+  },
+  "approved": 82,
+  "approved_multiplier_contracts": 1,
+  "same_day_comparisons": 574,
+  "gap_markets": [],
+  "src_unchanged_since_snapshot": true
+}

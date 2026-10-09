@@ -1,0 +1,1 @@
+{'max_abs_difference': 8.326672684688674e-17, 'different_entries': 0, 'days': 1225, 'coins': 234, 'source': 'FactorPanel copied verbatim from current src/trader.rs; rustc standalone harness', 'fixed_equity': 1000000.0}

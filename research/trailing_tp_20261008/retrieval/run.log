@@ -1,0 +1,48 @@
+1 / 468 {'coin': 'BTC', 'interval': '1d', 'count': 1226, 'first': 1685577600000, 'last': 1791417600000, 'sha256': '57fb3976f92c173cec0d0ec9cf4c7ab4ad950c25e76e1dbc0dde9b315bfd5c2b'}
+11 / 468 {'coin': 'LTC', 'interval': '1d', 'count': 1226, 'first': 1685577600000, 'last': 1791417600000, 'sha256': '790f6936db5fc3f4569bdf7b8c8112b666b51644f14f5a6e2667be1037693b0b'}
+21 / 468 {'coin': 'RNDR', 'interval': '1d', 'count': 417, 'first': 1685577600000, 'last': 1721520000000, 'sha256': '0bbb3ff03e7d987f9e33f5646fe1af3b509e6d0ce811af2dd1973ef9153f2757'}
+31 / 468 {'coin': 'MKR', 'interval': '1d', 'count': 828, 'first': 1685577600000, 'last': 1757030400000, 'sha256': '137c847b9f0254c4612c88544bcd04422f3e0323ada4e2fdf0547991c2871cd9'}
+41 / 468 {'coin': 'SEI', 'interval': '1d', 'count': 1151, 'first': 1692057600000, 'last': 1791417600000, 'sha256': '42093f2939e70a11e9ce7265f43aaed5effa1660b93ff14e5c2ef80a3e02a9df'}
+51 / 468 {'coin': 'TRB', 'interval': '1d', 'count': 1226, 'first': 1685577600000, 'last': 1791417600000, 'sha256': 'b6b89237371eb8378dabdba1b6d52b6f1bb3f9395e3c45e0c0eb5b40b2570b42'}
+61 / 468 {'coin': 'KAS', 'interval': '1d', 'count': 1093, 'first': 1697068800000, 'last': 1791417600000, 'sha256': '7127cafdc436f141df1e49113b99d60ddd967a399d41beed32169ece44b23d52'}
+71 / 468 {'coin': 'PENDLE', 'interval': '1d', 'count': 1169, 'first': 1690502400000, 'last': 1791417600000, 'sha256': 'fc5f3a920b1d9f2269c98a5cf8e27c422884f57e47c4cd23100a4e16d04f6322'}
+81 / 468 {'coin': 'FIL', 'interval': '1d', 'count': 1226, 'first': 1685577600000, 'last': 1791417600000, 'sha256': 'cd6e7e1f17413e3a5fd008e9f499fe7cfc35071f69430dab0c39ecabf50b93c6'}
+91 / 468 {'coin': 'JUP', 'interval': '1d', 'error': 'None'}
+101 / 468 {'coin': 'PEOPLE', 'interval': '1d', 'error': 'None'}
+111 / 468 {'coin': 'MAVIA', 'interval': '1d', 'count': 820, 'first': 1707177600000, 'last': 1777939200000, 'sha256': '68c36a4ab1b34bda4fca59f83d7da108d5f5c37d41dc0dc4f7deea42094a8d29'}
+121 / 468 {'coin': 'BOME', 'interval': '1d', 'count': 938, 'first': 1710460800000, 'last': 1791417600000, 'sha256': '9ae6c47bf5dcde918462cd8660a6a8cf24dd2bcada0e95cb6163d81544c22bd7'}
+131 / 468 {'coin': 'EIGEN', 'interval': '1d', 'count': 892, 'first': 1714435200000, 'last': 1791417600000, 'sha256': 'c89d6d0318d666c40a713a430692240352f198913ba4258f6ec4b2c5a5eb27bf'}
+141 / 468 {'coin': 'RENDER', 'interval': '1d', 'count': 805, 'first': 1721952000000, 'last': 1791417600000, 'sha256': 'fd2c5ee66fabb1f2bd9b830dab814734abb2e27bfce87fe9dd999316cc88a9b6'}
+151 / 468 {'coin': 'MOODENG', 'interval': '1d', 'count': 714, 'first': 1729814400000, 'last': 1791417600000, 'sha256': '7f1abbbe18c04945dda395fb5306fcb1539e0fdf939ae2e89aaf529146cfc9d0'}
+161 / 468 {'coin': 'ME', 'interval': '1d', 'count': 668, 'first': 1733788800000, 'last': 1791417600000, 'sha256': '7221a0e5c7040a0cff4a768f4f6d54c05cffb38838ed6c5c071388d19a4fc4be'}
+171 / 468 {'coin': 'GRIFFAIN', 'interval': '1d', 'count': 645, 'first': 1735776000000, 'last': 1791417600000, 'sha256': '61c7c5abe280c648348b266cd88154fb021fa6f718b7a77583d9d0cdc6f0fa44'}
+181 / 468 {'coin': 'BERA', 'interval': '1d', 'count': 610, 'first': 1738800000000, 'last': 1791417600000, 'sha256': '78ca4501a1c226ca595d6375073fcffdea4866a544ee244450957cb17ba8e8e1'}
+191 / 468 {'coin': 'WCT', 'interval': '1d', 'count': 542, 'first': 1744675200000, 'last': 1791417600000, 'sha256': 'b5ac69137900b9f09b01a89dc65b28cd1d50fe718929adbc6ab597bb1ebc0ef3'}
+201 / 468 {'coin': 'PUMP', 'interval': '1d', 'count': 456, 'first': 1752105600000, 'last': 1791417600000, 'sha256': 'eb5993ce805ed4eb3a2a3bf37380b18046e590a63774b6be84a002a785610171'}
+211 / 468 {'coin': '0G', 'interval': '1d', 'error': 'None'}
+221 / 468 {'coin': 'AERO', 'interval': '1d', 'count': 674, 'first': 1733270400000, 'last': 1791417600000, 'sha256': '9423694be22041e00d099f7634503793db6f5cf6f9cabbac0ca1449cc490432f'}
+231 / 468 {'coin': 'GRAM', 'interval': '1d', 'count': 99, 'first': 1782950400000, 'last': 1791417600000, 'sha256': 'f320557f221eba697533550019c0af05462543239cd2a494bc7366fbfc5e9c37'}
+241 / 468 {'coin': 'AVAX', 'interval': '1h', 'count': 2233, 'first': 1783443600000, 'last': 1791478800000, 'sha256': '19a0ae213a1814e886a3d35cbbcd6d61f1d127447aeb05bfc034d9ea2c1a194d'}
+251 / 468 {'coin': 'CRV', 'interval': '1h', 'count': 2233, 'first': 1783443600000, 'last': 1791478800000, 'sha256': '4255aabcedac023eb225846602ad331cccfc41a944b3fbb8e01339760e65ac20'}
+261 / 468 {'coin': 'BCH', 'interval': '1h', 'count': 2233, 'first': 1783443600000, 'last': 1791478800000, 'sha256': '3585a99e5ac7113576f135872cb84a939364d2bc51b33ef8f3ef8fd37e4b5bcd'}
+271 / 468 {'coin': 'YGG', 'interval': '1h', 'count': 2233, 'first': 1783443600000, 'last': 1791478800000, 'sha256': 'fed8dd2bdaf06d9e707c9042fa2485508ed91876ca173842aad5a6d54bf7c790'}
+281 / 468 {'coin': 'ZRO', 'interval': '1h', 'count': 2233, 'first': 1783443600000, 'last': 1791478800000, 'sha256': '3b41d81194d74c360d6ce1143b1cb99849541939b4a1c4ba472aae39b35cdf11'}
+291 / 468 {'coin': 'BNT', 'interval': '1h', 'count': 0, 'first': None, 'last': None, 'sha256': '4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945'}
+301 / 468 {'coin': 'TON', 'interval': '1h', 'count': 0, 'first': None, 'last': None, 'sha256': '4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945'}
+311 / 468 {'coin': 'ORDI', 'interval': '1h', 'count': 2233, 'first': 1783443600000, 'last': 1791478800000, 'sha256': '82d905cff46611afc72376cc0ba84433e9ec2fabe6145cabad6dcc25220a58a7'}
+321 / 468 {'coin': 'GMT', 'interval': '1h', 'count': 2233, 'first': 1783443600000, 'last': 1791478800000, 'sha256': '7100ec216b53fc8449c4d7817eb3f4f8001cb678316a994e068396e340759ea2'}
+331 / 468 {'coin': 'ACE', 'interval': '1h', 'count': 2233, 'first': 1783443600000, 'last': 1791478800000, 'sha256': '951998060cb594e43c13d1f789ad957f75c8de4ab2bf180aef6094df41328d5a'}
+341 / 468 {'coin': 'ONDO', 'interval': '1h', 'count': 2233, 'first': 1783443600000, 'last': 1791478800000, 'sha256': 'e6c43f7d2a37ceff96764f82fbf58dd3cd2bfea65be40240ab4d20e7f903d37e'}
+351 / 468 {'coin': 'TAO', 'interval': '1h', 'count': 2233, 'first': 1783443600000, 'last': 1791478800000, 'sha256': '710f2be1376f998dfad12cddc4e3576a64bc151f88c98e8685e575e412adc832'}
+361 / 468 {'coin': 'MERL', 'interval': '1h', 'count': 2233, 'first': 1783443600000, 'last': 1791478800000, 'sha256': 'a552487c1dc0d72bf29f5e9741ef4141e379516d7765a12824eb878604f4ad7a'}
+371 / 468 {'coin': 'ZK', 'interval': '1h', 'count': 2233, 'first': 1783443600000, 'last': 1791478800000, 'sha256': '950531dc36275435e2d06d7b534edd85b51f2f46653218b1c678a8fc3e9de831'}
+381 / 468 {'coin': 'SCR', 'interval': '1h', 'count': 0, 'first': None, 'last': None, 'sha256': '4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945'}
+391 / 468 {'coin': 'SAND', 'interval': '1h', 'count': 2233, 'first': 1783443600000, 'last': 1791478800000, 'sha256': '29e97fb05331e02f763ffc9f75f7a12a1223979d5a8c2c6660b62096101dc075'}
+401 / 468 {'coin': 'AI16Z', 'interval': '1h', 'count': 0, 'first': None, 'last': None, 'sha256': '4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945'}
+411 / 468 {'coin': 'ANIME', 'interval': '1h', 'count': 2233, 'first': 1783443600000, 'last': 1791478800000, 'sha256': 'a3de1c520e566972da90db8bc48ffa683007f43d9b9c7500089c027a63061fc8'}
+421 / 468 {'coin': 'NIL', 'interval': '1h', 'count': 2233, 'first': 1783443600000, 'last': 1791478800000, 'sha256': '918d1540581d0317dcfdbf26cb7a2d4235b3e9f51e7e1f38e517e21e5502e2e5'}
+431 / 468 {'coin': 'NXPC', 'interval': '1h', 'count': 2233, 'first': 1783443600000, 'last': 1791478800000, 'sha256': 'e8daea1f821fa5f1bdfcfb43578d453feb3b494c1e0f563ec07c435a0909bfea'}
+441 / 468 {'coin': 'SKY', 'interval': '1h', 'count': 2233, 'first': 1783443600000, 'last': 1791478800000, 'sha256': 'ddec5b4ab355bf23208594f5d4c30b40323f305f13253e9d28c595c9a457072b'}
+451 / 468 {'coin': 'MET', 'interval': '1h', 'count': 2233, 'first': 1783443600000, 'last': 1791478800000, 'sha256': 'bbc17f2cad0ced636afb0af2d30737bfaf4fa7c6b01bf71605d0ce2570494286'}
+461 / 468 {'coin': 'DASH', 'interval': '1h', 'count': 2233, 'first': 1783443600000, 'last': 1791478800000, 'sha256': 'a73727a01cafd35273c31e997821c648d5152a0deca0ea1d4d015a76ffdd37c8'}
+DONE

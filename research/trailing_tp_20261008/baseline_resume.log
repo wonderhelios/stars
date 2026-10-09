@@ -1,0 +1,4 @@
+cap5_open_0.0007 {'days': 1193, 'sharpe': 1.2936769138122235, 'annual_arithmetic': 1.033040215950655, 'annual_cost': 0.40536973562347944, 'daily_turnover': 1.5865743077239902}
+cap5_close_0.0007 {'days': 1193, 'sharpe': 1.2924893526235428, 'annual_arithmetic': 1.032435371769125, 'annual_cost': 0.40559937176478156, 'daily_turnover': 1.5874730793142133}
+cap8_open_0.0007 {'days': 1193, 'sharpe': 1.2630077191794877, 'annual_arithmetic': 0.9371031898759835, 'annual_cost': 0.3966638356935912, 'daily_turnover': 1.5525003353956603}
+cap5_open_0.00075 {'days': 1193, 'sharpe': 1.2568598547735363, 'annual_arithmetic': 1.0037968093525589, 'annual_cost': 0.43434294384382455, 'daily_turnover': 1.586640890753697}

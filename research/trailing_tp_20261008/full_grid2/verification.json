@@ -1,0 +1,16 @@
+{
+  "series": 180,
+  "expected": 180,
+  "errors": [],
+  "same_coin_same_day_duplicate_exits": 0,
+  "bankrupt": [
+    [
+      "s3_p1_0.2_0.05_coin_pess.npz",
+      1774569600000
+    ],
+    [
+      "s3_p1_0.2_0.1_coin_pess.npz",
+      1775174400000
+    ]
+  ]
+}

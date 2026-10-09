@@ -1,0 +1,35 @@
+{
+  "activation": [
+    0.1,
+    0.2,
+    0.3
+  ],
+  "distance": [
+    0.05,
+    0.1,
+    0.15
+  ],
+  "modes": [
+    "coin",
+    "portfolio"
+  ],
+  "paths": [
+    "pess",
+    "opt"
+  ],
+  "primary_slices": 1,
+  "sensitivity_slices": 3,
+  "phases": [
+    0,
+    1,
+    2
+  ],
+  "family": 144,
+  "bootstrap": 3999,
+  "block": 30,
+  "seed": 20261009,
+  "fee": 0.0007,
+  "gate": "FWER<.05; both subperiod Sharpe and deltas positive; delta > phase SD; pessimistic positive",
+  "short": "favorable minimum price, adverse maximum; return on entry notional",
+  "portfolio": "synchronous open/close equity; peaks only close; pess checks open then close, opt close only"
+}

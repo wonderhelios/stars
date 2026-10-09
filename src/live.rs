@@ -575,24 +575,19 @@ fn ensure_candidates(
 /// send the orders. Ranking is identical to the paper engine.
 /// 选出用来算因子的面板。
 ///
-/// TxFlow 的盘口薄、历史短，用它自己的价量算信号等于用噪声算信号 —— 一个大单
-/// 就能推动 10~20%，而做市商都在币安/HL 对冲，那里的价格才是真实信息。所以
-/// TxFlow 用 Hyperliquid 的库做信号，只把币名映射成 TxFlow 的符号（加 -USDC），
-/// 并丢弃 TxFlow 上没有对应市场的币。
+/// TxFlow ranks the full Binance universe before execution filtering.
 fn signal_panel(
     store: &crate::store::Store,
     signal_store: Option<&crate::store::Store>,
     cfg: &LiveConfig,
-    markets: &HashMap<String, MarketInfo>,
+    _markets: &HashMap<String, MarketInfo>,
 ) -> Result<Vec<crate::momentum::PanelEntry>> {
     if cfg.txflow {
-        let hs=signal_store.context("TxFlow 缺少 Hyperliquid 信号源，拒绝计划")?;
+        let hs=signal_store.context("TxFlow 缺少币安信号源，拒绝计划")?;
         let day=86_400_000;
         let yesterday=now_ms_pub()/day*day-day;
         let need=cfg.lookback.max(30)+3;
-        let mapped:Vec<_>=trader::load_panel(hs)?.into_iter().filter_map(|mut entry| {
-            entry.coin=format!("{}-USDC",entry.coin);
-            if !markets.contains_key(&entry.coin) {return None;}
+        let mapped:Vec<_>=trader::load_panel(hs)?.into_iter().filter_map(|entry| {
             let closed:Vec<_>=entry.candles.iter().filter(|c|c.t<=yesterday).collect();
             let recent=&closed[closed.len().saturating_sub(need)..];
             if recent.len()<need || recent.last().map(|c|c.t)!=Some(yesterday)
@@ -600,15 +595,24 @@ fn signal_panel(
                 || !recent.iter().all(|c|c.c.is_finite() && c.c>0. && c.v.is_finite() && c.v>=0.) {return None;}
             Some(entry)
         }).collect();
-        anyhow::ensure!(mapped.len()>=20,"TxFlow 新鲜且连续的 HL 信号宇宙不足 20，拒绝计划");
+        anyhow::ensure!(mapped.len()>=20,"TxFlow 新鲜且连续的币安信号宇宙不足 20，拒绝计划");
         return Ok(mapped);
     }
-    let all = trader::load_panel(store)?;
-    Ok(if cfg.txflow {
-        all.into_iter().filter(|e| markets.contains_key(&e.coin)).collect()
-    } else {
-        all
-    })
+    trader::load_panel(store)
+}
+
+fn signal_description(txflow: bool, count: usize, markets: usize) -> String {
+    if txflow { format!("信号源: 币安（TxFlow 独立组合） · 可排名 {count} 币 / TxFlow 共 {markets} 市场（已验证映射 82 币）") }
+    else { "信号源: Hyperliquid".into() }
+}
+fn drop_unsupported(weights: &mut Vec<(String,f64)>, panel: &[crate::momentum::PanelEntry], markets: &HashMap<String,MarketInfo>) -> Vec<String> {
+    let universe: std::collections::HashSet<_> = panel.iter().map(|e| e.coin.as_str()).collect();
+    let mut dropped=Vec::new();
+    weights.retain(|(coin,_)| {
+        let keep=universe.contains(coin.as_str()) && markets.contains_key(coin);
+        if !keep { dropped.push(coin.clone()); } keep
+    });
+    dropped
 }
 
 pub async fn run(
@@ -636,17 +640,20 @@ pub async fn run(
     let mut tc = cfg.trade_config();
     if cfg.txflow && state.pending_recovery.is_some() { tc.rebalance_slices=1; }
 
-    let using_hl = cfg.txflow && signal_store.is_some();
     let panel = signal_panel(store, signal_store, &cfg, markets)?;
     anyhow::ensure!(
         panel.len() >= 20,
-        "K 线缓存不足（{} 币）—— TxFlow 用 Hyperliquid 做信号源，请确认 HL 的日线缓存已就绪",
+        "K 线缓存不足（{} 币）—— 请确认对应信号源的日线缓存已就绪",
         panel.len()
     );
     let acct0 = exec.account().await?;
     let (mut weights, liquid) = trader::target_weights(&panel, &tc, acct0.equity, crate::live::now_ms_pub() as i64);
-    let source = if using_hl { "Hyperliquid（替代 TxFlow 做信号）" } else if cfg.txflow { "TxFlow 自身" } else { "Hyperliquid" };
+    let source = if cfg.txflow { "币安（TxFlow 独立组合）" } else { "Hyperliquid" };
     ensure_candidates(&weights, &liquid, &cfg, panel.len(), source)?;
+
+    let dropped_unsupported = if cfg.txflow {
+        drop_unsupported(&mut weights, &panel, markets)
+    } else { Vec::new() };
 
     let acct = exec.account().await?;
     let mut coins: Vec<String> = weights.iter().map(|(c, _)| c.clone()).collect();
@@ -690,6 +697,13 @@ pub async fn run(
         cfg.effective_leverage(),
         cfg.margin_buffer * 100.0
     )];
+    if !dropped_unsupported.is_empty() {
+        plan_lines.push(format!(
+            "注: 以下 {} 个币 TxFlow 不支持交易，已跳过（权重未重新归一化，总名义相应略低）: {}",
+            dropped_unsupported.len(),
+            dropped_unsupported.join(" ")
+        ));
+    }
     // 腿的名单**按权重强弱排序**并显示权重值。
     //
     // 原来直接用 Vec 的插入顺序 —— 那是三因子合并后的任意顺序，看不出谁强谁弱。
@@ -709,19 +723,7 @@ pub async fn run(
                 .collect::<Vec<_>>()
                 .join(" ")
         };
-        // 把信号源写进计划里 —— 否则"宇宙只有 41 个币"这种事没法判断是
-    // 数据源问题、门槛问题还是回填问题。真实事故：hl_store 没接上，
-    // 偷偷退回 TxFlow 自己的价量，而计划里看不出任何异常。
-    plan_lines.push(format!(
-        "信号源: {}",
-        if using_hl {
-            "Hyperliquid（TxFlow 只负责执行）"
-        } else if cfg.txflow {
-            "⚠ TxFlow 自身（hl_store 未接上，结果不可信）"
-        } else {
-            "Hyperliquid"
-        }
-    ));
+    plan_lines.push(signal_description(cfg.txflow, panel.len(), markets.len()));
     plan_lines.push(format!("多头腿（按权重降序）: {}", legs(&plan.long_leg)));
         plan_lines.push(format!("空头腿（按权重降序）: {}", legs(&plan.short_leg)));
     }
@@ -883,7 +885,7 @@ pub async fn rebuild_cross(
         &liquid,
         &cfg,
         panel.len(),
-        if cfg.txflow { "Hyperliquid（替代 TxFlow 做信号）" } else { "Hyperliquid" },
+        if cfg.txflow { "币安（TxFlow 独立组合）" } else { "Hyperliquid" },
     )?;
     let coins: Vec<String> = acct.positions.keys().cloned().collect();
     let mids = trader::fetch_mids(&exec, &coins).await;
@@ -1545,7 +1547,7 @@ mod txflow_fix_tests {
         merge_txflow_reconciliation(&mut current,&snapshot);assert_eq!(current.records.len(),3);
     }
     #[test]
-    fn txflow_signal_requires_hl_source_and_yesterdays_contiguous_bars() {
+    fn txflow_signal_requires_binance_source_and_yesterdays_contiguous_bars() {
         let root=std::env::temp_dir().join(format!("stars-signal-{}",uuid::Uuid::new_v4()));
         let store=crate::store::Store::open(&root.join("tx")).unwrap();let hl=crate::store::Store::open(&root.join("hl")).unwrap();
         let yesterday=now_ms_pub()/86_400_000*86_400_000-86_400_000;
@@ -1562,6 +1564,25 @@ mod txflow_fix_tests {
         drop(store);drop(hl);std::fs::remove_dir_all(root).unwrap();
         assert!(stale.is_err(),"stale HL factor bars must not produce a TxFlow live signal");
         assert!(missing.is_err(),"missing HL signal source must fail closed");assert_eq!(unchanged,24);
+    }
+    #[test]
+    fn binance_universe_differs_from_hl_and_markets_without_changing_weights() {
+        let root=std::env::temp_dir().join(uuid::Uuid::new_v4().to_string());
+        let bn=crate::store::Store::open(&root.join("bn")).unwrap();
+        let hl=crate::store::Store::open(&root.join("hl")).unwrap();
+        let yesterday=now_ms_pub()/86400000*86400000-86400000;
+        let candles:Vec<_>=(0..40).map(|d|crate::hl::Candle{t:yesterday-(39-d)*86400000,o:2.,h:2.,l:2.,c:2.,v:6000000.}).collect();
+        for i in 0..24 {bn.upsert_candles(&format!("BN{i}-USDC"),&candles).unwrap();}
+        hl.upsert_candles("HL_ONLY",&candles).unwrap();
+        let markets=HashMap::from([("BN0-USDC".into(),MarketInfo{sz_decimals:2,max_leverage:10})]);
+        let panel=signal_panel(&hl,Some(&bn),&LiveConfig{txflow:true,..Default::default()},&markets).unwrap();
+        assert_eq!(panel.len(),24);assert!(panel.iter().all(|e|e.coin.starts_with("BN")));
+        let unchanged=signal_panel(&hl,Some(&bn),&LiveConfig::default(),&markets).unwrap();assert_eq!(unchanged[0].coin,"HL_ONLY");
+        let mut weights=vec![("BN0-USDC".into(),0.2),("BN1-USDC".into(),-0.3),("HL_ONLY".into(),0.5)];
+        assert_eq!(drop_unsupported(&mut weights,&panel,&markets).len(),2);assert_eq!(weights,vec![("BN0-USDC".into(),0.2)]);
+        assert_eq!(signal_description(true,82,227),"信号源: 币安（TxFlow 独立组合） · 可排名 82 币 / TxFlow 共 227 市场（已验证映射 82 币）");
+        assert_eq!(signal_description(false,1,1),"信号源: Hyperliquid");
+        drop(bn);drop(hl);std::fs::remove_dir_all(root).unwrap();
     }
     #[test]
     fn txflow_fractional_leverage_uses_actual_integer_budget() {

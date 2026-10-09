@@ -1105,12 +1105,61 @@ mod tests {
     }
 }
 
+/// 币安面板的每日保鲜。CSV 一旦过期，"没有昨日的连续 K 线"会让策略拒绝生成计划
+/// （fail-closed 是对的），所以这件事必须有人自动做，不能靠人记得跑命令。
+///
+/// 路径用环境变量配置，默认和导入器一致：
+///   STARS_BINANCE_MAPPING  默认 research/bn_panel_20261008/mapping.json
+///   STARS_BINANCE_DAILY    默认 research/bn_panel_20261008/data/daily
+/// 抓取失败不影响主循环（只是这一轮面板没更新），下一轮会重试。
+async fn refresh_binance_panel(state: &crate::web::AppState) {
+    let mapping = std::env::var("STARS_BINANCE_MAPPING").unwrap_or_else(|_| {
+        "research/bn_panel_20261008/mapping.json".to_string()
+    });
+    let daily = std::env::var("STARS_BINANCE_DAILY").unwrap_or_else(|_| {
+        "research/bn_panel_20261008/data/daily".to_string()
+    });
+    let mapping = std::path::PathBuf::from(mapping);
+    let daily = std::path::PathBuf::from(daily);
+    if !mapping.exists() {
+        tracing::warn!("币安面板未刷新：映射表不存在 {}", mapping.display());
+        return;
+    }
+    match crate::binance::fetch(&mapping, &daily, 1000).await {
+        Ok(rep) => {
+            tracing::info!(
+                "币安面板已刷新：更新 {} 个币，跳过 {} 个",
+                rep.updated.len(),
+                rep.skipped.len()
+            );
+            for (c, why) in rep.skipped.iter().take(5) {
+                tracing::warn!("币安面板跳过 {c}: {why}");
+            }
+            // 重新导入，让信号库拿到新数据
+            if let Some(store) = &state.binance_store {
+                match crate::binance::import(store, &mapping, &daily) {
+                    Ok(imp) => tracing::info!("币安面板已导入 {} 个币", imp.imported.len()),
+                    Err(e) => tracing::warn!("币安面板导入失败: {e}"),
+                }
+            }
+        }
+        Err(e) => tracing::warn!("币安面板抓取失败（下轮重试）: {e}"),
+    }
+}
+
 pub async fn background(state: crate::web::AppState) {
+    let mut last_binance: i64 = 0;
     loop {
         let now = crate::live::now_ms_pub();
         let due = auto_due(&*state.live.lock().await, now);
         let stale = now - state.meta.lock().await.refreshed_at > 30 * 60 * 1000;
         let recovering = state.live.lock().await.pending_recovery.is_some();
+        // 币安面板每天刷新一次（抓取约 1 分钟，82 个币）。放在这里而不是调仓路径上：
+        // 调仓不能被一次网络抓取拖住 —— 那个教训今晚已经吃过一次了。
+        if now - last_binance > 6 * 60 * 60 * 1000 {
+            last_binance = now;
+            refresh_binance_panel(&state).await;
+        }
         if due && recovering {
             if let Err(e)=run_auto(&state).await { tracing::warn!("TxFlow 优先恢复失败: {e}"); }
         } else if due || stale {
@@ -1160,7 +1209,7 @@ async fn run_auto(state: &crate::web::AppState) -> Result<()> {
     };
     refresh_meta_only(state).await?;
     let markets = crate::live::markets_from_meta(&state.meta.lock().await.universe);
-    let result = crate::live::run(&state.store, state.hl_store.as_deref(), &snapshot, &markets, true).await;
+    let result = crate::live::run(&state.store, state.signal_store().as_deref(), &snapshot, &markets, true).await;
     let mut st = state.live.lock().await;
     match result {
         Ok((r, records)) => {
@@ -1227,7 +1276,7 @@ mod public_tests {
  let server=tokio::spawn(async move {axum::serve(listener,app).await.unwrap()});
  let root=std::env::temp_dir().join(format!("stars-audit-{}",uuid::Uuid::new_v4()));std::fs::create_dir_all(&root).unwrap();
  let state=crate::web::AppState {
- store:Arc::new(crate::store::Store::open(&root.join("db")).unwrap()),hl_store:None,
+ store:Arc::new(crate::store::Store::open(&root.join("db")).unwrap()),binance_store:None,hl_store:None,
  paper:Arc::new(Mutex::new(Default::default())),paper_path:Arc::new(root.join("paper")),
  live:Arc::new(Mutex::new(Default::default())),live_path:Arc::new(root.join("live")),
  meta:Arc::new(Mutex::new(Default::default())),refresh:Arc::new(Mutex::new(Default::default())),http:reqwest::Client::builder().no_proxy().build().unwrap(),
@@ -1509,7 +1558,7 @@ mod public_tests {
  let server=tokio::spawn(async move {axum::serve(listener,app).await.unwrap()});
  let root=std::env::temp_dir().join(format!("stars-audit-{}",uuid::Uuid::new_v4()));std::fs::create_dir_all(&root).unwrap();
  let state=crate::web::AppState {
- store:Arc::new(crate::store::Store::open(&root.join("db")).unwrap()),hl_store:None,
+ store:Arc::new(crate::store::Store::open(&root.join("db")).unwrap()),binance_store:None,hl_store:None,
  paper:Arc::new(Mutex::new(Default::default())),paper_path:Arc::new(root.join("paper")),
  live:Arc::new(Mutex::new(Default::default())),live_path:Arc::new(root.join("live")),
  meta:Arc::new(Mutex::new(Default::default())),refresh:Arc::new(Mutex::new(Default::default())),http:reqwest::Client::builder().no_proxy().build().unwrap(),

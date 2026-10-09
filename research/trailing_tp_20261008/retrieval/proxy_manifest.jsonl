@@ -1,0 +1,6 @@
+{"coin": "ACE", "interval": "1d", "count": 1026, "first": 1702857600000, "last": 1791417600000, "sha256": "3cc80351f215ee3462fb8a871f26f62d4005d00409ddef9168a5ff04ca9301b1"}
+{"coin": "PEOPLE", "interval": "1d", "count": 1226, "first": 1685577600000, "last": 1791417600000, "sha256": "8fa4585ffb63fefd6337e2caa2599920936364cf67c1ab28e7beb2e6cf565045"}
+{"coin": "ENS", "interval": "1d", "count": 1226, "first": 1685577600000, "last": 1791417600000, "sha256": "d9e6d0b30779f729958fd6a916eb1c01c978be2a6091d1e0b196857675f00ac1"}
+{"coin": "XAI", "interval": "1d", "count": 1004, "first": 1704758400000, "last": 1791417600000, "sha256": "f9005b9ea6ce8801b496f833aa1f1c2ea539aa468f7d9056bf870cb744453126"}
+{"coin": "0G", "interval": "1d", "count": 387, "first": 1758067200000, "last": 1791417600000, "sha256": "d06ac46c7fa25b12e919602d2a4a001149979544b280af73c88ad27c8b8834d9"}
+{"coin": "ZEC", "interval": "1d", "count": 1226, "first": 1685577600000, "last": 1791417600000, "sha256": "2e7dbce4a016cf415c25cc1fa8392a6d89e68dbd913e2b6e14e9c5e1ff452a4d"}

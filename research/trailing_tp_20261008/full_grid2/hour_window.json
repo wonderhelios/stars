@@ -1,0 +1,9 @@
+{
+  "first": 1783468800000,
+  "last_exclusive": 1791417600000,
+  "days": 92,
+  "full_hourly_symbols": 159,
+  "symbols_with_any_hourly": 179,
+  "outside": "daily fallback; only window metrics interpreted",
+  "caveat": "hourly OHLC remains ambiguous within hour; no ticks/orderbook/fills"
+}

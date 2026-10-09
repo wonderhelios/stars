@@ -1,0 +1,380 @@
+[
+  {
+    "mode": "coin",
+    "activation": 0.1,
+    "distance": 0.05,
+    "ends": {
+      "low": {
+        "sharpe": 2.038787727021984,
+        "delta": 0.7840403100176134,
+        "annual_cost": 0.5788301122164792,
+        "full_path_exit_count": 168,
+        "missing_marks": 4847
+      },
+      "close": {
+        "sharpe": 2.56407498057969,
+        "delta": 1.3093275635753194,
+        "annual_cost": 0.566737899495342,
+        "full_path_exit_count": 150,
+        "missing_marks": 4847
+      }
+    }
+  },
+  {
+    "mode": "coin",
+    "activation": 0.1,
+    "distance": 0.1,
+    "ends": {
+      "low": {
+        "sharpe": 2.19599559740491,
+        "delta": 0.9412481804005393,
+        "annual_cost": 0.5455670014108207,
+        "full_path_exit_count": 117,
+        "missing_marks": 4847
+      },
+      "close": {
+        "sharpe": 2.2235217850412297,
+        "delta": 0.968774368036859,
+        "annual_cost": 0.5322352650287503,
+        "full_path_exit_count": 102,
+        "missing_marks": 4847
+      }
+    }
+  },
+  {
+    "mode": "coin",
+    "activation": 0.1,
+    "distance": 0.15,
+    "ends": {
+      "low": {
+        "sharpe": 2.4696234842466547,
+        "delta": 1.214876067242284,
+        "annual_cost": 0.516864427082596,
+        "full_path_exit_count": 73,
+        "missing_marks": 4847
+      },
+      "close": {
+        "sharpe": 3.7359996481500684,
+        "delta": 2.4812522311456977,
+        "annual_cost": 0.5017277442481143,
+        "full_path_exit_count": 59,
+        "missing_marks": 4847
+      }
+    }
+  },
+  {
+    "mode": "coin",
+    "activation": 0.2,
+    "distance": 0.05,
+    "ends": {
+      "low": {
+        "sharpe": 1.6873299700800342,
+        "delta": 0.4325825530756635,
+        "annual_cost": 0.49948726379056363,
+        "full_path_exit_count": 39,
+        "missing_marks": 4847
+      },
+      "close": {
+        "sharpe": 1.105776184339082,
+        "delta": -0.14897123266528856,
+        "annual_cost": 0.49731807240248094,
+        "full_path_exit_count": 37,
+        "missing_marks": 4847
+      }
+    }
+  },
+  {
+    "mode": "coin",
+    "activation": 0.2,
+    "distance": 0.1,
+    "ends": {
+      "low": {
+        "sharpe": 1.1826474156443334,
+        "delta": -0.07210000136003725,
+        "annual_cost": 0.4941360005355485,
+        "full_path_exit_count": 33,
+        "missing_marks": 4847
+      },
+      "close": {
+        "sharpe": 0.779184552499962,
+        "delta": -0.47556286450440866,
+        "annual_cost": 0.4904809293440899,
+        "full_path_exit_count": 29,
+        "missing_marks": 4847
+      }
+    }
+  },
+  {
+    "mode": "coin",
+    "activation": 0.2,
+    "distance": 0.15,
+    "ends": {
+      "low": {
+        "sharpe": 1.3696228841008586,
+        "delta": 0.114875467096488,
+        "annual_cost": 0.48402828760463745,
+        "full_path_exit_count": 21,
+        "missing_marks": 4847
+      },
+      "close": {
+        "sharpe": 1.9720271983782243,
+        "delta": 0.7172797813738536,
+        "annual_cost": 0.48016182387055834,
+        "full_path_exit_count": 19,
+        "missing_marks": 4847
+      }
+    }
+  },
+  {
+    "mode": "coin",
+    "activation": 0.3,
+    "distance": 0.05,
+    "ends": {
+      "low": {
+        "sharpe": 2.007155326945093,
+        "delta": 0.7524079099407222,
+        "annual_cost": 0.4800437811027208,
+        "full_path_exit_count": 18,
+        "missing_marks": 4847
+      },
+      "close": {
+        "sharpe": 1.6550569849644658,
+        "delta": 0.4003095679600952,
+        "annual_cost": 0.4795577263100356,
+        "full_path_exit_count": 16,
+        "missing_marks": 4847
+      }
+    }
+  },
+  {
+    "mode": "coin",
+    "activation": 0.3,
+    "distance": 0.1,
+    "ends": {
+      "low": {
+        "sharpe": 1.8865646656387374,
+        "delta": 0.6318172486343667,
+        "annual_cost": 0.4784098060724101,
+        "full_path_exit_count": 15,
+        "missing_marks": 4847
+      },
+      "close": {
+        "sharpe": 1.2913151164965255,
+        "delta": 0.03656769949215488,
+        "annual_cost": 0.4763209913856917,
+        "full_path_exit_count": 14,
+        "missing_marks": 4847
+      }
+    }
+  },
+  {
+    "mode": "coin",
+    "activation": 0.3,
+    "distance": 0.15,
+    "ends": {
+      "low": {
+        "sharpe": 2.094534006711222,
+        "delta": 0.8397865897068515,
+        "annual_cost": 0.47282624148762425,
+        "full_path_exit_count": 10,
+        "missing_marks": 4847
+      },
+      "close": {
+        "sharpe": 2.446781759208547,
+        "delta": 1.1920343422041761,
+        "annual_cost": 0.47063882717846367,
+        "full_path_exit_count": 10,
+        "missing_marks": 4847
+      }
+    }
+  },
+  {
+    "mode": "portfolio",
+    "activation": 0.1,
+    "distance": 0.05,
+    "ends": {
+      "low": {
+        "sharpe": -9.94031304236732,
+        "delta": -11.19506045937169,
+        "annual_cost": 1.3683575371069527,
+        "full_path_exit_count": 1578,
+        "missing_marks": 4847
+      },
+      "close": {
+        "sharpe": -9.94031304236732,
+        "delta": -11.19506045937169,
+        "annual_cost": 1.3683575371069527,
+        "full_path_exit_count": 1578,
+        "missing_marks": 4847
+      }
+    }
+  },
+  {
+    "mode": "portfolio",
+    "activation": 0.1,
+    "distance": 0.1,
+    "ends": {
+      "low": {
+        "sharpe": -1.996764502148937,
+        "delta": -3.251511919153308,
+        "annual_cost": 1.1744086781628615,
+        "full_path_exit_count": 1252,
+        "missing_marks": 4847
+      },
+      "close": {
+        "sharpe": -1.996764502148937,
+        "delta": -3.251511919153308,
+        "annual_cost": 1.1744086781628615,
+        "full_path_exit_count": 1252,
+        "missing_marks": 4847
+      }
+    }
+  },
+  {
+    "mode": "portfolio",
+    "activation": 0.1,
+    "distance": 0.15,
+    "ends": {
+      "low": {
+        "sharpe": -1.996764502148937,
+        "delta": -3.251511919153308,
+        "annual_cost": 1.1744086781628615,
+        "full_path_exit_count": 1252,
+        "missing_marks": 4847
+      },
+      "close": {
+        "sharpe": -1.996764502148937,
+        "delta": -3.251511919153308,
+        "annual_cost": 1.1744086781628615,
+        "full_path_exit_count": 1252,
+        "missing_marks": 4847
+      }
+    }
+  },
+  {
+    "mode": "portfolio",
+    "activation": 0.2,
+    "distance": 0.05,
+    "ends": {
+      "low": {
+        "sharpe": -9.94031304236732,
+        "delta": -11.19506045937169,
+        "annual_cost": 1.3683575371069527,
+        "full_path_exit_count": 1578,
+        "missing_marks": 4847
+      },
+      "close": {
+        "sharpe": -9.94031304236732,
+        "delta": -11.19506045937169,
+        "annual_cost": 1.3683575371069527,
+        "full_path_exit_count": 1578,
+        "missing_marks": 4847
+      }
+    }
+  },
+  {
+    "mode": "portfolio",
+    "activation": 0.2,
+    "distance": 0.1,
+    "ends": {
+      "low": {
+        "sharpe": -1.996764502148937,
+        "delta": -3.251511919153308,
+        "annual_cost": 1.1744086781628615,
+        "full_path_exit_count": 1252,
+        "missing_marks": 4847
+      },
+      "close": {
+        "sharpe": -1.996764502148937,
+        "delta": -3.251511919153308,
+        "annual_cost": 1.1744086781628615,
+        "full_path_exit_count": 1252,
+        "missing_marks": 4847
+      }
+    }
+  },
+  {
+    "mode": "portfolio",
+    "activation": 0.2,
+    "distance": 0.15,
+    "ends": {
+      "low": {
+        "sharpe": -1.996764502148937,
+        "delta": -3.251511919153308,
+        "annual_cost": 1.1744086781628615,
+        "full_path_exit_count": 1252,
+        "missing_marks": 4847
+      },
+      "close": {
+        "sharpe": -1.996764502148937,
+        "delta": -3.251511919153308,
+        "annual_cost": 1.1744086781628615,
+        "full_path_exit_count": 1252,
+        "missing_marks": 4847
+      }
+    }
+  },
+  {
+    "mode": "portfolio",
+    "activation": 0.3,
+    "distance": 0.05,
+    "ends": {
+      "low": {
+        "sharpe": -9.94031304236732,
+        "delta": -11.19506045937169,
+        "annual_cost": 1.3683575371069527,
+        "full_path_exit_count": 1578,
+        "missing_marks": 4847
+      },
+      "close": {
+        "sharpe": -9.94031304236732,
+        "delta": -11.19506045937169,
+        "annual_cost": 1.3683575371069527,
+        "full_path_exit_count": 1578,
+        "missing_marks": 4847
+      }
+    }
+  },
+  {
+    "mode": "portfolio",
+    "activation": 0.3,
+    "distance": 0.1,
+    "ends": {
+      "low": {
+        "sharpe": -1.996764502148937,
+        "delta": -3.251511919153308,
+        "annual_cost": 1.1744086781628615,
+        "full_path_exit_count": 1252,
+        "missing_marks": 4847
+      },
+      "close": {
+        "sharpe": -1.996764502148937,
+        "delta": -3.251511919153308,
+        "annual_cost": 1.1744086781628615,
+        "full_path_exit_count": 1252,
+        "missing_marks": 4847
+      }
+    }
+  },
+  {
+    "mode": "portfolio",
+    "activation": 0.3,
+    "distance": 0.15,
+    "ends": {
+      "low": {
+        "sharpe": -1.996764502148937,
+        "delta": -3.251511919153308,
+        "annual_cost": 1.1744086781628615,
+        "full_path_exit_count": 1252,
+        "missing_marks": 4847
+      },
+      "close": {
+        "sharpe": -1.996764502148937,
+        "delta": -3.251511919153308,
+        "annual_cost": 1.1744086781628615,
+        "full_path_exit_count": 1252,
+        "missing_marks": 4847
+      }
+    }
+  }
+]
