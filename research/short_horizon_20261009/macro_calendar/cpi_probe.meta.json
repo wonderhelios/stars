@@ -1,0 +1,18 @@
+{
+  "url": "https://www.bls.gov/news.release/archives/cpi_11132024.htm",
+  "status": 403,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "41d4d7b745ba2ee4897d7e6788f2f2a357af5528d229db83eefaf86625ffd288",
+  "retrieved_utc": "2026-10-09T04:19:03Z",
+  "attempts": [
+    {
+      "url": "https://www.bls.gov/news.release/archives/cpi_11132024.htm",
+      "status": 403,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "41d4d7b745ba2ee4897d7e6788f2f2a357af5528d229db83eefaf86625ffd288",
+      "retrieved_utc": "2026-10-09T04:19:03Z"
+    }
+  ]
+}

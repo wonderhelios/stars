@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-fourth-quarter-and-fiscal-year-2024-302322901.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "21adf97b687559d6ab2d4ff9b6eff20f04c1d1b2b7d54d5a436ffa7598344668",
+  "retrieved_utc": "2026-10-09T03:31:58Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-fourth-quarter-and-fiscal-year-2024-302322901.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "21adf97b687559d6ab2d4ff9b6eff20f04c1d1b2b7d54d5a436ffa7598344668",
+      "retrieved_utc": "2026-10-09T03:31:58Z"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/veeva-announces-fiscal-2026-first-quarter-results-302467581.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "c965f6583442e32345b77166ce6daf446bf007cdabff210df3031f8305c51f1a",
+  "retrieved_utc": "2026-10-09T03:08:23Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/veeva-announces-fiscal-2026-first-quarter-results-302467581.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "c965f6583442e32345b77166ce6daf446bf007cdabff210df3031f8305c51f1a",
+      "retrieved_utc": "2026-10-09T03:08:23Z"
+    }
+  ]
+}

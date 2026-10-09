@@ -1,0 +1,730 @@
+{
+  "source": {
+    "verified_events": 47,
+    "within_window": 46,
+    "late_updates": 1,
+    "comparisons": [
+      {
+        "planned_date": "2021-01-27",
+        "within_research_window": true,
+        "matches_observed_meeting": true,
+        "late_update": false
+      },
+      {
+        "planned_date": "2021-03-17",
+        "within_research_window": true,
+        "matches_observed_meeting": true,
+        "late_update": false
+      },
+      {
+        "planned_date": "2021-04-28",
+        "within_research_window": true,
+        "matches_observed_meeting": true,
+        "late_update": false
+      },
+      {
+        "planned_date": "2021-06-16",
+        "within_research_window": true,
+        "matches_observed_meeting": true,
+        "late_update": false
+      },
+      {
+        "planned_date": "2021-07-28",
+        "within_research_window": true,
+        "matches_observed_meeting": true,
+        "late_update": false
+      },
+      {
+        "planned_date": "2021-09-22",
+        "within_research_window": true,
+        "matches_observed_meeting": true,
+        "late_update": false
+      },
+      {
+        "planned_date": "2021-12-15",
+        "within_research_window": true,
+        "matches_observed_meeting": true,
+        "late_update": false
+      },
+      {
+        "planned_date": "2021-11-03",
+        "within_research_window": true,
+        "matches_observed_meeting": true,
+        "late_update": true
+      },
+      {
+        "planned_date": "2022-01-26",
+        "within_research_window": true,
+        "matches_observed_meeting": true,
+        "late_update": false
+      },
+      {
+        "planned_date": "2022-03-16",
+        "within_research_window": true,
+        "matches_observed_meeting": true,
+        "late_update": false
+      },
+      {
+        "planned_date": "2022-05-04",
+        "within_research_window": true,
+        "matches_observed_meeting": true,
+        "late_update": false
+      },
+      {
+        "planned_date": "2022-06-15",
+        "within_research_window": true,
+        "matches_observed_meeting": true,
+        "late_update": false
+      },
+      {
+        "planned_date": "2022-07-27",
+        "within_research_window": true,
+        "matches_observed_meeting": true,
+        "late_update": false
+      },
+      {
+        "planned_date": "2022-09-21",
+        "within_research_window": true,
+        "matches_observed_meeting": true,
+        "late_update": false
+      },
+      {
+        "planned_date": "2022-11-02",
+        "within_research_window": true,
+        "matches_observed_meeting": true,
+        "late_update": false
+      },
+      {
+        "planned_date": "2022-12-14",
+        "within_research_window": true,
+        "matches_observed_meeting": true,
+        "late_update": false
+      },
+      {
+        "planned_date": "2023-02-01",
+        "within_research_window": true,
+        "matches_observed_meeting": true,
+        "late_update": false
+      },
+      {
+        "planned_date": "2023-03-22",
+        "within_research_window": true,
+        "matches_observed_meeting": true,
+        "late_update": false
+      },
+      {
+        "planned_date": "2023-05-03",
+        "within_research_window": true,
+        "matches_observed_meeting": true,
+        "late_update": false
+      },
+      {
+        "planned_date": "2023-06-14",
+        "within_research_window": true,
+        "matches_observed_meeting": true,
+        "late_update": false
+      },
+      {
+        "planned_date": "2023-07-26",
+        "within_research_window": true,
+        "matches_observed_meeting": true,
+        "late_update": false
+      },
+      {
+        "planned_date": "2023-09-20",
+        "within_research_window": true,
+        "matches_observed_meeting": true,
+        "late_update": false
+      },
+      {
+        "planned_date": "2023-11-01",
+        "within_research_window": true,
+        "matches_observed_meeting": true,
+        "late_update": false
+      },
+      {
+        "planned_date": "2023-12-13",
+        "within_research_window": true,
+        "matches_observed_meeting": true,
+        "late_update": false
+      },
+      {
+        "planned_date": "2024-01-31",
+        "within_research_window": true,
+        "matches_observed_meeting": true,
+        "late_update": false
+      },
+      {
+        "planned_date": "2024-03-20",
+        "within_research_window": true,
+        "matches_observed_meeting": true,
+        "late_update": false
+      },
+      {
+        "planned_date": "2024-05-01",
+        "within_research_window": true,
+        "matches_observed_meeting": true,
+        "late_update": false
+      },
+      {
+        "planned_date": "2024-06-12",
+        "within_research_window": true,
+        "matches_observed_meeting": true,
+        "late_update": false
+      },
+      {
+        "planned_date": "2024-07-31",
+        "within_research_window": true,
+        "matches_observed_meeting": true,
+        "late_update": false
+      },
+      {
+        "planned_date": "2024-09-18",
+        "within_research_window": true,
+        "matches_observed_meeting": true,
+        "late_update": false
+      },
+      {
+        "planned_date": "2024-11-07",
+        "within_research_window": true,
+        "matches_observed_meeting": true,
+        "late_update": false
+      },
+      {
+        "planned_date": "2024-12-18",
+        "within_research_window": true,
+        "matches_observed_meeting": true,
+        "late_update": false
+      },
+      {
+        "planned_date": "2025-01-29",
+        "within_research_window": true,
+        "matches_observed_meeting": true,
+        "late_update": false
+      },
+      {
+        "planned_date": "2025-03-19",
+        "within_research_window": true,
+        "matches_observed_meeting": true,
+        "late_update": false
+      },
+      {
+        "planned_date": "2025-05-07",
+        "within_research_window": true,
+        "matches_observed_meeting": true,
+        "late_update": false
+      },
+      {
+        "planned_date": "2025-06-18",
+        "within_research_window": true,
+        "matches_observed_meeting": true,
+        "late_update": false
+      },
+      {
+        "planned_date": "2025-07-30",
+        "within_research_window": true,
+        "matches_observed_meeting": true,
+        "late_update": false
+      },
+      {
+        "planned_date": "2025-09-17",
+        "within_research_window": true,
+        "matches_observed_meeting": true,
+        "late_update": false
+      },
+      {
+        "planned_date": "2025-10-29",
+        "within_research_window": true,
+        "matches_observed_meeting": true,
+        "late_update": false
+      },
+      {
+        "planned_date": "2025-12-10",
+        "within_research_window": true,
+        "matches_observed_meeting": true,
+        "late_update": false
+      },
+      {
+        "planned_date": "2026-01-28",
+        "within_research_window": true,
+        "matches_observed_meeting": true,
+        "late_update": false
+      },
+      {
+        "planned_date": "2026-03-18",
+        "within_research_window": true,
+        "matches_observed_meeting": true,
+        "late_update": false
+      },
+      {
+        "planned_date": "2026-04-29",
+        "within_research_window": true,
+        "matches_observed_meeting": true,
+        "late_update": false
+      },
+      {
+        "planned_date": "2026-06-17",
+        "within_research_window": true,
+        "matches_observed_meeting": true,
+        "late_update": false
+      },
+      {
+        "planned_date": "2026-07-29",
+        "within_research_window": true,
+        "matches_observed_meeting": true,
+        "late_update": false
+      },
+      {
+        "planned_date": "2026-09-16",
+        "within_research_window": true,
+        "matches_observed_meeting": true,
+        "late_update": false
+      },
+      {
+        "planned_date": "2026-10-28",
+        "within_research_window": false,
+        "matches_observed_meeting": false,
+        "late_update": false
+      }
+    ],
+    "ready_for_exploration": true,
+    "source_hash_quote_and_publication_checks": true,
+    "actual_calendar_audit_only": true,
+    "limitations": [
+      "Current source versions; late modifications conservatively delay availability",
+      "No proof all extraordinary rescheduling announcements are archived"
+    ]
+  },
+  "paths": 32,
+  "trades_including_stress_and_gross": 2160,
+  "max_daily_nav_replay_error": 2.9103830456733704e-10,
+  "max_holding_hours": 30.5,
+  "default_engine_regression_error": 0.0,
+  "prefix_checks": {
+    "2023-12-31": {
+      "SPY_pre1_g1_fee5": 0.0,
+      "SPY_pre1_g1_fee15": 0.0,
+      "SPY_pre1_g2.7_fee5": 0.0,
+      "SPY_pre1_g2.7_fee15": 0.0,
+      "SPY_event2_g1_fee5": 0.0,
+      "SPY_event2_g1_fee15": 0.0,
+      "SPY_event2_g2.7_fee5": 0.0,
+      "SPY_event2_g2.7_fee15": 0.0,
+      "GLD_pre1_g1_fee5": 0.0,
+      "GLD_pre1_g1_fee15": 0.0,
+      "GLD_pre1_g2.7_fee5": 0.0,
+      "GLD_pre1_g2.7_fee15": 0.0,
+      "GLD_event2_g1_fee5": 0.0,
+      "GLD_event2_g1_fee15": 0.0,
+      "GLD_event2_g2.7_fee5": 0.0,
+      "GLD_event2_g2.7_fee15": 0.0,
+      "TLT_pre1_g1_fee5": 0.0,
+      "TLT_pre1_g1_fee15": 0.0,
+      "TLT_pre1_g2.7_fee5": 0.0,
+      "TLT_pre1_g2.7_fee15": 0.0,
+      "TLT_event2_g1_fee5": 0.0,
+      "TLT_event2_g1_fee15": 0.0,
+      "TLT_event2_g2.7_fee5": 0.0,
+      "TLT_event2_g2.7_fee15": 0.0,
+      "mix_pre1_g1_fee5": 0.0,
+      "mix_pre1_g1_fee15": 0.0,
+      "mix_pre1_g2.7_fee5": 0.0,
+      "mix_pre1_g2.7_fee15": 0.0,
+      "mix_event2_g1_fee5": 0.0,
+      "mix_event2_g1_fee15": 0.0,
+      "mix_event2_g2.7_fee5": 0.0,
+      "mix_event2_g2.7_fee15": 0.0
+    },
+    "2025-06-30": {
+      "SPY_pre1_g1_fee5": 0.0,
+      "SPY_pre1_g1_fee15": 0.0,
+      "SPY_pre1_g2.7_fee5": 0.0,
+      "SPY_pre1_g2.7_fee15": 0.0,
+      "SPY_event2_g1_fee5": 0.0,
+      "SPY_event2_g1_fee15": 0.0,
+      "SPY_event2_g2.7_fee5": 0.0,
+      "SPY_event2_g2.7_fee15": 0.0,
+      "GLD_pre1_g1_fee5": 0.0,
+      "GLD_pre1_g1_fee15": 0.0,
+      "GLD_pre1_g2.7_fee5": 0.0,
+      "GLD_pre1_g2.7_fee15": 0.0,
+      "GLD_event2_g1_fee5": 0.0,
+      "GLD_event2_g1_fee15": 0.0,
+      "GLD_event2_g2.7_fee5": 0.0,
+      "GLD_event2_g2.7_fee15": 0.0,
+      "TLT_pre1_g1_fee5": 0.0,
+      "TLT_pre1_g1_fee15": 0.0,
+      "TLT_pre1_g2.7_fee5": 0.0,
+      "TLT_pre1_g2.7_fee15": 0.0,
+      "TLT_event2_g1_fee5": 0.0,
+      "TLT_event2_g1_fee15": 0.0,
+      "TLT_event2_g2.7_fee5": 0.0,
+      "TLT_event2_g2.7_fee15": 0.0,
+      "mix_pre1_g1_fee5": 0.0,
+      "mix_pre1_g1_fee15": 0.0,
+      "mix_pre1_g2.7_fee5": 0.0,
+      "mix_pre1_g2.7_fee15": 0.0,
+      "mix_event2_g1_fee5": 0.0,
+      "mix_event2_g1_fee15": 0.0,
+      "mix_event2_g2.7_fee5": 0.0,
+      "mix_event2_g2.7_fee15": 0.0
+    }
+  },
+  "per_path": {
+    "SPY_pre1_g1_fee5": {
+      "max_daily_nav_error": 1.4551915228366852e-11,
+      "flows": {
+        "finance": 0.4629344461364901,
+        "fees": 4279.555150931078,
+        "dividends": 0.0,
+        "nav": 90827.25609325881
+      },
+      "entry_to_sale_settlement_hours_max": 48.0,
+      "entry_to_sale_settlement_hours_median": 48.0
+    },
+    "SPY_pre1_g1_fee15": {
+      "max_daily_nav_error": 2.9103830456733704e-11,
+      "flows": {
+        "finance": 1.3399892377766676,
+        "fees": 12285.724301529448,
+        "dividends": 0.0,
+        "nav": 83009.04954131356
+      },
+      "entry_to_sale_settlement_hours_max": 48.0,
+      "entry_to_sale_settlement_hours_median": 48.0
+    },
+    "SPY_pre1_g2.7_fee5": {
+      "max_daily_nav_error": 1.4551915228366852e-11,
+      "flows": {
+        "finance": 1750.3123263864716,
+        "fees": 10500.707132627896,
+        "dividends": 0.0,
+        "nav": 75228.30491664149
+      },
+      "entry_to_sale_settlement_hours_max": 48.0,
+      "entry_to_sale_settlement_hours_median": 48.0
+    },
+    "SPY_pre1_g2.7_fee15": {
+      "max_daily_nav_error": 8.731149137020111e-11,
+      "flows": {
+        "finance": 1595.624710034607,
+        "fees": 28142.259826315578,
+        "dividends": 0.0,
+        "nav": 58912.13064316758
+      },
+      "entry_to_sale_settlement_hours_max": 48.0,
+      "entry_to_sale_settlement_hours_median": 48.0
+    },
+    "SPY_event2_g1_fee5": {
+      "max_daily_nav_error": 1.4551915228366852e-11,
+      "flows": {
+        "finance": 0.48207084935555977,
+        "fees": 4393.375509857412,
+        "dividends": 0.0,
+        "nav": 90529.07954680368
+      },
+      "entry_to_sale_settlement_hours_max": 72.0,
+      "entry_to_sale_settlement_hours_median": 72.0
+    },
+    "SPY_event2_g1_fee15": {
+      "max_daily_nav_error": 2.9103830456733704e-11,
+      "flows": {
+        "finance": 1.394248491463518,
+        "fees": 12609.015381625984,
+        "dividends": 0.0,
+        "nav": 82736.52573563009
+      },
+      "entry_to_sale_settlement_hours_max": 72.0,
+      "entry_to_sale_settlement_hours_median": 72.0
+    },
+    "SPY_event2_g2.7_fee5": {
+      "max_daily_nav_error": 1.4551915228366852e-11,
+      "flows": {
+        "finance": 3007.377930599754,
+        "fees": 11058.447666589476,
+        "dividends": 0.0,
+        "nav": 71979.61509918615
+      },
+      "entry_to_sale_settlement_hours_max": 72.0,
+      "entry_to_sale_settlement_hours_median": 72.0
+    },
+    "SPY_event2_g2.7_fee15": {
+      "max_daily_nav_error": 2.9103830456733704e-11,
+      "flows": {
+        "finance": 2715.537057583164,
+        "fees": 29595.692260590953,
+        "dividends": 0.0,
+        "nav": 56351.10849217854
+      },
+      "entry_to_sale_settlement_hours_max": 72.0,
+      "entry_to_sale_settlement_hours_median": 72.0
+    },
+    "GLD_pre1_g1_fee5": {
+      "max_daily_nav_error": 1.4551915228366852e-11,
+      "flows": {
+        "finance": 0.46724465509008195,
+        "fees": 4329.706067338824,
+        "dividends": 0.0,
+        "nav": 96634.13988072034
+      },
+      "entry_to_sale_settlement_hours_max": 48.0,
+      "entry_to_sale_settlement_hours_median": 48.0
+    },
+    "GLD_pre1_g1_fee15": {
+      "max_daily_nav_error": 2.9103830456733704e-11,
+      "flows": {
+        "finance": 1.352207627734949,
+        "fees": 12426.35631292758,
+        "dividends": 0.0,
+        "nav": 88316.08979252522
+      },
+      "entry_to_sale_settlement_hours_max": 48.0,
+      "entry_to_sale_settlement_hours_median": 48.0
+    },
+    "GLD_pre1_g2.7_fee5": {
+      "max_daily_nav_error": 4.3655745685100555e-11,
+      "flows": {
+        "finance": 1794.586142467793,
+        "fees": 10830.692992776483,
+        "dividends": 0.0,
+        "nav": 89064.22701354799
+      },
+      "entry_to_sale_settlement_hours_max": 48.0,
+      "entry_to_sale_settlement_hours_median": 48.0
+    },
+    "GLD_pre1_g2.7_fee15": {
+      "max_daily_nav_error": 7.275957614183426e-11,
+      "flows": {
+        "finance": 1633.9150854257393,
+        "fees": 28975.315625240826,
+        "dividends": 0.0,
+        "nav": 69788.02161650095
+      },
+      "entry_to_sale_settlement_hours_max": 48.0,
+      "entry_to_sale_settlement_hours_median": 48.0
+    },
+    "GLD_event2_g1_fee5": {
+      "max_daily_nav_error": 1.4551915228366852e-11,
+      "flows": {
+        "finance": 0.4928407225403414,
+        "fees": 4532.414522282162,
+        "dividends": 0.0,
+        "nav": 99445.57229776838
+      },
+      "entry_to_sale_settlement_hours_max": 72.0,
+      "entry_to_sale_settlement_hours_median": 72.0
+    },
+    "GLD_event2_g1_fee15": {
+      "max_daily_nav_error": 2.9103830456733704e-11,
+      "flows": {
+        "finance": 1.424478038896229,
+        "fees": 12998.066197366303,
+        "dividends": 0.0,
+        "nav": 90885.50544087883
+      },
+      "entry_to_sale_settlement_hours_max": 72.0,
+      "entry_to_sale_settlement_hours_median": 72.0
+    },
+    "GLD_event2_g2.7_fee5": {
+      "max_daily_nav_error": 5.820766091346741e-11,
+      "flows": {
+        "finance": 3241.342985926378,
+        "fees": 12101.973137213201,
+        "dividends": 0.0,
+        "nav": 93150.63647284525
+      },
+      "entry_to_sale_settlement_hours_max": 72.0,
+      "entry_to_sale_settlement_hours_median": 72.0
+    },
+    "GLD_event2_g2.7_fee15": {
+      "max_daily_nav_error": 7.275957614183426e-11,
+      "flows": {
+        "finance": 2912.1417353405664,
+        "fees": 32214.26748850539,
+        "dividends": 0.0,
+        "nav": 72991.54633640277
+      },
+      "entry_to_sale_settlement_hours_max": 72.0,
+      "entry_to_sale_settlement_hours_median": 72.0
+    },
+    "TLT_pre1_g1_fee5": {
+      "max_daily_nav_error": 2.9103830456733704e-11,
+      "flows": {
+        "finance": 0.4571969294259112,
+        "fees": 4246.885318589206,
+        "dividends": 0.0,
+        "nav": 94985.32918515487
+      },
+      "entry_to_sale_settlement_hours_max": 48.0,
+      "entry_to_sale_settlement_hours_median": 48.0
+    },
+    "TLT_pre1_g1_fee15": {
+      "max_daily_nav_error": 7.275957614183426e-11,
+      "flows": {
+        "finance": 1.3232268190912182,
+        "fees": 12188.754563192968,
+        "dividends": 0.0,
+        "nav": 86809.20502467647
+      },
+      "entry_to_sale_settlement_hours_max": 48.0,
+      "entry_to_sale_settlement_hours_median": 48.0
+    },
+    "TLT_pre1_g2.7_fee5": {
+      "max_daily_nav_error": 5.820766091346741e-11,
+      "flows": {
+        "finance": 1697.1047202948673,
+        "fees": 10279.789990788333,
+        "dividends": 0.0,
+        "nav": 84913.96289342316
+      },
+      "entry_to_sale_settlement_hours_max": 48.0,
+      "entry_to_sale_settlement_hours_median": 48.0
+    },
+    "TLT_pre1_g2.7_fee15": {
+      "max_daily_nav_error": 1.4551915228366852e-10,
+      "flows": {
+        "finance": 1546.0826721141218,
+        "fees": 27504.582879633468,
+        "dividends": 0.0,
+        "nav": 66524.68498482599
+      },
+      "entry_to_sale_settlement_hours_max": 48.0,
+      "entry_to_sale_settlement_hours_median": 48.0
+    },
+    "TLT_event2_g1_fee5": {
+      "max_daily_nav_error": 1.4551915228366852e-11,
+      "flows": {
+        "finance": 0.4931097213674304,
+        "fees": 4572.91825130416,
+        "dividends": 1348.0581717085051,
+        "nav": 104907.43435491888
+      },
+      "entry_to_sale_settlement_hours_max": 72.0,
+      "entry_to_sale_settlement_hours_median": 72.0
+    },
+    "TLT_event2_g1_fee15": {
+      "max_daily_nav_error": 2.9103830456733704e-11,
+      "flows": {
+        "finance": 1.424630712492707,
+        "fees": 13106.640655650375,
+        "dividends": 1284.3242545455223,
+        "nav": 95878.49719541779
+      },
+      "entry_to_sale_settlement_hours_max": 72.0,
+      "entry_to_sale_settlement_hours_median": 72.0
+    },
+    "TLT_event2_g2.7_fee5": {
+      "max_daily_nav_error": 7.275957614183426e-11,
+      "flows": {
+        "finance": 3285.6522254931597,
+        "fees": 12423.027795005697,
+        "dividends": 3633.126674752577,
+        "nav": 108806.7402742421
+      },
+      "entry_to_sale_settlement_hours_max": 72.0,
+      "entry_to_sale_settlement_hours_median": 72.0
+    },
+    "TLT_event2_g2.7_fee15": {
+      "max_daily_nav_error": 7.275957614183426e-11,
+      "flows": {
+        "finance": 2941.2325659065464,
+        "fees": 32932.70146558298,
+        "dividends": 3186.9986068585504,
+        "nav": 85312.7578105754
+      },
+      "entry_to_sale_settlement_hours_max": 72.0,
+      "entry_to_sale_settlement_hours_median": 72.0
+    },
+    "mix_pre1_g1_fee5": {
+      "max_daily_nav_error": 1.3096723705530167e-10,
+      "flows": {
+        "finance": 0.4625066106764314,
+        "fees": 4286.012352676176,
+        "dividends": 0.0,
+        "nav": 94164.06558775241
+      },
+      "entry_to_sale_settlement_hours_max": 48.0,
+      "entry_to_sale_settlement_hours_median": 48.0
+    },
+    "mix_pre1_g1_fee15": {
+      "max_daily_nav_error": 4.3655745685100555e-11,
+      "flows": {
+        "finance": 1.338609867778503,
+        "fees": 12302.048427937267,
+        "dividends": 0.0,
+        "nav": 86058.63395630398
+      },
+      "entry_to_sale_settlement_hours_max": 48.0,
+      "entry_to_sale_settlement_hours_median": 48.0
+    },
+    "mix_pre1_g2.7_fee5": {
+      "max_daily_nav_error": 1.3096723705530167e-10,
+      "flows": {
+        "finance": 1748.6218914616165,
+        "fees": 10547.87825903345,
+        "dividends": 0.0,
+        "nav": 83165.25457169459
+      },
+      "entry_to_sale_settlement_hours_max": 48.0,
+      "entry_to_sale_settlement_hours_median": 48.0
+    },
+    "mix_pre1_g2.7_fee15": {
+      "max_daily_nav_error": 8.731149137020111e-11,
+      "flows": {
+        "finance": 1592.9695171830108,
+        "fees": 28234.726830992855,
+        "dividends": 0.0,
+        "nav": 65150.99464921736
+      },
+      "entry_to_sale_settlement_hours_max": 48.0,
+      "entry_to_sale_settlement_hours_median": 48.0
+    },
+    "mix_event2_g1_fee5": {
+      "max_daily_nav_error": 1.3096723705530167e-10,
+      "flows": {
+        "finance": 0.48960424922006557,
+        "fees": 4502.149591086697,
+        "dividends": 446.74943174532757,
+        "nav": 98333.81113003647
+      },
+      "entry_to_sale_settlement_hours_max": 72.0,
+      "entry_to_sale_settlement_hours_median": 72.0
+    },
+    "mix_event2_g1_fee15": {
+      "max_daily_nav_error": 7.275957614183426e-11,
+      "flows": {
+        "finance": 1.4152064063565024,
+        "fees": 12911.899081533402,
+        "dividends": 425.7011843767832,
+        "nav": 89869.84297173617
+      },
+      "entry_to_sale_settlement_hours_max": 72.0,
+      "entry_to_sale_settlement_hours_median": 72.0
+    },
+    "mix_event2_g2.7_fee5": {
+      "max_daily_nav_error": 2.9103830456733704e-10,
+      "flows": {
+        "finance": 3190.0993743117265,
+        "fees": 11907.480449921002,
+        "dividends": 1191.825103854229,
+        "nav": 91498.91130893302
+      },
+      "entry_to_sale_settlement_hours_max": 72.0,
+      "entry_to_sale_settlement_hours_median": 72.0
+    },
+    "mix_event2_g2.7_fee15": {
+      "max_daily_nav_error": 1.7462298274040222e-10,
+      "flows": {
+        "finance": 2866.8201813875476,
+        "fees": 31701.915674278618,
+        "dividends": 1046.6937695035303,
+        "nav": 71698.50798133385
+      },
+      "entry_to_sale_settlement_hours_max": 72.0,
+      "entry_to_sale_settlement_hours_median": 72.0
+    }
+  },
+  "all_entries_after_source_available": true,
+  "no_same_name_overlap": true,
+  "equal_notional_mix_verified": true
+}

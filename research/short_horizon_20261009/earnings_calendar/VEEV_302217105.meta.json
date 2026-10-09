@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/veeva-to-release-fiscal-2025-second-quarter-results-on-august-28-2024-302217105.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "56a85b3b10ee7cabb90c1d8ab9f5b4fe3a000b300b4336d320b12d5422497892",
+  "retrieved_utc": "2026-10-09T04:09:57Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/veeva-to-release-fiscal-2025-second-quarter-results-on-august-28-2024-302217105.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "56a85b3b10ee7cabb90c1d8ab9f5b4fe3a000b300b4336d320b12d5422497892",
+      "retrieved_utc": "2026-10-09T04:09:57Z"
+    }
+  ]
+}

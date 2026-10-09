@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2025-third-quarter-results-302316794.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "4f4e398fbc772408a8a6b3590a2ae2dc46bc3014ee26b7a885333b8da365aa34",
+  "retrieved_utc": "2026-10-09T03:25:13Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2025-third-quarter-results-302316794.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "4f4e398fbc772408a8a6b3590a2ae2dc46bc3014ee26b7a885333b8da365aa34",
+      "retrieved_utc": "2026-10-09T03:25:13Z"
+    }
+  ]
+}

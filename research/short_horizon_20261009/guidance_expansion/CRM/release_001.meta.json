@@ -1,0 +1,18 @@
+{
+  "url": "https://www.salesforce.com/news/press-releases/2023/05/31/fy24-q1-earnings/",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "2e2a861e57c700213499442125a9ad21ad05705c6340737708347b6c557067e3",
+  "retrieved_utc": "2026-10-09T03:24:31Z",
+  "attempts": [
+    {
+      "url": "https://www.salesforce.com/news/press-releases/2023/05/31/fy24-q1-earnings/",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "2e2a861e57c700213499442125a9ad21ad05705c6340737708347b6c557067e3",
+      "retrieved_utc": "2026-10-09T03:24:31Z"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "url": "https://www.globenewswire.com/news-release/2021/02/11/2174547/0/en/datadog-announces-fourth-quarter-and-full-year-2020-results.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "a988b4b63f5a944e120a7b4644b53c767f2c8c026d164b26a9a08c2bf39d7668",
+  "retrieved_utc": "2026-10-09T03:23:14Z",
+  "attempts": [
+    {
+      "url": "https://www.globenewswire.com/news-release/2021/02/11/2174547/0/en/datadog-announces-fourth-quarter-and-full-year-2020-results.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "a988b4b63f5a944e120a7b4644b53c767f2c8c026d164b26a9a08c2bf39d7668",
+      "retrieved_utc": "2026-10-09T03:23:14Z"
+    }
+  ]
+}

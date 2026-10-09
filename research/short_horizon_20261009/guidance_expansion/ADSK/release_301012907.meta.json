@@ -1,0 +1,26 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2020-fourth-quarter-and-full-year-results-301012907.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "98afec350734031f420b0c39c29f1b3825ddc8df588c96a797fbdf48c51327a6",
+  "retrieved_utc": "2026-10-09T03:27:30Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2020-fourth-quarter-and-full-year-results-301012907.html",
+      "status": 0,
+      "exit_code": 35,
+      "error": "curl: (35) LibreSSL SSL_connect: SSL_ERROR_SYSCALL in connection to www.prnewswire.com:443 \n",
+      "sha256": null,
+      "retrieved_utc": "2026-10-09T03:27:25Z"
+    },
+    {
+      "url": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2020-fourth-quarter-and-full-year-results-301012907.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "98afec350734031f420b0c39c29f1b3825ddc8df588c96a797fbdf48c51327a6",
+      "retrieved_utc": "2026-10-09T03:27:30Z"
+    }
+  ]
+}

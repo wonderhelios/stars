@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-second-quarter-fiscal-2022-financial-results-301368784.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "c53cd65da682356203e3b9e3f0526690ec7b6e098d5c3290b3ffd9bbe6ddcebc",
+  "retrieved_utc": "2026-10-09T03:23:43Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-second-quarter-fiscal-2022-financial-results-301368784.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "c53cd65da682356203e3b9e3f0526690ec7b6e098d5c3290b3ffd9bbe6ddcebc",
+      "retrieved_utc": "2026-10-09T03:23:43Z"
+    }
+  ]
+}

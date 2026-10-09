@@ -1,0 +1,10 @@
+{
+  "releases": 27,
+  "parsed": 27,
+  "errors": [],
+  "consecutive": true,
+  "non_calendar_period_ends": 17,
+  "scope_and_period_change_review": "pending; numeric revisions are not eligible signals yet",
+  "sec_crosscheck": "pending",
+  "market_performance_read": false
+}

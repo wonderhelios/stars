@@ -1,0 +1,332 @@
+[
+  {
+    "meeting_id": "20201216",
+    "url": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20201216.htm",
+    "published_date": "January 06, 2021",
+    "publication_evidence": "Official December 2020 press-conference page: Released January 06, 2021 at 2:00 p.m.",
+    "publication_source": "https://www.federalreserve.gov/monetarypolicy/fomcpresconf20201216.htm",
+    "file": "minutes_20201216.html"
+  },
+  {
+    "meeting_id": "20210127",
+    "url": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20210127.htm",
+    "published_date": "February 17, 2021",
+    "publication_evidence": "January 26-27 Statement: PDF | HTML Implementation Note Press Conference Statement on Longer-Run Goals and Monetary Policy Strategy Minutes: PDF | HTML (Released February 17, 2021)",
+    "file": "minutes_20210127.html"
+  },
+  {
+    "meeting_id": "20210317",
+    "url": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20210317.htm",
+    "published_date": "April 07, 2021",
+    "publication_evidence": "March 16-17* Statement: PDF | HTML Implementation Note Press Conference Projection Materials PDF | HTML Minutes: PDF | HTML (Released April 07, 2021)",
+    "file": "minutes_20210317.html"
+  },
+  {
+    "meeting_id": "20210428",
+    "url": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20210428.htm",
+    "published_date": "May 19, 2021",
+    "publication_evidence": "April 27-28 Statement: PDF | HTML Implementation Note Press Conference Minutes: PDF | HTML (Released May 19, 2021)",
+    "file": "minutes_20210428.html"
+  },
+  {
+    "meeting_id": "20210616",
+    "url": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20210616.htm",
+    "published_date": "July 07, 2021",
+    "publication_evidence": "June 15-16* Statement: PDF | HTML Implementation Note Press Conference Projection Materials PDF | HTML Minutes: PDF | HTML (Released July 07, 2021)",
+    "file": "minutes_20210616.html"
+  },
+  {
+    "meeting_id": "20210728",
+    "url": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20210728.htm",
+    "published_date": "August 18, 2021",
+    "publication_evidence": "July 27-28 Statement: PDF | HTML Implementation Note Press Conference Minutes: PDF | HTML (Released August 18, 2021)",
+    "file": "minutes_20210728.html"
+  },
+  {
+    "meeting_id": "20210922",
+    "url": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20210922.htm",
+    "published_date": "October 13, 2021",
+    "publication_evidence": "September 21-22* Statement: PDF | HTML Implementation Note Press Conference Projection Materials PDF | HTML Minutes: PDF | HTML (Released October 13, 2021)",
+    "file": "minutes_20210922.html"
+  },
+  {
+    "meeting_id": "20211103",
+    "url": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20211103.htm",
+    "published_date": "November 24, 2021",
+    "publication_evidence": "November 2-3 Statement: PDF | HTML Implementation Note Press Conference Minutes: PDF | HTML (Released November 24, 2021)",
+    "file": "minutes_20211103.html"
+  },
+  {
+    "meeting_id": "20211215",
+    "url": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20211215.htm",
+    "published_date": "January 05, 2022",
+    "publication_evidence": "December 14-15* Statement: PDF | HTML Implementation Note Press Conference Projection Materials PDF | HTML Minutes: PDF | HTML (Released January 05, 2022)",
+    "file": "minutes_20211215.html"
+  },
+  {
+    "meeting_id": "20220126",
+    "url": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20220126.htm",
+    "published_date": "February 16, 2022",
+    "publication_evidence": "January 25-26 Statement: PDF | HTML Implementation Note Press Conference Statement on Longer-Run Goals and Monetary Policy Strategy Principles for Reducing the Size of the Federal Reserve's Balance Sheet Minutes: PDF | HTML (Released February 16, 2022)",
+    "file": "minutes_20220126.html"
+  },
+  {
+    "meeting_id": "20220316",
+    "url": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20220316.htm",
+    "published_date": "April 06, 2022",
+    "publication_evidence": "March 15-16* Statement: PDF | HTML Implementation Note Press Conference Projection Materials PDF | HTML Minutes: PDF | HTML (Released April 06, 2022)",
+    "file": "minutes_20220316.html"
+  },
+  {
+    "meeting_id": "20220504",
+    "url": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20220504.htm",
+    "published_date": "May 25, 2022",
+    "publication_evidence": "May 3-4 Statement: PDF | HTML Implementation Note Press Conference Plans for Reducing the Size of the Federal Reserve's Balance Sheet Minutes: PDF | HTML (Released May 25, 2022)",
+    "file": "minutes_20220504.html"
+  },
+  {
+    "meeting_id": "20220615",
+    "url": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20220615.htm",
+    "published_date": "July 06, 2022",
+    "publication_evidence": "June 14-15* Statement: PDF | HTML Implementation Note Press Conference Projection Materials PDF | HTML Minutes: PDF | HTML (Released July 06, 2022)",
+    "file": "minutes_20220615.html"
+  },
+  {
+    "meeting_id": "20220727",
+    "url": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20220727.htm",
+    "published_date": "August 17, 2022",
+    "publication_evidence": "July 26-27 Statement: PDF | HTML Implementation Note Press Conference Minutes: PDF | HTML (Released August 17, 2022)",
+    "file": "minutes_20220727.html"
+  },
+  {
+    "meeting_id": "20220921",
+    "url": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20220921.htm",
+    "published_date": "October 12, 2022",
+    "publication_evidence": "September 20-21* Statement: PDF | HTML Implementation Note Press Conference Projection Materials PDF | HTML Minutes: PDF | HTML (Released October 12, 2022)",
+    "file": "minutes_20220921.html"
+  },
+  {
+    "meeting_id": "20221102",
+    "url": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20221102.htm",
+    "published_date": "November 23, 2022",
+    "publication_evidence": "November 1-2 Statement: PDF | HTML Implementation Note Press Conference Minutes: PDF | HTML (Released November 23, 2022)",
+    "file": "minutes_20221102.html"
+  },
+  {
+    "meeting_id": "20221214",
+    "url": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20221214.htm",
+    "published_date": "January 04, 2023",
+    "publication_evidence": "December 13-14* Statement: PDF | HTML Implementation Note Press Conference Projection Materials PDF | HTML Minutes: PDF | HTML (Released January 04, 2023)",
+    "file": "minutes_20221214.html"
+  },
+  {
+    "meeting_id": "20230201",
+    "url": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20230201.htm",
+    "published_date": "February 22, 2023",
+    "publication_evidence": "Jan/Feb 31-1 Statement: PDF | HTML Implementation Note Press Conference Statement on Longer-Run Goals and Monetary Policy Strategy Minutes: PDF | HTML (Released February 22, 2023)",
+    "file": "minutes_20230201.html"
+  },
+  {
+    "meeting_id": "20230322",
+    "url": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20230322.htm",
+    "published_date": "April 12, 2023",
+    "publication_evidence": "March 21-22* Statement: PDF | HTML Implementation Note Press Conference Projection Materials PDF | HTML Minutes: PDF | HTML (Released April 12, 2023)",
+    "file": "minutes_20230322.html"
+  },
+  {
+    "meeting_id": "20230503",
+    "url": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20230503.htm",
+    "published_date": "May 24, 2023",
+    "publication_evidence": "May 2-3 Statement: PDF | HTML Implementation Note Press Conference Minutes: PDF | HTML (Released May 24, 2023)",
+    "file": "minutes_20230503.html"
+  },
+  {
+    "meeting_id": "20230614",
+    "url": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20230614.htm",
+    "published_date": "July 05, 2023",
+    "publication_evidence": "June 13-14* Statement: PDF | HTML Implementation Note Press Conference Projection Materials PDF | HTML Minutes: PDF | HTML (Released July 05, 2023)",
+    "file": "minutes_20230614.html"
+  },
+  {
+    "meeting_id": "20230726",
+    "url": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20230726.htm",
+    "published_date": "August 16, 2023",
+    "publication_evidence": "July 25-26 Statement: PDF | HTML Implementation Note Press Conference Minutes: PDF | HTML (Released August 16, 2023)",
+    "file": "minutes_20230726.html"
+  },
+  {
+    "meeting_id": "20230920",
+    "url": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20230920.htm",
+    "published_date": "October 11, 2023",
+    "publication_evidence": "September 19-20* Statement: PDF | HTML Implementation Note Press Conference Projection Materials PDF | HTML Minutes: PDF | HTML (Released October 11, 2023)",
+    "file": "minutes_20230920.html"
+  },
+  {
+    "meeting_id": "20231101",
+    "url": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20231101.htm",
+    "published_date": "November 21, 2023",
+    "publication_evidence": "Oct/Nov 31-1 Statement: PDF | HTML Implementation Note Press Conference Minutes: PDF | HTML (Released November 21, 2023)",
+    "file": "minutes_20231101.html"
+  },
+  {
+    "meeting_id": "20231213",
+    "url": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20231213.htm",
+    "published_date": "January 03, 2024",
+    "publication_evidence": "December 12-13* Statement: PDF | HTML Implementation Note Press Conference Projection Materials PDF | HTML Minutes: PDF | HTML (Released January 03, 2024)",
+    "file": "minutes_20231213.html"
+  },
+  {
+    "meeting_id": "20240131",
+    "url": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20240131.htm",
+    "published_date": "February 21, 2024",
+    "publication_evidence": "January 30-31 Statement: PDF | HTML Implementation Note Press Conference Statement on Longer-Run Goals and Monetary Policy Strategy Minutes: PDF | HTML (Released February 21, 2024)",
+    "file": "minutes_20240131.html"
+  },
+  {
+    "meeting_id": "20240320",
+    "url": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20240320.htm",
+    "published_date": "April 10, 2024",
+    "publication_evidence": "March 19-20* Statement: PDF | HTML Implementation Note Press Conference Projection Materials PDF | HTML Minutes: PDF | HTML (Released April 10, 2024)",
+    "file": "minutes_20240320.html"
+  },
+  {
+    "meeting_id": "20240501",
+    "url": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20240501.htm",
+    "published_date": "May 22, 2024",
+    "publication_evidence": "Apr/May 30-1 Statement: PDF | HTML Implementation Note Press Conference Minutes: PDF | HTML (Released May 22, 2024)",
+    "file": "minutes_20240501.html"
+  },
+  {
+    "meeting_id": "20240612",
+    "url": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20240612.htm",
+    "published_date": "July 03, 2024",
+    "publication_evidence": "June 11-12* Statement: PDF | HTML Implementation Note Press Conference Projection Materials PDF | HTML Minutes: PDF | HTML (Released July 03, 2024)",
+    "file": "minutes_20240612.html"
+  },
+  {
+    "meeting_id": "20240731",
+    "url": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20240731.htm",
+    "published_date": "August 21, 2024",
+    "publication_evidence": "July 30-31 Statement: PDF | HTML Implementation Note Press Conference Minutes: PDF | HTML (Released August 21, 2024)",
+    "file": "minutes_20240731.html"
+  },
+  {
+    "meeting_id": "20240918",
+    "url": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20240918.htm",
+    "published_date": "October 09, 2024",
+    "publication_evidence": "September 17-18* Statement: PDF | HTML Implementation Note Press Conference Projection Materials PDF | HTML Minutes: PDF | HTML (Released October 09, 2024)",
+    "file": "minutes_20240918.html"
+  },
+  {
+    "meeting_id": "20241107",
+    "url": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20241107.htm",
+    "published_date": "November 26, 2024",
+    "publication_evidence": "November 6-7 Statement: PDF | HTML Implementation Note Press Conference Minutes: PDF | HTML (Released November 26, 2024)",
+    "file": "minutes_20241107.html"
+  },
+  {
+    "meeting_id": "20241218",
+    "url": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20241218.htm",
+    "published_date": "January 08, 2025",
+    "publication_evidence": "December 17-18* Statement: PDF | HTML Implementation Note Press Conference Projection Materials PDF | HTML Minutes: PDF | HTML (Released January 08, 2025)",
+    "file": "minutes_20241218.html"
+  },
+  {
+    "meeting_id": "20250129",
+    "url": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20250129.htm",
+    "published_date": "February 19, 2025",
+    "publication_evidence": "January 28-29 Statement: PDF | HTML Implementation Note Press Conference Minutes: PDF | HTML (Released February 19, 2025)",
+    "file": "minutes_20250129.html"
+  },
+  {
+    "meeting_id": "20250319",
+    "url": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20250319.htm",
+    "published_date": "April 09, 2025",
+    "publication_evidence": "March 18-19* Statement: PDF | HTML Implementation Note Press Conference Projection Materials PDF | HTML Minutes: PDF | HTML (Released April 09, 2025)",
+    "file": "minutes_20250319.html"
+  },
+  {
+    "meeting_id": "20250507",
+    "url": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20250507.htm",
+    "published_date": "May 28, 2025",
+    "publication_evidence": "May 6-7 Statement: PDF | HTML Implementation Note Press Conference Minutes: PDF | HTML (Released May 28, 2025)",
+    "file": "minutes_20250507.html"
+  },
+  {
+    "meeting_id": "20250618",
+    "url": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20250618.htm",
+    "published_date": "July 09, 2025",
+    "publication_evidence": "June 17-18* Statement: PDF | HTML Implementation Note Press Conference Projection Materials PDF | HTML Minutes: PDF | HTML (Released July 09, 2025)",
+    "file": "minutes_20250618.html"
+  },
+  {
+    "meeting_id": "20250730",
+    "url": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20250730.htm",
+    "published_date": "August 20, 2025",
+    "publication_evidence": "July 29-30 Statement: PDF | HTML Implementation Note Press Conference Minutes: PDF | HTML (Released August 20, 2025)",
+    "file": "minutes_20250730.html"
+  },
+  {
+    "meeting_id": "20250917",
+    "url": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20250917.htm",
+    "published_date": "October 08, 2025",
+    "publication_evidence": "September 16-17* Statement: PDF | HTML Implementation Note Press Conference Projection Materials PDF | HTML Minutes: PDF | HTML (Released October 08, 2025)",
+    "file": "minutes_20250917.html"
+  },
+  {
+    "meeting_id": "20251029",
+    "url": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20251029.htm",
+    "published_date": "November 19, 2025",
+    "publication_evidence": "October 28-29 Statement: PDF | HTML Implementation Note Press Conference Minutes: PDF | HTML (Released November 19, 2025)",
+    "file": "minutes_20251029.html"
+  },
+  {
+    "meeting_id": "20251210",
+    "url": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20251210.htm",
+    "published_date": "December 30, 2025",
+    "publication_evidence": "December 9-10* Statement: PDF | HTML Implementation Note Press Conference Projection Materials PDF | HTML Minutes: PDF | HTML (Released December 30, 2025)",
+    "file": "minutes_20251210.html"
+  },
+  {
+    "meeting_id": "20260128",
+    "url": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20260128.htm",
+    "published_date": "February 18, 2026",
+    "publication_evidence": "January 27-28 Statement: PDF | HTML Implementation Note Press Conference Statement on Longer-Run Goals and Monetary Policy Strategy Minutes: PDF | HTML (Released February 18, 2026)",
+    "file": "minutes_20260128.html"
+  },
+  {
+    "meeting_id": "20260318",
+    "url": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20260318.htm",
+    "published_date": "April 08, 2026",
+    "publication_evidence": "March 17-18* Statement: PDF | HTML Implementation Note Press Conference Projection Materials PDF | HTML Minutes: PDF | HTML (Released April 08, 2026)",
+    "file": "minutes_20260318.html"
+  },
+  {
+    "meeting_id": "20260429",
+    "url": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20260429.htm",
+    "published_date": "May 20, 2026",
+    "publication_evidence": "April 28-29 Statement: PDF | HTML Implementation Note Press Conference Minutes: PDF | HTML (Released May 20, 2026)",
+    "file": "minutes_20260429.html"
+  },
+  {
+    "meeting_id": "20260617",
+    "url": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20260617.htm",
+    "published_date": "July 08, 2026",
+    "publication_evidence": "June 16-17* Statement: PDF | HTML Implementation Note Press Conference Projection Materials PDF | HTML Minutes: PDF | HTML (Released July 08, 2026)",
+    "file": "minutes_20260617.html"
+  },
+  {
+    "meeting_id": "20260729",
+    "url": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20260729.htm",
+    "published_date": "August 19, 2026",
+    "publication_evidence": "July 28-29 Statement: PDF | HTML Implementation Note Press Conference Minutes: PDF | HTML (Released August 19, 2026)",
+    "file": "minutes_20260729.html"
+  },
+  {
+    "meeting_id": "20260916",
+    "url": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20260916.htm",
+    "published_date": "October 07, 2026",
+    "publication_evidence": "September 15-16* Statement: PDF | HTML Implementation Note Press Conference Projection Materials PDF | HTML Minutes: PDF | HTML (Released October 07, 2026)",
+    "file": "minutes_20260916.html"
+  }
+]

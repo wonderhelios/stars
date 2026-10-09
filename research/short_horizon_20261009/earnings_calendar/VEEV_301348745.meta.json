@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/veeva-to-release-fiscal-2022-second-quarter-results-on-september-1-2021-301348745.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "3dfabe4f317052c582950716ff4924e02718819730d311ac1a6ea935015fd673",
+  "retrieved_utc": "2026-10-09T04:09:52Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/veeva-to-release-fiscal-2022-second-quarter-results-on-september-1-2021-301348745.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "3dfabe4f317052c582950716ff4924e02718819730d311ac1a6ea935015fd673",
+      "retrieved_utc": "2026-10-09T04:09:52Z"
+    }
+  ]
+}

@@ -1,0 +1,916 @@
+{
+  "fomc_long_BTC_h1_p0_fee5": {
+    "status": "complete_proxy",
+    "invalid": [],
+    "events": 27,
+    "events_filled": 13,
+    "imbalanced_events": 13,
+    "capital_final": 97065.47479239412,
+    "cash_pnl": -2934.525207605881,
+    "max_event_premium_fraction": 0.011396763530629624,
+    "total_fills": 22,
+    "statuses": {
+      "imbalanced": 13,
+      "no_fill": 13,
+      "no_pair_in_prior_hour": 1
+    },
+    "metrics": {
+      "full": {
+        "annual_arithmetic": -0.008852593468954765,
+        "annual_geometric": -0.008835284076746275,
+        "volatility": 0.006602603908578622,
+        "sharpe": -1.3407730634049968,
+        "max_drawdown": -0.03122179588833851,
+        "total_return": -0.02934525207605898
+      },
+      "2023-24": {
+        "annual_arithmetic": -0.012885839207500232,
+        "annual_geometric": -0.012835961173850219,
+        "volatility": 0.008117048107037301,
+        "sharpe": -1.5875031215262227,
+        "max_drawdown": -0.022179007980305587,
+        "total_return": -0.020284948097141542
+      },
+      "2025-26": {
+        "annual_arithmetic": -0.005237656498958129,
+        "annual_geometric": -0.005235761461708788,
+        "volatility": 0.00485897345310694,
+        "sharpe": -1.077934783860375,
+        "max_drawdown": -0.009247897091424817,
+        "total_return": -0.009247897091424817
+      }
+    }
+  },
+  "fomc_long_BTC_h1_p0_fee15": {
+    "status": "complete_proxy",
+    "invalid": [],
+    "events": 27,
+    "events_filled": 10,
+    "imbalanced_events": 10,
+    "capital_final": 97935.82509995752,
+    "cash_pnl": -2064.1749000424807,
+    "max_event_premium_fraction": 0.008259331043615129,
+    "total_fills": 15,
+    "statuses": {
+      "imbalanced": 10,
+      "no_fill": 16,
+      "no_pair_in_prior_hour": 1
+    },
+    "metrics": {
+      "full": {
+        "annual_arithmetic": -0.006191960810951715,
+        "annual_geometric": -0.006195491750842663,
+        "volatility": 0.006738583520882548,
+        "sharpe": -0.9188816598864027,
+        "max_drawdown": -0.02234937243011126,
+        "total_return": -0.020641749000424703
+      },
+      "2023-24": {
+        "annual_arithmetic": -0.008808358653577849,
+        "annual_geometric": -0.00880518870785596,
+        "volatility": 0.00844828435639403,
+        "sharpe": -1.0426209964051814,
+        "max_drawdown": -0.015650908323659007,
+        "total_return": -0.013931584953391862
+      },
+      "2025-26": {
+        "annual_arithmetic": -0.0038469231160902116,
+        "annual_geometric": -0.0038506214584963505,
+        "volatility": 0.004709471531644045,
+        "sharpe": -0.8168481516963914,
+        "max_drawdown": -0.006804968037350312,
+        "total_return": -0.006804968037350312
+      }
+    }
+  },
+  "fomc_long_BTC_h1_p1_fee5": {
+    "status": "complete_proxy",
+    "invalid": [],
+    "events": 27,
+    "events_filled": 3,
+    "imbalanced_events": 3,
+    "capital_final": 100411.3459123842,
+    "cash_pnl": 411.3459123842003,
+    "max_event_premium_fraction": 0.0016929009234794385,
+    "total_fills": 5,
+    "statuses": {
+      "imbalanced": 3,
+      "no_fill": 24
+    },
+    "metrics": {
+      "full": {
+        "annual_arithmetic": 0.0012251179463681292,
+        "annual_geometric": 0.0012238773255175417,
+        "volatility": 0.001995783952339474,
+        "sharpe": 0.6138529899150839,
+        "max_drawdown": -0.0008971522516336705,
+        "total_return": 0.004113459123842089
+      },
+      "2023-24": {
+        "annual_arithmetic": 0.0031575648638122425,
+        "annual_geometric": 0.003158588523859418,
+        "volatility": 0.0028121152700892227,
+        "sharpe": 1.1228433263022177,
+        "max_drawdown": 0.0,
+        "total_return": 0.005015110693326497
+      },
+      "2025-26": {
+        "annual_arithmetic": -0.0005069049099788394,
+        "annual_geometric": -0.0005070038615940797,
+        "volatility": 0.0006743670227344565,
+        "sharpe": -0.7516751159085694,
+        "max_drawdown": -0.0008971522516337815,
+        "total_return": -0.0008971522516337815
+      }
+    }
+  },
+  "fomc_long_BTC_h1_p1_fee15": {
+    "status": "complete_proxy",
+    "invalid": [],
+    "events": 27,
+    "events_filled": 1,
+    "imbalanced_events": 1,
+    "capital_final": 99904.8922887049,
+    "cash_pnl": -95.10771129510002,
+    "max_event_premium_fraction": 0.0009510771129510002,
+    "total_fills": 1,
+    "statuses": {
+      "no_fill": 26,
+      "imbalanced": 1
+    },
+    "metrics": {
+      "full": {
+        "annual_arithmetic": -0.0002833821601854178,
+        "annual_geometric": -0.0002834768176860347,
+        "volatility": 0.0005191515065671887,
+        "sharpe": -0.5458563764155088,
+        "max_drawdown": -0.0009510771129510598,
+        "total_return": -0.0009510771129510598
+      },
+      "2023-24": {
+        "annual_arithmetic": 0.0,
+        "annual_geometric": 0.0,
+        "volatility": 0.0,
+        "sharpe": null,
+        "max_drawdown": 0.0,
+        "total_return": 0.0
+      },
+      "2025-26": {
+        "annual_arithmetic": -0.0005373732913732768,
+        "annual_geometric": -0.0005374844986628657,
+        "volatility": 0.0007149009991154751,
+        "sharpe": -0.7516751159085694,
+        "max_drawdown": -0.0009510771129510598,
+        "total_return": -0.0009510771129510598
+      }
+    }
+  },
+  "fomc_long_BTC_h1_p2_fee5": {
+    "status": "complete_proxy",
+    "invalid": [],
+    "events": 27,
+    "events_filled": 2,
+    "imbalanced_events": 2,
+    "capital_final": 100583.0584591621,
+    "cash_pnl": 583.0584591621014,
+    "max_event_premium_fraction": 0.004771658250780422,
+    "total_fills": 3,
+    "statuses": {
+      "imbalanced": 2,
+      "no_fill": 23,
+      "no_pair_in_prior_hour": 2
+    },
+    "metrics": {
+      "full": {
+        "annual_arithmetic": 0.001738186234336966,
+        "annual_geometric": 0.0017337323372885738,
+        "volatility": 0.0034585337412453587,
+        "sharpe": 0.5025789436742851,
+        "max_drawdown": -0.00048347110274393756,
+        "total_return": 0.005830584591621113
+      },
+      "2023-24": {
+        "annual_arithmetic": -0.000304778847152914,
+        "annual_geometric": -0.0003048060839748734,
+        "volatility": 0.00038386425377474957,
+        "sharpe": -0.7939755894326054,
+        "max_drawdown": -0.00048347110274393756,
+        "total_return": -0.00048347110274393756
+      },
+      "2025-26": {
+        "annual_arithmetic": 0.0035692648445268117,
+        "annual_geometric": 0.0035643757123873243,
+        "volatility": 0.004748414266996916,
+        "sharpe": 0.7516751159085694,
+        "max_drawdown": 0.0,
+        "total_return": 0.006317109834422796
+      }
+    }
+  },
+  "fomc_long_BTC_h1_p2_fee15": {
+    "status": "complete_proxy",
+    "invalid": [],
+    "events": 27,
+    "events_filled": 1,
+    "imbalanced_events": 1,
+    "capital_final": 100611.1710780575,
+    "cash_pnl": 611.1710780575014,
+    "max_event_premium_fraction": 0.004960607254232001,
+    "total_fills": 2,
+    "statuses": {
+      "no_fill": 24,
+      "no_pair_in_prior_hour": 2,
+      "imbalanced": 1
+    },
+    "metrics": {
+      "full": {
+        "annual_arithmetic": 0.0018210403550284816,
+        "annual_geometric": 0.0018171471038290754,
+        "volatility": 0.003336116300384292,
+        "sharpe": 0.5458563764155084,
+        "max_drawdown": 0.0,
+        "total_return": 0.0061117107805750415
+      },
+      "2023-24": {
+        "annual_arithmetic": 0.0,
+        "annual_geometric": 0.0,
+        "volatility": 0.0,
+        "sharpe": null,
+        "max_drawdown": 0.0,
+        "total_return": 0.0
+      },
+      "2025-26": {
+        "annual_arithmetic": 0.003453211199550914,
+        "annual_geometric": 0.0034486343885198334,
+        "volatility": 0.004594020909388396,
+        "sharpe": 0.7516751159085694,
+        "max_drawdown": 0.0,
+        "total_return": 0.0061117107805750415
+      }
+    }
+  },
+  "fomc_long_BTC_h2_p0_fee5": {
+    "status": "incomplete_proxy",
+    "invalid": [
+      [
+        "2024-11-07",
+        "missing_interim_mark_P"
+      ]
+    ],
+    "events": 27,
+    "events_filled": 8,
+    "imbalanced_events": 8,
+    "capital_final": 99198.54120848345,
+    "cash_pnl": -801.4587915165237,
+    "max_event_premium_fraction": 0.0069446028724371,
+    "total_fills": 11,
+    "statuses": {
+      "imbalanced": 8,
+      "no_fill": 19
+    },
+    "metrics": {}
+  },
+  "fomc_long_BTC_h2_p0_fee15": {
+    "status": "incomplete_proxy",
+    "invalid": [
+      [
+        "2024-11-07",
+        "missing_interim_mark_P"
+      ]
+    ],
+    "events": 27,
+    "events_filled": 6,
+    "imbalanced_events": 6,
+    "capital_final": 98943.65035619508,
+    "cash_pnl": -1056.3496438049249,
+    "max_event_premium_fraction": 0.00458789450274045,
+    "total_fills": 9,
+    "statuses": {
+      "imbalanced": 6,
+      "no_fill": 21
+    },
+    "metrics": {}
+  },
+  "fomc_long_BTC_h2_p1_fee5": {
+    "status": "incomplete_proxy",
+    "invalid": [
+      [
+        "2024-03-20",
+        "missing_interim_mark_C"
+      ]
+    ],
+    "events": 27,
+    "events_filled": 7,
+    "imbalanced_events": 7,
+    "capital_final": 101089.1957852054,
+    "cash_pnl": 1089.1957852054043,
+    "max_event_premium_fraction": 0.008030348797081867,
+    "total_fills": 10,
+    "statuses": {
+      "imbalanced": 7,
+      "no_fill": 20
+    },
+    "metrics": {}
+  },
+  "fomc_long_BTC_h2_p1_fee15": {
+    "status": "incomplete_proxy",
+    "invalid": [
+      [
+        "2024-03-20",
+        "missing_interim_mark_C"
+      ]
+    ],
+    "events": 27,
+    "events_filled": 6,
+    "imbalanced_events": 6,
+    "capital_final": 100893.03066462837,
+    "cash_pnl": 893.0306646283533,
+    "max_event_premium_fraction": 0.008329914003079591,
+    "total_fills": 8,
+    "statuses": {
+      "imbalanced": 6,
+      "no_fill": 21
+    },
+    "metrics": {}
+  },
+  "fomc_long_BTC_h2_p2_fee5": {
+    "status": "complete_proxy",
+    "invalid": [],
+    "events": 27,
+    "events_filled": 1,
+    "imbalanced_events": 1,
+    "capital_final": 99283.3673331769,
+    "cash_pnl": -716.6326668231002,
+    "max_event_premium_fraction": 0.008392467944904001,
+    "total_fills": 2,
+    "statuses": {
+      "no_fill": 22,
+      "imbalanced": 1,
+      "no_pair_in_prior_hour": 4
+    },
+    "metrics": {
+      "full": {
+        "annual_arithmetic": -0.002138884360406464,
+        "annual_geometric": -0.0021406661253354775,
+        "volatility": 0.0028504271849535126,
+        "sharpe": -0.7503732674516107,
+        "max_drawdown": -0.007166326668231027,
+        "total_return": -0.007166326668231027
+      },
+      "2023-24": {
+        "annual_arithmetic": -0.004525273474089669,
+        "annual_geometric": -0.004523635099376255,
+        "volatility": 0.00414440675281676,
+        "sharpe": -1.0918989722748742,
+        "max_drawdown": -0.007166326668231027,
+        "total_return": -0.007166326668231027
+      },
+      "2025-26": {
+        "annual_arithmetic": 0.0,
+        "annual_geometric": 0.0,
+        "volatility": 0.0,
+        "sharpe": null,
+        "max_drawdown": 0.0,
+        "total_return": 0.0
+      }
+    }
+  },
+  "fomc_long_BTC_h2_p2_fee15": {
+    "status": "complete_proxy",
+    "invalid": [],
+    "events": 27,
+    "events_filled": 1,
+    "imbalanced_events": 1,
+    "capital_final": 99268.16727648869,
+    "cash_pnl": -731.8327235113001,
+    "max_event_premium_fraction": 0.008543241757132,
+    "total_fills": 2,
+    "statuses": {
+      "no_fill": 22,
+      "imbalanced": 1,
+      "no_pair_in_prior_hour": 4
+    },
+    "metrics": {
+      "full": {
+        "annual_arithmetic": -0.0021842986209159834,
+        "annual_geometric": -0.0021861877915008154,
+        "volatility": 0.002921484277067772,
+        "sharpe": -0.7476674230498733,
+        "max_drawdown": -0.0073183272351130535,
+        "total_return": -0.0073183272351130535
+      },
+      "2023-24": {
+        "annual_arithmetic": -0.004621357185875786,
+        "annual_geometric": -0.0046197136075769585,
+        "volatility": 0.004247747296043563,
+        "sharpe": -1.087954829652934,
+        "max_drawdown": -0.0073183272351130535,
+        "total_return": -0.0073183272351130535
+      },
+      "2025-26": {
+        "annual_arithmetic": 0.0,
+        "annual_geometric": 0.0,
+        "volatility": 0.0,
+        "sharpe": null,
+        "max_drawdown": 0.0,
+        "total_return": 0.0
+      }
+    }
+  },
+  "fomc_long_ETH_h1_p0_fee5": {
+    "status": "complete_proxy",
+    "invalid": [],
+    "events": 27,
+    "events_filled": 8,
+    "imbalanced_events": 8,
+    "capital_final": 98895.92554462474,
+    "cash_pnl": -1104.0744553752495,
+    "max_event_premium_fraction": 0.006657378844141566,
+    "total_fills": 11,
+    "statuses": {
+      "no_fill": 19,
+      "imbalanced": 8
+    },
+    "metrics": {
+      "full": {
+        "annual_arithmetic": -0.0033007455760002964,
+        "annual_geometric": -0.0033025209816565093,
+        "volatility": 0.0037952290941004134,
+        "sharpe": -0.8697091780654878,
+        "max_drawdown": -0.01123139163890996,
+        "total_return": -0.01104074455375259
+      },
+      "2023-24": {
+        "annual_arithmetic": -0.0013416084954790566,
+        "annual_geometric": -0.001341251347056649,
+        "volatility": 0.001040457914195988,
+        "sharpe": -1.2894404253878757,
+        "max_drawdown": -0.0021267921346349583,
+        "total_return": -0.0021267921346349583
+      },
+      "2025-26": {
+        "annual_arithmetic": -0.005056690420616082,
+        "annual_geometric": -0.005057103745293334,
+        "volatility": 0.005132801625086488,
+        "sharpe": -0.9851716060682311,
+        "max_drawdown": -0.009124004364994831,
+        "total_return": -0.00893295094893487
+      }
+    }
+  },
+  "fomc_long_ETH_h1_p0_fee15": {
+    "status": "complete_proxy",
+    "invalid": [],
+    "events": 27,
+    "events_filled": 7,
+    "imbalanced_events": 7,
+    "capital_final": 98922.16598852677,
+    "cash_pnl": -1077.8340114732496,
+    "max_event_premium_fraction": 0.00690186398465884,
+    "total_fills": 9,
+    "statuses": {
+      "no_fill": 20,
+      "imbalanced": 7
+    },
+    "metrics": {
+      "full": {
+        "annual_arithmetic": -0.0032212171629824133,
+        "annual_geometric": -0.0032237307333945475,
+        "volatility": 0.003919134817873765,
+        "sharpe": -0.8219204780329578,
+        "max_drawdown": -0.010956362483379722,
+        "total_return": -0.010778340114732221
+      },
+      "2023-24": {
+        "annual_arithmetic": -0.0009219364019103564,
+        "annual_geometric": -0.0009219559050503978,
+        "volatility": 0.00094238723939186,
+        "sharpe": -0.9782989023761602,
+        "max_drawdown": -0.0014621045920799602,
+        "total_return": -0.0014621045920799602
+      },
+      "2025-26": {
+        "annual_arithmetic": -0.005282027628401486,
+        "annual_geometric": -0.0052822696668164415,
+        "volatility": 0.00532231679137469,
+        "sharpe": -0.992430145639114,
+        "max_drawdown": -0.009508159815428074,
+        "total_return": -0.009329876778333301
+      }
+    }
+  },
+  "fomc_long_ETH_h1_p1_fee5": {
+    "status": "complete_proxy",
+    "invalid": [],
+    "events": 27,
+    "events_filled": 3,
+    "imbalanced_events": 3,
+    "capital_final": 100711.7346480615,
+    "cash_pnl": 711.7346480614991,
+    "max_event_premium_fraction": 0.002957676966341822,
+    "total_fills": 3,
+    "statuses": {
+      "imbalanced": 3,
+      "no_fill": 22,
+      "no_pair_in_prior_hour": 2
+    },
+    "metrics": {
+      "full": {
+        "annual_arithmetic": 0.002118365754240897,
+        "annual_geometric": 0.002115401875440126,
+        "volatility": 0.0032298651790479437,
+        "sharpe": 0.6558681668766497,
+        "max_drawdown": 0.0,
+        "total_return": 0.007117346480614906
+      },
+      "2023-24": {
+        "annual_arithmetic": 0.0005939086870998151,
+        "annual_geometric": 0.0005938053292326995,
+        "volatility": 0.0007480188245135305,
+        "sharpe": 0.7939755894326055,
+        "max_drawdown": 0.0,
+        "total_return": 0.0009421181639199805
+      },
+      "2025-26": {
+        "annual_arithmetic": 0.003484713497080969,
+        "annual_geometric": 0.0034811520235014104,
+        "volatility": 0.0043913945647672354,
+        "sharpe": 0.7935323154606297,
+        "max_drawdown": 0.0,
+        "total_return": 0.006169415997822725
+      }
+    }
+  },
+  "fomc_long_ETH_h1_p1_fee15": {
+    "status": "complete_proxy",
+    "invalid": [],
+    "events": 27,
+    "events_filled": 2,
+    "imbalanced_events": 2,
+    "capital_final": 100125.6206966805,
+    "cash_pnl": 125.62069668049998,
+    "max_event_premium_fraction": 0.0002583287542330851,
+    "total_fills": 2,
+    "statuses": {
+      "imbalanced": 2,
+      "no_fill": 23,
+      "no_pair_in_prior_hour": 2
+    },
+    "metrics": {
+      "full": {
+        "annual_arithmetic": 0.000374208466316518,
+        "annual_geometric": 0.00037413347140202724,
+        "volatility": 0.0005384712635908285,
+        "sharpe": 0.6949460289135692,
+        "max_drawdown": 0.0,
+        "total_return": 0.0012562069668049514
+      },
+      "2023-24": {
+        "annual_arithmetic": 0.0005875711188414085,
+        "annual_geometric": 0.0005874699545938,
+        "volatility": 0.000740036755111453,
+        "sharpe": 0.7939755894326053,
+        "max_drawdown": 0.0,
+        "total_return": 0.0009320648707100698
+      },
+      "2025-26": {
+        "annual_arithmetic": 0.00018297475762934834,
+        "annual_geometric": 0.00018296187221000793,
+        "volatility": 0.00024342266194109935,
+        "sharpe": 0.7516751159085693,
+        "max_drawdown": 0.0,
+        "total_return": 0.00032384025596865484
+      }
+    }
+  },
+  "fomc_long_ETH_h1_p2_fee5": {
+    "status": "complete_proxy",
+    "invalid": [],
+    "events": 27,
+    "events_filled": 0,
+    "imbalanced_events": 0,
+    "capital_final": 100000.0,
+    "cash_pnl": 0.0,
+    "max_event_premium_fraction": 0.0,
+    "total_fills": 0,
+    "statuses": {
+      "no_fill": 24,
+      "no_pair_in_prior_hour": 3
+    },
+    "metrics": {
+      "full": {
+        "annual_arithmetic": 0.0,
+        "annual_geometric": 0.0,
+        "volatility": 0.0,
+        "sharpe": null,
+        "max_drawdown": 0.0,
+        "total_return": 0.0
+      },
+      "2023-24": {
+        "annual_arithmetic": 0.0,
+        "annual_geometric": 0.0,
+        "volatility": 0.0,
+        "sharpe": null,
+        "max_drawdown": 0.0,
+        "total_return": 0.0
+      },
+      "2025-26": {
+        "annual_arithmetic": 0.0,
+        "annual_geometric": 0.0,
+        "volatility": 0.0,
+        "sharpe": null,
+        "max_drawdown": 0.0,
+        "total_return": 0.0
+      }
+    }
+  },
+  "fomc_long_ETH_h1_p2_fee15": {
+    "status": "complete_proxy",
+    "invalid": [],
+    "events": 27,
+    "events_filled": 0,
+    "imbalanced_events": 0,
+    "capital_final": 100000.0,
+    "cash_pnl": 0.0,
+    "max_event_premium_fraction": 0.0,
+    "total_fills": 0,
+    "statuses": {
+      "no_fill": 24,
+      "no_pair_in_prior_hour": 3
+    },
+    "metrics": {
+      "full": {
+        "annual_arithmetic": 0.0,
+        "annual_geometric": 0.0,
+        "volatility": 0.0,
+        "sharpe": null,
+        "max_drawdown": 0.0,
+        "total_return": 0.0
+      },
+      "2023-24": {
+        "annual_arithmetic": 0.0,
+        "annual_geometric": 0.0,
+        "volatility": 0.0,
+        "sharpe": null,
+        "max_drawdown": 0.0,
+        "total_return": 0.0
+      },
+      "2025-26": {
+        "annual_arithmetic": 0.0,
+        "annual_geometric": 0.0,
+        "volatility": 0.0,
+        "sharpe": null,
+        "max_drawdown": 0.0,
+        "total_return": 0.0
+      }
+    }
+  },
+  "fomc_long_ETH_h2_p0_fee5": {
+    "status": "complete_proxy",
+    "invalid": [],
+    "events": 27,
+    "events_filled": 2,
+    "imbalanced_events": 2,
+    "capital_final": 99394.860957688,
+    "cash_pnl": -605.139042312,
+    "max_event_premium_fraction": 0.004501275593955626,
+    "total_fills": 4,
+    "statuses": {
+      "no_fill": 19,
+      "imbalanced": 2,
+      "no_pair_in_prior_hour": 6
+    },
+    "metrics": {
+      "full": {
+        "annual_arithmetic": -0.001806707709510227,
+        "annual_geometric": -0.0018069105601917768,
+        "volatility": 0.0019139362212890099,
+        "sharpe": -0.9439748772262819,
+        "max_drawdown": -0.006051390423120195,
+        "total_return": -0.006051390423120195
+      },
+      "2023-24": {
+        "annual_arithmetic": -0.0009817901965026808,
+        "annual_geometric": -0.0009818892532760248,
+        "volatility": 0.0010775897175847294,
+        "sharpe": -0.9110983340702525,
+        "max_drawdown": -0.001557123872850119,
+        "total_return": -0.001557123872850119
+      },
+      "2025-26": {
+        "annual_arithmetic": -0.0025460687621903654,
+        "annual_geometric": -0.002545785627875774,
+        "volatility": 0.0024305795852669464,
+        "sharpe": -1.047515077318785,
+        "max_drawdown": -0.004501275593955634,
+        "total_return": -0.004501275593955634
+      }
+    }
+  },
+  "fomc_long_ETH_h2_p0_fee15": {
+    "status": "complete_proxy",
+    "invalid": [],
+    "events": 27,
+    "events_filled": 2,
+    "imbalanced_events": 2,
+    "capital_final": 99380.320709254,
+    "cash_pnl": -619.679290746,
+    "max_event_premium_fraction": 0.00461689349236161,
+    "total_fills": 4,
+    "statuses": {
+      "no_fill": 19,
+      "imbalanced": 2,
+      "no_pair_in_prior_hour": 6
+    },
+    "metrics": {
+      "full": {
+        "annual_arithmetic": -0.001850192790323042,
+        "annual_geometric": -0.0018504218075233725,
+        "volatility": 0.001968275238896617,
+        "sharpe": -0.9400071462364328,
+        "max_drawdown": -0.006196792907460114,
+        "total_return": -0.006196792907460114
+      },
+      "2023-24": {
+        "annual_arithmetic": -0.0010007715546188122,
+        "annual_geometric": -0.0010008775202565712,
+        "volatility": 0.001101190223808307,
+        "sharpe": -0.9088089714034953,
+        "max_drawdown": -0.001587227475300046,
+        "total_return": -0.001587227475300046
+      },
+      "2025-26": {
+        "annual_arithmetic": -0.0026115161579279168,
+        "annual_geometric": -0.0026112415054299065,
+        "volatility": 0.0025023532463198314,
+        "sharpe": -1.0436241013408596,
+        "max_drawdown": -0.004616893492361607,
+        "total_return": -0.004616893492361607
+      }
+    }
+  },
+  "fomc_long_ETH_h2_p1_fee5": {
+    "status": "complete_proxy",
+    "invalid": [],
+    "events": 27,
+    "events_filled": 2,
+    "imbalanced_events": 2,
+    "capital_final": 99885.81783745,
+    "cash_pnl": -114.18216255,
+    "max_event_premium_fraction": 0.0009273104071056493,
+    "total_fills": 2,
+    "statuses": {
+      "imbalanced": 2,
+      "no_fill": 25
+    },
+    "metrics": {
+      "full": {
+        "annual_arithmetic": -0.00034029485542867683,
+        "annual_geometric": -0.0003403526874228291,
+        "volatility": 0.0004809123944404319,
+        "sharpe": -0.707602589084086,
+        "max_drawdown": -0.001141821625499917,
+        "total_return": -0.001141821625499917
+      },
+      "2023-24": {
+        "annual_arithmetic": -0.000719967526597805,
+        "annual_geometric": -0.0007199531620555311,
+        "volatility": 0.0006992941328084757,
+        "sharpe": -1.0295632307199571,
+        "max_drawdown": -0.001141821625499917,
+        "total_return": -0.001141821625499917
+      },
+      "2025-26": {
+        "annual_arithmetic": 0.0,
+        "annual_geometric": 0.0,
+        "volatility": 0.0,
+        "sharpe": null,
+        "max_drawdown": 0.0,
+        "total_return": 0.0
+      }
+    }
+  },
+  "fomc_long_ETH_h2_p1_fee15": {
+    "status": "complete_proxy",
+    "invalid": [],
+    "events": 27,
+    "events_filled": 2,
+    "imbalanced_events": 2,
+    "capital_final": 99882.65154095,
+    "cash_pnl": -117.34845905,
+    "max_event_premium_fraction": 0.0009500353669548098,
+    "total_fills": 2,
+    "statuses": {
+      "imbalanced": 2,
+      "no_fill": 25
+    },
+    "metrics": {
+      "full": {
+        "annual_arithmetic": -0.0003497336330857991,
+        "annual_geometric": -0.00034979463360751417,
+        "volatility": 0.0004940795952021773,
+        "sharpe": -0.707848768663859,
+        "max_drawdown": -0.0011734845905001512,
+        "total_return": -0.0011734845905001512
+      },
+      "2023-24": {
+        "annual_arithmetic": -0.0007399373066150327,
+        "annual_geometric": -0.0007399219548978042,
+        "volatility": 0.0007184401600361321,
+        "sharpe": -1.029921972315439,
+        "max_drawdown": -0.0011734845905001512,
+        "total_return": -0.0011734845905001512
+      },
+      "2025-26": {
+        "annual_arithmetic": 0.0,
+        "annual_geometric": 0.0,
+        "volatility": 0.0,
+        "sharpe": null,
+        "max_drawdown": 0.0,
+        "total_return": 0.0
+      }
+    }
+  },
+  "fomc_long_ETH_h2_p2_fee5": {
+    "status": "complete_proxy",
+    "invalid": [],
+    "events": 27,
+    "events_filled": 0,
+    "imbalanced_events": 0,
+    "capital_final": 100000.0,
+    "cash_pnl": 0.0,
+    "max_event_premium_fraction": 0.0,
+    "total_fills": 0,
+    "statuses": {
+      "no_fill": 19,
+      "no_pair_in_prior_hour": 8
+    },
+    "metrics": {
+      "full": {
+        "annual_arithmetic": 0.0,
+        "annual_geometric": 0.0,
+        "volatility": 0.0,
+        "sharpe": null,
+        "max_drawdown": 0.0,
+        "total_return": 0.0
+      },
+      "2023-24": {
+        "annual_arithmetic": 0.0,
+        "annual_geometric": 0.0,
+        "volatility": 0.0,
+        "sharpe": null,
+        "max_drawdown": 0.0,
+        "total_return": 0.0
+      },
+      "2025-26": {
+        "annual_arithmetic": 0.0,
+        "annual_geometric": 0.0,
+        "volatility": 0.0,
+        "sharpe": null,
+        "max_drawdown": 0.0,
+        "total_return": 0.0
+      }
+    }
+  },
+  "fomc_long_ETH_h2_p2_fee15": {
+    "status": "complete_proxy",
+    "invalid": [],
+    "events": 27,
+    "events_filled": 0,
+    "imbalanced_events": 0,
+    "capital_final": 100000.0,
+    "cash_pnl": 0.0,
+    "max_event_premium_fraction": 0.0,
+    "total_fills": 0,
+    "statuses": {
+      "no_fill": 19,
+      "no_pair_in_prior_hour": 8
+    },
+    "metrics": {
+      "full": {
+        "annual_arithmetic": 0.0,
+        "annual_geometric": 0.0,
+        "volatility": 0.0,
+        "sharpe": null,
+        "max_drawdown": 0.0,
+        "total_return": 0.0
+      },
+      "2023-24": {
+        "annual_arithmetic": 0.0,
+        "annual_geometric": 0.0,
+        "volatility": 0.0,
+        "sharpe": null,
+        "max_drawdown": 0.0,
+        "total_return": 0.0
+      },
+      "2025-26": {
+        "annual_arithmetic": 0.0,
+        "annual_geometric": 0.0,
+        "volatility": 0.0,
+        "sharpe": null,
+        "max_drawdown": 0.0,
+        "total_return": 0.0
+      }
+    }
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2021-fourth-quarter-and-full-year-results-301236041.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "c4d932fb440f9fa018dd7fff9c9f0e821ca98747a18a1f4234af94e131d40118",
+  "retrieved_utc": "2026-10-09T03:26:40Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2021-fourth-quarter-and-full-year-results-301236041.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "c4d932fb440f9fa018dd7fff9c9f0e821ca98747a18a1f4234af94e131d40118",
+      "retrieved_utc": "2026-10-09T03:26:40Z"
+    }
+  ]
+}

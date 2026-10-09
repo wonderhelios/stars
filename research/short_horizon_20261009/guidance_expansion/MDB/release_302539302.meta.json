@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-second-quarter-fiscal-2026-financial-results-302539302.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "bb97639faf1818be1ebe84dca3b4c44bd876f7b882452ce9617494061da516c8",
+  "retrieved_utc": "2026-10-09T03:22:13Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-second-quarter-fiscal-2026-financial-results-302539302.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "bb97639faf1818be1ebe84dca3b4c44bd876f7b882452ce9617494061da516c8",
+      "retrieved_utc": "2026-10-09T03:22:13Z"
+    }
+  ]
+}

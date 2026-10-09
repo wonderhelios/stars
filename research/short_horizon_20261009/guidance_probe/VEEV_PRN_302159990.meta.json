@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/veeva-announces-fiscal-2025-first-quarter-results-302159990.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "f918e1188b08102641cf51cbe848dda50e9af3e833b3aed82bc9bd0f8168fa15",
+  "retrieved_utc": "2026-10-09T03:08:38Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/veeva-announces-fiscal-2025-first-quarter-results-302159990.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "f918e1188b08102641cf51cbe848dda50e9af3e833b3aed82bc9bd0f8168fa15",
+      "retrieved_utc": "2026-10-09T03:08:38Z"
+    }
+  ]
+}

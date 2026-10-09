@@ -1,0 +1,30 @@
+{
+  "full": {
+    "days": 1192,
+    "sharpe": 1.0724149831931427,
+    "annual_arithmetic": 0.7769727206935273,
+    "annual_cost": 0.4289909745273485,
+    "daily_turnover": 1.6790253406158455
+  },
+  "2023-24": {
+    "days": 547,
+    "sharpe": 0.44593425301660217,
+    "annual_arithmetic": 0.32501052903549804,
+    "annual_cost": 0.3826858090773889,
+    "daily_turnover": 1.497791816349859
+  },
+  "2025-26": {
+    "days": 645,
+    "sharpe": 1.6097392827728754,
+    "annual_arithmetic": 1.160264687882585,
+    "annual_cost": 0.4682606264670818,
+    "daily_turnover": 1.832722608481729
+  },
+  "missing_held_quotes": [],
+  "ending_equity": 5391869.220628206,
+  "factor": "binary20",
+  "mode": "mix",
+  "period": 1,
+  "phase": 0,
+  "key": "binary20_mix_k1_p0"
+}

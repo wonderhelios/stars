@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-date-of-second-quarter-fiscal-2026-earnings-call-302522408.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "a3516bddbfe344a45fb864449862736243e9e7fda84b742247d9d97f51d9cac8",
+  "retrieved_utc": "2026-10-09T04:07:47Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-date-of-second-quarter-fiscal-2026-earnings-call-302522408.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "a3516bddbfe344a45fb864449862736243e9e7fda84b742247d9d97f51d9cac8",
+      "retrieved_utc": "2026-10-09T04:07:47Z"
+    }
+  ]
+}

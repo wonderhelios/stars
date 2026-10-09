@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/veeva-to-release-fiscal-2025-first-quarter-results-on-may-30-2024-302140101.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "55e8238a94d571aa364b32403e98244feb8d3d9082d0b14afc2cdc051c913e0e",
+  "retrieved_utc": "2026-10-09T04:10:22Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/veeva-to-release-fiscal-2025-first-quarter-results-on-may-30-2024-302140101.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "55e8238a94d571aa364b32403e98244feb8d3d9082d0b14afc2cdc051c913e0e",
+      "retrieved_utc": "2026-10-09T04:10:22Z"
+    }
+  ]
+}

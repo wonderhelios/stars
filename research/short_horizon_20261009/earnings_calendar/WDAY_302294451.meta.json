@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/workday-announces-date-of-fiscal-2025-third-quarter-financial-results-302294451.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "5550be65b2366afca491b22870fe6e123021ff7e6ebe0395256bb1fc27e694cd",
+  "retrieved_utc": "2026-10-09T04:11:48Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/workday-announces-date-of-fiscal-2025-third-quarter-financial-results-302294451.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "5550be65b2366afca491b22870fe6e123021ff7e6ebe0395256bb1fc27e694cd",
+      "retrieved_utc": "2026-10-09T04:11:48Z"
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "rules": [
+    {
+      "symbol": "MDB",
+      "published": "2026-05-28",
+      "source": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-first-quarter-fiscal-2027-financial-results-302784757.html",
+      "previous_source": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-fourth-quarter-fiscal-2026-financial-results-302701531.html",
+      "action": "exclude_incomparable_guidance_pair",
+      "reason": "Clarity Business Solutions newly acquired during the quarter, with ongoing integration and separate operations. Release does not quantify a comparable revenue bridge versus the previously published full-year and quarterly forecast.",
+      "registered_before_expansion_performance": true
+    }
+  ],
+  "remaining_review": "Other acquisition effects and non-quarterly announcements remain under review. Exclusion here means unable to establish comparable scope, not evidence that the acquisition materially changed revenue."
+}

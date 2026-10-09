@@ -1,0 +1,95 @@
+{
+  "source": {
+    "verified_notices": 113,
+    "source_hash_and_quote_checks": true,
+    "planned_actual_counts": {
+      "matches_observed_date": 113
+    },
+    "downloaded": 140,
+    "catalogued": 141,
+    "download_failures": 1,
+    "timing_rule": "max publication/modification + 60 minutes; actual dates are audit-only and never replace plans",
+    "ready_for_restricted_exploration": true,
+    "limitations": [
+      "Not a complete 30-company calendar",
+      "No proof all historical rescheduling notices were archived",
+      "Ambiguous conference-only notices remain excluded",
+      "Actual-date differences retained, not retrospectively removed"
+    ]
+  },
+  "paths": 6,
+  "trades_including_stress": 606,
+  "max_holding_hours": 30.5,
+  "max_daily_nav_replay_error": 1.1641532182693481e-10,
+  "per_path": {
+    "pre1_fee5": {
+      "max_daily_nav_error": 8.731149137020111e-11,
+      "independent_flows": {
+        "finance": 0.0,
+        "fees": 2043.619215354276,
+        "dividends": 0.0,
+        "nav": 95432.14993583964
+      }
+    },
+    "pre1_fee15": {
+      "max_daily_nav_error": 4.3655745685100555e-11,
+      "independent_flows": {
+        "finance": 0.0,
+        "fees": 6006.117693978896,
+        "dividends": 0.0,
+        "nav": 91504.99277649827
+      }
+    },
+    "pre2_fee5": {
+      "max_daily_nav_error": 7.275957614183426e-11,
+      "independent_flows": {
+        "finance": 0.0,
+        "fees": 1778.2314482490783,
+        "dividends": 0.0,
+        "nav": 98592.10873721575
+      }
+    },
+    "pre2_fee15": {
+      "max_daily_nav_error": 5.820766091346741e-11,
+      "independent_flows": {
+        "finance": 0.0,
+        "fees": 5237.7963289462505,
+        "dividends": 0.0,
+        "nav": 94990.36594263595
+      }
+    },
+    "event2_fee5": {
+      "max_daily_nav_error": 1.1641532182693481e-10,
+      "independent_flows": {
+        "finance": 0.0,
+        "fees": 2762.056031006886,
+        "dividends": 0.0,
+        "nav": 134830.85181019513
+      }
+    },
+    "event2_fee15": {
+      "max_daily_nav_error": 7.275957614183426e-11,
+      "independent_flows": {
+        "finance": 0.0,
+        "fees": 8110.653727453373,
+        "dividends": 0.0,
+        "nav": 129261.58308299369
+      }
+    }
+  },
+  "prefix_checks": {
+    "2023-12-31": {
+      "pre1": 0.0,
+      "pre2": 0.0,
+      "event2": 0.0
+    },
+    "2025-06-30": {
+      "pre1": 0.0,
+      "pre2": 0.0,
+      "event2": 0.0
+    }
+  },
+  "no_same_name_overlap": true,
+  "all_entries_after_known_notice": true,
+  "actual_dates_never_used_for_trading": true
+}

@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/autodesk-files-forms-10-k-and-10-q-and-announces-financial-results-conference-call-302168653.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "9daf0c5b2d99254122026e981573bc44bb7de929bd22a0ce1a3036913819c546",
+  "retrieved_utc": "2026-10-09T04:06:30Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/autodesk-files-forms-10-k-and-10-q-and-announces-financial-results-conference-call-302168653.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "9daf0c5b2d99254122026e981573bc44bb7de929bd22a0ce1a3036913819c546",
+      "retrieved_utc": "2026-10-09T04:06:30Z"
+    }
+  ]
+}

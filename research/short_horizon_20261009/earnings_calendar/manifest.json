@@ -1,0 +1,44 @@
+{
+  "start": "2021-01-01",
+  "end": "2026-10-07",
+  "rules": {
+    "pre1": [
+      0,
+      1
+    ],
+    "pre2": [
+      -1,
+      2
+    ],
+    "event2": [
+      0,
+      2
+    ]
+  },
+  "notice_count": 113,
+  "signal_counts": {
+    "pre2": 93,
+    "pre1": 105,
+    "event2": 105
+  },
+  "spec_sha256": "8671a89245c7d9097e541bbee9af1d1536a05811419e972b65b1da61f142bc51",
+  "code_sha256": {
+    "earnings_calendar_parse.py": "216aecd965b6f3965390b320197af1898f25f57c6cfba3a1a26b88611095d185",
+    "earnings_calendar_screen.py": "bbe2a8af0d9b01427f6bd7220d42217c65eb4f8ed516fc9929276736bd33b15b",
+    "screen.py": "0c3ca297fe43ee03ef5de63dc5eb8b5b1d1581f0d92f83ba44b06b12f1d137c8"
+  },
+  "data_sha256": {
+    "DDOG": "6123525d73f074150ad5f9dd6673cd03f7340fe3afc596e4c942caf20cff2c3d",
+    "MDB": "e545b1daafd2545a39eacb4e5585a07dc67203311b33e2bdd792bd32d936a0ac",
+    "SNPS": "70d9dfa09a22684a53c402befe96f4c051d54a990a493b83c40611940dc0ffef",
+    "VEEV": "192cc22fbdd4ccf5f209b7950a581c5cef53586ac306bb1dc4c07bfe2a4a403b",
+    "WDAY": "3035d6478347763b83853576652cbb54a59752ce6bd4db9b32ca38b58fba557f"
+  },
+  "limitations": [
+    "Fixed present-day surviving universe",
+    "Incomplete original scheduling notices",
+    "Auction and bank-settlement proxies",
+    "Not a clean holdout",
+    "No synchronous crypto combination yet"
+  ]
+}

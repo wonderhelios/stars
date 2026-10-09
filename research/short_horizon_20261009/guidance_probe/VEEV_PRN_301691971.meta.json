@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/veeva-announces-fiscal-2023-third-quarter-results-301691971.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "59d3b7e270ba86f867e6d4566663f9c2cca18fa25641dc3427556ccc76c5ca91",
+  "retrieved_utc": "2026-10-09T03:09:20Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/veeva-announces-fiscal-2023-third-quarter-results-301691971.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "59d3b7e270ba86f867e6d4566663f9c2cca18fa25641dc3427556ccc76c5ca91",
+      "retrieved_utc": "2026-10-09T03:09:20Z"
+    }
+  ]
+}

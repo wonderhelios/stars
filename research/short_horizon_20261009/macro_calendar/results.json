@@ -1,0 +1,1794 @@
+{
+  "SPY_pre1_g1_fee5": {
+    "configuration": "SPY_pre1",
+    "gross": 1.0,
+    "fee": 0.0005,
+    "metrics": {
+      "full": {
+        "n": 2106,
+        "annual_return": -0.016492140175187072,
+        "vol": 0.019045367848245367,
+        "sharpe": -0.8659397028504481,
+        "cagr": -0.016536452392265755,
+        "max_drawdown": -0.09172743906741243
+      },
+      "2021-22": {
+        "n": 730,
+        "annual_return": -0.03199846922175892,
+        "vol": 0.024273570118039774,
+        "sharpe": -1.318243219524519,
+        "cagr": -0.03178019196647641,
+        "max_drawdown": -0.06255040333152684
+      },
+      "2023-24": {
+        "n": 731,
+        "annual_return": 0.00036450010175128787,
+        "vol": 0.01827772265900191,
+        "sharpe": 0.019942314945443653,
+        "cagr": 0.00019732501114866352,
+        "max_drawdown": -0.022808907436427495
+      },
+      "2025-26": {
+        "n": 645,
+        "annual_return": -0.018046533723163036,
+        "vol": 0.011760939990647042,
+        "sharpe": -1.5344465440274884,
+        "cagr": -0.017953129691470004,
+        "max_drawdown": -0.036792072161555334
+      }
+    },
+    "diagnostics": {
+      "trades": 45,
+      "fees": 4279.555150931078,
+      "finance": 0.4629344461364947,
+      "borrow": 0.0,
+      "nav": 90827.2560932588,
+      "max_hold_hours": 6.5,
+      "active_sessions": 45,
+      "mean_open_gross": 0.015205379054894459,
+      "stale_marks": 0,
+      "adverse_margin_flags": 0,
+      "reconciliation_max_dollars": 8.731149137020111e-11,
+      "open_positions": 0,
+      "cash_available_final": 90827.2560932588,
+      "unsettled_final": 0,
+      "mean_open_gross_in_research_window": 0.031083283513737254
+    }
+  },
+  "SPY_pre1_g1_fee15": {
+    "configuration": "SPY_pre1",
+    "gross": 1.0,
+    "fee": 0.0015,
+    "metrics": {
+      "full": {
+        "n": 2106,
+        "annual_return": -0.03204358910172382,
+        "vol": 0.021357766171330415,
+        "sharpe": -1.5003249330792614,
+        "cagr": -0.031759422707883456,
+        "max_drawdown": -0.16990950458686416
+      },
+      "2021-22": {
+        "n": 730,
+        "annual_return": -0.04692170082038022,
+        "vol": 0.02722819081994026,
+        "sharpe": -1.7232764795381714,
+        "cagr": -0.04619716006486252,
+        "max_drawdown": -0.09026014253166648
+      },
+      "2023-24": {
+        "n": 731,
+        "annual_return": -0.015600256345269447,
+        "vol": 0.019040772091774932,
+        "sharpe": -0.8193079708153383,
+        "cagr": -0.01565879429517658,
+        "max_drawdown": -0.0421389874149396
+      },
+      "2025-26": {
+        "n": 645,
+        "annual_return": -0.03384057311776875,
+        "vol": 0.015468383868004181,
+        "sharpe": -2.18772519524595,
+        "cagr": -0.03339193144454211,
+        "max_drawdown": -0.061514321764223445
+      }
+    },
+    "diagnostics": {
+      "trades": 45,
+      "fees": 12285.724301529448,
+      "finance": 1.3399892377765952,
+      "borrow": 0.0,
+      "nav": 83009.0495413136,
+      "max_hold_hours": 6.5,
+      "active_sessions": 45,
+      "mean_open_gross": 0.015190196449747274,
+      "stale_marks": 0,
+      "adverse_margin_flags": 0,
+      "reconciliation_max_dollars": 5.820766091346741e-11,
+      "open_positions": 0,
+      "cash_available_final": 83009.0495413136,
+      "unsettled_final": 0,
+      "mean_open_gross_in_research_window": 0.031052246785316127
+    }
+  },
+  "SPY_pre1_g2.7_fee5": {
+    "configuration": "SPY_pre1",
+    "gross": 2.7,
+    "fee": 0.0005,
+    "metrics": {
+      "full": {
+        "n": 2106,
+        "annual_return": -0.04798584719502972,
+        "vol": 0.051486601564734245,
+        "sharpe": -0.9320064975486289,
+        "cagr": -0.048135560361153185,
+        "max_drawdown": -0.24771695083358503
+      },
+      "2021-22": {
+        "n": 730,
+        "annual_return": -0.09063276772346635,
+        "vol": 0.06563014849899518,
+        "sharpe": -1.3809624051795946,
+        "cagr": -0.08865814900528202,
+        "max_drawdown": -0.16945603062552117
+      },
+      "2023-24": {
+        "n": 731,
+        "annual_return": -0.0027818971446916317,
+        "vol": 0.049356334239699706,
+        "sharpe": -0.05636352836054051,
+        "cagr": -0.0039983661683996585,
+        "max_drawdown": -0.06287085066975984
+      },
+      "2025-26": {
+        "n": 645,
+        "annual_return": -0.05094993324315129,
+        "vol": 0.03186705000040347,
+        "sharpe": -1.5988280447203682,
+        "cagr": -0.050162829089590355,
+        "max_drawdown": -0.10019484997768513
+      }
+    },
+    "diagnostics": {
+      "trades": 45,
+      "fees": 10500.707132627896,
+      "finance": 1750.3123263864716,
+      "borrow": 0.0,
+      "nav": 75228.30491664149,
+      "max_hold_hours": 6.5,
+      "active_sessions": 45,
+      "mean_open_gross": 0.041054523448215065,
+      "stale_marks": 0,
+      "adverse_margin_flags": 0,
+      "reconciliation_max_dollars": 2.6193447411060333e-10,
+      "open_positions": 0,
+      "cash_available_final": 75228.30491664149,
+      "unsettled_final": 0,
+      "mean_open_gross_in_research_window": 0.08392486548709065
+    }
+  },
+  "SPY_pre1_g2.7_fee15": {
+    "configuration": "SPY_pre1",
+    "gross": 2.7,
+    "fee": 0.0015,
+    "metrics": {
+      "full": {
+        "n": 2106,
+        "annual_return": -0.08999041745491393,
+        "vol": 0.05777132215678561,
+        "sharpe": -1.5577005007898017,
+        "cagr": -0.08762540382878214,
+        "max_drawdown": -0.4108786935683255
+      },
+      "2021-22": {
+        "n": 730,
+        "annual_return": -0.13094563282436023,
+        "vol": 0.07363281075264017,
+        "sharpe": -1.7783598301612444,
+        "cagr": -0.12518738949590613,
+        "max_drawdown": -0.23470289650301257
+      },
+      "2023-24": {
+        "n": 731,
+        "annual_return": -0.04590391010005178,
+        "vol": 0.051471208991654034,
+        "sharpe": -0.8918366403146858,
+        "cagr": -0.04615244024527898,
+        "max_drawdown": -0.11721254022610172
+      },
+      "2025-26": {
+        "n": 645,
+        "annual_return": -0.09360271149632235,
+        "vol": 0.04192120348968946,
+        "sharpe": -2.2328250075011318,
+        "cagr": -0.09017565571354802,
+        "max_drawdown": -0.1616105368629076
+      }
+    },
+    "diagnostics": {
+      "trades": 45,
+      "fees": 28142.259826315578,
+      "finance": 1595.6247100346075,
+      "borrow": 0.0,
+      "nav": 58912.13064316749,
+      "max_hold_hours": 6.5,
+      "active_sessions": 45,
+      "mean_open_gross": 0.04101353041431764,
+      "stale_marks": 0,
+      "adverse_margin_flags": 0,
+      "reconciliation_max_dollars": 8.731149137020111e-11,
+      "open_positions": 0,
+      "cash_available_final": 58912.13064316749,
+      "unsettled_final": 0,
+      "mean_open_gross_in_research_window": 0.08384106632035355
+    }
+  },
+  "SPY_event2_g1_fee5": {
+    "configuration": "SPY_event2",
+    "gross": 1.0,
+    "fee": 0.0005,
+    "metrics": {
+      "full": {
+        "n": 2106,
+        "annual_return": -0.016412881284983007,
+        "vol": 0.04074175796586997,
+        "sharpe": -0.40285157304042557,
+        "cagr": -0.017096777588321954,
+        "max_drawdown": -0.14959273908602033
+      },
+      "2021-22": {
+        "n": 730,
+        "annual_return": -0.012284477614118217,
+        "vol": 0.0517076269677269,
+        "sharpe": -0.23757573755580622,
+        "cagr": -0.013525845336075148,
+        "max_drawdown": -0.08586512575271199
+      },
+      "2023-24": {
+        "n": 731,
+        "annual_return": -0.0034069623998489807,
+        "vol": 0.0398366286545708,
+        "sharpe": -0.08552336166273623,
+        "cagr": -0.004195817912547861,
+        "max_drawdown": -0.03873971747239502
+      },
+      "2025-26": {
+        "n": 645,
+        "annual_return": -0.03582537955593537,
+        "vol": 0.0244644840954501,
+        "sharpe": -1.464383202039325,
+        "cagr": -0.03548280160526629,
+        "max_drawdown": -0.07011360687117807
+      }
+    },
+    "diagnostics": {
+      "trades": 45,
+      "fees": 4393.375509857412,
+      "finance": 0.4820708493555638,
+      "borrow": 0.0,
+      "nav": 90529.07954680368,
+      "max_hold_hours": 30.5,
+      "active_sessions": 90,
+      "mean_open_gross": 0.030418360799316393,
+      "stale_marks": 0,
+      "adverse_margin_flags": 0,
+      "reconciliation_max_dollars": 5.820766091346741e-11,
+      "open_positions": 0,
+      "cash_available_final": 90529.07954680368,
+      "unsettled_final": 0,
+      "mean_open_gross_in_research_window": 0.06218210866923144
+    }
+  },
+  "SPY_event2_g1_fee15": {
+    "configuration": "SPY_event2",
+    "gross": 1.0,
+    "fee": 0.0015,
+    "metrics": {
+      "full": {
+        "n": 2106,
+        "annual_return": -0.031988704729279636,
+        "vol": 0.04126581670573268,
+        "sharpe": -0.7751865171454547,
+        "cagr": -0.032311102290243476,
+        "max_drawdown": -0.20391292191945476
+      },
+      "2021-22": {
+        "n": 730,
+        "annual_return": -0.027266899559013513,
+        "vol": 0.05202103400958806,
+        "sharpe": -0.5241514337063718,
+        "cagr": -0.028214623958108476,
+        "max_drawdown": -0.09133455463823881
+      },
+      "2023-24": {
+        "n": 731,
+        "annual_return": -0.019375553344637933,
+        "vol": 0.04007001022219305,
+        "sharpe": -0.48354251065068726,
+        "cagr": -0.019982292763138454,
+        "max_drawdown": -0.061940007225542604
+      },
+      "2025-26": {
+        "n": 645,
+        "annual_return": -0.05162766819667089,
+        "vol": 0.026096701916654544,
+        "sharpe": -1.9783215657501472,
+        "cagr": -0.050646107109264316,
+        "max_drawdown": -0.0922781600259539
+      }
+    },
+    "diagnostics": {
+      "trades": 45,
+      "fees": 12609.015381625984,
+      "finance": 1.3942484914634936,
+      "borrow": 0.0,
+      "nav": 82736.52573563012,
+      "max_hold_hours": 30.5,
+      "active_sessions": 90,
+      "mean_open_gross": 0.030403178194169177,
+      "stale_marks": 0,
+      "adverse_margin_flags": 0,
+      "reconciliation_max_dollars": 5.820766091346741e-11,
+      "open_positions": 0,
+      "cash_available_final": 82736.52573563012,
+      "unsettled_final": 0,
+      "mean_open_gross_in_research_window": 0.062151071940810244
+    }
+  },
+  "SPY_event2_g2.7_fee5": {
+    "configuration": "SPY_event2",
+    "gross": 2.7,
+    "fee": 0.0005,
+    "metrics": {
+      "full": {
+        "n": 2106,
+        "annual_return": -0.05084732759910654,
+        "vol": 0.1103473324456677,
+        "sharpe": -0.4607934462225673,
+        "cagr": -0.05539038426276288,
+        "max_drawdown": -0.3808643032349073
+      },
+      "2021-22": {
+        "n": 730,
+        "annual_return": -0.041160162384607235,
+        "vol": 0.14019995356355064,
+        "sharpe": -0.2935818546184462,
+        "cagr": -0.049692943060267614,
+        "max_drawdown": -0.22320891440164314
+      },
+      "2023-24": {
+        "n": 731,
+        "annual_return": -0.01589582375887772,
+        "vol": 0.10754329422364933,
+        "sharpe": -0.14780860000271542,
+        "cagr": -0.021547596103648314,
+        "max_drawdown": -0.10699848801024137
+      },
+      "2025-26": {
+        "n": 645,
+        "annual_return": -0.1014228003336674,
+        "vol": 0.06655155740665049,
+        "sharpe": -1.5239733566855975,
+        "cagr": -0.09848916222083592,
+        "max_drawdown": -0.1858248378341526
+      }
+    },
+    "diagnostics": {
+      "trades": 45,
+      "fees": 11058.447666589476,
+      "finance": 3007.377930599754,
+      "borrow": 0.0,
+      "nav": 71979.61509918615,
+      "max_hold_hours": 30.5,
+      "active_sessions": 90,
+      "mean_open_gross": 0.08215275007132308,
+      "stale_marks": 0,
+      "adverse_margin_flags": 0,
+      "reconciliation_max_dollars": 3.637978807091713e-10,
+      "open_positions": 0,
+      "cash_available_final": 71979.61509918615,
+      "unsettled_final": 0,
+      "mean_open_gross_in_research_window": 0.16793907029092858
+    }
+  },
+  "SPY_event2_g2.7_fee15": {
+    "configuration": "SPY_event2",
+    "gross": 2.7,
+    "fee": 0.0015,
+    "metrics": {
+      "full": {
+        "n": 2106,
+        "annual_return": -0.09304432754643914,
+        "vol": 0.1120089105173894,
+        "sharpe": -0.8306868365797914,
+        "cagr": -0.09462640369225939,
+        "max_drawdown": -0.4830151353083949
+      },
+      "2021-22": {
+        "n": 730,
+        "annual_return": -0.08174440114185261,
+        "vol": 0.14134017441959687,
+        "sharpe": -0.5783522022491483,
+        "cagr": -0.08768990604716409,
+        "max_drawdown": -0.23640983639617907
+      },
+      "2023-24": {
+        "n": 731,
+        "annual_return": -0.05909479546796947,
+        "vol": 0.10841702758538771,
+        "sharpe": -0.5450693196825308,
+        "cagr": -0.06303888172562877,
+        "max_drawdown": -0.1747341751131014
+      },
+      "2025-26": {
+        "n": 645,
+        "annual_return": -0.14430952789482593,
+        "vol": 0.07112935644046166,
+        "sharpe": -2.028832188515852,
+        "cagr": -0.13663034965497145,
+        "max_drawdown": -0.23883836429214922
+      }
+    },
+    "diagnostics": {
+      "trades": 45,
+      "fees": 29595.692260590953,
+      "finance": 2715.5370575831635,
+      "borrow": 0.0,
+      "nav": 56351.10849217854,
+      "max_hold_hours": 30.5,
+      "active_sessions": 90,
+      "mean_open_gross": 0.08218179123815253,
+      "stale_marks": 0,
+      "adverse_margin_flags": 0,
+      "reconciliation_max_dollars": 2.764863893389702e-10,
+      "open_positions": 0,
+      "cash_available_final": 56351.10849217854,
+      "unsettled_final": 0,
+      "mean_open_gross_in_research_window": 0.16799843709913972
+    }
+  },
+  "GLD_pre1_g1_fee5": {
+    "configuration": "GLD_pre1",
+    "gross": 1.0,
+    "fee": 0.0005,
+    "metrics": {
+      "full": {
+        "n": 2106,
+        "annual_return": -0.005802534697171181,
+        "vol": 0.016247853963895546,
+        "sharpe": -0.3571262217191899,
+        "cagr": -0.005916381244969959,
+        "max_drawdown": -0.06398640389876176
+      },
+      "2021-22": {
+        "n": 730,
+        "annual_return": -0.016950311482579306,
+        "vol": 0.009081093710994045,
+        "sharpe": -1.8665495613219336,
+        "cagr": -0.016848463632144872,
+        "max_drawdown": -0.03341305653752602
+      },
+      "2023-24": {
+        "n": 731,
+        "annual_return": -0.015873899585878027,
+        "vol": 0.018675888325610752,
+        "sharpe": -0.8499675790045133,
+        "cagr": -0.01592054704163648,
+        "max_drawdown": -0.034681220875775964
+      },
+      "2025-26": {
+        "n": 645,
+        "annual_return": 0.018228542491964688,
+        "vol": 0.01928451709093575,
+        "sharpe": 0.945242362357759,
+        "cagr": 0.018208474875715863,
+        "max_drawdown": -0.0052924385458313905
+      }
+    },
+    "diagnostics": {
+      "trades": 45,
+      "fees": 4329.706067338825,
+      "finance": 0.46724465509008134,
+      "borrow": 0.0,
+      "nav": 96634.13988072032,
+      "max_hold_hours": 6.5,
+      "active_sessions": 45,
+      "mean_open_gross": 0.015205379054894459,
+      "stale_marks": 0,
+      "adverse_margin_flags": 0,
+      "reconciliation_max_dollars": 5.820766091346741e-11,
+      "open_positions": 0,
+      "cash_available_final": 96634.13988072032,
+      "unsettled_final": 0,
+      "mean_open_gross_in_research_window": 0.031083283513737254
+    }
+  },
+  "GLD_pre1_g1_fee15": {
+    "configuration": "GLD_pre1",
+    "gross": 1.0,
+    "fee": 0.0015,
+    "metrics": {
+      "full": {
+        "n": 2106,
+        "annual_return": -0.021375341492813484,
+        "vol": 0.01777852174304244,
+        "sharpe": -1.2023126445357386,
+        "cagr": -0.021303738973032615,
+        "max_drawdown": -0.1280190781584667
+      },
+      "2021-22": {
+        "n": 730,
+        "annual_return": -0.03190360935295672,
+        "vol": 0.013334077571951777,
+        "sharpe": -2.3926371494992598,
+        "cagr": -0.03148776786666818,
+        "max_drawdown": -0.061984056208111205
+      },
+      "2023-24": {
+        "n": 731,
+        "annual_return": -0.03180621165357011,
+        "vol": 0.020991288715659216,
+        "sharpe": -1.515210051388751,
+        "cagr": -0.0315211498655219,
+        "max_drawdown": -0.06240666735048317
+      },
+      "2025-26": {
+        "n": 645,
+        "annual_return": 0.0023620253682991635,
+        "vol": 0.01817047023902549,
+        "sharpe": 0.12999252838411088,
+        "cagr": 0.002201174957366936,
+        "max_drawdown": -0.013294008210377184
+      }
+    },
+    "diagnostics": {
+      "trades": 45,
+      "fees": 12426.35631292758,
+      "finance": 1.3522076277349016,
+      "borrow": 0.0,
+      "nav": 88316.08979252525,
+      "max_hold_hours": 6.5,
+      "active_sessions": 45,
+      "mean_open_gross": 0.015190196449747274,
+      "stale_marks": 0,
+      "adverse_margin_flags": 0,
+      "reconciliation_max_dollars": 5.820766091346741e-11,
+      "open_positions": 0,
+      "cash_available_final": 88316.08979252525,
+      "unsettled_final": 0,
+      "mean_open_gross_in_research_window": 0.031052246785316127
+    }
+  },
+  "GLD_pre1_g2.7_fee5": {
+    "configuration": "GLD_pre1",
+    "gross": 2.7,
+    "fee": 0.0005,
+    "metrics": {
+      "full": {
+        "n": 2106,
+        "annual_return": -0.019118683320902566,
+        "vol": 0.0439007862543948,
+        "sharpe": -0.4354975150129262,
+        "cagr": -0.019871853317970145,
+        "max_drawdown": -0.17845937782880528
+      },
+      "2021-22": {
+        "n": 730,
+        "annual_return": -0.04998123823848782,
+        "vol": 0.024656904029913728,
+        "sharpe": -2.0270686935330824,
+        "cagr": -0.04904723774531494,
+        "max_drawdown": -0.09568884396018451
+      },
+      "2023-24": {
+        "n": 731,
+        "annual_return": -0.04664932672349268,
+        "vol": 0.05048817606081762,
+        "sharpe": -0.9239653788898871,
+        "cagr": -0.04679987208873637,
+        "max_drawdown": -0.09732556379047785
+      },
+      "2025-26": {
+        "n": 645,
+        "annual_return": 0.04701242585294334,
+        "vol": 0.05200566487383842,
+        "sharpe": 0.9039866323599883,
+        "cagr": 0.046762666669136754,
+        "max_drawdown": -0.015291990528962796
+      }
+    },
+    "diagnostics": {
+      "trades": 45,
+      "fees": 10830.692992776483,
+      "finance": 1794.586142467793,
+      "borrow": 0.0,
+      "nav": 89064.22701354796,
+      "max_hold_hours": 6.5,
+      "active_sessions": 45,
+      "mean_open_gross": 0.041054523448215065,
+      "stale_marks": 0,
+      "adverse_margin_flags": 0,
+      "reconciliation_max_dollars": 2.473825588822365e-10,
+      "open_positions": 0,
+      "cash_available_final": 89064.22701354796,
+      "unsettled_final": 0,
+      "mean_open_gross_in_research_window": 0.08392486548709065
+    }
+  },
+  "GLD_pre1_g2.7_fee15": {
+    "configuration": "GLD_pre1",
+    "gross": 2.7,
+    "fee": 0.0015,
+    "metrics": {
+      "full": {
+        "n": 2106,
+        "annual_return": -0.061180866413813664,
+        "vol": 0.04808887969681841,
+        "sharpe": -1.2722456168564356,
+        "cagr": -0.06043898688149574,
+        "max_drawdown": -0.32346351022860487
+      },
+      "2021-22": {
+        "n": 730,
+        "annual_return": -0.0903750634256203,
+        "vol": 0.0361678945683814,
+        "sharpe": -2.498764843907385,
+        "cagr": -0.08702535864319982,
+        "max_drawdown": -0.16647730423942209
+      },
+      "2023-24": {
+        "n": 731,
+        "annual_return": -0.0896839747675834,
+        "vol": 0.05678235985194252,
+        "sharpe": -1.5794337361361939,
+        "cagr": -0.08727968022578014,
+        "max_drawdown": -0.16774767449268502
+      },
+      "2025-26": {
+        "n": 645,
+        "annual_return": 0.00416415067955769,
+        "vol": 0.04905489739325011,
+        "sharpe": 0.08488756272744076,
+        "cagr": 0.00299709013463767,
+        "max_drawdown": -0.03716169014068205
+      }
+    },
+    "diagnostics": {
+      "trades": 45,
+      "fees": 28975.315625240826,
+      "finance": 1633.9150854257396,
+      "borrow": 0.0,
+      "nav": 69788.02161650095,
+      "max_hold_hours": 6.5,
+      "active_sessions": 45,
+      "mean_open_gross": 0.04101353041431764,
+      "stale_marks": 0,
+      "adverse_margin_flags": 0,
+      "reconciliation_max_dollars": 5.820766091346741e-11,
+      "open_positions": 0,
+      "cash_available_final": 69788.02161650095,
+      "unsettled_final": 0,
+      "mean_open_gross_in_research_window": 0.08384106632035355
+    }
+  },
+  "GLD_event2_g1_fee5": {
+    "configuration": "GLD_event2",
+    "gross": 1.0,
+    "fee": 0.0005,
+    "metrics": {
+      "full": {
+        "n": 2106,
+        "annual_return": -0.00019860637328425538,
+        "vol": 0.03915564679502105,
+        "sharpe": -0.005072228134142576,
+        "cagr": -0.0009631122644432333,
+        "max_drawdown": -0.0682956348292072
+      },
+      "2021-22": {
+        "n": 730,
+        "annual_return": -0.01153161400519376,
+        "vol": 0.025683268400398748,
+        "sharpe": -0.44899324437285104,
+        "cagr": -0.011792252119262048,
+        "max_drawdown": -0.03836514814566416
+      },
+      "2023-24": {
+        "n": 731,
+        "annual_return": 0.03095848153975609,
+        "vol": 0.0379736768464131,
+        "sharpe": 0.8152616262304437,
+        "cagr": 0.030702336938603247,
+        "max_drawdown": -0.01967554408051042
+      },
+      "2025-26": {
+        "n": 645,
+        "annual_return": -0.022683467913033956,
+        "vol": 0.05123758158622229,
+        "sharpe": -0.44271152561840477,
+        "cagr": -0.023707567515196315,
+        "max_drawdown": -0.06829563482920697
+      }
+    },
+    "diagnostics": {
+      "trades": 45,
+      "fees": 4532.414522282162,
+      "finance": 0.4928407225403366,
+      "borrow": 0.0,
+      "nav": 99445.57229776838,
+      "max_hold_hours": 30.5,
+      "active_sessions": 90,
+      "mean_open_gross": 0.030418360799316393,
+      "stale_marks": 0,
+      "adverse_margin_flags": 0,
+      "reconciliation_max_dollars": 7.275957614183426e-11,
+      "open_positions": 0,
+      "cash_available_final": 99445.57229776838,
+      "unsettled_final": 0,
+      "mean_open_gross_in_research_window": 0.06218210866923144
+    }
+  },
+  "GLD_event2_g1_fee15": {
+    "configuration": "GLD_event2",
+    "gross": 1.0,
+    "fee": 0.0015,
+    "metrics": {
+      "full": {
+        "n": 2106,
+        "annual_return": -0.015790630835132248,
+        "vol": 0.0393115007928817,
+        "sharpe": -0.4016796743102599,
+        "cagr": -0.01642716940926725,
+        "max_drawdown": -0.09114494559121078
+      },
+      "2021-22": {
+        "n": 730,
+        "annual_return": -0.026514759109005526,
+        "vol": 0.026358692365973175,
+        "sharpe": -1.0059208833604287,
+        "cagr": -0.026506844257910833,
+        "max_drawdown": -0.05457599482717801
+      },
+      "2023-24": {
+        "n": 731,
+        "annual_return": 0.014955475499099527,
+        "vol": 0.037350930670890195,
+        "sharpe": 0.40040436022535897,
+        "cagr": 0.014362621949238097,
+        "max_drawdown": -0.024082480374512327
+      },
+      "2025-26": {
+        "n": 645,
+        "annual_return": -0.03849883252566858,
+        "vol": 0.05175653408789476,
+        "sharpe": -0.7438448730026728,
+        "cagr": -0.03905599306908636,
+        "max_drawdown": -0.0775669228752458
+      }
+    },
+    "diagnostics": {
+      "trades": 45,
+      "fees": 12998.066197366303,
+      "finance": 1.4244780388962175,
+      "borrow": 0.0,
+      "nav": 90885.50544087884,
+      "max_hold_hours": 30.5,
+      "active_sessions": 90,
+      "mean_open_gross": 0.030403178194169177,
+      "stale_marks": 0,
+      "adverse_margin_flags": 0,
+      "reconciliation_max_dollars": 5.820766091346741e-11,
+      "open_positions": 0,
+      "cash_available_final": 90885.50544087884,
+      "unsettled_final": 0,
+      "mean_open_gross_in_research_window": 0.062151071940810244
+    }
+  },
+  "GLD_event2_g2.7_fee5": {
+    "configuration": "GLD_event2",
+    "gross": 2.7,
+    "fee": 0.0005,
+    "metrics": {
+      "full": {
+        "n": 2106,
+        "annual_return": -0.006771664218089519,
+        "vol": 0.1052269562953616,
+        "sharpe": -0.06435294202639608,
+        "cagr": -0.012221743783441985,
+        "max_drawdown": -0.18034486678944495
+      },
+      "2021-22": {
+        "n": 730,
+        "annual_return": -0.03734154661851363,
+        "vol": 0.06956794813659768,
+        "sharpe": -0.5367636622714954,
+        "cagr": -0.03900424994951979,
+        "max_drawdown": -0.10817102013595115
+      },
+      "2023-24": {
+        "n": 731,
+        "annual_return": 0.07771264904026469,
+        "vol": 0.10244426381310957,
+        "sharpe": 0.7585846795876916,
+        "cagr": 0.07521903014248443,
+        "max_drawdown": -0.05367199896451369
+      },
+      "2025-26": {
+        "n": 645,
+        "annual_return": -0.06792208102358924,
+        "vol": 0.1370492216659823,
+        "sharpe": -0.49560355175988957,
+        "cagr": -0.07440385660603621,
+        "max_drawdown": -0.18034486678944528
+      }
+    },
+    "diagnostics": {
+      "trades": 45,
+      "fees": 12101.973137213201,
+      "finance": 3241.342985926378,
+      "borrow": 0.0,
+      "nav": 93150.63647284525,
+      "max_hold_hours": 30.5,
+      "active_sessions": 90,
+      "mean_open_gross": 0.08213350417604484,
+      "stale_marks": 0,
+      "adverse_margin_flags": 0,
+      "reconciliation_max_dollars": 2.9103830456733704e-10,
+      "open_positions": 0,
+      "cash_available_final": 93150.63647284525,
+      "unsettled_final": 0,
+      "mean_open_gross_in_research_window": 0.16789972726519742
+    }
+  },
+  "GLD_event2_g2.7_fee15": {
+    "configuration": "GLD_event2",
+    "gross": 2.7,
+    "fee": 0.0015,
+    "metrics": {
+      "full": {
+        "n": 2106,
+        "annual_return": -0.04893524200445899,
+        "vol": 0.1058902434447377,
+        "sharpe": -0.46213173577221445,
+        "cagr": -0.05310205346664476,
+        "max_drawdown": -0.2700845366359722
+      },
+      "2021-22": {
+        "n": 730,
+        "annual_return": -0.07791137968712397,
+        "vol": 0.07157570831140223,
+        "sharpe": -1.088517061516979,
+        "cagr": -0.07736061158302554,
+        "max_drawdown": -0.14873655894155136
+      },
+      "2023-24": {
+        "n": 731,
+        "annual_return": 0.03458127390722,
+        "vol": 0.100953172203806,
+        "sharpe": 0.3425476698979476,
+        "cagr": 0.029963766719635743,
+        "max_drawdown": -0.06806220026668397
+      },
+      "2025-26": {
+        "n": 645,
+        "annual_return": -0.11079259490847744,
+        "vol": 0.138793952641396,
+        "sharpe": -0.79825232151673,
+        "cagr": -0.11351423464214727,
+        "max_drawdown": -0.20278618872048204
+      }
+    },
+    "diagnostics": {
+      "trades": 45,
+      "fees": 32214.26748850539,
+      "finance": 2912.141735340567,
+      "borrow": 0.0,
+      "nav": 72991.54633640277,
+      "max_hold_hours": 30.5,
+      "active_sessions": 90,
+      "mean_open_gross": 0.08216247011810031,
+      "stale_marks": 0,
+      "adverse_margin_flags": 0,
+      "reconciliation_max_dollars": 2.3283064365386963e-10,
+      "open_positions": 0,
+      "cash_available_final": 72991.54633640277,
+      "unsettled_final": 0,
+      "mean_open_gross_in_research_window": 0.1679589402967109
+    }
+  },
+  "TLT_pre1_g1_fee5": {
+    "configuration": "TLT_pre1",
+    "gross": 1.0,
+    "fee": 0.0005,
+    "metrics": {
+      "full": {
+        "n": 2106,
+        "annual_return": -0.008742063658159115,
+        "vol": 0.018656335708544167,
+        "sharpe": -0.4685841740163077,
+        "cagr": -0.008876995141439137,
+        "max_drawdown": -0.08837744392484426
+      },
+      "2021-22": {
+        "n": 730,
+        "annual_return": -0.04174438970774347,
+        "vol": 0.02288199461002986,
+        "sharpe": -1.8243335172120727,
+        "cagr": -0.04114012296822622,
+        "max_drawdown": -0.08134795181648025
+      },
+      "2023-24": {
+        "n": 731,
+        "annual_return": 0.000376058592380291,
+        "vol": 0.01778406564674694,
+        "sharpe": 0.021145816701878827,
+        "cagr": 0.00021844598286890893,
+        "max_drawdown": -0.02166961344928464
+      },
+      "2025-26": {
+        "n": 645,
+        "annual_return": 0.018275534250449053,
+        "vol": 0.013447386240065466,
+        "sharpe": 1.3590398850892291,
+        "cagr": 0.018351550591718224,
+        "max_drawdown": -0.009674685207605505
+      }
+    },
+    "diagnostics": {
+      "trades": 45,
+      "fees": 4246.885318589206,
+      "finance": 0.4571969294258204,
+      "borrow": 0.0,
+      "nav": 94985.32918515489,
+      "max_hold_hours": 6.5,
+      "active_sessions": 45,
+      "mean_open_gross": 0.015205379054894459,
+      "stale_marks": 0,
+      "adverse_margin_flags": 0,
+      "reconciliation_max_dollars": 8.731149137020111e-11,
+      "open_positions": 0,
+      "cash_available_final": 94985.32918515489,
+      "unsettled_final": 0,
+      "mean_open_gross_in_research_window": 0.031083283513737254
+    }
+  },
+  "TLT_pre1_g1_fee15": {
+    "configuration": "TLT_pre1",
+    "gross": 1.0,
+    "fee": 0.0015,
+    "metrics": {
+      "full": {
+        "n": 2106,
+        "annual_return": -0.02430899726466336,
+        "vol": 0.020280142710899805,
+        "sharpe": -1.1986600691719096,
+        "cagr": -0.024218525713455175,
+        "max_drawdown": -0.1368298967890088
+      },
+      "2021-22": {
+        "n": 730,
+        "annual_return": -0.056648148923171104,
+        "vol": 0.026723327428714642,
+        "sharpe": -2.1198014758559505,
+        "cagr": -0.05541772000072798,
+        "max_drawdown": -0.10776431631137695
+      },
+      "2023-24": {
+        "n": 731,
+        "annual_return": -0.01558872094854533,
+        "vol": 0.018568111519694966,
+        "sharpe": -0.8395426175683276,
+        "cagr": -0.01563800815403349,
+        "max_drawdown": -0.04050139713338974
+      },
+      "2025-26": {
+        "n": 645,
+        "annual_return": 0.0024089232370860486,
+        "vol": 0.011818827394985089,
+        "sharpe": 0.20382083235331722,
+        "cagr": 0.0023420013737873724,
+        "max_drawdown": -0.01772025509692332
+      }
+    },
+    "diagnostics": {
+      "trades": 45,
+      "fees": 12188.754563192968,
+      "finance": 1.3232268190909926,
+      "borrow": 0.0,
+      "nav": 86809.20502467653,
+      "max_hold_hours": 6.5,
+      "active_sessions": 45,
+      "mean_open_gross": 0.015190196449747274,
+      "stale_marks": 0,
+      "adverse_margin_flags": 0,
+      "reconciliation_max_dollars": 5.820766091346741e-11,
+      "open_positions": 0,
+      "cash_available_final": 86809.20502467653,
+      "unsettled_final": 0,
+      "mean_open_gross_in_research_window": 0.031052246785316127
+    }
+  },
+  "TLT_pre1_g2.7_fee5": {
+    "configuration": "TLT_pre1",
+    "gross": 2.7,
+    "fee": 0.0005,
+    "metrics": {
+      "full": {
+        "n": 2106,
+        "annual_return": -0.027060650591451102,
+        "vol": 0.0504100653555725,
+        "sharpe": -0.5368104643502456,
+        "cagr": -0.0279445014103622,
+        "max_drawdown": -0.23336787786493274
+      },
+      "2021-22": {
+        "n": 730,
+        "annual_return": -0.11695925713967342,
+        "vol": 0.0619057164452657,
+        "sharpe": -1.889312713844183,
+        "cagr": -0.11213381037628944,
+        "max_drawdown": -0.2133916463717931
+      },
+      "2023-24": {
+        "n": 731,
+        "annual_return": -0.0027558262952293924,
+        "vol": 0.04802362662907471,
+        "sharpe": -0.05738480178756317,
+        "cagr": -0.003894716930676889,
+        "max_drawdown": -0.06050639720652706
+      },
+      "2025-26": {
+        "n": 645,
+        "annual_return": 0.04713959160957871,
+        "vol": 0.03621796379139702,
+        "sharpe": 1.3015527841677266,
+        "cagr": 0.047586771926168225,
+        "max_drawdown": -0.02695791945510284
+      }
+    },
+    "diagnostics": {
+      "trades": 45,
+      "fees": 10279.789990788333,
+      "finance": 1697.1047202948675,
+      "borrow": 0.0,
+      "nav": 84913.9628934231,
+      "max_hold_hours": 6.5,
+      "active_sessions": 45,
+      "mean_open_gross": 0.041054523448215065,
+      "stale_marks": 0,
+      "adverse_margin_flags": 0,
+      "reconciliation_max_dollars": 2.764863893389702e-10,
+      "open_positions": 0,
+      "cash_available_final": 84913.9628934231,
+      "unsettled_final": 0,
+      "mean_open_gross_in_research_window": 0.08392486548709065
+    }
+  },
+  "TLT_pre1_g2.7_fee15": {
+    "configuration": "TLT_pre1",
+    "gross": 2.7,
+    "fee": 0.0015,
+    "metrics": {
+      "full": {
+        "n": 2106,
+        "annual_return": -0.0691070292431031,
+        "vol": 0.054842128378862647,
+        "sharpe": -1.2601084473909374,
+        "cagr": -0.06820497909005685,
+        "max_drawdown": -0.34156371299233335
+      },
+      "2021-22": {
+        "n": 730,
+        "annual_return": -0.1572196694438534,
+        "vol": 0.07229514029884643,
+        "sharpe": -2.174692085719101,
+        "cagr": -0.14779743034980353,
+        "max_drawdown": -0.27375078028160194
+      },
+      "2023-24": {
+        "n": 731,
+        "annual_return": -0.04587795192328449,
+        "vol": 0.05019655481255744,
+        "sharpe": -0.9139661495614717,
+        "cagr": -0.0460525717803445,
+        "max_drawdown": -0.11184341084379834
+      },
+      "2025-26": {
+        "n": 645,
+        "annual_return": 0.004291066610788918,
+        "vol": 0.03190229441547588,
+        "sharpe": 0.13450652028047586,
+        "cagr": 0.0037915925957456853,
+        "max_drawdown": -0.04995617821128928
+      }
+    },
+    "diagnostics": {
+      "trades": 45,
+      "fees": 27504.582879633468,
+      "finance": 1546.0826721141211,
+      "borrow": 0.0,
+      "nav": 66524.68498482613,
+      "max_hold_hours": 6.5,
+      "active_sessions": 45,
+      "mean_open_gross": 0.04101353041431764,
+      "stale_marks": 0,
+      "adverse_margin_flags": 0,
+      "reconciliation_max_dollars": 1.1641532182693481e-10,
+      "open_positions": 0,
+      "cash_available_final": 66524.68498482613,
+      "unsettled_final": 0,
+      "mean_open_gross_in_research_window": 0.08384106632035355
+    }
+  },
+  "TLT_event2_g1_fee5": {
+    "configuration": "TLT_event2",
+    "gross": 1.0,
+    "fee": 0.0005,
+    "metrics": {
+      "full": {
+        "n": 2106,
+        "annual_return": 0.008808101255773181,
+        "vol": 0.03181764945455369,
+        "sharpe": 0.2768306712396877,
+        "cagr": 0.008337744663260205,
+        "max_drawdown": -0.06528488662596155
+      },
+      "2021-22": {
+        "n": 730,
+        "annual_return": -0.029662651051436117,
+        "vol": 0.032518672739550024,
+        "sharpe": -0.9121728703078233,
+        "cagr": -0.029741259199990266,
+        "max_drawdown": -0.06528488662596155
+      },
+      "2023-24": {
+        "n": 731,
+        "annual_return": 0.05545550984069007,
+        "vol": 0.036978602388170495,
+        "sharpe": 1.4996648401841806,
+        "cagr": 0.05630094769008176,
+        "max_drawdown": -0.019508790937360465
+      },
+      "2025-26": {
+        "n": 645,
+        "annual_return": -0.0005184204361825738,
+        "vol": 0.023460232975161296,
+        "sharpe": -0.022097838360405686,
+        "cagr": -0.0007937051288648966,
+        "max_drawdown": -0.044086649521569155
+      }
+    },
+    "diagnostics": {
+      "trades": 45,
+      "fees": 4572.91825130416,
+      "finance": 0.4931097213674232,
+      "borrow": 0.0,
+      "nav": 104907.43435491888,
+      "max_hold_hours": 30.5,
+      "active_sessions": 90,
+      "mean_open_gross": 0.030413867079666514,
+      "stale_marks": 0,
+      "adverse_margin_flags": 0,
+      "reconciliation_max_dollars": 4.3655745685100555e-11,
+      "open_positions": 0,
+      "cash_available_final": 104907.43435491888,
+      "unsettled_final": 0,
+      "mean_open_gross_in_research_window": 0.06217292247522705
+    }
+  },
+  "TLT_event2_g1_fee15": {
+    "configuration": "TLT_event2",
+    "gross": 1.0,
+    "fee": 0.0015,
+    "metrics": {
+      "full": {
+        "n": 2106,
+        "annual_return": -0.006790624565660988,
+        "vol": 0.03175531740453328,
+        "sharpe": -0.21384212537241343,
+        "cagr": -0.0072679914677549196,
+        "max_drawdown": -0.09018728170663914
+      },
+      "2021-22": {
+        "n": 730,
+        "annual_return": -0.04462770561158503,
+        "vol": 0.033563742162723606,
+        "sharpe": -1.3296403421055123,
+        "cagr": -0.04418858737612419,
+        "max_drawdown": -0.09018728170663914
+      },
+      "2023-24": {
+        "n": 731,
+        "annual_return": 0.03943469858344654,
+        "vol": 0.03569161886131813,
+        "sharpe": 1.1048727920319994,
+        "cagr": 0.039562322754143286,
+        "max_drawdown": -0.02146805084944836
+      },
+      "2025-26": {
+        "n": 645,
+        "annual_return": -0.01635596109042542,
+        "vol": 0.02378084846785722,
+        "sharpe": -0.6877787019471797,
+        "cagr": -0.016502362616637734,
+        "max_drawdown": -0.060678305434131885
+      }
+    },
+    "diagnostics": {
+      "trades": 45,
+      "fees": 13106.640655650372,
+      "finance": 1.4246307124926485,
+      "borrow": 0.0,
+      "nav": 95878.4971954178,
+      "max_hold_hours": 30.5,
+      "active_sessions": 90,
+      "mean_open_gross": 0.030398684474519294,
+      "stale_marks": 0,
+      "adverse_margin_flags": 0,
+      "reconciliation_max_dollars": 5.820766091346741e-11,
+      "open_positions": 0,
+      "cash_available_final": 95878.4971954178,
+      "unsettled_final": 0,
+      "mean_open_gross_in_research_window": 0.062141885746805854
+    }
+  },
+  "TLT_event2_g2.7_fee5": {
+    "configuration": "TLT_event2",
+    "gross": 2.7,
+    "fee": 0.0005,
+    "metrics": {
+      "full": {
+        "n": 2106,
+        "annual_return": 0.018306018388365708,
+        "vol": 0.0860065118344993,
+        "sharpe": 0.21284456255581702,
+        "cagr": 0.014735783868068175,
+        "max_drawdown": -0.17972218397996786
+      },
+      "2021-22": {
+        "n": 730,
+        "annual_return": -0.08599329290741775,
+        "vol": 0.08834842366305805,
+        "sharpe": -0.9733426963606926,
+        "cagr": -0.0859912659227473,
+        "max_drawdown": -0.17972218397996786
+      },
+      "2023-24": {
+        "n": 731,
+        "annual_return": 0.14359548612488002,
+        "vol": 0.09961802809516011,
+        "sharpe": 1.4414608366641268,
+        "cagr": 0.14877722252891812,
+        "max_drawdown": -0.05342050200895354
+      },
+      "2025-26": {
+        "n": 645,
+        "annual_return": -0.005644529936394054,
+        "vol": 0.06332189074929549,
+        "sharpe": -0.0891402620736945,
+        "cagr": -0.007634450812830651,
+        "max_drawdown": -0.11962453300987652
+      }
+    },
+    "diagnostics": {
+      "trades": 45,
+      "fees": 12423.027795005697,
+      "finance": 3285.652225493158,
+      "borrow": 0.0,
+      "nav": 108806.74027424215,
+      "max_hold_hours": 30.5,
+      "active_sessions": 90,
+      "mean_open_gross": 0.08206538377707985,
+      "stale_marks": 0,
+      "adverse_margin_flags": 0,
+      "reconciliation_max_dollars": 5.820766091346741e-10,
+      "open_positions": 0,
+      "cash_available_final": 108806.74027424215,
+      "unsettled_final": 0,
+      "mean_open_gross_in_research_window": 0.16776047354015355
+    }
+  },
+  "TLT_event2_g2.7_fee15": {
+    "configuration": "TLT_event2",
+    "gross": 2.7,
+    "fee": 0.0015,
+    "metrics": {
+      "full": {
+        "n": 2106,
+        "annual_return": -0.02383284403209612,
+        "vol": 0.08600167467531224,
+        "sharpe": -0.277120697033794,
+        "cagr": -0.027154815155708834,
+        "max_drawdown": -0.23799683074761113
+      },
+      "2021-22": {
+        "n": 730,
+        "annual_return": -0.12660260045797223,
+        "vol": 0.09128169993216968,
+        "sharpe": -1.3869439389499654,
+        "cagr": -0.12262549872561612,
+        "max_drawdown": -0.23799683074761113
+      },
+      "2023-24": {
+        "n": 731,
+        "annual_return": 0.10052857795382375,
+        "vol": 0.09634051117739602,
+        "sharpe": 1.0434715025407748,
+        "cagr": 0.10069410221960395,
+        "max_drawdown": -0.0587104342884881
+      },
+      "2025-26": {
+        "n": 645,
+        "annual_return": -0.048462731289178086,
+        "vol": 0.06434384873661797,
+        "sharpe": -0.7531835947139734,
+        "cagr": -0.04930448036287427,
+        "max_drawdown": -0.16073909950941612
+      }
+    },
+    "diagnostics": {
+      "trades": 45,
+      "fees": 32932.70146558298,
+      "finance": 2941.2325659065446,
+      "borrow": 0.0,
+      "nav": 85312.75781057545,
+      "max_hold_hours": 30.5,
+      "active_sessions": 90,
+      "mean_open_gross": 0.08209407256767688,
+      "stale_marks": 0,
+      "adverse_margin_flags": 0,
+      "reconciliation_max_dollars": 1.6007106751203537e-10,
+      "open_positions": 0,
+      "cash_available_final": 85312.75781057545,
+      "unsettled_final": 0,
+      "mean_open_gross_in_research_window": 0.16781912001049637
+    }
+  },
+  "mix_pre1_g1_fee5": {
+    "configuration": "mix_pre1",
+    "gross": 1.0,
+    "fee": 0.0005,
+    "metrics": {
+      "full": {
+        "n": 2106,
+        "annual_return": -0.010345579510172226,
+        "vol": 0.012302260903541388,
+        "sharpe": -0.8409494475274945,
+        "cagr": -0.010367541967916338,
+        "max_drawdown": -0.07025007391978078
+      },
+      "2021-22": {
+        "n": 730,
+        "annual_return": -0.0302310568040271,
+        "vol": 0.01556448455140252,
+        "sharpe": -1.9423101808599867,
+        "cagr": -0.029898032016254517,
+        "max_drawdown": -0.05890217171406398
+      },
+      "2023-24": {
+        "n": 731,
+        "annual_return": -0.005044446963915205,
+        "vol": 0.01186236666603252,
+        "sharpe": -0.4252479379481504,
+        "cagr": -0.005101785640521217,
+        "max_drawdown": -0.019483280855579377
+      },
+      "2025-26": {
+        "n": 645,
+        "annual_return": 0.006152514339750529,
+        "vol": 0.007674405258207728,
+        "sharpe": 0.8016926566616289,
+        "cagr": 0.006141921653564086,
+        "max_drawdown": -0.0036345722533276392
+      }
+    },
+    "diagnostics": {
+      "trades": 135,
+      "fees": 4286.012352676176,
+      "finance": 0.4625066106758897,
+      "borrow": 0.0,
+      "nav": 94164.0655877525,
+      "max_hold_hours": 6.5,
+      "active_sessions": 45,
+      "mean_open_gross": 0.015205379054894459,
+      "stale_marks": 0,
+      "adverse_margin_flags": 0,
+      "reconciliation_max_dollars": 7.275957614183426e-11,
+      "open_positions": 0,
+      "cash_available_final": 94164.0655877525,
+      "unsettled_final": 0,
+      "mean_open_gross_in_research_window": 0.031083283513737254
+    }
+  },
+  "mix_pre1_g1_fee15": {
+    "configuration": "mix_pre1",
+    "gross": 1.0,
+    "fee": 0.0015,
+    "metrics": {
+      "full": {
+        "n": 2106,
+        "annual_return": -0.025909309286400173,
+        "vol": 0.014886819871159826,
+        "sharpe": -1.7404193448054117,
+        "cagr": -0.02568600045947933,
+        "max_drawdown": -0.13941366043695957
+      },
+      "2021-22": {
+        "n": 730,
+        "annual_return": -0.04515781969883581,
+        "vol": 0.019720377563996774,
+        "sharpe": -2.2899064458725085,
+        "cagr": -0.04434302581679328,
+        "max_drawdown": -0.08671974769499768
+      },
+      "2023-24": {
+        "n": 731,
+        "annual_return": -0.020998396315795014,
+        "vol": 0.013823574167032112,
+        "sharpe": -1.5190280069444093,
+        "cagr": -0.0208738981927703,
+        "max_drawdown": -0.04435261586467221
+      },
+      "2025-26": {
+        "n": 645,
+        "annual_return": -0.00968987483746118,
+        "vol": 0.008099791452787443,
+        "sharpe": -1.1963116450518647,
+        "cagr": -0.009675679454400066,
+        "max_drawdown": -0.018730765650412873
+      }
+    },
+    "diagnostics": {
+      "trades": 135,
+      "fees": 12302.048427937267,
+      "finance": 1.3386098677785683,
+      "borrow": 0.0,
+      "nav": 86058.63395630401,
+      "max_hold_hours": 6.5,
+      "active_sessions": 45,
+      "mean_open_gross": 0.015190196449747274,
+      "stale_marks": 0,
+      "adverse_margin_flags": 0,
+      "reconciliation_max_dollars": 4.3655745685100555e-11,
+      "open_positions": 0,
+      "cash_available_final": 86058.63395630401,
+      "unsettled_final": 0,
+      "mean_open_gross_in_research_window": 0.031052246785316127
+    }
+  },
+  "mix_pre1_g2.7_fee5": {
+    "configuration": "mix_pre1",
+    "gross": 2.7,
+    "fee": 0.0005,
+    "metrics": {
+      "full": {
+        "n": 2106,
+        "annual_return": -0.031387901505044544,
+        "vol": 0.03328224283614735,
+        "sharpe": -0.94308252179912,
+        "cagr": -0.03144388606319526,
+        "max_drawdown": -0.1926046725945635
+      },
+      "2021-22": {
+        "n": 730,
+        "annual_return": -0.0858571846073446,
+        "vol": 0.04215941201320457,
+        "sharpe": -2.036489137477857,
+        "cagr": -0.08311325913699164,
+        "max_drawdown": -0.1593187044296105
+      },
+      "2023-24": {
+        "n": 731,
+        "annual_return": -0.017395052491929883,
+        "vol": 0.03206825816430525,
+        "sharpe": -0.5424383327215472,
+        "cagr": -0.0177516054085034,
+        "max_drawdown": -0.057656965301284835
+      },
+      "2025-26": {
+        "n": 645,
+        "annual_return": 0.01440094196176511,
+        "vol": 0.020673634340097585,
+        "sharpe": 0.6965849218796395,
+        "cagr": 0.014289900591456073,
+        "max_drawdown": -0.011235064589208754
+      }
+    },
+    "diagnostics": {
+      "trades": 135,
+      "fees": 10547.87825903345,
+      "finance": 1748.621891461616,
+      "borrow": 0.0,
+      "nav": 83165.25457169446,
+      "max_hold_hours": 6.5,
+      "active_sessions": 45,
+      "mean_open_gross": 0.041054523448215065,
+      "stale_marks": 0,
+      "adverse_margin_flags": 0,
+      "reconciliation_max_dollars": 4.0745362639427185e-10,
+      "open_positions": 0,
+      "cash_available_final": 83165.25457169446,
+      "unsettled_final": 0,
+      "mean_open_gross_in_research_window": 0.08392486548709065
+    }
+  },
+  "mix_pre1_g2.7_fee15": {
+    "configuration": "mix_pre1",
+    "gross": 2.7,
+    "fee": 0.0015,
+    "metrics": {
+      "full": {
+        "n": 2106,
+        "annual_return": -0.07342560559919187,
+        "vol": 0.04031823027868245,
+        "sharpe": -1.8211515012357664,
+        "cagr": -0.07156853675664476,
+        "max_drawdown": -0.3484900535078267
+      },
+      "2021-22": {
+        "n": 730,
+        "annual_return": -0.12617954447873142,
+        "vol": 0.05340031311188129,
+        "sharpe": -2.3628989630522805,
+        "cagr": -0.11984252182578292,
+        "max_drawdown": -0.22532281361400264
+      },
+      "2023-24": {
+        "n": 731,
+        "annual_return": -0.0604879729579641,
+        "vol": 0.037433295904378175,
+        "sharpe": -1.6158869128830693,
+        "cagr": -0.05936601376386896,
+        "max_drawdown": -0.12268882965248773
+      },
+      "2025-26": {
+        "n": 645,
+        "annual_return": -0.028382247581631603,
+        "vol": 0.021960980831760547,
+        "sharpe": -1.292394351557579,
+        "cagr": -0.028219082425326447,
+        "max_drawdown": -0.053670577833157096
+      }
+    },
+    "diagnostics": {
+      "trades": 135,
+      "fees": 28234.726830992855,
+      "finance": 1592.9695171830112,
+      "borrow": 0.0,
+      "nav": 65150.99464921736,
+      "max_hold_hours": 6.5,
+      "active_sessions": 45,
+      "mean_open_gross": 0.04101353041431764,
+      "stale_marks": 0,
+      "adverse_margin_flags": 0,
+      "reconciliation_max_dollars": 1.7462298274040222e-10,
+      "open_positions": 0,
+      "cash_available_final": 65150.99464921736,
+      "unsettled_final": 0,
+      "mean_open_gross_in_research_window": 0.08384106632035355
+    }
+  },
+  "mix_event2_g1_fee5": {
+    "configuration": "mix_event2",
+    "gross": 1.0,
+    "fee": 0.0005,
+    "metrics": {
+      "full": {
+        "n": 2106,
+        "annual_return": -0.0025243154619468662,
+        "vol": 0.027849910819908622,
+        "sharpe": -0.09063998367069633,
+        "cagr": -0.002907836524110974,
+        "max_drawdown": -0.054728630872716955
+      },
+      "2021-22": {
+        "n": 730,
+        "annual_return": -0.017703318739581753,
+        "vol": 0.02813692632935736,
+        "sharpe": -0.6291845289835569,
+        "cagr": -0.01793621567428838,
+        "max_drawdown": -0.03555072351586208
+      },
+      "2023-24": {
+        "n": 731,
+        "annual_return": 0.027666130080211956,
+        "vol": 0.030309819312573278,
+        "sharpe": 0.9127777963603808,
+        "cagr": 0.02758057930009583,
+        "max_drawdown": -0.020967357967696998
+      },
+      "2025-26": {
+        "n": 645,
+        "annual_return": -0.019560816700155595,
+        "vol": 0.024358097078859848,
+        "sharpe": -0.8030519230146362,
+        "cagr": -0.019662905590500435,
+        "max_drawdown": -0.04895147255072951
+      }
+    },
+    "diagnostics": {
+      "trades": 135,
+      "fees": 4502.149591086697,
+      "finance": 0.4896042492185976,
+      "borrow": 0.0,
+      "nav": 98333.81113003657,
+      "max_hold_hours": 30.5,
+      "active_sessions": 90,
+      "mean_open_gross": 0.03041686001600999,
+      "stale_marks": 0,
+      "adverse_margin_flags": 0,
+      "reconciliation_max_dollars": 8.731149137020111e-11,
+      "open_positions": 0,
+      "cash_available_final": 98333.81113003657,
+      "unsettled_final": 0,
+      "mean_open_gross_in_research_window": 0.0621790407238131
+    }
+  },
+  "mix_event2_g1_fee15": {
+    "configuration": "mix_event2",
+    "gross": 1.0,
+    "fee": 0.0015,
+    "metrics": {
+      "full": {
+        "n": 2106,
+        "annual_return": -0.018113250878597786,
+        "vol": 0.028174346460408752,
+        "sharpe": -0.6428987058866101,
+        "cagr": -0.0183410329164434,
+        "max_drawdown": -0.10130157028263787
+      },
+      "2021-22": {
+        "n": 730,
+        "annual_return": -0.03268031559951351,
+        "vol": 0.02895457310066452,
+        "sharpe": -1.128675442248654,
+        "cagr": -0.03255932308412357,
+        "max_drawdown": -0.06405853664855088
+      },
+      "2023-24": {
+        "n": 731,
+        "annual_return": 0.011668661657960861,
+        "vol": 0.02965065253606266,
+        "sharpe": 0.39353810658193206,
+        "cagr": 0.011292604501021541,
+        "max_drawdown": -0.025464437539957308
+      },
+      "2025-26": {
+        "n": 645,
+        "annual_return": -0.0353793296661263,
+        "vol": 0.02539290459661463,
+        "sharpe": -1.393276201685216,
+        "cagr": -0.03507491782229155,
+        "max_drawdown": -0.06697140804706414
+      }
+    },
+    "diagnostics": {
+      "trades": 135,
+      "fees": 12911.8990815334,
+      "finance": 1.4152064063566618,
+      "borrow": 0.0,
+      "nav": 89869.84297173616,
+      "max_hold_hours": 30.5,
+      "active_sessions": 90,
+      "mean_open_gross": 0.030401677410862773,
+      "stale_marks": 0,
+      "adverse_margin_flags": 0,
+      "reconciliation_max_dollars": 5.820766091346741e-11,
+      "open_positions": 0,
+      "cash_available_final": 89869.84297173616,
+      "unsettled_final": 0,
+      "mean_open_gross_in_research_window": 0.0621480039953919
+    }
+  },
+  "mix_event2_g2.7_fee5": {
+    "configuration": "mix_event2",
+    "gross": 2.7,
+    "fee": 0.0005,
+    "metrics": {
+      "full": {
+        "n": 2106,
+        "annual_return": -0.012560209721763936,
+        "vol": 0.07528071897708731,
+        "sharpe": -0.16684497561170744,
+        "cagr": -0.015279845541780745,
+        "max_drawdown": -0.1515412284630775
+      },
+      "2021-22": {
+        "n": 730,
+        "annual_return": -0.053932789056397194,
+        "vol": 0.07637400679472849,
+        "sharpe": -0.7061668140752798,
+        "cagr": -0.05526472804614191,
+        "max_drawdown": -0.10747526592626988
+      },
+      "2023-24": {
+        "n": 731,
+        "annual_return": 0.06843321653772598,
+        "vol": 0.08151674986625274,
+        "sharpe": 0.8394988349021107,
+        "cagr": 0.06728619086342769,
+        "max_drawdown": -0.05708110186332449
+      },
+      "2025-26": {
+        "n": 645,
+        "annual_return": -0.05752797977045361,
+        "vol": 0.06601111194988542,
+        "sharpe": -0.8714893306770523,
+        "cagr": -0.057985690668282075,
+        "max_drawdown": -0.13077685141128303
+      }
+    },
+    "diagnostics": {
+      "trades": 135,
+      "fees": 11907.480449921002,
+      "finance": 3190.0993743117274,
+      "borrow": 0.0,
+      "nav": 91498.91130893277,
+      "max_hold_hours": 30.5,
+      "active_sessions": 90,
+      "mean_open_gross": 0.0821093513904597,
+      "stale_marks": 0,
+      "adverse_margin_flags": 0,
+      "reconciliation_max_dollars": 2.473825588822365e-10,
+      "open_positions": 0,
+      "cash_available_final": 91498.91130893277,
+      "unsettled_final": 0,
+      "mean_open_gross_in_research_window": 0.16785035342984092
+    }
+  },
+  "mix_event2_g2.7_fee15": {
+    "configuration": "mix_event2",
+    "gross": 2.7,
+    "fee": 0.0015,
+    "metrics": {
+      "full": {
+        "n": 2106,
+        "annual_return": -0.054723248591792374,
+        "vol": 0.07635474182158423,
+        "sharpe": -0.7166974478109361,
+        "cagr": -0.05603078430075015,
+        "max_drawdown": -0.28301492018666285
+      },
+      "2021-22": {
+        "n": 730,
+        "annual_return": -0.09451637600434987,
+        "vol": 0.07873504309025597,
+        "sharpe": -1.2004359468756922,
+        "cagr": -0.09302605645392126,
+        "max_drawdown": -0.17739826572847428
+      },
+      "2023-24": {
+        "n": 731,
+        "annual_return": 0.025303059180238036,
+        "vol": 0.07994981592777986,
+        "sharpe": 0.31648677219087973,
+        "cagr": 0.02234942536071083,
+        "max_drawdown": -0.0710367782591187
+      },
+      "2025-26": {
+        "n": 645,
+        "annual_return": -0.10038254777037726,
+        "vol": 0.0690126557013281,
+        "sharpe": -1.4545527447141189,
+        "cagr": -0.09770488336714644,
+        "max_drawdown": -0.17899073455826764
+      }
+    },
+    "diagnostics": {
+      "trades": 135,
+      "fees": 31701.915674278618,
+      "finance": 2866.8201813875485,
+      "borrow": 0.0,
+      "nav": 71698.50798133377,
+      "max_hold_hours": 30.5,
+      "active_sessions": 90,
+      "mean_open_gross": 0.08213820214676892,
+      "stale_marks": 0,
+      "adverse_margin_flags": 0,
+      "reconciliation_max_dollars": 2.1827872842550278e-10,
+      "open_positions": 0,
+      "cash_available_final": 71698.50798133377,
+      "unsettled_final": 0,
+      "mean_open_gross_in_research_window": 0.16790933099526087
+    }
+  }
+}

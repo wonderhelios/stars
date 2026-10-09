@@ -1,0 +1,20 @@
+[
+  {
+    "symbol": "VEEV",
+    "url": "https://ir.veeva.com/financials/quarterly-results/default.aspx",
+    "status": "403",
+    "error": ""
+  },
+  {
+    "symbol": "GWRE",
+    "url": "https://ir.guidewire.com/financial-information/quarterly-results",
+    "status": "403",
+    "error": ""
+  },
+  {
+    "symbol": "TYL",
+    "url": "https://investors.tylertech.com/financials/quarterly-results/default.aspx",
+    "status": "403",
+    "error": ""
+  }
+]

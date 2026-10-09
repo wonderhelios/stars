@@ -1,0 +1,46 @@
+1 100 07:03 ET May 27, 2026, 10:09 ET earnings 2
+2 100 May 27, 2026, 09:49 ET Oct 16, 2025, 10:00 ET earnings 4
+3 100 Oct 16, 2025, 10:00 ET May 29, 2025, 07:22 ET earnings 5
+Traceback (most recent call last):
+  File "/Users/wonder/Code/stars/research/short_horizon_20261009/guidance_collect.py", line 76, in <module>
+    main()
+  File "/Users/wonder/Code/stars/research/short_horizon_20261009/guidance_collect.py", line 42, in main
+    html = fetch(url, CAT / f'veeva_{page:02}.html')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/wonder/Code/stars/research/short_horizon_20261009/guidance_collect.py", line 32, in fetch
+    raise RuntimeError(f'Fetch failed: {m}')
+RuntimeError: Fetch failed: {'url': 'https://www.prnewswire.com/news/veeva-systems/?page=4&pagesize=100', 'status': 0, 'exit_code': 35, 'error': 'curl: (35) LibreSSL SSL_connect: SSL_ERROR_SYSCALL in connection to www.prnewswire.com:443 \n', 'sha256': None, 'retrieved_utc': '2026-10-09T03:05:42Z'}
+1 100 07:03 ET May 27, 2026, 10:09 ET earnings 2
+2 100 May 27, 2026, 09:49 ET Oct 16, 2025, 10:00 ET earnings 4
+3 100 Oct 16, 2025, 10:00 ET May 29, 2025, 07:22 ET earnings 5
+4 100 May 29, 2025, 07:18 ET Nov 17, 2024, 20:00 ET earnings 8
+5 100 Nov 15, 2024, 08:54 ET Apr 01, 2024, 09:03 ET earnings 10
+6 100 Apr 01, 2024, 09:03 ET Aug 31, 2023, 07:03 ET earnings 12
+7 100 Aug 31, 2023, 07:03 ET Apr 20, 2023, 07:03 ET earnings 14
+8 100 Apr 20, 2023, 04:40 ET Oct 04, 2022, 12:22 ET earnings 16
+9 100 Oct 04, 2022, 07:03 ET Feb 09, 2022, 07:00 ET earnings 19
+10 100 Feb 01, 2022, 16:05 ET Aug 31, 2021, 16:14 ET earnings 21
+11 100 Aug 31, 2021, 12:50 ET Mar 17, 2015, 07:00 ET earnings 22
+12 100 Mar 17, 2015, 07:00 ET Jun 24, 2013, 07:11 ET earnings 22
+download Aug 26, 2026, 16:05 ET Veeva Announces Fiscal 2027 Second Quarter Results
+download Jun 03, 2026, 16:05 ET Veeva Announces Fiscal 2027 First Quarter Results
+download Mar 04, 2026, 16:05 ET Veeva Announces Fourth Quarter and Fiscal Year 2026 Results
+download Nov 20, 2025, 16:05 ET Veeva Announces Fiscal 2026 Third Quarter Results
+download Aug 27, 2025, 16:05 ET Veeva Announces Fiscal 2026 Second Quarter Results
+download May 28, 2025, 16:05 ET Veeva Announces Fiscal 2026 First Quarter Results
+download Mar 05, 2025, 16:05 ET Veeva Announces Fourth Quarter and Fiscal Year 2025 Results
+download Dec 05, 2024, 16:05 ET Veeva Announces Fiscal 2025 Third Quarter Results
+download Aug 28, 2024, 16:05 ET Veeva Announces Fiscal 2025 Second Quarter Results
+download May 30, 2024, 16:40 ET Veeva Announces Fiscal 2025 First Quarter Results
+download Feb 29, 2024, 16:05 ET Veeva Announces Fourth Quarter and Fiscal Year 2024 Results
+download Dec 06, 2023, 16:05 ET Veeva Announces Fiscal 2024 Third Quarter Results
+download Aug 30, 2023, 16:05 ET Veeva Announces Fiscal 2024 Second Quarter Results
+download May 31, 2023, 16:05 ET Veeva Announces Fiscal 2024 First Quarter Results
+download Mar 01, 2023, 16:05 ET Veeva Announces Fourth Quarter and Fiscal Year 2023 Results
+download Dec 01, 2022, 16:05 ET Veeva Announces Fiscal 2023 Third Quarter Results
+download Aug 31, 2022, 16:05 ET Veeva Announces Fiscal 2023 Second Quarter Results
+download Jun 01, 2022, 16:05 ET Veeva Announces Fiscal 2023 First Quarter Results
+download Mar 02, 2022, 16:05 ET Veeva Announces Fourth Quarter and Fiscal Year 2022 Results
+download Dec 01, 2021, 16:05 ET Veeva Announces Fiscal 2022 Third Quarter Results
+download Sep 01, 2021, 16:05 ET Veeva Announces Fiscal 2022 Second Quarter Results
+download May 27, 2021, 16:05 ET Veeva Announces Fiscal 2022 First Quarter Results

@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/veeva-announces-fiscal-2022-third-quarter-results-301435572.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "41ee0fab228b5c3031bcb290e116ecd669d913b4dcd7dc69c26a6b590c3a12e3",
+  "retrieved_utc": "2026-10-09T03:09:58Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/veeva-announces-fiscal-2022-third-quarter-results-301435572.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "41ee0fab228b5c3031bcb290e116ecd669d913b4dcd7dc69c26a6b590c3a12e3",
+      "retrieved_utc": "2026-10-09T03:09:58Z"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2024-fourth-quarter-and-full-year-results-302076225.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "042280edb8227a5f89868e66e64aa264c2444bec758404260fd6f8535bb1342a",
+  "retrieved_utc": "2026-10-09T03:25:27Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2024-fourth-quarter-and-full-year-results-302076225.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "042280edb8227a5f89868e66e64aa264c2444bec758404260fd6f8535bb1342a",
+      "retrieved_utc": "2026-10-09T03:25:27Z"
+    }
+  ]
+}

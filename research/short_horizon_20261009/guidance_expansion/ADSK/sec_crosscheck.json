@@ -1,0 +1,631 @@
+{
+  "symbol": "ADSK",
+  "verified": 27,
+  "expected": 27,
+  "issues": [],
+  "preliminary_no_exact_value": 1,
+  "audit_timing_note": "Quarter checks use filings within 15 days of the release; annual checks use the same FY/FP=FY first annual filing within 30 days. MDB FY2025 annual filing was 16 days later. This is later verification only, not signal availability.",
+  "source_sha256": "a3d69314b54f231aed01fdf912404d4a15305f2901d0b7d245e497765e856b83",
+  "independent_filing_accessions": [
+    "0000769397-19-000052",
+    "0000769397-20-000013",
+    "0000769397-20-000023",
+    "0000769397-20-000031",
+    "0000769397-20-000040",
+    "0000769397-21-000014",
+    "0000769397-21-000034",
+    "0000769397-21-000075",
+    "0000769397-21-000094",
+    "0000769397-22-000019",
+    "0000769397-22-000074",
+    "0000769397-22-000123",
+    "0000769397-22-000148",
+    "0000769397-23-000036",
+    "0000769397-23-000110",
+    "0000769397-23-000159",
+    "0000769397-23-000193",
+    "0000769397-24-000090",
+    "0000769397-24-000091",
+    "0000769397-24-000150",
+    "0000769397-24-000181",
+    "0000769397-25-000019",
+    "0000769397-25-000071",
+    "0000769397-25-000117",
+    "0000769397-25-000129",
+    "0000769397-26-000015",
+    "0000769397-26-000044",
+    "0000769397-26-000061"
+  ],
+  "records": [
+    {
+      "source": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2020-fourth-quarter-and-full-year-results-301012907.html",
+      "quarter_end": "2020-01-31",
+      "reported_revenue_dollars": 899300000,
+      "method": "annual_minus_original_nine_month",
+      "filings": [
+        {
+          "start": "2019-02-01",
+          "end": "2020-01-31",
+          "val": 3274300000,
+          "accn": "0000769397-20-000013",
+          "fy": 2020,
+          "fp": "FY",
+          "form": "10-K",
+          "filed": "2020-03-19"
+        },
+        {
+          "start": "2019-02-01",
+          "end": "2019-10-31",
+          "val": 2375000000,
+          "accn": "0000769397-19-000052",
+          "fy": 2020,
+          "fp": "Q3",
+          "form": "10-Q",
+          "filed": "2019-12-05"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2021-first-quarter-results-301066369.html",
+      "quarter_end": "2020-04-30",
+      "reported_revenue_dollars": 885700000,
+      "method": "reported_quarter",
+      "filings": [
+        {
+          "start": "2020-02-01",
+          "end": "2020-04-30",
+          "val": 885700000,
+          "accn": "0000769397-20-000023",
+          "fy": 2021,
+          "fp": "Q1",
+          "form": "10-Q",
+          "filed": "2020-06-02"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2021-second-quarter-results-301118184.html",
+      "quarter_end": "2020-07-31",
+      "reported_revenue_dollars": 913100000,
+      "method": "reported_quarter",
+      "filings": [
+        {
+          "start": "2020-05-01",
+          "end": "2020-07-31",
+          "val": 913100000,
+          "accn": "0000769397-20-000031",
+          "fy": 2021,
+          "fp": "Q2",
+          "form": "10-Q",
+          "filed": "2020-09-02"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2021-third-quarter-results-301179972.html",
+      "quarter_end": "2020-10-31",
+      "reported_revenue_dollars": 952400000,
+      "method": "reported_quarter",
+      "filings": [
+        {
+          "start": "2020-08-01",
+          "end": "2020-10-31",
+          "val": 952400000,
+          "accn": "0000769397-20-000040",
+          "fy": 2021,
+          "fp": "Q3",
+          "form": "10-Q",
+          "filed": "2020-12-04"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2021-fourth-quarter-and-full-year-results-301236041.html",
+      "quarter_end": "2021-01-31",
+      "reported_revenue_dollars": 1039200000,
+      "method": "annual_minus_original_nine_month",
+      "filings": [
+        {
+          "start": "2020-02-01",
+          "end": "2021-01-31",
+          "val": 3790400000,
+          "accn": "0000769397-21-000014",
+          "fy": 2021,
+          "fp": "FY",
+          "form": "10-K",
+          "filed": "2021-03-19"
+        },
+        {
+          "start": "2020-02-01",
+          "end": "2020-10-31",
+          "val": 2751200000,
+          "accn": "0000769397-20-000040",
+          "fy": 2021,
+          "fp": "Q3",
+          "form": "10-Q",
+          "filed": "2020-12-04"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2022-first-quarter-results-301301172.html",
+      "quarter_end": "2021-04-30",
+      "reported_revenue_dollars": 989300000,
+      "method": "reported_quarter",
+      "filings": [
+        {
+          "start": "2021-02-01",
+          "end": "2021-04-30",
+          "val": 989300000,
+          "accn": "0000769397-21-000034",
+          "fy": 2022,
+          "fp": "Q1",
+          "form": "10-Q",
+          "filed": "2021-06-03"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2022-second-quarter-results-301362938.html",
+      "quarter_end": "2021-07-31",
+      "reported_revenue_dollars": 1059700000,
+      "method": "reported_quarter",
+      "filings": [
+        {
+          "start": "2021-05-01",
+          "end": "2021-07-31",
+          "val": 1059700000,
+          "accn": "0000769397-21-000075",
+          "fy": 2022,
+          "fp": "Q2",
+          "form": "10-Q",
+          "filed": "2021-09-01"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2022-third-quarter-results-301431093.html",
+      "quarter_end": "2021-10-31",
+      "reported_revenue_dollars": 1125800000,
+      "method": "reported_quarter",
+      "filings": [
+        {
+          "start": "2021-08-01",
+          "end": "2021-10-31",
+          "val": 1125800000,
+          "accn": "0000769397-21-000094",
+          "fy": 2022,
+          "fp": "Q3",
+          "form": "10-Q",
+          "filed": "2021-12-03"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2022-fourth-quarter-and-full-year-results-301490017.html",
+      "quarter_end": "2022-01-31",
+      "reported_revenue_dollars": 1211600000,
+      "method": "annual_minus_original_nine_month",
+      "filings": [
+        {
+          "start": "2021-02-01",
+          "end": "2022-01-31",
+          "val": 4386400000,
+          "accn": "0000769397-22-000019",
+          "fy": 2022,
+          "fp": "FY",
+          "form": "10-K",
+          "filed": "2022-03-14"
+        },
+        {
+          "start": "2021-02-01",
+          "end": "2021-10-31",
+          "val": 3174800000,
+          "accn": "0000769397-21-000094",
+          "fy": 2022,
+          "fp": "Q3",
+          "form": "10-Q",
+          "filed": "2021-12-03"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2023-first-quarter-results-301556131.html",
+      "quarter_end": "2022-04-30",
+      "reported_revenue_dollars": 1170000000,
+      "method": "reported_quarter",
+      "filings": [
+        {
+          "start": "2022-02-01",
+          "end": "2022-04-30",
+          "val": 1170000000,
+          "accn": "0000769397-22-000074",
+          "fy": 2023,
+          "fp": "Q1",
+          "form": "10-Q",
+          "filed": "2022-06-02"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2023-second-quarter-results-301611859.html",
+      "quarter_end": "2022-07-31",
+      "reported_revenue_dollars": 1237000000,
+      "method": "reported_quarter",
+      "filings": [
+        {
+          "start": "2022-05-01",
+          "end": "2022-07-31",
+          "val": 1237000000,
+          "accn": "0000769397-22-000123",
+          "fy": 2023,
+          "fp": "Q2",
+          "form": "10-Q",
+          "filed": "2022-08-31"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2023-third-quarter-results-301685521.html",
+      "quarter_end": "2022-10-31",
+      "reported_revenue_dollars": 1280000000,
+      "method": "reported_quarter",
+      "filings": [
+        {
+          "start": "2022-08-01",
+          "end": "2022-10-31",
+          "val": 1280000000,
+          "accn": "0000769397-22-000148",
+          "fy": 2023,
+          "fp": "Q3",
+          "form": "10-Q",
+          "filed": "2022-12-06"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2023-fourth-quarter-and-full-year-results-301754839.html",
+      "quarter_end": "2023-01-31",
+      "reported_revenue_dollars": 1318000000,
+      "method": "annual_minus_original_nine_month",
+      "filings": [
+        {
+          "start": "2022-02-01",
+          "end": "2023-01-31",
+          "val": 5005000000,
+          "accn": "0000769397-23-000036",
+          "fy": 2023,
+          "fp": "FY",
+          "form": "10-K",
+          "filed": "2023-03-14"
+        },
+        {
+          "start": "2022-02-01",
+          "end": "2022-10-31",
+          "val": 3687000000,
+          "accn": "0000769397-22-000148",
+          "fy": 2023,
+          "fp": "Q3",
+          "form": "10-Q",
+          "filed": "2022-12-06"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2024-first-quarter-results-301835017.html",
+      "quarter_end": "2023-04-30",
+      "reported_revenue_dollars": 1269000000,
+      "method": "reported_quarter",
+      "filings": [
+        {
+          "start": "2023-02-01",
+          "end": "2023-04-30",
+          "val": 1269000000,
+          "accn": "0000769397-23-000110",
+          "fy": 2024,
+          "fp": "Q1",
+          "form": "10-Q",
+          "filed": "2023-06-01"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2024-second-quarter-results-301908360.html",
+      "quarter_end": "2023-07-31",
+      "reported_revenue_dollars": 1345000000,
+      "method": "reported_quarter",
+      "filings": [
+        {
+          "start": "2023-05-01",
+          "end": "2023-07-31",
+          "val": 1345000000,
+          "accn": "0000769397-23-000159",
+          "fy": 2024,
+          "fp": "Q2",
+          "form": "10-Q",
+          "filed": "2023-08-29"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2024-third-quarter-results-301995206.html",
+      "quarter_end": "2023-10-31",
+      "reported_revenue_dollars": 1414000000,
+      "method": "reported_quarter",
+      "filings": [
+        {
+          "start": "2023-08-01",
+          "end": "2023-10-31",
+          "val": 1414000000,
+          "accn": "0000769397-23-000193",
+          "fy": 2024,
+          "fp": "Q3",
+          "form": "10-Q",
+          "filed": "2023-12-04"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2024-fourth-quarter-and-full-year-results-302076225.html",
+      "quarter_end": "2024-01-31",
+      "reported_revenue_dollars": 1469000000,
+      "timing_exception": "Delayed original FY2024 annual filing on 2024-06-10 after audit-committee review; used only to check unchanged original quarterly amount, never backdated as a source.",
+      "method": "annual_minus_original_nine_month",
+      "filings": [
+        {
+          "start": "2023-02-01",
+          "end": "2024-01-31",
+          "val": 5497000000,
+          "accn": "0000769397-24-000090",
+          "fy": 2024,
+          "fp": "FY",
+          "form": "10-K",
+          "filed": "2024-06-10"
+        },
+        {
+          "start": "2023-02-01",
+          "end": "2023-10-31",
+          "val": 4028000000,
+          "accn": "0000769397-23-000193",
+          "fy": 2024,
+          "fp": "Q3",
+          "form": "10-Q",
+          "filed": "2023-12-04"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2025-first-quarter-results-302169849.html",
+      "quarter_end": "2024-04-30",
+      "reported_revenue_dollars": 1417000000,
+      "timing_exception": "10-Q filed 2024-06-10, before the 2024-06-11 final news release. Final release is a repeated-quarter event and generates no new signal.",
+      "method": "reported_quarter",
+      "filings": [
+        {
+          "start": "2024-02-01",
+          "end": "2024-04-30",
+          "val": 1417000000,
+          "accn": "0000769397-24-000091",
+          "fy": 2025,
+          "fp": "Q1",
+          "form": "10-Q",
+          "filed": "2024-06-10"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2025-second-quarter-results-302234360.html",
+      "quarter_end": "2024-07-31",
+      "reported_revenue_dollars": 1505000000,
+      "method": "reported_quarter",
+      "filings": [
+        {
+          "start": "2024-05-01",
+          "end": "2024-07-31",
+          "val": 1505000000,
+          "accn": "0000769397-24-000150",
+          "fy": 2025,
+          "fp": "Q2",
+          "form": "10-Q",
+          "filed": "2024-09-03"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2025-third-quarter-results-302316794.html",
+      "quarter_end": "2024-10-31",
+      "reported_revenue_dollars": 1570000000,
+      "method": "reported_quarter",
+      "filings": [
+        {
+          "start": "2024-08-01",
+          "end": "2024-10-31",
+          "val": 1570000000,
+          "accn": "0000769397-24-000181",
+          "fy": 2025,
+          "fp": "Q3",
+          "form": "10-Q",
+          "filed": "2024-12-03"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2025-fourth-quarter-and-full-year-results-302387861.html",
+      "quarter_end": "2025-01-31",
+      "reported_revenue_dollars": 1639000000,
+      "method": "annual_minus_original_nine_month",
+      "filings": [
+        {
+          "start": "2024-02-01",
+          "end": "2025-01-31",
+          "val": 6131000000,
+          "accn": "0000769397-25-000019",
+          "fy": 2025,
+          "fp": "FY",
+          "form": "10-K",
+          "filed": "2025-03-06"
+        },
+        {
+          "start": "2024-02-01",
+          "end": "2024-10-31",
+          "val": 4492000000,
+          "accn": "0000769397-24-000181",
+          "fy": 2025,
+          "fp": "Q3",
+          "form": "10-Q",
+          "filed": "2024-12-03"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2026-first-quarter-results-302463539.html",
+      "quarter_end": "2025-04-30",
+      "reported_revenue_dollars": 1633000000,
+      "method": "reported_quarter",
+      "filings": [
+        {
+          "start": "2025-02-01",
+          "end": "2025-04-30",
+          "val": 1633000000,
+          "accn": "0000769397-25-000071",
+          "fy": 2026,
+          "fp": "Q1",
+          "form": "10-Q",
+          "filed": "2025-05-29"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2026-second-quarter-results-302540893.html",
+      "quarter_end": "2025-07-31",
+      "reported_revenue_dollars": 1763000000,
+      "method": "reported_quarter",
+      "filings": [
+        {
+          "start": "2025-05-01",
+          "end": "2025-07-31",
+          "val": 1763000000,
+          "accn": "0000769397-25-000117",
+          "fy": 2026,
+          "fp": "Q2",
+          "form": "10-Q",
+          "filed": "2025-09-02"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2026-third-quarter-results-302625697.html",
+      "quarter_end": "2025-10-31",
+      "reported_revenue_dollars": 1853000000,
+      "method": "reported_quarter",
+      "filings": [
+        {
+          "start": "2025-08-01",
+          "end": "2025-10-31",
+          "val": 1853000000,
+          "accn": "0000769397-25-000129",
+          "fy": 2026,
+          "fp": "Q3",
+          "form": "10-Q",
+          "filed": "2025-11-26",
+          "frame": "CY2025Q3"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2026-fourth-quarter-results-302698740.html",
+      "quarter_end": "2026-01-31",
+      "reported_revenue_dollars": 1957000000,
+      "method": "annual_minus_original_nine_month",
+      "filings": [
+        {
+          "start": "2025-02-01",
+          "end": "2026-01-31",
+          "val": 7206000000,
+          "accn": "0000769397-26-000015",
+          "fy": 2026,
+          "fp": "FY",
+          "form": "10-K",
+          "filed": "2026-03-03",
+          "frame": "CY2025"
+        },
+        {
+          "start": "2025-02-01",
+          "end": "2025-10-31",
+          "val": 5249000000,
+          "accn": "0000769397-25-000129",
+          "fy": 2026,
+          "fp": "Q3",
+          "form": "10-Q",
+          "filed": "2025-11-26"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2027-first-quarter-results-302784940.html",
+      "quarter_end": "2026-04-30",
+      "reported_revenue_dollars": 1934000000,
+      "method": "reported_quarter",
+      "filings": [
+        {
+          "start": "2026-02-01",
+          "end": "2026-04-30",
+          "val": 1934000000,
+          "accn": "0000769397-26-000044",
+          "fy": 2027,
+          "fp": "Q1",
+          "form": "10-Q",
+          "filed": "2026-05-29",
+          "frame": "CY2026Q1"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2027-second-quarter-results-302861696.html",
+      "quarter_end": "2026-07-31",
+      "reported_revenue_dollars": 2046000000,
+      "method": "reported_quarter",
+      "filings": [
+        {
+          "start": "2026-05-01",
+          "end": "2026-07-31",
+          "val": 2046000000,
+          "accn": "0000769397-26-000061",
+          "fy": 2027,
+          "fp": "Q2",
+          "form": "10-Q",
+          "filed": "2026-08-28",
+          "frame": "CY2026Q2"
+        }
+      ],
+      "error_dollars": 0
+    }
+  ],
+  "scope": "Independent reported financial values and completed-quarter filing references, not an exhaustive interim-guidance news catalogue."
+}

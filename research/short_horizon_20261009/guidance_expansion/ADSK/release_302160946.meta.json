@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/autodesk-reports-results-of-audit-committee-investigation-provides-preliminary-results-for-first-quarter-fiscal-2025-and-business-outlook-302160946.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "c0fdc13c807b183c42c3c41accd8e614e57e64345ae77ef4194f6c9175e3bbf3",
+  "retrieved_utc": "2026-10-09T03:25:24Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/autodesk-reports-results-of-audit-committee-investigation-provides-preliminary-results-for-first-quarter-fiscal-2025-and-business-outlook-302160946.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "c0fdc13c807b183c42c3c41accd8e614e57e64345ae77ef4194f6c9175e3bbf3",
+      "retrieved_utc": "2026-10-09T03:25:24Z"
+    }
+  ]
+}

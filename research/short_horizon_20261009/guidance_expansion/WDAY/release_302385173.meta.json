@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/workday-announces-fiscal-2025-fourth-quarter-and-full-year-financial-results-302385173.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "203ba453a456d7cfe10c09c03e6785090fd212e8056b2cdbaf9c2f7a629be61a",
+  "retrieved_utc": "2026-10-09T03:28:20Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/workday-announces-fiscal-2025-fourth-quarter-and-full-year-financial-results-302385173.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "203ba453a456d7cfe10c09c03e6785090fd212e8056b2cdbaf9c2f7a629be61a",
+      "retrieved_utc": "2026-10-09T03:28:20Z"
+    }
+  ]
+}

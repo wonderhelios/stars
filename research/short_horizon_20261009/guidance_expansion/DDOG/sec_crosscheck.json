@@ -1,0 +1,629 @@
+{
+  "symbol": "DDOG",
+  "verified": 27,
+  "expected": 27,
+  "issues": [],
+  "preliminary_no_exact_value": 0,
+  "audit_timing_note": "Quarter checks use filings within 15 days of the release; annual checks use the same FY/FP=FY first annual filing within 30 days. MDB FY2025 annual filing was 16 days later. This is later verification only, not signal availability.",
+  "source_sha256": "d3c4561fd839e25b1cde245ff3ca1f821b2a70e70d34688c5ede40bbc0f600a2",
+  "independent_filing_accessions": [
+    "0001561550-21-000007",
+    "0001561550-21-000018",
+    "0001561550-21-000026",
+    "0001561550-22-000009",
+    "0001561550-22-000026",
+    "0001561550-22-000038",
+    "0001561550-22-000045",
+    "0001561550-23-000006",
+    "0001561550-23-000023",
+    "0001561550-23-000039",
+    "0001561550-23-000055",
+    "0001561550-24-000009",
+    "0001561550-24-000051",
+    "0001561550-24-000112",
+    "0001561550-24-000175",
+    "0001561550-25-000025",
+    "0001561550-25-000123",
+    "0001561550-25-000220",
+    "0001561550-25-000313",
+    "0001564590-19-043256",
+    "0001564590-20-006422",
+    "0001564590-20-024662",
+    "0001564590-20-038405",
+    "0001564590-20-053609",
+    "0001564590-21-009770",
+    "0001628280-26-008819",
+    "0001628280-26-032328",
+    "0001628280-26-054458"
+  ],
+  "records": [
+    {
+      "source": "https://www.globenewswire.com/news-release/2020/02/13/1984930/0/en/datadog-announces-fourth-quarter-and-full-year-2019-results.html",
+      "quarter_end": "2019-12-31",
+      "reported_revenue_dollars": 113644000,
+      "method": "annual_minus_original_nine_month",
+      "filings": [
+        {
+          "start": "2019-01-01",
+          "end": "2019-12-31",
+          "val": 362780000,
+          "accn": "0001564590-20-006422",
+          "fy": 2019,
+          "fp": "FY",
+          "form": "10-K",
+          "filed": "2020-02-25"
+        },
+        {
+          "start": "2019-01-01",
+          "end": "2019-09-30",
+          "val": 249136000,
+          "accn": "0001564590-19-043256",
+          "fy": 2019,
+          "fp": "Q3",
+          "form": "10-Q",
+          "filed": "2019-11-13"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://www.globenewswire.com/news-release/2020/05/11/2031453/0/en/datadog-announces-first-quarter-results.html",
+      "quarter_end": "2020-03-31",
+      "reported_revenue_dollars": 131248000,
+      "method": "reported_quarter",
+      "filings": [
+        {
+          "start": "2020-01-01",
+          "end": "2020-03-31",
+          "val": 131248000,
+          "accn": "0001564590-20-024662",
+          "fy": 2020,
+          "fp": "Q1",
+          "form": "10-Q",
+          "filed": "2020-05-12"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://www.globenewswire.com/news-release/2020/08/06/2074654/0/en/datadog-announces-second-quarter-results.html",
+      "quarter_end": "2020-06-30",
+      "reported_revenue_dollars": 140012000,
+      "method": "reported_quarter",
+      "filings": [
+        {
+          "start": "2020-04-01",
+          "end": "2020-06-30",
+          "val": 140012000,
+          "accn": "0001564590-20-038405",
+          "fy": 2020,
+          "fp": "Q2",
+          "form": "10-Q",
+          "filed": "2020-08-07"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://www.globenewswire.com/news-release/2020/11/10/2124285/0/en/datadog-announces-third-quarter-results.html",
+      "quarter_end": "2020-09-30",
+      "reported_revenue_dollars": 154675000,
+      "method": "reported_quarter",
+      "filings": [
+        {
+          "start": "2020-07-01",
+          "end": "2020-09-30",
+          "val": 154675000,
+          "accn": "0001564590-20-053609",
+          "fy": 2020,
+          "fp": "Q3",
+          "form": "10-Q",
+          "filed": "2020-11-12"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://www.globenewswire.com/news-release/2021/02/11/2174547/0/en/datadog-announces-fourth-quarter-and-full-year-2020-results.html",
+      "quarter_end": "2020-12-31",
+      "reported_revenue_dollars": 177531000,
+      "method": "annual_minus_original_nine_month",
+      "filings": [
+        {
+          "start": "2020-01-01",
+          "end": "2020-12-31",
+          "val": 603466000,
+          "accn": "0001564590-21-009770",
+          "fy": 2020,
+          "fp": "FY",
+          "form": "10-K",
+          "filed": "2021-03-01"
+        },
+        {
+          "start": "2020-01-01",
+          "end": "2020-09-30",
+          "val": 425935000,
+          "accn": "0001564590-20-053609",
+          "fy": 2020,
+          "fp": "Q3",
+          "form": "10-Q",
+          "filed": "2020-11-12"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://www.globenewswire.com/news-release/2021/05/06/2225061/0/en/datadog-announces-first-quarter-results.html",
+      "quarter_end": "2021-03-31",
+      "reported_revenue_dollars": 198549000,
+      "method": "reported_quarter",
+      "filings": [
+        {
+          "start": "2021-01-01",
+          "end": "2021-03-31",
+          "val": 198549000,
+          "accn": "0001561550-21-000007",
+          "fy": 2021,
+          "fp": "Q1",
+          "form": "10-Q",
+          "filed": "2021-05-07"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://www.globenewswire.com/news-release/2021/08/05/2275436/0/en/datadog-announces-second-quarter-2021-financial-results.html",
+      "quarter_end": "2021-06-30",
+      "reported_revenue_dollars": 233549000,
+      "method": "reported_quarter",
+      "filings": [
+        {
+          "start": "2021-04-01",
+          "end": "2021-06-30",
+          "val": 233549000,
+          "accn": "0001561550-21-000018",
+          "fy": 2021,
+          "fp": "Q2",
+          "form": "10-Q",
+          "filed": "2021-08-06"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://www.prnewswire.com/news-releases/datadog-announces-third-quarter-2021-financial-results-301416918.html",
+      "quarter_end": "2021-09-30",
+      "reported_revenue_dollars": 270488000,
+      "method": "reported_quarter",
+      "filings": [
+        {
+          "start": "2021-07-01",
+          "end": "2021-09-30",
+          "val": 270488000,
+          "accn": "0001561550-21-000026",
+          "fy": 2021,
+          "fp": "Q3",
+          "form": "10-Q",
+          "filed": "2021-11-05"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://www.prnewswire.com/news-releases/datadog-announces-fourth-quarter-and-fiscal-year-2021-financial-results-301479300.html",
+      "quarter_end": "2021-12-31",
+      "reported_revenue_dollars": 326198000,
+      "method": "annual_minus_original_nine_month",
+      "filings": [
+        {
+          "start": "2021-01-01",
+          "end": "2021-12-31",
+          "val": 1028784000,
+          "accn": "0001561550-22-000009",
+          "fy": 2021,
+          "fp": "FY",
+          "form": "10-K",
+          "filed": "2022-02-25"
+        },
+        {
+          "start": "2021-01-01",
+          "end": "2021-09-30",
+          "val": 702586000,
+          "accn": "0001561550-21-000026",
+          "fy": 2021,
+          "fp": "Q3",
+          "form": "10-Q",
+          "filed": "2021-11-05"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://www.prnewswire.com/news-releases/datadog-announces-first-quarter-2022-financial-results-301540337.html",
+      "quarter_end": "2022-03-31",
+      "reported_revenue_dollars": 363030000,
+      "method": "reported_quarter",
+      "filings": [
+        {
+          "start": "2022-01-01",
+          "end": "2022-03-31",
+          "val": 363030000,
+          "accn": "0001561550-22-000026",
+          "fy": 2022,
+          "fp": "Q1",
+          "form": "10-Q",
+          "filed": "2022-05-06"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://www.prnewswire.com/news-releases/datadog-announces-second-quarter-2022-financial-results-301599525.html",
+      "quarter_end": "2022-06-30",
+      "reported_revenue_dollars": 406138000,
+      "method": "reported_quarter",
+      "filings": [
+        {
+          "start": "2022-04-01",
+          "end": "2022-06-30",
+          "val": 406138000,
+          "accn": "0001561550-22-000038",
+          "fy": 2022,
+          "fp": "Q2",
+          "form": "10-Q",
+          "filed": "2022-08-08"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://www.prnewswire.com/news-releases/datadog-announces-third-quarter-2022-financial-results-301666905.html",
+      "quarter_end": "2022-09-30",
+      "reported_revenue_dollars": 436533000,
+      "method": "reported_quarter",
+      "filings": [
+        {
+          "start": "2022-07-01",
+          "end": "2022-09-30",
+          "val": 436533000,
+          "accn": "0001561550-22-000045",
+          "fy": 2022,
+          "fp": "Q3",
+          "form": "10-Q",
+          "filed": "2022-11-04"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://www.prnewswire.com/news-releases/datadog-announces-fourth-quarter-and-fiscal-year-2022-financial-results-301748267.html",
+      "quarter_end": "2022-12-31",
+      "reported_revenue_dollars": 469399000,
+      "method": "annual_minus_original_nine_month",
+      "filings": [
+        {
+          "start": "2022-01-01",
+          "end": "2022-12-31",
+          "val": 1675100000,
+          "accn": "0001561550-23-000006",
+          "fy": 2022,
+          "fp": "FY",
+          "form": "10-K",
+          "filed": "2023-02-24"
+        },
+        {
+          "start": "2022-01-01",
+          "end": "2022-09-30",
+          "val": 1205701000,
+          "accn": "0001561550-22-000045",
+          "fy": 2022,
+          "fp": "Q3",
+          "form": "10-Q",
+          "filed": "2022-11-04"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://www.prnewswire.com/news-releases/datadog-announces-first-quarter-2023-financial-results-301815254.html",
+      "quarter_end": "2023-03-31",
+      "reported_revenue_dollars": 481714000,
+      "method": "reported_quarter",
+      "filings": [
+        {
+          "start": "2023-01-01",
+          "end": "2023-03-31",
+          "val": 481714000,
+          "accn": "0001561550-23-000023",
+          "fy": 2023,
+          "fp": "Q1",
+          "form": "10-Q",
+          "filed": "2023-05-05"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://www.prnewswire.com/news-releases/datadog-announces-second-quarter-2023-financial-results-301895068.html",
+      "quarter_end": "2023-06-30",
+      "reported_revenue_dollars": 509460000,
+      "method": "reported_quarter",
+      "filings": [
+        {
+          "start": "2023-04-01",
+          "end": "2023-06-30",
+          "val": 509460000,
+          "accn": "0001561550-23-000039",
+          "fy": 2023,
+          "fp": "Q2",
+          "form": "10-Q",
+          "filed": "2023-08-09"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://www.prnewswire.com/news-releases/datadog-announces-third-quarter-2023-financial-results-301979031.html",
+      "quarter_end": "2023-09-30",
+      "reported_revenue_dollars": 547536000,
+      "method": "reported_quarter",
+      "filings": [
+        {
+          "start": "2023-07-01",
+          "end": "2023-09-30",
+          "val": 547536000,
+          "accn": "0001561550-23-000055",
+          "fy": 2023,
+          "fp": "Q3",
+          "form": "10-Q",
+          "filed": "2023-11-07"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://www.prnewswire.com/news-releases/datadog-announces-fourth-quarter-and-fiscal-year-2023-financial-results-302059989.html",
+      "quarter_end": "2023-12-31",
+      "reported_revenue_dollars": 589649000,
+      "method": "annual_minus_original_nine_month",
+      "filings": [
+        {
+          "start": "2023-01-01",
+          "end": "2023-12-31",
+          "val": 2128359000,
+          "accn": "0001561550-24-000009",
+          "fy": 2023,
+          "fp": "FY",
+          "form": "10-K",
+          "filed": "2024-02-23"
+        },
+        {
+          "start": "2023-01-01",
+          "end": "2023-09-30",
+          "val": 1538710000,
+          "accn": "0001561550-23-000055",
+          "fy": 2023,
+          "fp": "Q3",
+          "form": "10-Q",
+          "filed": "2023-11-07"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://www.prnewswire.com/news-releases/datadog-announces-first-quarter-2024-financial-results-302137234.html",
+      "quarter_end": "2024-03-31",
+      "reported_revenue_dollars": 611253000,
+      "method": "reported_quarter",
+      "filings": [
+        {
+          "start": "2024-01-01",
+          "end": "2024-03-31",
+          "val": 611253000,
+          "accn": "0001561550-24-000051",
+          "fy": 2024,
+          "fp": "Q1",
+          "form": "10-Q",
+          "filed": "2024-05-08"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://www.prnewswire.com/news-releases/datadog-announces-second-quarter-2024-financial-results-302217275.html",
+      "quarter_end": "2024-06-30",
+      "reported_revenue_dollars": 645279000,
+      "method": "reported_quarter",
+      "filings": [
+        {
+          "start": "2024-04-01",
+          "end": "2024-06-30",
+          "val": 645279000,
+          "accn": "0001561550-24-000112",
+          "fy": 2024,
+          "fp": "Q2",
+          "form": "10-Q",
+          "filed": "2024-08-09"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://www.prnewswire.com/news-releases/datadog-announces-third-quarter-2024-financial-results-302298136.html",
+      "quarter_end": "2024-09-30",
+      "reported_revenue_dollars": 690016000,
+      "method": "reported_quarter",
+      "filings": [
+        {
+          "start": "2024-07-01",
+          "end": "2024-09-30",
+          "val": 690016000,
+          "accn": "0001561550-24-000175",
+          "fy": 2024,
+          "fp": "Q3",
+          "form": "10-Q",
+          "filed": "2024-11-08"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://www.newsfilecorp.com/release/240623/Datadog-Announces-Fourth-Quarter-and-Fiscal-Year-2024-Financial-Results",
+      "quarter_end": "2024-12-31",
+      "reported_revenue_dollars": 737727000,
+      "method": "annual_minus_original_nine_month",
+      "filings": [
+        {
+          "start": "2024-01-01",
+          "end": "2024-12-31",
+          "val": 2684275000,
+          "accn": "0001561550-25-000025",
+          "fy": 2024,
+          "fp": "FY",
+          "form": "10-K",
+          "filed": "2025-02-20"
+        },
+        {
+          "start": "2024-01-01",
+          "end": "2024-09-30",
+          "val": 1946548000,
+          "accn": "0001561550-24-000175",
+          "fy": 2024,
+          "fp": "Q3",
+          "form": "10-Q",
+          "filed": "2024-11-08"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://www.globenewswire.com/news-release/2025/05/06/3074862/0/en/datadog-announces-first-quarter-2025-financial-results.html",
+      "quarter_end": "2025-03-31",
+      "reported_revenue_dollars": 761553000,
+      "method": "reported_quarter",
+      "filings": [
+        {
+          "start": "2025-01-01",
+          "end": "2025-03-31",
+          "val": 761553000,
+          "accn": "0001561550-25-000123",
+          "fy": 2025,
+          "fp": "Q1",
+          "form": "10-Q",
+          "filed": "2025-05-07"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://www.globenewswire.com/news-release/2025/08/07/3129085/0/en/datadog-announces-second-quarter-2025-financial-results.html",
+      "quarter_end": "2025-06-30",
+      "reported_revenue_dollars": 826760000,
+      "method": "reported_quarter",
+      "filings": [
+        {
+          "start": "2025-04-01",
+          "end": "2025-06-30",
+          "val": 826760000,
+          "accn": "0001561550-25-000220",
+          "fy": 2025,
+          "fp": "Q2",
+          "form": "10-Q",
+          "filed": "2025-08-08"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://www.globenewswire.com/news-release/2025/11/06/3182403/0/en/datadog-announces-third-quarter-2025-financial-results.html",
+      "quarter_end": "2025-09-30",
+      "reported_revenue_dollars": 885651000,
+      "method": "reported_quarter",
+      "filings": [
+        {
+          "start": "2025-07-01",
+          "end": "2025-09-30",
+          "val": 885651000,
+          "accn": "0001561550-25-000313",
+          "fy": 2025,
+          "fp": "Q3",
+          "form": "10-Q",
+          "filed": "2025-11-07",
+          "frame": "CY2025Q3"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://www.globenewswire.com/news-release/2026/02/10/3235171/0/en/datadog-announces-fourth-quarter-and-fiscal-year-2025-financial-results.html",
+      "quarter_end": "2025-12-31",
+      "reported_revenue_dollars": 953194000,
+      "method": "annual_minus_original_nine_month",
+      "filings": [
+        {
+          "start": "2025-01-01",
+          "end": "2025-12-31",
+          "val": 3427158000,
+          "accn": "0001628280-26-008819",
+          "fy": 2025,
+          "fp": "FY",
+          "form": "10-K",
+          "filed": "2026-02-18",
+          "frame": "CY2025"
+        },
+        {
+          "start": "2025-01-01",
+          "end": "2025-09-30",
+          "val": 2473964000,
+          "accn": "0001561550-25-000313",
+          "fy": 2025,
+          "fp": "Q3",
+          "form": "10-Q",
+          "filed": "2025-11-07"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://www.globenewswire.com/news-release/2026/05/07/3289822/0/en/datadog-announces-first-quarter-2026-financial-results.html",
+      "quarter_end": "2026-03-31",
+      "reported_revenue_dollars": 1006426000,
+      "method": "reported_quarter",
+      "filings": [
+        {
+          "start": "2026-01-01",
+          "end": "2026-03-31",
+          "val": 1006426000,
+          "accn": "0001628280-26-032328",
+          "fy": 2026,
+          "fp": "Q1",
+          "form": "10-Q",
+          "filed": "2026-05-07",
+          "frame": "CY2026Q1"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://www.globenewswire.com/news-release/2026/08/06/3340086/0/en/datadog-announces-second-quarter-2026-financial-results.html",
+      "quarter_end": "2026-06-30",
+      "reported_revenue_dollars": 1121454000,
+      "method": "reported_quarter",
+      "filings": [
+        {
+          "start": "2026-04-01",
+          "end": "2026-06-30",
+          "val": 1121454000,
+          "accn": "0001628280-26-054458",
+          "fy": 2026,
+          "fp": "Q2",
+          "form": "10-Q",
+          "filed": "2026-08-06",
+          "frame": "CY2026Q2"
+        }
+      ],
+      "error_dollars": 0
+    }
+  ],
+  "scope": "Independent reported financial values and completed-quarter filing references, not an exhaustive interim-guidance news catalogue."
+}

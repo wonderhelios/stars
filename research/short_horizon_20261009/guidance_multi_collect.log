@@ -1,0 +1,92 @@
+/Users/wonder/Code/stars/research/short_horizon_20261009/guidance_multi_collect.py:42: SyntaxWarning: invalid escape sequence '\d'
+  if not date or not re.search('20\d{2}',date) or int(re.search('20\d{2}',date).group())>=2020:
+/Users/wonder/Code/stars/research/short_horizon_20261009/guidance_multi_collect.py:42: SyntaxWarning: invalid escape sequence '\d'
+  if not date or not re.search('20\d{2}',date) or int(re.search('20\d{2}',date).group())>=2020:
+/Users/wonder/Code/stars/research/short_horizon_20261009/guidance_multi_collect.py:47: SyntaxWarning: invalid escape sequence '\d'
+  dated=[d for d in dates if d and re.search('20\d{2}',d)]
+/Users/wonder/Code/stars/research/short_horizon_20261009/guidance_multi_collect.py:48: SyntaxWarning: invalid escape sequence '\d'
+  if dated and all(int(re.search('20\d{2}',d).group())<2020 for d in dated):
+MDB 0 1 100 Jun 01, 2023, 16:05 ET releases 14
+MDB 0 2 100 Jun 06, 2018, 04:05 ET releases 27
+MDB 0 3 5 Dec 12, 2017, 15:05 ET releases 27
+MDB download Sep 01, 2026, 16:05 ET MongoDB, Inc. Announces Second Quarter Fiscal 2027 Financial Results
+MDB download May 28, 2026, 16:05 ET MongoDB, Inc. Announces First Quarter Fiscal 2027 Financial Results
+MDB download Mar 02, 2026, 16:05 ET MongoDB, Inc. Announces Fourth Quarter Fiscal 2026 Financial Results
+MDB download Dec 01, 2025, 16:05 ET MongoDB, Inc. Announces Third Quarter Fiscal 2026 Financial Results
+MDB download Aug 26, 2025, 16:05 ET MongoDB, Inc. Announces Second Quarter Fiscal 2026 Financial Results
+MDB download Jun 04, 2025, 16:05 ET MongoDB, Inc. Announces First Quarter Fiscal 2026 Financial Results
+MDB download Mar 05, 2025, 16:05 ET MongoDB, Inc. Announces Fourth Quarter and Full Year Fiscal 2025 Financial Results
+MDB download Dec 09, 2024, 16:05 ET MongoDB, Inc. Announces Third Quarter Fiscal 2025 Financial Results
+MDB download Aug 29, 2024, 16:05 ET MongoDB, Inc. Announces Second Quarter Fiscal 2025 Financial Results
+MDB download May 30, 2024, 16:05 ET MongoDB, Inc. Announces First Quarter Fiscal 2025 Financial Results
+MDB download Mar 07, 2024, 16:05 ET MongoDB, Inc. Announces Fourth Quarter and Full Year Fiscal 2024 Financial Results
+MDB download Dec 05, 2023, 16:05 ET MongoDB, Inc. Announces Third Quarter Fiscal 2024 Financial Results
+MDB download Aug 31, 2023, 16:05 ET MongoDB, Inc. Announces Second Quarter Fiscal 2024 Financial Results
+MDB download Jun 01, 2023, 16:05 ET MongoDB, Inc. Announces First Quarter Fiscal 2024 Financial Results
+MDB download Mar 08, 2023, 16:05 ET MongoDB, Inc. Announces Fourth Quarter and Full Year Fiscal 2023 Financial Results
+MDB download Dec 06, 2022, 16:05 ET MongoDB, Inc. Announces Third Quarter Fiscal 2023 Financial Results
+MDB download Aug 31, 2022, 16:05 ET MongoDB, Inc. Announces Second Quarter Fiscal 2023 Financial Results
+MDB download Jun 01, 2022, 16:05 ET MongoDB, Inc. Announces First Quarter Fiscal 2023 Financial Results
+MDB download Mar 08, 2022, 16:05 ET MongoDB, Inc. Announces Fourth Quarter and Full Year Fiscal 2022 Financial Results
+MDB download Dec 06, 2021, 16:05 ET MongoDB, Inc. Announces Third Quarter Fiscal 2022 Financial Results
+MDB download Sep 02, 2021, 16:05 ET MongoDB, Inc. Announces Second Quarter Fiscal 2022 Financial Results
+MDB download Jun 03, 2021, 16:05 ET MongoDB, Inc. Announces First Quarter Fiscal 2022 Financial Results
+MDB download Mar 09, 2021, 16:05 ET MongoDB, Inc. Announces Fourth Quarter and Full Year Fiscal 2021 Financial Results
+MDB download Dec 08, 2020, 16:05 ET MongoDB, Inc. Announces Third Quarter Fiscal 2021 Financial Results
+MDB download Sep 02, 2020, 16:05 ET MongoDB, Inc. Announces Second Quarter Fiscal 2021 Financial Results
+MDB download Jun 04, 2020, 16:05 ET MongoDB, Inc. Announces First Quarter Fiscal 2021 Financial Results
+MDB download Mar 17, 2020, 16:05 ET MongoDB, Inc. Announces Fourth Quarter and Full Year Fiscal 2020 Financial Results
+ADSK 0 1 100 Aug 23, 2022, 09:00 ET releases 18
+ADSK 0 2 100 Jun 06, 2019, 13:42 ET releases 28
+ADSK 0 3 58 Feb 01, 2017, 07:00 ET releases 28
+ADSK download Aug 27, 2026, 16:01 ET AUTODESK, INC. ANNOUNCES FISCAL 2027 SECOND QUARTER RESULTS
+ADSK download May 28, 2026, 16:03 ET AUTODESK, INC. ANNOUNCES FISCAL 2027 FIRST QUARTER RESULTS
+ADSK download Feb 26, 2026, 16:01 ET AUTODESK, INC. ANNOUNCES FISCAL 2026 FOURTH QUARTER RESULTS
+ADSK download Nov 25, 2025, 16:01 ET AUTODESK, INC. ANNOUNCES FISCAL 2026 THIRD QUARTER RESULTS
+ADSK download Aug 28, 2025, 16:01 ET AUTODESK, INC. ANNOUNCES FISCAL 2026 SECOND QUARTER RESULTS
+ADSK download May 22, 2025, 16:01 ET AUTODESK, INC. ANNOUNCES FISCAL 2026 FIRST QUARTER RESULTS
+ADSK download Feb 27, 2025, 16:01 ET AUTODESK, INC. ANNOUNCES FISCAL 2025 FOURTH QUARTER AND FULL-YEAR RESULTS
+ADSK download Nov 26, 2024, 16:01 ET AUTODESK, INC. ANNOUNCES FISCAL 2025 THIRD QUARTER RESULTS
+ADSK download Aug 29, 2024, 16:01 ET AUTODESK, INC. ANNOUNCES FISCAL 2025 SECOND QUARTER RESULTS
+ADSK download Jun 11, 2024, 16:01 ET AUTODESK, INC. ANNOUNCES FISCAL 2025 FIRST QUARTER RESULTS
+ADSK download May 31, 2024, 16:05 ET Autodesk reports results of audit committee investigation Provides preliminary results for first quarter fiscal 2025 and business outlook
+ADSK download Feb 29, 2024, 16:01 ET AUTODESK, INC. ANNOUNCES FISCAL 2024 FOURTH QUARTER AND FULL-YEAR RESULTS
+ADSK download Nov 21, 2023, 16:01 ET AUTODESK, INC. ANNOUNCES FISCAL 2024 THIRD QUARTER RESULTS
+ADSK download Aug 23, 2023, 16:01 ET AUTODESK, INC. ANNOUNCES FISCAL 2024 SECOND QUARTER RESULTS
+ADSK download May 25, 2023, 16:01 ET AUTODESK, INC. ANNOUNCES FISCAL 2024 FIRST QUARTER RESULTS
+ADSK download Feb 23, 2023, 16:01 ET AUTODESK, INC. ANNOUNCES FISCAL 2023 FOURTH QUARTER AND FULL-YEAR RESULTS
+ADSK download Nov 22, 2022, 16:01 ET AUTODESK, INC. ANNOUNCES FISCAL 2023 THIRD QUARTER RESULTS
+ADSK download Aug 24, 2022, 16:01 ET AUTODESK, INC. ANNOUNCES FISCAL 2023 SECOND QUARTER RESULTS
+ADSK download May 26, 2022, 16:01 ET AUTODESK, INC. ANNOUNCES FISCAL 2023 FIRST QUARTER RESULTS
+ADSK download Feb 24, 2022, 16:01 ET AUTODESK, INC. ANNOUNCES FISCAL 2022 FOURTH QUARTER AND FULL-YEAR RESULTS
+ADSK download Nov 23, 2021, 16:01 ET Autodesk, Inc. Announces Fiscal 2022 Third Quarter Results
+ADSK download Aug 25, 2021, 16:05 ET Autodesk, Inc. Announces Fiscal 2022 Second Quarter Results
+ADSK download May 27, 2021, 16:05 ET Autodesk, Inc. Announces Fiscal 2022 First Quarter Results
+ADSK download Feb 25, 2021, 16:05 ET Autodesk, Inc. Announces Fiscal 2021 Fourth Quarter And Full-Year Results
+ADSK download Nov 24, 2020, 16:02 ET Autodesk, Inc. Announces Fiscal 2021 Third Quarter Results
+ADSK download Aug 25, 2020, 16:01 ET Autodesk, Inc. Announces Fiscal 2021 Second Quarter Results
+ADSK download May 27, 2020, 16:01 ET Autodesk, Inc. Announces Fiscal 2021 First Quarter Results
+ADSK download Feb 27, 2020, 16:01 ET Autodesk, Inc. Announces Fiscal 2020 Fourth Quarter And Full-Year Results
+WDAY 0 1 100 Nov 08, 2024, 11:25 ET releases 6
+WDAY 0 2 100 Sep 12, 2022, 09:00 ET releases 13
+WDAY 0 3 39 Jan 13, 2022, 09:00 ET releases 16
+WDAY 1 1 19 Sep 28, 2023, 12:20 ET releases 19
+WDAY download Feb 24, 2026, 16:01 ET Workday Announces Fiscal 2026 Fourth Quarter and Full Year Financial Results
+WDAY download Nov 25, 2025, 16:01 ET Workday Announces Fiscal 2026 Third Quarter Financial Results
+WDAY download Aug 21, 2025, 16:02 ET Workday Announces Fiscal 2026 Second Quarter Financial Results
+WDAY download May 22, 2025, 16:01 ET Workday Announces Fiscal 2026 First Quarter Financial Results
+WDAY download Feb 25, 2025, 16:01 ET Workday Announces Fiscal 2025 Fourth Quarter and Full Year Financial Results
+WDAY download Nov 26, 2024, 16:01 ET Workday Announces Fiscal 2025 Third Quarter Financial Results
+WDAY download May 23, 2024, 16:01 ET Workday Announces Fiscal 2025 First Quarter Financial Results
+WDAY download Feb 26, 2024, 16:01 ET Workday Announces Fiscal 2024 Fourth Quarter and Full Year Financial Results
+WDAY download Nov 28, 2023, 16:01 ET Workday Announces Fiscal 2024 Third Quarter Financial Results
+WDAY download Aug 24, 2023, 16:01 ET Workday Announces Fiscal 2024 Second Quarter Financial Results
+WDAY download May 25, 2023, 16:03 ET Workday Announces Fiscal 2024 First Quarter Financial Results
+WDAY download Feb 27, 2023, 16:01 ET Workday Announces Fiscal 2023 Fourth Quarter and Full Year Financial Results
+WDAY download Nov 29, 2022, 16:01 ET Workday Announces Fiscal 2023 Third Quarter Financial Results
+WDAY download Aug 25, 2022, 16:01 ET Workday Announces Fiscal 2023 Second Quarter Financial Results
+WDAY download May 26, 2022, 16:01 ET Workday Announces Fiscal 2023 First Quarter Financial Results
+WDAY download Feb 28, 2022, 16:01 ET Workday Announces Fiscal 2022 Fourth Quarter and Full Year Financial Results
+WDAY download Aug 27, 2026, 16:01 ET Workday Announces Fiscal 2027 Second Quarter Financial Results
+WDAY download May 21, 2026, 16:01 ET Workday Announces Fiscal 2027 First Quarter Financial Results
+WDAY download Aug 22, 2024, 16:01 ET Workday Announces Fiscal 2025 Second Quarter Financial Results

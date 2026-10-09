@@ -1,0 +1,5 @@
+{
+  "url": "https://fapi.binance.com/fapi/v1/fundingRate?symbol=APTUSDT&startTime=1685577600000&endTime=1685664000000&limit=10",
+  "http": "200",
+  "error": ""
+}

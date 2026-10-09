@@ -1,0 +1,296 @@
+{
+  "verified_events": 47,
+  "within_window": 46,
+  "late_updates": 1,
+  "comparisons": [
+    {
+      "planned_date": "2021-01-27",
+      "within_research_window": true,
+      "matches_observed_meeting": true,
+      "late_update": false
+    },
+    {
+      "planned_date": "2021-03-17",
+      "within_research_window": true,
+      "matches_observed_meeting": true,
+      "late_update": false
+    },
+    {
+      "planned_date": "2021-04-28",
+      "within_research_window": true,
+      "matches_observed_meeting": true,
+      "late_update": false
+    },
+    {
+      "planned_date": "2021-06-16",
+      "within_research_window": true,
+      "matches_observed_meeting": true,
+      "late_update": false
+    },
+    {
+      "planned_date": "2021-07-28",
+      "within_research_window": true,
+      "matches_observed_meeting": true,
+      "late_update": false
+    },
+    {
+      "planned_date": "2021-09-22",
+      "within_research_window": true,
+      "matches_observed_meeting": true,
+      "late_update": false
+    },
+    {
+      "planned_date": "2021-12-15",
+      "within_research_window": true,
+      "matches_observed_meeting": true,
+      "late_update": false
+    },
+    {
+      "planned_date": "2021-11-03",
+      "within_research_window": true,
+      "matches_observed_meeting": true,
+      "late_update": true
+    },
+    {
+      "planned_date": "2022-01-26",
+      "within_research_window": true,
+      "matches_observed_meeting": true,
+      "late_update": false
+    },
+    {
+      "planned_date": "2022-03-16",
+      "within_research_window": true,
+      "matches_observed_meeting": true,
+      "late_update": false
+    },
+    {
+      "planned_date": "2022-05-04",
+      "within_research_window": true,
+      "matches_observed_meeting": true,
+      "late_update": false
+    },
+    {
+      "planned_date": "2022-06-15",
+      "within_research_window": true,
+      "matches_observed_meeting": true,
+      "late_update": false
+    },
+    {
+      "planned_date": "2022-07-27",
+      "within_research_window": true,
+      "matches_observed_meeting": true,
+      "late_update": false
+    },
+    {
+      "planned_date": "2022-09-21",
+      "within_research_window": true,
+      "matches_observed_meeting": true,
+      "late_update": false
+    },
+    {
+      "planned_date": "2022-11-02",
+      "within_research_window": true,
+      "matches_observed_meeting": true,
+      "late_update": false
+    },
+    {
+      "planned_date": "2022-12-14",
+      "within_research_window": true,
+      "matches_observed_meeting": true,
+      "late_update": false
+    },
+    {
+      "planned_date": "2023-02-01",
+      "within_research_window": true,
+      "matches_observed_meeting": true,
+      "late_update": false
+    },
+    {
+      "planned_date": "2023-03-22",
+      "within_research_window": true,
+      "matches_observed_meeting": true,
+      "late_update": false
+    },
+    {
+      "planned_date": "2023-05-03",
+      "within_research_window": true,
+      "matches_observed_meeting": true,
+      "late_update": false
+    },
+    {
+      "planned_date": "2023-06-14",
+      "within_research_window": true,
+      "matches_observed_meeting": true,
+      "late_update": false
+    },
+    {
+      "planned_date": "2023-07-26",
+      "within_research_window": true,
+      "matches_observed_meeting": true,
+      "late_update": false
+    },
+    {
+      "planned_date": "2023-09-20",
+      "within_research_window": true,
+      "matches_observed_meeting": true,
+      "late_update": false
+    },
+    {
+      "planned_date": "2023-11-01",
+      "within_research_window": true,
+      "matches_observed_meeting": true,
+      "late_update": false
+    },
+    {
+      "planned_date": "2023-12-13",
+      "within_research_window": true,
+      "matches_observed_meeting": true,
+      "late_update": false
+    },
+    {
+      "planned_date": "2024-01-31",
+      "within_research_window": true,
+      "matches_observed_meeting": true,
+      "late_update": false
+    },
+    {
+      "planned_date": "2024-03-20",
+      "within_research_window": true,
+      "matches_observed_meeting": true,
+      "late_update": false
+    },
+    {
+      "planned_date": "2024-05-01",
+      "within_research_window": true,
+      "matches_observed_meeting": true,
+      "late_update": false
+    },
+    {
+      "planned_date": "2024-06-12",
+      "within_research_window": true,
+      "matches_observed_meeting": true,
+      "late_update": false
+    },
+    {
+      "planned_date": "2024-07-31",
+      "within_research_window": true,
+      "matches_observed_meeting": true,
+      "late_update": false
+    },
+    {
+      "planned_date": "2024-09-18",
+      "within_research_window": true,
+      "matches_observed_meeting": true,
+      "late_update": false
+    },
+    {
+      "planned_date": "2024-11-07",
+      "within_research_window": true,
+      "matches_observed_meeting": true,
+      "late_update": false
+    },
+    {
+      "planned_date": "2024-12-18",
+      "within_research_window": true,
+      "matches_observed_meeting": true,
+      "late_update": false
+    },
+    {
+      "planned_date": "2025-01-29",
+      "within_research_window": true,
+      "matches_observed_meeting": true,
+      "late_update": false
+    },
+    {
+      "planned_date": "2025-03-19",
+      "within_research_window": true,
+      "matches_observed_meeting": true,
+      "late_update": false
+    },
+    {
+      "planned_date": "2025-05-07",
+      "within_research_window": true,
+      "matches_observed_meeting": true,
+      "late_update": false
+    },
+    {
+      "planned_date": "2025-06-18",
+      "within_research_window": true,
+      "matches_observed_meeting": true,
+      "late_update": false
+    },
+    {
+      "planned_date": "2025-07-30",
+      "within_research_window": true,
+      "matches_observed_meeting": true,
+      "late_update": false
+    },
+    {
+      "planned_date": "2025-09-17",
+      "within_research_window": true,
+      "matches_observed_meeting": true,
+      "late_update": false
+    },
+    {
+      "planned_date": "2025-10-29",
+      "within_research_window": true,
+      "matches_observed_meeting": true,
+      "late_update": false
+    },
+    {
+      "planned_date": "2025-12-10",
+      "within_research_window": true,
+      "matches_observed_meeting": true,
+      "late_update": false
+    },
+    {
+      "planned_date": "2026-01-28",
+      "within_research_window": true,
+      "matches_observed_meeting": true,
+      "late_update": false
+    },
+    {
+      "planned_date": "2026-03-18",
+      "within_research_window": true,
+      "matches_observed_meeting": true,
+      "late_update": false
+    },
+    {
+      "planned_date": "2026-04-29",
+      "within_research_window": true,
+      "matches_observed_meeting": true,
+      "late_update": false
+    },
+    {
+      "planned_date": "2026-06-17",
+      "within_research_window": true,
+      "matches_observed_meeting": true,
+      "late_update": false
+    },
+    {
+      "planned_date": "2026-07-29",
+      "within_research_window": true,
+      "matches_observed_meeting": true,
+      "late_update": false
+    },
+    {
+      "planned_date": "2026-09-16",
+      "within_research_window": true,
+      "matches_observed_meeting": true,
+      "late_update": false
+    },
+    {
+      "planned_date": "2026-10-28",
+      "within_research_window": false,
+      "matches_observed_meeting": false,
+      "late_update": false
+    }
+  ],
+  "ready_for_exploration": true,
+  "source_hash_quote_and_publication_checks": true,
+  "actual_calendar_audit_only": true,
+  "limitations": [
+    "Current source versions; late modifications conservatively delay availability",
+    "No proof all extraordinary rescheduling announcements are archived"
+  ]
+}

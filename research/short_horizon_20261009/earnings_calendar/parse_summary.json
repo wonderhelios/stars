@@ -1,0 +1,17 @@
+{
+  "downloaded": 140,
+  "parsed": 113,
+  "issues": 27,
+  "schedule_updates": 0,
+  "parsed_by_symbol": {
+    "SNPS": 27,
+    "MDB": 26,
+    "DDOG": 19,
+    "VEEV": 22,
+    "WDAY": 19
+  },
+  "issues_by_symbol": {
+    "ADSK": 27
+  },
+  "market_performance_read": false
+}

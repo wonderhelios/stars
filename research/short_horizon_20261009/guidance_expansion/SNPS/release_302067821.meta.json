@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-first-quarter-fiscal-year-2024-302067821.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "2769c98356decd5687f9cebd0fe4d6eab6399cc325058d550696b446f2e03f22",
+  "retrieved_utc": "2026-10-09T03:32:12Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-first-quarter-fiscal-year-2024-302067821.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "2769c98356decd5687f9cebd0fe4d6eab6399cc325058d550696b446f2e03f22",
+      "retrieved_utc": "2026-10-09T03:32:12Z"
+    }
+  ]
+}

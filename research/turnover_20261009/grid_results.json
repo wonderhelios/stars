@@ -1,0 +1,3902 @@
+{
+  "baseline_p0_f0.0007": {
+    "full": {
+      "days": 1192,
+      "sharpe": 1.1292998945108697,
+      "annual_arithmetic": 0.8994001037161335,
+      "annual_cost": 0.40820017474341813,
+      "daily_turnover": 1.5976523473323607
+    },
+    "2023-24": {
+      "days": 547,
+      "sharpe": 0.010069660784515527,
+      "annual_arithmetic": 0.00789905152501154,
+      "annual_cost": 0.3493107860993633,
+      "daily_turnover": 1.3671655033243182
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.0566310705616657,
+      "annual_arithmetic": 1.6554482828611625,
+      "annual_cost": 0.4581420283686864,
+      "daily_turnover": 1.7931194848089487
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 6738629.797390147
+  },
+  "baseline_p0_f0.00045": {
+    "full": {
+      "days": 1192,
+      "sharpe": 1.3126122274879541,
+      "annual_arithmetic": 1.0445000889891742,
+      "annual_cost": 0.26234816662278,
+      "daily_turnover": 1.59724911185863
+    },
+    "2023-24": {
+      "days": 547,
+      "sharpe": 0.1685580310458767,
+      "annual_arithmetic": 0.1320929065015801,
+      "annual_cost": 0.2244949905647278,
+      "daily_turnover": 1.3667883748233047
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.2609034377901196,
+      "annual_arithmetic": 1.8182779631298163,
+      "annual_cost": 0.29445000740379473,
+      "daily_turnover": 1.7926941090033166
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 10840343.71410078
+  },
+  "baseline_p0_f0.00015": {
+    "full": {
+      "days": 1192,
+      "sharpe": 1.5336298063309177,
+      "annual_arithmetic": 1.219143336689989,
+      "annual_cost": 0.08742388868946971,
+      "daily_turnover": 1.5967833550588075
+    },
+    "2023-24": {
+      "days": 547,
+      "sharpe": 0.3591622886269557,
+      "annual_arithmetic": 0.28113325219079915,
+      "annual_cost": 0.07481099170582844,
+      "daily_turnover": 1.3664108074123917
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.5076662623353223,
+      "annual_arithmetic": 2.014634059513333,
+      "annual_cost": 0.09812040752675927,
+      "daily_turnover": 1.7921535621325897
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 19205289.400437456
+  },
+  "baseline_p0_f0.00075": {
+    "full": {
+      "days": 1192,
+      "sharpe": 1.092586188290842,
+      "annual_arithmetic": 0.8703136924595422,
+      "annual_cost": 0.43737941515876444,
+      "daily_turnover": 1.5977330234110116
+    },
+    "2023-24": {
+      "days": 547,
+      "sharpe": -0.021618690405046707,
+      "annual_arithmetic": -0.016962023182253906,
+      "annual_cost": 0.37428060052665935,
+      "daily_turnover": 1.3672350704170204
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.015680762964093,
+      "annual_arithmetic": 1.6227785241743675,
+      "annual_cost": 0.4908911230715729,
+      "daily_turnover": 1.7932095819966134
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 6125879.91904737
+  },
+  "baseline_p1_f0.0007": {
+    "full": {
+      "days": 1191,
+      "sharpe": 1.116564357899315,
+      "annual_arithmetic": 0.8894018318571774,
+      "annual_cost": 0.408221914101171,
+      "daily_turnover": 1.5977374328812954
+    },
+    "2023-24": {
+      "days": 546,
+      "sharpe": -0.01981018371737615,
+      "annual_arithmetic": -0.01554375032048497,
+      "annual_cost": 0.34925039105595707,
+      "daily_turnover": 1.3669291235066814
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.056631456935755,
+      "annual_arithmetic": 1.6554487897936174,
+      "annual_cost": 0.4581419940743288,
+      "daily_turnover": 1.7931193505844572
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 6510195.760720658
+  },
+  "baseline_p1_f0.00045": {
+    "full": {
+      "days": 1191,
+      "sharpe": 1.2998494259419688,
+      "annual_arithmetic": 1.0345123734109989,
+      "annual_cost": 0.26236179321043773,
+      "daily_turnover": 1.5973320743405648
+    },
+    "2023-24": {
+      "days": 546,
+      "sharpe": 0.13858857538237893,
+      "annual_arithmetic": 0.1086334697087906,
+      "annual_cost": 0.2244554124697614,
+      "daily_turnover": 1.366547412296873
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.260905445326945,
+      "annual_arithmetic": 1.818279631428682,
+      "annual_cost": 0.2944499852792895,
+      "daily_turnover": 1.7926939743031323
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 10469195.339202767
+  },
+  "baseline_p1_f0.00015": {
+    "full": {
+      "days": 1191,
+      "sharpe": 1.5208339853990067,
+      "annual_arithmetic": 1.2091682335644987,
+      "annual_cost": 0.08742865233591579,
+      "daily_turnover": 1.596870362299832
+    },
+    "2023-24": {
+      "days": 546,
+      "sharpe": 0.3290908198234803,
+      "annual_arithmetic": 0.2576572655592725,
+      "annual_cost": 0.07479828041738268,
+      "daily_turnover": 1.3661786377604144
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.5076655758882174,
+      "annual_arithmetic": 2.014633332061946,
+      "annual_cost": 0.09812040902974381,
+      "daily_turnover": 1.7921535895843619
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 18539911.440905333
+  },
+  "baseline_p1_f0.00075": {
+    "full": {
+      "days": 1191,
+      "sharpe": 1.0798567050957923,
+      "annual_arithmetic": 0.8603137642159365,
+      "annual_cost": 0.43740264585608246,
+      "daily_turnover": 1.5978178844057804
+    },
+    "2023-24": {
+      "days": 546,
+      "sharpe": -0.05148130805044124,
+      "annual_arithmetic": -0.04040223343416997,
+      "annual_cost": 0.37421575935396906,
+      "daily_turnover": 1.3669982076857319
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.0156830493318227,
+      "annual_arithmetic": 1.622780329668585,
+      "annual_cost": 0.4908910800113597,
+      "daily_turnover": 1.793209424699031
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 5918642.130341116
+  },
+  "baseline_p2_f0.0007": {
+    "full": {
+      "days": 1190,
+      "sharpe": 1.1172596538215651,
+      "annual_arithmetic": 0.8903282136125636,
+      "annual_cost": 0.4083884909332356,
+      "daily_turnover": 1.5983893969989653
+    },
+    "2023-24": {
+      "days": 545,
+      "sharpe": -0.019334279395205486,
+      "annual_arithmetic": -0.015184287491010107,
+      "annual_cost": 0.34950592011471043,
+      "daily_turnover": 1.367929237239571
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.0566345135337865,
+      "annual_arithmetic": 1.6554511796613196,
+      "annual_cost": 0.4581419810047028,
+      "daily_turnover": 1.793119299431322
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 6513992.333042496
+  },
+  "baseline_p2_f0.00045": {
+    "full": {
+      "days": 1190,
+      "sharpe": 1.3005412287519282,
+      "annual_arithmetic": 1.0354956095690226,
+      "annual_cost": 0.2624687288540092,
+      "daily_turnover": 1.5979831284871184
+    },
+    "2023-24": {
+      "days": 545,
+      "sharpe": 0.1390333399734048,
+      "annual_arithmetic": 0.10908220277273115,
+      "annual_cost": 0.22461929889452484,
+      "daily_turnover": 1.3675451987490097
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.2609045909519425,
+      "annual_arithmetic": 1.8182790308155012,
+      "annual_cost": 0.2944500301376045,
+      "daily_turnover": 1.7926942474131176
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 10473083.357729439
+  },
+  "baseline_p2_f0.00015": {
+    "full": {
+      "days": 1190,
+      "sharpe": 1.5215260493686937,
+      "annual_arithmetic": 1.210223592800435,
+      "annual_cost": 0.08746422366082555,
+      "daily_turnover": 1.5975200668643939
+    },
+    "2023-24": {
+      "days": 545,
+      "sharpe": 0.32950066870373435,
+      "annual_arithmetic": 0.2582150568692617,
+      "annual_cost": 0.0748527743862581,
+      "daily_turnover": 1.3671739613928424
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.5076663280060143,
+      "annual_arithmetic": 2.0146339061066203,
+      "annual_cost": 0.09812040948197166,
+      "daily_turnover": 1.7921535978442316
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 18542284.9808038
+  },
+  "baseline_p2_f0.00075": {
+    "full": {
+      "days": 1190,
+      "sharpe": 1.0805507451614982,
+      "annual_arithmetic": 0.8612269422981945,
+      "annual_cost": 0.4375811716342724,
+      "daily_turnover": 1.598470033367205
+    },
+    "2023-24": {
+      "days": 545,
+      "sharpe": -0.051000103326534645,
+      "annual_arithmetic": -0.040061374137895955,
+      "annual_cost": 0.3744896385420582,
+      "daily_turnover": 1.3679986796056918
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.015683712010443,
+      "annual_arithmetic": 1.6227806360310153,
+      "annual_cost": 0.4908910716889342,
+      "daily_turnover": 1.7932093942974765
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 5922313.067580108
+  },
+  "smooth_0.3_p0_f0.0007": {
+    "full": {
+      "days": 1192,
+      "sharpe": 1.4906920248737763,
+      "annual_arithmetic": 1.0684752084966838,
+      "annual_cost": 0.15294081686050098,
+      "daily_turnover": 0.5985941951487319
+    },
+    "2023-24": {
+      "days": 547,
+      "sharpe": 0.35761157145835815,
+      "annual_arithmetic": 0.23846938597322445,
+      "annual_cost": 0.13111225568303084,
+      "daily_turnover": 0.5131595134365199
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.3472510675332043,
+      "annual_arithmetic": 1.772371619225881,
+      "annual_cost": 0.171452790448216,
+      "daily_turnover": 0.6710481035155226
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 14173916.248146133
+  },
+  "smooth_0.3_p0_f0.00045": {
+    "full": {
+      "days": 1192,
+      "sharpe": 1.5670962802938528,
+      "annual_arithmetic": 1.1228637013536553,
+      "annual_cost": 0.0983090734731764,
+      "daily_turnover": 0.5985331718306022
+    },
+    "2023-24": {
+      "days": 547,
+      "sharpe": 0.4273314052919595,
+      "annual_arithmetic": 0.28483828150563134,
+      "annual_cost": 0.08427475753430899,
+      "daily_turnover": 0.513088325931866
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.4290698431922477,
+      "annual_arithmetic": 1.8335612279534523,
+      "annual_cost": 0.11021104373451046,
+      "daily_turnover": 0.6709957000579024
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 16934841.33124403
+  },
+  "smooth_0.3_p0_f0.00015": {
+    "full": {
+      "days": 1192,
+      "sharpe": 1.6591157902755262,
+      "annual_arithmetic": 1.188316776154314,
+      "annual_cost": 0.03276424324475466,
+      "daily_turnover": 0.5984336665708614
+    },
+    "2023-24": {
+      "days": 547,
+      "sharpe": 0.5117574550338538,
+      "annual_arithmetic": 0.3409293933896733,
+      "annual_cost": 0.02808338309562172,
+      "daily_turnover": 0.5129385040296205
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.5272571627244753,
+      "annual_arithmetic": 1.9069538278942497,
+      "annual_cost": 0.03673390293712011,
+      "daily_turnover": 0.6709388664314176
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 20978937.13064344
+  },
+  "smooth_0.3_p0_f0.00075": {
+    "full": {
+      "days": 1192,
+      "sharpe": 1.4753955503331544,
+      "annual_arithmetic": 1.0575866267769614,
+      "annual_cost": 0.16386833853553792,
+      "daily_turnover": 0.5986058028695449
+    },
+    "2023-24": {
+      "days": 547,
+      "sharpe": 0.34358562954879857,
+      "annual_arithmetic": 0.229137812549184,
+      "annual_cost": 0.14048061966790285,
+      "daily_turnover": 0.5131712133987318
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.3309268215352166,
+      "annual_arithmetic": 1.7601625979127664,
+      "annual_cost": 0.18370257453646252,
+      "daily_turnover": 0.6710596330099087
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 13677647.693671178
+  },
+  "smooth_0.3_p1_f0.0007": {
+    "full": {
+      "days": 1191,
+      "sharpe": 1.4769001038619933,
+      "annual_arithmetic": 1.0585816704211308,
+      "annual_cost": 0.1529391220664402,
+      "daily_turnover": 0.5985875619038755
+    },
+    "2023-24": {
+      "days": 546,
+      "sharpe": 0.3230536962370555,
+      "annual_arithmetic": 0.2153649712592987,
+      "annual_cost": 0.13106859567368584,
+      "daily_turnover": 0.5129886327737215
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.3472534034038772,
+      "annual_arithmetic": 1.772374411106961,
+      "annual_cost": 0.17145277696635314,
+      "daily_turnover": 0.671048050748936
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 13694440.019899067
+  },
+  "smooth_0.3_p1_f0.00045": {
+    "full": {
+      "days": 1191,
+      "sharpe": 1.5533186516345354,
+      "annual_arithmetic": 1.1129868121150615,
+      "annual_cost": 0.09830814706973966,
+      "daily_turnover": 0.5985275316270299
+    },
+    "2023-24": {
+      "days": 546,
+      "sharpe": 0.3928129512725316,
+      "annual_arithmetic": 0.26175922702209514,
+      "annual_cost": 0.08424703409138852,
+      "daily_turnover": 0.5129195378471143
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.4290695907757143,
+      "annual_arithmetic": 1.833560860891433,
+      "annual_cost": 0.11021104270722758,
+      "daily_turnover": 0.6709956938035165
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 16360402.784149528
+  },
+  "smooth_0.3_p1_f0.00015": {
+    "full": {
+      "days": 1191,
+      "sharpe": 1.6453403449554684,
+      "annual_arithmetic": 1.178450122979373,
+      "annual_cost": 0.032763992323486195,
+      "daily_turnover": 0.5984290835339945
+    },
+    "2023-24": {
+      "days": 546,
+      "sharpe": 0.4772462008273795,
+      "annual_arithmetic": 0.31785519450882727,
+      "annual_cost": 0.02807426447239302,
+      "daily_turnover": 0.5127719538336625
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.5272572893998935,
+      "annual_arithmetic": 1.9069537368474625,
+      "annual_cost": 0.03673390148115578,
+      "daily_turnover": 0.6709388398384618
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 20264330.014582496
+  },
+  "smooth_0.3_p1_f0.00075": {
+    "full": {
+      "days": 1191,
+      "sharpe": 1.4616002998001372,
+      "annual_arithmetic": 1.0476890371617107,
+      "annual_cost": 0.16386645613014797,
+      "daily_turnover": 0.5985989265028236
+    },
+    "2023-24": {
+      "days": 546,
+      "sharpe": 0.3090227631505562,
+      "annual_arithmetic": 0.20603019882660759,
+      "annual_cost": 0.1404336983593418,
+      "daily_turnover": 0.5129998113583262
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.3309272019548994,
+      "annual_arithmetic": 1.7601630305430538,
+      "annual_cost": 0.18370255805706295,
+      "daily_turnover": 0.6710595728111889
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 13215188.831564033
+  },
+  "smooth_0.3_p2_f0.0007": {
+    "full": {
+      "days": 1190,
+      "sharpe": 1.4794058154231282,
+      "annual_arithmetic": 1.0608685574138104,
+      "annual_cost": 0.15300907241232575,
+      "daily_turnover": 0.5988613401656585
+    },
+    "2023-24": {
+      "days": 545,
+      "sharpe": 0.32787909590614545,
+      "annual_arithmetic": 0.21881106643616077,
+      "annual_cost": 0.1311812094935922,
+      "daily_turnover": 0.5134293913643531
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.3472545934630684,
+      "annual_arithmetic": 1.7723744994026764,
+      "annual_cost": 0.1714527705374572,
+      "daily_turnover": 0.6710480255869166
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 13755764.859559022
+  },
+  "smooth_0.3_p2_f0.00045": {
+    "full": {
+      "days": 1190,
+      "sharpe": 1.5558089364961096,
+      "annual_arithmetic": 1.1152865359745243,
+      "annual_cost": 0.09835298724187415,
+      "daily_turnover": 0.5988005311529628
+    },
+    "2023-24": {
+      "days": 545,
+      "sharpe": 0.3975870792916363,
+      "annual_arithmetic": 0.265217845027768,
+      "annual_cost": 0.0843191454470639,
+      "daily_turnover": 0.513358571976036
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.429070285472158,
+      "annual_arithmetic": 1.8335616314256598,
+      "annual_cost": 0.1102110396111324,
+      "daily_turnover": 0.670995674953622
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 16431910.633590203
+  },
+  "smooth_0.3_p2_f0.00015": {
+    "full": {
+      "days": 1190,
+      "sharpe": 1.647834321264371,
+      "annual_arithmetic": 1.180780831086006,
+      "annual_cost": 0.032778902610820074,
+      "daily_turnover": 0.5987014175492252
+    },
+    "2023-24": {
+      "days": 545,
+      "sharpe": 0.48201306933730487,
+      "annual_arithmetic": 0.32136555311506315,
+      "annual_cost": 0.028098214235569158,
+      "daily_turnover": 0.5132093924304869
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.527257510512024,
+      "annual_arithmetic": 1.9069534303017641,
+      "annual_cost": 0.036733902865877056,
+      "daily_turnover": 0.6709388651301745
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 20351322.58040203
+  },
+  "smooth_0.3_p2_f0.00075": {
+    "full": {
+      "days": 1190,
+      "sharpe": 1.4641042123338892,
+      "annual_arithmetic": 1.0499702137008673,
+      "annual_cost": 0.16394144369895797,
+      "daily_turnover": 0.5988728536948236
+    },
+    "2023-24": {
+      "days": 545,
+      "sharpe": 0.31384927668944207,
+      "annual_arithmetic": 0.20946761524096527,
+      "annual_cost": 0.14055446689577727,
+      "daily_turnover": 0.5134409749617435
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.330926173016653,
+      "annual_arithmetic": 1.760162331779389,
+      "annual_cost": 0.18370253262567654,
+      "daily_turnover": 0.6710594799111472
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 13274508.294886578
+  },
+  "smooth_0.5_p0_f0.0007": {
+    "full": {
+      "days": 1192,
+      "sharpe": 1.3714299702196617,
+      "annual_arithmetic": 1.015018902029728,
+      "annual_cost": 0.225560569542622,
+      "daily_turnover": 0.8828202330435304
+    },
+    "2023-24": {
+      "days": 547,
+      "sharpe": 0.22827693415628822,
+      "annual_arithmetic": 0.16037748901489624,
+      "annual_cost": 0.19373266759406904,
+      "daily_turnover": 0.7582491882351038
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.2623074806516805,
+      "annual_arithmetic": 1.7398078212841666,
+      "annual_cost": 0.2525526042183716,
+      "daily_turnover": 0.9884642043771884
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 11282492.622831041
+  },
+  "smooth_0.5_p0_f0.00045": {
+    "full": {
+      "days": 1192,
+      "sharpe": 1.4809294345393615,
+      "annual_arithmetic": 1.0955058429937192,
+      "annual_cost": 0.1449837498921391,
+      "daily_turnover": 0.8827016736203294
+    },
+    "2023-24": {
+      "days": 547,
+      "sharpe": 0.32787946448517313,
+      "annual_arithmetic": 0.23021019742153448,
+      "annual_cost": 0.12451918884381454,
+      "daily_turnover": 0.7581076946350961
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.3798893145228757,
+      "annual_arithmetic": 1.8293302121843937,
+      "annual_cost": 0.1623389667811833,
+      "daily_turnover": 0.9883650945581937
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 14683796.497650249
+  },
+  "smooth_0.5_p0_f0.00015": {
+    "full": {
+      "days": 1192,
+      "sharpe": 1.6121950308384476,
+      "annual_arithmetic": 1.1919347096056507,
+      "annual_cost": 0.04832165876770967,
+      "daily_turnover": 0.8825873747526881
+    },
+    "2023-24": {
+      "days": 547,
+      "sharpe": 0.4461145574641993,
+      "annual_arithmetic": 0.3129987198782914,
+      "annual_cost": 0.041499221288668384,
+      "daily_turnover": 0.7579766445418883
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.521757890731882,
+      "annual_arithmetic": 1.937326936552729,
+      "annual_cost": 0.054107508846834615,
+      "daily_turnover": 0.9882650017686688
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 20131249.411436196
+  },
+  "smooth_0.5_p0_f0.00075": {
+    "full": {
+      "days": 1192,
+      "sharpe": 1.3494825820722833,
+      "annual_arithmetic": 0.9988666751467992,
+      "annual_cost": 0.24168017443983933,
+      "daily_turnover": 0.8828499522916505
+    },
+    "2023-24": {
+      "days": 547,
+      "sharpe": 0.20835119404958444,
+      "annual_arithmetic": 0.14639379610961392,
+      "annual_cost": 0.20758072165856634,
+      "daily_turnover": 0.7582857412185071
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.238697201622661,
+      "annual_arithmetic": 1.7218165431054666,
+      "annual_cost": 0.27059862509310495,
+      "daily_turnover": 0.9884881281939908
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 10701509.00672252
+  },
+  "smooth_0.5_p1_f0.0007": {
+    "full": {
+      "days": 1191,
+      "sharpe": 1.358133845842725,
+      "annual_arithmetic": 1.0052624926641507,
+      "annual_cost": 0.2255669523954365,
+      "daily_turnover": 0.8828452148549374
+    },
+    "2023-24": {
+      "days": 546,
+      "sharpe": 0.19575821552573533,
+      "annual_arithmetic": 0.13753082271484426,
+      "annual_cost": 0.19368827913446532,
+      "daily_turnover": 0.7580754564949719
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.2623072922813567,
+      "annual_arithmetic": 1.7398074411793776,
+      "annual_cost": 0.25255261999309586,
+      "daily_turnover": 0.9884642661177921
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 10905999.914144661
+  },
+  "smooth_0.5_p1_f0.00045": {
+    "full": {
+      "days": 1191,
+      "sharpe": 1.4675587344088892,
+      "annual_arithmetic": 1.0857084238386454,
+      "annual_cost": 0.14498798389417922,
+      "daily_turnover": 0.882727451410528
+    },
+    "2023-24": {
+      "days": 546,
+      "sharpe": 0.2951790177840771,
+      "annual_arithmetic": 0.20725058686985742,
+      "annual_cost": 0.1244909762227531,
+      "daily_turnover": 0.7579359282968225
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.379892995282896,
+      "annual_arithmetic": 1.829333197458736,
+      "annual_cost": 0.16233893922533996,
+      "daily_turnover": 0.9883649267905019
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 14188821.91752492
+  },
+  "smooth_0.5_p1_f0.00015": {
+    "full": {
+      "days": 1191,
+      "sharpe": 1.5988192503057073,
+      "annual_arithmetic": 1.182150196010432,
+      "annual_cost": 0.048323141555624435,
+      "daily_turnover": 0.8826144576369761
+    },
+    "2023-24": {
+      "days": 546,
+      "sharpe": 0.4133965145127967,
+      "annual_arithmetic": 0.2900442106056727,
+      "annual_cost": 0.04148995805929506,
+      "daily_turnover": 0.7578074531378094
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.5217581199231933,
+      "annual_arithmetic": 1.9373282859809724,
+      "annual_cost": 0.054107510840889314,
+      "daily_turnover": 0.9882650381897592
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 19448408.330290396
+  },
+  "smooth_0.5_p1_f0.00075": {
+    "full": {
+      "days": 1191,
+      "sharpe": 1.33618561790541,
+      "annual_arithmetic": 0.9891075783360987,
+      "annual_cost": 0.2416869478674003,
+      "daily_turnover": 0.8828746954060285
+    },
+    "2023-24": {
+      "days": 546,
+      "sharpe": 0.1758326137393453,
+      "annual_arithmetic": 0.12354500983488476,
+      "annual_cost": 0.20753308537952175,
+      "daily_turnover": 0.7581117274137781
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.238697647627254,
+      "annual_arithmetic": 1.7218163572534058,
+      "annual_cost": 0.2705985896013255,
+      "daily_turnover": 0.9884879985436547
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 10344752.902121892
+  },
+  "smooth_0.5_p2_f0.0007": {
+    "full": {
+      "days": 1190,
+      "sharpe": 1.3600746535949881,
+      "annual_arithmetic": 1.0071340098747583,
+      "annual_cost": 0.22567730082025395,
+      "daily_turnover": 0.883277106928587
+    },
+    "2023-24": {
+      "days": 545,
+      "sharpe": 0.19911499221326653,
+      "annual_arithmetic": 0.14002377702953406,
+      "annual_cost": 0.1938707602976296,
+      "daily_turnover": 0.7587896684838732
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.2623081894267503,
+      "annual_arithmetic": 1.739808547705219,
+      "annual_cost": 0.25255259475022346,
+      "daily_turnover": 0.9884641673198571
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 10942220.075172383
+  },
+  "smooth_0.5_p2_f0.00045": {
+    "full": {
+      "days": 1190,
+      "sharpe": 1.469510528844852,
+      "annual_arithmetic": 1.0876215993510603,
+      "annual_cost": 0.1450588542496454,
+      "daily_turnover": 0.8831589299826205
+    },
+    "2023-24": {
+      "days": 545,
+      "sharpe": 0.29854902217240337,
+      "annual_arithmetic": 0.20981844411191874,
+      "annual_cost": 0.124608096103392,
+      "daily_turnover": 0.7586489869308494
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.37989045389185,
+      "annual_arithmetic": 1.8293312421500245,
+      "annual_cost": 0.16233895221818512,
+      "daily_turnover": 0.9883650058945821
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 14234738.03990492
+  },
+  "smooth_0.5_p2_f0.00015": {
+    "full": {
+      "days": 1190,
+      "sharpe": 1.6007824807725157,
+      "annual_arithmetic": 1.1841123134508849,
+      "annual_cost": 0.048346731419870954,
+      "daily_turnover": 0.883045322737369
+    },
+    "2023-24": {
+      "days": 545,
+      "sharpe": 0.416767273204001,
+      "annual_arithmetic": 0.29269068213448723,
+      "annual_cost": 0.04152892714172281,
+      "daily_turnover": 0.7585192172004166
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.5217597265128724,
+      "annual_arithmetic": 1.9373290406872203,
+      "annual_cost": 0.05410751177892635,
+      "daily_turnover": 0.9882650553228557
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 19509286.149532128
+  },
+  "smooth_0.5_p2_f0.00075": {
+    "full": {
+      "days": 1190,
+      "sharpe": 1.3381245024697994,
+      "annual_arithmetic": 0.9909705172017955,
+      "annual_cost": 0.2418052019656385,
+      "daily_turnover": 0.8833066738470814
+    },
+    "2023-24": {
+      "days": 545,
+      "sharpe": 0.1791869184159302,
+      "annual_arithmetic": 0.12602291550687908,
+      "annual_cost": 0.20772863866547403,
+      "daily_turnover": 0.7588260773168002
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.2386990295890725,
+      "annual_arithmetic": 1.7218177155331589,
+      "annual_cost": 0.27059857715725044,
+      "daily_turnover": 0.9884879530858464
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 10379286.850710366
+  },
+  "smooth_0.7_p0_f0.0007": {
+    "full": {
+      "days": 1192,
+      "sharpe": 1.2602080126361332,
+      "annual_arithmetic": 0.9583064739556227,
+      "annual_cost": 0.2967051880661422,
+      "daily_turnover": 1.1612727517265842
+    },
+    "2023-24": {
+      "days": 547,
+      "sharpe": 0.10836396695269943,
+      "annual_arithmetic": 0.07973010560223764,
+      "annual_cost": 0.2548058465567303,
+      "daily_turnover": 0.9972831567778093
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.1861065350139564,
+      "annual_arithmetic": 1.70339371967547,
+      "annual_cost": 0.33223842807489945,
+      "daily_turnover": 1.3003460981405066
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 8932865.147987606
+  },
+  "smooth_0.7_p0_f0.00045": {
+    "full": {
+      "days": 1192,
+      "sharpe": 1.4003054034323796,
+      "annual_arithmetic": 1.0641598203129568,
+      "annual_cost": 0.19070857191960572,
+      "daily_turnover": 1.161087195857569
+    },
+    "2023-24": {
+      "days": 547,
+      "sharpe": 0.23184483244406046,
+      "annual_arithmetic": 0.17045202256151795,
+      "annual_cost": 0.16377540170120677,
+      "daily_turnover": 0.9971105126405283
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.339931956008878,
+      "annual_arithmetic": 1.8220794565455727,
+      "annual_cost": 0.21354957053893012,
+      "daily_turnover": 1.3001495923222535
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 12633718.890908089
+  },
+  "smooth_0.7_p0_f0.00015": {
+    "full": {
+      "days": 1192,
+      "sharpe": 1.5680551373816967,
+      "annual_arithmetic": 1.1907774105392352,
+      "annual_cost": 0.06355712539777748,
+      "daily_turnover": 1.1608607378589495
+    },
+    "2023-24": {
+      "days": 547,
+      "sharpe": 0.37985751895761133,
+      "annual_arithmetic": 0.27902377505255416,
+      "annual_cost": 0.05458048542802879,
+      "daily_turnover": 0.9969038434343158
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.5240156466598025,
+      "annual_arithmetic": 1.9640010362930562,
+      "annual_cost": 0.07116987278297522,
+      "daily_turnover": 1.2999063522004606
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 19120927.71832117
+  },
+  "smooth_0.7_p0_f0.00075": {
+    "full": {
+      "days": 1192,
+      "sharpe": 1.2323886008329825,
+      "annual_arithmetic": 0.9372924963568648,
+      "annual_cost": 0.31791350490043496,
+      "daily_turnover": 1.1613278717824107
+    },
+    "2023-24": {
+      "days": 547,
+      "sharpe": 0.08421378197048965,
+      "annual_arithmetic": 0.06197269497537793,
+      "annual_cost": 0.27302221065568927,
+      "daily_turnover": 0.997341408787906
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.1552781293381784,
+      "annual_arithmetic": 1.6796179713269013,
+      "annual_cost": 0.3559841063762114,
+      "daily_turnover": 1.300398562104882
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 8338360.887916454
+  },
+  "smooth_0.7_p1_f0.0007": {
+    "full": {
+      "days": 1191,
+      "sharpe": 1.2471511171550875,
+      "annual_arithmetic": 0.9484978540461175,
+      "annual_cost": 0.2967047796107579,
+      "daily_turnover": 1.1612711530753734
+    },
+    "2023-24": {
+      "days": 546,
+      "sharpe": 0.07707375383956219,
+      "annual_arithmetic": 0.0567155090794899,
+      "annual_cost": 0.2547307506324404,
+      "daily_turnover": 0.9969892392659117
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.18611672468711,
+      "annual_arithmetic": 1.703401978622518,
+      "annual_cost": 0.332236283211008,
+      "daily_turnover": 1.3003377033698944
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 8634204.060520642
+  },
+  "smooth_0.7_p1_f0.00045": {
+    "full": {
+      "days": 1191,
+      "sharpe": 1.3872220217984166,
+      "annual_arithmetic": 1.0543516201947603,
+      "annual_cost": 0.19070932288793127,
+      "daily_turnover": 1.161091767963052
+    },
+    "2023-24": {
+      "days": 546,
+      "sharpe": 0.20049241294735357,
+      "annual_arithmetic": 0.14742149692464102,
+      "annual_cost": 0.16372774357231068,
+      "daily_turnover": 0.9968203566046312
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.3399318920890932,
+      "annual_arithmetic": 1.822078515242024,
+      "annual_cost": 0.21354954351789843,
+      "daily_turnover": 1.3001494278106451
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 12207892.998126952
+  },
+  "smooth_0.7_p1_f0.00015": {
+    "full": {
+      "days": 1191,
+      "sharpe": 1.5549459293900592,
+      "annual_arithmetic": 1.1809744783935558,
+      "annual_cost": 0.06355747458567418,
+      "daily_turnover": 1.1608671157200763
+    },
+    "2023-24": {
+      "days": 546,
+      "sharpe": 0.3484237786303006,
+      "annual_arithmetic": 0.2559683817484148,
+      "annual_cost": 0.05456481317358105,
+      "daily_turnover": 0.996617592211526
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.5240179234737936,
+      "annual_arithmetic": 1.9640028950885122,
+      "annual_cost": 0.07116986703684137,
+      "daily_turnover": 1.2999062472482443
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 18470515.27227657
+  },
+  "smooth_0.7_p1_f0.00075": {
+    "full": {
+      "days": 1191,
+      "sharpe": 1.2193327787079689,
+      "annual_arithmetic": 0.927480268140863,
+      "annual_cost": 0.31791425116704863,
+      "daily_turnover": 1.1613305978704973
+    },
+    "2023-24": {
+      "days": 546,
+      "sharpe": 0.05294045305183057,
+      "annual_arithmetic": 0.038963959455235474,
+      "annual_cost": 0.2729416487934322,
+      "daily_turnover": 0.9970471188801175
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.155281446258537,
+      "annual_arithmetic": 1.6796196550282312,
+      "annual_cost": 0.35598408201355186,
+      "daily_turnover": 1.3003984731088651
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 8059935.741143288
+  },
+  "smooth_0.7_p2_f0.0007": {
+    "full": {
+      "days": 1190,
+      "sharpe": 1.2484527026717835,
+      "annual_arithmetic": 0.9498890052361654,
+      "annual_cost": 0.296842079624974,
+      "daily_turnover": 1.161808530821816
+    },
+    "2023-24": {
+      "days": 545,
+      "sharpe": 0.07892103923063747,
+      "annual_arithmetic": 0.05812911104902992,
+      "annual_cost": 0.2549510122463267,
+      "daily_turnover": 0.9978513199464843
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.1861039917238427,
+      "annual_arithmetic": 1.7033915514873108,
+      "annual_cost": 0.3322384078751488,
+      "daily_turnover": 1.3003460190808172
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 8650844.566055287
+  },
+  "smooth_0.7_p2_f0.00045": {
+    "full": {
+      "days": 1190,
+      "sharpe": 1.388537735763759,
+      "annual_arithmetic": 1.0557972731957277,
+      "annual_cost": 0.19079674186817366,
+      "daily_turnover": 1.1616239991974044
+    },
+    "2023-24": {
+      "days": 545,
+      "sharpe": 0.20233086819439988,
+      "annual_arithmetic": 0.1489122601253559,
+      "annual_cost": 0.16386910824173206,
+      "daily_turnover": 0.9976810243027828
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.339934280741851,
+      "annual_arithmetic": 1.8220799586582896,
+      "annual_cost": 0.2135495485757871,
+      "daily_turnover": 1.3001494586044877
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 12230042.935036918
+  },
+  "smooth_0.7_p2_f0.00015": {
+    "full": {
+      "days": 1190,
+      "sharpe": 1.5562709580664773,
+      "annual_arithmetic": 1.1824799255874534,
+      "annual_cost": 0.06358657784700862,
+      "daily_turnover": 1.1613986821371438
+    },
+    "2023-24": {
+      "days": 545,
+      "sharpe": 0.3502633209144739,
+      "annual_arithmetic": 0.25756022399824424,
+      "annual_cost": 0.05461185716201805,
+      "daily_turnover": 0.9974768431418822
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.52401564315821,
+      "annual_arithmetic": 1.9640012238294986,
+      "annual_cost": 0.07116986896843473,
+      "daily_turnover": 1.2999062825284884
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 18501194.903746113
+  },
+  "smooth_0.7_p2_f0.00075": {
+    "full": {
+      "days": 1190,
+      "sharpe": 1.220616785002694,
+      "annual_arithmetic": 0.9288478033301399,
+      "annual_cost": 0.3180591390042381,
+      "daily_turnover": 1.1618598685086323
+    },
+    "2023-24": {
+      "days": 545,
+      "sharpe": 0.054784243177294634,
+      "annual_arithmetic": 0.040358621769733975,
+      "annual_cost": 0.27317770373144457,
+      "daily_turnover": 0.9979094200235418
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.1552447983337735,
+      "annual_arithmetic": 1.6795867241835067,
+      "annual_cost": 0.35598221221923426,
+      "daily_turnover": 1.3003916428099882
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 8075339.0036359755
+  },
+  "vol_q0.6_a0.3_p0_f0.0007": {
+    "full": {
+      "days": 1192,
+      "sharpe": 1.2794221336425626,
+      "annual_arithmetic": 0.9813786033489639,
+      "annual_cost": 0.30075561372443016,
+      "daily_turnover": 1.1771256897237972
+    },
+    "2023-24": {
+      "days": 547,
+      "sharpe": 0.16311668008659036,
+      "annual_arithmetic": 0.12122677768246937,
+      "annual_cost": 0.24047115679688186,
+      "daily_turnover": 0.9411786958782069
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.1786763278372505,
+      "annual_arithmetic": 1.7108406942630296,
+      "annual_cost": 0.35188057176996346,
+      "daily_turnover": 1.3772233728765693
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 9500622.896490352
+  },
+  "vol_q0.6_a0.3_p0_f0.00045": {
+    "full": {
+      "days": 1192,
+      "sharpe": 1.419391869220639,
+      "annual_arithmetic": 1.0882505436157108,
+      "annual_cost": 0.19330116149206797,
+      "daily_turnover": 1.1768716072576437
+    },
+    "2023-24": {
+      "days": 547,
+      "sharpe": 0.2784713384459878,
+      "annual_arithmetic": 0.20682409142208202,
+      "annual_cost": 0.15455002734370893,
+      "daily_turnover": 0.9409438498855948
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.338771579443115,
+      "annual_arithmetic": 1.8357548371814703,
+      "annual_cost": 0.22616452642098644,
+      "daily_turnover": 1.3769529766878932
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 13476031.024357071
+  },
+  "vol_q0.6_a0.3_p0_f0.00015": {
+    "full": {
+      "days": 1192,
+      "sharpe": 1.5877895582632824,
+      "annual_arithmetic": 1.2167399542702475,
+      "annual_cost": 0.06441708142063099,
+      "daily_turnover": 1.1765676971804748
+    },
+    "2023-24": {
+      "days": 547,
+      "sharpe": 0.41687983789831945,
+      "annual_arithmetic": 0.30939131046894125,
+      "annual_cost": 0.05150247038040468,
+      "daily_turnover": 0.9406843905096746
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.5317356988345545,
+      "annual_arithmetic": 1.986227873897092,
+      "annual_cost": 0.07536947248885392,
+      "daily_turnover": 1.3766113696594324
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 20511271.08517801
+  },
+  "vol_q0.6_a0.3_p0_f0.00075": {
+    "full": {
+      "days": 1192,
+      "sharpe": 1.2513443195043976,
+      "annual_arithmetic": 0.9599314429160072,
+      "annual_cost": 0.32225283978625874,
+      "daily_turnover": 1.1771793234201233
+    },
+    "2023-24": {
+      "days": 547,
+      "sharpe": 0.14005530385240236,
+      "annual_arithmetic": 0.10410158870891933,
+      "annual_cost": 0.2576601860705887,
+      "daily_turnover": 0.9412244240021506
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.1465028361466225,
+      "annual_arithmetic": 1.6857282340032584,
+      "annual_cost": 0.37703141588311395,
+      "daily_turnover": 1.377283710988544
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 8856840.217353264
+  },
+  "vol_q0.6_a0.3_p1_f0.0007": {
+    "full": {
+      "days": 1191,
+      "sharpe": 1.2662932456584364,
+      "annual_arithmetic": 0.9714501250842785,
+      "annual_cost": 0.30068714537608343,
+      "daily_turnover": 1.1768577118437706
+    },
+    "2023-24": {
+      "days": 546,
+      "sharpe": 0.13183194391090516,
+      "annual_arithmetic": 0.09799424560405512,
+      "annual_cost": 0.2402114309483709,
+      "daily_turnover": 0.9401621563537021
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.178676510224651,
+      "annual_arithmetic": 1.7108406835280028,
+      "annual_cost": 0.3518805408451238,
+      "daily_turnover": 1.377223251840015
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 9178590.269374922
+  },
+  "vol_q0.6_a0.3_p1_f0.00045": {
+    "full": {
+      "days": 1191,
+      "sharpe": 1.4062104299653728,
+      "annual_arithmetic": 1.078300414759431,
+      "annual_cost": 0.19325730322334844,
+      "daily_turnover": 1.1766045858346939
+    },
+    "2023-24": {
+      "days": 546,
+      "sharpe": 0.2470289663791324,
+      "annual_arithmetic": 0.18350394381663995,
+      "annual_cost": 0.15438340133288678,
+      "daily_turnover": 0.9399293840662818
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.3387730112130356,
+      "annual_arithmetic": 1.835756032022631,
+      "annual_cost": 0.22616451319573924,
+      "daily_turnover": 1.3769528961688844
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 13014677.788263993
+  },
+  "vol_q0.6_a0.3_p1_f0.00015": {
+    "full": {
+      "days": 1191,
+      "sharpe": 1.5745477910022319,
+      "annual_arithmetic": 1.2067653642571465,
+      "annual_cost": 0.06440252714306972,
+      "daily_turnover": 1.1763018656268442
+    },
+    "2023-24": {
+      "days": 546,
+      "sharpe": 0.38525753232170945,
+      "annual_arithmetic": 0.28597093927628353,
+      "annual_cost": 0.05144707778304044,
+      "daily_turnover": 0.9396726535715149
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.5317361133909086,
+      "annual_arithmetic": 1.986228551915366,
+      "annual_cost": 0.0753694656710945,
+      "daily_turnover": 1.3766112451341461
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 19800808.270466983
+  },
+  "vol_q0.6_a0.3_p1_f0.00075": {
+    "full": {
+      "days": 1191,
+      "sharpe": 1.2382263006665435,
+      "annual_arithmetic": 0.9500073391291195,
+      "annual_cost": 0.32217944148602234,
+      "daily_turnover": 1.1769112017754242
+    },
+    "2023-24": {
+      "days": 546,
+      "sharpe": 0.10880011993257863,
+      "annual_arithmetic": 0.08088486635611943,
+      "annual_cost": 0.2573818146453621,
+      "daily_turnover": 0.9402075420835144
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.1465047447641092,
+      "annual_arithmetic": 1.685729618406729,
+      "annual_cost": 0.37703138606741854,
+      "daily_turnover": 1.3772836020727617
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 8557235.944206933
+  },
+  "vol_q0.6_a0.3_p2_f0.0007": {
+    "full": {
+      "days": 1190,
+      "sharpe": 1.2670603888682357,
+      "annual_arithmetic": 0.9724450080355604,
+      "annual_cost": 0.30076338522167423,
+      "daily_turnover": 1.1771561065427563
+    },
+    "2023-24": {
+      "days": 545,
+      "sharpe": 0.13247617169030285,
+      "annual_arithmetic": 0.09856361693529277,
+      "annual_cost": 0.2402668877795021,
+      "daily_turnover": 0.9403792085303408
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.1786766858332207,
+      "annual_arithmetic": 1.7108409121435388,
+      "annual_cost": 0.3518805807348275,
+      "daily_turnover": 1.3772234079640997
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 9183930.335343609
+  },
+  "vol_q0.6_a0.3_p2_f0.00045": {
+    "full": {
+      "days": 1190,
+      "sharpe": 1.4069518368428022,
+      "annual_arithmetic": 1.0793196672400462,
+      "annual_cost": 0.19330614171374194,
+      "daily_turnover": 1.1769019282419602
+    },
+    "2023-24": {
+      "days": 545,
+      "sharpe": 0.24758735187164294,
+      "annual_arithmetic": 0.18408773092280026,
+      "annual_cost": 0.15441871139254812,
+      "daily_turnover": 0.9401443615984665
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.338773045202936,
+      "annual_arithmetic": 1.8357559545158584,
+      "annual_cost": 0.22616451307040963,
+      "daily_turnover": 1.3769528954058425
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 13019473.556289475
+  },
+  "vol_q0.6_a0.3_p2_f0.00015": {
+    "full": {
+      "days": 1190,
+      "sharpe": 1.575260196956826,
+      "annual_arithmetic": 1.2078152704760199,
+      "annual_cost": 0.06441874851626535,
+      "daily_turnover": 1.1765981464158055
+    },
+    "2023-24": {
+      "days": 545,
+      "sharpe": 0.38571907286702134,
+      "annual_arithmetic": 0.2865764475034947,
+      "annual_cost": 0.051458728810901716,
+      "daily_turnover": 0.9398854577333647
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.5317333924525833,
+      "annual_arithmetic": 1.986226368956681,
+      "annual_cost": 0.07536946284095244,
+      "daily_turnover": 1.376611193442054
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 19803119.973048184
+  },
+  "vol_q0.6_a0.3_p2_f0.00075": {
+    "full": {
+      "days": 1190,
+      "sharpe": 1.2389938002512275,
+      "annual_arithmetic": 0.9509938282215309,
+      "annual_cost": 0.3222611415059206,
+      "daily_turnover": 1.1772096493366961
+    },
+    "2023-24": {
+      "days": 545,
+      "sharpe": 0.10945068862529204,
+      "annual_arithmetic": 0.08144332154254988,
+      "annual_cost": 0.2574413166038366,
+      "daily_turnover": 0.9404249008359329
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.14650520813393,
+      "annual_arithmetic": 1.6857303028572588,
+      "annual_cost": 0.3770313811518676,
+      "daily_turnover": 1.377283584116411
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 8562479.361598263
+  },
+  "vol_q0.6_a0.5_p0_f0.0007": {
+    "full": {
+      "days": 1192,
+      "sharpe": 1.1825932648373754,
+      "annual_arithmetic": 0.9136628721796456,
+      "annual_cost": 0.3312856143264694,
+      "daily_turnover": 1.2966168858178841
+    },
+    "2023-24": {
+      "days": 547,
+      "sharpe": 0.03157616533197001,
+      "annual_arithmetic": 0.023752043529446775,
+      "annual_cost": 0.2715872680539987,
+      "daily_turnover": 1.062963867138938
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.1175164241888402,
+      "annual_arithmetic": 1.6683624431434578,
+      "annual_cost": 0.3819135141885492,
+      "daily_turnover": 1.4947691357673158
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 7518038.488072275
+  },
+  "vol_q0.6_a0.5_p0_f0.00045": {
+    "full": {
+      "days": 1192,
+      "sharpe": 1.3356051493229202,
+      "annual_arithmetic": 1.031306459348855,
+      "annual_cost": 0.21292412177269107,
+      "daily_turnover": 1.2963416850696565
+    },
+    "2023-24": {
+      "days": 547,
+      "sharpe": 0.1601543094667251,
+      "annual_arithmetic": 0.12038225437957308,
+      "annual_cost": 0.1745494098739426,
+      "daily_turnover": 1.0627056917743842
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.2907150174198176,
+      "annual_arithmetic": 1.8038266765863704,
+      "annual_cost": 0.24546825728992427,
+      "daily_turnover": 1.4944794964378951
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 11048569.850443177
+  },
+  "vol_q0.6_a0.5_p0_f0.00015": {
+    "full": {
+      "days": 1192,
+      "sharpe": 1.5196563383948705,
+      "annual_arithmetic": 1.1726888421417319,
+      "annual_cost": 0.07095649185248644,
+      "daily_turnover": 1.2960089836070585
+    },
+    "2023-24": {
+      "days": 547,
+      "sharpe": 0.31451364805521065,
+      "annual_arithmetic": 0.2362068525516633,
+      "annual_cost": 0.05816732260461766,
+      "daily_turnover": 1.0624168512258934
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.4993310513008233,
+      "annual_arithmetic": 1.966883645716565,
+      "annual_cost": 0.08180250050145424,
+      "daily_turnover": 1.4941095982000776
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 17544466.504369386
+  },
+  "vol_q0.6_a0.5_p0_f0.00075": {
+    "full": {
+      "days": 1192,
+      "sharpe": 1.1519001175097665,
+      "annual_arithmetic": 0.8900496310860831,
+      "annual_cost": 0.354964857710596,
+      "daily_turnover": 1.296675279308113
+    },
+    "2023-24": {
+      "days": 547,
+      "sharpe": 0.005868260466318959,
+      "annual_arithmetic": 0.004414850494728222,
+      "annual_cost": 0.2910002040835333,
+      "daily_turnover": 1.0630144441407607
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.08271325689568,
+      "annual_arithmetic": 1.6411228481147202,
+      "annual_cost": 0.4092108507865701,
+      "daily_turnover": 1.494834158124457
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 6958835.717547333
+  },
+  "vol_q0.6_a0.5_p1_f0.0007": {
+    "full": {
+      "days": 1191,
+      "sharpe": 1.169490601077849,
+      "annual_arithmetic": 0.9036726125069267,
+      "annual_cost": 0.33124280509195136,
+      "daily_turnover": 1.2964493349978528
+    },
+    "2023-24": {
+      "days": 546,
+      "sharpe": 0.00044226312396578797,
+      "annual_arithmetic": 0.00033273974879256097,
+      "annual_cost": 0.27138452226847065,
+      "daily_turnover": 1.062170341559572
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.117513663157747,
+      "annual_arithmetic": 1.668360318748696,
+      "annual_cost": 0.38191353752857227,
+      "daily_turnover": 1.4947692271176998
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 7263092.384182586
+  },
+  "vol_q0.6_a0.5_p1_f0.00045": {
+    "full": {
+      "days": 1191,
+      "sharpe": 1.3224604333330385,
+      "annual_arithmetic": 1.0213058190711233,
+      "annual_cost": 0.21289724808363825,
+      "daily_turnover": 1.296178070524434
+    },
+    "2023-24": {
+      "days": 546,
+      "sharpe": 0.12889155847055853,
+      "annual_arithmetic": 0.09690113218411178,
+      "annual_cost": 0.1744205418425307,
+      "daily_turnover": 1.061921107108254
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.29071383387529,
+      "annual_arithmetic": 1.8038251354126862,
+      "annual_cost": 0.2454682273202968,
+      "daily_turnover": 1.49447931397441
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 10670225.531767247
+  },
+  "vol_q0.6_a0.5_p1_f0.00015": {
+    "full": {
+      "days": 1191,
+      "sharpe": 1.5064620346705995,
+      "annual_arithmetic": 1.1626756852776365,
+      "annual_cost": 0.07094743319911698,
+      "daily_turnover": 1.295843528750995
+    },
+    "2023-24": {
+      "days": 546,
+      "sharpe": 0.28309796296777595,
+      "annual_arithmetic": 0.21265104567403112,
+      "annual_cost": 0.05812413606234807,
+      "daily_turnover": 1.0616280559332982
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.4993299693480817,
+      "annual_arithmetic": 1.9668825895002233,
+      "annual_cost": 0.08180250333349809,
+      "daily_turnover": 1.4941096499269058
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 16936676.952555276
+  },
+  "vol_q0.6_a0.5_p1_f0.00075": {
+    "full": {
+      "days": 1191,
+      "sharpe": 1.1387868706293152,
+      "annual_arithmetic": 0.8800466290400379,
+      "annual_cost": 0.3549199573759222,
+      "daily_turnover": 1.2965112598207202
+    },
+    "2023-24": {
+      "days": 546,
+      "sharpe": -0.025237098572922036,
+      "annual_arithmetic": -0.01899017392375794,
+      "annual_cost": 0.2907828771340823,
+      "daily_turnover": 1.0622205557409399
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.0826743603744777,
+      "annual_arithmetic": 1.6410917366652051,
+      "annual_cost": 0.4092127415806424,
+      "daily_turnover": 1.4948410651347668
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 6722994.235669205
+  },
+  "vol_q0.6_a0.5_p2_f0.0007": {
+    "full": {
+      "days": 1190,
+      "sharpe": 1.1702173941733414,
+      "annual_arithmetic": 0.9046125028870019,
+      "annual_cost": 0.33134467398630174,
+      "daily_turnover": 1.2968480390853299
+    },
+    "2023-24": {
+      "days": 545,
+      "sharpe": 0.0009646229619582957,
+      "annual_arithmetic": 0.0007264081196901094,
+      "annual_cost": 0.2714971519352516,
+      "daily_turnover": 1.062611162173196
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.1175151519188207,
+      "annual_arithmetic": 1.6683612186206218,
+      "annual_cost": 0.38191351044804184,
+      "daily_turnover": 1.4947691211273655
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 7267364.539089634
+  },
+  "vol_q0.6_a0.5_p2_f0.00045": {
+    "full": {
+      "days": 1190,
+      "sharpe": 1.3231674661219244,
+      "annual_arithmetic": 1.022278912917514,
+      "annual_cost": 0.21296209888847015,
+      "daily_turnover": 1.296572900386424
+    },
+    "2023-24": {
+      "days": 545,
+      "sharpe": 0.12934243609249638,
+      "annual_arithmetic": 0.09732939644573564,
+      "annual_cost": 0.174491543157653,
+      "daily_turnover": 1.0623533829994094
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.2907134767310375,
+      "annual_arithmetic": 1.8038254035797145,
+      "annual_cost": 0.24546822737419932,
+      "daily_turnover": 1.4944793143025834
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 10674220.686009478
+  },
+  "vol_q0.6_a0.5_p2_f0.00015": {
+    "full": {
+      "days": 1190,
+      "sharpe": 1.507148331070034,
+      "annual_arithmetic": 1.1636909268769575,
+      "annual_cost": 0.07096915064900042,
+      "daily_turnover": 1.296240194502291
+    },
+    "2023-24": {
+      "days": 545,
+      "sharpe": 0.2834665215927167,
+      "annual_arithmetic": 0.21312342952004398,
+      "annual_cost": 0.05814803344279939,
+      "daily_turnover": 1.0620645377680256
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.499331937659807,
+      "annual_arithmetic": 1.9668836184421012,
+      "annual_cost": 0.08180249774571292,
+      "daily_turnover": 1.4941095478669029
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 16938792.076726288
+  },
+  "vol_q0.6_a0.5_p2_f0.00075": {
+    "full": {
+      "days": 1190,
+      "sharpe": 1.1395332341541913,
+      "annual_arithmetic": 0.880991935869851,
+      "annual_cost": 0.35502816358346484,
+      "daily_turnover": 1.2969065336382277
+    },
+    "2023-24": {
+      "days": 545,
+      "sharpe": -0.02471220270842086,
+      "annual_arithmetic": -0.018612296555061268,
+      "annual_cost": 0.2909036885709502,
+      "daily_turnover": 1.0626618760582656
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.0827133049587854,
+      "annual_arithmetic": 1.6411226438878002,
+      "annual_cost": 0.4092108595242719,
+      "daily_turnover": 1.4948341900430022
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 6727501.456346819
+  },
+  "vol_q0.75_a0.3_p0_f0.0007": {
+    "full": {
+      "days": 1192,
+      "sharpe": 0.914958658688595,
+      "annual_arithmetic": 0.7239236115116261,
+      "annual_cost": 0.3398637704907183,
+      "daily_turnover": 1.3301908825468427
+    },
+    "2023-24": {
+      "days": 547,
+      "sharpe": -0.48413332518309987,
+      "annual_arithmetic": -0.3795444765581601,
+      "annual_cost": 0.2701083172488102,
+      "daily_turnover": 1.0571754099757737
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.0887157116490704,
+      "annual_arithmetic": 1.6597329823242977,
+      "annual_cost": 0.3990207207594373,
+      "daily_turnover": 1.5617249344792068
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 3828139.608662813
+  },
+  "vol_q0.75_a0.3_p0_f0.00045": {
+    "full": {
+      "days": 1192,
+      "sharpe": 1.068350227483896,
+      "annual_arithmetic": 0.8447940309492102,
+      "annual_cost": 0.21843211220952946,
+      "daily_turnover": 1.3298758734217928
+    },
+    "2023-24": {
+      "days": 547,
+      "sharpe": -0.3617774184703943,
+      "annual_arithmetic": -0.28341064239366237,
+      "annual_cost": 0.17359431620406532,
+      "daily_turnover": 1.056890814027795
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.2686949466209487,
+      "annual_arithmetic": 1.8015815601252587,
+      "annual_cost": 0.256457343860675,
+      "daily_turnover": 1.5613841330939116
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 5687445.592117226
+  },
+  "vol_q0.75_a0.3_p0_f0.00015": {
+    "full": {
+      "days": 1192,
+      "sharpe": 1.2530315512632213,
+      "annual_arithmetic": 0.9901570329526175,
+      "annual_cost": 0.07279028194972535,
+      "daily_turnover": 1.3295028666616504
+    },
+    "2023-24": {
+      "days": 547,
+      "sharpe": -0.2149100891358012,
+      "annual_arithmetic": -0.16820871582531502,
+      "annual_cost": 0.057849782614045796,
+      "daily_turnover": 1.0566170340464986
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.485831638596902,
+      "annual_arithmetic": 1.9725230245518872,
+      "annual_cost": 0.08546075192897608,
+      "daily_turnover": 1.5609269758717093
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 9153508.55424011
+  },
+  "vol_q0.75_a0.3_p0_f0.00075": {
+    "full": {
+      "days": 1192,
+      "sharpe": 0.8842232807988735,
+      "annual_arithmetic": 0.6996905887213305,
+      "annual_cost": 0.36415756722070386,
+      "daily_turnover": 1.3302559533176397
+    },
+    "2023-24": {
+      "days": 547,
+      "sharpe": -0.5085950236837355,
+      "annual_arithmetic": -0.3987828586282272,
+      "annual_cost": 0.2894162399170012,
+      "daily_turnover": 1.0572282736694107
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.0526142336468687,
+      "annual_arithmetic": 1.6312641944580875,
+      "annual_cost": 0.4275428478953169,
+      "daily_turnover": 1.5618003576084634
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 3535958.5852474365
+  },
+  "vol_q0.75_a0.3_p1_f0.0007": {
+    "full": {
+      "days": 1191,
+      "sharpe": 0.9019938013152679,
+      "annual_arithmetic": 0.7137737259555434,
+      "annual_cost": 0.3398281145327771,
+      "daily_turnover": 1.3300513288954094
+    },
+    "2023-24": {
+      "days": 546,
+      "sharpe": -0.5148406932659323,
+      "annual_arithmetic": -0.4037006007247029,
+      "annual_cost": 0.26990286306709843,
+      "daily_turnover": 1.0563712840199546
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.088709991159765,
+      "annual_arithmetic": 1.6597287373778913,
+      "annual_cost": 0.39902065298279343,
+      "daily_turnover": 1.561724669208585
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 3698318.0629055016
+  },
+  "vol_q0.75_a0.3_p1_f0.00045": {
+    "full": {
+      "days": 1191,
+      "sharpe": 1.0553462565520266,
+      "annual_arithmetic": 0.8346368803288683,
+      "annual_cost": 0.2184093685679873,
+      "daily_turnover": 1.3297374037624798
+    },
+    "2023-24": {
+      "days": 546,
+      "sharpe": -0.3926158425767818,
+      "annual_arithmetic": -0.30763051933094765,
+      "annual_cost": 0.17346259448908552,
+      "daily_turnover": 1.0560888553368981
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.268692652350993,
+      "annual_arithmetic": 1.8015795163199686,
+      "annual_cost": 0.25645733546268557,
+      "daily_turnover": 1.5613840819646
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 5492688.244496563
+  },
+  "vol_q0.75_a0.3_p1_f0.00015": {
+    "full": {
+      "days": 1191,
+      "sharpe": 1.239978672922402,
+      "annual_arithmetic": 0.9799892143188896,
+      "annual_cost": 0.0727827543982772,
+      "daily_turnover": 1.3293653771374832
+    },
+    "2023-24": {
+      "days": 546,
+      "sharpe": -0.2459107751259515,
+      "annual_arithmetic": -0.1925100626423603,
+      "annual_cost": 0.05780600591165688,
+      "daily_turnover": 1.0558174595736418
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.485831844372929,
+      "annual_arithmetic": 1.9725234859791105,
+      "annual_cost": 0.08546074614043954,
+      "daily_turnover": 1.5609268701450145
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 8836364.99630798
+  },
+  "vol_q0.75_a0.3_p1_f0.00075": {
+    "full": {
+      "days": 1191,
+      "sharpe": 0.871272028504961,
+      "annual_arithmetic": 0.6895466435722029,
+      "annual_cost": 0.36411934879745805,
+      "daily_turnover": 1.3301163426391163
+    },
+    "2023-24": {
+      "days": 546,
+      "sharpe": -0.539271025254144,
+      "annual_arithmetic": -0.4229225976083585,
+      "annual_cost": 0.28919602338586314,
+      "daily_turnover": 1.056423829720048
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.052615397250466,
+      "annual_arithmetic": 1.6312647919203989,
+      "annual_cost": 0.42754281495983154,
+      "daily_turnover": 1.561800237296188
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 3416330.085456151
+  },
+  "vol_q0.75_a0.3_p2_f0.0007": {
+    "full": {
+      "days": 1190,
+      "sharpe": 0.9025986045545596,
+      "annual_arithmetic": 0.7145515609644009,
+      "annual_cost": 0.33993719573831566,
+      "daily_turnover": 1.330478261206715
+    },
+    "2023-24": {
+      "days": 545,
+      "sharpe": -0.5148148484702991,
+      "annual_arithmetic": -0.404051176254966,
+      "annual_cost": 0.27001277558497283,
+      "daily_turnover": 1.0568014699998938
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.088708251204285,
+      "annual_arithmetic": 1.6597275172195247,
+      "annual_cost": 0.39902062051904735,
+      "daily_turnover": 1.5617245421489132
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 3700465.4121628064
+  },
+  "vol_q0.75_a0.3_p2_f0.00045": {
+    "full": {
+      "days": 1190,
+      "sharpe": 1.05593496013531,
+      "annual_arithmetic": 0.8354521490671949,
+      "annual_cost": 0.21847935213724654,
+      "daily_turnover": 1.3301634833317904
+    },
+    "2023-24": {
+      "days": 545,
+      "sharpe": -0.39266024186593146,
+      "annual_arithmetic": -0.30794797122838696,
+      "annual_cost": 0.17353291858702077,
+      "daily_turnover": 1.056517008140157
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.268694633075082,
+      "annual_arithmetic": 1.8015809328828416,
+      "annual_cost": 0.25645734637735984,
+      "daily_turnover": 1.5613841484161939
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 5494728.051173332
+  },
+  "vol_q0.75_a0.3_p2_f0.00015": {
+    "full": {
+      "days": 1190,
+      "sharpe": 1.24055061023587,
+      "annual_arithmetic": 0.9808517093131027,
+      "annual_cost": 0.07280601944715191,
+      "daily_turnover": 1.3297903095370214
+    },
+    "2023-24": {
+      "days": 545,
+      "sharpe": -0.24602682717972735,
+      "annual_arithmetic": -0.19277791204226966,
+      "annual_cost": 0.05782932417791802,
+      "daily_turnover": 1.056243363980238
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.485831521693624,
+      "annual_arithmetic": 1.9725232498381846,
+      "annual_cost": 0.08546074645758985,
+      "daily_turnover": 1.5609268759377142
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 8837484.297161369
+  },
+  "vol_q0.75_a0.3_p2_f0.00075": {
+    "full": {
+      "days": 1190,
+      "sharpe": 0.8718805526976692,
+      "annual_arithmetic": 0.690317390643306,
+      "annual_cost": 0.3642362884055552,
+      "daily_turnover": 1.3305435192896995
+    },
+    "2023-24": {
+      "days": 545,
+      "sharpe": -0.5392303730487088,
+      "annual_arithmetic": -0.4232792568027392,
+      "annual_cost": 0.28931387618460164,
+      "daily_turnover": 1.0568543422268553
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.052613446916996,
+      "annual_arithmetic": 1.6312633950744606,
+      "annual_cost": 0.4275428227627951,
+      "daily_turnover": 1.5618002658001646
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 3418461.225311756
+  },
+  "vol_q0.75_a0.5_p0_f0.0007": {
+    "full": {
+      "days": 1192,
+      "sharpe": 0.9939983515622974,
+      "annual_arithmetic": 0.78568333339742,
+      "annual_cost": 0.3589191635909303,
+      "daily_turnover": 1.4047716774596095
+    },
+    "2023-24": {
+      "days": 547,
+      "sharpe": -0.33149829892125765,
+      "annual_arithmetic": -0.2588448248485857,
+      "annual_cost": 0.2920895880857492,
+      "daily_turnover": 1.143207781157531
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.099523036513098,
+      "annual_arithmetic": 1.6715079885300792,
+      "annual_cost": 0.41559478808912254,
+      "daily_turnover": 1.626594082540597
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 4706086.696481937
+  },
+  "vol_q0.75_a0.5_p0_f0.00045": {
+    "full": {
+      "days": 1192,
+      "sharpe": 1.1562108523811478,
+      "annual_arithmetic": 0.9132789621981927,
+      "annual_cost": 0.23067821892310092,
+      "daily_turnover": 1.4044336007494729
+    },
+    "2023-24": {
+      "days": 547,
+      "sharpe": -0.19865634486273226,
+      "annual_arithmetic": -0.15498465076993395,
+      "annual_cost": 0.1877205873262233,
+      "daily_turnover": 1.142895508835454
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.2867028894830264,
+      "annual_arithmetic": 1.819232754901395,
+      "annual_cost": 0.2671089545564219,
+      "daily_turnover": 1.6262341221091137
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 7148016.654634625
+  },
+  "vol_q0.75_a0.5_p0_f0.00015": {
+    "full": {
+      "days": 1192,
+      "sharpe": 1.3514326735343434,
+      "annual_arithmetic": 1.0666493124882093,
+      "annual_cost": 0.07687128470136295,
+      "daily_turnover": 1.4040417297052594
+    },
+    "2023-24": {
+      "days": 547,
+      "sharpe": -0.03895012429680402,
+      "annual_arithmetic": -0.030356687975803716,
+      "annual_cost": 0.06255700287243572,
+      "daily_turnover": 1.1425936597705155
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.51215163167744,
+      "annual_arithmetic": 1.9969784322615658,
+      "annual_cost": 0.08901068339969348,
+      "daily_turnover": 1.6257659068437167
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 11810323.394678188
+  },
+  "vol_q0.75_a0.5_p0_f0.00075": {
+    "full": {
+      "days": 1192,
+      "sharpe": 0.9614977732273432,
+      "annual_arithmetic": 0.7600995262154484,
+      "annual_cost": 0.38457488786540733,
+      "daily_turnover": 1.404839773024319
+    },
+    "2023-24": {
+      "days": 547,
+      "sharpe": -0.35806261307557535,
+      "annual_arithmetic": -0.279636392502464,
+      "annual_cost": 0.3129686265575259,
+      "daily_turnover": 1.143264389251236
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.061987852101795,
+      "annual_arithmetic": 1.6418600650351352,
+      "annual_cost": 0.4453014381528665,
+      "daily_turnover": 1.6266719201931195
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 4327655.163401428
+  },
+  "vol_q0.75_a0.5_p1_f0.0007": {
+    "full": {
+      "days": 1191,
+      "sharpe": 0.9810785010825263,
+      "annual_arithmetic": 0.7755905570294025,
+      "annual_cost": 0.3588995488002623,
+      "daily_turnover": 1.4046949072417312
+    },
+    "2023-24": {
+      "days": 546,
+      "sharpe": -0.3620661887939987,
+      "annual_arithmetic": -0.28277334544377086,
+      "annual_cost": 0.291924428814785,
+      "daily_turnover": 1.1425613652242075
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.0995220820278795,
+      "annual_arithmetic": 1.6715079070299492,
+      "annual_cost": 0.4155947666484339,
+      "daily_turnover": 1.6265939986240074
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 4546565.745015743
+  },
+  "vol_q0.75_a0.5_p1_f0.00045": {
+    "full": {
+      "days": 1191,
+      "sharpe": 1.1432519870146638,
+      "annual_arithmetic": 0.9031811144115719,
+      "annual_cost": 0.2306652156662703,
+      "daily_turnover": 1.4043544332801845
+    },
+    "2023-24": {
+      "days": 546,
+      "sharpe": -0.2293549222510011,
+      "annual_arithmetic": -0.17897174759635692,
+      "annual_cost": 0.18761360997092236,
+      "daily_turnover": 1.142244200736209
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.286706522108595,
+      "annual_arithmetic": 1.8192360952740978,
+      "annual_cost": 0.2671089004874486,
+      "daily_turnover": 1.6262337929220616
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 6903284.359511997
+  },
+  "vol_q0.75_a0.5_p1_f0.00015": {
+    "full": {
+      "days": 1191,
+      "sharpe": 1.3384294789285092,
+      "annual_arithmetic": 1.0565469243406964,
+      "annual_cost": 0.07686718706776681,
+      "daily_turnover": 1.4039668870824988
+    },
+    "2023-24": {
+      "days": 546,
+      "sharpe": -0.06978903804039155,
+      "annual_arithmetic": -0.054402720966410266,
+      "annual_cost": 0.06252185384474322,
+      "daily_turnover": 1.1419516683971367
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.512152419278597,
+      "annual_arithmetic": 1.996978717112294,
+      "annual_cost": 0.08901067844725652,
+      "daily_turnover": 1.625765816388247
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 11401181.300313562
+  },
+  "vol_q0.75_a0.5_p1_f0.00075": {
+    "full": {
+      "days": 1191,
+      "sharpe": 0.9485862553166837,
+      "annual_arithmetic": 0.7500076602042693,
+      "annual_cost": 0.38455380843296133,
+      "daily_turnover": 1.4047627705313657
+    },
+    "2023-24": {
+      "days": 546,
+      "sharpe": -0.38861079949865346,
+      "annual_arithmetic": -0.3035582003299048,
+      "annual_cost": 0.31279157563102605,
+      "daily_turnover": 1.1426176278758944
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.0619921375038808,
+      "annual_arithmetic": 1.6418634119122681,
+      "annual_cost": 0.445301372944367,
+      "daily_turnover": 1.6266716819885554
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 4181261.7519299104
+  },
+  "vol_q0.75_a0.5_p2_f0.0007": {
+    "full": {
+      "days": 1190,
+      "sharpe": 0.9817149805080211,
+      "annual_arithmetic": 0.7764185871522215,
+      "annual_cost": 0.3590246780276582,
+      "daily_turnover": 1.4051846498147091
+    },
+    "2023-24": {
+      "days": 545,
+      "sharpe": -0.3619034307799363,
+      "annual_arithmetic": -0.28290604741991404,
+      "annual_cost": 0.2920747368950447,
+      "daily_turnover": 1.1431496551665155
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.0995218878952318,
+      "annual_arithmetic": 1.6715068442713128,
+      "annual_cost": 0.4155947833257579,
+      "daily_turnover": 1.626594063897291
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 4549180.326938271
+  },
+  "vol_q0.75_a0.5_p2_f0.00045": {
+    "full": {
+      "days": 1190,
+      "sharpe": 1.1438769321350395,
+      "annual_arithmetic": 0.9040528849403531,
+      "annual_cost": 0.23074550330490837,
+      "daily_turnover": 1.40484324690964
+    },
+    "2023-24": {
+      "days": 545,
+      "sharpe": -0.2292454050167622,
+      "annual_arithmetic": -0.17905064535512094,
+      "annual_cost": 0.187709938564755,
+      "daily_turnover": 1.1428306761933336
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.2867036103333733,
+      "annual_arithmetic": 1.8192333872830406,
+      "annual_cost": 0.267108887465193,
+      "daily_turnover": 1.6262337136389224
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 6905825.171473407
+  },
+  "vol_q0.75_a0.5_p2_f0.00015": {
+    "full": {
+      "days": 1190,
+      "sharpe": 1.3390407839819274,
+      "annual_arithmetic": 1.0574717511511267,
+      "annual_cost": 0.07689388562953113,
+      "daily_turnover": 1.4044545320462307
+    },
+    "2023-24": {
+      "days": 545,
+      "sharpe": -0.06974672768491516,
+      "annual_arithmetic": -0.05441969341352253,
+      "annual_cost": 0.06255382042103257,
+      "daily_turnover": 1.142535532804248
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.51214935734976,
+      "annual_arithmetic": 1.9969769252406364,
+      "annual_cost": 0.08901068491423147,
+      "daily_turnover": 1.6257659345065112
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 11402551.231237067
+  },
+  "vol_q0.75_a0.5_p2_f0.00075": {
+    "full": {
+      "days": 1190,
+      "sharpe": 0.9492243110955257,
+      "annual_arithmetic": 0.7508265072231377,
+      "annual_cost": 0.3846879315606804,
+      "daily_turnover": 1.4052527180298828
+    },
+    "2023-24": {
+      "days": 545,
+      "sharpe": -0.3884368090841609,
+      "annual_arithmetic": -0.30370119123280476,
+      "annual_cost": 0.3129527437964863,
+      "daily_turnover": 1.1432063700328265
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.061989933917347,
+      "annual_arithmetic": 1.6418615392518023,
+      "annual_cost": 0.4453013847877903,
+      "daily_turnover": 1.6266717252522018
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 4183832.452534484
+  },
+  "vol_q0.9_a0.3_p0_f0.0007": {
+    "full": {
+      "days": 1192,
+      "sharpe": 1.11263728042747,
+      "annual_arithmetic": 0.8802266437732366,
+      "annual_cost": 0.37096777212434545,
+      "daily_turnover": 1.4519286580209216
+    },
+    "2023-24": {
+      "days": 547,
+      "sharpe": -0.220482816057488,
+      "annual_arithmetic": -0.17279881458765473,
+      "annual_cost": 0.30797536822168603,
+      "daily_turnover": 1.2053830458774404
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.2306725026020446,
+      "annual_arithmetic": 1.7732575363676673,
+      "annual_cost": 0.4243892371394691,
+      "daily_turnover": 1.6610146267689594
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 6401445.858466476
+  },
+  "vol_q0.9_a0.3_p0_f0.00045": {
+    "full": {
+      "days": 1192,
+      "sharpe": 1.2798848141839108,
+      "annual_arithmetic": 1.011930329929742,
+      "annual_cost": 0.23842024861508657,
+      "daily_turnover": 1.4515692457539517
+    },
+    "2023-24": {
+      "days": 547,
+      "sharpe": -0.0808343142441099,
+      "annual_arithmetic": -0.06330324492585605,
+      "annual_cost": 0.1979276366792886,
+      "daily_turnover": 1.205038883892168
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.421555378263618,
+      "annual_arithmetic": 1.923795082559218,
+      "annual_cost": 0.27276049470637564,
+      "daily_turnover": 1.6606422813173556
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 9851829.427646646
+  },
+  "vol_q0.9_a0.3_p0_f0.00015": {
+    "full": {
+      "days": 1192,
+      "sharpe": 1.4816582732459997,
+      "annual_arithmetic": 1.1706087148439597,
+      "annual_cost": 0.07945074218090939,
+      "daily_turnover": 1.4511551083271124
+    },
+    "2023-24": {
+      "days": 547,
+      "sharpe": 0.08702226163683557,
+      "annual_arithmetic": 0.06808719993453989,
+      "annual_cost": 0.06595765818462487,
+      "daily_turnover": 1.2047060855639247
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.6525041064268566,
+      "annual_arithmetic": 2.1056153329144283,
+      "annual_cost": 0.09089371419016155,
+      "daily_turnover": 1.660159163290622
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 16558357.68739798
+  },
+  "vol_q0.9_a0.3_p0_f0.00075": {
+    "full": {
+      "days": 1192,
+      "sharpe": 1.079069638537285,
+      "annual_arithmetic": 0.8537818445011734,
+      "annual_cost": 0.39748540177842195,
+      "daily_turnover": 1.452001467683733
+    },
+    "2023-24": {
+      "days": 547,
+      "sharpe": -0.2484186160507698,
+      "annual_arithmetic": -0.1947240685376835,
+      "annual_cost": 0.32999047898304873,
+      "daily_turnover": 1.2054446720841963
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.1922801133088137,
+      "annual_arithmetic": 1.742979882380638,
+      "annual_cost": 0.4547252820405446,
+      "daily_turnover": 1.661096920696053
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 5870368.550263809
+  },
+  "vol_q0.9_a0.3_p1_f0.0007": {
+    "full": {
+      "days": 1191,
+      "sharpe": 1.0998060787847188,
+      "annual_arithmetic": 0.8702133432461312,
+      "annual_cost": 0.3709582334199896,
+      "daily_turnover": 1.4518913245400769
+    },
+    "2023-24": {
+      "days": 546,
+      "sharpe": -0.25075755468804783,
+      "annual_arithmetic": -0.1965705997804199,
+      "annual_cost": 0.30783928226688073,
+      "daily_turnover": 1.2048504198312358
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.2306740685519744,
+      "annual_arithmetic": 1.7732583554825603,
+      "annual_cost": 0.4243891595123889,
+      "daily_turnover": 1.6610143229447707
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 6184464.434891948
+  },
+  "vol_q0.9_a0.3_p1_f0.00045": {
+    "full": {
+      "days": 1191,
+      "sharpe": 1.2670159532808185,
+      "annual_arithmetic": 1.0019137912836082,
+      "annual_cost": 0.23841428253833585,
+      "daily_turnover": 1.4515329226078286
+    },
+    "2023-24": {
+      "days": 546,
+      "sharpe": -0.11122320550482524,
+      "annual_arithmetic": -0.08712091827838571,
+      "annual_cost": 0.19784044915781246,
+      "daily_turnover": 1.2045080618436073
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.4215544821082684,
+      "annual_arithmetic": 1.9237943361221335,
+      "annual_cost": 0.27276050428370907,
+      "daily_turnover": 1.6606423396268435
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 9514479.209713524
+  },
+  "vol_q0.9_a0.3_p1_f0.00015": {
+    "full": {
+      "days": 1191,
+      "sharpe": 1.4687520988803475,
+      "annual_arithmetic": 1.1605948838128675,
+      "annual_cost": 0.07944880728470895,
+      "daily_turnover": 1.4511197677572412
+    },
+    "2023-24": {
+      "days": 546,
+      "sharpe": 0.056512698874317084,
+      "annual_arithmetic": 0.04422586309692997,
+      "annual_cost": 0.0659287337328739,
+      "daily_turnover": 1.2041777850753226
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.6525027039070106,
+      "annual_arithmetic": 2.1056142408840333,
+      "annual_cost": 0.09089370675649489,
+      "daily_turnover": 1.6601590275158886
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 15984784.076966908
+  },
+  "vol_q0.9_a0.3_p1_f0.00075": {
+    "full": {
+      "days": 1191,
+      "sharpe": 1.0662406924043402,
+      "annual_arithmetic": 0.8437648398790043,
+      "annual_cost": 0.39747512366831406,
+      "daily_turnover": 1.451963922076033
+    },
+    "2023-24": {
+      "days": 546,
+      "sharpe": -0.27868113776102726,
+      "annual_arithmetic": -0.2184950570372135,
+      "annual_cost": 0.3298445024463287,
+      "daily_turnover": 1.2049114244614747
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.1922800967879144,
+      "annual_arithmetic": 1.7429801944778491,
+      "annual_cost": 0.45472523093529693,
+      "daily_turnover": 1.661096734010217
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 5671717.297946347
+  },
+  "vol_q0.9_a0.3_p2_f0.0007": {
+    "full": {
+      "days": 1190,
+      "sharpe": 1.1004930011201246,
+      "annual_arithmetic": 0.8711213776811906,
+      "annual_cost": 0.3710934746853306,
+      "daily_turnover": 1.4524206445609809
+    },
+    "2023-24": {
+      "days": 545,
+      "sharpe": -0.2504921449207852,
+      "annual_arithmetic": -0.19654307136916918,
+      "annual_cost": 0.3080187596092994,
+      "daily_turnover": 1.205552875183168
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.2306715088215467,
+      "annual_arithmetic": 1.7732564547857583,
+      "annual_cost": 0.4243891641681786,
+      "daily_turnover": 1.6610143411670397
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 6188026.47143703
+  },
+  "vol_q0.9_a0.3_p2_f0.00045": {
+    "full": {
+      "days": 1190,
+      "sharpe": 1.2676944852253558,
+      "annual_arithmetic": 1.002869490357207,
+      "annual_cost": 0.23850107609418625,
+      "daily_turnover": 1.4520613460833256
+    },
+    "2023-24": {
+      "days": 545,
+      "sharpe": -0.11100658406736894,
+      "annual_arithmetic": -0.08703115394995682,
+      "annual_cost": 0.19795551226855737,
+      "daily_turnover": 1.2052085982864986
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.421553631523125,
+      "annual_arithmetic": 1.923793290585741,
+      "annual_cost": 0.27276050599336094,
+      "daily_turnover": 1.660642350035683
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 9518007.974316876
+  },
+  "vol_q0.9_a0.3_p2_f0.00015": {
+    "full": {
+      "days": 1190,
+      "sharpe": 1.4694207029162851,
+      "annual_arithmetic": 1.1616082576529236,
+      "annual_cost": 0.0794776743454922,
+      "daily_turnover": 1.4516470200089902
+    },
+    "2023-24": {
+      "days": 545,
+      "sharpe": 0.056671182243028986,
+      "annual_arithmetic": 0.04439063532842236,
+      "annual_cost": 0.06596695252891632,
+      "daily_turnover": 1.2048758452770105
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.6525023951877817,
+      "annual_arithmetic": 2.10561384550851,
+      "annual_cost": 0.09089371060911056,
+      "daily_turnover": 1.660159097883298
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 15986770.136297654
+  },
+  "vol_q0.9_a0.3_p2_f0.00075": {
+    "full": {
+      "days": 1190,
+      "sharpe": 1.0669333693675709,
+      "annual_arithmetic": 0.8446665063801583,
+      "annual_cost": 0.39762016061170635,
+      "daily_turnover": 1.4524937373943612
+    },
+    "2023-24": {
+      "days": 545,
+      "sharpe": -0.2784002115577174,
+      "annual_arithmetic": -0.21847552651086224,
+      "annual_cost": 0.3300370508839918,
+      "daily_turnover": 1.2056147977497418
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.1922803020956056,
+      "annual_arithmetic": 1.7429803171175324,
+      "annual_cost": 0.4547252688312482,
+      "daily_turnover": 1.6610968724429158
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 5675276.735977569
+  },
+  "vol_q0.9_a0.5_p0_f0.0007": {
+    "full": {
+      "days": 1192,
+      "sharpe": 1.1141961287843871,
+      "annual_arithmetic": 0.8831096212371868,
+      "annual_cost": 0.3814652277242246,
+      "daily_turnover": 1.4930145899186873
+    },
+    "2023-24": {
+      "days": 547,
+      "sharpe": -0.16153745123722965,
+      "annual_arithmetic": -0.12664629391789609,
+      "annual_cost": 0.319503315205114,
+      "daily_turnover": 1.2505022121530882
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.1806408282022764,
+      "annual_arithmetic": 1.7394452578105675,
+      "annual_cost": 0.43401277213965633,
+      "daily_turnover": 1.6986801257912185
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 6447830.178763048
+  },
+  "vol_q0.9_a0.5_p0_f0.00045": {
+    "full": {
+      "days": 1192,
+      "sharpe": 1.2863111248770245,
+      "annual_arithmetic": 1.0188189587491856,
+      "annual_cost": 0.24516618782679211,
+      "daily_turnover": 1.492640412948506
+    },
+    "2023-24": {
+      "days": 547,
+      "sharpe": -0.016579279482332572,
+      "annual_arithmetic": -0.012987126300182592,
+      "annual_cost": 0.20533662599320002,
+      "daily_turnover": 1.2501468858033487
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.3759264583831965,
+      "annual_arithmetic": 1.893854506845316,
+      "annual_cost": 0.2789441263120245,
+      "daily_turnover": 1.698289962325872
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 10055847.452473044
+  },
+  "vol_q0.9_a0.5_p0_f0.00015": {
+    "full": {
+      "days": 1192,
+      "sharpe": 1.4935794433130867,
+      "annual_arithmetic": 1.1820300024264712,
+      "annual_cost": 0.08169865523059723,
+      "daily_turnover": 1.4922128809241504
+    },
+    "2023-24": {
+      "days": 547,
+      "sharpe": 0.15762290410220814,
+      "annual_arithmetic": 0.12334668004781603,
+      "annual_cost": 0.06842658974961432,
+      "daily_turnover": 1.2498007260203532
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.611463478592491,
+      "annual_arithmetic": 2.0798591145832535,
+      "annual_cost": 0.092954189832299,
+      "daily_turnover": 1.6977934215945025
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 17155907.965060446
+  },
+  "vol_q0.9_a0.5_p0_f0.00075": {
+    "full": {
+      "days": 1192,
+      "sharpe": 1.079733139671407,
+      "annual_arithmetic": 0.8559168561489586,
+      "annual_cost": 0.40873318146798726,
+      "daily_turnover": 1.4930892473716428
+    },
+    "2023-24": {
+      "days": 547,
+      "sharpe": -0.19052239631953055,
+      "annual_arithmetic": -0.14939700177841386,
+      "annual_cost": 0.3423425324723987,
+      "daily_turnover": 1.2505663286662965
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.1415129114488516,
+      "annual_arithmetic": 1.708485352716823,
+      "annual_cost": 0.4650365690657964,
+      "daily_turnover": 1.6987637226147811
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 5898313.695908095
+  },
+  "vol_q0.9_a0.5_p1_f0.0007": {
+    "full": {
+      "days": 1191,
+      "sharpe": 1.1013923431018353,
+      "annual_arithmetic": 0.8731006320143401,
+      "annual_cost": 0.38146454936652774,
+      "daily_turnover": 1.4930119348983473
+    },
+    "2023-24": {
+      "days": 546,
+      "sharpe": -0.19170207040910026,
+      "annual_arithmetic": -0.15033042893914408,
+      "annual_cost": 0.3193883509744455,
+      "daily_turnover": 1.2500522543031136
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.1806425702904044,
+      "annual_arithmetic": 1.7394469254726384,
+      "annual_cost": 0.4340127731216856,
+      "daily_turnover": 1.6986801296347775
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 6229312.741375269
+  },
+  "vol_q0.9_a0.5_p1_f0.00045": {
+    "full": {
+      "days": 1191,
+      "sharpe": 1.2734707138768242,
+      "annual_arithmetic": 1.0088092234664898,
+      "annual_cost": 0.2451658768022923,
+      "daily_turnover": 1.4926385193442453
+    },
+    "2023-24": {
+      "days": 546,
+      "sharpe": -0.046851156601070636,
+      "annual_arithmetic": -0.036708546259582475,
+      "annual_cost": 0.20526301474055647,
+      "daily_turnover": 1.2496987198816223
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.3759240661830208,
+      "annual_arithmetic": 1.8938521727229791,
+      "annual_cost": 0.27894411352431986,
+      "daily_turnover": 1.698289884470745
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 9711542.983020453
+  },
+  "vol_q0.9_a0.5_p1_f0.00015": {
+    "full": {
+      "days": 1191,
+      "sharpe": 1.4807019437310587,
+      "annual_arithmetic": 1.172025008890356,
+      "annual_cost": 0.08169861506050419,
+      "daily_turnover": 1.4922121472238208
+    },
+    "2023-24": {
+      "days": 546,
+      "sharpe": 0.12722856936210789,
+      "annual_arithmetic": 0.09958424162902521,
+      "annual_cost": 0.06840219783095608,
+      "daily_turnover": 1.249355211524312
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.6114627842288147,
+      "annual_arithmetic": 2.0798585886185523,
+      "annual_cost": 0.0929541868548193,
+      "daily_turnover": 1.6977933672113117
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 16561594.766217975
+  },
+  "vol_q0.9_a0.5_p1_f0.00075": {
+    "full": {
+      "days": 1191,
+      "sharpe": 1.0669327952118908,
+      "annual_arithmetic": 0.8459045997534701,
+      "annual_cost": 0.40873232786108205,
+      "daily_turnover": 1.4930861291729023
+    },
+    "2023-24": {
+      "days": 546,
+      "sharpe": -0.22067513641815387,
+      "annual_arithmetic": -0.17308136031664417,
+      "annual_cost": 0.34221918292641146,
+      "daily_turnover": 1.2501157367174847
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.1415168992216573,
+      "annual_arithmetic": 1.7084880636267759,
+      "annual_cost": 0.4650364784569426,
+      "daily_turnover": 1.6987633916235347
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 5698772.160796021
+  },
+  "vol_q0.9_a0.5_p2_f0.0007": {
+    "full": {
+      "days": 1190,
+      "sharpe": 1.102076209979468,
+      "annual_arithmetic": 0.8740082906597534,
+      "annual_cost": 0.3816086275100013,
+      "daily_turnover": 1.4935758415264238
+    },
+    "2023-24": {
+      "days": 545,
+      "sharpe": -0.19139088732067044,
+      "annual_arithmetic": -0.15022436499747074,
+      "annual_cost": 0.3195890759084965,
+      "daily_turnover": 1.2508378704833523
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.180640848319541,
+      "annual_arithmetic": 1.7394451857499658,
+      "annual_cost": 0.43401274475468354,
+      "daily_turnover": 1.698680018609329
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 6232845.993837206
+  },
+  "vol_q0.9_a0.5_p2_f0.00045": {
+    "full": {
+      "days": 1190,
+      "sharpe": 1.2741520809382096,
+      "annual_arithmetic": 1.0097710839887828,
+      "annual_cost": 0.2452583563593765,
+      "daily_turnover": 1.4932015607876803
+    },
+    "2023-24": {
+      "days": 545,
+      "sharpe": -0.046578894810472435,
+      "annual_arithmetic": -0.036528758941808695,
+      "annual_cost": 0.20539171667241807,
+      "daily_turnover": 1.2504822932871724
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.3759259339279675,
+      "annual_arithmetic": 1.8938538970076546,
+      "annual_cost": 0.2789441216762638,
+      "daily_turnover": 1.698289934102063
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 9715154.624953723
+  },
+  "vol_q0.9_a0.5_p2_f0.00015": {
+    "full": {
+      "days": 1190,
+      "sharpe": 1.4813760691492992,
+      "annual_arithmetic": 1.1730484252204805,
+      "annual_cost": 0.08172937128641895,
+      "daily_turnover": 1.4927739047747757
+    },
+    "2023-24": {
+      "days": 545,
+      "sharpe": 0.1274522812102564,
+      "annual_arithmetic": 0.09985098388695418,
+      "annual_cost": 0.06844495931180906,
+      "daily_turnover": 1.2501362431380652
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.611462695280077,
+      "annual_arithmetic": 2.0798586663472585,
+      "annual_cost": 0.09295418450527539,
+      "daily_turnover": 1.6977933242972674
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 16563673.70359471
+  },
+  "vol_q0.9_a0.5_p2_f0.00075": {
+    "full": {
+      "days": 1190,
+      "sharpe": 1.067621152546329,
+      "annual_arithmetic": 0.8468046299520978,
+      "annual_cost": 0.4088868524045588,
+      "daily_turnover": 1.4936506023910823
+    },
+    "2023-24": {
+      "days": 545,
+      "sharpe": -0.22034770619029548,
+      "annual_arithmetic": -0.17298341722712424,
+      "annual_cost": 0.342434436294811,
+      "daily_turnover": 1.2509020503920036
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.14151444477105,
+      "annual_arithmetic": 1.7084860031500448,
+      "annual_cost": 0.4650365683422526,
+      "daily_turnover": 1.698763719971699
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 5702287.194298968
+  },
+  "hyst_0.25_p0_f0.0007": {
+    "full": {
+      "days": 1192,
+      "sharpe": 0.8472161640361732,
+      "annual_arithmetic": 0.6655808902342751,
+      "annual_cost": 0.2764986457061476,
+      "daily_turnover": 1.082186480258895
+    },
+    "2023-24": {
+      "days": 547,
+      "sharpe": -0.48475192742980666,
+      "annual_arithmetic": -0.37643972802169057,
+      "annual_cost": 0.2592526621505165,
+      "daily_turnover": 1.0146875230939982
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 1.9589888366262378,
+      "annual_arithmetic": 1.5492789959490239,
+      "annual_cost": 0.29112430927968286,
+      "daily_turnover": 1.139429781916567
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 3197899.068343248
+  },
+  "hyst_0.25_p0_f0.00045": {
+    "full": {
+      "days": 1192,
+      "sharpe": 0.9737120668161694,
+      "annual_arithmetic": 0.7643693477113244,
+      "annual_cost": 0.17771600973928942,
+      "daily_turnover": 1.0819848385953694
+    },
+    "2023-24": {
+      "days": 547,
+      "sharpe": -0.366306049575007,
+      "annual_arithmetic": -0.28417953975924204,
+      "annual_cost": 0.16662622828004536,
+      "daily_turnover": 1.014467143257506
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.0922537921962765,
+      "annual_arithmetic": 1.6536038305739595,
+      "annual_cost": 0.18712083215511346,
+      "daily_turnover": 1.1392440313857746
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 4422763.452511473
+  },
+  "hyst_0.25_p0_f0.00015": {
+    "full": {
+      "days": 1192,
+      "sharpe": 1.12453825323992,
+      "annual_arithmetic": 0.8819151797776885,
+      "annual_cost": 0.05922880357222567,
+      "daily_turnover": 1.081804631456177
+    },
+    "2023-24": {
+      "days": 547,
+      "sharpe": -0.22551930202884507,
+      "annual_arithmetic": -0.1747462499969091,
+      "annual_cost": 0.055533962818630336,
+      "daily_turnover": 1.0143189555914218
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.2515701420839602,
+      "annual_arithmetic": 1.7780296016175408,
+      "annual_cost": 0.06236225766868562,
+      "daily_turnover": 1.1390366697476826
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 6505119.368768066
+  },
+  "hyst_0.25_p0_f0.00075": {
+    "full": {
+      "days": 1192,
+      "sharpe": 0.8215874414600073,
+      "annual_arithmetic": 0.6455543692012278,
+      "annual_cost": 0.29625696174530874,
+      "daily_turnover": 1.082217211855009
+    },
+    "2023-24": {
+      "days": 547,
+      "sharpe": -0.5087607731253555,
+      "annual_arithmetic": -0.3951640855509902,
+      "annual_cost": 0.27778280747956646,
+      "daily_turnover": 1.014731716820334
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 1.9319837466759908,
+      "annual_arithmetic": 1.5281481595104731,
+      "annual_cost": 0.3119241902466437,
+      "daily_turnover": 1.1394490967913924
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 2994351.9984782124
+  },
+  "hyst_0.25_p1_f0.0007": {
+    "full": {
+      "days": 1191,
+      "sharpe": 0.8364366180096227,
+      "annual_arithmetic": 0.6571742124597267,
+      "annual_cost": 0.2764582423131758,
+      "daily_turnover": 1.0820283456484376
+    },
+    "2023-24": {
+      "days": 546,
+      "sharpe": -0.5107750803449627,
+      "annual_arithmetic": -0.3966867207717793,
+      "annual_cost": 0.2591329372141137,
+      "daily_turnover": 1.0142189323448676
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 1.9589900160341025,
+      "annual_arithmetic": 1.5492797466370944,
+      "annual_cost": 0.291124314536568,
+      "daily_turnover": 1.13942980249146
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 3107856.6226295275
+  },
+  "hyst_0.25_p1_f0.00045": {
+    "full": {
+      "days": 1191,
+      "sharpe": 0.9629687466426492,
+      "annual_arithmetic": 0.756005378417214,
+      "annual_cost": 0.17769002651845303,
+      "daily_turnover": 1.0818266454700338
+    },
+    "2023-24": {
+      "days": 546,
+      "sharpe": -0.3924041595780886,
+      "annual_arithmetic": -0.3044559956009666,
+      "annual_cost": 0.16654992468496754,
+      "daily_turnover": 1.0140025856010202
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.092384685484224,
+      "annual_arithmetic": 1.6536982624698136,
+      "annual_cost": 0.18712025225656628,
+      "daily_turnover": 1.1392405008010125
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 4297713.144571804
+  },
+  "hyst_0.25_p1_f0.00015": {
+    "full": {
+      "days": 1191,
+      "sharpe": 1.1136935673628519,
+      "annual_arithmetic": 0.8734935223155784,
+      "annual_cost": 0.059220356784093146,
+      "daily_turnover": 1.0816503522208796
+    },
+    "2023-24": {
+      "days": 546,
+      "sharpe": -0.2517070560419462,
+      "annual_arithmetic": -0.19505700028151593,
+      "annual_cost": 0.05550877182437065,
+      "daily_turnover": 1.0138588461072264
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.251575543187803,
+      "annual_arithmetic": 1.7780339647000956,
+      "annual_cost": 0.06236225661046289,
+      "daily_turnover": 1.1390366504194138
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 6317978.5372905545
+  },
+  "hyst_0.25_p1_f0.00075": {
+    "full": {
+      "days": 1191,
+      "sharpe": 0.8109036884680253,
+      "annual_arithmetic": 0.6372238168945418,
+      "annual_cost": 0.29621441267569115,
+      "daily_turnover": 1.082061781463712
+    },
+    "2023-24": {
+      "days": 546,
+      "sharpe": -0.5347614235618552,
+      "annual_arithmetic": -0.41539994149286485,
+      "annual_cost": 0.2776543612955925,
+      "daily_turnover": 1.014262507015863
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 1.9321326049124743,
+      "annual_arithmetic": 1.5282820681806257,
+      "annual_cost": 0.31192571198349545,
+      "daily_turnover": 1.139454655647472
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 2910881.5672328775
+  },
+  "hyst_0.25_p2_f0.0007": {
+    "full": {
+      "days": 1190,
+      "sharpe": 0.8341706155431762,
+      "annual_arithmetic": 0.655584768996358,
+      "annual_cost": 0.2767048913279981,
+      "daily_turnover": 1.0829937038277813
+    },
+    "2023-24": {
+      "days": 545,
+      "sharpe": -0.5174154933153514,
+      "annual_arithmetic": -0.402088510977046,
+      "annual_cost": 0.2596397563194519,
+      "daily_turnover": 1.016202568764978
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 1.9589874756078671,
+      "annual_arithmetic": 1.5492776954855132,
+      "annual_cost": 0.2911242689708782,
+      "daily_turnover": 1.139429624152165
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 3087036.0549204205
+  },
+  "hyst_0.25_p2_f0.00045": {
+    "full": {
+      "days": 1190,
+      "sharpe": 0.9607789500072418,
+      "annual_arithmetic": 0.7545096345473182,
+      "annual_cost": 0.17784920998559486,
+      "daily_turnover": 1.0827957989990555
+    },
+    "2023-24": {
+      "days": 545,
+      "sharpe": -0.39880824771843165,
+      "annual_arithmetic": -0.30961584448589713,
+      "annual_cost": 0.16687805638090436,
+      "daily_turnover": 1.0160003432627358
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.0923238102724717,
+      "annual_arithmetic": 1.653654419156779,
+      "annual_cost": 0.1871194095430465,
+      "daily_turnover": 1.139235370125093
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 4269032.68469663
+  },
+  "hyst_0.25_p2_f0.00015": {
+    "full": {
+      "days": 1190,
+      "sharpe": 1.111632084567767,
+      "annual_arithmetic": 0.8721364304457052,
+      "annual_cost": 0.059273336598648765,
+      "daily_turnover": 1.0826180200666442
+    },
+    "2023-24": {
+      "days": 545,
+      "sharpe": -0.2579075258795361,
+      "annual_arithmetic": -0.19998700792379753,
+      "annual_cost": 0.05561807807802384,
+      "daily_turnover": 1.015855307361166
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.251582865208555,
+      "annual_arithmetic": 1.7780391806959055,
+      "annual_cost": 0.062361888371889995,
+      "daily_turnover": 1.1390299246007307
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 6276616.81842295
+  },
+  "hyst_0.25_p2_f0.00075": {
+    "full": {
+      "days": 1190,
+      "sharpe": 0.8086260134515535,
+      "annual_arithmetic": 0.6356185610362709,
+      "annual_cost": 0.2964787067882046,
+      "daily_turnover": 1.0830272394089666
+    },
+    "2023-24": {
+      "days": 545,
+      "sharpe": -0.5414369486315274,
+      "annual_arithmetic": -0.4208407653067909,
+      "annual_cost": 0.27819731905637524,
+      "daily_turnover": 1.016245914361188
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 1.93213781876229,
+      "annual_arithmetic": 1.528285743760253,
+      "annual_cost": 0.3119257708406807,
+      "daily_turnover": 1.1394548706508882
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 2891394.0662769177
+  },
+  "hyst_0.3_p0_f0.0007": {
+    "full": {
+      "days": 1192,
+      "sharpe": 1.210722200545036,
+      "annual_arithmetic": 0.9365707302636628,
+      "annual_cost": 0.23924596216583432,
+      "daily_turnover": 0.9363834135649094
+    },
+    "2023-24": {
+      "days": 547,
+      "sharpe": -0.03518589032979198,
+      "annual_arithmetic": -0.02645137495783761,
+      "annual_cost": 0.2258908072150373,
+      "daily_turnover": 0.8841127483954493
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.2203344700628467,
+      "annual_arithmetic": 1.7532731977925942,
+      "annual_cost": 0.2505719617907739,
+      "daily_turnover": 0.9807121792202501
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 7952196.021098292
+  },
+  "hyst_0.3_p0_f0.00045": {
+    "full": {
+      "days": 1192,
+      "sharpe": 1.3218967243130404,
+      "annual_arithmetic": 1.0215262492467185,
+      "annual_cost": 0.15378143724421053,
+      "daily_turnover": 0.9362644581078268
+    },
+    "2023-24": {
+      "days": 547,
+      "sharpe": 0.07117233938522113,
+      "annual_arithmetic": 0.053431188695346715,
+      "annual_cost": 0.14519565098919765,
+      "daily_turnover": 0.8839917868444301
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.3352233975824057,
+      "annual_arithmetic": 1.8425308974972616,
+      "annual_cost": 0.16106271644032225,
+      "daily_turnover": 0.9805949250552344
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 10514589.494293049
+  },
+  "hyst_0.3_p0_f0.00015": {
+    "full": {
+      "days": 1192,
+      "sharpe": 1.4552867690372844,
+      "annual_arithmetic": 1.1233474653137863,
+      "annual_cost": 0.05125217209567391,
+      "daily_turnover": 0.9361127323410761
+    },
+    "2023-24": {
+      "days": 547,
+      "sharpe": 0.19885866823477294,
+      "annual_arithmetic": 0.1490708826678659,
+      "annual_cost": 0.04839256529860989,
+      "daily_turnover": 0.8838824712074868
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.4731555945152417,
+      "annual_arithmetic": 1.9495944276507142,
+      "annual_cost": 0.0536772959995406,
+      "daily_turnover": 0.9804072328683217
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 14690984.175374743
+  },
+  "hyst_0.3_p0_f0.00075": {
+    "full": {
+      "days": 1192,
+      "sharpe": 1.1885017150216293,
+      "annual_arithmetic": 0.9195596348807049,
+      "annual_cost": 0.256343160486858,
+      "daily_turnover": 0.9364133716414903
+    },
+    "2023-24": {
+      "days": 547,
+      "sharpe": -0.05637824216434487,
+      "annual_arithmetic": -0.04239402404003995,
+      "annual_cost": 0.24203496806130786,
+      "daily_turnover": 0.8841460020504397
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.19731514129155,
+      "annual_arithmetic": 1.73535599368636,
+      "annual_cost": 0.2684773949934874,
+      "daily_turnover": 0.9807393424419631
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 7519747.132530005
+  },
+  "hyst_0.3_p1_f0.0007": {
+    "full": {
+      "days": 1191,
+      "sharpe": 1.2008363201486238,
+      "annual_arithmetic": 0.92902028078919,
+      "annual_cost": 0.23923705975122814,
+      "daily_turnover": 0.9363485704549047
+    },
+    "2023-24": {
+      "days": 546,
+      "sharpe": -0.05943438688173121,
+      "annual_arithmetic": -0.044685164508671806,
+      "annual_cost": 0.22584697384817234,
+      "daily_turnover": 0.8839411892296374
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.2203346672932858,
+      "annual_arithmetic": 1.7532732623901706,
+      "annual_cost": 0.25057192316683813,
+      "daily_turnover": 0.9807120280502472
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 7743910.45567242
+  },
+  "hyst_0.3_p1_f0.00045": {
+    "full": {
+      "days": 1191,
+      "sharpe": 1.3119880213354926,
+      "annual_arithmetic": 1.013978158883961,
+      "annual_cost": 0.1537758309470214,
+      "daily_turnover": 0.9362303254004348
+    },
+    "2023-24": {
+      "days": 546,
+      "sharpe": 0.046871493096258925,
+      "annual_arithmetic": 0.0351917681081052,
+      "annual_cost": 0.1451677093644477,
+      "daily_turnover": 0.8838216704075964
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.3352254382659274,
+      "annual_arithmetic": 1.8425322199128247,
+      "annual_cost": 0.16106270596110703,
+      "daily_turnover": 0.9805948612548374
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 10236871.71349533
+  },
+  "hyst_0.3_p1_f0.00015": {
+    "full": {
+      "days": 1191,
+      "sharpe": 1.4452988272052103,
+      "annual_arithmetic": 1.115762157362109,
+      "annual_cost": 0.05125049644202891,
+      "daily_turnover": 0.9360821267950487
+    },
+    "2023-24": {
+      "days": 546,
+      "sharpe": 0.17438749591887745,
+      "annual_arithmetic": 0.13074210421039126,
+      "annual_cost": 0.048383669566450314,
+      "daily_turnover": 0.8837199920812844
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.473153659152285,
+      "annual_arithmetic": 1.9495930860765864,
+      "annual_cost": 0.05367729872740241,
+      "daily_turnover": 0.9804072826922815
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 14297215.91303035
+  },
+  "hyst_0.3_p1_f0.00075": {
+    "full": {
+      "days": 1191,
+      "sharpe": 1.1786203230729024,
+      "annual_arithmetic": 0.9120089078522703,
+      "annual_cost": 0.25633366470515034,
+      "daily_turnover": 0.9363786838544303
+    },
+    "2023-24": {
+      "days": 546,
+      "sharpe": -0.08061769288009968,
+      "annual_arithmetic": -0.06062738104702029,
+      "annual_cost": 0.24198805441426915,
+      "daily_turnover": 0.8839746279973302
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.1973159858747513,
+      "annual_arithmetic": 1.7353568361298093,
+      "annual_cost": 0.2684773906258032,
+      "daily_turnover": 0.9807393264869524
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 7323123.355548973
+  },
+  "hyst_0.3_p2_f0.0007": {
+    "full": {
+      "days": 1190,
+      "sharpe": 1.1905647577017633,
+      "annual_arithmetic": 0.9214611066589579,
+      "annual_cost": 0.23915609144962688,
+      "daily_turnover": 0.9360316690787744
+    },
+    "2023-24": {
+      "days": 545,
+      "sharpe": -0.08369367333457971,
+      "annual_arithmetic": -0.06297689823544687,
+      "annual_cost": 0.2256457012752436,
+      "daily_turnover": 0.8831534296487029
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.2203345028577455,
+      "annual_arithmetic": 1.753273064282912,
+      "annual_cost": 0.25057184748844685,
+      "daily_turnover": 0.980711731853021
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 7536613.680243665
+  },
+  "hyst_0.3_p2_f0.00045": {
+    "full": {
+      "days": 1190,
+      "sharpe": 1.3016602437702125,
+      "annual_arithmetic": 1.0064208489123638,
+      "annual_cost": 0.15372499076436183,
+      "daily_turnover": 0.9359207961300569
+    },
+    "2023-24": {
+      "days": 545,
+      "sharpe": 0.022485933421467298,
+      "annual_arithmetic": 0.016896918667835773,
+      "annual_cost": 0.1450408778392341,
+      "daily_turnover": 0.8830494845615471
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.3352230346435165,
+      "annual_arithmetic": 1.8425302163282826,
+      "annual_cost": 0.1610627295925705,
+      "daily_turnover": 0.9805950051298052
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 9960619.195283694
+  },
+  "hyst_0.3_p2_f0.00015": {
+    "full": {
+      "days": 1190,
+      "sharpe": 1.4348885239892357,
+      "annual_arithmetic": 1.1081926995038303,
+      "annual_cost": 0.05123354218902572,
+      "daily_turnover": 0.9357724600735291
+    },
+    "2023-24": {
+      "days": 545,
+      "sharpe": 0.14980523673066568,
+      "annual_arithmetic": 0.11240633538008162,
+      "annual_cost": 0.048341392980913056,
+      "daily_turnover": 0.8829478170029782
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.473154589503675,
+      "annual_arithmetic": 1.9495935808176954,
+      "annual_cost": 0.05367729617107438,
+      "daily_turnover": 0.9804072360013587
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 13907081.44257395
+  },
+  "hyst_0.3_p2_f0.00075": {
+    "full": {
+      "days": 1190,
+      "sharpe": 1.168362641823777,
+      "annual_arithmetic": 0.9044517132185559,
+      "annual_cost": 0.2562469333674279,
+      "daily_turnover": 0.9360618570499649
+    },
+    "2023-24": {
+      "days": 545,
+      "sharpe": -0.10484565799020865,
+      "annual_arithmetic": -0.07891362279405358,
+      "annual_cost": 0.24177235936194974,
+      "daily_turnover": 0.8831867008655698
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.197316851507892,
+      "annual_arithmetic": 1.7353573072137063,
+      "annual_cost": 0.26847738737205673,
+      "daily_turnover": 0.9807393146011204
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 7127460.146299875
+  },
+  "hyst_0.4_p0_f0.0007": {
+    "full": {
+      "days": 1192,
+      "sharpe": 1.4038965419661413,
+      "annual_arithmetic": 1.0631456779625736,
+      "annual_cost": 0.18835641825932037,
+      "daily_turnover": 0.7372071164748352
+    },
+    "2023-24": {
+      "days": 547,
+      "sharpe": 0.05771440020276115,
+      "annual_arithmetic": 0.04209942272312794,
+      "annual_cost": 0.1794540535258046,
+      "daily_turnover": 0.7023642016665542
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.4801447490710653,
+      "annual_arithmetic": 1.9290562231036228,
+      "annual_cost": 0.19590617563797635,
+      "daily_turnover": 0.7667560690331756
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 12521938.179432044
+  },
+  "hyst_0.4_p0_f0.00045": {
+    "full": {
+      "days": 1192,
+      "sharpe": 1.493982801972271,
+      "annual_arithmetic": 1.1304623014512656,
+      "annual_cost": 0.1210732603185489,
+      "daily_turnover": 0.7371279167034941
+    },
+    "2023-24": {
+      "days": 547,
+      "sharpe": 0.14775562584968904,
+      "annual_arithmetic": 0.10767104417746762,
+      "annual_cost": 0.11534965492419515,
+      "daily_turnover": 0.7022810041046889
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.5703004804793936,
+      "annual_arithmetic": 1.9978527165346265,
+      "annual_cost": 0.12592723264523334,
+      "daily_turnover": 0.7666802596361239
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 15621613.03046036
+  },
+  "hyst_0.4_p0_f0.00015": {
+    "full": {
+      "days": 1192,
+      "sharpe": 1.60006225101823,
+      "annual_arithmetic": 1.209850791069308,
+      "annual_cost": 0.04035687341853498,
+      "daily_turnover": 0.737111843260913
+    },
+    "2023-24": {
+      "days": 547,
+      "sharpe": 0.24956091111130582,
+      "annual_arithmetic": 0.18174495925420794,
+      "annual_cost": 0.038452417335368264,
+      "daily_turnover": 0.7023272572670003
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.6805138631185206,
+      "annual_arithmetic": 2.0817482949497097,
+      "annual_cost": 0.04197197028286397,
+      "daily_turnover": 0.7666113293673785
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 20266676.41707705
+  },
+  "hyst_0.4_p0_f0.00075": {
+    "full": {
+      "days": 1192,
+      "sharpe": 1.3860657752319525,
+      "annual_arithmetic": 1.0498251098191367,
+      "annual_cost": 0.20181448141459538,
+      "daily_turnover": 0.7372218499163302
+    },
+    "2023-24": {
+      "days": 547,
+      "sharpe": 0.0402268600269256,
+      "annual_arithmetic": 0.02934961049941478,
+      "annual_cost": 0.19227795697745143,
+      "daily_turnover": 0.7023852309678591
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.4620349273870734,
+      "annual_arithmetic": 1.9152516185445443,
+      "annual_cost": 0.2099020455496617,
+      "daily_turnover": 0.7667654631951111
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 11985305.741538627
+  },
+  "hyst_0.4_p1_f0.0007": {
+    "full": {
+      "days": 1191,
+      "sharpe": 1.3816011844147364,
+      "annual_arithmetic": 1.0474532650445931,
+      "annual_cost": 0.1881983250876513,
+      "daily_turnover": 0.7365883565074416
+    },
+    "2023-24": {
+      "days": 546,
+      "sharpe": 0.008207159039361627,
+      "annual_arithmetic": 0.0060011498880881186,
+      "annual_cost": 0.17909292203391025,
+      "daily_turnover": 0.7009507711699031
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.4801424578525437,
+      "annual_arithmetic": 1.9290545904328904,
+      "annual_cost": 0.1959061546494228,
+      "daily_turnover": 0.766755986886195
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 11846374.063179422
+  },
+  "hyst_0.4_p1_f0.00045": {
+    "full": {
+      "days": 1191,
+      "sharpe": 1.4707459136573453,
+      "annual_arithmetic": 1.1141710213709395,
+      "annual_cost": 0.12097268214531182,
+      "daily_turnover": 0.7365155686168147
+    },
+    "2023-24": {
+      "days": 546,
+      "sharpe": 0.09625001090704625,
+      "annual_arithmetic": 0.07031139160970086,
+      "annual_cost": 0.11511849038352516,
+      "daily_turnover": 0.7008736096409447
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.5702502397573554,
+      "annual_arithmetic": 1.9978103358664998,
+      "annual_cost": 0.12592832354366149,
+      "daily_turnover": 0.7666869013312723
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 14746922.241565373
+  },
+  "hyst_0.4_p1_f0.00015": {
+    "full": {
+      "days": 1191,
+      "sharpe": 1.5767565958787728,
+      "annual_arithmetic": 1.193627992677817,
+      "annual_cost": 0.04032311972125349,
+      "daily_turnover": 0.736495337374493
+    },
+    "2023-24": {
+      "days": 546,
+      "sharpe": 0.19789286100679399,
+      "annual_arithmetic": 0.14447671028687417,
+      "annual_cost": 0.03837530631029202,
+      "daily_turnover": 0.7009188367176624
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.680512304314264,
+      "annual_arithmetic": 2.081746752655266,
+      "annual_cost": 0.041971966422625524,
+      "daily_turnover": 0.7666112588607402
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 19131819.327603642
+  },
+  "hyst_0.4_p1_f0.00075": {
+    "full": {
+      "days": 1191,
+      "sharpe": 1.363808075485769,
+      "annual_arithmetic": 1.0341401467871743,
+      "annual_cost": 0.2016450404448706,
+      "daily_turnover": 0.7366028874698469
+    },
+    "2023-24": {
+      "days": 546,
+      "sharpe": -0.00920515396702648,
+      "annual_arithmetic": -0.006732313380479894,
+      "annual_cost": 0.19189091900587651,
+      "daily_turnover": 0.7009713936287727
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.4620349123189604,
+      "annual_arithmetic": 1.915250787487235,
+      "annual_cost": 0.2099020176629958,
+      "daily_turnover": 0.766765361326012
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 11339414.22433005
+  },
+  "hyst_0.4_p2_f0.0007": {
+    "full": {
+      "days": 1190,
+      "sharpe": 1.378006615508883,
+      "annual_arithmetic": 1.0447499136701,
+      "annual_cost": 0.18807622590616765,
+      "daily_turnover": 0.7361104732139635
+    },
+    "2023-24": {
+      "days": 545,
+      "sharpe": -0.002481340733520532,
+      "annual_arithmetic": -0.0018142762302851517,
+      "annual_cost": 0.17880960998399695,
+      "daily_turnover": 0.699841917745585
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.4801442603894865,
+      "annual_arithmetic": 1.9290560896324407,
+      "annual_cost": 0.19590615718924215,
+      "daily_turnover": 0.7667559968267795
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 11718380.19689494
+  },
+  "hyst_0.4_p2_f0.00045": {
+    "full": {
+      "days": 1190,
+      "sharpe": 1.467081596965617,
+      "annual_arithmetic": 1.111418557441002,
+      "annual_cost": 0.12089410573606692,
+      "daily_turnover": 0.7360371734311533
+    },
+    "2023-24": {
+      "days": 545,
+      "sharpe": 0.0854084398976564,
+      "annual_arithmetic": 0.062387973794787825,
+      "annual_cost": 0.11493617589435819,
+      "daily_turnover": 0.6997636279717393
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.5702483516069163,
+      "annual_arithmetic": 1.9978087405219118,
+      "annual_cost": 0.12592832552479757,
+      "daily_turnover": 0.7666869133929838
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 14582602.399560552
+  },
+  "hyst_0.4_p2_f0.00015": {
+    "full": {
+      "days": 1190,
+      "sharpe": 1.5730075195688655,
+      "annual_arithmetic": 1.1908155139145913,
+      "annual_cost": 0.04029725714666639,
+      "daily_turnover": 0.7360229615829479
+    },
+    "2023-24": {
+      "days": 545,
+      "sharpe": 0.18685486149492056,
+      "annual_arithmetic": 0.13641034693274795,
+      "annual_cost": 0.03831526298281359,
+      "daily_turnover": 0.6998221549372345
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.6805124348655913,
+      "annual_arithmetic": 2.0817470115969234,
+      "annual_cost": 0.041971965393642785,
+      "daily_turnover": 0.766611240066535
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 18910845.200611148
+  },
+  "hyst_0.4_p2_f0.00075": {
+    "full": {
+      "days": 1190,
+      "sharpe": 1.3600863573031954,
+      "annual_arithmetic": 1.0313274842424236,
+      "annual_cost": 0.20151544606332208,
+      "daily_turnover": 0.7361294833363364
+    },
+    "2023-24": {
+      "days": 545,
+      "sharpe": -0.019874790958696535,
+      "annual_arithmetic": -0.0145348781511536,
+      "annual_cost": 0.19158750491607954,
+      "daily_turnover": 0.6998630316569115
+    },
+    "2025-26": {
+      "days": 645,
+      "sharpe": 2.4618138732996133,
+      "annual_arithmetic": 1.9150406431641285,
+      "annual_cost": 0.20990417152882168,
+      "daily_turnover": 0.7667732293290289
+    },
+    "missing_held_quotes": [],
+    "ending_equity": 11213551.111153115
+  }
+}

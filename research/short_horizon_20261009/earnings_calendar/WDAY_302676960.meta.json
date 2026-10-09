@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/workday-announces-date-of-fiscal-2026-fourth-quarter-and-full-year-financial-results-on-february-24th-2026-302676960.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "c535873d98749e66182cfc9030323a509398df79c50458bab7b7c328408841b5",
+  "retrieved_utc": "2026-10-09T04:10:52Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/workday-announces-date-of-fiscal-2026-fourth-quarter-and-full-year-financial-results-on-february-24th-2026-302676960.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "c535873d98749e66182cfc9030323a509398df79c50458bab7b7c328408841b5",
+      "retrieved_utc": "2026-10-09T04:10:52Z"
+    }
+  ]
+}

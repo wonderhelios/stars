@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/veeva-to-release-fiscal-2023-first-quarter-results-on-june-1-2022-301540062.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "abb07e212fc45ec6a8207cad184c8bb1a138648142e2a0d73de3480d65b9e9f5",
+  "retrieved_utc": "2026-10-09T04:10:17Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/veeva-to-release-fiscal-2023-first-quarter-results-on-june-1-2022-301540062.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "abb07e212fc45ec6a8207cad184c8bb1a138648142e2a0d73de3480d65b9e9f5",
+      "retrieved_utc": "2026-10-09T04:10:17Z"
+    }
+  ]
+}

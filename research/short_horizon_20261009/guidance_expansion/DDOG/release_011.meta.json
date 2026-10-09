@@ -1,0 +1,18 @@
+{
+  "url": "https://www.globenewswire.com/news-release/2026/05/07/3289822/0/en/datadog-announces-first-quarter-2026-financial-results.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "9c6cd287e17d1a6965561b1b365a721593b09fef6401ae9cbd27e10c0dfaa5ec",
+  "retrieved_utc": "2026-10-09T03:23:34Z",
+  "attempts": [
+    {
+      "url": "https://www.globenewswire.com/news-release/2026/05/07/3289822/0/en/datadog-announces-first-quarter-2026-financial-results.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "9c6cd287e17d1a6965561b1b365a721593b09fef6401ae9cbd27e10c0dfaa5ec",
+      "retrieved_utc": "2026-10-09T03:23:34Z"
+    }
+  ]
+}

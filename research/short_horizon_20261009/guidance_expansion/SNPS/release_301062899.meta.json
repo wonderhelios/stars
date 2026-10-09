@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-second-quarter-fiscal-year-2020-301062899.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "d927a80401c4aaf21a135a40d11d04eea6d2ed40788a87f6a462b5eaba0e4e33",
+  "retrieved_utc": "2026-10-09T03:33:27Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-second-quarter-fiscal-year-2020-301062899.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "d927a80401c4aaf21a135a40d11d04eea6d2ed40788a87f6a462b5eaba0e4e33",
+      "retrieved_utc": "2026-10-09T03:33:27Z"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/workday-announces-date-of-fiscal-2023-first-quarter-financial-results-301540214.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "cdecf105911fdbca7b64713fe0454a4a7bf8498819507a1a15d47758315e7074",
+  "retrieved_utc": "2026-10-09T04:11:43Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/workday-announces-date-of-fiscal-2023-first-quarter-financial-results-301540214.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "cdecf105911fdbca7b64713fe0454a4a7bf8498819507a1a15d47758315e7074",
+      "retrieved_utc": "2026-10-09T04:11:43Z"
+    }
+  ]
+}

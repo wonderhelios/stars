@@ -1,0 +1,74 @@
+[
+  {
+    "source": "https://www.prnewswire.com/news-releases/veeva-announces-fiscal-2022-second-quarter-results-301367764.html",
+    "published": "2021-09-01T16:05:00-04:00",
+    "available_after": "2021-09-01T16:05:00-04:00",
+    "remaining_year_revision_million": 7.899999999999977,
+    "immediate_entry": "2021-09-02 13:30:00+00:00",
+    "pullback_observed": "2021-09-02 20:00:00+00:00",
+    "pullback_entry": "2021-09-03 13:30:00+00:00"
+  },
+  {
+    "source": "https://www.prnewswire.com/news-releases/veeva-announces-fiscal-2022-third-quarter-results-301435572.html",
+    "published": "2021-12-01T16:05:00-05:00",
+    "available_after": "2021-12-01T16:05:00-05:00",
+    "remaining_year_revision_million": 0.39999999999997726,
+    "immediate_entry": "2021-12-02 14:30:00+00:00",
+    "pullback_observed": "2021-12-02 21:00:00+00:00",
+    "pullback_entry": "2021-12-03 14:30:00+00:00"
+  },
+  {
+    "source": "https://www.prnewswire.com/news-releases/veeva-announces-fiscal-2025-third-quarter-results-302324307.html",
+    "published": "2024-12-05T16:05:00-05:00",
+    "available_after": "2024-12-05T16:05:55-05:00",
+    "remaining_year_revision_million": 0.7999999999999545,
+    "immediate_entry": "2024-12-06 14:30:00+00:00",
+    "pullback_observed": "2024-12-11 21:00:00+00:00",
+    "pullback_entry": "2024-12-12 14:30:00+00:00"
+  },
+  {
+    "source": "https://www.prnewswire.com/news-releases/veeva-announces-fiscal-2026-first-quarter-results-302467581.html",
+    "published": "2025-05-28T16:05:00-04:00",
+    "available_after": "2025-05-28T16:05:36-04:00",
+    "remaining_year_revision_million": 16.0,
+    "immediate_entry": "2025-05-29 13:30:00+00:00",
+    "pullback_observed": null,
+    "pullback_entry": null
+  },
+  {
+    "source": "https://www.prnewswire.com/news-releases/veeva-announces-fiscal-2026-second-quarter-results-302540372.html",
+    "published": "2025-08-27T16:05:00-04:00",
+    "available_after": "2025-08-27T16:06:07-04:00",
+    "remaining_year_revision_million": 20.399999999999977,
+    "immediate_entry": "2025-08-28 13:30:00+00:00",
+    "pullback_observed": "2025-08-28 20:00:00+00:00",
+    "pullback_entry": "2025-08-29 13:30:00+00:00"
+  },
+  {
+    "source": "https://www.prnewswire.com/news-releases/veeva-announces-fiscal-2026-third-quarter-results-302622267.html",
+    "published": "2025-11-20T16:05:00-05:00",
+    "available_after": "2025-11-20T16:05:59-05:00",
+    "remaining_year_revision_million": 10.799999999999955,
+    "immediate_entry": "2025-11-21 14:30:00+00:00",
+    "pullback_observed": "2025-11-21 21:00:00+00:00",
+    "pullback_entry": "2025-11-24 14:30:00+00:00"
+  },
+  {
+    "source": "https://www.prnewswire.com/news-releases/veeva-announces-fiscal-2027-first-quarter-results-302790659.html",
+    "published": "2026-06-03T16:05:00-04:00",
+    "available_after": "2026-06-03T16:05:58-04:00",
+    "remaining_year_revision_million": 21.100000000000023,
+    "immediate_entry": "2026-06-04 13:30:00+00:00",
+    "pullback_observed": "2026-06-08 20:00:00+00:00",
+    "pullback_entry": "2026-06-09 13:30:00+00:00"
+  },
+  {
+    "source": "https://www.prnewswire.com/news-releases/veeva-announces-fiscal-2027-second-quarter-results-302860933.html",
+    "published": "2026-08-26T16:05:00-04:00",
+    "available_after": "2026-08-26T16:05:00-04:00",
+    "remaining_year_revision_million": 20.0,
+    "immediate_entry": "2026-08-27 13:30:00+00:00",
+    "pullback_observed": null,
+    "pullback_entry": null
+  }
+]

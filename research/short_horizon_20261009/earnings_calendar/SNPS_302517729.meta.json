@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/synopsys-announces-earnings-release-date-for-third-quarter-fiscal-year-2025-302517729.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "e3c4178c2fb17af8128b86085d49d3ddc9f392196ca7d876af93a9aa61e4ecad",
+  "retrieved_utc": "2026-10-09T04:09:25Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/synopsys-announces-earnings-release-date-for-third-quarter-fiscal-year-2025-302517729.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "e3c4178c2fb17af8128b86085d49d3ddc9f392196ca7d876af93a9aa61e4ecad",
+      "retrieved_utc": "2026-10-09T04:09:25Z"
+    }
+  ]
+}

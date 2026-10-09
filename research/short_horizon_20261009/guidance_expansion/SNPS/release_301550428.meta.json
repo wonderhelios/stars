@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-second-quarter-fiscal-year-2022-301550428.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "adce2bb4a31f95641924a618e69b55c08a547858f9fc75f338940f958e47be60",
+  "retrieved_utc": "2026-10-09T03:32:45Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-second-quarter-fiscal-year-2022-301550428.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "adce2bb4a31f95641924a618e69b55c08a547858f9fc75f338940f958e47be60",
+      "retrieved_utc": "2026-10-09T03:32:45Z"
+    }
+  ]
+}

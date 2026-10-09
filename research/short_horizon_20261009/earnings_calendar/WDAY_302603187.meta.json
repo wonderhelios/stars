@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/workday-to-announce-fiscal-2026-third-quarter-financial-results-on-november-25-2025-302603187.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "74e5fd94ab9f681952817d57ea3ce79f439db3edf9f919229ea83fb579f98440",
+  "retrieved_utc": "2026-10-09T04:11:48Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/workday-to-announce-fiscal-2026-third-quarter-financial-results-on-november-25-2025-302603187.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "74e5fd94ab9f681952817d57ea3ce79f439db3edf9f919229ea83fb579f98440",
+      "retrieved_utc": "2026-10-09T04:11:48Z"
+    }
+  ]
+}

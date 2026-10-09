@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news/workday-inc./?page=4&pagesize=100",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "2ff2c0f5102dd313374fc4651e73e291bda40f736ae373b17254272a3cac22f1",
+  "retrieved_utc": "2026-10-09T03:27:52Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news/workday-inc./?page=4&pagesize=100",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "2ff2c0f5102dd313374fc4651e73e291bda40f736ae373b17254272a3cac22f1",
+      "retrieved_utc": "2026-10-09T03:27:52Z"
+    }
+  ]
+}

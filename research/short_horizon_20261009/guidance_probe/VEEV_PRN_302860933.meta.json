@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/veeva-announces-fiscal-2027-second-quarter-results-302860933.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "9f518a943bd30901c1f383c8407a60fbe2a8395da3df62ed128af89c4d8f3aa3",
+  "retrieved_utc": "2026-10-09T03:07:54Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/veeva-announces-fiscal-2027-second-quarter-results-302860933.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "9f518a943bd30901c1f383c8407a60fbe2a8395da3df62ed128af89c4d8f3aa3",
+      "retrieved_utc": "2026-10-09T03:07:54Z"
+    }
+  ]
+}

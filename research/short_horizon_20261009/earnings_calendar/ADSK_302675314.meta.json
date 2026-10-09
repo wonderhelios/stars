@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/autodesk-extends-invitation-to-join-financial-results-conference-call-302675314.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "2246d4284283cb496179a71e9d346980399782dfcb2ff51aacc8c88c923689b5",
+  "retrieved_utc": "2026-10-09T04:06:27Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/autodesk-extends-invitation-to-join-financial-results-conference-call-302675314.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "2246d4284283cb496179a71e9d346980399782dfcb2ff51aacc8c88c923689b5",
+      "retrieved_utc": "2026-10-09T04:06:27Z"
+    }
+  ]
+}

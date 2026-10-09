@@ -1,0 +1,38 @@
+GOOGL Alphabet Inc.
+MSFT MICROSOFT CORPORATION
+AAPL Apple Inc.
+AMZN curl: (28) Operation timed out after 45004 milliseconds with 3021882 bytes received
+
+META Meta Platforms, Inc.
+NVDA curl: (35) LibreSSL SSL_connect: SSL_ERROR_SYSCALL in connection to data.sec.gov:443 
+
+AMD ADVANCED MICRO DEVICES INC
+INTC curl: (35) LibreSSL SSL_connect: SSL_ERROR_SYSCALL in connection to data.sec.gov:443 
+
+ORCL Oracle Corporation
+CRM curl: (28) Operation timed out after 45000 milliseconds with 2922546 bytes received
+
+ADBE curl: (28) Operation timed out after 45009 milliseconds with 2874059 bytes received
+
+INTU INTUIT INC.
+NOW ServiceNow, Inc.
+VEEV Veeva Systems Inc.
+GWRE Guidewire Software, Inc.
+TYL TYLER TECHNOLOGIES, INC.
+ADSK curl: (28) Operation timed out after 45009 milliseconds with 3457242 bytes received
+
+ANSS curl: (28) Operation timed out after 45011 milliseconds with 2854855 bytes received
+
+CDNS CADENCE DESIGN SYSTEMS, INC.
+SNPS SYNOPSYS INC
+PAYC Paycom Software, Inc.
+PCTY PAYLOCITY HOLDING CORPORATION
+WDAY WORKDAY, INC.
+TEAM Atlassian Corporation
+DDOG Datadog, Inc.
+ZS Zscaler Inc
+CRWD CrowdStrike Holdings, Inc.
+NET Cloudflare, Inc.
+MDB MONGODB, INC.
+HUBS curl: (35) LibreSSL SSL_connect: SSL_ERROR_SYSCALL in connection to data.sec.gov:443 
+

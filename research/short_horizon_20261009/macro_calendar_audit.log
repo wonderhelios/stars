@@ -1,0 +1,10 @@
+{
+  "paths": 32,
+  "trades_including_stress_and_gross": 2160,
+  "max_daily_nav_replay_error": 2.9103830456733704e-10,
+  "max_holding_hours": 30.5,
+  "default_engine_regression_error": 0.0,
+  "all_entries_after_source_available": true,
+  "no_same_name_overlap": true,
+  "equal_notional_mix_verified": true
+}

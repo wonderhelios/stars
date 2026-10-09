@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/veeva-announces-fourth-quarter-and-fiscal-year-2022-results-301494433.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "279be6be68c0c3d0f1cd1a22afed86cfd29b571c60fb6d392d98f6e2092bcd1a",
+  "retrieved_utc": "2026-10-09T03:09:53Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/veeva-announces-fourth-quarter-and-fiscal-year-2022-results-301494433.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "279be6be68c0c3d0f1cd1a22afed86cfd29b571c60fb6d392d98f6e2092bcd1a",
+      "retrieved_utc": "2026-10-09T03:09:53Z"
+    }
+  ]
+}

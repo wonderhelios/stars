@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-date-of-second-quarter-fiscal-2027-earnings-call-302842874.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "15c1787adc94b518230b70fc64b5570a0d528e8c5957364047ca9f1af8d57ed0",
+  "retrieved_utc": "2026-10-09T04:02:26Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-date-of-second-quarter-fiscal-2027-earnings-call-302842874.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "15c1787adc94b518230b70fc64b5570a0d528e8c5957364047ca9f1af8d57ed0",
+      "retrieved_utc": "2026-10-09T04:02:26Z"
+    }
+  ]
+}

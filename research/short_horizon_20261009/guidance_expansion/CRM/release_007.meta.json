@@ -1,0 +1,18 @@
+{
+  "url": "https://www.salesforce.com/news/press-releases/2025/02/26/fy25-q4-earnings/",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "053e91c87fbf26b0c8848fb83eaf848cd1b35e835fc901cd2bf8f21e7a208d32",
+  "retrieved_utc": "2026-10-09T03:24:59Z",
+  "attempts": [
+    {
+      "url": "https://www.salesforce.com/news/press-releases/2025/02/26/fy25-q4-earnings/",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "053e91c87fbf26b0c8848fb83eaf848cd1b35e835fc901cd2bf8f21e7a208d32",
+      "retrieved_utc": "2026-10-09T03:24:59Z"
+    }
+  ]
+}

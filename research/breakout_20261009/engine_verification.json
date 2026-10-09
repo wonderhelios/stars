@@ -1,0 +1,9 @@
+{
+  "exact_array_equality": true,
+  "fields": [
+    "r",
+    "t",
+    "turn"
+  ],
+  "source_sha256": "3ac84286295d5c8ff6c27b1332554d39d84981496bc040480a85428a3a019511"
+}

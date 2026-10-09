@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-second-quarter-fiscal-2025-financial-results-302234446.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "d58c86110c445ea452afec2015c88ed4a79a8013328abc87e905e5cbe6643aab",
+  "retrieved_utc": "2026-10-09T03:22:32Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-second-quarter-fiscal-2025-financial-results-302234446.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "d58c86110c445ea452afec2015c88ed4a79a8013328abc87e905e5cbe6643aab",
+      "retrieved_utc": "2026-10-09T03:22:32Z"
+    }
+  ]
+}

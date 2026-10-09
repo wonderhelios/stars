@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/workday-announces-fiscal-2024-third-quarter-financial-results-301999619.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "0bbaf0a60cfb2fac37dc7724a70ec8a9bb2b5e304de3fc89610d11eef61d4254",
+  "retrieved_utc": "2026-10-09T03:28:42Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/workday-announces-fiscal-2024-third-quarter-financial-results-301999619.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "0bbaf0a60cfb2fac37dc7724a70ec8a9bb2b5e304de3fc89610d11eef61d4254",
+      "retrieved_utc": "2026-10-09T03:28:42Z"
+    }
+  ]
+}

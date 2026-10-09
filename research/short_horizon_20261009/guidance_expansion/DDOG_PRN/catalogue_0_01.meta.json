@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news/datadog%2C-inc./?page=1&pagesize=100",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "5da2393c66fc85d3efde5bee39d187685c751c393df80c023535c78cecf3f16c",
+  "retrieved_utc": "2026-10-09T03:33:39Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news/datadog%2C-inc./?page=1&pagesize=100",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "5da2393c66fc85d3efde5bee39d187685c751c393df80c023535c78cecf3f16c",
+      "retrieved_utc": "2026-10-09T03:33:39Z"
+    }
+  ]
+}

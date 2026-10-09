@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/workday-announces-fiscal-2026-fourth-quarter-and-full-year-financial-results-302696152.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "7bb378e7c992d7e2dfcf845dd35c3b8b481f41fcca34b314c3ad47a81f16ccfc",
+  "retrieved_utc": "2026-10-09T03:28:04Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/workday-announces-fiscal-2026-fourth-quarter-and-full-year-financial-results-302696152.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "7bb378e7c992d7e2dfcf845dd35c3b8b481f41fcca34b314c3ad47a81f16ccfc",
+      "retrieved_utc": "2026-10-09T03:28:04Z"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2027-second-quarter-results-302861696.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "0eacba367fc8c0426445ec63ebd362453d286f0d8c2ffd62f34b43e4c63730e9",
+  "retrieved_utc": "2026-10-09T03:24:37Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2027-second-quarter-results-302861696.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "0eacba367fc8c0426445ec63ebd362453d286f0d8c2ffd62f34b43e4c63730e9",
+      "retrieved_utc": "2026-10-09T03:24:37Z"
+    }
+  ]
+}

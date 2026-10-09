@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/workday-announces-date-of-fiscal-2023-third-quarter-financial-results-301666856.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "8a3d021fdd38cd7ab1c2565a26436f65c653652b493690d76815e6e9067f6448",
+  "retrieved_utc": "2026-10-09T04:11:48Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/workday-announces-date-of-fiscal-2023-third-quarter-financial-results-301666856.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "8a3d021fdd38cd7ab1c2565a26436f65c653652b493690d76815e6e9067f6448",
+      "retrieved_utc": "2026-10-09T04:11:48Z"
+    }
+  ]
+}

@@ -1,0 +1,1162 @@
+{
+  "raw_h1_p0_base": {
+    "status": "research_proxy",
+    "trades": 0,
+    "funding_income": -0.0,
+    "price_pnl": 0.0,
+    "fees": 0.0,
+    "final_equity": 100000.0,
+    "risk_flags": [],
+    "metrics": {
+      "full": {
+        "sharpe": null,
+        "annual_arithmetic": 0.0,
+        "cagr": 0.0,
+        "max_drawdown": 0.0
+      },
+      "2023-24": {
+        "sharpe": null,
+        "annual_arithmetic": 0.0,
+        "cagr": 0.0,
+        "max_drawdown": 0.0
+      },
+      "2025-26": {
+        "sharpe": null,
+        "annual_arithmetic": 0.0,
+        "cagr": 0.0,
+        "max_drawdown": 0.0
+      }
+    }
+  },
+  "raw_h1_p0_stress": {
+    "status": "research_proxy",
+    "trades": 0,
+    "funding_income": -0.0,
+    "price_pnl": 0.0,
+    "fees": 0.0,
+    "final_equity": 100000.0,
+    "risk_flags": [],
+    "metrics": {
+      "full": {
+        "sharpe": null,
+        "annual_arithmetic": 0.0,
+        "cagr": 0.0,
+        "max_drawdown": 0.0
+      },
+      "2023-24": {
+        "sharpe": null,
+        "annual_arithmetic": 0.0,
+        "cagr": 0.0,
+        "max_drawdown": 0.0
+      },
+      "2025-26": {
+        "sharpe": null,
+        "annual_arithmetic": 0.0,
+        "cagr": 0.0,
+        "max_drawdown": 0.0
+      }
+    }
+  },
+  "raw_h1_p0_markstress": {
+    "status": "research_proxy",
+    "trades": 0,
+    "funding_income": -0.0,
+    "price_pnl": 0.0,
+    "fees": 0.0,
+    "final_equity": 100000.0,
+    "risk_flags": [],
+    "metrics": {
+      "full": {
+        "sharpe": null,
+        "annual_arithmetic": 0.0,
+        "cagr": 0.0,
+        "max_drawdown": 0.0
+      },
+      "2023-24": {
+        "sharpe": null,
+        "annual_arithmetic": 0.0,
+        "cagr": 0.0,
+        "max_drawdown": 0.0
+      },
+      "2025-26": {
+        "sharpe": null,
+        "annual_arithmetic": 0.0,
+        "cagr": 0.0,
+        "max_drawdown": 0.0
+      }
+    }
+  },
+  "raw_h1_p0_unit": {
+    "status": "research_proxy",
+    "trades": 0,
+    "funding_income": -0.0,
+    "price_pnl": 0.0,
+    "fees": 0.0,
+    "final_equity": 100000.0,
+    "risk_flags": [],
+    "metrics": {
+      "full": {
+        "sharpe": null,
+        "annual_arithmetic": 0.0,
+        "cagr": 0.0,
+        "max_drawdown": 0.0
+      },
+      "2023-24": {
+        "sharpe": null,
+        "annual_arithmetic": 0.0,
+        "cagr": 0.0,
+        "max_drawdown": 0.0
+      },
+      "2025-26": {
+        "sharpe": null,
+        "annual_arithmetic": 0.0,
+        "cagr": 0.0,
+        "max_drawdown": 0.0
+      }
+    }
+  },
+  "raw_h1_p1_base": {
+    "status": "research_proxy",
+    "trades": 0,
+    "funding_income": -0.0,
+    "price_pnl": 0.0,
+    "fees": 0.0,
+    "final_equity": 100000.0,
+    "risk_flags": [],
+    "metrics": {
+      "full": {
+        "sharpe": null,
+        "annual_arithmetic": 0.0,
+        "cagr": 0.0,
+        "max_drawdown": 0.0
+      },
+      "2023-24": {
+        "sharpe": null,
+        "annual_arithmetic": 0.0,
+        "cagr": 0.0,
+        "max_drawdown": 0.0
+      },
+      "2025-26": {
+        "sharpe": null,
+        "annual_arithmetic": 0.0,
+        "cagr": 0.0,
+        "max_drawdown": 0.0
+      }
+    }
+  },
+  "raw_h1_p1_stress": {
+    "status": "research_proxy",
+    "trades": 0,
+    "funding_income": -0.0,
+    "price_pnl": 0.0,
+    "fees": 0.0,
+    "final_equity": 100000.0,
+    "risk_flags": [],
+    "metrics": {
+      "full": {
+        "sharpe": null,
+        "annual_arithmetic": 0.0,
+        "cagr": 0.0,
+        "max_drawdown": 0.0
+      },
+      "2023-24": {
+        "sharpe": null,
+        "annual_arithmetic": 0.0,
+        "cagr": 0.0,
+        "max_drawdown": 0.0
+      },
+      "2025-26": {
+        "sharpe": null,
+        "annual_arithmetic": 0.0,
+        "cagr": 0.0,
+        "max_drawdown": 0.0
+      }
+    }
+  },
+  "raw_h1_p1_markstress": {
+    "status": "research_proxy",
+    "trades": 0,
+    "funding_income": -0.0,
+    "price_pnl": 0.0,
+    "fees": 0.0,
+    "final_equity": 100000.0,
+    "risk_flags": [],
+    "metrics": {
+      "full": {
+        "sharpe": null,
+        "annual_arithmetic": 0.0,
+        "cagr": 0.0,
+        "max_drawdown": 0.0
+      },
+      "2023-24": {
+        "sharpe": null,
+        "annual_arithmetic": 0.0,
+        "cagr": 0.0,
+        "max_drawdown": 0.0
+      },
+      "2025-26": {
+        "sharpe": null,
+        "annual_arithmetic": 0.0,
+        "cagr": 0.0,
+        "max_drawdown": 0.0
+      }
+    }
+  },
+  "raw_h1_p1_unit": {
+    "status": "research_proxy",
+    "trades": 0,
+    "funding_income": -0.0,
+    "price_pnl": 0.0,
+    "fees": 0.0,
+    "final_equity": 100000.0,
+    "risk_flags": [],
+    "metrics": {
+      "full": {
+        "sharpe": null,
+        "annual_arithmetic": 0.0,
+        "cagr": 0.0,
+        "max_drawdown": 0.0
+      },
+      "2023-24": {
+        "sharpe": null,
+        "annual_arithmetic": 0.0,
+        "cagr": 0.0,
+        "max_drawdown": 0.0
+      },
+      "2025-26": {
+        "sharpe": null,
+        "annual_arithmetic": 0.0,
+        "cagr": 0.0,
+        "max_drawdown": 0.0
+      }
+    }
+  },
+  "raw_h2_p0_base": {
+    "status": "research_proxy",
+    "trades": 4,
+    "funding_income": 946.8201063664487,
+    "price_pnl": -11075.231937518947,
+    "fees": 1632.0449268734103,
+    "final_equity": 88239.5432419741,
+    "risk_flags": [],
+    "metrics": {
+      "full": {
+        "sharpe": -1.4631234002911049,
+        "annual_arithmetic": -0.03692413180647712,
+        "cagr": -0.03656355154903679,
+        "max_drawdown": -0.11760456758025906
+      },
+      "2023-24": {
+        "sharpe": null,
+        "annual_arithmetic": 0.0,
+        "cagr": 0.0,
+        "max_drawdown": 0.0
+      },
+      "2025-26": {
+        "sharpe": -2.0202175301597274,
+        "annual_arithmetic": -0.07007582909402624,
+        "cagr": -0.0682510845623604,
+        "max_drawdown": -0.11760456758025906
+      }
+    }
+  },
+  "raw_h2_p0_stress": {
+    "status": "research_proxy",
+    "trades": 4,
+    "funding_income": 940.6901738361545,
+    "price_pnl": -10986.973645117412,
+    "fees": 3037.5045067639567,
+    "final_equity": 86916.21202195478,
+    "risk_flags": [],
+    "metrics": {
+      "full": {
+        "sharpe": -1.526354924668775,
+        "annual_arithmetic": -0.041372482606193126,
+        "cagr": -0.04088800636065826,
+        "max_drawdown": -0.13083787978045236
+      },
+      "2023-24": {
+        "sharpe": null,
+        "annual_arithmetic": 0.0,
+        "cagr": 0.0,
+        "max_drawdown": 0.0
+      },
+      "2025-26": {
+        "sharpe": -2.108018031644813,
+        "annual_arithmetic": -0.07851805522475662,
+        "cagr": -0.07617224885643614,
+        "max_drawdown": -0.13083787978045236
+      }
+    }
+  },
+  "raw_h2_p0_markstress": {
+    "status": "research_proxy",
+    "trades": 4,
+    "funding_income": 946.8201063664487,
+    "price_pnl": -11075.231937518947,
+    "fees": 1632.0449268734103,
+    "final_equity": 88239.5432419741,
+    "risk_flags": [],
+    "metrics": {
+      "full": {
+        "sharpe": -1.4631234002911049,
+        "annual_arithmetic": -0.03692413180647712,
+        "cagr": -0.03656355154903679,
+        "max_drawdown": -0.11760456758025906
+      },
+      "2023-24": {
+        "sharpe": null,
+        "annual_arithmetic": 0.0,
+        "cagr": 0.0,
+        "max_drawdown": 0.0
+      },
+      "2025-26": {
+        "sharpe": -2.0202175301597274,
+        "annual_arithmetic": -0.07007582909402624,
+        "cagr": -0.0682510845623604,
+        "max_drawdown": -0.11760456758025906
+      }
+    }
+  },
+  "raw_h2_p0_unit": {
+    "status": "research_proxy",
+    "trades": 4,
+    "funding_income": 359.00746445378246,
+    "price_pnl": -4223.717885184911,
+    "fees": 621.1338996181837,
+    "final_equity": 95514.15567965069,
+    "risk_flags": [],
+    "metrics": {
+      "full": {
+        "sharpe": -1.4646815861854792,
+        "annual_arithmetic": -0.013620216431580168,
+        "cagr": -0.013570970479893418,
+        "max_drawdown": -0.04485844320349275
+      },
+      "2023-24": {
+        "sharpe": null,
+        "annual_arithmetic": 0.0,
+        "cagr": 0.0,
+        "max_drawdown": 0.0
+      },
+      "2025-26": {
+        "sharpe": -2.0223804227483932,
+        "annual_arithmetic": -0.025848893723091772,
+        "cagr": -0.025598452292355023,
+        "max_drawdown": -0.04485844320349275
+      }
+    }
+  },
+  "raw_h2_p1_base": {
+    "status": "research_proxy",
+    "trades": 4,
+    "funding_income": 1325.3133281534538,
+    "price_pnl": -3583.6594351915783,
+    "fees": 1711.3266983015064,
+    "final_equity": 96030.32719466038,
+    "risk_flags": [],
+    "metrics": {
+      "full": {
+        "sharpe": -0.3214727734573784,
+        "annual_arithmetic": -0.011429417490022246,
+        "cagr": -0.011986908586583911,
+        "max_drawdown": -0.0823268442826095
+      },
+      "2023-24": {
+        "sharpe": null,
+        "annual_arithmetic": 0.0,
+        "cagr": 0.0,
+        "max_drawdown": 0.0
+      },
+      "2025-26": {
+        "sharpe": -0.4427608526165945,
+        "annual_arithmetic": -0.021691123595614974,
+        "cagr": -0.022626682458287473,
+        "max_drawdown": -0.0823268442826095
+      }
+    }
+  },
+  "raw_h2_p1_stress": {
+    "status": "research_proxy",
+    "trades": 4,
+    "funding_income": 1316.3220027183147,
+    "price_pnl": -3548.2224051811095,
+    "fees": 3184.75600876531,
+    "final_equity": 94583.34358877191,
+    "risk_flags": [],
+    "metrics": {
+      "full": {
+        "sharpe": -0.4372165557464635,
+        "annual_arithmetic": -0.015917594778020627,
+        "cagr": -0.016442771638312315,
+        "max_drawdown": -0.09265616707381408
+      },
+      "2023-24": {
+        "sharpe": null,
+        "annual_arithmetic": 0.0,
+        "cagr": 0.0,
+        "max_drawdown": 0.0
+      },
+      "2025-26": {
+        "sharpe": -0.6022385849588375,
+        "annual_arithmetic": -0.03020893374280695,
+        "cagr": -0.030975159864675805,
+        "max_drawdown": -0.09265616707381408
+      }
+    }
+  },
+  "raw_h2_p1_markstress": {
+    "status": "research_proxy",
+    "trades": 4,
+    "funding_income": 1325.3133281534538,
+    "price_pnl": -3583.6594351915783,
+    "fees": 1711.3266983015064,
+    "final_equity": 96030.32719466038,
+    "risk_flags": [],
+    "metrics": {
+      "full": {
+        "sharpe": -0.3214727734573784,
+        "annual_arithmetic": -0.011429417490022246,
+        "cagr": -0.011986908586583911,
+        "max_drawdown": -0.0823268442826095
+      },
+      "2023-24": {
+        "sharpe": null,
+        "annual_arithmetic": 0.0,
+        "cagr": 0.0,
+        "max_drawdown": 0.0
+      },
+      "2025-26": {
+        "sharpe": -0.4427608526165945,
+        "annual_arithmetic": -0.021691123595614974,
+        "cagr": -0.022626682458287473,
+        "max_drawdown": -0.0823268442826095
+      }
+    }
+  },
+  "raw_h2_p1_unit": {
+    "status": "research_proxy",
+    "trades": 4,
+    "funding_income": 493.5081296997897,
+    "price_pnl": -1331.2875399915438,
+    "fees": 638.08609931426,
+    "final_equity": 98524.13449039396,
+    "risk_flags": [],
+    "metrics": {
+      "full": {
+        "sharpe": -0.3267749217799682,
+        "annual_arithmetic": -0.004338623430317114,
+        "cagr": -0.004416853410313615,
+        "max_drawdown": -0.03139508766494503
+      },
+      "2023-24": {
+        "sharpe": null,
+        "annual_arithmetic": 0.0,
+        "cagr": 0.0,
+        "max_drawdown": 0.0
+      },
+      "2025-26": {
+        "sharpe": -0.450065346767464,
+        "annual_arithmetic": -0.00823398192812505,
+        "cagr": -0.008365826144779098,
+        "max_drawdown": -0.03139508766494503
+      }
+    }
+  },
+  "raw_h2_p2_base": {
+    "status": "research_proxy",
+    "trades": 5,
+    "funding_income": 1785.4406505388956,
+    "price_pnl": 13823.432079939648,
+    "fees": 2169.3480192969155,
+    "final_equity": 113439.52471118163,
+    "risk_flags": [],
+    "metrics": {
+      "full": {
+        "sharpe": 0.4079650603400445,
+        "annual_arithmetic": 0.04238925239334327,
+        "cagr": 0.03825551292799756,
+        "max_drawdown": -0.045445769612426745
+      },
+      "2023-24": {
+        "sharpe": null,
+        "annual_arithmetic": 0.0,
+        "cagr": 0.0,
+        "max_drawdown": 0.0
+      },
+      "2025-26": {
+        "sharpe": 0.5619293629865632,
+        "annual_arithmetic": 0.08044771429448737,
+        "cagr": 0.07384780251579781,
+        "max_drawdown": -0.045445769612426745
+      }
+    }
+  },
+  "raw_h2_p2_stress": {
+    "status": "research_proxy",
+    "trades": 5,
+    "funding_income": 1769.0740625138017,
+    "price_pnl": 13614.611641916274,
+    "fees": 4028.7167789073224,
+    "final_equity": 111354.96892552274,
+    "risk_flags": [],
+    "metrics": {
+      "full": {
+        "sharpe": 0.3544119311000606,
+        "annual_arithmetic": 0.03688535619574029,
+        "cagr": 0.0325383776587187,
+        "max_drawdown": -0.054298244392268935
+      },
+      "2023-24": {
+        "sharpe": null,
+        "annual_arithmetic": 0.0,
+        "cagr": 0.0,
+        "max_drawdown": 0.0
+      },
+      "2025-26": {
+        "sharpe": 0.48814096629314846,
+        "annual_arithmetic": 0.07000223946745758,
+        "cagr": 0.06265342828164067,
+        "max_drawdown": -0.054298244392268935
+      }
+    }
+  },
+  "raw_h2_p2_markstress": {
+    "status": "research_proxy",
+    "trades": 5,
+    "funding_income": 1785.4406505388956,
+    "price_pnl": 13823.432079939648,
+    "fees": 2169.3480192969155,
+    "final_equity": 113439.52471118163,
+    "risk_flags": [],
+    "metrics": {
+      "full": {
+        "sharpe": 0.4079650603400445,
+        "annual_arithmetic": 0.04238925239334327,
+        "cagr": 0.03825551292799756,
+        "max_drawdown": -0.045445769612426745
+      },
+      "2023-24": {
+        "sharpe": null,
+        "annual_arithmetic": 0.0,
+        "cagr": 0.0,
+        "max_drawdown": 0.0
+      },
+      "2025-26": {
+        "sharpe": 0.5619293629865632,
+        "annual_arithmetic": 0.08044771429448737,
+        "cagr": 0.07384780251579781,
+        "max_drawdown": -0.045445769612426745
+      }
+    }
+  },
+  "raw_h2_p2_unit": {
+    "status": "research_proxy",
+    "trades": 5,
+    "funding_income": 665.4118789374221,
+    "price_pnl": 5247.077680662801,
+    "fees": 799.6995252457557,
+    "final_equity": 105112.79003435446,
+    "risk_flags": [],
+    "metrics": {
+      "full": {
+        "sharpe": 0.40414121834386785,
+        "annual_arithmetic": 0.015555570159186422,
+        "cagr": 0.014955990201667824,
+        "max_drawdown": -0.016873928778061043
+      },
+      "2023-24": {
+        "sharpe": null,
+        "annual_arithmetic": 0.0,
+        "cagr": 0.0,
+        "max_drawdown": 0.0
+      },
+      "2025-26": {
+        "sharpe": 0.5566602903949498,
+        "annual_arithmetic": 0.02952187154049931,
+        "cagr": 0.028574442021202406,
+        "max_drawdown": -0.016873928778061043
+      }
+    }
+  },
+  "residual_h1_p0_base": {
+    "status": "research_proxy",
+    "trades": 0,
+    "funding_income": -0.0,
+    "price_pnl": 0.0,
+    "fees": 0.0,
+    "final_equity": 100000.0,
+    "risk_flags": [],
+    "metrics": {
+      "full": {
+        "sharpe": null,
+        "annual_arithmetic": 0.0,
+        "cagr": 0.0,
+        "max_drawdown": 0.0
+      },
+      "2023-24": {
+        "sharpe": null,
+        "annual_arithmetic": 0.0,
+        "cagr": 0.0,
+        "max_drawdown": 0.0
+      },
+      "2025-26": {
+        "sharpe": null,
+        "annual_arithmetic": 0.0,
+        "cagr": 0.0,
+        "max_drawdown": 0.0
+      }
+    }
+  },
+  "residual_h1_p0_stress": {
+    "status": "research_proxy",
+    "trades": 0,
+    "funding_income": -0.0,
+    "price_pnl": 0.0,
+    "fees": 0.0,
+    "final_equity": 100000.0,
+    "risk_flags": [],
+    "metrics": {
+      "full": {
+        "sharpe": null,
+        "annual_arithmetic": 0.0,
+        "cagr": 0.0,
+        "max_drawdown": 0.0
+      },
+      "2023-24": {
+        "sharpe": null,
+        "annual_arithmetic": 0.0,
+        "cagr": 0.0,
+        "max_drawdown": 0.0
+      },
+      "2025-26": {
+        "sharpe": null,
+        "annual_arithmetic": 0.0,
+        "cagr": 0.0,
+        "max_drawdown": 0.0
+      }
+    }
+  },
+  "residual_h1_p0_markstress": {
+    "status": "research_proxy",
+    "trades": 0,
+    "funding_income": -0.0,
+    "price_pnl": 0.0,
+    "fees": 0.0,
+    "final_equity": 100000.0,
+    "risk_flags": [],
+    "metrics": {
+      "full": {
+        "sharpe": null,
+        "annual_arithmetic": 0.0,
+        "cagr": 0.0,
+        "max_drawdown": 0.0
+      },
+      "2023-24": {
+        "sharpe": null,
+        "annual_arithmetic": 0.0,
+        "cagr": 0.0,
+        "max_drawdown": 0.0
+      },
+      "2025-26": {
+        "sharpe": null,
+        "annual_arithmetic": 0.0,
+        "cagr": 0.0,
+        "max_drawdown": 0.0
+      }
+    }
+  },
+  "residual_h1_p0_unit": {
+    "status": "research_proxy",
+    "trades": 0,
+    "funding_income": -0.0,
+    "price_pnl": 0.0,
+    "fees": 0.0,
+    "final_equity": 100000.0,
+    "risk_flags": [],
+    "metrics": {
+      "full": {
+        "sharpe": null,
+        "annual_arithmetic": 0.0,
+        "cagr": 0.0,
+        "max_drawdown": 0.0
+      },
+      "2023-24": {
+        "sharpe": null,
+        "annual_arithmetic": 0.0,
+        "cagr": 0.0,
+        "max_drawdown": 0.0
+      },
+      "2025-26": {
+        "sharpe": null,
+        "annual_arithmetic": 0.0,
+        "cagr": 0.0,
+        "max_drawdown": 0.0
+      }
+    }
+  },
+  "residual_h1_p1_base": {
+    "status": "research_proxy",
+    "trades": 0,
+    "funding_income": -0.0,
+    "price_pnl": 0.0,
+    "fees": 0.0,
+    "final_equity": 100000.0,
+    "risk_flags": [],
+    "metrics": {
+      "full": {
+        "sharpe": null,
+        "annual_arithmetic": 0.0,
+        "cagr": 0.0,
+        "max_drawdown": 0.0
+      },
+      "2023-24": {
+        "sharpe": null,
+        "annual_arithmetic": 0.0,
+        "cagr": 0.0,
+        "max_drawdown": 0.0
+      },
+      "2025-26": {
+        "sharpe": null,
+        "annual_arithmetic": 0.0,
+        "cagr": 0.0,
+        "max_drawdown": 0.0
+      }
+    }
+  },
+  "residual_h1_p1_stress": {
+    "status": "research_proxy",
+    "trades": 0,
+    "funding_income": -0.0,
+    "price_pnl": 0.0,
+    "fees": 0.0,
+    "final_equity": 100000.0,
+    "risk_flags": [],
+    "metrics": {
+      "full": {
+        "sharpe": null,
+        "annual_arithmetic": 0.0,
+        "cagr": 0.0,
+        "max_drawdown": 0.0
+      },
+      "2023-24": {
+        "sharpe": null,
+        "annual_arithmetic": 0.0,
+        "cagr": 0.0,
+        "max_drawdown": 0.0
+      },
+      "2025-26": {
+        "sharpe": null,
+        "annual_arithmetic": 0.0,
+        "cagr": 0.0,
+        "max_drawdown": 0.0
+      }
+    }
+  },
+  "residual_h1_p1_markstress": {
+    "status": "research_proxy",
+    "trades": 0,
+    "funding_income": -0.0,
+    "price_pnl": 0.0,
+    "fees": 0.0,
+    "final_equity": 100000.0,
+    "risk_flags": [],
+    "metrics": {
+      "full": {
+        "sharpe": null,
+        "annual_arithmetic": 0.0,
+        "cagr": 0.0,
+        "max_drawdown": 0.0
+      },
+      "2023-24": {
+        "sharpe": null,
+        "annual_arithmetic": 0.0,
+        "cagr": 0.0,
+        "max_drawdown": 0.0
+      },
+      "2025-26": {
+        "sharpe": null,
+        "annual_arithmetic": 0.0,
+        "cagr": 0.0,
+        "max_drawdown": 0.0
+      }
+    }
+  },
+  "residual_h1_p1_unit": {
+    "status": "research_proxy",
+    "trades": 0,
+    "funding_income": -0.0,
+    "price_pnl": 0.0,
+    "fees": 0.0,
+    "final_equity": 100000.0,
+    "risk_flags": [],
+    "metrics": {
+      "full": {
+        "sharpe": null,
+        "annual_arithmetic": 0.0,
+        "cagr": 0.0,
+        "max_drawdown": 0.0
+      },
+      "2023-24": {
+        "sharpe": null,
+        "annual_arithmetic": 0.0,
+        "cagr": 0.0,
+        "max_drawdown": 0.0
+      },
+      "2025-26": {
+        "sharpe": null,
+        "annual_arithmetic": 0.0,
+        "cagr": 0.0,
+        "max_drawdown": 0.0
+      }
+    }
+  },
+  "residual_h2_p0_base": {
+    "status": "research_proxy",
+    "trades": 2,
+    "funding_income": 606.2174604596038,
+    "price_pnl": -4230.293609259136,
+    "fees": 848.6549417265223,
+    "final_equity": 95527.26890947395,
+    "risk_flags": [],
+    "metrics": {
+      "full": {
+        "sharpe": -0.6619912962717409,
+        "annual_arithmetic": -0.013413641299934862,
+        "cagr": -0.013530653384613567,
+        "max_drawdown": -0.05072682090824965
+      },
+      "2023-24": {
+        "sharpe": null,
+        "annual_arithmetic": 0.0,
+        "cagr": 0.0,
+        "max_drawdown": 0.0
+      },
+      "2025-26": {
+        "sharpe": -0.9121293714184706,
+        "annual_arithmetic": -0.025456848659009504,
+        "cagr": -0.02552286874407461,
+        "max_drawdown": -0.05072682090824965
+      }
+    }
+  },
+  "residual_h2_p0_stress": {
+    "status": "research_proxy",
+    "trades": 2,
+    "funding_income": 603.7920960418228,
+    "price_pnl": -4208.718516599857,
+    "fees": 1585.2830401638303,
+    "final_equity": 94809.79053927814,
+    "risk_flags": [],
+    "metrics": {
+      "full": {
+        "sharpe": -0.7197251112232974,
+        "annual_arithmetic": -0.01562682670223154,
+        "cagr": -0.015742302381848927,
+        "max_drawdown": -0.05607973076760575
+      },
+      "2023-24": {
+        "sharpe": null,
+        "annual_arithmetic": 0.0,
+        "cagr": 0.0,
+        "max_drawdown": 0.0
+      },
+      "2025-26": {
+        "sharpe": -0.9917758095277345,
+        "annual_arithmetic": -0.02965710454634036,
+        "cagr": -0.02966500953969331,
+        "max_drawdown": -0.05607973076760575
+      }
+    }
+  },
+  "residual_h2_p0_markstress": {
+    "status": "research_proxy",
+    "trades": 2,
+    "funding_income": 606.2174604596038,
+    "price_pnl": -4230.293609259136,
+    "fees": 848.6549417265223,
+    "final_equity": 95527.26890947395,
+    "risk_flags": [],
+    "metrics": {
+      "full": {
+        "sharpe": -0.6619912962717409,
+        "annual_arithmetic": -0.013413641299934862,
+        "cagr": -0.013530653384613567,
+        "max_drawdown": -0.05072682090824965
+      },
+      "2023-24": {
+        "sharpe": null,
+        "annual_arithmetic": 0.0,
+        "cagr": 0.0,
+        "max_drawdown": 0.0
+      },
+      "2025-26": {
+        "sharpe": -0.9121293714184706,
+        "annual_arithmetic": -0.025456848659009504,
+        "cagr": -0.02552286874407461,
+        "max_drawdown": -0.05072682090824965
+      }
+    }
+  },
+  "residual_h2_p0_unit": {
+    "status": "research_proxy",
+    "trades": 2,
+    "funding_income": 225.3512502355623,
+    "price_pnl": -1574.4284391119213,
+    "fees": 315.3821798535093,
+    "final_equity": 98335.54063127014,
+    "risk_flags": [],
+    "metrics": {
+      "full": {
+        "sharpe": -0.6627461102553538,
+        "annual_arithmetic": -0.004968752673043299,
+        "cagr": -0.004984603198221249,
+        "max_drawdown": -0.01894415136000016
+      },
+      "2023-24": {
+        "sharpe": null,
+        "annual_arithmetic": 0.0,
+        "cagr": 0.0,
+        "max_drawdown": 0.0
+      },
+      "2025-26": {
+        "sharpe": -0.913170522352385,
+        "annual_arithmetic": -0.009429861884134805,
+        "cagr": -0.009438771699230464,
+        "max_drawdown": -0.01894415136000016
+      }
+    }
+  },
+  "residual_h2_p1_base": {
+    "status": "research_proxy",
+    "trades": 3,
+    "funding_income": 1064.6079895350586,
+    "price_pnl": -3540.565502757329,
+    "fees": 1292.3114582790918,
+    "final_equity": 96231.73102849865,
+    "risk_flags": [],
+    "metrics": {
+      "full": {
+        "sharpe": -0.5311729702748227,
+        "annual_arithmetic": -0.011210195391626146,
+        "cagr": -0.011370448666788158,
+        "max_drawdown": -0.04956489487067017
+      },
+      "2023-24": {
+        "sharpe": null,
+        "annual_arithmetic": 0.0,
+        "cagr": 0.0,
+        "max_drawdown": 0.0
+      },
+      "2025-26": {
+        "sharpe": -0.7317396916438188,
+        "annual_arithmetic": -0.02127507670299327,
+        "cagr": -0.02146901932841816,
+        "max_drawdown": -0.04956489487067017
+      }
+    }
+  },
+  "residual_h2_p1_stress": {
+    "status": "research_proxy",
+    "trades": 3,
+    "funding_income": 1058.9017267464244,
+    "price_pnl": -3498.830668623976,
+    "fees": 2409.5097573983003,
+    "final_equity": 95150.56130072415,
+    "risk_flags": [],
+    "metrics": {
+      "full": {
+        "sharpe": -0.6699078470891898,
+        "annual_arithmetic": -0.014559809839214618,
+        "cagr": -0.014690405902311188,
+        "max_drawdown": -0.05674071187116925
+      },
+      "2023-24": {
+        "sharpe": null,
+        "annual_arithmetic": 0.0,
+        "cagr": 0.0,
+        "max_drawdown": 0.0
+      },
+      "2025-26": {
+        "sharpe": -0.9230492398183949,
+        "annual_arithmetic": -0.02763208492705437,
+        "cagr": -0.02769598046710875,
+        "max_drawdown": -0.05674071187116925
+      }
+    }
+  },
+  "residual_h2_p1_markstress": {
+    "status": "research_proxy",
+    "trades": 3,
+    "funding_income": 1064.6079895350586,
+    "price_pnl": -3540.565502757329,
+    "fees": 1292.3114582790918,
+    "final_equity": 96231.73102849865,
+    "risk_flags": [],
+    "metrics": {
+      "full": {
+        "sharpe": -0.5311729702748227,
+        "annual_arithmetic": -0.011210195391626146,
+        "cagr": -0.011370448666788158,
+        "max_drawdown": -0.04956489487067017
+      },
+      "2023-24": {
+        "sharpe": null,
+        "annual_arithmetic": 0.0,
+        "cagr": 0.0,
+        "max_drawdown": 0.0
+      },
+      "2025-26": {
+        "sharpe": -0.7317396916438188,
+        "annual_arithmetic": -0.02127507670299327,
+        "cagr": -0.02146901932841816,
+        "max_drawdown": -0.04956489487067017
+      }
+    }
+  },
+  "residual_h2_p1_unit": {
+    "status": "research_proxy",
+    "trades": 3,
+    "funding_income": 393.1158749120939,
+    "price_pnl": -1301.0074669027617,
+    "fees": 476.9532713857745,
+    "final_equity": 98615.15513662355,
+    "risk_flags": [],
+    "metrics": {
+      "full": {
+        "sharpe": -0.530755601867707,
+        "annual_arithmetic": -0.004121441344512242,
+        "cagr": -0.004143114595374753,
+        "max_drawdown": -0.018399746328473188
+      },
+      "2023-24": {
+        "sharpe": null,
+        "annual_arithmetic": 0.0,
+        "cagr": 0.0,
+        "max_drawdown": 0.0
+      },
+      "2025-26": {
+        "sharpe": -0.7311643290496272,
+        "annual_arithmetic": -0.007821806638346761,
+        "cagr": -0.00784831240398498,
+        "max_drawdown": -0.018399746328473188
+      }
+    }
+  },
+  "residual_h2_p2_base": {
+    "status": "research_proxy",
+    "trades": 2,
+    "funding_income": 668.1913016142944,
+    "price_pnl": -1482.936178987381,
+    "fees": 832.4053328595203,
+    "final_equity": 98352.8497897674,
+    "risk_flags": [],
+    "metrics": {
+      "full": {
+        "sharpe": -0.4258300594853513,
+        "annual_arithmetic": -0.004879048009665539,
+        "cagr": -0.004932463225575057,
+        "max_drawdown": -0.025008560280690317
+      },
+      "2023-24": {
+        "sharpe": null,
+        "annual_arithmetic": 0.0,
+        "cagr": 0.0,
+        "max_drawdown": 0.0
+      },
+      "2025-26": {
+        "sharpe": -0.5865472969387044,
+        "annual_arithmetic": -0.009259617430108282,
+        "cagr": -0.00934025939183114,
+        "max_drawdown": -0.025008560280690317
+      }
+    }
+  },
+  "residual_h2_p2_stress": {
+    "status": "research_proxy",
+    "trades": 2,
+    "funding_income": 665.6477372280308,
+    "price_pnl": -1482.7340690645335,
+    "fees": 1554.9590185881361,
+    "final_equity": 97627.95464957536,
+    "risk_flags": [],
+    "metrics": {
+      "full": {
+        "sharpe": -0.5677774556563274,
+        "annual_arithmetic": -0.00706946218584445,
+        "cagr": -0.007121587534489104,
+        "max_drawdown": -0.030403810693221178
+      },
+      "2023-24": {
+        "sharpe": null,
+        "annual_arithmetic": 0.0,
+        "cagr": 0.0,
+        "max_drawdown": 0.0
+      },
+      "2025-26": {
+        "sharpe": -0.78220450078051,
+        "annual_arithmetic": -0.01341665733722182,
+        "cagr": -0.013472362750711175,
+        "max_drawdown": -0.030403810693221178
+      }
+    }
+  },
+  "residual_h2_p2_markstress": {
+    "status": "research_proxy",
+    "trades": 2,
+    "funding_income": 668.1913016142944,
+    "price_pnl": -1482.936178987381,
+    "fees": 832.4053328595203,
+    "final_equity": 98352.8497897674,
+    "risk_flags": [],
+    "metrics": {
+      "full": {
+        "sharpe": -0.4258300594853513,
+        "annual_arithmetic": -0.004879048009665539,
+        "cagr": -0.004932463225575057,
+        "max_drawdown": -0.025008560280690317
+      },
+      "2023-24": {
+        "sharpe": null,
+        "annual_arithmetic": 0.0,
+        "cagr": 0.0,
+        "max_drawdown": 0.0
+      },
+      "2025-26": {
+        "sharpe": -0.5865472969387044,
+        "annual_arithmetic": -0.009259617430108282,
+        "cagr": -0.00934025939183114,
+        "max_drawdown": -0.025008560280690317
+      }
+    }
+  },
+  "residual_h2_p2_unit": {
+    "status": "research_proxy",
+    "trades": 2,
+    "funding_income": 249.74045776789768,
+    "price_pnl": -546.103559889719,
+    "fees": 311.0043680033749,
+    "final_equity": 99392.63252987483,
+    "risk_flags": [],
+    "metrics": {
+      "full": {
+        "sharpe": -0.4256854843057153,
+        "annual_arithmetic": -0.0018047603768229204,
+        "cagr": -0.0018121008482878675,
+        "max_drawdown": -0.009286534246653488
+      },
+      "2023-24": {
+        "sharpe": null,
+        "annual_arithmetic": 0.0,
+        "cagr": 0.0,
+        "max_drawdown": 0.0
+      },
+      "2025-26": {
+        "sharpe": -0.5863480671478112,
+        "annual_arithmetic": -0.0034251334705648617,
+        "cagr": -0.0034362666691090116,
+        "max_drawdown": -0.009286534246653488
+      }
+    }
+  }
+}

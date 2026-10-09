@@ -47,6 +47,13 @@ pub struct LiveConfig {
     pub lookback: usize,
     pub top_frac: f64,
     pub min_vol_usd: f64,
+    /// 最小下单额占净值的比例（0.01 = 1%）。0 表示只用绝对下限，行为与旧版一致。
+    ///
+    /// 为什么需要：`min_order_usd` 是绝对值，而仓位随账号缩放。同一个 $10 门槛，
+    /// 对 $585 的账号是一个仓位的 17.7%（几乎不调仓），对 $2900 的账号是 3.8%
+    /// （每天微调一堆）。这就是"HL 不需要调、TxFlow 一大堆要调"的真实原因。
+    /// 设成比例之后，两边的**执行粒度**才可比。
+    pub min_order_pct: f64,
     /// 错峰调仓档数：每个币每 N 天轮到一次。1 = 每日全量。
     ///
     /// 实测（相位平均 + 两个子区间均通过）：换手 29%→13%、成本 16.2%→7.3%、
@@ -76,6 +83,7 @@ impl Default for LiveConfig {
             lookback: 14,
             top_frac: 0.2,
             min_vol_usd: 5_000_000.0,
+            min_order_pct: 0.0,
             take_profit_pct: 0.0,
             rebalance_slices: 3,
             armed: false,
@@ -109,6 +117,7 @@ impl LiveConfig {
             target_positions: self.target_positions,
             slippage: self.slippage,
             margin_buffer: self.margin_buffer,
+            min_order_pct: self.min_order_pct,
             // 这里漏掉过 rebalance_slices：`..Default::default()` 会静默用默认值 3，
             // 界面上改成 1 也毫无作用。下面有 field_parity 测试守着。
             rebalance_slices: self.rebalance_slices,
@@ -1609,4 +1618,34 @@ mod report5_state_tests {
   std::fs::write(&path,value.to_string()).unwrap();assert!(LiveState::load_txflow(&path).is_ok());
   value["config"].as_object_mut().unwrap().remove("account");std::fs::write(&path,value.to_string()).unwrap();let result=LiveState::load_txflow(&path);std::fs::remove_dir_all(root).unwrap();assert!(result.is_err(),"missing required account must be explicit error");
  }
+}
+
+
+#[cfg(test)]
+mod min_order_pct_tests {
+    use super::*;
+
+    /// 配置字段漏传是踩过的坑（`rebalance_slices` 曾经被 `..Default::default()` 静默吞掉）。
+    /// 这条确保 `min_order_pct` 真的会到 TradeConfig。
+    #[test]
+    fn min_order_pct_reaches_trade_config() {
+        let mut cfg = LiveConfig::default();
+        cfg.min_order_pct = 0.02;
+        assert_eq!(cfg.trade_config().min_order_pct, 0.02);
+    }
+
+    /// 有效门槛 = max(绝对下限, 净值 × 比例)。
+    #[test]
+    fn effective_threshold_scales_with_equity() {
+        let mut cfg = TradeConfig::default();
+        cfg.min_order_usd = 10.0;
+        // 比例 0 → 与旧版一致
+        cfg.min_order_pct = 0.0;
+        assert_eq!(cfg.effective_min_order_usd(100_000.0), 10.0);
+        // 比例 1% × 大账号 → 比例项接管
+        cfg.min_order_pct = 0.01;
+        assert_eq!(cfg.effective_min_order_usd(2900.0), 29.0);
+        // 小账号 → 绝对下限仍然接管，不会低到无法下单
+        assert_eq!(cfg.effective_min_order_usd(585.0), 10.0);
+    }
 }

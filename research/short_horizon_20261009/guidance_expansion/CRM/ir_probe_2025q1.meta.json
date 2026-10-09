@@ -1,0 +1,18 @@
+{
+  "url": "https://investor.salesforce.com/news/news-details/2025/Salesforce-Reports-Record-First-Quarter-Fiscal-2026-Results/",
+  "status": 403,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "73bfce724821c821dfcdf91342303ec9f533b52e663e2637411669c435294c76",
+  "retrieved_utc": "2026-10-09T03:54:14Z",
+  "attempts": [
+    {
+      "url": "https://investor.salesforce.com/news/news-details/2025/Salesforce-Reports-Record-First-Quarter-Fiscal-2026-Results/",
+      "status": 403,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "73bfce724821c821dfcdf91342303ec9f533b52e663e2637411669c435294c76",
+      "retrieved_utc": "2026-10-09T03:54:14Z"
+    }
+  ]
+}

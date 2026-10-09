@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/veeva-announces-fiscal-2024-third-quarter-results-302008083.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "124d91214444631c1d7e4dea74516bb89f57d12398e4016208da234d7559a7ad",
+  "retrieved_utc": "2026-10-09T03:08:47Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/veeva-announces-fiscal-2024-third-quarter-results-302008083.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "124d91214444631c1d7e4dea74516bb89f57d12398e4016208da234d7559a7ad",
+      "retrieved_utc": "2026-10-09T03:08:47Z"
+    }
+  ]
+}

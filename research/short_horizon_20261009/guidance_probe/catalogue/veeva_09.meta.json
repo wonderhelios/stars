@@ -1,0 +1,26 @@
+{
+  "url": "https://www.prnewswire.com/news/veeva-systems/?page=9&pagesize=100",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "03aa0a632983f8ad06f4d87a2f9efe91a986008458602958d32e75fd962bcfe2",
+  "retrieved_utc": "2026-10-09T03:07:15Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news/veeva-systems/?page=9&pagesize=100",
+      "status": 0,
+      "exit_code": 35,
+      "error": "curl: (35) LibreSSL SSL_connect: SSL_ERROR_SYSCALL in connection to www.prnewswire.com:443 \n",
+      "sha256": null,
+      "retrieved_utc": "2026-10-09T03:07:06Z"
+    },
+    {
+      "url": "https://www.prnewswire.com/news/veeva-systems/?page=9&pagesize=100",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "03aa0a632983f8ad06f4d87a2f9efe91a986008458602958d32e75fd962bcfe2",
+      "retrieved_utc": "2026-10-09T03:07:15Z"
+    }
+  ]
+}

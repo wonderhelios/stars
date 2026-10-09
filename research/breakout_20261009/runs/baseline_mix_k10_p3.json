@@ -1,0 +1,11 @@
+{
+  "invalid": true,
+  "reason": "frozen baseline raised insolvent",
+  "failure_t": 1709510400000,
+  "failure_equity": -194197.3577715533,
+  "factor": "baseline",
+  "mode": "mix",
+  "period": 10,
+  "phase": 3,
+  "key": "baseline_mix_k10_p3"
+}

@@ -1,0 +1,15 @@
+metrics checkpoint
+bootstrap 20 9999 checkpoint
+bootstrap 10 4999 checkpoint
+bootstrap 40 4999 checkpoint
+    name   sharpe     delta  daily_turnover  annual_cost     cagr  max_drawdown  underwater_days usable risk_reduced
+baseline 1.117597  0.000000        1.597338     0.408120 0.777222     -0.808983            609.0   None         None
+      K3 0.565989 -0.551608        1.700538     0.434487 0.098868     -0.907571            701.0  False        False
+      K5 1.052967 -0.064630        1.537813     0.392911 0.678505     -0.771332            585.0  False        False
+      K8 1.405266  0.287669        1.456372     0.372103 1.063970     -0.597724            389.0  False         True
+     K12 1.625112  0.507516        1.402924     0.358447 1.310186     -0.559515            193.0  False         True
+     K20 1.397622  0.280025        1.346058     0.343918 0.920308     -0.559515            163.0  False         True
+  N30_K5 1.135292  0.017695        1.513956     0.386816 0.782907     -0.759163            508.0  False        False
+  N50_K8 1.409569  0.291972        1.454304     0.371575 1.070016     -0.597724            389.0  False         True
+ N50_K12 1.628755  0.511158        1.402561     0.358354 1.316205     -0.559515            193.0  False         True
+ N80_K15 1.610653  0.493056        1.362167     0.348034 1.222755     -0.559515            164.0  False         True

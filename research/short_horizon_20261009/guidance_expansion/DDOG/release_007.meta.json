@@ -1,0 +1,18 @@
+{
+  "url": "https://www.globenewswire.com/news-release/2025/05/06/3074862/0/en/datadog-announces-first-quarter-2025-financial-results.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "521a36efc480365d03166db59131218912a8ca2dacc9520c8778e745db4b836b",
+  "retrieved_utc": "2026-10-09T03:23:21Z",
+  "attempts": [
+    {
+      "url": "https://www.globenewswire.com/news-release/2025/05/06/3074862/0/en/datadog-announces-first-quarter-2025-financial-results.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "521a36efc480365d03166db59131218912a8ca2dacc9520c8778e745db4b836b",
+      "retrieved_utc": "2026-10-09T03:23:21Z"
+    }
+  ]
+}

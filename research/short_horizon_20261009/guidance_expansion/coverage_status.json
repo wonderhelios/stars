@@ -1,0 +1,244 @@
+[
+  {
+    "symbol": "GOOGL",
+    "status": "not_yet_checked",
+    "source": null,
+    "notes": "No inference from absence of a downloaded release."
+  },
+  {
+    "symbol": "MSFT",
+    "status": "not_yet_checked",
+    "source": null,
+    "notes": "No inference from absence of a downloaded release."
+  },
+  {
+    "symbol": "AAPL",
+    "status": "not_yet_checked",
+    "source": null,
+    "notes": "No inference from absence of a downloaded release."
+  },
+  {
+    "symbol": "AMZN",
+    "status": "not_yet_checked",
+    "source": null,
+    "notes": "No inference from absence of a downloaded release."
+  },
+  {
+    "symbol": "META",
+    "status": "not_yet_checked",
+    "source": null,
+    "notes": "No inference from absence of a downloaded release."
+  },
+  {
+    "symbol": "NVDA",
+    "status": "not_yet_checked",
+    "source": null,
+    "notes": "No inference from absence of a downloaded release."
+  },
+  {
+    "symbol": "AMD",
+    "status": "not_yet_checked",
+    "source": null,
+    "notes": "No inference from absence of a downloaded release."
+  },
+  {
+    "symbol": "INTC",
+    "status": "not_yet_checked",
+    "source": null,
+    "notes": "No inference from absence of a downloaded release."
+  },
+  {
+    "symbol": "ORCL",
+    "status": "not_yet_checked",
+    "source": null,
+    "notes": "No inference from absence of a downloaded release."
+  },
+  {
+    "symbol": "CRM",
+    "status": "quarterly_archive_recovered_financial_version_audit_incomplete",
+    "source": "Salesforce public WordPress newsroom API; one original 8-K exhibit mirrored by Yahoo Finance",
+    "notes": "Public API fills old archive and FY2025Q3 gaps: 24 consecutive quarters FY2021Q3\u2013FY2027Q2. Six bodies modified more than 24h later; no HTML financial tables, headline actuals rounded. Preserve max(pub,modified) unless independently recovering original versions. IR raw request403 stopped. One observed Yahoo 8-K exhibit URL fetched200, exact quarter $9829m; remaining original versions/exact actuals pending.",
+    "download_count": 14,
+    "collection_status": {
+      "catalogued_releases": 14,
+      "downloaded": 14,
+      "complete_download": true,
+      "archive_termination": "repeated_article_set"
+    },
+    "api_release_count": 24
+  },
+  {
+    "symbol": "ADBE",
+    "status": "not_yet_checked",
+    "source": null,
+    "notes": "No inference from absence of a downloaded release."
+  },
+  {
+    "symbol": "INTU",
+    "status": "not_yet_checked",
+    "source": null,
+    "notes": "No inference from absence of a downloaded release."
+  },
+  {
+    "symbol": "NOW",
+    "status": "not_yet_checked",
+    "source": null,
+    "notes": "No inference from absence of a downloaded release."
+  },
+  {
+    "symbol": "VEEV",
+    "status": "quarterly_pilot_completed",
+    "source": "PR Newswire",
+    "notes": "22 quarterly releases; 6 rules not qualified. Interim investor-day material incomplete."
+  },
+  {
+    "symbol": "GWRE",
+    "status": "original_archive_access_unavailable",
+    "source": null,
+    "notes": "Previously checked official IR and SEC submissions returned 403. No retry or identity changes. GWRE independent BusinessWire403 and corporate newsroom429 also stopped; alternative legitimate sources may be researched."
+  },
+  {
+    "symbol": "TYL",
+    "status": "original_archive_access_unavailable",
+    "source": null,
+    "notes": "Previously checked official IR and SEC submissions returned 403. No retry or identity changes. GWRE independent BusinessWire403 and corporate newsroom429 also stopped; alternative legitimate sources may be researched."
+  },
+  {
+    "symbol": "ADSK",
+    "status": "28_releases_parsed_27_quarter_values_verified",
+    "source": "PR Newswire company distribution archive",
+    "notes": "27 consecutive final quarters plus 1 preliminary. Two acquisition-scope pairs excluded before performance; preliminary/repeated-quarter events not new signals. Other scope/interim review pending.",
+    "download_count": 28,
+    "collection_status": {
+      "catalogued_releases": 28,
+      "downloaded": 28,
+      "complete_download": true,
+      "profiles": [
+        {
+          "profile": "https://www.prnewswire.com/news/autodesk%2C-inc./",
+          "termination": "before_2020",
+          "pages": 3
+        }
+      ]
+    }
+  },
+  {
+    "symbol": "ANSS",
+    "status": "not_yet_checked",
+    "source": null,
+    "notes": "Frozen price data unavailable; acquired company must not be silently omitted or assigned zero returns. Original guidance not yet checked."
+  },
+  {
+    "symbol": "CDNS",
+    "status": "not_yet_checked",
+    "source": null,
+    "notes": "No inference from absence of a downloaded release."
+  },
+  {
+    "symbol": "SNPS",
+    "status": "quarterly_values_verified_scope_review_incomplete",
+    "source": "PR Newswire",
+    "notes": "27 consecutive fiscal quarters FY2020Q1\u2013FY2026Q3 parsed. Actual fiscal-week ends and explicitly disclosed nominal calendar ends preserved; 27 original SEC revenue values verified. Three source-based acquisition/accounting exclusions registered before performance. Other scope/interim-news review pending.",
+    "download_count": 27,
+    "parsed_count": 27,
+    "sec_verified_count": 27
+  },
+  {
+    "symbol": "PAYC",
+    "status": "not_yet_checked",
+    "source": null,
+    "notes": "No inference from absence of a downloaded release."
+  },
+  {
+    "symbol": "PCTY",
+    "status": "not_yet_checked",
+    "source": null,
+    "notes": "No inference from absence of a downloaded release."
+  },
+  {
+    "symbol": "WDAY",
+    "status": "19_original_outlooks_subscription_not_total_revenue",
+    "source": "PR Newswire company distribution archive",
+    "notes": "All19 downloaded financial outlook sections/explicit CFO guidance reviewed: subscription revenue rather than total revenue. These19 releases are inapplicable to the frozen total-revenue factor. 2021 originals still not covered; do not infer blanket historical exclusion.",
+    "download_count": 19,
+    "collection_status": {
+      "catalogued_releases": 19,
+      "downloaded": 19,
+      "complete_download": true,
+      "profiles": [
+        {
+          "profile": "https://www.prnewswire.com/news/workday-inc./",
+          "termination": "end_or_repeated",
+          "pages": 4
+        },
+        {
+          "profile": "https://www.prnewswire.com/news/workday%2C-inc./",
+          "termination": "end_or_repeated",
+          "pages": 2
+        }
+      ]
+    }
+  },
+  {
+    "symbol": "TEAM",
+    "status": "not_yet_checked",
+    "source": null,
+    "notes": "No inference from absence of a downloaded release."
+  },
+  {
+    "symbol": "DDOG",
+    "status": "27_quarters_merged_and_SEC_verified",
+    "source": "GlobeNewswire",
+    "notes": "GlobeNewswire13 + PRNewswire13 + Newsfile1 now continuous FY2019Q4\u20132026Q2. All27 exact quarterly values matched SEC. Newsfile visible timestamp available, last-modified metadata unavailable. Scope/interim review pending.",
+    "download_count": 13,
+    "collection_status": {
+      "catalogued_releases": 13,
+      "downloaded": 13,
+      "complete_download": true,
+      "archive_termination": "no_unique_next"
+    }
+  },
+  {
+    "symbol": "ZS",
+    "status": "not_yet_checked",
+    "source": null,
+    "notes": "No inference from absence of a downloaded release."
+  },
+  {
+    "symbol": "CRWD",
+    "status": "not_yet_checked",
+    "source": null,
+    "notes": "No inference from absence of a downloaded release."
+  },
+  {
+    "symbol": "NET",
+    "status": "not_yet_checked",
+    "source": null,
+    "notes": "No inference from absence of a downloaded release."
+  },
+  {
+    "symbol": "MDB",
+    "status": "27_quarter_values_crosschecked_with_SEC",
+    "source": "PR Newswire company distribution archive",
+    "notes": "27 consecutive quarters, 20 computable remaining-year revisions. Actual values independently matched SEC filings; interim guidance/accounting scope review pending; no market PnL read.",
+    "download_count": 27,
+    "collection_status": {
+      "catalogued_releases": 27,
+      "downloaded": 27,
+      "complete_download": true,
+      "profiles": [
+        {
+          "profile": "https://www.prnewswire.com/news/mongodb%2C-inc./",
+          "termination": "before_2020",
+          "pages": 3
+        }
+      ]
+    }
+  },
+  {
+    "symbol": "HUBS",
+    "status": "not_yet_checked",
+    "source": null,
+    "notes": "No inference from absence of a downloaded release."
+  }
+]

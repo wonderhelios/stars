@@ -1,0 +1,18 @@
+{
+  "verified_notices": 113,
+  "source_hash_and_quote_checks": true,
+  "planned_actual_counts": {
+    "matches_observed_date": 113
+  },
+  "downloaded": 140,
+  "catalogued": 141,
+  "download_failures": 1,
+  "timing_rule": "max publication/modification + 60 minutes; actual dates are audit-only and never replace plans",
+  "ready_for_restricted_exploration": true,
+  "limitations": [
+    "Not a complete 30-company calendar",
+    "No proof all historical rescheduling notices were archived",
+    "Ambiguous conference-only notices remain excluded",
+    "Actual-date differences retained, not retrospectively removed"
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "url": "https://investors.mongodb.com/financial-information/quarterly-results",
+  "status": 403,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "083d44b4a502e796be52c9b2cd6830e6be11fae0d926274e0dcf9e3e026e03ee",
+  "retrieved_utc": "2026-10-09T03:24:53Z",
+  "attempts": [
+    {
+      "url": "https://investors.mongodb.com/financial-information/quarterly-results",
+      "status": 403,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "083d44b4a502e796be52c9b2cd6830e6be11fae0d926274e0dcf9e3e026e03ee",
+      "retrieved_utc": "2026-10-09T03:24:53Z"
+    }
+  ]
+}

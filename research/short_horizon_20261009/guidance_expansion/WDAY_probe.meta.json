@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/workday-announces-fiscal-2026-first-quarter-financial-results-302463675.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "c31a9296058c17d763febec8e27577d35d5a5ca1d3676ca0c8a3008f92446b0e",
+  "retrieved_utc": "2026-10-09T03:19:17Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/workday-announces-fiscal-2026-first-quarter-financial-results-302463675.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "c31a9296058c17d763febec8e27577d35d5a5ca1d3676ca0c8a3008f92446b0e",
+      "retrieved_utc": "2026-10-09T03:19:17Z"
+    }
+  ]
+}

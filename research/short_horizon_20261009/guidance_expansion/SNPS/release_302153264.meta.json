@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-second-quarter-fiscal-year-2024-302153264.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "ec8204660bff0e689f0bc53bbc767acdfb7026b8b89643864239fa1ece02187d",
+  "retrieved_utc": "2026-10-09T03:32:08Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-second-quarter-fiscal-year-2024-302153264.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "ec8204660bff0e689f0bc53bbc767acdfb7026b8b89643864239fa1ece02187d",
+      "retrieved_utc": "2026-10-09T03:32:08Z"
+    }
+  ]
+}

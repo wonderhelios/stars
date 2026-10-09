@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-first-quarter-fiscal-year-2025-302386200.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "adcb1ff1e063cc1683dcf954340ff28087fe5433a7cc9bd84b299abc85d005f7",
+  "retrieved_utc": "2026-10-09T03:31:52Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-first-quarter-fiscal-year-2025-302386200.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "adcb1ff1e063cc1683dcf954340ff28087fe5433a7cc9bd84b299abc85d005f7",
+      "retrieved_utc": "2026-10-09T03:31:52Z"
+    }
+  ]
+}

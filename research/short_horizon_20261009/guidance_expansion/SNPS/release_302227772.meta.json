@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-third-quarter-fiscal-year-2024-302227772.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "bd2e5f2e754a803f879f00581749c861380c8b0c28bce2109de693f2ea717c6e",
+  "retrieved_utc": "2026-10-09T03:32:04Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-third-quarter-fiscal-year-2024-302227772.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "bd2e5f2e754a803f879f00581749c861380c8b0c28bce2109de693f2ea717c6e",
+      "retrieved_utc": "2026-10-09T03:32:04Z"
+    }
+  ]
+}

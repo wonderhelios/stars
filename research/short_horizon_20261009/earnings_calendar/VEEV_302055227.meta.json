@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/veeva-to-release-fiscal-2024-fourth-quarter-and-full-year-results-on-february-29-2024-302055227.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "35bb83718e0298810fefdc5a565c89a52d1c4bde917d0b456da32cecc587125a",
+  "retrieved_utc": "2026-10-09T04:10:01Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/veeva-to-release-fiscal-2024-fourth-quarter-and-full-year-results-on-february-29-2024-302055227.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "35bb83718e0298810fefdc5a565c89a52d1c4bde917d0b456da32cecc587125a",
+      "retrieved_utc": "2026-10-09T04:10:01Z"
+    }
+  ]
+}

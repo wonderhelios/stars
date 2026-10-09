@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/veeva-announces-fourth-quarter-and-fiscal-year-2024-results-302076388.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "4e00a4d09d2099c4400d0b6e37d6ef263590933a552e82af5c3bffb4797775bb",
+  "retrieved_utc": "2026-10-09T03:08:43Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/veeva-announces-fourth-quarter-and-fiscal-year-2024-results-302076388.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "4e00a4d09d2099c4400d0b6e37d6ef263590933a552e82af5c3bffb4797775bb",
+      "retrieved_utc": "2026-10-09T03:08:43Z"
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/datadog-announces-date-of-second-quarter-fiscal-year-2024-earnings-call-302199809.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "a3967b68bcea5bb39ed26d148d2e927035a7351a5316190222abc41caebf4b21",
+  "retrieved_utc": "2026-10-09T04:07:40Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/datadog-announces-date-of-second-quarter-fiscal-year-2024-earnings-call-302199809.html",
+      "status": 0,
+      "exit_code": 35,
+      "error": "curl: (35) LibreSSL SSL_connect: SSL_ERROR_SYSCALL in connection to www.prnewswire.com:443 \n",
+      "sha256": null,
+      "retrieved_utc": "2026-10-09T04:07:34Z"
+    },
+    {
+      "url": "https://www.prnewswire.com/news-releases/datadog-announces-date-of-second-quarter-fiscal-year-2024-earnings-call-302199809.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "a3967b68bcea5bb39ed26d148d2e927035a7351a5316190222abc41caebf4b21",
+      "retrieved_utc": "2026-10-09T04:07:40Z"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-date-of-first-quarter-fiscal-2023-earnings-call-301549218.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "3be15115a01ca1596e6c0fbf239c50de51c023628646612c5b3bc479040479e4",
+  "retrieved_utc": "2026-10-09T04:08:33Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-date-of-first-quarter-fiscal-2023-earnings-call-301549218.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "3be15115a01ca1596e6c0fbf239c50de51c023628646612c5b3bc479040479e4",
+      "retrieved_utc": "2026-10-09T04:08:33Z"
+    }
+  ]
+}

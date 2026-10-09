@@ -1,0 +1,27 @@
+[
+  {
+    "symbol": "ADSK",
+    "url": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2026-third-quarter-results-302625697.html",
+    "status": "retrieved",
+    "title": "AUTODESK, INC. ANNOUNCES FISCAL 2026 THIRD QUARTER RESULTS",
+    "profiles": [
+      "/news/autodesk%2C-inc./"
+    ]
+  },
+  {
+    "symbol": "WDAY",
+    "url": "https://www.prnewswire.com/news-releases/workday-announces-fiscal-2026-first-quarter-financial-results-302463675.html",
+    "status": "retrieved",
+    "title": "Workday Announces Fiscal 2026 First Quarter Financial Results",
+    "profiles": [
+      "/news/workday-inc./"
+    ]
+  },
+  {
+    "symbol": "MDB",
+    "url": "https://www.prnewswire.com/news/mongodb%2C-inc./?page=1&pagesize=100",
+    "status": "retrieved",
+    "title": " MongoDB, Inc. News and Press Releases | PR Newswire",
+    "profiles": []
+  }
+]

@@ -1,0 +1,17 @@
+{
+  "status": "passed",
+  "paths": 40,
+  "completed_trades_including_stresses": 80,
+  "funding_records_verified": 65804,
+  "prefix_cutoffs_passed": 2,
+  "max_cash_error_usdt": 7.275957614183426e-11,
+  "max_hold_hours": 48.0,
+  "min_cash_only_gap_days": 1.0,
+  "limitations": [
+    "Limited preselected coin universe",
+    "Historical fee tier and lot-size filters not replayed",
+    "Daily trade-open execution and hourly settlement-order approximation",
+    "Near-time official mark-bar proxies for early funding",
+    "Adverse daily envelope is a rejection screen, not tick liquidation reconstruction"
+  ]
+}

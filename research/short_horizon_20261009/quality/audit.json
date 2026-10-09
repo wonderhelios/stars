@@ -1,0 +1,24 @@
+{
+  "financial_records_verified": 1442,
+  "max_trade_reconciliation_error": 3.055902197957039e-10,
+  "prefix_checks": {
+    "2018-12-31": true,
+    "2024-12-31": true
+  },
+  "max_holding_hours": 30.5,
+  "no_overlap": true,
+  "source_manifest_sha256": "b1caea2a39fb3a23ed3f37215a7fef0ddc68d118182095504fb8560e5d9e75d6",
+  "code_sha256": {
+    "fetch.py": "15e6d1d99a2115f8f46adec699fe3c949f216fd288784565932c69693f55749a",
+    "screen.py": "26c6f3a8bee3348e94f105c977137e97de9daf3f460a92edf75979ad1c086e5a",
+    "audit.py": "5d6d809ca86b71653d7d0a8b9b36c58c4dd045434d466a6bd4ea9b58accbd37a",
+    "quality_report.py": "399247184e272aec203ee27722ea66a263c1f8dc075a0e715af4f7815ef1934c",
+    "events.py": "c8a4ad447fd85f14e24d854a21af5cd39168db77fe4a1e37c3fe8a25176472fa",
+    "quality_audit.py": "4c960c99270aa93695f1683bc15fb3f22b1575332ee76b1710f8d4b3390310d6",
+    "recover_fundamentals.py": "2f5566ccd17b460c5d7fa1de6dab2c338469664f3610dc5cf439a630a4726a52",
+    "fetch_fundamentals.py": "89d7c5fb4ad38d2121cb2e367e143c2e04796bfac45cc46ba4e5e6f137e7bbd3",
+    "inference.py": "73857a1c6ea705cc6d96cbfdee31f4894cb66b85a6607006d265bf7d7e53a85c",
+    "quality.py": "72fefc5fad5b6bb706a5b4e9e06e03a6375471e0413bbf862dcfff2dbdfec06f",
+    "report.py": "f80964a847232e4f149f4f7b75f335995588b5f1fb60c2b8bb0a04b2e93e90ab"
+  }
+}

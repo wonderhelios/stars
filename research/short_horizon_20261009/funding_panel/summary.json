@@ -1,0 +1,162 @@
+[
+  {
+    "strategy": "raw",
+    "hold": 1,
+    "mean_trades": 0.0,
+    "funding_income": 0.0,
+    "price_pnl": 0.0,
+    "fees": 0.0,
+    "phase_final_equity": [
+      100000.0,
+      100000.0
+    ],
+    "metrics": {
+      "full": {
+        "annual": 0.0,
+        "sharpe": null,
+        "phase_sharpes": [
+          null,
+          null
+        ]
+      },
+      "2023-24": {
+        "annual": 0.0,
+        "sharpe": null,
+        "phase_sharpes": [
+          null,
+          null
+        ]
+      },
+      "2025-26": {
+        "annual": 0.0,
+        "sharpe": null,
+        "phase_sharpes": [
+          null,
+          null
+        ]
+      }
+    }
+  },
+  {
+    "strategy": "raw",
+    "hold": 2,
+    "mean_trades": 4.333333333333333,
+    "funding_income": 1352.5246950195994,
+    "price_pnl": -278.48643092362545,
+    "fees": 1837.573214823944,
+    "phase_final_equity": [
+      88239.5432419741,
+      96030.32719466038,
+      113439.52471118163
+    ],
+    "metrics": {
+      "full": {
+        "annual": -0.0019880989677186975,
+        "sharpe": -0.4588770378028129,
+        "phase_sharpes": [
+          -1.4631234002911049,
+          -0.3214727734573784,
+          0.4079650603400445
+        ]
+      },
+      "2023-24": {
+        "annual": 0.0,
+        "sharpe": null,
+        "phase_sharpes": [
+          null,
+          null,
+          null
+        ]
+      },
+      "2025-26": {
+        "annual": -0.003773079465051283,
+        "sharpe": -0.6336830065965863,
+        "phase_sharpes": [
+          -2.0202175301597274,
+          -0.4427608526165945,
+          0.5619293629865632
+        ]
+      }
+    }
+  },
+  {
+    "strategy": "residual",
+    "hold": 1,
+    "mean_trades": 0.0,
+    "funding_income": 0.0,
+    "price_pnl": 0.0,
+    "fees": 0.0,
+    "phase_final_equity": [
+      100000.0,
+      100000.0
+    ],
+    "metrics": {
+      "full": {
+        "annual": 0.0,
+        "sharpe": null,
+        "phase_sharpes": [
+          null,
+          null
+        ]
+      },
+      "2023-24": {
+        "annual": 0.0,
+        "sharpe": null,
+        "phase_sharpes": [
+          null,
+          null
+        ]
+      },
+      "2025-26": {
+        "annual": 0.0,
+        "sharpe": null,
+        "phase_sharpes": [
+          null,
+          null
+        ]
+      }
+    }
+  },
+  {
+    "strategy": "residual",
+    "hold": 2,
+    "mean_trades": 2.3333333333333335,
+    "funding_income": 779.672250536319,
+    "price_pnl": -3084.598430334616,
+    "fees": 991.1239109550448,
+    "phase_final_equity": [
+      95527.26890947395,
+      96231.73102849865,
+      98352.8497897674
+    ],
+    "metrics": {
+      "full": {
+        "annual": -0.009834294900408849,
+        "sharpe": -0.5396647753439716,
+        "phase_sharpes": [
+          -0.6619912962717409,
+          -0.5311729702748227,
+          -0.4258300594853513
+        ]
+      },
+      "2023-24": {
+        "annual": 0.0,
+        "sharpe": null,
+        "phase_sharpes": [
+          null,
+          null,
+          null
+        ]
+      },
+      "2025-26": {
+        "annual": -0.018663847597370352,
+        "sharpe": -0.7434721200003312,
+        "phase_sharpes": [
+          -0.9121293714184706,
+          -0.7317396916438188,
+          -0.5865472969387044
+        ]
+      }
+    }
+  }
+]

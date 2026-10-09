@@ -1,0 +1,19 @@
+{
+  "status": "passed",
+  "paths": 24,
+  "point_in_time_checks": 298,
+  "fills_checked": 127,
+  "imbalanced_events_including_stress": 87,
+  "max_hold_hours": 47.91594555555555,
+  "max_cash_error_usd": 2.9103830456733704e-11,
+  "max_daily_return_error": 3.3306690738754696e-16,
+  "execution_quotes_verified": false,
+  "remaining_limitations": [
+    "Historical prints do not prove fill availability",
+    "Interim mark timestamps may precede valuation by up to one hour",
+    "Conversion at delivery TWAP plus fixed spread is a proxy",
+    "Event schedule is reconstructed from current official historical calendar",
+    "No original-strategy synchronized portfolio test"
+  ],
+  "input_sha256": "ab1adfac89f8fa6e508b69ab12c66988334727302cc895fe6533fbe613d7f30d"
+}

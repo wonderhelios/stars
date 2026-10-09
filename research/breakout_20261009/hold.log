@@ -1,0 +1,57 @@
+baseline_mix_k5_p0 1.7211 0.5115
+channel20_mix_k5_p0 1.4583 0.5349
+channel20_single_k5_p0 1.4497 0.5958
+baseline_mix_k5_p1 0.7967 0.5277
+channel20_mix_k5_p1 0.9106 0.5388
+channel20_single_k5_p1 1.2063 0.5978
+baseline_mix_k5_p2 1.7595 0.5099
+channel20_mix_k5_p2 1.2714 0.5373
+channel20_single_k5_p2 1.2285 0.5999
+baseline_mix_k5_p3 0.8774 0.5086
+channel20_mix_k5_p3 1.0762 0.5217
+channel20_single_k5_p3 1.6307 0.6009
+baseline_mix_k5_p4 1.3225 0.4997
+channel20_mix_k5_p4 0.8881 0.5282
+channel20_single_k5_p4 1.1868 0.594
+baseline_mix_k10_p0 1.5451 0.3123
+channel20_mix_k10_p0 1.8305 0.3123
+channel20_single_k10_p0 1.8399 0.3504
+Traceback (most recent call last):
+  File "/Users/wonder/Code/stars/research/breakout_20261009/run.py", line 129, in <module>
+    main(parser.parse_args().stage)
+  File "/Users/wonder/Code/stars/research/breakout_20261009/run.py", line 123, in main
+    execute('baseline','mix',period,p)
+  File "/Users/wonder/Code/stars/research/breakout_20261009/run.py", line 94, in execute
+    result=B.run(5,'open',.0007)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/wonder/Code/stars/research/trailing_tp_20261008/baseline.py", line 54, in run
+    if eq<=0:raise ValueError('insolvent')
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: insolvent
+baseline_mix_k10_p1 INSOLVENT 1709510400000
+channel20_mix_k10_p1 INSOLVENT 1709769600000
+channel20_single_k10_p1 (1.4575, 0.3535)
+baseline_mix_k10_p2 (0.7021, 0.3252)
+channel20_mix_k10_p2 (0.5241, 0.3656)
+channel20_single_k10_p2 (0.7203, 0.3678)
+baseline_mix_k10_p3 INSOLVENT 1709510400000
+channel20_mix_k10_p3 INSOLVENT 1709424000000
+channel20_single_k10_p3 (1.5326, 0.3439)
+baseline_mix_k10_p4 (1.3981, 0.3027)
+channel20_mix_k10_p4 (0.6272, 0.3129)
+channel20_single_k10_p4 (0.7118, 0.3594)
+baseline_mix_k10_p5 (1.4918, 0.297)
+channel20_mix_k10_p5 (1.088, 0.3058)
+channel20_single_k10_p5 (0.6951, 0.3614)
+baseline_mix_k10_p6 (1.5394, 0.3068)
+channel20_mix_k10_p6 (1.2426, 0.3092)
+channel20_single_k10_p6 (1.2938, 0.3459)
+baseline_mix_k10_p7 (1.8985, 0.3012)
+channel20_mix_k10_p7 (1.2715, 0.309)
+channel20_single_k10_p7 (1.4715, 0.3468)
+baseline_mix_k10_p8 (0.759, 0.3158)
+channel20_mix_k10_p8 (1.3162, 0.3078)
+channel20_single_k10_p8 (1.7373, 0.3526)
+baseline_mix_k10_p9 (1.1311, 0.3109)
+channel20_mix_k10_p9 (1.3906, 0.308)
+channel20_single_k10_p9 (1.5815, 0.3577)

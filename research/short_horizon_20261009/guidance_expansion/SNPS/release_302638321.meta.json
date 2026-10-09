@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-fourth-quarter-and-fiscal-year-2025-302638321.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "f76d55d8dc6d6b1ea3e14204f83bd8ae773de8e18c6d83e68085403742416ca2",
+  "retrieved_utc": "2026-10-09T03:31:37Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-fourth-quarter-and-fiscal-year-2025-302638321.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "f76d55d8dc6d6b1ea3e14204f83bd8ae773de8e18c6d83e68085403742416ca2",
+      "retrieved_utc": "2026-10-09T03:31:37Z"
+    }
+  ]
+}

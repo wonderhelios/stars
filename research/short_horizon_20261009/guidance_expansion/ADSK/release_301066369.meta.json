@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2021-first-quarter-results-301066369.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "cbfc579e828be06d30edf2429d7cda747e9ae1ad4342ec01e19cbb77e1cd9def",
+  "retrieved_utc": "2026-10-09T03:27:19Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2021-first-quarter-results-301066369.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "cbfc579e828be06d30edf2429d7cda747e9ae1ad4342ec01e19cbb77e1cd9def",
+      "retrieved_utc": "2026-10-09T03:27:19Z"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/workday-announces-date-of-fiscal-2025-first-quarter-financial-results-302133830.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "d4e5c114d433c6ed0f7507855165c15b6e428ec4946aa711ea8c4d43ed1c9520",
+  "retrieved_utc": "2026-10-09T04:11:27Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/workday-announces-date-of-fiscal-2025-first-quarter-financial-results-302133830.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "d4e5c114d433c6ed0f7507855165c15b6e428ec4946aa711ea8c4d43ed1c9520",
+      "retrieved_utc": "2026-10-09T04:11:27Z"
+    }
+  ]
+}

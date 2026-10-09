@@ -1,0 +1,1252 @@
+[
+  {
+    "symbol": "DDOG",
+    "source": "https://www.globenewswire.com/news-release/2020/02/13/1984930/0/en/datadog-announces-fourth-quarter-and-full-year-2019-results.html",
+    "source_file": "DDOG/release_000.html",
+    "sha256": "8befb8ae6fb008aca71709de0c128842c523fd57e6e19075a2c337887fdf310d",
+    "title": "Datadog Announces Fourth Quarter and Full Year 2019 Results",
+    "published": "2020-02-13 21:10:00+00:00",
+    "modified": "2020-02-13 21:10:00+00:00",
+    "available_after": "2020-02-13 21:10:00+00:00",
+    "publication_basis": "JSON-LD and visible timestamp/listing",
+    "reported_fiscal_year": 2019,
+    "reported_quarter": 4,
+    "actual_revenue_million": 113.644,
+    "actual_source_row": [
+      "Revenue",
+      "",
+      "$",
+      "113,644",
+      "",
+      "",
+      "$",
+      "61,610",
+      "",
+      "",
+      "$",
+      "362,780",
+      "",
+      "",
+      "$",
+      "198,077",
+      ""
+    ],
+    "fiscal_year": 2020,
+    "next_quarter": 1,
+    "quarter_range_million": [
+      117.0,
+      119.0
+    ],
+    "annual_range_million": [
+      535.0,
+      545.0
+    ],
+    "guidance_source": [
+      "First Quarter 2020 Outlook: Revenue between $117 million and $119 million.",
+      "Full Year 2020 Outlook: Revenue between $535 million and $545 million."
+    ],
+    "actual_rounded_value_million": 113.6,
+    "rounding_tolerance_million": 0.050001000000000004,
+    "remaining_year_revision_million": null,
+    "previous_source": null
+  },
+  {
+    "symbol": "DDOG",
+    "source": "https://www.globenewswire.com/news-release/2020/05/11/2031453/0/en/datadog-announces-first-quarter-results.html",
+    "source_file": "DDOG/release_001.html",
+    "sha256": "63e971b896aa0df9e415ac1762062ed22d130ddfb5a5496202572f1041e5eba6",
+    "title": "Datadog Announces First Quarter Results",
+    "published": "2020-05-11 20:10:00+00:00",
+    "modified": "2020-05-11 20:10:00+00:00",
+    "available_after": "2020-05-11 20:10:00+00:00",
+    "publication_basis": "JSON-LD and visible timestamp/listing",
+    "reported_fiscal_year": 2020,
+    "reported_quarter": 1,
+    "actual_revenue_million": 131.248,
+    "actual_source_row": [
+      "Revenue",
+      "$",
+      "131,248",
+      "",
+      "",
+      "$",
+      "70,050",
+      ""
+    ],
+    "fiscal_year": 2020,
+    "next_quarter": 2,
+    "quarter_range_million": [
+      134.0,
+      136.0
+    ],
+    "annual_range_million": [
+      555.0,
+      565.0
+    ],
+    "guidance_source": [
+      "Second Quarter 2020 Outlook: \u2022 Revenue between $134 million and $136 million.",
+      "Full Year 2020 Outlook: \u2022 Revenue between $555 million and $565 million."
+    ],
+    "actual_rounded_value_million": 131.2,
+    "rounding_tolerance_million": 0.050001000000000004,
+    "remaining_year_revision_million": 6.7520000000000095,
+    "previous_source": "https://www.globenewswire.com/news-release/2020/02/13/1984930/0/en/datadog-announces-fourth-quarter-and-full-year-2019-results.html",
+    "realized_surprise_million": 13.24799999999999
+  },
+  {
+    "symbol": "DDOG",
+    "source": "https://www.globenewswire.com/news-release/2020/08/06/2074654/0/en/datadog-announces-second-quarter-results.html",
+    "source_file": "DDOG/release_002.html",
+    "sha256": "41d4248495917ea70fa72c7ac806a15e488babcf7ed791186139487cdf6ee7a0",
+    "title": "Datadog Announces Second Quarter Results",
+    "published": "2020-08-06 20:10:00+00:00",
+    "modified": "2020-08-06 20:10:00+00:00",
+    "available_after": "2020-08-06 20:10:00+00:00",
+    "publication_basis": "JSON-LD and visible timestamp/listing",
+    "reported_fiscal_year": 2020,
+    "reported_quarter": 2,
+    "actual_revenue_million": 140.012,
+    "actual_source_row": [
+      "Revenue",
+      "",
+      "$",
+      "140,012",
+      "",
+      "",
+      "$",
+      "83,222",
+      "",
+      "",
+      "$",
+      "271,260",
+      "",
+      "",
+      "$",
+      "153,272",
+      ""
+    ],
+    "fiscal_year": 2020,
+    "next_quarter": 3,
+    "quarter_range_million": [
+      143.0,
+      145.0
+    ],
+    "annual_range_million": [
+      566.0,
+      572.0
+    ],
+    "guidance_source": [
+      "Third Quarter 2020 Outlook: Revenue between $143 million and $145 million.",
+      "Full Year 2020 Outlook: Revenue between $566 million and $572 million."
+    ],
+    "actual_rounded_value_million": 140.0,
+    "rounding_tolerance_million": 0.050001000000000004,
+    "remaining_year_revision_million": 3.9879999999999995,
+    "previous_source": "https://www.globenewswire.com/news-release/2020/05/11/2031453/0/en/datadog-announces-first-quarter-results.html",
+    "realized_surprise_million": 5.0120000000000005
+  },
+  {
+    "symbol": "DDOG",
+    "source": "https://www.globenewswire.com/news-release/2020/11/10/2124285/0/en/datadog-announces-third-quarter-results.html",
+    "source_file": "DDOG/release_003.html",
+    "sha256": "00a469eab4cc2a0c2209cae81b7e592ccb6b53d9297cd6691e4afd8ff700e81c",
+    "title": "Datadog Announces Third Quarter Results",
+    "published": "2020-11-10 21:10:00+00:00",
+    "modified": "2020-11-10 21:10:00+00:00",
+    "available_after": "2020-11-10 21:10:00+00:00",
+    "publication_basis": "JSON-LD and visible timestamp/listing",
+    "reported_fiscal_year": 2020,
+    "reported_quarter": 3,
+    "actual_revenue_million": 154.675,
+    "actual_source_row": [
+      "Revenue",
+      "$",
+      "154,675",
+      "",
+      "",
+      "$",
+      "95,864",
+      "",
+      "",
+      "$",
+      "425,935",
+      "",
+      "",
+      "$",
+      "249,136",
+      ""
+    ],
+    "fiscal_year": 2020,
+    "next_quarter": 4,
+    "quarter_range_million": [
+      162.0,
+      164.0
+    ],
+    "annual_range_million": [
+      588.0,
+      590.0
+    ],
+    "guidance_source": [
+      "Fourth Quarter 2020 Outlook: Revenue between $162 million and $164 million.",
+      "Full Year 2020 Outlook: Revenue between $588 million and $590 million."
+    ],
+    "actual_rounded_value_million": 154.7,
+    "rounding_tolerance_million": 0.050001000000000004,
+    "remaining_year_revision_million": 9.324999999999989,
+    "previous_source": "https://www.globenewswire.com/news-release/2020/08/06/2074654/0/en/datadog-announces-second-quarter-results.html",
+    "realized_surprise_million": 10.675000000000011
+  },
+  {
+    "symbol": "DDOG",
+    "source": "https://www.globenewswire.com/news-release/2021/02/11/2174547/0/en/datadog-announces-fourth-quarter-and-full-year-2020-results.html",
+    "source_file": "DDOG/release_004.html",
+    "sha256": "a988b4b63f5a944e120a7b4644b53c767f2c8c026d164b26a9a08c2bf39d7668",
+    "title": "Datadog Announces Fourth Quarter and Full Year 2020 Results",
+    "published": "2021-02-11 21:10:00+00:00",
+    "modified": "2021-02-11 21:10:00+00:00",
+    "available_after": "2021-02-11 21:10:00+00:00",
+    "publication_basis": "JSON-LD and visible timestamp/listing",
+    "reported_fiscal_year": 2020,
+    "reported_quarter": 4,
+    "actual_revenue_million": 177.531,
+    "actual_source_row": [
+      "Revenue",
+      "",
+      "$",
+      "177,531",
+      "",
+      "",
+      "$",
+      "113,644",
+      "",
+      "",
+      "$",
+      "603,466",
+      "",
+      "",
+      "$",
+      "362,780",
+      ""
+    ],
+    "fiscal_year": 2021,
+    "next_quarter": 1,
+    "quarter_range_million": [
+      185.0,
+      187.0
+    ],
+    "annual_range_million": [
+      825.0,
+      835.0
+    ],
+    "guidance_source": [
+      "First Quarter 2021 Outlook: \u25cb Revenue between $185 million and $187 million.",
+      "Full Year 2021 Outlook: \u25cb Revenue between $825 million and $835 million."
+    ],
+    "actual_rounded_value_million": 177.5,
+    "rounding_tolerance_million": 0.050001000000000004,
+    "remaining_year_revision_million": null,
+    "previous_source": null
+  },
+  {
+    "symbol": "DDOG",
+    "source": "https://www.globenewswire.com/news-release/2021/05/06/2225061/0/en/datadog-announces-first-quarter-results.html",
+    "source_file": "DDOG/release_005.html",
+    "sha256": "a35b6f6a621def6efe74bc308e286fd23f332078bd61c061c28747edd68dd403",
+    "title": "Datadog Announces First Quarter Results",
+    "published": "2021-05-06 20:10:00+00:00",
+    "modified": "2021-05-06 20:10:00+00:00",
+    "available_after": "2021-05-06 20:10:00+00:00",
+    "publication_basis": "JSON-LD and visible timestamp/listing",
+    "reported_fiscal_year": 2021,
+    "reported_quarter": 1,
+    "actual_revenue_million": 198.549,
+    "actual_source_row": [
+      "Revenue",
+      "$",
+      "198,549",
+      "",
+      "",
+      "$",
+      "131,248",
+      ""
+    ],
+    "fiscal_year": 2021,
+    "next_quarter": 2,
+    "quarter_range_million": [
+      211.0,
+      213.0
+    ],
+    "annual_range_million": [
+      880.0,
+      890.0
+    ],
+    "guidance_source": [
+      "Second Quarter 2021 Outlook: Revenue between $211 million and $213 million.",
+      "Full Year 2021 Outlook: Revenue between $880 million and $890 million."
+    ],
+    "actual_rounded_value_million": 198.5,
+    "rounding_tolerance_million": 0.050001000000000004,
+    "remaining_year_revision_million": 42.45099999999999,
+    "previous_source": "https://www.globenewswire.com/news-release/2021/02/11/2174547/0/en/datadog-announces-fourth-quarter-and-full-year-2020-results.html",
+    "realized_surprise_million": 12.549000000000007
+  },
+  {
+    "symbol": "DDOG",
+    "source": "https://www.globenewswire.com/news-release/2021/08/05/2275436/0/en/datadog-announces-second-quarter-2021-financial-results.html",
+    "source_file": "DDOG/release_006.html",
+    "sha256": "f692b249583c9b2790ea4699c11692ab74a95d4c9dee70a78f919e2e7c255711",
+    "title": "Datadog Announces Second Quarter 2021 Financial Results",
+    "published": "2021-08-05 11:00:00+00:00",
+    "modified": "2021-08-05 11:00:00+00:00",
+    "available_after": "2021-08-05 11:00:00+00:00",
+    "publication_basis": "JSON-LD and visible timestamp/listing",
+    "reported_fiscal_year": 2021,
+    "reported_quarter": 2,
+    "actual_revenue_million": 233.549,
+    "actual_source_row": [
+      "Revenue",
+      "",
+      "$",
+      "233,549",
+      "",
+      "",
+      "$",
+      "140,012",
+      "",
+      "",
+      "$",
+      "432,098",
+      "",
+      "",
+      "$",
+      "271,260",
+      ""
+    ],
+    "fiscal_year": 2021,
+    "next_quarter": 3,
+    "quarter_range_million": [
+      246.0,
+      248.0
+    ],
+    "annual_range_million": [
+      938.0,
+      944.0
+    ],
+    "guidance_source": [
+      "Third Quarter 2021 Outlook: Revenue between $246 million and $248 million.",
+      "Full Year 2021 Outlook: Revenue between $938 million and $944 million."
+    ],
+    "actual_rounded_value_million": 233.5,
+    "rounding_tolerance_million": 0.050001000000000004,
+    "remaining_year_revision_million": 34.45099999999999,
+    "previous_source": "https://www.globenewswire.com/news-release/2021/05/06/2225061/0/en/datadog-announces-first-quarter-results.html",
+    "realized_surprise_million": 21.549000000000007
+  },
+  {
+    "symbol": "DDOG",
+    "source": "https://www.prnewswire.com/news-releases/datadog-announces-third-quarter-2021-financial-results-301416918.html",
+    "source_file": "DDOG_PRN/release_301416918.html",
+    "sha256": "5bedcf018434ed3d9970841632907f049af45e4901890d2629ee3c98be48e449",
+    "title": "Datadog Announces Third Quarter 2021 Financial Results",
+    "published": "2021-11-04 16:05:00-04:00",
+    "modified": "2021-11-04 16:05:00-04:00",
+    "available_after": "2021-11-04 16:05:00-04:00",
+    "publication_basis": "JSON-LD and visible timestamp/listing",
+    "reported_fiscal_year": 2021,
+    "reported_quarter": 3,
+    "actual_revenue_million": 270.488,
+    "actual_source_row": [
+      "Revenue",
+      "",
+      "$",
+      "270,488",
+      "",
+      "",
+      "$",
+      "154,675",
+      "",
+      "",
+      "$",
+      "702,586",
+      "",
+      "",
+      "$",
+      "425,935",
+      ""
+    ],
+    "fiscal_year": 2021,
+    "next_quarter": 4,
+    "quarter_range_million": [
+      290.0,
+      292.0
+    ],
+    "annual_range_million": [
+      993.0,
+      995.0
+    ],
+    "guidance_source": [
+      "Fourth Quarter 2021 Outlook: Revenue between $290 million and $292 million .",
+      "Full Year 2021 Outlook: Revenue between $993 million and $995 million ."
+    ],
+    "actual_rounded_value_million": 270.5,
+    "rounding_tolerance_million": 0.050001000000000004,
+    "remaining_year_revision_million": 29.512,
+    "previous_source": "https://www.globenewswire.com/news-release/2021/08/05/2275436/0/en/datadog-announces-second-quarter-2021-financial-results.html",
+    "realized_surprise_million": 23.488
+  },
+  {
+    "symbol": "DDOG",
+    "source": "https://www.prnewswire.com/news-releases/datadog-announces-fourth-quarter-and-fiscal-year-2021-financial-results-301479300.html",
+    "source_file": "DDOG_PRN/release_301479300.html",
+    "sha256": "89fffec6d20b460d16ebd6b3667778ababa1d8b5a61078c7e5e0be706099bbe9",
+    "title": "Datadog Announces Fourth Quarter and Fiscal Year 2021 Financial Results",
+    "published": "2022-02-10 07:00:00-05:00",
+    "modified": "2022-02-10 07:00:00-05:00",
+    "available_after": "2022-02-10 07:00:00-05:00",
+    "publication_basis": "JSON-LD and visible timestamp/listing",
+    "reported_fiscal_year": 2021,
+    "reported_quarter": 4,
+    "actual_revenue_million": 326.198,
+    "actual_source_row": [
+      "Revenue",
+      "",
+      "$ \u00a0 \u00a0 \u00a0 326,198",
+      "",
+      "177,531",
+      "",
+      "$ \u00a0 \u00a01,028,784",
+      "",
+      "$ \u00a0 \u00a0 \u00a0 603,466"
+    ],
+    "fiscal_year": 2022,
+    "next_quarter": 1,
+    "quarter_range_million": [
+      334.0,
+      339.0
+    ],
+    "annual_range_million": [
+      1510.0,
+      1530.0
+    ],
+    "guidance_source": [
+      "First Quarter 2022 Outlook: Revenue between $334 million and $339 million .",
+      "Fiscal Year 2022 Outlook: Revenue between $1.51 billion and $1.53 billion ."
+    ],
+    "actual_rounded_value_million": 326.2,
+    "rounding_tolerance_million": 0.050001000000000004,
+    "remaining_year_revision_million": null,
+    "previous_source": null
+  },
+  {
+    "symbol": "DDOG",
+    "source": "https://www.prnewswire.com/news-releases/datadog-announces-first-quarter-2022-financial-results-301540337.html",
+    "source_file": "DDOG_PRN/release_301540337.html",
+    "sha256": "8c79cad25c095748f12af0f31cca3267d00fccf20c1a0ebb9be2cf1394fb274b",
+    "title": "Datadog Announces First Quarter 2022 Financial Results",
+    "published": "2022-05-05 07:00:00-04:00",
+    "modified": "2022-05-05 07:00:00-04:00",
+    "available_after": "2022-05-05 07:00:00-04:00",
+    "publication_basis": "JSON-LD and visible timestamp/listing",
+    "reported_fiscal_year": 2022,
+    "reported_quarter": 1,
+    "actual_revenue_million": 363.03,
+    "actual_source_row": [
+      "Revenue",
+      "",
+      "$\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0 363,030",
+      "",
+      "$\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0 198,549",
+      ""
+    ],
+    "fiscal_year": 2022,
+    "next_quarter": 2,
+    "quarter_range_million": [
+      376.0,
+      380.0
+    ],
+    "annual_range_million": [
+      1600.0,
+      1620.0
+    ],
+    "guidance_source": [
+      "Second Quarter 2022 Outlook: Revenue between $376 million and $380 million .",
+      "Full Year 2022 Outlook: Revenue between $1.60 billion and $1.62 billion ."
+    ],
+    "actual_rounded_value_million": 363.0,
+    "rounding_tolerance_million": 0.050001000000000004,
+    "remaining_year_revision_million": 63.47000000000003,
+    "previous_source": "https://www.prnewswire.com/news-releases/datadog-announces-fourth-quarter-and-fiscal-year-2021-financial-results-301479300.html",
+    "realized_surprise_million": 26.529999999999973
+  },
+  {
+    "symbol": "DDOG",
+    "source": "https://www.prnewswire.com/news-releases/datadog-announces-second-quarter-2022-financial-results-301599525.html",
+    "source_file": "DDOG_PRN/release_301599525.html",
+    "sha256": "3645e92d1fa7cf091f5f9169c19efde0b91447906c883db0db6dff7de1ca3fa3",
+    "title": "Datadog Announces Second Quarter 2022 Financial Results",
+    "published": "2022-08-04 07:00:00-04:00",
+    "modified": "2022-08-04 07:00:00-04:00",
+    "available_after": "2022-08-04 07:00:00-04:00",
+    "publication_basis": "JSON-LD and visible timestamp/listing",
+    "reported_fiscal_year": 2022,
+    "reported_quarter": 2,
+    "actual_revenue_million": 406.138,
+    "actual_source_row": [
+      "Revenue",
+      "",
+      "$\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0 406,138",
+      "",
+      "$\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0 233,549",
+      "",
+      "$\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0 769,168",
+      "",
+      "$\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0 432,098"
+    ],
+    "fiscal_year": 2022,
+    "next_quarter": 3,
+    "quarter_range_million": [
+      410.0,
+      414.0
+    ],
+    "annual_range_million": [
+      1610.0,
+      1630.0
+    ],
+    "guidance_source": [
+      "Third Quarter 2022 Outlook: Revenue between $410 million and $414 million .",
+      "Full Year 2022 Outlook: Revenue between $1.61 billion and $1.63 billion ."
+    ],
+    "actual_rounded_value_million": 406.1,
+    "rounding_tolerance_million": 0.050001000000000004,
+    "remaining_year_revision_million": -18.137999999999977,
+    "previous_source": "https://www.prnewswire.com/news-releases/datadog-announces-first-quarter-2022-financial-results-301540337.html",
+    "realized_surprise_million": 28.137999999999977
+  },
+  {
+    "symbol": "DDOG",
+    "source": "https://www.prnewswire.com/news-releases/datadog-announces-third-quarter-2022-financial-results-301666905.html",
+    "source_file": "DDOG_PRN/release_301666905.html",
+    "sha256": "cadc4bae9fad916272a9952a022be60cd99dba1e2c48f6e569a2285d0d8a6d18",
+    "title": "Datadog Announces Third Quarter 2022 Financial Results",
+    "published": "2022-11-03 07:00:00-04:00",
+    "modified": "2022-11-03 07:00:00-04:00",
+    "available_after": "2022-11-03 07:00:00-04:00",
+    "publication_basis": "JSON-LD and visible timestamp/listing",
+    "reported_fiscal_year": 2022,
+    "reported_quarter": 3,
+    "actual_revenue_million": 436.533,
+    "actual_source_row": [
+      "Revenue",
+      "",
+      "$\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0 436,533",
+      "",
+      "$\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0 270,488",
+      "",
+      "$\u00a0\u00a0\u00a0 1,205,701",
+      "",
+      "$\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0 702,586"
+    ],
+    "fiscal_year": 2022,
+    "next_quarter": 4,
+    "quarter_range_million": [
+      445.0,
+      449.0
+    ],
+    "annual_range_million": [
+      1650.0,
+      1654.0
+    ],
+    "guidance_source": [
+      "Fourth Quarter 2022 Outlook: Revenue between $445 million and $449 million .",
+      "Full Year 2022 Outlook: Revenue between $1.650 billion and $1.654 billion ."
+    ],
+    "actual_rounded_value_million": 436.5,
+    "rounding_tolerance_million": 0.050001000000000004,
+    "remaining_year_revision_million": 7.4669999999999845,
+    "previous_source": "https://www.prnewswire.com/news-releases/datadog-announces-second-quarter-2022-financial-results-301599525.html",
+    "realized_surprise_million": 24.533000000000015
+  },
+  {
+    "symbol": "DDOG",
+    "source": "https://www.prnewswire.com/news-releases/datadog-announces-fourth-quarter-and-fiscal-year-2022-financial-results-301748267.html",
+    "source_file": "DDOG_PRN/release_301748267.html",
+    "sha256": "64ea411f1464cd6e4d24d95301c8ae681867c7c7da2a02b66cddf6753ec6f17c",
+    "title": "Datadog Announces Fourth Quarter and Fiscal Year 2022 Financial Results",
+    "published": "2023-02-16 07:00:00-05:00",
+    "modified": "2023-02-16 07:00:00-05:00",
+    "available_after": "2023-02-16 07:00:00-05:00",
+    "publication_basis": "JSON-LD and visible timestamp/listing",
+    "reported_fiscal_year": 2022,
+    "reported_quarter": 4,
+    "actual_revenue_million": 469.399,
+    "actual_source_row": [
+      "Revenue",
+      "",
+      "$\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0 469,399",
+      "",
+      "326,198",
+      "",
+      "$\u00a0\u00a0\u00a0 1,675,100",
+      "",
+      "$\u00a0\u00a0\u00a0 1,028,784"
+    ],
+    "fiscal_year": 2023,
+    "next_quarter": 1,
+    "quarter_range_million": [
+      466.0,
+      470.0
+    ],
+    "annual_range_million": [
+      2070.0,
+      2090.0
+    ],
+    "guidance_source": [
+      "First Quarter 2023 Outlook: Revenue between $466 million and $470 million .",
+      "Fiscal Year 2023 Outlook: Revenue between $2.07 billion and $2.09 billion ."
+    ],
+    "actual_rounded_value_million": 469.4,
+    "rounding_tolerance_million": 0.050001000000000004,
+    "remaining_year_revision_million": null,
+    "previous_source": null
+  },
+  {
+    "symbol": "DDOG",
+    "source": "https://www.prnewswire.com/news-releases/datadog-announces-first-quarter-2023-financial-results-301815254.html",
+    "source_file": "DDOG_PRN/release_301815254.html",
+    "sha256": "5237d689341c98904ca2054386f1c7dc09bf8d14ebb95884245e90d1178e58b8",
+    "title": "Datadog Announces First Quarter 2023 Financial Results",
+    "published": "2023-05-04 07:00:00-04:00",
+    "modified": "2023-05-04 07:00:00-04:00",
+    "available_after": "2023-05-04 07:00:00-04:00",
+    "publication_basis": "JSON-LD and visible timestamp/listing",
+    "reported_fiscal_year": 2023,
+    "reported_quarter": 1,
+    "actual_revenue_million": 481.714,
+    "actual_source_row": [
+      "Revenue",
+      "",
+      "$\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0 481,714",
+      "",
+      "$\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0 363,030"
+    ],
+    "fiscal_year": 2023,
+    "next_quarter": 2,
+    "quarter_range_million": [
+      498.0,
+      502.0
+    ],
+    "annual_range_million": [
+      2080.0,
+      2100.0
+    ],
+    "guidance_source": [
+      "Second Quarter 2023 Outlook: Revenue between $498 million and $502 million .",
+      "Full Year 2023 Outlook: Revenue between $2.08 billion and $2.10 billion ."
+    ],
+    "actual_rounded_value_million": 481.7,
+    "rounding_tolerance_million": 0.050001000000000004,
+    "remaining_year_revision_million": -3.7139999999999986,
+    "previous_source": "https://www.prnewswire.com/news-releases/datadog-announces-fourth-quarter-and-fiscal-year-2022-financial-results-301748267.html",
+    "realized_surprise_million": 13.713999999999999
+  },
+  {
+    "symbol": "DDOG",
+    "source": "https://www.prnewswire.com/news-releases/datadog-announces-second-quarter-2023-financial-results-301895068.html",
+    "source_file": "DDOG_PRN/release_301895068.html",
+    "sha256": "9e191c36081af10348e6990758be61471ec3c98662c9011153b1d7611c131bb1",
+    "title": "Datadog Announces Second Quarter 2023 Financial Results",
+    "published": "2023-08-08 07:00:00-04:00",
+    "modified": "2023-08-08 07:00:00-04:00",
+    "available_after": "2023-08-08 07:00:00-04:00",
+    "publication_basis": "JSON-LD and visible timestamp/listing",
+    "reported_fiscal_year": 2023,
+    "reported_quarter": 2,
+    "actual_revenue_million": 509.46,
+    "actual_source_row": [
+      "Revenue",
+      "",
+      "$\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0 509,460",
+      "",
+      "$\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0 406,138",
+      "",
+      "$\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0 991,174",
+      "",
+      "$\u00a0\u00a0\u00a0\u00a0\u00a0 769,168"
+    ],
+    "fiscal_year": 2023,
+    "next_quarter": 3,
+    "quarter_range_million": [
+      521.0,
+      525.0
+    ],
+    "annual_range_million": [
+      2050.0,
+      2060.0
+    ],
+    "guidance_source": [
+      "Third Quarter 2023 Outlook: Revenue between $521 million and $525 million .",
+      "Full Year 2023 Outlook: Revenue between $2.05 billion and $2.06 billion ."
+    ],
+    "actual_rounded_value_million": 509.5,
+    "rounding_tolerance_million": 0.050001000000000004,
+    "remaining_year_revision_million": -44.45999999999998,
+    "previous_source": "https://www.prnewswire.com/news-releases/datadog-announces-first-quarter-2023-financial-results-301815254.html",
+    "realized_surprise_million": 9.45999999999998
+  },
+  {
+    "symbol": "DDOG",
+    "source": "https://www.prnewswire.com/news-releases/datadog-announces-third-quarter-2023-financial-results-301979031.html",
+    "source_file": "DDOG_PRN/release_301979031.html",
+    "sha256": "5b10b7ee639e45d2e98c73edc33cc47fdfd09fc3f7edb711bf3acd221345caee",
+    "title": "Datadog Announces Third Quarter 2023 Financial Results",
+    "published": "2023-11-07 07:00:00-05:00",
+    "modified": "2023-11-07 07:00:00-05:00",
+    "available_after": "2023-11-07 07:00:00-05:00",
+    "publication_basis": "JSON-LD and visible timestamp/listing",
+    "reported_fiscal_year": 2023,
+    "reported_quarter": 3,
+    "actual_revenue_million": 547.536,
+    "actual_source_row": [
+      "Revenue",
+      "",
+      "$\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0 547,536",
+      "",
+      "$\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0 436,533",
+      "",
+      "$\u00a0\u00a0 1,538,710",
+      "",
+      "$\u00a0\u00a0 1,205,701"
+    ],
+    "fiscal_year": 2023,
+    "next_quarter": 4,
+    "quarter_range_million": [
+      564.0,
+      568.0
+    ],
+    "annual_range_million": [
+      2103.0,
+      2107.0
+    ],
+    "guidance_source": [
+      "Fourth Quarter 2023 Outlook: Revenue between $564 million and $568 million .",
+      "Full Year 2023 Outlook: Revenue between $2.103 billion and $2.107 billion ."
+    ],
+    "actual_rounded_value_million": 547.5,
+    "rounding_tolerance_million": 0.050001000000000004,
+    "remaining_year_revision_million": 25.464000000000055,
+    "previous_source": "https://www.prnewswire.com/news-releases/datadog-announces-second-quarter-2023-financial-results-301895068.html",
+    "realized_surprise_million": 24.535999999999945
+  },
+  {
+    "symbol": "DDOG",
+    "source": "https://www.prnewswire.com/news-releases/datadog-announces-fourth-quarter-and-fiscal-year-2023-financial-results-302059989.html",
+    "source_file": "DDOG_PRN/release_302059989.html",
+    "sha256": "dd92f459951931a671ecafb0f811437841da7d5a0747bf43c58be3fac58ad19d",
+    "title": "Datadog Announces Fourth Quarter and Fiscal Year 2023 Financial Results",
+    "published": "2024-02-13 07:00:00-05:00",
+    "modified": "2024-02-13 07:00:00-05:00",
+    "available_after": "2024-02-13 07:00:00-05:00",
+    "publication_basis": "JSON-LD and visible timestamp/listing",
+    "reported_fiscal_year": 2023,
+    "reported_quarter": 4,
+    "actual_revenue_million": 589.649,
+    "actual_source_row": [
+      "Revenue",
+      "",
+      "$\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0 589,649",
+      "",
+      "469,399",
+      "",
+      "$\u00a0\u00a0\u00a0 2,128,359",
+      "",
+      "$\u00a0\u00a0\u00a0 1,675,100"
+    ],
+    "fiscal_year": 2024,
+    "next_quarter": 1,
+    "quarter_range_million": [
+      587.0,
+      591.0
+    ],
+    "annual_range_million": [
+      2555.0,
+      2575.0
+    ],
+    "guidance_source": [
+      "First Quarter 2024 Outlook: Revenue between $587 million and $591 million .",
+      "Fiscal Year 2024 Outlook: Revenue between $2.555 billion and $2.575 billion ."
+    ],
+    "actual_rounded_value_million": 589.6,
+    "rounding_tolerance_million": 0.050001000000000004,
+    "remaining_year_revision_million": null,
+    "previous_source": null
+  },
+  {
+    "symbol": "DDOG",
+    "source": "https://www.prnewswire.com/news-releases/datadog-announces-first-quarter-2024-financial-results-302137234.html",
+    "source_file": "DDOG_PRN/release_302137234.html",
+    "sha256": "6764151265c2e106c9b954f01eabcd2c798e16d49c64a5422bfae6da44f1b4f4",
+    "title": "Datadog Announces First Quarter 2024 Financial Results",
+    "published": "2024-05-07 07:00:00-04:00",
+    "modified": "2024-05-07 07:00:00-04:00",
+    "available_after": "2024-05-07 07:00:00-04:00",
+    "publication_basis": "JSON-LD and visible timestamp/listing",
+    "reported_fiscal_year": 2024,
+    "reported_quarter": 1,
+    "actual_revenue_million": 611.253,
+    "actual_source_row": [
+      "Revenue",
+      "",
+      "$\u00a0\u00a0\u00a0\u00a0\u00a0 611,253",
+      "",
+      "$\u00a0\u00a0\u00a0\u00a0\u00a0 481,714"
+    ],
+    "fiscal_year": 2024,
+    "next_quarter": 2,
+    "quarter_range_million": [
+      620.0,
+      624.0
+    ],
+    "annual_range_million": [
+      2590.0,
+      2610.0
+    ],
+    "guidance_source": [
+      "Second Quarter 2024 Outlook: Revenue between $620 million and $624 million .",
+      "Full Year 2024 Outlook: Revenue between $2.59 billion and $2.61 billion ."
+    ],
+    "actual_rounded_value_million": 611.0,
+    "rounding_tolerance_million": 0.500001,
+    "remaining_year_revision_million": 12.746999999999957,
+    "previous_source": "https://www.prnewswire.com/news-releases/datadog-announces-fourth-quarter-and-fiscal-year-2023-financial-results-302059989.html",
+    "realized_surprise_million": 22.253000000000043
+  },
+  {
+    "symbol": "DDOG",
+    "source": "https://www.prnewswire.com/news-releases/datadog-announces-second-quarter-2024-financial-results-302217275.html",
+    "source_file": "DDOG_PRN/release_302217275.html",
+    "sha256": "5bea4734f4a856505893fff7e50f3a4b9b554664ffbdddcb554fc381d53832af",
+    "title": "Datadog Announces Second Quarter 2024 Financial Results",
+    "published": "2024-08-08 07:00:00-04:00",
+    "modified": "2024-08-08 07:00:00-04:00",
+    "available_after": "2024-08-08 07:00:00-04:00",
+    "publication_basis": "JSON-LD and visible timestamp/listing",
+    "reported_fiscal_year": 2024,
+    "reported_quarter": 2,
+    "actual_revenue_million": 645.279,
+    "actual_source_row": [
+      "Revenue",
+      "",
+      "$\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0 645,279",
+      "",
+      "$\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0 509,460",
+      "",
+      "$\u00a0\u00a0\u00a0\u00a0\u00a0 1,256,532",
+      "",
+      "$\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0 991,174"
+    ],
+    "fiscal_year": 2024,
+    "next_quarter": 3,
+    "quarter_range_million": [
+      660.0,
+      664.0
+    ],
+    "annual_range_million": [
+      2620.0,
+      2630.0
+    ],
+    "guidance_source": [
+      "Third Quarter 2024 Outlook: Revenue between $660 million and $664 million .",
+      "Full Year 2024 Outlook: Revenue between $2.62 billion and $2.63 billion ."
+    ],
+    "actual_rounded_value_million": 645.0,
+    "rounding_tolerance_million": 0.500001,
+    "remaining_year_revision_million": 1.7210000000000036,
+    "previous_source": "https://www.prnewswire.com/news-releases/datadog-announces-first-quarter-2024-financial-results-302137234.html",
+    "realized_surprise_million": 23.278999999999996
+  },
+  {
+    "symbol": "DDOG",
+    "source": "https://www.prnewswire.com/news-releases/datadog-announces-third-quarter-2024-financial-results-302298136.html",
+    "source_file": "DDOG_PRN/release_302298136.html",
+    "sha256": "cbf9cadd65b0eec7db6ec0d7be7436576ac048178a16d3b55aa6bb70a89a7c35",
+    "title": "Datadog Announces Third Quarter 2024 Financial Results",
+    "published": "2024-11-07 07:00:00-05:00",
+    "modified": "2024-11-07 07:01:36-05:00",
+    "available_after": "2024-11-07 07:01:36-05:00",
+    "publication_basis": "JSON-LD and visible timestamp/listing",
+    "reported_fiscal_year": 2024,
+    "reported_quarter": 3,
+    "actual_revenue_million": 690.016,
+    "actual_source_row": [
+      "Revenue",
+      "",
+      "$\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0 690,016",
+      "",
+      "$\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0 547,536",
+      "",
+      "$\u00a0\u00a0\u00a0\u00a0\u00a0 1,946,548",
+      "",
+      "$\u00a0\u00a0\u00a0\u00a0\u00a0 1,538,710"
+    ],
+    "fiscal_year": 2024,
+    "next_quarter": 4,
+    "quarter_range_million": [
+      709.0,
+      713.0
+    ],
+    "annual_range_million": [
+      2656.0,
+      2660.0
+    ],
+    "guidance_source": [
+      "Fourth Quarter 2024 Outlook: Revenue between $709 million and $713 million .",
+      "Full Year 2024 Outlook: Revenue between $2.656 billion and $2.660 billion ."
+    ],
+    "actual_rounded_value_million": 690.0,
+    "rounding_tolerance_million": 0.500001,
+    "remaining_year_revision_million": 4.984000000000037,
+    "previous_source": "https://www.prnewswire.com/news-releases/datadog-announces-second-quarter-2024-financial-results-302217275.html",
+    "realized_surprise_million": 28.015999999999963
+  },
+  {
+    "symbol": "DDOG",
+    "source": "https://www.newsfilecorp.com/release/240623/Datadog-Announces-Fourth-Quarter-and-Fiscal-Year-2024-Financial-Results",
+    "source_file": "DDOG_NEWSFILE/release_240623.html",
+    "sha256": "e21a12d051c69e21a9259f26f64208054cc6a5197414dcc3056c4acd06fc7902",
+    "title": "Datadog Announces Fourth Quarter and Fiscal Year 2024 Financial Results",
+    "published": "2025-02-13 07:00:00-05:00",
+    "modified": null,
+    "available_after": "2025-02-13 07:00:00-05:00",
+    "publication_basis": "visible Newsfile issuer timestamp, also matched official issuer listing",
+    "reported_fiscal_year": 2024,
+    "reported_quarter": 4,
+    "actual_revenue_million": 737.727,
+    "actual_source_row": [
+      "Revenue",
+      "$",
+      "737,727",
+      "",
+      "",
+      "589,649",
+      "",
+      "$",
+      "2,684,275",
+      "",
+      "$",
+      "2,128,359",
+      ""
+    ],
+    "fiscal_year": 2025,
+    "next_quarter": 1,
+    "quarter_range_million": [
+      737.0,
+      741.0
+    ],
+    "annual_range_million": [
+      3175.0,
+      3195.0
+    ],
+    "guidance_source": [
+      "First Quarter 2025 Outlook: Revenue between $737 million and $741 million.",
+      "Fiscal Year 2025 Outlook: Revenue between $3.175 billion and $3.195 billion."
+    ],
+    "actual_rounded_value_million": 738.0,
+    "rounding_tolerance_million": 0.500001,
+    "remaining_year_revision_million": null,
+    "previous_source": null
+  },
+  {
+    "symbol": "DDOG",
+    "source": "https://www.globenewswire.com/news-release/2025/05/06/3074862/0/en/datadog-announces-first-quarter-2025-financial-results.html",
+    "source_file": "DDOG/release_007.html",
+    "sha256": "521a36efc480365d03166db59131218912a8ca2dacc9520c8778e745db4b836b",
+    "title": "Datadog Announces First Quarter 2025 Financial Results",
+    "published": "2025-05-06 11:00:00+00:00",
+    "modified": "2025-05-06 11:00:00+00:00",
+    "available_after": "2025-05-06 11:00:00+00:00",
+    "publication_basis": "JSON-LD and visible timestamp/listing",
+    "reported_fiscal_year": 2025,
+    "reported_quarter": 1,
+    "actual_revenue_million": 761.553,
+    "actual_source_row": [
+      "Revenue",
+      "",
+      "$",
+      "761,553",
+      "",
+      "",
+      "$",
+      "611,253",
+      ""
+    ],
+    "fiscal_year": 2025,
+    "next_quarter": 2,
+    "quarter_range_million": [
+      787.0,
+      791.0
+    ],
+    "annual_range_million": [
+      3215.0,
+      3235.0
+    ],
+    "guidance_source": [
+      "Second Quarter 2025 Outlook: Revenue between $787 million and $791 million.",
+      "Full Year 2025 Outlook: Revenue between $3.215 billion and $3.235 billion."
+    ],
+    "actual_rounded_value_million": 762.0,
+    "rounding_tolerance_million": 0.500001,
+    "remaining_year_revision_million": 17.447000000000003,
+    "previous_source": "https://www.newsfilecorp.com/release/240623/Datadog-Announces-Fourth-Quarter-and-Fiscal-Year-2024-Financial-Results",
+    "realized_surprise_million": 22.552999999999997
+  },
+  {
+    "symbol": "DDOG",
+    "source": "https://www.globenewswire.com/news-release/2025/08/07/3129085/0/en/datadog-announces-second-quarter-2025-financial-results.html",
+    "source_file": "DDOG/release_008.html",
+    "sha256": "4096b7d89e1ec78e1687bfbc6024edf9d1da740c83598c2ebe8e4e4a9f79fa21",
+    "title": "Datadog Announces Second Quarter 2025 Financial Results",
+    "published": "2025-08-07 11:00:00+00:00",
+    "modified": "2025-08-07 11:00:00+00:00",
+    "available_after": "2025-08-07 11:00:00+00:00",
+    "publication_basis": "JSON-LD and visible timestamp/listing",
+    "reported_fiscal_year": 2025,
+    "reported_quarter": 2,
+    "actual_revenue_million": 826.76,
+    "actual_source_row": [
+      "Revenue",
+      "",
+      "$",
+      "826,760",
+      "",
+      "",
+      "$",
+      "645,279",
+      "",
+      "",
+      "$",
+      "1,588,313",
+      "",
+      "",
+      "$",
+      "1,256,532",
+      ""
+    ],
+    "fiscal_year": 2025,
+    "next_quarter": 3,
+    "quarter_range_million": [
+      847.0,
+      851.0
+    ],
+    "annual_range_million": [
+      3312.0,
+      3322.0
+    ],
+    "guidance_source": [
+      "Third Quarter 2025 Outlook: Revenue between $847 million and $851 million.",
+      "Full Year 2025 Outlook: Revenue between $3.312 billion and $3.322 billion."
+    ],
+    "actual_rounded_value_million": 827.0,
+    "rounding_tolerance_million": 0.500001,
+    "remaining_year_revision_million": 54.24000000000001,
+    "previous_source": "https://www.globenewswire.com/news-release/2025/05/06/3074862/0/en/datadog-announces-first-quarter-2025-financial-results.html",
+    "realized_surprise_million": 37.75999999999999
+  },
+  {
+    "symbol": "DDOG",
+    "source": "https://www.globenewswire.com/news-release/2025/11/06/3182403/0/en/datadog-announces-third-quarter-2025-financial-results.html",
+    "source_file": "DDOG/release_009.html",
+    "sha256": "161f492d525a9dc367039c4e8d72ccb8754d3bb2f93aa145dfc106a77896e3b4",
+    "title": "Datadog Announces Third Quarter 2025 Financial Results",
+    "published": "2025-11-06 12:00:00+00:00",
+    "modified": "2025-11-06 12:00:00+00:00",
+    "available_after": "2025-11-06 12:00:00+00:00",
+    "publication_basis": "JSON-LD and visible timestamp/listing",
+    "reported_fiscal_year": 2025,
+    "reported_quarter": 3,
+    "actual_revenue_million": 885.651,
+    "actual_source_row": [
+      "Revenue",
+      "$",
+      "885,651",
+      "",
+      "",
+      "$",
+      "690,016",
+      "",
+      "",
+      "$",
+      "2,473,964",
+      "",
+      "",
+      "$",
+      "1,946,548",
+      ""
+    ],
+    "fiscal_year": 2025,
+    "next_quarter": 4,
+    "quarter_range_million": [
+      912.0,
+      916.0
+    ],
+    "annual_range_million": [
+      3386.0,
+      3390.0
+    ],
+    "guidance_source": [
+      "Fourth Quarter 2025 Outlook: Revenue between $912 million and $916 million.",
+      "Full Year 2025 Outlook: Revenue between $3.386 billion and $3.390 billion."
+    ],
+    "actual_rounded_value_million": 886.0,
+    "rounding_tolerance_million": 0.500001,
+    "remaining_year_revision_million": 34.349000000000046,
+    "previous_source": "https://www.globenewswire.com/news-release/2025/08/07/3129085/0/en/datadog-announces-second-quarter-2025-financial-results.html",
+    "realized_surprise_million": 36.650999999999954
+  },
+  {
+    "symbol": "DDOG",
+    "source": "https://www.globenewswire.com/news-release/2026/02/10/3235171/0/en/datadog-announces-fourth-quarter-and-fiscal-year-2025-financial-results.html",
+    "source_file": "DDOG/release_010.html",
+    "sha256": "8015e05c6d69e310af38675524bee8daf1df9d19fbe42a58d40e8396a4d243ae",
+    "title": "Datadog Announces Fourth Quarter and Fiscal Year 2025 Financial Results",
+    "published": "2026-02-10 12:00:00+00:00",
+    "modified": "2026-02-10 12:00:00+00:00",
+    "available_after": "2026-02-10 12:00:00+00:00",
+    "publication_basis": "JSON-LD and visible timestamp/listing",
+    "reported_fiscal_year": 2025,
+    "reported_quarter": 4,
+    "actual_revenue_million": 953.194,
+    "actual_source_row": [
+      "Revenue",
+      "",
+      "$",
+      "953,194",
+      "",
+      "",
+      "$",
+      "737,727",
+      "",
+      "",
+      "$",
+      "3,427,158",
+      "",
+      "",
+      "$",
+      "2,684,275",
+      ""
+    ],
+    "fiscal_year": 2026,
+    "next_quarter": 1,
+    "quarter_range_million": [
+      951.0,
+      961.0
+    ],
+    "annual_range_million": [
+      4059.9999999999995,
+      4100.0
+    ],
+    "guidance_source": [
+      "First Quarter 2026 Outlook: Revenue between $951 million and $961 million.",
+      "Fiscal Year 2026 Outlook: Revenue between $4.06 billion and $4.10 billion."
+    ],
+    "actual_rounded_value_million": 953.0,
+    "rounding_tolerance_million": 0.500001,
+    "remaining_year_revision_million": null,
+    "previous_source": null
+  },
+  {
+    "symbol": "DDOG",
+    "source": "https://www.globenewswire.com/news-release/2026/05/07/3289822/0/en/datadog-announces-first-quarter-2026-financial-results.html",
+    "source_file": "DDOG/release_011.html",
+    "sha256": "9c6cd287e17d1a6965561b1b365a721593b09fef6401ae9cbd27e10c0dfaa5ec",
+    "title": "Datadog Announces First Quarter 2026 Financial Results",
+    "published": "2026-05-07 11:00:00+00:00",
+    "modified": "2026-05-07 11:00:00+00:00",
+    "available_after": "2026-05-07 11:00:00+00:00",
+    "publication_basis": "JSON-LD and visible timestamp/listing",
+    "reported_fiscal_year": 2026,
+    "reported_quarter": 1,
+    "actual_revenue_million": 1006.426,
+    "actual_source_row": [
+      "Revenue",
+      "",
+      "$",
+      "1,006,426",
+      "",
+      "",
+      "$",
+      "761,553",
+      ""
+    ],
+    "fiscal_year": 2026,
+    "next_quarter": 2,
+    "quarter_range_million": [
+      1070.0,
+      1080.0
+    ],
+    "annual_range_million": [
+      4300.0,
+      4340.0
+    ],
+    "guidance_source": [
+      "Second Quarter 2026 Outlook: Revenue between $1.07 billion and $1.08 billion.",
+      "Full Year 2026 Outlook: Revenue between $4.30 billion and $4.34 billion."
+    ],
+    "actual_rounded_value_million": 1006.0,
+    "rounding_tolerance_million": 0.500001,
+    "remaining_year_revision_million": 189.57399999999996,
+    "previous_source": "https://www.globenewswire.com/news-release/2026/02/10/3235171/0/en/datadog-announces-fourth-quarter-and-fiscal-year-2025-financial-results.html",
+    "realized_surprise_million": 50.426000000000045
+  },
+  {
+    "symbol": "DDOG",
+    "source": "https://www.globenewswire.com/news-release/2026/08/06/3340086/0/en/datadog-announces-second-quarter-2026-financial-results.html",
+    "source_file": "DDOG/release_012.html",
+    "sha256": "0bee20e6b94ca16265c34757ef48e9bfa116d1f3c6fea917d5afa03791026552",
+    "title": "Datadog Announces Second Quarter 2026 Financial Results",
+    "published": "2026-08-06 11:00:00+00:00",
+    "modified": "2026-08-06 11:00:00+00:00",
+    "available_after": "2026-08-06 11:00:00+00:00",
+    "publication_basis": "JSON-LD and visible timestamp/listing",
+    "reported_fiscal_year": 2026,
+    "reported_quarter": 2,
+    "actual_revenue_million": 1121.454,
+    "actual_source_row": [
+      "Revenue",
+      "",
+      "$",
+      "1,121,454",
+      "",
+      "",
+      "$",
+      "826,760",
+      "",
+      "",
+      "$",
+      "2,127,880",
+      "",
+      "",
+      "$",
+      "1,588,313",
+      ""
+    ],
+    "fiscal_year": 2026,
+    "next_quarter": 3,
+    "quarter_range_million": [
+      1135.0,
+      1145.0
+    ],
+    "annual_range_million": [
+      4450.0,
+      4470.0
+    ],
+    "guidance_source": [
+      "Third Quarter 2026 Outlook: Revenue between $1.135 billion and $1.145 billion.",
+      "Full Year 2026 Outlook: Revenue between $4.45 billion and $4.47 billion."
+    ],
+    "actual_rounded_value_million": 1120.0,
+    "rounding_tolerance_million": 5.000001,
+    "remaining_year_revision_million": 93.54600000000005,
+    "previous_source": "https://www.globenewswire.com/news-release/2026/05/07/3289822/0/en/datadog-announces-first-quarter-2026-financial-results.html",
+    "realized_surprise_million": 46.45399999999995
+  }
+]

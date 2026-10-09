@@ -1,0 +1,106 @@
+"""Report independent sleeves, both cash benchmarks, and the limits of high Sharpe."""
+import json
+from pathlib import Path
+OUT=Path(__file__).resolve().parent
+x=json.loads((OUT/'portfolio_results.json').read_text())
+c=json.loads((OUT/'carry_results.json').read_text())
+d=json.loads((OUT/'dated_results.json').read_text())
+v=json.loads((OUT/'verification.json').read_text())
+labels={'core':'原三因子（资金费不完整）','carry_gated':'带开关的现货／永续资金费',
+        'carry_always':'持续持有的现货／永续资金费','dated':'全额抵押季度期货基差',
+        'trend':'BTC/ETH方向趋势（含资金费）','core_carry_equal':'原策略＋资金费各半',
+        'core_carry_iv':'原策略＋资金费：滚动风险分配','core_carry_trend_iv':'原策略＋资金费＋趋势：滚动风险分配',
+        'core_carry_trend_mv':'原策略＋资金费＋趋势：均值协方差',
+        'new_three_iv':'资金费＋季度基差＋趋势：滚动风险分配',
+        'new_three_mv':'资金费＋季度基差＋趋势：均值协方差',
+        'core_carry_dated_iv':'原策略＋资金费＋季度基差：滚动风险分配',
+        'carry_dated_equal':'资金费＋季度基差各半'}
+lines=['# 平行策略组合研究：找到了高 Sharpe 候选，但需区分现金基准', '',
+'2026-10-09。用户明确允许跨交易所、现货、永续及期权研究，不设最低年化收益。本轮没有修改实盘代码、配置或发单。', '',
+'**结果：按原项目的零现金收益口径，独立“资金费＋季度基差＋趋势”组合的全期相位平均Sharpe为5.81，2025–26年为3.67；全期算术年化5.41%，后半段2.41%。它不依赖原三因子。若按同期SOFR扣除美元现金机会成本，全期Sharpe约1.00，后半段−2.48。因此，找到了可复跑的高回报／波动比候选，但没有证明稳定获得超额Sharpe 3。**', '',
+'这与上一轮给原策略加入几个日线排名不同：本次建立了现货现金、永续保证金、资金费、币本位期货抵押与交割的独立账本。低年化收益不再被当作排除理由；此前“carry只有2–6.5%/年”的结论不能直接否决用户当前目标。', '',
+'## 三个独立账本', '',
+'**1. 现货／永续资金费。** BTC、ETH、SOL等资本。买Binance现货，同时在Hyperliquid卖出相同币数量；实际持仓按价格漂移。初始现货目标为45%权益，其余是现金／保证金。持续持有版本作对照；开关版本用已知过去7日费率，年化>10%开仓、<0退出。数量偏离目标20%以上才维护。长期方向风险对冲，仍保留两场所价格基差、币种与场所风险。', '',
+'新获取每币29,250条Hyperliquid实际资金费记录，2023年早期8小时、后续1小时结算按实际时间戳处理，没有摊回过去。每币有3个缺失小时，共9币小时；主值为已返回付款，缺失费率未认证为0，压力测试另外收费。资金费金额所需完整历史oracle缺失，主值以当日现货开收均价估值，压力按每笔费率正负分别使用不利日高低；这是金额代理，不是精确逐笔资金费重建。', '',
+'Binance USDT现金按真实USDCUSDT日价换算为USDC；现货和永续分别记账，资金转出当日不能再使用，次日才到账。每次转账假设5 USDC，换汇按0.1%＋3bp，现货0.1%＋3bp，Hyperliquid永续4.5bp＋3bp。5 USDC是明确的费用情景，不是声称当前每条转账路径实际均收费5 USDC。', '',
+'**2. 全额抵押的季度期货基差。** 买BTC或ETH作为Deribit抵押品，卖出USD名义相匹配的逆向季度期货。按真实币本位损益 `N×(1/F当前−1/F入场)` 盯市，持有至交易所规定到期日08:00，用官方交割价结算，再开下一季度。不把BTC抵押品误当稳定币，也不把开仓基差直接平均成每日利息。初始BTC/ETH资本各半，之后不免费每日再平衡。', '',
+'新获取30份季度合约小时OHLC档案（每币15份），每币14次到期滚动；开仓／滚动使用的小时均有成交。ETH日标记有1个零成交量小时，价格可能陈旧，未据此伪造更高精度。期货开仓／提前平仓按0.05%＋3bp，到期费0.025%；初末现货、换汇及转账成本另计。合约选择由季度到期日确定，没有按哪一期表现好择优选合约。', '',
+'**3. BTC/ETH趋势。** 固定63日方向，两币各半，目标总名义1倍，已收盘信号后次日执行、2%调仓带，含实际资金费估值。它是小的方向性收益来源；本次没有再搜周期或止盈参数。', '',
+'前两种都与加密融资需求有关，不能仅凭平时低相关就声称危机时完全独立。此次收益相关性：', '',
+'|账本|与原三因子相关|与资金费账本相关|',
+'|---|---:|---:|']
+for key,label in [('carry','资金费'),('dated','季度基差'),('trend','趋势')]:
+    lines.append(f"|{label}|{x['correlations']['core'][key]:.3f}|{x['correlations']['carry'][key]:.3f}|")
+lines+=['', '相关性用同日期日收益；原策略用三相位平均收益仅作相关性诊断，不以该平均收益伪装成实盘可实现Sharpe。', '',
+'## 统一比较', '',
+f"以下全部比较日期为 **{x['meta']['start'][:10]} → {x['meta']['end'][:10]}，{x['meta']['days']}日**。此前126个共同交易日只用于估计。2023–24标签实际从2023年12月18日起，不能看作两整年。原基线在这个日历上为1.277，与上一轮1.209的差异来自评价窗口。所有收益仅为回测，不是实盘收益。", '',
+'表内Sharpe先按各条调仓相位净收益计算，再取算术平均。年化为算术年化，不是保证收益；CAGR另存JSON。', '',
+'|方案|全期S（现金0）|2023–24 S|2025–26 S|全期年化|2025–26年化|全期S（扣SOFR）|',
+'|---|---:|---:|---:|---:|---:|---:|']
+for z,label in labels.items():
+    q=x['summary'][z];f=q['full'];late=q['2025-26']
+    lines.append(f"|{label}|{f['sharpe']:.3f}|{q['2023-24']['sharpe']:.3f}|{late['sharpe']:.3f}|{f['annual_return']:.2%}|{late['annual_return']:.2%}|{f['sharpe_sofr']:.3f}|")
+lines+=['',
+'原三因子部分仍缺全币种完整资金费，所有含它的组合都只作探索性对照，不能以此认证实盘净Sharpe。新的三账本组合没有这个旧基线依赖，但资金费金额的oracle代理限制仍存在。', '',
+'## 最值得继续验证的候选', '',
+'**资金费＋季度基差＋趋势，按过去126日波动倒数分配资本。** 每30天调权，使用全部30个调仓起点；单策略资本占比上限95%，不加策略层杠杆。每天仓位权重自然漂移，不把未轮到调仓的持仓强制恢复目标。额外资本调配费用按绝对资本换手0.2%计，初次建仓按各腿成本单独计。', '',
+'历史平均资本配置约 **80.3%资金费、18.8%季度基差、0.9%趋势**。这些是滚动规则的结果，不是用全样本求出的固定最优配方，更不是建议现在照搬这三个固定权重。旧策略被排除在该候选之外，所以这里不是“原策略提高到5.8”。', '',
+'|指标|全期|2025–26|',
+'|---|---:|---:|']
+f=x['summary']['new_three_iv']['full'];late=x['summary']['new_three_iv']['2025-26']
+for label,key,fmt in [('Sharpe（现金0）','sharpe','.3f'),('年化收益','annual_return','.2%'),('年化波动','vol','.2%'),('最差相位日频最大回撤','worst_drawdown','.2%'),('Sharpe（扣SOFR）','sharpe_sofr','.3f')]:
+    lines.append(f'|{label}|{format(f[key],fmt)}|{format(late[key],fmt)}|')
+lines+=['',
+f"30个起点全期Sharpe范围 **{f['phase_range'][0]:.3f}–{f['phase_range'][1]:.3f}**，后段 **{late['phase_range'][0]:.3f}–{late['phase_range'][1]:.3f}**。不是挑中一个好起点。历史很小的日频回撤不包含违约、冻结或长期无法转移抵押品等尾部事件，也不等于盘中最大回撤。", '',
+'**更复杂的均值协方差分配没有更可信。** 全期看起来略高，但后半段只有约2，且起点更敏感，因此没有拿最高的全期数作为推荐。原策略混入后，多种组合全期仍只有约1.2–1.4；说明高波动旧策略的风险会压过低波动的新收益，简单按资本各半通常不能达到目标。', '',
+'## 统计证据和压力测试', '',
+'本轮4个独立账本对照＋8个组合，共12项正式比较，另有逐币与成本诊断。配对移动块bootstrap 4,999次，15/30/60日块；全部相位共用日期抽样，不把30相位当30倍样本。FWER只覆盖本轮比较，不能抹去此前整个项目的探索历史。', '',
+'|滚动风险分配的新三账本|全期|2025–26|',
+'|---|---|---|']
+uf=x['uncertainty']['full']['zero']['30']['new_three_iv'];ul=x['uncertainty']['2025-26']['zero']['30']['new_three_iv']
+lines += [f"|Sharpe单项95%区间|[{uf['ci95'][0]:.2f}, {uf['ci95'][1]:.2f}]|[{ul['ci95'][0]:.2f}, {ul['ci95'][1]:.2f}]|",
+          f"|本轮同时95%下界|{uf['simultaneous_lower95']:.2f}|{ul['simultaneous_lower95']:.2f}|",
+          f"|相对旧基线提升的FWER p|{uf['p_fwer_improvement']:.4f}|{ul['p_fwer_improvement']:.4f}|", '',
+'全期零现金基准证据较强，但后半段区间下端低于3，后半段相对旧基线的提升也不显著。因此即便接受零现金基准，也不能宣称“未来稳定Sharpe≥3”。历史已被项目反复使用，滚动估计只避免权重使用未来数据，不使整个研究变成全新未见样本。', '',
+'同时施加：所有正/负资金费按不利日高/低估值、缺失小时额外扣款、滑点从3bp升6bp、跨所到账从1天改3天、组合调配费用翻倍。结果：', '',
+'|压力后的新三账本|全期|2025–26|',
+'|---|---:|---:|']
+sf=v['combined_stress']['full'];sl=v['combined_stress']['2025-26']
+for label,key,fmt in [('Sharpe（现金0）','sharpe','.3f'),('年化收益','annual_return','.2%'),('Sharpe（扣SOFR）','sharpe_sofr','.3f')]:
+    lines.append(f'|{label}|{format(sf[key],fmt)}|{format(sl[key],fmt)}|')
+lines += ['',
+f"后半段压力下相位范围{sl['phase_range'][0]:.3f}–{sl['phase_range'][1]:.3f}，已有起点低于3。没有模拟真实IOC订单、盘口容量或共同交易所故障，所以这仍只是成本及估值压力。", '',
+'## 资金规模不能忽略', '',
+'资金费独立账本按每次转账5 USDC的相同情景，仅改变初始本金（以下覆盖2023-06-01开始的整个独立账本，不与上面的形成期后窗口混比）：', '',
+'|资金费账本初始资本|全期年化|2025–26年化|2025–26 Sharpe（现金0）|',
+'|---|---:|---:|---:|']
+for capital,q in v['size_sensitivity'].items():
+    if 'error' in q:
+        lines.append(f'|{int(capital):,} USDC|未通过账本检查|—|—|')
+    else:
+        lines.append(f"|{int(capital):,} USDC|{q['full']['annual_return']:.2%}|{q['late']['annual_return']:.2%}|{q['late']['sharpe']:.3f}|")
+lines+=['',
+'主研究各独立账本按100,000 USDC校准费用；组合层使用收益率缩放及额外调配成本，并非把每个随权重变化的账户全部逐单重放。固定转账费用不严格随资金线性缩放，必须根据计划资本重算，不能把大账户Sharpe套给小账户。未取得实际账户费率、链路、最小数量及执行报价前，不称为可部署结果。', '',
+'## 为什么同时给两种Sharpe', '',
+'项目原先采用 `mean(r)/std(r)×√365`，即现金收益假设0。对高波动alpha策略，扣现金利率影响可能不大；对本次低波动carry，差别非常大。SOFR来自FRED公开历史数据，使用前一日观测、周末沿用前值，按ACT/360作事后美元机会成本对照；未重建纽约实际公告发布时间，且这些利率完全不进入交易信号或分配决策。不是把SOFR利息凭空加入组合收益，也不假设USDC可以无摩擦赚到该利率。', '',
+f"比较期平均现金机会成本约{f['cash_benchmark_annual']:.2%}/年，2025–26约{late['cash_benchmark_annual']:.2%}/年。候选后段收益只有{late['annual_return']:.2%}，所以扣现金之后为负。**不能把“无最低年化要求”理解成可以忽略现金基准。** 如果目标是账户USDC名义收益／波动比3，本次已有历史候选；如果目标是相对美元现金的超额Sharpe3，本轮尚未找到。", '',
+'## 期权方向的实际进展', '',
+'已通过Deribit历史接口读到过期BTC ATM期权真实交易OHLC，纠正了“过期合约历史完全读不到”的可能印象。但本轮只完成可用性探测，尚未建立完整的逐日delta对冲、权利金、到期结算、保证金和成交价差账本。交易OHLC也不等于同时可成交的买卖报价。没有用DVOL−实现波动或假想期权收益来凑组合Sharpe；期权未计入以上数字。', '',
+'## 当前判断', '',
+'- 用户提出寻找平行收益来源的方向得到支持：新增资金费与季度基差与旧策略低相关，零现金口径下组合已出现明显高于3的历史结果。',
+'- 研究候选优先保留固定规则的“资金费＋季度基差＋趋势”滚动风险分配，进一步核验账户资本、oracle、成交、转账和前向收益。平均80/19/1只是解释，不作为事后固定配方。',
+'- 不把旧动量策略硬塞进低波动组合，也不以最高全期均值协方差结果选优。',
+'- 严格的超额Sharpe3目标仍未达到：后段现金机会成本不通过，样本外确认和执行认证也没有完成。', '',
+'## 复跑与证据', '',
+'`fetch.py` 获取并缓存实际资金费与现货，`fetch_dated.py` 获取历史季度期货、交割价和SOFR。`carry.py` 是独立双场所现金账本，`dated.py` 是币本位逆向期货账本，`combine.py` 是只用过去126日的分配，`check.py` 验证会计、未来前缀不变性、资金规模及组合压力。每条日收益、费用、转账与统计结果保存在本目录。`manifest.json` 保存输入和实现的SHA256。', '',
+'```sh',
+'OPENBLAS_NUM_THREADS=1 python research/multisleeve_20261009/carry.py',
+'OPENBLAS_NUM_THREADS=1 python research/multisleeve_20261009/dated.py',
+'OPENBLAS_NUM_THREADS=1 python research/multisleeve_20261009/combine.py',
+'OPENBLAS_NUM_THREADS=1 python research/multisleeve_20261009/check.py',
+'python research/multisleeve_20261009/report.py',
+'```', '',
+'验证：双场所每日权益变化与资金费、基差、汇兑、全部费用相符；逆向合约在币价翻倍／减半时保持美元对冲；截断未来输入不会改变此前资金费开关和组合权重，最大差0。两场所开盘保证金与各币不同时高点组成的保守包络未触发模型保证金线，后者不等于逐笔真实清算检查。', '',
+'规则来源：[Hyperliquid资金费](https://hyperliquid.gitbook.io/hyperliquid-docs/trading/funding)、[Hyperliquid费用](https://hyperliquid.gitbook.io/hyperliquid-docs/trading/fees)、[Deribit逆向期货](https://support.deribit.com/hc/en-us/articles/25944756746397-Futures-inverse)、[Deribit费用及交割费](https://support.deribit.com/hc/en-us/articles/25944746248989-Fees)、[SOFR历史](https://fred.stlouisfed.org/series/SOFR)。历史费用使用固定研究情景，不声称逐日复原用户真实费率。', '']
+(OUT/'REPORT.md').write_text('\n'.join(lines))
+print(OUT/'REPORT.md')

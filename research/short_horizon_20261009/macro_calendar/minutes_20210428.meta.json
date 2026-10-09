@@ -1,0 +1,18 @@
+{
+  "url": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20210428.htm",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "71dcf2671f26de646ab69839251a63562e3c4a85a8f14cd47a4cf8b3106be5e3",
+  "retrieved_utc": "2026-10-09T04:23:00Z",
+  "attempts": [
+    {
+      "url": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20210428.htm",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "71dcf2671f26de646ab69839251a63562e3c4a85a8f14cd47a4cf8b3106be5e3",
+      "retrieved_utc": "2026-10-09T04:23:00Z"
+    }
+  ]
+}

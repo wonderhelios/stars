@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/synopsys-announces-earnings-release-date-for-first-quarter-fiscal-year-2025-302361112.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "c14e9cde14337c2aaae4853689990bbfe248c68af21729df89c477406abfd807",
+  "retrieved_utc": "2026-10-09T04:09:12Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/synopsys-announces-earnings-release-date-for-first-quarter-fiscal-year-2025-302361112.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "c14e9cde14337c2aaae4853689990bbfe248c68af21729df89c477406abfd807",
+      "retrieved_utc": "2026-10-09T04:09:12Z"
+    }
+  ]
+}

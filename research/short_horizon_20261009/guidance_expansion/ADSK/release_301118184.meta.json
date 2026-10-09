@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2021-second-quarter-results-301118184.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "5677102b024ffe8b6a4d94788252ac3df4918bc99db1e6f3505bb553d779f0ee",
+  "retrieved_utc": "2026-10-09T03:26:59Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2021-second-quarter-results-301118184.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "5677102b024ffe8b6a4d94788252ac3df4918bc99db1e6f3505bb553d779f0ee",
+      "retrieved_utc": "2026-10-09T03:26:59Z"
+    }
+  ]
+}

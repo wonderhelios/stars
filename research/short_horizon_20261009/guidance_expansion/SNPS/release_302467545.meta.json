@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-second-quarter-fiscal-year-2025-302467545.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "fa0563ef50fce417f02196de1f66d65849f29dc4f39ee0e3e4a23fd4036ae4ea",
+  "retrieved_utc": "2026-10-09T03:31:47Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-second-quarter-fiscal-year-2025-302467545.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "fa0563ef50fce417f02196de1f66d65849f29dc4f39ee0e3e4a23fd4036ae4ea",
+      "retrieved_utc": "2026-10-09T03:31:47Z"
+    }
+  ]
+}

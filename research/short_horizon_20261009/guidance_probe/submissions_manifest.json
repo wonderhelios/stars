@@ -1,0 +1,23 @@
+[
+  {
+    "symbol": "VEEV",
+    "cik": 1393052,
+    "url": "https://data.sec.gov/submissions/CIK0001393052.json",
+    "http": "403",
+    "error": ""
+  },
+  {
+    "symbol": "GWRE",
+    "cik": 1528396,
+    "url": "https://data.sec.gov/submissions/CIK0001528396.json",
+    "http": "403",
+    "error": ""
+  },
+  {
+    "symbol": "TYL",
+    "cik": 860731,
+    "url": "https://data.sec.gov/submissions/CIK0000860731.json",
+    "http": "403",
+    "error": ""
+  }
+]

@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/datadog-announces-third-quarter-2022-financial-results-301666905.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "cadc4bae9fad916272a9952a022be60cd99dba1e2c48f6e569a2285d0d8a6d18",
+  "retrieved_utc": "2026-10-09T03:34:42Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/datadog-announces-third-quarter-2022-financial-results-301666905.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "cadc4bae9fad916272a9952a022be60cd99dba1e2c48f6e569a2285d0d8a6d18",
+      "retrieved_utc": "2026-10-09T03:34:42Z"
+    }
+  ]
+}

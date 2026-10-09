@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-third-quarter-fiscal-year-2026-302860810.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "e3cf665d638dec409d88c8afb00bbd37ff20e9eef9634837bd5870ee55f0650e",
+  "retrieved_utc": "2026-10-09T03:31:27Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-third-quarter-fiscal-year-2026-302860810.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "e3cf665d638dec409d88c8afb00bbd37ff20e9eef9634837bd5870ee55f0650e",
+      "retrieved_utc": "2026-10-09T03:31:27Z"
+    }
+  ]
+}

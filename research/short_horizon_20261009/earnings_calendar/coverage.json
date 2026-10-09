@@ -1,0 +1,182 @@
+[
+  {
+    "symbol": "GOOGL",
+    "parsed_notices": 0,
+    "price_available": true,
+    "status": "no_verified_notices_not_zero_events"
+  },
+  {
+    "symbol": "MSFT",
+    "parsed_notices": 0,
+    "price_available": true,
+    "status": "no_verified_notices_not_zero_events"
+  },
+  {
+    "symbol": "AAPL",
+    "parsed_notices": 0,
+    "price_available": true,
+    "status": "no_verified_notices_not_zero_events"
+  },
+  {
+    "symbol": "AMZN",
+    "parsed_notices": 0,
+    "price_available": true,
+    "status": "no_verified_notices_not_zero_events"
+  },
+  {
+    "symbol": "META",
+    "parsed_notices": 0,
+    "price_available": true,
+    "status": "no_verified_notices_not_zero_events"
+  },
+  {
+    "symbol": "NVDA",
+    "parsed_notices": 0,
+    "price_available": true,
+    "status": "no_verified_notices_not_zero_events"
+  },
+  {
+    "symbol": "AMD",
+    "parsed_notices": 0,
+    "price_available": true,
+    "status": "no_verified_notices_not_zero_events"
+  },
+  {
+    "symbol": "INTC",
+    "parsed_notices": 0,
+    "price_available": true,
+    "status": "no_verified_notices_not_zero_events"
+  },
+  {
+    "symbol": "ORCL",
+    "parsed_notices": 0,
+    "price_available": true,
+    "status": "no_verified_notices_not_zero_events"
+  },
+  {
+    "symbol": "CRM",
+    "parsed_notices": 0,
+    "price_available": true,
+    "status": "no_verified_notices_not_zero_events"
+  },
+  {
+    "symbol": "ADBE",
+    "parsed_notices": 0,
+    "price_available": true,
+    "status": "no_verified_notices_not_zero_events"
+  },
+  {
+    "symbol": "INTU",
+    "parsed_notices": 0,
+    "price_available": true,
+    "status": "no_verified_notices_not_zero_events"
+  },
+  {
+    "symbol": "NOW",
+    "parsed_notices": 0,
+    "price_available": true,
+    "status": "no_verified_notices_not_zero_events"
+  },
+  {
+    "symbol": "VEEV",
+    "parsed_notices": 22,
+    "price_available": true,
+    "status": "restricted_notice_coverage"
+  },
+  {
+    "symbol": "GWRE",
+    "parsed_notices": 0,
+    "price_available": true,
+    "status": "no_verified_notices_not_zero_events"
+  },
+  {
+    "symbol": "TYL",
+    "parsed_notices": 0,
+    "price_available": true,
+    "status": "no_verified_notices_not_zero_events"
+  },
+  {
+    "symbol": "ADSK",
+    "parsed_notices": 0,
+    "price_available": true,
+    "status": "no_verified_notices_not_zero_events"
+  },
+  {
+    "symbol": "ANSS",
+    "parsed_notices": 0,
+    "price_available": false,
+    "status": "no_verified_notices_not_zero_events"
+  },
+  {
+    "symbol": "CDNS",
+    "parsed_notices": 0,
+    "price_available": true,
+    "status": "no_verified_notices_not_zero_events"
+  },
+  {
+    "symbol": "SNPS",
+    "parsed_notices": 27,
+    "price_available": true,
+    "status": "restricted_notice_coverage"
+  },
+  {
+    "symbol": "PAYC",
+    "parsed_notices": 0,
+    "price_available": true,
+    "status": "no_verified_notices_not_zero_events"
+  },
+  {
+    "symbol": "PCTY",
+    "parsed_notices": 0,
+    "price_available": true,
+    "status": "no_verified_notices_not_zero_events"
+  },
+  {
+    "symbol": "WDAY",
+    "parsed_notices": 19,
+    "price_available": true,
+    "status": "restricted_notice_coverage"
+  },
+  {
+    "symbol": "TEAM",
+    "parsed_notices": 0,
+    "price_available": true,
+    "status": "no_verified_notices_not_zero_events"
+  },
+  {
+    "symbol": "DDOG",
+    "parsed_notices": 19,
+    "price_available": true,
+    "status": "restricted_notice_coverage"
+  },
+  {
+    "symbol": "ZS",
+    "parsed_notices": 0,
+    "price_available": true,
+    "status": "no_verified_notices_not_zero_events"
+  },
+  {
+    "symbol": "CRWD",
+    "parsed_notices": 0,
+    "price_available": true,
+    "status": "no_verified_notices_not_zero_events"
+  },
+  {
+    "symbol": "NET",
+    "parsed_notices": 0,
+    "price_available": true,
+    "status": "no_verified_notices_not_zero_events"
+  },
+  {
+    "symbol": "MDB",
+    "parsed_notices": 26,
+    "price_available": true,
+    "status": "restricted_notice_coverage"
+  },
+  {
+    "symbol": "HUBS",
+    "parsed_notices": 0,
+    "price_available": true,
+    "status": "no_verified_notices_not_zero_events"
+  }
+]

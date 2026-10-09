@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/veeva-to-release-fiscal-2026-third-quarter-results-on-november-20-2025-302600289.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "2eb5de06563eb0a914f142ce24be15e2c45c7fcc871467efea3d4e1af39ccf5d",
+  "retrieved_utc": "2026-10-09T04:10:41Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/veeva-to-release-fiscal-2026-third-quarter-results-on-november-20-2025-302600289.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "2eb5de06563eb0a914f142ce24be15e2c45c7fcc871467efea3d4e1af39ccf5d",
+      "retrieved_utc": "2026-10-09T04:10:41Z"
+    }
+  ]
+}

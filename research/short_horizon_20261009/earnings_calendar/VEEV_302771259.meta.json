@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/veeva-to-release-fiscal-2027-first-quarter-results-on-june-3-2026-302771259.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "3e5dd5c570078848882c0b4309c71286a9eae6e5994559eb02c5e359ec43eaf8",
+  "retrieved_utc": "2026-10-09T04:10:21Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/veeva-to-release-fiscal-2027-first-quarter-results-on-june-3-2026-302771259.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "3e5dd5c570078848882c0b4309c71286a9eae6e5994559eb02c5e359ec43eaf8",
+      "retrieved_utc": "2026-10-09T04:10:21Z"
+    }
+  ]
+}

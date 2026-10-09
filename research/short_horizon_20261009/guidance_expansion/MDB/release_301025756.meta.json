@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-fourth-quarter-and-full-year-fiscal-2020-financial-results-301025756.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "81c82c1ccddf0afa494f34c1078375b0cf670a02236b01dae91237a0d5512c7e",
+  "retrieved_utc": "2026-10-09T03:24:07Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-fourth-quarter-and-full-year-fiscal-2020-financial-results-301025756.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "81c82c1ccddf0afa494f34c1078375b0cf670a02236b01dae91237a0d5512c7e",
+      "retrieved_utc": "2026-10-09T03:24:07Z"
+    }
+  ]
+}

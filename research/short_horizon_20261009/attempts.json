@@ -1,0 +1,30 @@
+{
+  "batch1": {
+    "economic_hypotheses": 12,
+    "execution_paths": 18,
+    "cost_scenarios": 2,
+    "status": "all rejected",
+    "registered": "SPEC.md",
+    "correction": "inference.json"
+  },
+  "gemini_integer_generations": {
+    "events": 4,
+    "horizons": [
+      1,
+      2,
+      5,
+      20
+    ],
+    "status": "descriptive cases only; not sufficient for inference",
+    "registered": "EVENT_SPEC.md"
+  },
+  "next": "Point-in-time financial/event information; scheduled macro-event windows; no threshold mining of rejected batch1.",
+  "batch2": {
+    "economic_hypotheses": 6,
+    "cumulative_hypotheses": 18,
+    "status": "all rejected",
+    "registered": "QUALITY_SPEC.md",
+    "correction": "quality/inference.json",
+    "audit": "quality/audit.json"
+  }
+}

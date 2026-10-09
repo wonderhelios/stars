@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/workday-announces-fiscal-2023-first-quarter-financial-results-301556068.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "b94a73839809c9762104d41b01fdabb6819060b3eccbd189f671ebed7255b9fb",
+  "retrieved_utc": "2026-10-09T03:29:15Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/workday-announces-fiscal-2023-first-quarter-financial-results-301556068.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "b94a73839809c9762104d41b01fdabb6819060b3eccbd189f671ebed7255b9fb",
+      "retrieved_utc": "2026-10-09T03:29:15Z"
+    }
+  ]
+}

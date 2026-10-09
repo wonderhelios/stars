@@ -1,0 +1,7 @@
+{
+  "status": "completed_not_qualified",
+  "market_performance_read": true,
+  "source_audit_complete": true,
+  "cash_audit_complete": true,
+  "inference_complete": true
+}

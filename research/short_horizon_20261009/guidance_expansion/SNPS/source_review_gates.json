@@ -1,0 +1,33 @@
+{
+  "rules": [
+    {
+      "symbol": "SNPS",
+      "published": "2024-05-22",
+      "source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-second-quarter-fiscal-year-2024-302153264.html",
+      "previous_source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-first-quarter-fiscal-year-2024-302067821.html",
+      "action": "exclude_incomparable_guidance_pair",
+      "reason": "Prior targets include Software Integrity, whereas the current actual and all current targets exclude it as discontinued operations. The originally forecast quarter and full year cannot be restated from these announcements alone.",
+      "registered_before_expansion_performance": true
+    },
+    {
+      "symbol": "SNPS",
+      "published": "2025-09-09",
+      "source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-third-quarter-fiscal-year-2025-302551316.html",
+      "previous_source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-second-quarter-fiscal-year-2025-302467545.html",
+      "action": "exclude_incomparable_guidance_pair",
+      "reason": "Prior FY2025 targets explicitly excluded the combined company; current results and FY2025 targets include Ansys after its July 17 acquisition. No matched original standalone quarterly forecast and revised remaining-year forecast.",
+      "registered_before_expansion_performance": true
+    },
+    {
+      "symbol": "SNPS",
+      "published": "2026-05-27",
+      "source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-second-quarter-fiscal-year-2026-302783403.html",
+      "previous_source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-first-quarter-fiscal-year-2026-302697317.html",
+      "action": "exclude_incomparable_guidance_pair",
+      "reason": "Current annual revenue targets newly include a $60m Ansys channel accounting impact and a $40m Processor IP Solutions divestiture impact. Prior quarterly forecast has no matching accounting/scope bridge; a full-year-only subtraction cannot establish the remaining-year adjustment.",
+      "registered_before_expansion_performance": true
+    }
+  ],
+  "period_notes": "FY2024 extra week and FY2025 calendar change are already in their initial year forecasts. They are not grounds to exclude every later same-year comparison. Real fiscal and presentation dates are both retained; SEC verification uses only those observed endpoints.",
+  "remaining_review": "Other acquisition effects and non-quarterly updates still pending; these gates are not final eligibility approval."
+}

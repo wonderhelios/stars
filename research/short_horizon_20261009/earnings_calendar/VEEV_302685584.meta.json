@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/veeva-to-release-fiscal-2026-fourth-quarter-and-full-year-results-on-march-4-2026-302685584.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "5da7cf758946a9f3c994536173d12a8ca496cf0ac9d4cbc9f43d0a847f868352",
+  "retrieved_utc": "2026-10-09T04:10:07Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/veeva-to-release-fiscal-2026-fourth-quarter-and-full-year-results-on-march-4-2026-302685584.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "5da7cf758946a9f3c994536173d12a8ca496cf0ac9d4cbc9f43d0a847f868352",
+      "retrieved_utc": "2026-10-09T04:10:07Z"
+    }
+  ]
+}

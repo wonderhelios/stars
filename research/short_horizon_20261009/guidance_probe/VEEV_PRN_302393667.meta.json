@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/veeva-announces-fourth-quarter-and-fiscal-year-2025-results-302393667.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "72398d76c20cc1140d80b59b0de0b396e12b5434ac26e02018c4fd4df0f70646",
+  "retrieved_utc": "2026-10-09T03:08:29Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/veeva-announces-fourth-quarter-and-fiscal-year-2025-results-302393667.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "72398d76c20cc1140d80b59b0de0b396e12b5434ac26e02018c4fd4df0f70646",
+      "retrieved_utc": "2026-10-09T03:08:29Z"
+    }
+  ]
+}

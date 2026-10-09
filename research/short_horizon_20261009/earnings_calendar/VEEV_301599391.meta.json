@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/veeva-to-release-fiscal-2023-second-quarter-results-on-august-31-2022-301599391.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "810f399c66363ab40349644dc879282a44795426502db4142de6b4e3f6e483cd",
+  "retrieved_utc": "2026-10-09T04:09:53Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/veeva-to-release-fiscal-2023-second-quarter-results-on-august-31-2022-301599391.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "810f399c66363ab40349644dc879282a44795426502db4142de6b4e3f6e483cd",
+      "retrieved_utc": "2026-10-09T04:09:53Z"
+    }
+  ]
+}

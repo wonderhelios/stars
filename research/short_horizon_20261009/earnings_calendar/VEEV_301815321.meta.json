@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/veeva-to-release-fiscal-2024-first-quarter-results-on-may-31-2023-301815321.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "63259fd354b3e8be9febe72f892cdbce13728e176318d1e9f79f328e743cdc82",
+  "retrieved_utc": "2026-10-09T04:10:16Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/veeva-to-release-fiscal-2024-first-quarter-results-on-may-31-2023-301815321.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "63259fd354b3e8be9febe72f892cdbce13728e176318d1e9f79f328e743cdc82",
+      "retrieved_utc": "2026-10-09T04:10:16Z"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/veeva-to-release-fiscal-2024-third-quarter-results-on-december-6-2023-301989689.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "dce8e74aa68c0f15ad08249b99e549c4c3c9860ebb26885e8b814119cadc898a",
+  "retrieved_utc": "2026-10-09T04:10:40Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/veeva-to-release-fiscal-2024-third-quarter-results-on-december-6-2023-301989689.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "dce8e74aa68c0f15ad08249b99e549c4c3c9860ebb26885e8b814119cadc898a",
+      "retrieved_utc": "2026-10-09T04:10:40Z"
+    }
+  ]
+}

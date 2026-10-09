@@ -1,0 +1,18 @@
+{
+  "url": "https://www.globenewswire.com/news-release/2026/07/16/3328791/0/en/datadog-announces-date-of-second-quarter-fiscal-year-2026-earnings-call.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "0e8ed0912b6ea2a3c4c5781cba1ec5ff703b4cd1379d4166bce768eb4c666e74",
+  "retrieved_utc": "2026-10-09T04:06:55Z",
+  "attempts": [
+    {
+      "url": "https://www.globenewswire.com/news-release/2026/07/16/3328791/0/en/datadog-announces-date-of-second-quarter-fiscal-year-2026-earnings-call.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "0e8ed0912b6ea2a3c4c5781cba1ec5ff703b4cd1379d4166bce768eb4c666e74",
+      "retrieved_utc": "2026-10-09T04:06:55Z"
+    }
+  ]
+}

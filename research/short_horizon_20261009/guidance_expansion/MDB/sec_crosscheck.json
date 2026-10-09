@@ -1,0 +1,629 @@
+{
+  "symbol": "MDB",
+  "verified": 27,
+  "expected": 27,
+  "issues": [],
+  "preliminary_no_exact_value": 0,
+  "audit_timing_note": "Quarter checks use filings within 15 days of the release; annual checks use the same FY/FP=FY first annual filing within 30 days. MDB FY2025 annual filing was 16 days later. This is later verification only, not signal availability.",
+  "source_sha256": "8947052d6912d9ac6b35470f5e331ef6fe1f4b4cf782fab20822c9cb66738997",
+  "independent_filing_accessions": [
+    "0001441816-19-000242",
+    "0001441816-20-000067",
+    "0001441816-20-000110",
+    "0001441816-20-000176",
+    "0001441816-20-000233",
+    "0001441816-21-000051",
+    "0001441816-21-000095",
+    "0001441816-21-000192",
+    "0001441816-21-000242",
+    "0001441816-22-000059",
+    "0001441816-22-000109",
+    "0001441816-22-000164",
+    "0001441816-22-000193",
+    "0001441816-23-000027",
+    "0001441816-23-000087",
+    "0001441816-23-000168",
+    "0001441816-23-000248",
+    "0001441816-24-000049",
+    "0001441816-24-000111",
+    "0001441816-24-000188",
+    "0001441816-24-000260",
+    "0001441816-25-000057",
+    "0001441816-25-000118",
+    "0001441816-25-000181",
+    "0001628280-25-054768",
+    "0001628280-26-016799",
+    "0001628280-26-039150",
+    "0001628280-26-059830"
+  ],
+  "records": [
+    {
+      "source": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-fourth-quarter-and-full-year-fiscal-2020-financial-results-301025756.html",
+      "quarter_end": "2020-01-31",
+      "reported_revenue_dollars": 123523000,
+      "method": "annual_minus_original_nine_month",
+      "filings": [
+        {
+          "start": "2019-02-01",
+          "end": "2020-01-31",
+          "val": 421720000,
+          "accn": "0001441816-20-000067",
+          "fy": 2020,
+          "fp": "FY",
+          "form": "10-K",
+          "filed": "2020-03-27"
+        },
+        {
+          "start": "2019-02-01",
+          "end": "2019-10-31",
+          "val": 298197000,
+          "accn": "0001441816-19-000242",
+          "fy": 2020,
+          "fp": "Q3",
+          "form": "10-Q",
+          "filed": "2019-12-10"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-first-quarter-fiscal-2021-financial-results-301071036.html",
+      "quarter_end": "2020-04-30",
+      "reported_revenue_dollars": 130329000,
+      "method": "reported_quarter",
+      "filings": [
+        {
+          "start": "2020-02-01",
+          "end": "2020-04-30",
+          "val": 130329000,
+          "accn": "0001441816-20-000110",
+          "fy": 2021,
+          "fp": "Q1",
+          "form": "10-Q",
+          "filed": "2020-06-05"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-second-quarter-fiscal-2021-financial-results-301123342.html",
+      "quarter_end": "2020-07-31",
+      "reported_revenue_dollars": 138281000,
+      "method": "reported_quarter",
+      "filings": [
+        {
+          "start": "2020-05-01",
+          "end": "2020-07-31",
+          "val": 138281000,
+          "accn": "0001441816-20-000176",
+          "fy": 2021,
+          "fp": "Q2",
+          "form": "10-Q",
+          "filed": "2020-09-03"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-third-quarter-fiscal-2021-financial-results-301188829.html",
+      "quarter_end": "2020-10-31",
+      "reported_revenue_dollars": 150771000,
+      "method": "reported_quarter",
+      "filings": [
+        {
+          "start": "2020-08-01",
+          "end": "2020-10-31",
+          "val": 150771000,
+          "accn": "0001441816-20-000233",
+          "fy": 2021,
+          "fp": "Q3",
+          "form": "10-Q",
+          "filed": "2020-12-09"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-fourth-quarter-and-full-year-fiscal-2021-financial-results-301243910.html",
+      "quarter_end": "2021-01-31",
+      "reported_revenue_dollars": 170999000,
+      "method": "annual_minus_original_nine_month",
+      "filings": [
+        {
+          "start": "2020-02-01",
+          "end": "2021-01-31",
+          "val": 590380000,
+          "accn": "0001441816-21-000051",
+          "fy": 2021,
+          "fp": "FY",
+          "form": "10-K",
+          "filed": "2021-03-22"
+        },
+        {
+          "start": "2020-02-01",
+          "end": "2020-10-31",
+          "val": 419381000,
+          "accn": "0001441816-20-000233",
+          "fy": 2021,
+          "fp": "Q3",
+          "form": "10-Q",
+          "filed": "2020-12-09"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-first-quarter-fiscal-2022-financial-results-301305606.html",
+      "quarter_end": "2021-04-30",
+      "reported_revenue_dollars": 181648000,
+      "method": "reported_quarter",
+      "filings": [
+        {
+          "start": "2021-02-01",
+          "end": "2021-04-30",
+          "val": 181648000,
+          "accn": "0001441816-21-000095",
+          "fy": 2022,
+          "fp": "Q1",
+          "form": "10-Q",
+          "filed": "2021-06-04"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-second-quarter-fiscal-2022-financial-results-301368784.html",
+      "quarter_end": "2021-07-31",
+      "reported_revenue_dollars": 198747000,
+      "method": "reported_quarter",
+      "filings": [
+        {
+          "start": "2021-05-01",
+          "end": "2021-07-31",
+          "val": 198747000,
+          "accn": "0001441816-21-000192",
+          "fy": 2022,
+          "fp": "Q2",
+          "form": "10-Q",
+          "filed": "2021-09-03"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-third-quarter-fiscal-2022-financial-results-301438283.html",
+      "quarter_end": "2021-10-31",
+      "reported_revenue_dollars": 226893000,
+      "method": "reported_quarter",
+      "filings": [
+        {
+          "start": "2021-08-01",
+          "end": "2021-10-31",
+          "val": 226893000,
+          "accn": "0001441816-21-000242",
+          "fy": 2022,
+          "fp": "Q3",
+          "form": "10-Q",
+          "filed": "2021-12-08"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-fourth-quarter-and-full-year-fiscal-2022-financial-results-301498378.html",
+      "quarter_end": "2022-01-31",
+      "reported_revenue_dollars": 266494000,
+      "method": "annual_minus_original_nine_month",
+      "filings": [
+        {
+          "start": "2021-02-01",
+          "end": "2022-01-31",
+          "val": 873782000,
+          "accn": "0001441816-22-000059",
+          "fy": 2022,
+          "fp": "FY",
+          "form": "10-K",
+          "filed": "2022-03-18"
+        },
+        {
+          "start": "2021-02-01",
+          "end": "2021-10-31",
+          "val": 607288000,
+          "accn": "0001441816-21-000242",
+          "fy": 2022,
+          "fp": "Q3",
+          "form": "10-Q",
+          "filed": "2021-12-08"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-first-quarter-fiscal-2023-financial-results-301559515.html",
+      "quarter_end": "2022-04-30",
+      "reported_revenue_dollars": 285447000,
+      "method": "reported_quarter",
+      "filings": [
+        {
+          "start": "2022-02-01",
+          "end": "2022-04-30",
+          "val": 285447000,
+          "accn": "0001441816-22-000109",
+          "fy": 2023,
+          "fp": "Q1",
+          "form": "10-Q",
+          "filed": "2022-06-03"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-second-quarter-fiscal-2023-financial-results-301615816.html",
+      "quarter_end": "2022-07-31",
+      "reported_revenue_dollars": 303660000,
+      "method": "reported_quarter",
+      "filings": [
+        {
+          "start": "2022-05-01",
+          "end": "2022-07-31",
+          "val": 303660000,
+          "accn": "0001441816-22-000164",
+          "fy": 2023,
+          "fp": "Q2",
+          "form": "10-Q",
+          "filed": "2022-09-02"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-third-quarter-fiscal-2023-financial-results-301696344.html",
+      "quarter_end": "2022-10-31",
+      "reported_revenue_dollars": 333621000,
+      "method": "reported_quarter",
+      "filings": [
+        {
+          "start": "2022-08-01",
+          "end": "2022-10-31",
+          "val": 333621000,
+          "accn": "0001441816-22-000193",
+          "fy": 2023,
+          "fp": "Q3",
+          "form": "10-Q",
+          "filed": "2022-12-08"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-fourth-quarter-and-full-year-fiscal-2023-financial-results-301766227.html",
+      "quarter_end": "2023-01-31",
+      "reported_revenue_dollars": 361312000,
+      "method": "annual_minus_original_nine_month",
+      "filings": [
+        {
+          "start": "2022-02-01",
+          "end": "2023-01-31",
+          "val": 1284040000,
+          "accn": "0001441816-23-000027",
+          "fy": 2023,
+          "fp": "FY",
+          "form": "10-K",
+          "filed": "2023-03-17"
+        },
+        {
+          "start": "2022-02-01",
+          "end": "2022-10-31",
+          "val": 922728000,
+          "accn": "0001441816-22-000193",
+          "fy": 2023,
+          "fp": "Q3",
+          "form": "10-Q",
+          "filed": "2022-12-08"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-first-quarter-fiscal-2024-financial-results-301840651.html",
+      "quarter_end": "2023-04-30",
+      "reported_revenue_dollars": 368280000,
+      "method": "reported_quarter",
+      "filings": [
+        {
+          "start": "2023-02-01",
+          "end": "2023-04-30",
+          "val": 368280000,
+          "accn": "0001441816-23-000087",
+          "fy": 2024,
+          "fp": "Q1",
+          "form": "10-Q",
+          "filed": "2023-06-02"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-second-quarter-fiscal-2024-financial-results-301915271.html",
+      "quarter_end": "2023-07-31",
+      "reported_revenue_dollars": 423791000,
+      "method": "reported_quarter",
+      "filings": [
+        {
+          "start": "2023-05-01",
+          "end": "2023-07-31",
+          "val": 423791000,
+          "accn": "0001441816-23-000168",
+          "fy": 2024,
+          "fp": "Q2",
+          "form": "10-Q",
+          "filed": "2023-09-01"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-third-quarter-fiscal-2024-financial-results-302006667.html",
+      "quarter_end": "2023-10-31",
+      "reported_revenue_dollars": 432938000,
+      "method": "reported_quarter",
+      "filings": [
+        {
+          "start": "2023-08-01",
+          "end": "2023-10-31",
+          "val": 432938000,
+          "accn": "0001441816-23-000248",
+          "fy": 2024,
+          "fp": "Q3",
+          "form": "10-Q",
+          "filed": "2023-12-07"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-fourth-quarter-and-full-year-fiscal-2024-financial-results-302083476.html",
+      "quarter_end": "2024-01-31",
+      "reported_revenue_dollars": 458002000,
+      "method": "annual_minus_original_nine_month",
+      "filings": [
+        {
+          "start": "2023-02-01",
+          "end": "2024-01-31",
+          "val": 1683011000,
+          "accn": "0001441816-24-000049",
+          "fy": 2024,
+          "fp": "FY",
+          "form": "10-K",
+          "filed": "2024-03-15"
+        },
+        {
+          "start": "2023-02-01",
+          "end": "2023-10-31",
+          "val": 1225009000,
+          "accn": "0001441816-23-000248",
+          "fy": 2024,
+          "fp": "Q3",
+          "form": "10-Q",
+          "filed": "2023-12-07"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-first-quarter-fiscal-2025-financial-results-302159949.html",
+      "quarter_end": "2024-04-30",
+      "reported_revenue_dollars": 450561000,
+      "method": "reported_quarter",
+      "filings": [
+        {
+          "start": "2024-02-01",
+          "end": "2024-04-30",
+          "val": 450561000,
+          "accn": "0001441816-24-000111",
+          "fy": 2025,
+          "fp": "Q1",
+          "form": "10-Q",
+          "filed": "2024-05-31"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-second-quarter-fiscal-2025-financial-results-302234446.html",
+      "quarter_end": "2024-07-31",
+      "reported_revenue_dollars": 478109000,
+      "method": "reported_quarter",
+      "filings": [
+        {
+          "start": "2024-05-01",
+          "end": "2024-07-31",
+          "val": 478109000,
+          "accn": "0001441816-24-000188",
+          "fy": 2025,
+          "fp": "Q2",
+          "form": "10-Q",
+          "filed": "2024-08-30"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-third-quarter-fiscal-2025-financial-results-302326649.html",
+      "quarter_end": "2024-10-31",
+      "reported_revenue_dollars": 529375000,
+      "method": "reported_quarter",
+      "filings": [
+        {
+          "start": "2024-08-01",
+          "end": "2024-10-31",
+          "val": 529375000,
+          "accn": "0001441816-24-000260",
+          "fy": 2025,
+          "fp": "Q3",
+          "form": "10-Q",
+          "filed": "2024-12-10"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-fourth-quarter-and-full-year-fiscal-2025-financial-results-302393702.html",
+      "quarter_end": "2025-01-31",
+      "reported_revenue_dollars": 548398000,
+      "method": "annual_minus_original_nine_month",
+      "filings": [
+        {
+          "start": "2024-02-01",
+          "end": "2025-01-31",
+          "val": 2006443000,
+          "accn": "0001441816-25-000057",
+          "fy": 2025,
+          "fp": "FY",
+          "form": "10-K",
+          "filed": "2025-03-21"
+        },
+        {
+          "start": "2024-02-01",
+          "end": "2024-10-31",
+          "val": 1458045000,
+          "accn": "0001441816-24-000260",
+          "fy": 2025,
+          "fp": "Q3",
+          "form": "10-Q",
+          "filed": "2024-12-10"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-first-quarter-fiscal-2026-financial-results-302473666.html",
+      "quarter_end": "2025-04-30",
+      "reported_revenue_dollars": 549014000,
+      "method": "reported_quarter",
+      "filings": [
+        {
+          "start": "2025-02-01",
+          "end": "2025-04-30",
+          "val": 549014000,
+          "accn": "0001441816-25-000118",
+          "fy": 2026,
+          "fp": "Q1",
+          "form": "10-Q",
+          "filed": "2025-06-04"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-second-quarter-fiscal-2026-financial-results-302539302.html",
+      "quarter_end": "2025-07-31",
+      "reported_revenue_dollars": 591402000,
+      "method": "reported_quarter",
+      "filings": [
+        {
+          "start": "2025-05-01",
+          "end": "2025-07-31",
+          "val": 591402000,
+          "accn": "0001441816-25-000181",
+          "fy": 2026,
+          "fp": "Q2",
+          "form": "10-Q",
+          "filed": "2025-08-27"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-third-quarter-fiscal-2026-financial-results-302629494.html",
+      "quarter_end": "2025-10-31",
+      "reported_revenue_dollars": 628309000,
+      "method": "reported_quarter",
+      "filings": [
+        {
+          "start": "2025-08-01",
+          "end": "2025-10-31",
+          "val": 628309000,
+          "accn": "0001628280-25-054768",
+          "fy": 2026,
+          "fp": "Q3",
+          "form": "10-Q",
+          "filed": "2025-12-02",
+          "frame": "CY2025Q3"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-fourth-quarter-fiscal-2026-financial-results-302701531.html",
+      "quarter_end": "2026-01-31",
+      "reported_revenue_dollars": 695072000,
+      "method": "annual_minus_original_nine_month",
+      "filings": [
+        {
+          "start": "2025-02-01",
+          "end": "2026-01-31",
+          "val": 2463797000,
+          "accn": "0001628280-26-016799",
+          "fy": 2026,
+          "fp": "FY",
+          "form": "10-K",
+          "filed": "2026-03-11",
+          "frame": "CY2025"
+        },
+        {
+          "start": "2025-02-01",
+          "end": "2025-10-31",
+          "val": 1768725000,
+          "accn": "0001628280-25-054768",
+          "fy": 2026,
+          "fp": "Q3",
+          "form": "10-Q",
+          "filed": "2025-12-02"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-first-quarter-fiscal-2027-financial-results-302784757.html",
+      "quarter_end": "2026-04-30",
+      "reported_revenue_dollars": 687616000,
+      "method": "reported_quarter",
+      "filings": [
+        {
+          "start": "2026-02-01",
+          "end": "2026-04-30",
+          "val": 687616000,
+          "accn": "0001628280-26-039150",
+          "fy": 2027,
+          "fp": "Q1",
+          "form": "10-Q",
+          "filed": "2026-05-29",
+          "frame": "CY2026Q1"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-second-quarter-fiscal-2027-financial-results-302866656.html",
+      "quarter_end": "2026-07-31",
+      "reported_revenue_dollars": 771773000,
+      "method": "reported_quarter",
+      "filings": [
+        {
+          "start": "2026-05-01",
+          "end": "2026-07-31",
+          "val": 771773000,
+          "accn": "0001628280-26-059830",
+          "fy": 2027,
+          "fp": "Q2",
+          "form": "10-Q",
+          "filed": "2026-09-01",
+          "frame": "CY2026Q2"
+        }
+      ],
+      "error_dollars": 0
+    }
+  ],
+  "scope": "Independent reported financial values and completed-quarter filing references, not an exhaustive interim-guidance news catalogue."
+}

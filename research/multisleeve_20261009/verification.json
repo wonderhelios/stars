@@ -1,0 +1,129 @@
+{
+  "checks": {
+    "inverse_contract_hedge_doubling_halving": true,
+    "gated_carry_prefix_error": 0.0,
+    "iv_prefix_error": 0.0,
+    "mv_prefix_error": 0.0
+  },
+  "size_sensitivity": {
+    "1000": {
+      "full": {
+        "sharpe": -5.95045497633901,
+        "annual_return": -0.31582024860613717,
+        "vol": 0.05307497491569023,
+        "cagr": -0.2719414971287887,
+        "max_drawdown": -0.6554410600879523
+      },
+      "late": {
+        "sharpe": -5.596917098255918,
+        "annual_return": -0.33161404060656585,
+        "vol": 0.05924941084260506,
+        "cagr": -0.28361062922792635,
+        "max_drawdown": -0.44543499926181906
+      },
+      "audit": {
+        "transfers": 161,
+        "transfer_volume": 3283.3239654875747,
+        "open_margin_breaches": 0,
+        "intraday_adverse_envelope_breaches": 0,
+        "constrained_buys": 0,
+        "missing_funding_hours": 9
+      }
+    },
+    "10000": {
+      "full": {
+        "sharpe": 4.90211335300714,
+        "annual_return": 0.035508512011181666,
+        "vol": 0.007243511003147124,
+        "cagr": 0.0361175289241038,
+        "max_drawdown": -0.005182649743730616
+      },
+      "late": {
+        "sharpe": 0.8289566853986159,
+        "annual_return": 0.004496418325913734,
+        "vol": 0.005424189713545244,
+        "cagr": 0.004491758486214081,
+        "max_drawdown": -0.005182649743728729
+      },
+      "audit": {
+        "transfers": 162,
+        "transfer_volume": 50059.20855905555,
+        "open_margin_breaches": 0,
+        "intraday_adverse_envelope_breaches": 0,
+        "constrained_buys": 2,
+        "missing_funding_hours": 9
+      }
+    },
+    "100000": {
+      "full": {
+        "sharpe": 8.104788610773685,
+        "annual_return": 0.05541195041302374,
+        "vol": 0.006836939625959485,
+        "cagr": 0.05694683320129479,
+        "max_drawdown": -0.002545519924484041
+      },
+      "late": {
+        "sharpe": 4.059921500672732,
+        "annual_return": 0.019145253971610404,
+        "vol": 0.0047156709725638835,
+        "cagr": 0.01931787248047212,
+        "max_drawdown": -0.002545519924484707
+      },
+      "audit": {
+        "transfers": 167,
+        "transfer_volume": 531250.3300361057,
+        "open_margin_breaches": 0,
+        "intraday_adverse_envelope_breaches": 0,
+        "constrained_buys": 1,
+        "missing_funding_hours": 9
+      }
+    }
+  },
+  "combined_stress": {
+    "full": {
+      "sharpe": 5.263361620381981,
+      "annual_return": 0.04955224447506455,
+      "vol": 0.009415236446630114,
+      "cagr": 0.05075048102294659,
+      "max_drawdown": -0.0033955335389139825,
+      "phase_range": [
+        5.183096763656579,
+        5.3475168040980385
+      ],
+      "sharpe_sofr": 0.5074155375809295
+    },
+    "2023-24": {
+      "sharpe": 8.041378351311483,
+      "annual_return": 0.09873144783191973,
+      "vol": 0.012279512218506245,
+      "cagr": 0.10367232140982525,
+      "max_drawdown": -0.0032067597021721056,
+      "phase_range": [
+        7.890017914625805,
+        8.224600698633749
+      ],
+      "sharpe_sofr": 3.787067035518803
+    },
+    "2025-26": {
+      "sharpe": 3.0343885491454987,
+      "annual_return": 0.020578450249320427,
+      "vol": 0.006781948776255678,
+      "cagr": 0.020767649809033045,
+      "max_drawdown": -0.003361673715326859,
+      "phase_range": [
+        2.983813758054089,
+        3.111986192591948
+      ],
+      "sharpe_sofr": -2.935227450494929
+    }
+  },
+  "stress_carry_audit": {
+    "transfers": 142,
+    "transfer_volume": 469804.5964417654,
+    "open_margin_breaches": 0,
+    "intraday_adverse_envelope_breaches": 0,
+    "constrained_buys": 1,
+    "missing_funding_hours": 9
+  },
+  "stress_definition": "Adverse signed funding oracle, missing-hour penalty, 6bp slippage, 3-day transfers, doubled inter-sleeve allocation cost"
+}

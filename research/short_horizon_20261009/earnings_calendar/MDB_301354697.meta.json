@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-date-of-second-quarter-fiscal-2022-earnings-call-301354697.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "a663466da06166ee1c85e674449dc908c1d545066110c02210dfc15cad3f41cf",
+  "retrieved_utc": "2026-10-09T04:07:51Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-date-of-second-quarter-fiscal-2022-earnings-call-301354697.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "a663466da06166ee1c85e674449dc908c1d545066110c02210dfc15cad3f41cf",
+      "retrieved_utc": "2026-10-09T04:07:51Z"
+    }
+  ]
+}

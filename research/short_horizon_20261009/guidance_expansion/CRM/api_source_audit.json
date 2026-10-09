@@ -1,0 +1,12 @@
+{
+  "api_records": 100,
+  "financial_releases": 24,
+  "consecutive_quarters": true,
+  "first": "Salesforce Announces Strong Third Quarter Fiscal 2021 Results",
+  "last": "Salesforce Delivers Record Second Quarter Fiscal 2027 Results",
+  "modified_more_than_24h": 6,
+  "releases_with_html_tables": 0,
+  "source_sha256": "2f8cc7db4d8845a281e79c147f68328566a4a3d55bb1e705d837c03b73117d64",
+  "market_performance_read": false,
+  "limitation": "Archive continuity is not proof of original text versions or complete interim guidance. Rounded headline revenue must not be treated as exact realized quarterly revenue."
+}

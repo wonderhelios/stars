@@ -1,0 +1,25 @@
+{
+  "full": {
+    "days": 1192,
+    "sharpe": 1.8309878539732476,
+    "annual_arithmetic": 1.1230646269742413,
+    "annual_cost": 0.22383329379044958,
+    "daily_turnover": 1.3627597795461162
+  },
+  "2023-24": {
+    "days": 547,
+    "sharpe": 0.8673633554554455,
+    "annual_arithmetic": 0.5444543827840577,
+    "annual_cost": 0.1916958831029366,
+    "daily_turnover": 1.167098222848929
+  },
+  "2025-26": {
+    "days": 645,
+    "sharpe": 2.6886109235106725,
+    "annual_arithmetic": 1.613761996853358,
+    "annual_cost": 0.2510878110711776,
+    "daily_turnover": 1.5286929136753584
+  },
+  "missing_held_quotes": [],
+  "ending_equity": 21049294.83257346
+}

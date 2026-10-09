@@ -1,0 +1,26 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/veeva-announces-fiscal-2023-first-quarter-results-301559503.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "724bbdca0203b495964634f42be12ae7a9b0662aa7338064de1c0e63622117ef",
+  "retrieved_utc": "2026-10-09T03:09:49Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/veeva-announces-fiscal-2023-first-quarter-results-301559503.html",
+      "status": 0,
+      "exit_code": 35,
+      "error": "curl: (35) LibreSSL SSL_connect: SSL_ERROR_SYSCALL in connection to www.prnewswire.com:443 \n",
+      "sha256": null,
+      "retrieved_utc": "2026-10-09T03:09:42Z"
+    },
+    {
+      "url": "https://www.prnewswire.com/news-releases/veeva-announces-fiscal-2023-first-quarter-results-301559503.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "724bbdca0203b495964634f42be12ae7a9b0662aa7338064de1c0e63622117ef",
+      "retrieved_utc": "2026-10-09T03:09:49Z"
+    }
+  ]
+}

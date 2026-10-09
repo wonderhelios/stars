@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/datadog-announces-second-quarter-2022-financial-results-301599525.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "3645e92d1fa7cf091f5f9169c19efde0b91447906c883db0db6dff7de1ca3fa3",
+  "retrieved_utc": "2026-10-09T03:34:50Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/datadog-announces-second-quarter-2022-financial-results-301599525.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "3645e92d1fa7cf091f5f9169c19efde0b91447906c883db0db6dff7de1ca3fa3",
+      "retrieved_utc": "2026-10-09T03:34:50Z"
+    }
+  ]
+}

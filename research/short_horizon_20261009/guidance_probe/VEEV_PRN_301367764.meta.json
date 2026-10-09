@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/veeva-announces-fiscal-2022-second-quarter-results-301367764.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "f409fbfdd737dcab229ffbe7cb0cb672b0212aef394504fec34029be6ec362b5",
+  "retrieved_utc": "2026-10-09T03:10:03Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/veeva-announces-fiscal-2022-second-quarter-results-301367764.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "f409fbfdd737dcab229ffbe7cb0cb672b0212aef394504fec34029be6ec362b5",
+      "retrieved_utc": "2026-10-09T03:10:03Z"
+    }
+  ]
+}

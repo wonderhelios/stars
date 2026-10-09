@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news/autodesk%2C-inc./?page=2&pagesize=100",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "64c594b12d61a95b6fb32a75176f9be51f1f385295955e0ec9000420711c791d",
+  "retrieved_utc": "2026-10-09T03:24:28Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news/autodesk%2C-inc./?page=2&pagesize=100",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "64c594b12d61a95b6fb32a75176f9be51f1f385295955e0ec9000420711c791d",
+      "retrieved_utc": "2026-10-09T03:24:28Z"
+    }
+  ]
+}

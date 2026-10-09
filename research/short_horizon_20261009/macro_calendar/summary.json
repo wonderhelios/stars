@@ -1,0 +1,169 @@
+{
+  "status": "completed_not_qualified",
+  "hypotheses": 8,
+  "cumulative_series_hypotheses": 43,
+  "qualified": [],
+  "costs": {
+    "SPY_pre1_g1_fee5": {
+      "annual_turnover_both_sides": 15.581794946173675,
+      "annual_fee_drag": 0.007790897473086833,
+      "annual_financing_drag": 8.38260471179027e-07
+    },
+    "SPY_pre1_g1_fee15": {
+      "annual_turnover_both_sides": 15.566236488913368,
+      "annual_fee_drag": 0.02334935473337006,
+      "annual_financing_drag": 2.5173001064636766e-06
+    },
+    "SPY_pre1_g2.7_fee5": {
+      "annual_turnover_both_sides": 42.070846354668916,
+      "annual_fee_drag": 0.02103542317733445,
+      "annual_financing_drag": 0.003459332025296871
+    },
+    "SPY_pre1_g2.7_fee15": {
+      "annual_turnover_both_sides": 42.028838520066145,
+      "annual_fee_drag": 0.0630432577800992,
+      "annual_financing_drag": 0.003479523590546689
+    },
+    "SPY_event2_g1_fee5": {
+      "annual_turnover_both_sides": 15.594478589416928,
+      "annual_fee_drag": 0.007797239294708457,
+      "annual_financing_drag": 8.52512611494263e-07
+    },
+    "SPY_event2_g1_fee15": {
+      "annual_turnover_both_sides": 15.586695017100068,
+      "annual_fee_drag": 0.02338004252565012,
+      "annual_financing_drag": 2.560099348061115e-06
+    },
+    "SPY_event2_g2.7_fee5": {
+      "annual_turnover_both_sides": 42.168125756494135,
+      "annual_fee_drag": 0.021084062878247063,
+      "annual_financing_drag": 0.005700567492911452
+    },
+    "SPY_event2_g2.7_fee15": {
+      "annual_turnover_both_sides": 42.1832372666248,
+      "annual_fee_drag": 0.06327485589993714,
+      "annual_financing_drag": 0.00572708383720332
+    },
+    "GLD_pre1_g1_fee5": {
+      "annual_turnover_both_sides": 15.592489899128163,
+      "annual_fee_drag": 0.007796244949564081,
+      "annual_financing_drag": 8.38260471178944e-07
+    },
+    "GLD_pre1_g1_fee15": {
+      "annual_turnover_both_sides": 15.57692076293331,
+      "annual_fee_drag": 0.02336538114439998,
+      "annual_financing_drag": 2.5173001064637113e-06
+    },
+    "GLD_pre1_g2.7_fee5": {
+      "annual_turnover_both_sides": 42.099722727646046,
+      "annual_fee_drag": 0.021049861363823013,
+      "annual_financing_drag": 0.0034541029418121466
+    },
+    "GLD_pre1_g2.7_fee15": {
+      "annual_turnover_both_sides": 42.057686059919995,
+      "annual_fee_drag": 0.06308652908987993,
+      "annual_financing_drag": 0.0034742410935046644
+    },
+    "GLD_event2_g1_fee5": {
+      "annual_turnover_both_sides": 15.60000067241563,
+      "annual_fee_drag": 0.007800000336207807,
+      "annual_financing_drag": 8.525126114942279e-07
+    },
+    "GLD_event2_g1_fee15": {
+      "annual_turnover_both_sides": 15.592217100098773,
+      "annual_fee_drag": 0.02338832565014816,
+      "annual_financing_drag": 2.560099348061125e-06
+    },
+    "GLD_event2_g2.7_fee5": {
+      "annual_turnover_both_sides": 42.1329376162561,
+      "annual_fee_drag": 0.02106646880812803,
+      "annual_financing_drag": 0.0056741746677445755
+    },
+    "GLD_event2_g2.7_fee15": {
+      "annual_turnover_both_sides": 42.14785126642691,
+      "annual_fee_drag": 0.06322177689964034,
+      "annual_financing_drag": 0.0057004649169586
+    },
+    "TLT_pre1_g1_fee5": {
+      "annual_turnover_both_sides": 15.589548899667452,
+      "annual_fee_drag": 0.007794774449833716,
+      "annual_financing_drag": 8.382604711790324e-07
+    },
+    "TLT_pre1_g1_fee15": {
+      "annual_turnover_both_sides": 15.573982700067157,
+      "annual_fee_drag": 0.023360974050100753,
+      "annual_financing_drag": 2.5173001064636965e-06
+    },
+    "TLT_pre1_g2.7_fee5": {
+      "annual_turnover_both_sides": 42.0917820291021,
+      "annual_fee_drag": 0.021045891014551028,
+      "annual_financing_drag": 0.0034593420176937555
+    },
+    "TLT_pre1_g2.7_fee15": {
+      "annual_turnover_both_sides": 42.04975329018138,
+      "annual_fee_drag": 0.06307462993527205,
+      "annual_financing_drag": 0.003479533338799659
+    },
+    "TLT_event2_g1_fee5": {
+      "annual_turnover_both_sides": 15.609639170906812,
+      "annual_fee_drag": 0.007804819585453396,
+      "annual_financing_drag": 8.522412577985699e-07
+    },
+    "TLT_event2_g1_fee15": {
+      "annual_turnover_both_sides": 15.601855598589957,
+      "annual_fee_drag": 0.02340278339788494,
+      "annual_financing_drag": 2.5592836581779273e-06
+    },
+    "TLT_event2_g2.7_fee5": {
+      "annual_turnover_both_sides": 42.17430376559799,
+      "annual_fee_drag": 0.021087151882798978,
+      "annual_financing_drag": 0.0056674571660448704
+    },
+    "TLT_event2_g2.7_fee15": {
+      "annual_turnover_both_sides": 42.189331399529785,
+      "annual_fee_drag": 0.06328399709929465,
+      "annual_financing_drag": 0.005693661145869486
+    },
+    "mix_pre1_g1_fee5": {
+      "annual_turnover_both_sides": 15.587944581656382,
+      "annual_fee_drag": 0.007793972290828211,
+      "annual_financing_drag": 8.382604711788144e-07
+    },
+    "mix_pre1_g1_fee15": {
+      "annual_turnover_both_sides": 15.57237998397126,
+      "annual_fee_drag": 0.02335856997595695,
+      "annual_financing_drag": 2.5173001064637097e-06
+    },
+    "mix_pre1_g2.7_fee5": {
+      "annual_turnover_both_sides": 42.08745037047227,
+      "annual_fee_drag": 0.021043725185236156,
+      "annual_financing_drag": 0.0034571001308507875
+    },
+    "mix_pre1_g2.7_fee15": {
+      "annual_turnover_both_sides": 42.045425956722546,
+      "annual_fee_drag": 0.06306813893508363,
+      "annual_financing_drag": 0.003477267236198772
+    },
+    "mix_event2_g1_fee5": {
+      "annual_turnover_both_sides": 15.601450319218031,
+      "annual_fee_drag": 0.007800725159609031,
+      "annual_financing_drag": 8.52421738250927e-07
+    },
+    "mix_event2_g1_fee15": {
+      "annual_turnover_both_sides": 15.593666746901208,
+      "annual_fee_drag": 0.023390500120351834,
+      "annual_financing_drag": 2.5598261822690235e-06
+    },
+    "mix_event2_g2.7_fee5": {
+      "annual_turnover_both_sides": 42.15685394792173,
+      "annual_fee_drag": 0.021078426973960913,
+      "annual_financing_drag": 0.00567824015309254
+    },
+    "mix_event2_g2.7_fee15": {
+      "annual_turnover_both_sides": 42.17186021509951,
+      "annual_fee_drag": 0.06325779032264915,
+      "annual_financing_drag": 0.005704546296684365
+    }
+  },
+  "events_traded": 45
+}

@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-first-quarter-fiscal-2025-financial-results-302159949.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "89957afa7b6525119b7e57c4bc42e86fb13b7d386121179d89efa1bcd04cf0d4",
+  "retrieved_utc": "2026-10-09T03:22:40Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-first-quarter-fiscal-2025-financial-results-302159949.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "89957afa7b6525119b7e57c4bc42e86fb13b7d386121179d89efa1bcd04cf0d4",
+      "retrieved_utc": "2026-10-09T03:22:40Z"
+    }
+  ]
+}

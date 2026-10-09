@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/workday-announces-date-of-fiscal-2024-fourth-quarter-and-full-year-financial-results-302056899.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "1f018166fde1072f1faaaf5cbb3d53f0a6e7c607132a73da0f637d386ee35d79",
+  "retrieved_utc": "2026-10-09T04:11:23Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/workday-announces-date-of-fiscal-2024-fourth-quarter-and-full-year-financial-results-302056899.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "1f018166fde1072f1faaaf5cbb3d53f0a6e7c607132a73da0f637d386ee35d79",
+      "retrieved_utc": "2026-10-09T04:11:23Z"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2023-first-quarter-results-301556131.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "91528d7c967f4da49eab9e1c1c0c37b65a8dfca03d3931e2df688aa090b512e8",
+  "retrieved_utc": "2026-10-09T03:26:00Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2023-first-quarter-results-301556131.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "91528d7c967f4da49eab9e1c1c0c37b65a8dfca03d3931e2df688aa090b512e8",
+      "retrieved_utc": "2026-10-09T03:26:00Z"
+    }
+  ]
+}

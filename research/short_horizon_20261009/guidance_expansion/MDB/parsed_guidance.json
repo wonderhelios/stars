@@ -1,0 +1,1436 @@
+[
+  {
+    "symbol": "MDB",
+    "source": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-fourth-quarter-and-full-year-fiscal-2020-financial-results-301025756.html",
+    "source_file": "release_301025756.html",
+    "sha256": "81c82c1ccddf0afa494f34c1078375b0cf670a02236b01dae91237a0d5512c7e",
+    "published": "2020-03-17 16:05:00-04:00",
+    "modified": "2020-03-17 16:05:00-04:00",
+    "available_after": "2020-03-17 16:05:00-04:00",
+    "title": "MongoDB, Inc. Announces Fourth Quarter and Full Year Fiscal 2020 Financial Results",
+    "reported_fiscal_year": 2020,
+    "reported_quarter": 4,
+    "actual_revenue_million": 123.523,
+    "actual_source_row": [
+      "Total revenue",
+      "123,523",
+      "",
+      "85,484",
+      "",
+      "421,720",
+      "",
+      "267,016"
+    ],
+    "actual_rounded_million": 123.5,
+    "fiscal_year": 2021,
+    "next_quarter": 1,
+    "quarter_range_million": [
+      119.0,
+      121.0
+    ],
+    "annual_range_million": [
+      510.0,
+      530.0
+    ],
+    "source_header": [
+      "",
+      "First Quarter Fiscal 2021",
+      "Full Year Fiscal 2021"
+    ],
+    "revenue_source_row": [
+      "Revenue",
+      "$119.0 million to $121.0 million",
+      "$510.0 million to $530.0 million"
+    ],
+    "eps_source_row": [
+      [
+        "Non-GAAP Net Loss per Share",
+        "($0.25) to ($0.22)",
+        "($1.40) to ($1.23)"
+      ]
+    ],
+    "remaining_year_revision_million": null,
+    "previous_source": null
+  },
+  {
+    "symbol": "MDB",
+    "source": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-first-quarter-fiscal-2021-financial-results-301071036.html",
+    "source_file": "release_301071036.html",
+    "sha256": "130c7ae110fefc50b768a849cd658c3f2d9d8186a5bed6066222d9676bb81a85",
+    "published": "2020-06-04 16:05:00-04:00",
+    "modified": "2020-06-04 16:05:00-04:00",
+    "available_after": "2020-06-04 16:05:00-04:00",
+    "title": "MongoDB, Inc. Announces First Quarter Fiscal 2021 Financial Results",
+    "reported_fiscal_year": 2021,
+    "reported_quarter": 1,
+    "actual_revenue_million": 130.329,
+    "actual_source_row": [
+      "Total revenue",
+      "130,329",
+      "",
+      "89,388"
+    ],
+    "actual_rounded_million": 130.3,
+    "fiscal_year": 2021,
+    "next_quarter": 2,
+    "quarter_range_million": [
+      125.0,
+      127.0
+    ],
+    "annual_range_million": [
+      520.0,
+      530.0
+    ],
+    "source_header": [
+      "",
+      "Second Quarter Fiscal 2021",
+      "Full Year Fiscal 2021"
+    ],
+    "revenue_source_row": [
+      "Revenue",
+      "$125.0 million to $127.0 million",
+      "$520.0 million to $530.0 million"
+    ],
+    "eps_source_row": [
+      [
+        "Non-GAAP Net Loss per Share",
+        "$(0.41) to $(0.38)",
+        "$(1.34) to $(1.21)"
+      ]
+    ],
+    "remaining_year_revision_million": -5.329000000000008,
+    "previous_source": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-fourth-quarter-and-full-year-fiscal-2020-financial-results-301025756.html",
+    "realized_surprise_million": 10.329000000000008
+  },
+  {
+    "symbol": "MDB",
+    "source": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-second-quarter-fiscal-2021-financial-results-301123342.html",
+    "source_file": "release_301123342.html",
+    "sha256": "89002a4e5b9b1b8ea094665fc6094355de5f24986bfdbfea6df8f96bb0ca94b5",
+    "published": "2020-09-02 16:05:00-04:00",
+    "modified": "2020-09-02 16:05:00-04:00",
+    "available_after": "2020-09-02 16:05:00-04:00",
+    "title": "MongoDB, Inc. Announces Second Quarter Fiscal 2021 Financial Results",
+    "reported_fiscal_year": 2021,
+    "reported_quarter": 2,
+    "actual_revenue_million": 138.281,
+    "actual_source_row": [
+      "Total revenue",
+      "138,281",
+      "99,368",
+      "268,610",
+      "188,756"
+    ],
+    "actual_rounded_million": 138.3,
+    "fiscal_year": 2021,
+    "next_quarter": 3,
+    "quarter_range_million": [
+      137.0,
+      139.0
+    ],
+    "annual_range_million": [
+      549.0,
+      554.0
+    ],
+    "source_header": [
+      "",
+      "Third Quarter Fiscal 2021",
+      "Full Year Fiscal 2021"
+    ],
+    "revenue_source_row": [
+      "Revenue",
+      "$137.0 million to $139.0 million",
+      "$549.0 million to $554.0 million"
+    ],
+    "eps_source_row": [
+      [
+        "Non-GAAP Net Loss per Share",
+        "$(0.48) to $(0.45)",
+        "$(1.29) to $(1.21)"
+      ]
+    ],
+    "remaining_year_revision_million": 14.218999999999994,
+    "previous_source": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-first-quarter-fiscal-2021-financial-results-301071036.html",
+    "realized_surprise_million": 12.281000000000006
+  },
+  {
+    "symbol": "MDB",
+    "source": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-third-quarter-fiscal-2021-financial-results-301188829.html",
+    "source_file": "release_301188829.html",
+    "sha256": "695cdec6d38f36603cd15c6fc62508faa1adba88a869d775645cf7eef1ee26f7",
+    "published": "2020-12-08 16:05:00-05:00",
+    "modified": "2020-12-08 16:05:00-05:00",
+    "available_after": "2020-12-08 16:05:00-05:00",
+    "title": "MongoDB, Inc. Announces Third Quarter Fiscal 2021 Financial Results",
+    "reported_fiscal_year": 2021,
+    "reported_quarter": 3,
+    "actual_revenue_million": 150.771,
+    "actual_source_row": [
+      "Total revenue",
+      "150,771",
+      "",
+      "",
+      "109,441",
+      "",
+      "",
+      "419,381",
+      "",
+      "",
+      "298,197",
+      ""
+    ],
+    "actual_rounded_million": 150.8,
+    "fiscal_year": 2021,
+    "next_quarter": 4,
+    "quarter_range_million": [
+      155.0,
+      157.0
+    ],
+    "annual_range_million": [
+      574.4,
+      576.4
+    ],
+    "source_header": [
+      "",
+      "Fourth Quarter Fiscal 2021",
+      "Full Year Fiscal 2021"
+    ],
+    "revenue_source_row": [
+      "Revenue",
+      "$155.0 million to $157.0 million",
+      "$574.4 million to $576.4 million"
+    ],
+    "eps_source_row": [
+      [
+        "Non-GAAP Net Loss per Share",
+        "$(0.42) to $(0.39)",
+        "$(1.07) to $(1.04)"
+      ]
+    ],
+    "remaining_year_revision_million": 11.12899999999999,
+    "previous_source": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-second-quarter-fiscal-2021-financial-results-301123342.html",
+    "realized_surprise_million": 12.770999999999987
+  },
+  {
+    "symbol": "MDB",
+    "source": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-fourth-quarter-and-full-year-fiscal-2021-financial-results-301243910.html",
+    "source_file": "release_301243910.html",
+    "sha256": "8bfc145d56ccd1c2390df8e4b131968b987a93af3d77b2dfee757b78de887327",
+    "published": "2021-03-09 16:05:00-05:00",
+    "modified": "2021-03-09 16:05:00-05:00",
+    "available_after": "2021-03-09 16:05:00-05:00",
+    "title": "MongoDB, Inc. Announces Fourth Quarter and Full Year Fiscal 2021 Financial Results",
+    "reported_fiscal_year": 2021,
+    "reported_quarter": 4,
+    "actual_revenue_million": 170.999,
+    "actual_source_row": [
+      "Total revenue",
+      "170,999",
+      "",
+      "",
+      "123,523",
+      "",
+      "",
+      "590,380",
+      "",
+      "",
+      "421,720",
+      ""
+    ],
+    "actual_rounded_million": 171.0,
+    "fiscal_year": 2022,
+    "next_quarter": 1,
+    "quarter_range_million": [
+      167.0,
+      170.0
+    ],
+    "annual_range_million": [
+      745.0,
+      765.0
+    ],
+    "source_header": [
+      "",
+      "First Quarter Fiscal 2022",
+      "Full Year Fiscal 2022"
+    ],
+    "revenue_source_row": [
+      "Revenue",
+      "$167.0 million to $170.0 million",
+      "$745.0 million to $765.0 million"
+    ],
+    "eps_source_row": [
+      [
+        "Non-GAAP Net Loss per Share",
+        "($0.39) to ($0.36)",
+        "($1.55) to ($1.39)"
+      ]
+    ],
+    "remaining_year_revision_million": null,
+    "previous_source": null
+  },
+  {
+    "symbol": "MDB",
+    "source": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-first-quarter-fiscal-2022-financial-results-301305606.html",
+    "source_file": "release_301305606.html",
+    "sha256": "2103997eed27844e861003897c0df5bb55f8550449bb03f3d5d7106e8fb35d88",
+    "published": "2021-06-03 16:05:00-04:00",
+    "modified": "2021-06-03 16:05:00-04:00",
+    "available_after": "2021-06-03 16:05:00-04:00",
+    "title": "MongoDB, Inc. Announces First Quarter Fiscal 2022 Financial Results",
+    "reported_fiscal_year": 2022,
+    "reported_quarter": 1,
+    "actual_revenue_million": 181.648,
+    "actual_source_row": [
+      "Total revenue",
+      "181,648",
+      "",
+      "",
+      "130,329",
+      ""
+    ],
+    "actual_rounded_million": 181.6,
+    "fiscal_year": 2022,
+    "next_quarter": 2,
+    "quarter_range_million": [
+      180.0,
+      183.0
+    ],
+    "annual_range_million": [
+      771.0,
+      784.0
+    ],
+    "source_header": [
+      "",
+      "Second Quarter Fiscal 2022",
+      "Full Year Fiscal 2022"
+    ],
+    "revenue_source_row": [
+      "Revenue",
+      "$180.0 million to $183.0 million",
+      "$771.0 million to $784.0 million"
+    ],
+    "eps_source_row": [
+      [
+        "Non-GAAP Net Loss per Share",
+        "($0.43) to ($0.40)",
+        "($1.38) to ($1.25)"
+      ]
+    ],
+    "remaining_year_revision_million": 9.352000000000004,
+    "previous_source": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-fourth-quarter-and-full-year-fiscal-2021-financial-results-301243910.html",
+    "realized_surprise_million": 13.147999999999996
+  },
+  {
+    "symbol": "MDB",
+    "source": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-second-quarter-fiscal-2022-financial-results-301368784.html",
+    "source_file": "release_301368784.html",
+    "sha256": "c53cd65da682356203e3b9e3f0526690ec7b6e098d5c3290b3ffd9bbe6ddcebc",
+    "published": "2021-09-02 16:05:00-04:00",
+    "modified": "2021-09-02 16:05:00-04:00",
+    "available_after": "2021-09-02 16:05:00-04:00",
+    "title": "MongoDB, Inc. Announces Second Quarter Fiscal 2022 Financial Results",
+    "reported_fiscal_year": 2022,
+    "reported_quarter": 2,
+    "actual_revenue_million": 198.747,
+    "actual_source_row": [
+      "Total revenue",
+      "198,747",
+      "",
+      "",
+      "138,281",
+      "",
+      "",
+      "380,395",
+      "",
+      "",
+      "268,610",
+      ""
+    ],
+    "actual_rounded_million": 198.7,
+    "fiscal_year": 2022,
+    "next_quarter": 3,
+    "quarter_range_million": [
+      202.0,
+      204.0
+    ],
+    "annual_range_million": [
+      805.0,
+      811.0
+    ],
+    "source_header": [
+      "",
+      "Third Quarter Fiscal 2022",
+      "Full Year Fiscal 2022"
+    ],
+    "revenue_source_row": [
+      "Revenue",
+      "$202.0 million to $204.0 million",
+      "$805.0 million to $811.0 million"
+    ],
+    "eps_source_row": [
+      [
+        "Non-GAAP Net Loss per Share",
+        "$(0.42) to $(0.39)",
+        "$(1.20) to $(1.13)"
+      ]
+    ],
+    "remaining_year_revision_million": 13.252999999999986,
+    "previous_source": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-first-quarter-fiscal-2022-financial-results-301305606.html",
+    "realized_surprise_million": 17.247000000000014
+  },
+  {
+    "symbol": "MDB",
+    "source": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-third-quarter-fiscal-2022-financial-results-301438283.html",
+    "source_file": "release_301438283.html",
+    "sha256": "775d3c7ce8f8b72779ee006d6f3c20f8c362a0712df3819156102bb710be3ab9",
+    "published": "2021-12-06 16:05:00-05:00",
+    "modified": "2021-12-06 16:05:00-05:00",
+    "available_after": "2021-12-06 16:05:00-05:00",
+    "title": "MongoDB, Inc. Announces Third Quarter Fiscal 2022 Financial Results",
+    "reported_fiscal_year": 2022,
+    "reported_quarter": 3,
+    "actual_revenue_million": 226.893,
+    "actual_source_row": [
+      "Total revenue",
+      "226,893",
+      "",
+      "",
+      "150,771",
+      "",
+      "",
+      "607,288",
+      "",
+      "",
+      "419,381",
+      ""
+    ],
+    "actual_rounded_million": 226.9,
+    "fiscal_year": 2022,
+    "next_quarter": 4,
+    "quarter_range_million": [
+      239.0,
+      242.0
+    ],
+    "annual_range_million": [
+      846.3,
+      849.3
+    ],
+    "source_header": [
+      "",
+      "Fourth Quarter Fiscal 2022",
+      "Full Year Fiscal 2022"
+    ],
+    "revenue_source_row": [
+      "Revenue",
+      "$239.0 million to $242.0 million",
+      "$846.3 million to $849.3 million"
+    ],
+    "eps_source_row": [
+      [
+        "Non-GAAP Net Loss per Share",
+        "($0.24) to ($0.21)",
+        "($0.74) to ($0.71)"
+      ]
+    ],
+    "remaining_year_revision_million": 15.906999999999954,
+    "previous_source": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-second-quarter-fiscal-2022-financial-results-301368784.html",
+    "realized_surprise_million": 23.893
+  },
+  {
+    "symbol": "MDB",
+    "source": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-fourth-quarter-and-full-year-fiscal-2022-financial-results-301498378.html",
+    "source_file": "release_301498378.html",
+    "sha256": "a42e35774a55d94c405f3fe0662f915145f3b4e683d5f9ec1843b18751583eda",
+    "published": "2022-03-08 16:05:00-05:00",
+    "modified": "2022-03-08 16:05:00-05:00",
+    "available_after": "2022-03-08 16:05:00-05:00",
+    "title": "MongoDB, Inc. Announces Fourth Quarter and Full Year Fiscal 2022 Financial Results",
+    "reported_fiscal_year": 2022,
+    "reported_quarter": 4,
+    "actual_revenue_million": 266.494,
+    "actual_source_row": [
+      "Total revenue",
+      "266,494",
+      "",
+      "170,999",
+      "",
+      "873,782",
+      "",
+      "590,380"
+    ],
+    "actual_rounded_million": 266.5,
+    "fiscal_year": 2023,
+    "next_quarter": 1,
+    "quarter_range_million": [
+      263.0,
+      267.0
+    ],
+    "annual_range_million": [
+      1151.0,
+      1181.0
+    ],
+    "source_header": [
+      "",
+      "First Quarter Fiscal 2023",
+      "Full Year Fiscal 2023"
+    ],
+    "revenue_source_row": [
+      "Revenue",
+      "$263.0 million to $267.0 million",
+      "$1,151.0 million to $1,181.0 million"
+    ],
+    "eps_source_row": [
+      [
+        "Non-GAAP Net Loss per Share",
+        "($0.12) to ($0.08)",
+        "($0.51) to ($0.29)"
+      ]
+    ],
+    "remaining_year_revision_million": null,
+    "previous_source": null
+  },
+  {
+    "symbol": "MDB",
+    "source": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-first-quarter-fiscal-2023-financial-results-301559515.html",
+    "source_file": "release_301559515.html",
+    "sha256": "e5bdc133b6373ccd97d978becb33b573d83da660e4d29f81613d3f2bd1cad400",
+    "published": "2022-06-01 16:05:00-04:00",
+    "modified": "2022-06-01 16:05:00-04:00",
+    "available_after": "2022-06-01 16:05:00-04:00",
+    "title": "MongoDB, Inc. Announces First Quarter Fiscal 2023 Financial Results",
+    "reported_fiscal_year": 2023,
+    "reported_quarter": 1,
+    "actual_revenue_million": 285.447,
+    "actual_source_row": [
+      "Total revenue",
+      "285,447",
+      "",
+      "181,648"
+    ],
+    "actual_rounded_million": 285.4,
+    "fiscal_year": 2023,
+    "next_quarter": 2,
+    "quarter_range_million": [
+      279.0,
+      282.0
+    ],
+    "annual_range_million": [
+      1172.0,
+      1192.0
+    ],
+    "source_header": [
+      "",
+      "Second Quarter Fiscal 2023",
+      "Full Year Fiscal 2023"
+    ],
+    "revenue_source_row": [
+      "Revenue",
+      "$279.0 million to $282.0 million",
+      "$1,172.0 million to $1,192.0 million"
+    ],
+    "eps_source_row": [
+      [
+        "Non-GAAP Net Loss per Share",
+        "($0.31) to ($0.28)",
+        "($0.31) to ($0.16)"
+      ]
+    ],
+    "remaining_year_revision_million": -4.447000000000003,
+    "previous_source": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-fourth-quarter-and-full-year-fiscal-2022-financial-results-301498378.html",
+    "realized_surprise_million": 20.447000000000003
+  },
+  {
+    "symbol": "MDB",
+    "source": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-second-quarter-fiscal-2023-financial-results-301615816.html",
+    "source_file": "release_301615816.html",
+    "sha256": "26a463ce78d3fb6b20cb67681cf6fd14b719da9bc38442bc79bb4e7b557348ae",
+    "published": "2022-08-31 16:05:00-04:00",
+    "modified": "2022-08-31 16:05:00-04:00",
+    "available_after": "2022-08-31 16:05:00-04:00",
+    "title": "MongoDB, Inc. Announces Second Quarter Fiscal 2023 Financial Results",
+    "reported_fiscal_year": 2023,
+    "reported_quarter": 2,
+    "actual_revenue_million": 303.66,
+    "actual_source_row": [
+      "Total revenue",
+      "303,660",
+      "",
+      "198,747",
+      "",
+      "589,107",
+      "",
+      "380,395"
+    ],
+    "actual_rounded_million": 303.7,
+    "fiscal_year": 2023,
+    "next_quarter": 3,
+    "quarter_range_million": [
+      300.0,
+      303.0
+    ],
+    "annual_range_million": [
+      1196.0,
+      1206.0
+    ],
+    "source_header": [
+      "",
+      "Third Quarter Fiscal 2023",
+      "Full Year Fiscal 2023"
+    ],
+    "revenue_source_row": [
+      "Revenue",
+      "$300.0 million to $303.0 million",
+      "$1,196.0 million to $1,206.0 million"
+    ],
+    "eps_source_row": [
+      [
+        "Non-GAAP Net Loss per Share",
+        "($0.19) to ($0.16)",
+        "($0.35) to ($0.28)"
+      ]
+    ],
+    "remaining_year_revision_million": -4.160000000000025,
+    "previous_source": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-first-quarter-fiscal-2023-financial-results-301559515.html",
+    "realized_surprise_million": 23.160000000000025
+  },
+  {
+    "symbol": "MDB",
+    "source": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-third-quarter-fiscal-2023-financial-results-301696344.html",
+    "source_file": "release_301696344.html",
+    "sha256": "df3702e79545497886202e3432c8b71de33592e8dbdb9c8eadc811509fbeaf28",
+    "published": "2022-12-06 16:05:00-05:00",
+    "modified": "2022-12-06 16:05:00-05:00",
+    "available_after": "2022-12-06 16:05:00-05:00",
+    "title": "MongoDB, Inc. Announces Third Quarter Fiscal 2023 Financial Results",
+    "reported_fiscal_year": 2023,
+    "reported_quarter": 3,
+    "actual_revenue_million": 333.621,
+    "actual_source_row": [
+      "Total revenue",
+      "333,621",
+      "",
+      "226,893",
+      "",
+      "922,728",
+      "",
+      "607,288"
+    ],
+    "actual_rounded_million": 333.6,
+    "fiscal_year": 2023,
+    "next_quarter": 4,
+    "quarter_range_million": [
+      334.0,
+      337.0
+    ],
+    "annual_range_million": [
+      1257.0,
+      1260.0
+    ],
+    "source_header": [
+      "",
+      "Fourth Quarter Fiscal 2023",
+      "Full Year Fiscal 2023"
+    ],
+    "revenue_source_row": [
+      "Revenue",
+      "$334 million to $337 million",
+      "$1.257 billion to $1.260 billion"
+    ],
+    "eps_source_row": [
+      [
+        "Non-GAAP Net Income per Share",
+        "$0.06 to $0.08",
+        "$0.29 to $0.31"
+      ]
+    ],
+    "remaining_year_revision_million": 25.37900000000002,
+    "previous_source": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-second-quarter-fiscal-2023-financial-results-301615816.html",
+    "realized_surprise_million": 32.12099999999998
+  },
+  {
+    "symbol": "MDB",
+    "source": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-fourth-quarter-and-full-year-fiscal-2023-financial-results-301766227.html",
+    "source_file": "release_301766227.html",
+    "sha256": "ecc82b0c93499e525229aa9f653619702a085fc045f581ab9f97e71f2b241a4f",
+    "published": "2023-03-08 16:05:00-05:00",
+    "modified": "2023-03-08 16:05:00-05:00",
+    "available_after": "2023-03-08 16:05:00-05:00",
+    "title": "MongoDB, Inc. Announces Fourth Quarter and Full Year Fiscal 2023 Financial Results",
+    "reported_fiscal_year": 2023,
+    "reported_quarter": 4,
+    "actual_revenue_million": 361.312,
+    "actual_source_row": [
+      "Total revenue",
+      "361,312",
+      "",
+      "266,494",
+      "",
+      "1,284,040",
+      "",
+      "873,782"
+    ],
+    "actual_rounded_million": 361.3,
+    "fiscal_year": 2024,
+    "next_quarter": 1,
+    "quarter_range_million": [
+      344.0,
+      348.0
+    ],
+    "annual_range_million": [
+      1480.0,
+      1510.0
+    ],
+    "source_header": [
+      "",
+      "First Quarter Fiscal 2024",
+      "Full Year Fiscal 2024"
+    ],
+    "revenue_source_row": [
+      "Revenue",
+      "$344.0 million to $348.0 million",
+      "$1.480 billion to $1.510 billion"
+    ],
+    "eps_source_row": [
+      [
+        "Non-GAAP Net Income per Share",
+        "$0.17 to $0.20",
+        "$0.96 to $1.10"
+      ]
+    ],
+    "remaining_year_revision_million": null,
+    "previous_source": null
+  },
+  {
+    "symbol": "MDB",
+    "source": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-first-quarter-fiscal-2024-financial-results-301840651.html",
+    "source_file": "release_301840651.html",
+    "sha256": "09776088bd9eba485c2190fc2182bf568708f38565cc51c5a4d0d5d9f4565e1e",
+    "published": "2023-06-01 16:05:00-04:00",
+    "modified": "2023-06-01 16:05:00-04:00",
+    "available_after": "2023-06-01 16:05:00-04:00",
+    "title": "MongoDB, Inc. Announces First Quarter Fiscal 2024 Financial Results",
+    "reported_fiscal_year": 2024,
+    "reported_quarter": 1,
+    "actual_revenue_million": 368.28,
+    "actual_source_row": [
+      "Total revenue",
+      "",
+      "368,280",
+      "",
+      "285,447"
+    ],
+    "actual_rounded_million": 368.3,
+    "fiscal_year": 2024,
+    "next_quarter": 2,
+    "quarter_range_million": [
+      388.0,
+      392.0
+    ],
+    "annual_range_million": [
+      1522.0,
+      1542.0
+    ],
+    "source_header": [
+      "",
+      "Second Quarter Fiscal 2024",
+      "Full Year Fiscal 2024"
+    ],
+    "revenue_source_row": [
+      "Revenue",
+      "$388.0 million to $392.0 million",
+      "$1.522 billion to $1.542 billion"
+    ],
+    "eps_source_row": [
+      [
+        "Non-GAAP Net Income per Share",
+        "$0.43 to $0.46",
+        "$1.42 to $1.56"
+      ]
+    ],
+    "remaining_year_revision_million": 14.720000000000027,
+    "previous_source": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-fourth-quarter-and-full-year-fiscal-2023-financial-results-301766227.html",
+    "realized_surprise_million": 22.279999999999973
+  },
+  {
+    "symbol": "MDB",
+    "source": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-second-quarter-fiscal-2024-financial-results-301915271.html",
+    "source_file": "release_301915271.html",
+    "sha256": "c74639a69bf2b4d7ba3888ca61c8b3e5cd841946afe4227c1fecbb2b3eecbd07",
+    "published": "2023-08-31 16:05:00-04:00",
+    "modified": "2023-08-31 16:05:00-04:00",
+    "available_after": "2023-08-31 16:05:00-04:00",
+    "title": "MongoDB, Inc. Announces Second Quarter Fiscal 2024 Financial Results",
+    "reported_fiscal_year": 2024,
+    "reported_quarter": 2,
+    "actual_revenue_million": 423.791,
+    "actual_source_row": [
+      "Total revenue",
+      "423,791",
+      "",
+      "303,660",
+      "",
+      "792,071",
+      "",
+      "589,107"
+    ],
+    "actual_rounded_million": 423.8,
+    "fiscal_year": 2024,
+    "next_quarter": 3,
+    "quarter_range_million": [
+      400.0,
+      404.0
+    ],
+    "annual_range_million": [
+      1596.0,
+      1608.0
+    ],
+    "source_header": [
+      "",
+      "Third Quarter Fiscal 2024",
+      "Full Year Fiscal 2024"
+    ],
+    "revenue_source_row": [
+      "Revenue",
+      "$400.0 million to $404.0 million",
+      "$1.596 billion to $1.608 billion"
+    ],
+    "eps_source_row": [
+      [
+        "Non-GAAP Net Income per Share",
+        "$0.47 to $0.50",
+        "$2.27 to $2.35"
+      ]
+    ],
+    "remaining_year_revision_million": 36.209,
+    "previous_source": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-first-quarter-fiscal-2024-financial-results-301840651.html",
+    "realized_surprise_million": 33.791
+  },
+  {
+    "symbol": "MDB",
+    "source": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-third-quarter-fiscal-2024-financial-results-302006667.html",
+    "source_file": "release_302006667.html",
+    "sha256": "a81ee963fdf4bfd717a18f6fc92f764355c643359e2bac32c31462cc57d2b9fc",
+    "published": "2023-12-05 16:05:00-05:00",
+    "modified": "2023-12-05 16:07:07-05:00",
+    "available_after": "2023-12-05 16:07:07-05:00",
+    "title": "MongoDB, Inc. Announces Third Quarter Fiscal 2024 Financial Results",
+    "reported_fiscal_year": 2024,
+    "reported_quarter": 3,
+    "actual_revenue_million": 432.938,
+    "actual_source_row": [
+      "Total revenue",
+      "432,938",
+      "",
+      "333,621",
+      "",
+      "1,225,009",
+      "",
+      "922,728"
+    ],
+    "actual_rounded_million": 432.9,
+    "fiscal_year": 2024,
+    "next_quarter": 4,
+    "quarter_range_million": [
+      429.0,
+      433.0
+    ],
+    "annual_range_million": [
+      1654.0,
+      1658.0
+    ],
+    "source_header": [
+      "",
+      "Fourth Quarter Fiscal 2024",
+      "Full Year Fiscal 2024"
+    ],
+    "revenue_source_row": [
+      "Revenue",
+      "$429.0 million to $433.0 million",
+      "$1.654 billion to $1.658 billion"
+    ],
+    "eps_source_row": [
+      [
+        "Non-GAAP Net Income per Share",
+        "$0.44 to $0.46",
+        "$2.89 to $2.91"
+      ]
+    ],
+    "remaining_year_revision_million": 23.062000000000012,
+    "previous_source": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-second-quarter-fiscal-2024-financial-results-301915271.html",
+    "realized_surprise_million": 30.937999999999988
+  },
+  {
+    "symbol": "MDB",
+    "source": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-fourth-quarter-and-full-year-fiscal-2024-financial-results-302083476.html",
+    "source_file": "release_302083476.html",
+    "sha256": "22e6e18f38650821054d60a9faad9fed573e7abfe178cd5be5f0916ed6cec585",
+    "published": "2024-03-07 16:05:00-05:00",
+    "modified": "2024-03-07 16:05:00-05:00",
+    "available_after": "2024-03-07 16:05:00-05:00",
+    "title": "MongoDB, Inc. Announces Fourth Quarter and Full Year Fiscal 2024 Financial Results",
+    "reported_fiscal_year": 2024,
+    "reported_quarter": 4,
+    "actual_revenue_million": 458.002,
+    "actual_source_row": [
+      "Total revenue",
+      "458,002",
+      "",
+      "361,312",
+      "",
+      "1,683,011",
+      "",
+      "1,284,040"
+    ],
+    "actual_rounded_million": 458.0,
+    "fiscal_year": 2025,
+    "next_quarter": 1,
+    "quarter_range_million": [
+      436.0,
+      440.0
+    ],
+    "annual_range_million": [
+      1900.0,
+      1930.0
+    ],
+    "source_header": [
+      "",
+      "First Quarter Fiscal 2025",
+      "Full Year Fiscal 2025"
+    ],
+    "revenue_source_row": [
+      "Revenue",
+      "$436.0 million to $440.0 million",
+      "$1.90 billion to $1.93 billion"
+    ],
+    "eps_source_row": [
+      [
+        "Non-GAAP Net Income per Share",
+        "$0.34 to $0.39",
+        "$2.27 to $2.49"
+      ]
+    ],
+    "remaining_year_revision_million": null,
+    "previous_source": null
+  },
+  {
+    "symbol": "MDB",
+    "source": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-first-quarter-fiscal-2025-financial-results-302159949.html",
+    "source_file": "release_302159949.html",
+    "sha256": "89957afa7b6525119b7e57c4bc42e86fb13b7d386121179d89efa1bcd04cf0d4",
+    "published": "2024-05-30 16:05:00-04:00",
+    "modified": "2024-05-30 16:05:00-04:00",
+    "available_after": "2024-05-30 16:05:00-04:00",
+    "title": "MongoDB, Inc. Announces First Quarter Fiscal 2025 Financial Results",
+    "reported_fiscal_year": 2025,
+    "reported_quarter": 1,
+    "actual_revenue_million": 450.561,
+    "actual_source_row": [
+      "Total revenue",
+      "",
+      "450,561",
+      "",
+      "368,280"
+    ],
+    "actual_rounded_million": 450.6,
+    "fiscal_year": 2025,
+    "next_quarter": 2,
+    "quarter_range_million": [
+      460.0,
+      464.0
+    ],
+    "annual_range_million": [
+      1880.0,
+      1900.0
+    ],
+    "source_header": [
+      "",
+      "Second Quarter Fiscal 2025",
+      "Full Year Fiscal 2025"
+    ],
+    "revenue_source_row": [
+      "Revenue",
+      "$460.0 million to $464.0 million",
+      "$1.88 billion to $1.90 billion"
+    ],
+    "eps_source_row": [
+      [
+        "Non-GAAP Net Income per Share",
+        "$0.46 to $0.49",
+        "$2.15 to $2.30"
+      ]
+    ],
+    "remaining_year_revision_million": -37.56099999999998,
+    "previous_source": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-fourth-quarter-and-full-year-fiscal-2024-financial-results-302083476.html",
+    "realized_surprise_million": 12.560999999999979
+  },
+  {
+    "symbol": "MDB",
+    "source": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-second-quarter-fiscal-2025-financial-results-302234446.html",
+    "source_file": "release_302234446.html",
+    "sha256": "d58c86110c445ea452afec2015c88ed4a79a8013328abc87e905e5cbe6643aab",
+    "published": "2024-08-29 16:05:00-04:00",
+    "modified": "2024-08-29 16:05:00-04:00",
+    "available_after": "2024-08-29 16:05:00-04:00",
+    "title": "MongoDB, Inc. Announces Second Quarter Fiscal 2025 Financial Results",
+    "reported_fiscal_year": 2025,
+    "reported_quarter": 2,
+    "actual_revenue_million": 478.109,
+    "actual_source_row": [
+      "Total revenue",
+      "478,109",
+      "",
+      "423,791",
+      "",
+      "928,670",
+      "",
+      "792,071"
+    ],
+    "actual_rounded_million": 478.1,
+    "fiscal_year": 2025,
+    "next_quarter": 3,
+    "quarter_range_million": [
+      493.0,
+      497.0
+    ],
+    "annual_range_million": [
+      1920.0,
+      1930.0
+    ],
+    "source_header": [
+      "",
+      "Third Quarter Fiscal 2025",
+      "Full Year Fiscal 2025"
+    ],
+    "revenue_source_row": [
+      "Revenue",
+      "$493.0 million to $497.0 million",
+      "$1.92 billion to $1.93 billion"
+    ],
+    "eps_source_row": [
+      [
+        "Non-GAAP Net Income per Share",
+        "$0.65 to $0.68",
+        "$2.33 to $2.47"
+      ]
+    ],
+    "remaining_year_revision_million": 18.89100000000002,
+    "previous_source": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-first-quarter-fiscal-2025-financial-results-302159949.html",
+    "realized_surprise_million": 16.10899999999998
+  },
+  {
+    "symbol": "MDB",
+    "source": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-third-quarter-fiscal-2025-financial-results-302326649.html",
+    "source_file": "release_302326649.html",
+    "sha256": "b68a690327af64596e071177e60141a57a6a2aa2147744a0506ded3b2d750351",
+    "published": "2024-12-09 16:05:00-05:00",
+    "modified": "2024-12-09 16:05:50-05:00",
+    "available_after": "2024-12-09 16:05:50-05:00",
+    "title": "MongoDB, Inc. Announces Third Quarter Fiscal 2025 Financial Results",
+    "reported_fiscal_year": 2025,
+    "reported_quarter": 3,
+    "actual_revenue_million": 529.375,
+    "actual_source_row": [
+      "Total revenue",
+      "529,375",
+      "",
+      "432,938",
+      "",
+      "1,458,045",
+      "",
+      "1,225,009"
+    ],
+    "actual_rounded_million": 529.4,
+    "fiscal_year": 2025,
+    "next_quarter": 4,
+    "quarter_range_million": [
+      515.0,
+      519.0
+    ],
+    "annual_range_million": [
+      1973.0,
+      1977.0
+    ],
+    "source_header": [
+      "",
+      "Fourth Quarter Fiscal 2025",
+      "Full Year Fiscal 2025"
+    ],
+    "revenue_source_row": [
+      "Revenue",
+      "$515.0 million to $519.0\u00a0million",
+      "$1.973 billion to $1.977 billion"
+    ],
+    "eps_source_row": [
+      [
+        "Non-GAAP Net Income per Share",
+        "$0.62 to $0.65",
+        "$3.01 to $3.03"
+      ]
+    ],
+    "remaining_year_revision_million": 15.625,
+    "previous_source": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-second-quarter-fiscal-2025-financial-results-302234446.html",
+    "realized_surprise_million": 34.375
+  },
+  {
+    "symbol": "MDB",
+    "source": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-fourth-quarter-and-full-year-fiscal-2025-financial-results-302393702.html",
+    "source_file": "release_302393702.html",
+    "sha256": "aa814e0ea47ad60b7fef2e6f816f715213b428491eb99d2ae9dab101a734a7cd",
+    "published": "2025-03-05 16:05:00-05:00",
+    "modified": "2025-03-05 16:05:41-05:00",
+    "available_after": "2025-03-05 16:05:41-05:00",
+    "title": "MongoDB, Inc. Announces Fourth Quarter and Full Year Fiscal 2025 Financial Results",
+    "reported_fiscal_year": 2025,
+    "reported_quarter": 4,
+    "actual_revenue_million": 548.398,
+    "actual_source_row": [
+      "Total revenue",
+      "548,398",
+      "",
+      "458,002",
+      "",
+      "2,006,443",
+      "",
+      "1,683,011"
+    ],
+    "actual_rounded_million": 548.4,
+    "fiscal_year": 2026,
+    "next_quarter": 1,
+    "quarter_range_million": [
+      524.0,
+      529.0
+    ],
+    "annual_range_million": [
+      2240.0,
+      2280.0
+    ],
+    "source_header": [
+      "",
+      "First Quarter Fiscal 2026",
+      "Full Year Fiscal 2026"
+    ],
+    "revenue_source_row": [
+      "Revenue",
+      "$524.0 million to $529.0 million",
+      "$2.240 billion to $2.280 billion"
+    ],
+    "eps_source_row": [
+      [
+        "Non-GAAP Net Income per Share",
+        "$0.63 to $0.67",
+        "$2.44 to $2.62"
+      ]
+    ],
+    "remaining_year_revision_million": null,
+    "previous_source": null
+  },
+  {
+    "symbol": "MDB",
+    "source": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-first-quarter-fiscal-2026-financial-results-302473666.html",
+    "source_file": "release_302473666.html",
+    "sha256": "946ea2d68846aa00483529a6cb03d5006065e4514355bd2cf0253acee3df4e24",
+    "published": "2025-06-04 16:05:00-04:00",
+    "modified": "2025-06-04 16:05:36-04:00",
+    "available_after": "2025-06-04 16:05:36-04:00",
+    "title": "MongoDB, Inc. Announces First Quarter Fiscal 2026 Financial Results",
+    "reported_fiscal_year": 2026,
+    "reported_quarter": 1,
+    "actual_revenue_million": 549.014,
+    "actual_source_row": [
+      "Total revenue",
+      "549,014",
+      "",
+      "450,561"
+    ],
+    "actual_rounded_million": 549.0,
+    "fiscal_year": 2026,
+    "next_quarter": 2,
+    "quarter_range_million": [
+      548.0,
+      553.0
+    ],
+    "annual_range_million": [
+      2250.0,
+      2290.0
+    ],
+    "source_header": [
+      "",
+      "Second Quarter Fiscal 2026",
+      "Full Year Fiscal 2026"
+    ],
+    "revenue_source_row": [
+      "Revenue",
+      "$548.0 million to $553.0 million",
+      "$2.250 billion to $2.290 billion"
+    ],
+    "eps_source_row": [
+      [
+        "Non-GAAP Net Income per Share",
+        "$0.62 to $0.66",
+        "$2.94 to $3.12"
+      ]
+    ],
+    "remaining_year_revision_million": -12.51400000000001,
+    "previous_source": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-fourth-quarter-and-full-year-fiscal-2025-financial-results-302393702.html",
+    "realized_surprise_million": 22.51400000000001
+  },
+  {
+    "symbol": "MDB",
+    "source": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-second-quarter-fiscal-2026-financial-results-302539302.html",
+    "source_file": "release_302539302.html",
+    "sha256": "bb97639faf1818be1ebe84dca3b4c44bd876f7b882452ce9617494061da516c8",
+    "published": "2025-08-26 16:05:00-04:00",
+    "modified": "2025-08-26 16:05:59-04:00",
+    "available_after": "2025-08-26 16:05:59-04:00",
+    "title": "MongoDB, Inc. Announces Second Quarter Fiscal 2026 Financial Results",
+    "reported_fiscal_year": 2026,
+    "reported_quarter": 2,
+    "actual_revenue_million": 591.402,
+    "actual_source_row": [
+      "Total revenue",
+      "591,402",
+      "",
+      "478,109",
+      "",
+      "1,140,416",
+      "",
+      "928,670"
+    ],
+    "actual_rounded_million": 591.4,
+    "fiscal_year": 2026,
+    "next_quarter": 3,
+    "quarter_range_million": [
+      587.0,
+      592.0
+    ],
+    "annual_range_million": [
+      2340.0,
+      2360.0
+    ],
+    "source_header": [
+      "",
+      "Third Quarter Fiscal 2026",
+      "Full Year Fiscal 2026"
+    ],
+    "revenue_source_row": [
+      "Revenue",
+      "$587.0 million to $592.0 million",
+      "$2.34 billion to $2.36 billion"
+    ],
+    "eps_source_row": [
+      [
+        "Non-GAAP Net Income per Share",
+        "$0.76 to $0.79",
+        "$3.64 to $3.73"
+      ]
+    ],
+    "remaining_year_revision_million": 39.097999999999956,
+    "previous_source": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-first-quarter-fiscal-2026-financial-results-302473666.html",
+    "realized_surprise_million": 40.902000000000044
+  },
+  {
+    "symbol": "MDB",
+    "source": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-third-quarter-fiscal-2026-financial-results-302629494.html",
+    "source_file": "release_302629494.html",
+    "sha256": "4b40af2138da1108837eeb2034cc7ebdb82c4585a11244b82a849651ffbd8b4b",
+    "published": "2025-12-01 16:05:00-05:00",
+    "modified": "2025-12-01 16:06:04-05:00",
+    "available_after": "2025-12-01 16:06:04-05:00",
+    "title": "MongoDB, Inc. Announces Third Quarter Fiscal 2026 Financial Results",
+    "reported_fiscal_year": 2026,
+    "reported_quarter": 3,
+    "actual_revenue_million": 628.309,
+    "actual_source_row": [
+      "Total revenue",
+      "628,309",
+      "",
+      "529,375",
+      "",
+      "1,768,725",
+      "",
+      "1,458,045"
+    ],
+    "actual_rounded_million": 628.3,
+    "fiscal_year": 2026,
+    "next_quarter": 4,
+    "quarter_range_million": [
+      665.0,
+      670.0
+    ],
+    "annual_range_million": [
+      2434.0,
+      2439.0
+    ],
+    "source_header": [
+      "",
+      "Fourth Quarter Fiscal 2026",
+      "Full Year Fiscal 2026"
+    ],
+    "revenue_source_row": [
+      "Revenue",
+      "$665.0 million to $670.0 million",
+      "$2.434 billion to $2.439 billion"
+    ],
+    "eps_source_row": [
+      [
+        "Non-GAAP Net Income per Share",
+        "$1.44 to $1.48",
+        "$4.76 to $4.80"
+      ]
+    ],
+    "remaining_year_revision_million": 47.69100000000003,
+    "previous_source": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-second-quarter-fiscal-2026-financial-results-302539302.html",
+    "realized_surprise_million": 38.80899999999997
+  },
+  {
+    "symbol": "MDB",
+    "source": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-fourth-quarter-fiscal-2026-financial-results-302701531.html",
+    "source_file": "release_302701531.html",
+    "sha256": "d9ecb10e06ca4ec211b893f3560e3c506c64c218147b48b46ee16e98e50ba93e",
+    "published": "2026-03-02 16:05:00-05:00",
+    "modified": "2026-03-02 16:05:47-05:00",
+    "available_after": "2026-03-02 16:05:47-05:00",
+    "title": "MongoDB, Inc. Announces Fourth Quarter Fiscal 2026 Financial Results",
+    "reported_fiscal_year": 2026,
+    "reported_quarter": 4,
+    "actual_revenue_million": 695.072,
+    "actual_source_row": [
+      "Total revenue",
+      "695,072",
+      "",
+      "548,398",
+      "",
+      "2,463,797",
+      "",
+      "2,006,443"
+    ],
+    "actual_rounded_million": 695.1,
+    "fiscal_year": 2027,
+    "next_quarter": 1,
+    "quarter_range_million": [
+      659.0,
+      664.0
+    ],
+    "annual_range_million": [
+      2860.0,
+      2900.0
+    ],
+    "source_header": [
+      "Based on information available to management as of today, March 2, 2026, MongoDB is issuing the following financial guidance for the first quarter fiscal 2027. First Quarter Fiscal Year 2027 Guidance",
+      "Based on information available to management as of today, March 2, 2026, MongoDB is issuing the following financial guidance for the full year fiscal 2027. Full Year Fiscal 2027 Guidance"
+    ],
+    "revenue_source_row": [
+      [
+        "Revenues are expected to be in the range of:",
+        "$659 million to $664 million"
+      ],
+      [
+        "Revenues are expected to be in the range of:",
+        "$2.860 billion to $2.900 billion"
+      ]
+    ],
+    "eps_source_row": null,
+    "remaining_year_revision_million": null,
+    "previous_source": null
+  },
+  {
+    "symbol": "MDB",
+    "source": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-first-quarter-fiscal-2027-financial-results-302784757.html",
+    "source_file": "release_302784757.html",
+    "sha256": "beb0f1faaa24dce9a8a2340cac2426cde3997c33469af41ce00b62f73632fe87",
+    "published": "2026-05-28 16:05:00-04:00",
+    "modified": "2026-05-28 16:05:40-04:00",
+    "available_after": "2026-05-28 16:05:40-04:00",
+    "title": "MongoDB, Inc. Announces First Quarter Fiscal 2027 Financial Results",
+    "reported_fiscal_year": 2027,
+    "reported_quarter": 1,
+    "actual_revenue_million": 687.616,
+    "actual_source_row": [
+      "Total revenue",
+      "687,616",
+      "",
+      "549,014"
+    ],
+    "actual_rounded_million": 687.6,
+    "fiscal_year": 2027,
+    "next_quarter": 2,
+    "quarter_range_million": [
+      729.0,
+      734.0
+    ],
+    "annual_range_million": [
+      2920.0,
+      2960.0
+    ],
+    "source_header": [
+      "Based on information available to management as of today, May 28, 2026, MongoDB is issuing the following financial guidance for the second quarter fiscal 2027. Second Quarter Fiscal 2027 Guidance",
+      "Based on information available to management as of today, May 28, 2026, MongoDB is issuing the following financial guidance for the full year fiscal 2027. Full Year Fiscal 2027 Guidance"
+    ],
+    "revenue_source_row": [
+      [
+        "Revenues are expected to be in the range of:",
+        "$729 million to $734 million"
+      ],
+      [
+        "Revenues are expected to be in the range of:",
+        "$2.92 billion to $2.96 billion"
+      ]
+    ],
+    "eps_source_row": null,
+    "remaining_year_revision_million": 33.884000000000015,
+    "previous_source": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-fourth-quarter-fiscal-2026-financial-results-302701531.html",
+    "realized_surprise_million": 26.115999999999985
+  },
+  {
+    "symbol": "MDB",
+    "source": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-second-quarter-fiscal-2027-financial-results-302866656.html",
+    "source_file": "release_302866656.html",
+    "sha256": "d5acf5d98f9898df9a1563953f17e61a42176186a67a60b2916cb68fc5f8b57f",
+    "published": "2026-09-01 16:05:00-04:00",
+    "modified": "2026-09-01 16:05:00-04:00",
+    "available_after": "2026-09-01 16:05:00-04:00",
+    "title": "MongoDB, Inc. Announces Second Quarter Fiscal 2027 Financial Results",
+    "reported_fiscal_year": 2027,
+    "reported_quarter": 2,
+    "actual_revenue_million": 771.773,
+    "actual_source_row": [
+      "Total revenue",
+      "771,773",
+      "",
+      "591,402",
+      "",
+      "1,459,389",
+      "",
+      "1,140,416"
+    ],
+    "actual_rounded_million": 771.8,
+    "fiscal_year": 2027,
+    "next_quarter": 3,
+    "quarter_range_million": [
+      756.0,
+      761.0
+    ],
+    "annual_range_million": [
+      2990.0,
+      3030.0
+    ],
+    "source_header": [
+      "Based on information available to management as of today, September 1, 2026, MongoDB is issuing the following financial guidance for the third quarter fiscal 2027. Third Quarter Fiscal 2027 Guidance",
+      "Based on information available to management as of today, September 1, 2026, MongoDB is issuing the following financial guidance for the full year fiscal 2027. Full Year Fiscal 2027 Guidance"
+    ],
+    "revenue_source_row": [
+      [
+        "Revenues are expected to be in the range of:",
+        "$756 million to $761 million"
+      ],
+      [
+        "Revenues are expected to be in the range of:",
+        "$2.99 billion to $3.03 billion"
+      ]
+    ],
+    "eps_source_row": null,
+    "remaining_year_revision_million": 29.726999999999975,
+    "previous_source": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-first-quarter-fiscal-2027-financial-results-302784757.html",
+    "realized_surprise_million": 40.273000000000025
+  }
+]

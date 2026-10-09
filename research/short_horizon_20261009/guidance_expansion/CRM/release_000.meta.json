@@ -1,0 +1,18 @@
+{
+  "url": "https://www.salesforce.com/news/press-releases/2023/03/01/q4-fy23-results-update/",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "07e2aaa80803c4ee27e4f6af9bb0d2fde4ede4a5e9fbb908197a1f7f947255b2",
+  "retrieved_utc": "2026-10-09T03:24:27Z",
+  "attempts": [
+    {
+      "url": "https://www.salesforce.com/news/press-releases/2023/03/01/q4-fy23-results-update/",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "07e2aaa80803c4ee27e4f6af9bb0d2fde4ede4a5e9fbb908197a1f7f947255b2",
+      "retrieved_utc": "2026-10-09T03:24:27Z"
+    }
+  ]
+}

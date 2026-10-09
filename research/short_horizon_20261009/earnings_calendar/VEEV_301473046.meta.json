@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/veeva-to-release-fiscal-2022-fourth-quarter-and-full-year-results-on-march-2-2022-301473046.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "751921d4a4411c2db30f36d1639568c7442b417cb7eb1ebaeb0013ca04e4be2c",
+  "retrieved_utc": "2026-10-09T04:10:03Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/veeva-to-release-fiscal-2022-fourth-quarter-and-full-year-results-on-march-2-2022-301473046.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "751921d4a4411c2db30f36d1639568c7442b417cb7eb1ebaeb0013ca04e4be2c",
+      "retrieved_utc": "2026-10-09T04:10:03Z"
+    }
+  ]
+}

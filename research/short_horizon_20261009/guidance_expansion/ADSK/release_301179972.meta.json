@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2021-third-quarter-results-301179972.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "542b1f0a2299e598582c4e69a283f337bc59ff89278abbee732c8aaceac47407",
+  "retrieved_utc": "2026-10-09T03:26:45Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2021-third-quarter-results-301179972.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "542b1f0a2299e598582c4e69a283f337bc59ff89278abbee732c8aaceac47407",
+      "retrieved_utc": "2026-10-09T03:26:45Z"
+    }
+  ]
+}

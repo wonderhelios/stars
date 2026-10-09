@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-second-quarter-fiscal-2023-financial-results-301615816.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "26a463ce78d3fb6b20cb67681cf6fd14b719da9bc38442bc79bb4e7b557348ae",
+  "retrieved_utc": "2026-10-09T03:23:20Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-second-quarter-fiscal-2023-financial-results-301615816.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "26a463ce78d3fb6b20cb67681cf6fd14b719da9bc38442bc79bb4e7b557348ae",
+      "retrieved_utc": "2026-10-09T03:23:20Z"
+    }
+  ]
+}

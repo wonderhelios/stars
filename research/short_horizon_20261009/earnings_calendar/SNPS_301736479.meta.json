@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/synopsys-announces-earnings-release-date-for-first-quarter-fiscal-year-2023-301736479.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "99864bb91e2efc078b76a6bb82379f7089283a413aea3624d9346852c9f02722",
+  "retrieved_utc": "2026-10-09T04:09:07Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/synopsys-announces-earnings-release-date-for-first-quarter-fiscal-year-2023-301736479.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "99864bb91e2efc078b76a6bb82379f7089283a413aea3624d9346852c9f02722",
+      "retrieved_utc": "2026-10-09T04:09:07Z"
+    }
+  ]
+}

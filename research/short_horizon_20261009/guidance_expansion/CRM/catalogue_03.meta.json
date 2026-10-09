@@ -1,0 +1,18 @@
+{
+  "url": "https://www.salesforce.com/news/topics/earnings/page/3/?bc=HL#section-title",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "2bf8aaafc1ed477c5415f0a2245c16b92790a3459c2b9b65b5e931d2d91d0d28",
+  "retrieved_utc": "2026-10-09T03:22:59Z",
+  "attempts": [
+    {
+      "url": "https://www.salesforce.com/news/topics/earnings/page/3/?bc=HL#section-title",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "2bf8aaafc1ed477c5415f0a2245c16b92790a3459c2b9b65b5e931d2d91d0d28",
+      "retrieved_utc": "2026-10-09T03:22:59Z"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-third-quarter-fiscal-2022-financial-results-301438283.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "775d3c7ce8f8b72779ee006d6f3c20f8c362a0712df3819156102bb710be3ab9",
+  "retrieved_utc": "2026-10-09T03:23:37Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-third-quarter-fiscal-2022-financial-results-301438283.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "775d3c7ce8f8b72779ee006d6f3c20f8c362a0712df3819156102bb710be3ab9",
+      "retrieved_utc": "2026-10-09T03:23:37Z"
+    }
+  ]
+}

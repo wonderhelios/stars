@@ -1,0 +1,72 @@
+{
+  "original_baseline_arrays_equal": true,
+  "target_invariants": {
+    "baseline": {
+      "max_gross_normalization_error": 3.3306690738754696e-16,
+      "universe_gate_breaches": 0,
+      "all_finite": true
+    },
+    "smooth_0.3": {
+      "max_gross_normalization_error": 4.440892098500626e-16,
+      "universe_gate_breaches": 0,
+      "all_finite": true
+    },
+    "smooth_0.5": {
+      "max_gross_normalization_error": 3.3306690738754696e-16,
+      "universe_gate_breaches": 0,
+      "all_finite": true
+    },
+    "smooth_0.7": {
+      "max_gross_normalization_error": 3.3306690738754696e-16,
+      "universe_gate_breaches": 0,
+      "all_finite": true
+    },
+    "vol_q0.6_a0.3": {
+      "max_gross_normalization_error": 4.440892098500626e-16,
+      "universe_gate_breaches": 0,
+      "all_finite": true
+    },
+    "vol_q0.6_a0.5": {
+      "max_gross_normalization_error": 4.440892098500626e-16,
+      "universe_gate_breaches": 0,
+      "all_finite": true
+    },
+    "vol_q0.75_a0.3": {
+      "max_gross_normalization_error": 4.440892098500626e-16,
+      "universe_gate_breaches": 0,
+      "all_finite": true
+    },
+    "vol_q0.75_a0.5": {
+      "max_gross_normalization_error": 4.440892098500626e-16,
+      "universe_gate_breaches": 0,
+      "all_finite": true
+    },
+    "vol_q0.9_a0.3": {
+      "max_gross_normalization_error": 4.440892098500626e-16,
+      "universe_gate_breaches": 0,
+      "all_finite": true
+    },
+    "vol_q0.9_a0.5": {
+      "max_gross_normalization_error": 4.440892098500626e-16,
+      "universe_gate_breaches": 0,
+      "all_finite": true
+    },
+    "hyst_0.25": {
+      "max_gross_normalization_error": 3.3306690738754696e-16,
+      "universe_gate_breaches": 0,
+      "all_finite": true
+    },
+    "hyst_0.3": {
+      "max_gross_normalization_error": 3.3306690738754696e-16,
+      "universe_gate_breaches": 0,
+      "all_finite": true
+    },
+    "hyst_0.4": {
+      "max_gross_normalization_error": 3.3306690738754696e-16,
+      "universe_gate_breaches": 0,
+      "all_finite": true
+    }
+  },
+  "alpha1_matches_baseline_returns": true,
+  "alpha1_matches_baseline_turn": true
+}

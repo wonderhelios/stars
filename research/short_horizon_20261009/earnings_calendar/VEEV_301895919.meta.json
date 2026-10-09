@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/veeva-to-release-fiscal-2024-second-quarter-results-on-august-30-2023-301895919.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "bb1e3e9cfafb3d58294986d5db357414aa257a9deb776ef4612afa0db121840f",
+  "retrieved_utc": "2026-10-09T04:10:02Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/veeva-to-release-fiscal-2024-second-quarter-results-on-august-30-2023-301895919.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "bb1e3e9cfafb3d58294986d5db357414aa257a9deb776ef4612afa0db121840f",
+      "retrieved_utc": "2026-10-09T04:10:02Z"
+    }
+  ]
+}

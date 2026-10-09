@@ -1,0 +1,26 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/synopsys-announces-earnings-release-date-for-second-quarter-fiscal-year-2024-302125106.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "e6c96b932ce830b361d30099d782d1a28ab4412f19066cd6e160f3f116fd5bdb",
+  "retrieved_utc": "2026-10-09T04:08:56Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/synopsys-announces-earnings-release-date-for-second-quarter-fiscal-year-2024-302125106.html",
+      "status": 0,
+      "exit_code": 35,
+      "error": "curl: (35) LibreSSL SSL_connect: SSL_ERROR_SYSCALL in connection to www.prnewswire.com:443 \n",
+      "sha256": null,
+      "retrieved_utc": "2026-10-09T04:08:52Z"
+    },
+    {
+      "url": "https://www.prnewswire.com/news-releases/synopsys-announces-earnings-release-date-for-second-quarter-fiscal-year-2024-302125106.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "e6c96b932ce830b361d30099d782d1a28ab4412f19066cd6e160f3f116fd5bdb",
+      "retrieved_utc": "2026-10-09T04:08:56Z"
+    }
+  ]
+}

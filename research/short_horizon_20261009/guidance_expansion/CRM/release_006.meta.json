@@ -1,0 +1,18 @@
+{
+  "url": "https://www.salesforce.com/news/press-releases/2024/08/28/fy25-q2-earnings/",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "9ade242c3d959f733adac8513b0b561426c1b8f902716fe09b4a1f99410f2370",
+  "retrieved_utc": "2026-10-09T03:24:54Z",
+  "attempts": [
+    {
+      "url": "https://www.salesforce.com/news/press-releases/2024/08/28/fy25-q2-earnings/",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "9ade242c3d959f733adac8513b0b561426c1b8f902716fe09b4a1f99410f2370",
+      "retrieved_utc": "2026-10-09T03:24:54Z"
+    }
+  ]
+}

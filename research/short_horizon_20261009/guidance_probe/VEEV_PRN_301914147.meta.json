@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/veeva-announces-fiscal-2024-second-quarter-results-301914147.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "7505c223a246cd60db78b4666a2dbdf5f7a528a91e34a994dd08f983478d2573",
+  "retrieved_utc": "2026-10-09T03:08:55Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/veeva-announces-fiscal-2024-second-quarter-results-301914147.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "7505c223a246cd60db78b4666a2dbdf5f7a528a91e34a994dd08f983478d2573",
+      "retrieved_utc": "2026-10-09T03:08:55Z"
+    }
+  ]
+}

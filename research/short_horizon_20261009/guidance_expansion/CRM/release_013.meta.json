@@ -1,0 +1,18 @@
+{
+  "url": "https://www.salesforce.com/news/press-releases/2026/08/26/fy27-q2-earnings/",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "7000225c02af7ff61da7c2d0a988a6791d84ee78ad6449b40c91e71122b7aec9",
+  "retrieved_utc": "2026-10-09T03:25:25Z",
+  "attempts": [
+    {
+      "url": "https://www.salesforce.com/news/press-releases/2026/08/26/fy27-q2-earnings/",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "7000225c02af7ff61da7c2d0a988a6791d84ee78ad6449b40c91e71122b7aec9",
+      "retrieved_utc": "2026-10-09T03:25:25Z"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "url": "https://www.globenewswire.com/news-release/2026/01/20/3222250/0/en/datadog-announces-date-of-fourth-quarter-and-fiscal-year-2025-earnings-call.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "1c16f1ae39b23c15e023f44f7cfd544f556c5cfd3f3d01388b0a73ddf280c000",
+  "retrieved_utc": "2026-10-09T04:07:00Z",
+  "attempts": [
+    {
+      "url": "https://www.globenewswire.com/news-release/2026/01/20/3222250/0/en/datadog-announces-date-of-fourth-quarter-and-fiscal-year-2025-earnings-call.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "1c16f1ae39b23c15e023f44f7cfd544f556c5cfd3f3d01388b0a73ddf280c000",
+      "retrieved_utc": "2026-10-09T04:07:00Z"
+    }
+  ]
+}

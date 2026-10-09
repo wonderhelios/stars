@@ -1,0 +1,18 @@
+{
+  "url": "https://www.federalreserve.gov/monetarypolicy/fomcpresconf20201216.htm",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "c76a91ab3ca1f99d2c1b52005f906486e078f6105c6c0edd9464666dfad44fe5",
+  "retrieved_utc": "2026-10-09T05:43:22Z",
+  "attempts": [
+    {
+      "url": "https://www.federalreserve.gov/monetarypolicy/fomcpresconf20201216.htm",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "c76a91ab3ca1f99d2c1b52005f906486e078f6105c6c0edd9464666dfad44fe5",
+      "retrieved_utc": "2026-10-09T05:43:22Z"
+    }
+  ]
+}

@@ -1,0 +1,120 @@
+{
+  "config": {
+    "initial_equity": 1000000.0,
+    "cap": 5,
+    "top_frac": 0.2,
+    "lookback": 14,
+    "vol": 20,
+    "liquidity": 30,
+    "rebalance_slices": 1,
+    "gross": 2.7,
+    "fee": 0.0007,
+    "rebalance_band": 0.02,
+    "size_rounding": "floor to current meta szDecimals",
+    "funding": false,
+    "terminal_liquidation": false,
+    "missing_quote_policy": "retain held quantity at last observed price; diagnostic only, any unresolved event blocks gate"
+  },
+  "runs": {
+    "cap5_open_0.0007": {
+      "full": {
+        "days": 1192,
+        "sharpe": 1.1292998945108697,
+        "annual_arithmetic": 0.8994001037161335,
+        "annual_cost": 0.40820017474341813,
+        "daily_turnover": 1.5976523473323607
+      },
+      "2023-24": {
+        "days": 547,
+        "sharpe": 0.010069660784515527,
+        "annual_arithmetic": 0.00789905152501154,
+        "annual_cost": 0.3493107860993633,
+        "daily_turnover": 1.3671655033243182
+      },
+      "2025-26": {
+        "days": 645,
+        "sharpe": 2.0566310705616657,
+        "annual_arithmetic": 1.6554482828611625,
+        "annual_cost": 0.4581420283686864,
+        "daily_turnover": 1.7931194848089487
+      },
+      "missing_held_quotes": [],
+      "ending_equity": 6738629.797390147
+    },
+    "cap5_close_0.0007": {
+      "full": {
+        "days": 1192,
+        "sharpe": 1.117451687527584,
+        "annual_arithmetic": 0.8891985454486777,
+        "annual_cost": 0.4083495111494615,
+        "daily_turnover": 1.5982368342444677
+      },
+      "2023-24": {
+        "days": 547,
+        "sharpe": -0.0023581279870143177,
+        "annual_arithmetic": -0.0018476037320460073,
+        "annual_cost": 0.34974824966486523,
+        "daily_turnover": 1.3688776894906662
+      },
+      "2025-26": {
+        "days": 645,
+        "sharpe": 2.044691280146848,
+        "annual_arithmetic": 1.64486093862985,
+        "annual_cost": 0.45804701507515794,
+        "daily_turnover": 1.7927476128186222
+      },
+      "missing_held_quotes": [],
+      "ending_equity": 6528496.458907817
+    },
+    "cap8_open_0.0007": {
+      "full": {
+        "days": 1192,
+        "sharpe": 1.2586573362806215,
+        "annual_arithmetic": 0.9217013584769836,
+        "annual_cost": 0.3988299274856092,
+        "daily_turnover": 1.5609781897675508
+      },
+      "2023-24": {
+        "days": 547,
+        "sharpe": 0.20460558269022347,
+        "annual_arithmetic": 0.15392977613215766,
+        "annual_cost": 0.34622285406852527,
+        "daily_turnover": 1.3550796636732887
+      },
+      "2025-26": {
+        "days": 645,
+        "sharpe": 2.203841497378466,
+        "annual_arithmetic": 1.5728192740469367,
+        "annual_cost": 0.4434439881974618,
+        "daily_turnover": 1.7355929087963278
+      },
+      "missing_held_quotes": [],
+      "ending_equity": 8457291.795143327
+    },
+    "cap5_open_0.00075": {
+      "full": {
+        "days": 1192,
+        "sharpe": 1.092586188290842,
+        "annual_arithmetic": 0.8703136924595422,
+        "annual_cost": 0.43737941515876444,
+        "daily_turnover": 1.5977330234110116
+      },
+      "2023-24": {
+        "days": 547,
+        "sharpe": -0.021618690405046707,
+        "annual_arithmetic": -0.016962023182253906,
+        "annual_cost": 0.37428060052665935,
+        "daily_turnover": 1.3672350704170204
+      },
+      "2025-26": {
+        "days": 645,
+        "sharpe": 2.015680762964093,
+        "annual_arithmetic": 1.6227785241743675,
+        "annual_cost": 0.4908911230715729,
+        "daily_turnover": 1.7932095819966134
+      },
+      "missing_held_quotes": [],
+      "ending_equity": 6125879.91904737
+    }
+  }
+}

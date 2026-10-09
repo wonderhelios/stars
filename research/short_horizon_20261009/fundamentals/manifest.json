@@ -1,0 +1,432 @@
+[
+  {
+    "symbol": "GOOGL",
+    "downloaded_utc": "2026-10-09T01:58:45.408804+00:00",
+    "cik": 1652044,
+    "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001652044.json",
+    "name": "Alphabet Inc.",
+    "name_verified": true,
+    "sha256": "a017f26ee88cb4a639d1c1ddb06d53b4afe22f0ac89cabec7cd67c88919fe1c5"
+  },
+  {
+    "symbol": "MSFT",
+    "downloaded_utc": "2026-10-09T01:58:48.463466+00:00",
+    "cik": 789019,
+    "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000789019.json",
+    "name": "MICROSOFT CORPORATION",
+    "name_verified": true,
+    "sha256": "f8aae2965b20ad0df44bdf7ccbedf797d275b6b8dc030154a7a311361bb7246f"
+  },
+  {
+    "symbol": "AAPL",
+    "downloaded_utc": "2026-10-09T01:58:51.714481+00:00",
+    "cik": 320193,
+    "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000320193.json",
+    "name": "Apple Inc.",
+    "name_verified": true,
+    "sha256": "73a86c6aedc31f77cac2ea4df5f80f0b3bd7e6eb58bb4e01444fbedf3afb9c43"
+  },
+  {
+    "symbol": "AMZN",
+    "downloaded_utc": "2026-10-09T02:06:17.674760+00:00",
+    "recovery_attempted": true,
+    "recovery_sources": [
+      {
+        "url": "https://data.sec.gov/api/xbrl/companyconcept/CIK0001018724/us-gaap/RevenueFromContractWithCustomerExcludingAssessedTax.json",
+        "sha256": "f8bf9e47bc38ce1c65e26ba7c9546391f6f6b6cc5a5bc174e75b4a55e2b31cca"
+      },
+      {
+        "url": "https://data.sec.gov/api/xbrl/companyconcept/CIK0001018724/us-gaap/Revenues.json",
+        "error": "curl: (35) LibreSSL SSL_connect: SSL_ERROR_SYSCALL in connection to data.sec.gov:443 \n"
+      },
+      {
+        "url": "https://data.sec.gov/api/xbrl/companyconcept/CIK0001018724/us-gaap/SalesRevenueNet.json",
+        "sha256": "6b5a8f682f8a0638a856f8f872f87960201943d551be9dd4dda490879c18ed8c"
+      },
+      {
+        "url": "https://data.sec.gov/api/xbrl/companyconcept/CIK0001018724/us-gaap/OperatingIncomeLoss.json",
+        "sha256": "b7d49ab890fdb07e65a7f01a556695eb0a1553dd79c8ea4d52cdab3833ecdfa5"
+      }
+    ],
+    "cik": 1018724,
+    "name": "AMAZON COM INC",
+    "name_verified": true,
+    "source": "SEC companyconcept, merged only requested tags",
+    "sha256": "a37d52a4fc2f18218265ae0b508e95bb957d8228135085e5e8b62dbd199e51cf",
+    "initial_error": "curl: (28) Operation timed out after 45004 milliseconds with 3021882 bytes received\n"
+  },
+  {
+    "symbol": "META",
+    "downloaded_utc": "2026-10-09T02:00:13.589969+00:00",
+    "cik": 1326801,
+    "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001326801.json",
+    "name": "Meta Platforms, Inc.",
+    "name_verified": true,
+    "sha256": "7518e76d6dac2d016e1a3d1dec1cc55ff9ea3bdd58a151b16fcaa067a6c9d94e"
+  },
+  {
+    "symbol": "NVDA",
+    "downloaded_utc": "2026-10-09T02:06:27.929269+00:00",
+    "recovery_attempted": true,
+    "recovery_sources": [
+      {
+        "url": "https://data.sec.gov/api/xbrl/companyconcept/CIK0001045810/us-gaap/RevenueFromContractWithCustomerExcludingAssessedTax.json",
+        "sha256": "e9b2ce25e35f73f913d1a8d2f1f8daaf3c49ccab2e02e903f31943bc64447250"
+      },
+      {
+        "url": "https://data.sec.gov/api/xbrl/companyconcept/CIK0001045810/us-gaap/Revenues.json",
+        "sha256": "a110a9c6472ec39a5a7d10c6064e9794f2285a5153ec77215b33736f2ff20a63"
+      },
+      {
+        "url": "https://data.sec.gov/api/xbrl/companyconcept/CIK0001045810/us-gaap/SalesRevenueNet.json",
+        "error": "curl: (56) The requested URL returned error: 404\n"
+      },
+      {
+        "url": "https://data.sec.gov/api/xbrl/companyconcept/CIK0001045810/us-gaap/OperatingIncomeLoss.json",
+        "sha256": "c340224cab70ad4f0b3aab474abca632aa6041f673dacc90f972e6332df8d9c5"
+      }
+    ],
+    "cik": 1045810,
+    "name": "NVIDIA CORP",
+    "name_verified": true,
+    "source": "SEC companyconcept, merged only requested tags",
+    "sha256": "e53a7ed60a95c7ba1981d0ae8d88526d99c96d9d61d7d3019c2ec1526ff63bd8",
+    "initial_error": "curl: (35) LibreSSL SSL_connect: SSL_ERROR_SYSCALL in connection to data.sec.gov:443 \n"
+  },
+  {
+    "symbol": "AMD",
+    "downloaded_utc": "2026-10-09T02:00:22.820746+00:00",
+    "cik": 2488,
+    "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000002488.json",
+    "name": "ADVANCED MICRO DEVICES INC",
+    "name_verified": true,
+    "sha256": "21a29c75076d90fced568785d855fc427a15c7458bc0bb153a9dedd88ad3349e"
+  },
+  {
+    "symbol": "INTC",
+    "downloaded_utc": "2026-10-09T02:06:37.238295+00:00",
+    "recovery_attempted": true,
+    "recovery_sources": [
+      {
+        "url": "https://data.sec.gov/api/xbrl/companyconcept/CIK0000050863/us-gaap/RevenueFromContractWithCustomerExcludingAssessedTax.json",
+        "sha256": "d0e1bcac2ae8e5858e6917392420680757f0b3ee4b3100975b15f6c638c1c5b7"
+      },
+      {
+        "url": "https://data.sec.gov/api/xbrl/companyconcept/CIK0000050863/us-gaap/Revenues.json",
+        "error": "curl: (56) The requested URL returned error: 404\n"
+      },
+      {
+        "url": "https://data.sec.gov/api/xbrl/companyconcept/CIK0000050863/us-gaap/SalesRevenueNet.json",
+        "sha256": "84a493fdff129db599a68c3549e5ba580d5be724ab6cbf30825efb6b7c50f2a9"
+      },
+      {
+        "url": "https://data.sec.gov/api/xbrl/companyconcept/CIK0000050863/us-gaap/OperatingIncomeLoss.json",
+        "sha256": "adb6aaefa23500c04b98bb3c39347563f96f9014b3f85c485a50cf4301acd8ec"
+      }
+    ],
+    "cik": 50863,
+    "name": "INTEL CORP",
+    "name_verified": true,
+    "source": "SEC companyconcept, merged only requested tags",
+    "sha256": "632d3f55dcf9c31f7f93cdfb54f58fa04c727898aec90545363bf6a5cae52680",
+    "initial_error": "curl: (35) LibreSSL SSL_connect: SSL_ERROR_SYSCALL in connection to data.sec.gov:443 \n"
+  },
+  {
+    "symbol": "ORCL",
+    "downloaded_utc": "2026-10-09T02:00:33.587230+00:00",
+    "cik": 1341439,
+    "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001341439.json",
+    "name": "Oracle Corporation",
+    "name_verified": true,
+    "sha256": "65523545f040abaea1dfcf321da2a5aec85e7f34387244b0ffcb26e4c8707f7d"
+  },
+  {
+    "symbol": "CRM",
+    "downloaded_utc": "2026-10-09T02:06:53.227919+00:00",
+    "recovery_attempted": true,
+    "recovery_sources": [
+      {
+        "url": "https://data.sec.gov/api/xbrl/companyconcept/CIK0001108524/us-gaap/RevenueFromContractWithCustomerExcludingAssessedTax.json",
+        "sha256": "25b7b936d815bdd99904af035a62b1eac1109f40b48e908935952733a8558812"
+      },
+      {
+        "url": "https://data.sec.gov/api/xbrl/companyconcept/CIK0001108524/us-gaap/Revenues.json",
+        "sha256": "cc2287ee97a3b3623ec064c417514475374fc351fdddcec3eeaf9653893ca377"
+      },
+      {
+        "url": "https://data.sec.gov/api/xbrl/companyconcept/CIK0001108524/us-gaap/SalesRevenueNet.json",
+        "error": "curl: (56) The requested URL returned error: 404\n"
+      },
+      {
+        "url": "https://data.sec.gov/api/xbrl/companyconcept/CIK0001108524/us-gaap/OperatingIncomeLoss.json",
+        "sha256": "090c0a8f3d7dd91be23d58e633d548cd3a779222b94d0501c159f7ae7702fd44"
+      }
+    ],
+    "cik": 1108524,
+    "name": "Salesforce, Inc.",
+    "name_verified": true,
+    "source": "SEC companyconcept, merged only requested tags",
+    "sha256": "8d65340f3e2a23d0ec231682d7ae50d01549b72d74c6124b2ead86388a18ec2e",
+    "initial_error": "curl: (28) Operation timed out after 45000 milliseconds with 2922546 bytes received\n"
+  },
+  {
+    "symbol": "ADBE",
+    "downloaded_utc": "2026-10-09T02:07:02.922116+00:00",
+    "recovery_attempted": true,
+    "recovery_sources": [
+      {
+        "url": "https://data.sec.gov/api/xbrl/companyconcept/CIK0000796343/us-gaap/RevenueFromContractWithCustomerExcludingAssessedTax.json",
+        "error": "curl: (56) The requested URL returned error: 404\n"
+      },
+      {
+        "url": "https://data.sec.gov/api/xbrl/companyconcept/CIK0000796343/us-gaap/Revenues.json",
+        "sha256": "f09162967a3d4ad801b7014d3535f58ce0a8f37d01993f160ad46d3e2ede831e"
+      },
+      {
+        "url": "https://data.sec.gov/api/xbrl/companyconcept/CIK0000796343/us-gaap/SalesRevenueNet.json",
+        "error": "curl: (56) The requested URL returned error: 404\n"
+      },
+      {
+        "url": "https://data.sec.gov/api/xbrl/companyconcept/CIK0000796343/us-gaap/OperatingIncomeLoss.json",
+        "sha256": "ffd16356574d9222b2b444c323d22e60d8dccc35fbf9bb2f9e03af405f20b670"
+      }
+    ],
+    "cik": 796343,
+    "name": "ADOBE INC.",
+    "name_verified": true,
+    "source": "SEC companyconcept, merged only requested tags",
+    "sha256": "78a0239cdc36f6ccf2369618843aa9db734cf1d085cc08d227da3c1fb9bae4f5",
+    "initial_error": "curl: (28) Operation timed out after 45009 milliseconds with 2874059 bytes received\n"
+  },
+  {
+    "symbol": "INTU",
+    "downloaded_utc": "2026-10-09T02:02:06.828831+00:00",
+    "cik": 896878,
+    "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000896878.json",
+    "name": "INTUIT INC.",
+    "name_verified": true,
+    "sha256": "456f89ae1757bb5a6ee0990f8b759e3d694222b0107c33ee4b163ee85a478d8a"
+  },
+  {
+    "symbol": "NOW",
+    "downloaded_utc": "2026-10-09T02:02:12.869315+00:00",
+    "cik": 1373715,
+    "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001373715.json",
+    "name": "ServiceNow, Inc.",
+    "name_verified": true,
+    "sha256": "1131b67e8d2d6cd6415cafa82c8874cb2139016e4c8d7e04b1728837a8bbec2c"
+  },
+  {
+    "symbol": "VEEV",
+    "downloaded_utc": "2026-10-09T02:02:17.761458+00:00",
+    "cik": 1393052,
+    "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001393052.json",
+    "name": "Veeva Systems Inc.",
+    "name_verified": true,
+    "sha256": "c2624d24b7f8e7939be966eb22c27d2d0b6f1b361bf51656bff51b88a4588804"
+  },
+  {
+    "symbol": "GWRE",
+    "downloaded_utc": "2026-10-09T02:02:17.781757+00:00",
+    "cik": 1528396,
+    "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001528396.json",
+    "name": "Guidewire Software, Inc.",
+    "name_verified": true,
+    "sha256": "1bcfe0669ef1e428cae9f4f40ded456766c027e1e669ce68608dc5b0e725e4b3"
+  },
+  {
+    "symbol": "TYL",
+    "downloaded_utc": "2026-10-09T02:02:23.627491+00:00",
+    "cik": 860731,
+    "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000860731.json",
+    "name": "TYLER TECHNOLOGIES, INC.",
+    "name_verified": true,
+    "sha256": "2a4ec793c0bf7f9da9d3133f93327d4f328746f361fc9ef0a3c52acc4b9ae922"
+  },
+  {
+    "symbol": "ADSK",
+    "downloaded_utc": "2026-10-09T02:07:13.338000+00:00",
+    "recovery_attempted": true,
+    "recovery_sources": [
+      {
+        "url": "https://data.sec.gov/api/xbrl/companyconcept/CIK0000769397/us-gaap/RevenueFromContractWithCustomerExcludingAssessedTax.json",
+        "sha256": "edbb10d1541d66b886decda3ba39210fd1b864b9ec78e481ecf6d78830288d2d"
+      },
+      {
+        "url": "https://data.sec.gov/api/xbrl/companyconcept/CIK0000769397/us-gaap/Revenues.json",
+        "error": "curl: (56) The requested URL returned error: 404\n"
+      },
+      {
+        "url": "https://data.sec.gov/api/xbrl/companyconcept/CIK0000769397/us-gaap/SalesRevenueNet.json",
+        "sha256": "ef27fa2ffe6c26dea89b0183f93783a68a29ffbeffe7ce519b61271f10fac7e2"
+      },
+      {
+        "url": "https://data.sec.gov/api/xbrl/companyconcept/CIK0000769397/us-gaap/OperatingIncomeLoss.json",
+        "sha256": "e64de5a189d3cf39350314459e2aba60a1e9d01a96c336e2ca3226767a142a6e"
+      }
+    ],
+    "cik": 769397,
+    "name": "Autodesk, Inc.",
+    "name_verified": true,
+    "source": "SEC companyconcept, merged only requested tags",
+    "sha256": "a3d69314b54f231aed01fdf912404d4a15305f2901d0b7d245e497765e856b83",
+    "initial_error": "curl: (28) Operation timed out after 45009 milliseconds with 3457242 bytes received\n"
+  },
+  {
+    "symbol": "ANSS",
+    "downloaded_utc": "2026-10-09T02:07:28.851280+00:00",
+    "recovery_attempted": true,
+    "recovery_sources": [
+      {
+        "url": "https://data.sec.gov/api/xbrl/companyconcept/CIK0001013462/us-gaap/RevenueFromContractWithCustomerExcludingAssessedTax.json",
+        "error": "curl: (35) LibreSSL SSL_connect: SSL_ERROR_SYSCALL in connection to data.sec.gov:443 \n"
+      },
+      {
+        "url": "https://data.sec.gov/api/xbrl/companyconcept/CIK0001013462/us-gaap/Revenues.json",
+        "sha256": "68e6978fe2f2079ed32d8c029708bd4dc957ff34dfcfa43b92068e1603a2291e"
+      },
+      {
+        "url": "https://data.sec.gov/api/xbrl/companyconcept/CIK0001013462/us-gaap/SalesRevenueNet.json",
+        "error": "curl: (56) The requested URL returned error: 404\n"
+      },
+      {
+        "url": "https://data.sec.gov/api/xbrl/companyconcept/CIK0001013462/us-gaap/OperatingIncomeLoss.json",
+        "sha256": "2a251de08b55e14fb90768defd719643233e80b9cbc291c90a4a44efaf6c1781"
+      }
+    ],
+    "cik": 1013462,
+    "name": "ANSYS, Inc.",
+    "name_verified": true,
+    "source": "SEC companyconcept, merged only requested tags",
+    "sha256": "97fcccd4997acd8741e2a8bfd5ae10125c24fc5babaa8dc8fbbbbff5f7f1ae12",
+    "initial_error": "curl: (28) Operation timed out after 45011 milliseconds with 2854855 bytes received\n"
+  },
+  {
+    "symbol": "CDNS",
+    "downloaded_utc": "2026-10-09T02:03:56.809347+00:00",
+    "cik": 813672,
+    "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000813672.json",
+    "name": "CADENCE DESIGN SYSTEMS, INC.",
+    "name_verified": true,
+    "sha256": "0bfb80dcfb082f1368b0f19c256ca5b35585e20bda411cea2163627b55f0955b"
+  },
+  {
+    "symbol": "SNPS",
+    "downloaded_utc": "2026-10-09T02:04:01.505314+00:00",
+    "cik": 883241,
+    "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000883241.json",
+    "name": "SYNOPSYS INC",
+    "name_verified": true,
+    "sha256": "7e9b6e13ac2481586b56f1db93af14b9b014a1b7f92af2a09075d7cbd51526d4"
+  },
+  {
+    "symbol": "PAYC",
+    "downloaded_utc": "2026-10-09T02:04:07.557480+00:00",
+    "cik": 1590955,
+    "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001590955.json",
+    "name": "Paycom Software, Inc.",
+    "name_verified": true,
+    "sha256": "588556b7e71a89bf4e8a6ac0b9fed255fc1e5c15953d5c5b77b35778fb5ea3dd"
+  },
+  {
+    "symbol": "PCTY",
+    "downloaded_utc": "2026-10-09T02:04:11.762455+00:00",
+    "cik": 1591698,
+    "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001591698.json",
+    "name": "PAYLOCITY HOLDING CORPORATION",
+    "name_verified": true,
+    "sha256": "0892d204921923b02c569de0a75187f7c7b69a1de913a6ffe8ff6ee502259ce3"
+  },
+  {
+    "symbol": "WDAY",
+    "downloaded_utc": "2026-10-09T02:04:17.125782+00:00",
+    "cik": 1327811,
+    "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001327811.json",
+    "name": "WORKDAY, INC.",
+    "name_verified": true,
+    "sha256": "831819baad53b4b4f5b72b5d1f24144e90c5cd42ff9e6263eecdd0dff87c648d"
+  },
+  {
+    "symbol": "TEAM",
+    "downloaded_utc": "2026-10-09T02:04:21.806401+00:00",
+    "cik": 1650372,
+    "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001650372.json",
+    "name": "Atlassian Corporation",
+    "name_verified": true,
+    "sha256": "4a2efe51ce98d780879cf2bee5128ff8e06d7d89e61b09e1af42e11bab7feb7d"
+  },
+  {
+    "symbol": "DDOG",
+    "downloaded_utc": "2026-10-09T02:04:25.862122+00:00",
+    "cik": 1561550,
+    "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001561550.json",
+    "name": "Datadog, Inc.",
+    "name_verified": true,
+    "sha256": "d3c4561fd839e25b1cde245ff3ca1f821b2a70e70d34688c5ede40bbc0f600a2"
+  },
+  {
+    "symbol": "ZS",
+    "downloaded_utc": "2026-10-09T02:04:47.674937+00:00",
+    "cik": 1713683,
+    "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001713683.json",
+    "name": "Zscaler Inc",
+    "name_verified": true,
+    "sha256": "06053c252007a7d76d154eb77a698c48c832f9b4d6ad121a33b41d14a27a1434"
+  },
+  {
+    "symbol": "CRWD",
+    "downloaded_utc": "2026-10-09T02:04:53.158959+00:00",
+    "cik": 1535527,
+    "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001535527.json",
+    "name": "CrowdStrike Holdings, Inc.",
+    "name_verified": true,
+    "sha256": "a71a92f1f11bd3032271ca55be7a7770a96a846ec809f925829ef952fd5f3fa1"
+  },
+  {
+    "symbol": "NET",
+    "downloaded_utc": "2026-10-09T02:05:02.880423+00:00",
+    "cik": 1477333,
+    "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001477333.json",
+    "name": "Cloudflare, Inc.",
+    "name_verified": true,
+    "sha256": "04cc636210456fc5163996c546c38dd049e53b5f9ce59b8f824f1725b06afe11"
+  },
+  {
+    "symbol": "MDB",
+    "downloaded_utc": "2026-10-09T02:05:08.150204+00:00",
+    "cik": 1441816,
+    "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001441816.json",
+    "name": "MONGODB, INC.",
+    "name_verified": true,
+    "sha256": "8947052d6912d9ac6b35470f5e331ef6fe1f4b4cf782fab20822c9cb66738997"
+  },
+  {
+    "symbol": "HUBS",
+    "downloaded_utc": "2026-10-09T02:07:41.077903+00:00",
+    "recovery_attempted": true,
+    "recovery_sources": [
+      {
+        "url": "https://data.sec.gov/api/xbrl/companyconcept/CIK0001404655/us-gaap/RevenueFromContractWithCustomerExcludingAssessedTax.json",
+        "error": "curl: (35) LibreSSL SSL_connect: SSL_ERROR_SYSCALL in connection to data.sec.gov:443 \n"
+      },
+      {
+        "url": "https://data.sec.gov/api/xbrl/companyconcept/CIK0001404655/us-gaap/Revenues.json",
+        "sha256": "448fc8a4b2566bb470e8a82ae737414952c75e911a56aad67c351f0db5b58c7f"
+      },
+      {
+        "url": "https://data.sec.gov/api/xbrl/companyconcept/CIK0001404655/us-gaap/SalesRevenueNet.json",
+        "error": "curl: (56) The requested URL returned error: 404\n"
+      },
+      {
+        "url": "https://data.sec.gov/api/xbrl/companyconcept/CIK0001404655/us-gaap/OperatingIncomeLoss.json",
+        "sha256": "a3befb8a7d4d8404097e0d7ca172127753b7a66c40a94cd444dc4498fec4706a"
+      }
+    ],
+    "cik": 1404655,
+    "name": "HubSpot, Inc.",
+    "name_verified": true,
+    "source": "SEC companyconcept, merged only requested tags",
+    "sha256": "7eb6e934670c01875bcc1e3251b911a80dd2888bfae1cc1a3eff1a90f4e0323c",
+    "initial_error": "curl: (35) LibreSSL SSL_connect: SSL_ERROR_SYSCALL in connection to data.sec.gov:443 \n"
+  }
+]

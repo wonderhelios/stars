@@ -1,0 +1,18 @@
+{
+  "url": "https://www.salesforce.com/news/wp-json/wp/v2/sf_press_release?search=results&per_page=100&page=1",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "2f8cc7db4d8845a281e79c147f68328566a4a3d55bb1e705d837c03b73117d64",
+  "retrieved_utc": "2026-10-09T03:46:30Z",
+  "attempts": [
+    {
+      "url": "https://www.salesforce.com/news/wp-json/wp/v2/sf_press_release?search=results&per_page=100&page=1",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "2f8cc7db4d8845a281e79c147f68328566a4a3d55bb1e705d837c03b73117d64",
+      "retrieved_utc": "2026-10-09T03:46:30Z"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/autodesk-reschedules-earnings-date-to-be-a-day-earlier-301057302.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "63f1213e6d085467e24747221216cf27e873e76858b84547d579e7c3690dc900",
+  "retrieved_utc": "2026-10-09T04:06:48Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/autodesk-reschedules-earnings-date-to-be-a-day-earlier-301057302.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "63f1213e6d085467e24747221216cf27e873e76858b84547d579e7c3690dc900",
+      "retrieved_utc": "2026-10-09T04:06:48Z"
+    }
+  ]
+}

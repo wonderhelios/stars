@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-second-quarter-fiscal-year-2023-301827509.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "4120c008debc5276384e62d8ca1d57f2f63abc920bda49196c683248718870dc",
+  "retrieved_utc": "2026-10-09T03:32:26Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-second-quarter-fiscal-year-2023-301827509.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "4120c008debc5276384e62d8ca1d57f2f63abc920bda49196c683248718870dc",
+      "retrieved_utc": "2026-10-09T03:32:26Z"
+    }
+  ]
+}

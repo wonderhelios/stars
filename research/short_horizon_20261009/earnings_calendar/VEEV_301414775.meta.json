@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/veeva-to-release-fiscal-2022-third-quarter-results-on-december-1-2021-301414775.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "398fb3f7b8ac928a1cdd499b51faef4eb6c87383182f180c087a7a77e8d5f255",
+  "retrieved_utc": "2026-10-09T04:10:25Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/veeva-to-release-fiscal-2022-third-quarter-results-on-december-1-2021-301414775.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "398fb3f7b8ac928a1cdd499b51faef4eb6c87383182f180c087a7a77e8d5f255",
+      "retrieved_utc": "2026-10-09T04:10:25Z"
+    }
+  ]
+}

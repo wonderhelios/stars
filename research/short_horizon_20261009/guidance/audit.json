@@ -1,0 +1,22 @@
+{
+  "releases_verified": 22,
+  "independent_quarter_revenue_table_checks": 22,
+  "continuous_quarters": true,
+  "dates_match_listing": true,
+  "modifications_within_67_seconds": true,
+  "same_fiscal_year_and_quarter_verified": true,
+  "comparability_review": "FY2024 TFC change effective 2023-02-01 precedes the initial annual guidance used on 2023-03-01. Revisions compare the same fiscal year only; year-over-year growth is not a signal. No basis reset identified inside comparable annual guidance pairs in these releases; prepared-call material not fully archived.",
+  "paths": 12,
+  "trades_including_stress": 74,
+  "max_cash_error": 2.9103830456733704e-11,
+  "no_overlap": true,
+  "max_holding_hours": 174.5,
+  "prefix_checks": {
+    "2023-12-31": true,
+    "2025-06-30": true
+  },
+  "old_engine_default_regression_error": 0.0,
+  "research_only": true,
+  "not_survivorship_free": true,
+  "not_clean_holdout": true
+}

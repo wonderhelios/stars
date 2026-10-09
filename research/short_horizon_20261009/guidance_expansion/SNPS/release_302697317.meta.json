@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-first-quarter-fiscal-year-2026-302697317.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "299696bce1659253e5511fb16cfe5288ac634e36a1429a8e991351afddd38f8c",
+  "retrieved_utc": "2026-10-09T03:31:34Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-first-quarter-fiscal-year-2026-302697317.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "299696bce1659253e5511fb16cfe5288ac634e36a1429a8e991351afddd38f8c",
+      "retrieved_utc": "2026-10-09T03:31:34Z"
+    }
+  ]
+}

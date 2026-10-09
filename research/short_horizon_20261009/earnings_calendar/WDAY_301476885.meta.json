@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/workday-announces-date-of-fiscal-2022-fourth-quarter-and-full-year-financial-results-301476885.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "48f3c7ab41a7fa2e4bfdc1b138fe87aa594335c579da668eaa1f8cea026c4c65",
+  "retrieved_utc": "2026-10-09T04:11:13Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/workday-announces-date-of-fiscal-2022-fourth-quarter-and-full-year-financial-results-301476885.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "48f3c7ab41a7fa2e4bfdc1b138fe87aa594335c579da668eaa1f8cea026c4c65",
+      "retrieved_utc": "2026-10-09T04:11:13Z"
+    }
+  ]
+}

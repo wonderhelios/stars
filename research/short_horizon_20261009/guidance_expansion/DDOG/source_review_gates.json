@@ -1,0 +1,32 @@
+{
+  "rules": [
+    {
+      "symbol": "DDOG",
+      "published": "2021-05-06",
+      "source": "https://www.globenewswire.com/news-release/2021/05/06/2225061/0/en/datadog-announces-first-quarter-results.html",
+      "previous_source": "https://www.globenewswire.com/news-release/2021/02/11/2174547/0/en/datadog-announces-fourth-quarter-and-full-year-2020-results.html",
+      "action": "exclude_incomparable_guidance_pair",
+      "reason": "Sqreen closed April12 after prior full-year forecast; the prior announcement described a pending agreement but did not establish a matched consolidated forecast. No numerical scope bridge is available in the compared releases.",
+      "registered_before_expansion_performance": true
+    },
+    {
+      "symbol": "DDOG",
+      "published": "2025-05-06",
+      "source": "https://www.globenewswire.com/news-release/2025/05/06/3074862/0/en/datadog-announces-first-quarter-2025-financial-results.html",
+      "previous_source": "https://www.newsfilecorp.com/release/240623/Datadog-Announces-Fourth-Quarter-and-Fiscal-Year-2024-Financial-Results",
+      "action": "exclude_incomparable_guidance_pair",
+      "reason": "New acquisitions Eppo and Metaplane are reported after prior full-year forecast. Compared releases do not separately identify acquired revenue in original quarter expectations and remaining-year guidance.",
+      "registered_before_expansion_performance": true
+    },
+    {
+      "symbol": "DDOG",
+      "published": "2026-08-06",
+      "source": "https://www.globenewswire.com/news-release/2026/08/06/3340086/0/en/datadog-announces-second-quarter-2026-financial-results.html",
+      "previous_source": "https://www.globenewswire.com/news-release/2026/05/07/3289822/0/en/datadog-announces-first-quarter-2026-financial-results.html",
+      "action": "exclude_incomparable_guidance_pair",
+      "reason": "New Adaptive ML acquisition is reported after prior forecast. No comparable revenue bridge appears in the compared releases; do not assume zero revenue simply because it is a startup.",
+      "registered_before_expansion_performance": true
+    }
+  ],
+  "remaining_review": "Other acquisition effects and non-quarterly announcements remain under review. Exclusion here means unable to establish comparable scope, not evidence that the acquisition materially changed revenue."
+}

@@ -1,0 +1,615 @@
+{
+  "hypotheses": 12,
+  "bootstrap": 4999,
+  "method": "phase-average Sharpe influence-function circular block maxT vs zero, one-sided; exploratory family only",
+  "results": {
+    "full": {
+      "15": {
+        "etf_shock_rebound_h1": {
+          "p_fwer": 1.0,
+          "simultaneous_lower95": -0.9024134366448462
+        },
+        "etf_shock_rebound_h2": {
+          "p_fwer": 1.0,
+          "simultaneous_lower95": -0.6421014399091796
+        },
+        "etf_trend_dip_h1": {
+          "p_fwer": 1.0,
+          "simultaneous_lower95": -2.1926711715732368
+        },
+        "etf_trend_dip_h2": {
+          "p_fwer": 1.0,
+          "simultaneous_lower95": -1.098007378896807
+        },
+        "stock_gap_down_h1": {
+          "p_fwer": 1.0,
+          "simultaneous_lower95": -1.0659025340740795
+        },
+        "stock_gap_down_h2": {
+          "p_fwer": 1.0,
+          "simultaneous_lower95": -0.6107909235705623
+        },
+        "stock_gap_up_h1": {
+          "p_fwer": 0.8042,
+          "simultaneous_lower95": -0.48735784246935165
+        },
+        "stock_gap_up_h2": {
+          "p_fwer": 0.993,
+          "simultaneous_lower95": -0.436891183215642
+        },
+        "stock_residual_drop_h1": {
+          "p_fwer": 1.0,
+          "simultaneous_lower95": -1.5236621919092679
+        },
+        "stock_residual_drop_h2": {
+          "p_fwer": 0.9756,
+          "simultaneous_lower95": -0.4735133817850318
+        },
+        "stock_trend_dip_h1": {
+          "p_fwer": 1.0,
+          "simultaneous_lower95": -1.2175249187301818
+        },
+        "stock_trend_dip_h2": {
+          "p_fwer": 0.9818,
+          "simultaneous_lower95": -0.5307891260271449
+        }
+      },
+      "30": {
+        "etf_shock_rebound_h1": {
+          "p_fwer": 1.0,
+          "simultaneous_lower95": -0.880799928518434
+        },
+        "etf_shock_rebound_h2": {
+          "p_fwer": 1.0,
+          "simultaneous_lower95": -0.6489459643909443
+        },
+        "etf_trend_dip_h1": {
+          "p_fwer": 1.0,
+          "simultaneous_lower95": -2.166076231954667
+        },
+        "etf_trend_dip_h2": {
+          "p_fwer": 1.0,
+          "simultaneous_lower95": -1.0734873069353124
+        },
+        "stock_gap_down_h1": {
+          "p_fwer": 1.0,
+          "simultaneous_lower95": -1.0795125080568715
+        },
+        "stock_gap_down_h2": {
+          "p_fwer": 1.0,
+          "simultaneous_lower95": -0.5946196778709855
+        },
+        "stock_gap_up_h1": {
+          "p_fwer": 0.8072,
+          "simultaneous_lower95": -0.48627119200877367
+        },
+        "stock_gap_up_h2": {
+          "p_fwer": 0.9918,
+          "simultaneous_lower95": -0.41456808672629203
+        },
+        "stock_residual_drop_h1": {
+          "p_fwer": 1.0,
+          "simultaneous_lower95": -1.5150128688610431
+        },
+        "stock_residual_drop_h2": {
+          "p_fwer": 0.9664,
+          "simultaneous_lower95": -0.4718945919299936
+        },
+        "stock_trend_dip_h1": {
+          "p_fwer": 1.0,
+          "simultaneous_lower95": -1.1961314735465582
+        },
+        "stock_trend_dip_h2": {
+          "p_fwer": 0.9764,
+          "simultaneous_lower95": -0.5152239460651232
+        }
+      },
+      "60": {
+        "etf_shock_rebound_h1": {
+          "p_fwer": 1.0,
+          "simultaneous_lower95": -0.8949695527005922
+        },
+        "etf_shock_rebound_h2": {
+          "p_fwer": 1.0,
+          "simultaneous_lower95": -0.657857838405737
+        },
+        "etf_trend_dip_h1": {
+          "p_fwer": 1.0,
+          "simultaneous_lower95": -2.1691971125693525
+        },
+        "etf_trend_dip_h2": {
+          "p_fwer": 1.0,
+          "simultaneous_lower95": -1.0812171251546099
+        },
+        "stock_gap_down_h1": {
+          "p_fwer": 1.0,
+          "simultaneous_lower95": -1.135710562322809
+        },
+        "stock_gap_down_h2": {
+          "p_fwer": 1.0,
+          "simultaneous_lower95": -0.610122484516887
+        },
+        "stock_gap_up_h1": {
+          "p_fwer": 0.8206,
+          "simultaneous_lower95": -0.5409896940399141
+        },
+        "stock_gap_up_h2": {
+          "p_fwer": 0.991,
+          "simultaneous_lower95": -0.43121098002993324
+        },
+        "stock_residual_drop_h1": {
+          "p_fwer": 1.0,
+          "simultaneous_lower95": -1.5468642771719043
+        },
+        "stock_residual_drop_h2": {
+          "p_fwer": 0.9664,
+          "simultaneous_lower95": -0.49523983810282124
+        },
+        "stock_trend_dip_h1": {
+          "p_fwer": 1.0,
+          "simultaneous_lower95": -1.2328830153531358
+        },
+        "stock_trend_dip_h2": {
+          "p_fwer": 0.977,
+          "simultaneous_lower95": -0.5452621235611883
+        }
+      }
+    },
+    "2015-22": {
+      "15": {
+        "etf_shock_rebound_h1": {
+          "p_fwer": 1.0,
+          "simultaneous_lower95": -1.1662470162951033
+        },
+        "etf_shock_rebound_h2": {
+          "p_fwer": 1.0,
+          "simultaneous_lower95": -0.6830023518819017
+        },
+        "etf_trend_dip_h1": {
+          "p_fwer": 1.0,
+          "simultaneous_lower95": -2.2819291760390064
+        },
+        "etf_trend_dip_h2": {
+          "p_fwer": 1.0,
+          "simultaneous_lower95": -1.215410979631367
+        },
+        "stock_gap_down_h1": {
+          "p_fwer": 1.0,
+          "simultaneous_lower95": -1.2259840619789792
+        },
+        "stock_gap_down_h2": {
+          "p_fwer": 1.0,
+          "simultaneous_lower95": -0.6277853879454698
+        },
+        "stock_gap_up_h1": {
+          "p_fwer": 0.9976,
+          "simultaneous_lower95": -1.025955235180766
+        },
+        "stock_gap_up_h2": {
+          "p_fwer": 0.964,
+          "simultaneous_lower95": -0.44744644216565593
+        },
+        "stock_residual_drop_h1": {
+          "p_fwer": 1.0,
+          "simultaneous_lower95": -1.7534002736594052
+        },
+        "stock_residual_drop_h2": {
+          "p_fwer": 0.9684,
+          "simultaneous_lower95": -0.5959967103029717
+        },
+        "stock_trend_dip_h1": {
+          "p_fwer": 1.0,
+          "simultaneous_lower95": -1.4540379770720837
+        },
+        "stock_trend_dip_h2": {
+          "p_fwer": 0.9682,
+          "simultaneous_lower95": -0.6399409340447098
+        }
+      },
+      "30": {
+        "etf_shock_rebound_h1": {
+          "p_fwer": 1.0,
+          "simultaneous_lower95": -1.1467844390708624
+        },
+        "etf_shock_rebound_h2": {
+          "p_fwer": 1.0,
+          "simultaneous_lower95": -0.6728737180062796
+        },
+        "etf_trend_dip_h1": {
+          "p_fwer": 1.0,
+          "simultaneous_lower95": -2.275586273785712
+        },
+        "etf_trend_dip_h2": {
+          "p_fwer": 1.0,
+          "simultaneous_lower95": -1.234852486703104
+        },
+        "stock_gap_down_h1": {
+          "p_fwer": 1.0,
+          "simultaneous_lower95": -1.2568272365266568
+        },
+        "stock_gap_down_h2": {
+          "p_fwer": 1.0,
+          "simultaneous_lower95": -0.6100403699778649
+        },
+        "stock_gap_up_h1": {
+          "p_fwer": 0.9978,
+          "simultaneous_lower95": -1.034127684985703
+        },
+        "stock_gap_up_h2": {
+          "p_fwer": 0.9598,
+          "simultaneous_lower95": -0.4279965465126973
+        },
+        "stock_residual_drop_h1": {
+          "p_fwer": 1.0,
+          "simultaneous_lower95": -1.7518642821262698
+        },
+        "stock_residual_drop_h2": {
+          "p_fwer": 0.9682,
+          "simultaneous_lower95": -0.6020957216076547
+        },
+        "stock_trend_dip_h1": {
+          "p_fwer": 1.0,
+          "simultaneous_lower95": -1.4530281495654114
+        },
+        "stock_trend_dip_h2": {
+          "p_fwer": 0.9682,
+          "simultaneous_lower95": -0.649452776205908
+        }
+      },
+      "60": {
+        "etf_shock_rebound_h1": {
+          "p_fwer": 1.0,
+          "simultaneous_lower95": -1.1310596466844176
+        },
+        "etf_shock_rebound_h2": {
+          "p_fwer": 1.0,
+          "simultaneous_lower95": -0.6931674076699829
+        },
+        "etf_trend_dip_h1": {
+          "p_fwer": 1.0,
+          "simultaneous_lower95": -2.2314866814824024
+        },
+        "etf_trend_dip_h2": {
+          "p_fwer": 1.0,
+          "simultaneous_lower95": -1.2195872357815074
+        },
+        "stock_gap_down_h1": {
+          "p_fwer": 1.0,
+          "simultaneous_lower95": -1.3177650091257656
+        },
+        "stock_gap_down_h2": {
+          "p_fwer": 1.0,
+          "simultaneous_lower95": -0.5978363115978904
+        },
+        "stock_gap_up_h1": {
+          "p_fwer": 0.9976,
+          "simultaneous_lower95": -1.0628703562027013
+        },
+        "stock_gap_up_h2": {
+          "p_fwer": 0.9564,
+          "simultaneous_lower95": -0.42517674915528963
+        },
+        "stock_residual_drop_h1": {
+          "p_fwer": 1.0,
+          "simultaneous_lower95": -1.8030544657875658
+        },
+        "stock_residual_drop_h2": {
+          "p_fwer": 0.9692,
+          "simultaneous_lower95": -0.6453583868440473
+        },
+        "stock_trend_dip_h1": {
+          "p_fwer": 1.0,
+          "simultaneous_lower95": -1.4506131179568702
+        },
+        "stock_trend_dip_h2": {
+          "p_fwer": 0.9658,
+          "simultaneous_lower95": -0.654607845891284
+        }
+      }
+    },
+    "2023-24": {
+      "15": {
+        "etf_shock_rebound_h1": {
+          "p_fwer": 0.0796,
+          "simultaneous_lower95": -0.08146823788234991
+        },
+        "etf_shock_rebound_h2": {
+          "p_fwer": 0.9998,
+          "simultaneous_lower95": -1.1149788448085927
+        },
+        "etf_trend_dip_h1": {
+          "p_fwer": 1.0,
+          "simultaneous_lower95": -3.3556728786824515
+        },
+        "etf_trend_dip_h2": {
+          "p_fwer": 1.0,
+          "simultaneous_lower95": -2.2482595228006157
+        },
+        "stock_gap_down_h1": {
+          "p_fwer": 0.6058,
+          "simultaneous_lower95": -1.0282706208324908
+        },
+        "stock_gap_down_h2": {
+          "p_fwer": 0.9532,
+          "simultaneous_lower95": -1.1542825511243289
+        },
+        "stock_gap_up_h1": {
+          "p_fwer": 0.1826,
+          "simultaneous_lower95": -0.3142586764703099
+        },
+        "stock_gap_up_h2": {
+          "p_fwer": 0.9396,
+          "simultaneous_lower95": -0.7880931296035458
+        },
+        "stock_residual_drop_h1": {
+          "p_fwer": 0.9996,
+          "simultaneous_lower95": -1.9713006108406756
+        },
+        "stock_residual_drop_h2": {
+          "p_fwer": 0.9616,
+          "simultaneous_lower95": -1.0939135786516025
+        },
+        "stock_trend_dip_h1": {
+          "p_fwer": 0.9122,
+          "simultaneous_lower95": -1.2959290670074224
+        },
+        "stock_trend_dip_h2": {
+          "p_fwer": 0.8344,
+          "simultaneous_lower95": -1.0108471869063278
+        }
+      },
+      "30": {
+        "etf_shock_rebound_h1": {
+          "p_fwer": 0.0756,
+          "simultaneous_lower95": -0.06997390888699129
+        },
+        "etf_shock_rebound_h2": {
+          "p_fwer": 0.9996,
+          "simultaneous_lower95": -1.1462517445305536
+        },
+        "etf_trend_dip_h1": {
+          "p_fwer": 1.0,
+          "simultaneous_lower95": -3.332925959587194
+        },
+        "etf_trend_dip_h2": {
+          "p_fwer": 1.0,
+          "simultaneous_lower95": -2.16222963874517
+        },
+        "stock_gap_down_h1": {
+          "p_fwer": 0.5958,
+          "simultaneous_lower95": -0.9500000229259081
+        },
+        "stock_gap_down_h2": {
+          "p_fwer": 0.9522,
+          "simultaneous_lower95": -1.1524821901479863
+        },
+        "stock_gap_up_h1": {
+          "p_fwer": 0.194,
+          "simultaneous_lower95": -0.312800672931161
+        },
+        "stock_gap_up_h2": {
+          "p_fwer": 0.9232,
+          "simultaneous_lower95": -0.68394755202849
+        },
+        "stock_residual_drop_h1": {
+          "p_fwer": 0.9994,
+          "simultaneous_lower95": -1.8858498760054836
+        },
+        "stock_residual_drop_h2": {
+          "p_fwer": 0.9598,
+          "simultaneous_lower95": -1.0738432453522022
+        },
+        "stock_trend_dip_h1": {
+          "p_fwer": 0.9022,
+          "simultaneous_lower95": -1.1995271038219295
+        },
+        "stock_trend_dip_h2": {
+          "p_fwer": 0.8196,
+          "simultaneous_lower95": -0.9381781257854483
+        }
+      },
+      "60": {
+        "etf_shock_rebound_h1": {
+          "p_fwer": 0.0802,
+          "simultaneous_lower95": -0.07423939139538183
+        },
+        "etf_shock_rebound_h2": {
+          "p_fwer": 1.0,
+          "simultaneous_lower95": -1.166554199382238
+        },
+        "etf_trend_dip_h1": {
+          "p_fwer": 1.0,
+          "simultaneous_lower95": -3.2251113044805075
+        },
+        "etf_trend_dip_h2": {
+          "p_fwer": 1.0,
+          "simultaneous_lower95": -2.070694139051187
+        },
+        "stock_gap_down_h1": {
+          "p_fwer": 0.5918,
+          "simultaneous_lower95": -0.9122634533360331
+        },
+        "stock_gap_down_h2": {
+          "p_fwer": 0.968,
+          "simultaneous_lower95": -1.2007583223972533
+        },
+        "stock_gap_up_h1": {
+          "p_fwer": 0.2216,
+          "simultaneous_lower95": -0.36207779570508847
+        },
+        "stock_gap_up_h2": {
+          "p_fwer": 0.9196,
+          "simultaneous_lower95": -0.6058579435685826
+        },
+        "stock_residual_drop_h1": {
+          "p_fwer": 0.9996,
+          "simultaneous_lower95": -1.8294706692937224
+        },
+        "stock_residual_drop_h2": {
+          "p_fwer": 0.971,
+          "simultaneous_lower95": -1.0513325223864836
+        },
+        "stock_trend_dip_h1": {
+          "p_fwer": 0.8912,
+          "simultaneous_lower95": -1.0573889603974496
+        },
+        "stock_trend_dip_h2": {
+          "p_fwer": 0.7924,
+          "simultaneous_lower95": -0.8167067899033863
+        }
+      }
+    },
+    "2025-26": {
+      "15": {
+        "etf_shock_rebound_h1": {
+          "p_fwer": 0.953,
+          "simultaneous_lower95": -1.7076193623982663
+        },
+        "etf_shock_rebound_h2": {
+          "p_fwer": 1.0,
+          "simultaneous_lower95": -1.3845108116670461
+        },
+        "etf_trend_dip_h1": {
+          "p_fwer": 1.0,
+          "simultaneous_lower95": -3.20050193472342
+        },
+        "etf_trend_dip_h2": {
+          "p_fwer": 0.9998,
+          "simultaneous_lower95": -1.7002387600325053
+        },
+        "stock_gap_down_h1": {
+          "p_fwer": 1.0,
+          "simultaneous_lower95": -2.221073289610274
+        },
+        "stock_gap_down_h2": {
+          "p_fwer": 1.0,
+          "simultaneous_lower95": -1.6256875148918613
+        },
+        "stock_gap_up_h1": {
+          "p_fwer": 0.2228,
+          "simultaneous_lower95": -0.39951341158725495
+        },
+        "stock_gap_up_h2": {
+          "p_fwer": 1.0,
+          "simultaneous_lower95": -1.9085486851246691
+        },
+        "stock_residual_drop_h1": {
+          "p_fwer": 1.0,
+          "simultaneous_lower95": -2.4976565201262173
+        },
+        "stock_residual_drop_h2": {
+          "p_fwer": 0.9986,
+          "simultaneous_lower95": -1.2766246158885113
+        },
+        "stock_trend_dip_h1": {
+          "p_fwer": 1.0,
+          "simultaneous_lower95": -3.0368526971597967
+        },
+        "stock_trend_dip_h2": {
+          "p_fwer": 1.0,
+          "simultaneous_lower95": -2.0951391582894425
+        }
+      },
+      "30": {
+        "etf_shock_rebound_h1": {
+          "p_fwer": 0.9356,
+          "simultaneous_lower95": -1.6611873358095788
+        },
+        "etf_shock_rebound_h2": {
+          "p_fwer": 1.0,
+          "simultaneous_lower95": -1.4229150226028875
+        },
+        "etf_trend_dip_h1": {
+          "p_fwer": 1.0,
+          "simultaneous_lower95": -3.1911823996059985
+        },
+        "etf_trend_dip_h2": {
+          "p_fwer": 1.0,
+          "simultaneous_lower95": -1.5813062721759348
+        },
+        "stock_gap_down_h1": {
+          "p_fwer": 1.0,
+          "simultaneous_lower95": -2.0876874518056496
+        },
+        "stock_gap_down_h2": {
+          "p_fwer": 1.0,
+          "simultaneous_lower95": -1.5723594956319522
+        },
+        "stock_gap_up_h1": {
+          "p_fwer": 0.1912,
+          "simultaneous_lower95": -0.3747145329145607
+        },
+        "stock_gap_up_h2": {
+          "p_fwer": 1.0,
+          "simultaneous_lower95": -1.9889619892845696
+        },
+        "stock_residual_drop_h1": {
+          "p_fwer": 1.0,
+          "simultaneous_lower95": -2.359015429599525
+        },
+        "stock_residual_drop_h2": {
+          "p_fwer": 0.9986,
+          "simultaneous_lower95": -1.2712835190313165
+        },
+        "stock_trend_dip_h1": {
+          "p_fwer": 1.0,
+          "simultaneous_lower95": -2.860764376861684
+        },
+        "stock_trend_dip_h2": {
+          "p_fwer": 1.0,
+          "simultaneous_lower95": -2.053708619744305
+        }
+      },
+      "60": {
+        "etf_shock_rebound_h1": {
+          "p_fwer": 0.9218,
+          "simultaneous_lower95": -1.5234504285409436
+        },
+        "etf_shock_rebound_h2": {
+          "p_fwer": 1.0,
+          "simultaneous_lower95": -1.3047719648119918
+        },
+        "etf_trend_dip_h1": {
+          "p_fwer": 1.0,
+          "simultaneous_lower95": -3.0181782509779485
+        },
+        "etf_trend_dip_h2": {
+          "p_fwer": 1.0,
+          "simultaneous_lower95": -1.4565496442341224
+        },
+        "stock_gap_down_h1": {
+          "p_fwer": 1.0,
+          "simultaneous_lower95": -1.9320043361323276
+        },
+        "stock_gap_down_h2": {
+          "p_fwer": 1.0,
+          "simultaneous_lower95": -1.5465671271212509
+        },
+        "stock_gap_up_h1": {
+          "p_fwer": 0.1116,
+          "simultaneous_lower95": -0.20290517772720262
+        },
+        "stock_gap_up_h2": {
+          "p_fwer": 1.0,
+          "simultaneous_lower95": -1.8994916246629723
+        },
+        "stock_residual_drop_h1": {
+          "p_fwer": 1.0,
+          "simultaneous_lower95": -2.230477325718999
+        },
+        "stock_residual_drop_h2": {
+          "p_fwer": 0.9982,
+          "simultaneous_lower95": -1.0938131991557114
+        },
+        "stock_trend_dip_h1": {
+          "p_fwer": 1.0,
+          "simultaneous_lower95": -2.6391921807205168
+        },
+        "stock_trend_dip_h2": {
+          "p_fwer": 1.0,
+          "simultaneous_lower95": -1.9630639537258816
+        }
+      }
+    }
+  }
+}

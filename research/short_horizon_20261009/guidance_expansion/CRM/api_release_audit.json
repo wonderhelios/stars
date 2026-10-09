@@ -1,0 +1,590 @@
+[
+  {
+    "id": 42865,
+    "title": "Salesforce Announces Strong Third Quarter Fiscal 2021 Results",
+    "source": "https://www.salesforce.com/news/press-releases/2020/12/01/q3-results-news/",
+    "reported_fiscal_year": 2021,
+    "reported_quarter": 3,
+    "published_utc": "2020-12-01 21:11:40+00:00",
+    "modified_utc": "2020-12-02 23:34:55+00:00",
+    "available_after_utc": "2020-12-02 23:34:55+00:00",
+    "modified_delay_hours": 26.3875,
+    "body_sha256": "0509add25b9df9fcae0d7260a341a2d33c76d868213fc9b13fa2ca37d4debc4a",
+    "editor_notes": [],
+    "financial_image_sources": [
+      "https://www.salesforce.com/news/wp-content/uploads/sites/3/2020/12/earningstable10.png?w=580"
+    ],
+    "table_count": 0,
+    "guidance_paragraphs": [
+      "Initiates Fourth Quarter FY21 Revenue Guidance of Approximately $5.665 Billion to $5.675 Billion, up Approximately 17% Year-Over-Year",
+      "Raises FY21 Revenue Guidance to Approximately $21.10 Billion to $21.11 Billion, up Approximately 23% Year-Over-Year",
+      "Initiates First Quarter FY22 Revenue Guidance of Approximately $5.680 Billion to $5.715 Billion, up Approximately 17% Year-Over-Year",
+      "Initiates FY22 Revenue Guidance of Approximately $25.45 Billion to $25.55 Billion, up Approximately 21% Year-Over-Year which includes Approximately $600 Million related to the acquisition of Slack Technologies, Inc.",
+      "\u201cWe had another record quarter, and now we\u2019re raising our FY21 revenue guidance to $21.11 billion at the high end and initiating FY22 guidance of\u00a0$25.5 billion.\u00a0No other major enterprise software company is growing at this rate,\u201d said Marc Benioff, Chair & CEO, Salesforce. \u201cWe\u2019re rapidly moving to an all-digital world, where work happens wherever people are. Our results are being driven by the success of our customers and the relevance of our Customer 360 Platform in this new normal.\u201d",
+      "As of December 1, 2020, the Company is initiating its revenue guidance, GAAP earnings per share guidance, non-GAAP earnings per share guidance, and current remaining performance obligation growth guidance for its fourth quarter of fiscal year 2021. As of December 1, 2020, the Company is raising its revenue guidance, GAAP earnings per share guidance, and non-GAAP earnings per share guidance previously provided on August 25, 2020 for its full fiscal year 2021. As of December 1, 2020, the Company is initiating its GAAP operating margin guidance for its full fiscal year 2021. As of December 1, 2020, the Company is maintaining its non-GAAP operating margin guidance and operating cash flow guidance previously provided on August 25, 2020 for its full fiscal year 2021. As of December 1, 2020, the Company is initiating its revenue guidance for its first quarter of fiscal year 2022 and for its full fiscal year 2022."
+    ],
+    "eligibility": "pending exact quarterly actuals, image-table extraction, source-version and acquisition-scope verification"
+  },
+  {
+    "id": 44733,
+    "title": "Salesforce Announces Strong Fourth Quarter and Full Year Fiscal 2021 Results Raises FY22 Revenue Guidance to $25.65 Billion to $25.75 Billion",
+    "source": "https://www.salesforce.com/news/press-releases/2021/02/25/salesforce-reports-q4-2021-results/",
+    "reported_fiscal_year": 2021,
+    "reported_quarter": 4,
+    "published_utc": "2021-02-25 21:10:15+00:00",
+    "modified_utc": "2021-02-25 21:32:08+00:00",
+    "available_after_utc": "2021-02-25 21:32:08+00:00",
+    "modified_delay_hours": 0.3647222222222222,
+    "body_sha256": "a836e3f6d5d9736a52bda5c5bc324be52addae7755e308d2b67f47ccf33cd836",
+    "editor_notes": [],
+    "financial_image_sources": [
+      "https://www.salesforce.com/news/wp-content/uploads/sites/3/2021/02/image-1.png?w=1000",
+      "https://www.salesforce.com/news/wp-content/uploads/sites/3/2021/02/image-2-1.png?w=1000"
+    ],
+    "table_count": 0,
+    "guidance_paragraphs": [
+      "Raises First Quarter FY22 Revenue Guidance to Approximately $5.875 Billion to $5.885 Billion, up Approximately 21% Year-Over-Year",
+      "As of February 25, 2021, the company is initiating its GAAP earnings per share guidance, non-GAAP earnings per share guidance, and current remaining performance obligation growth guidance for its first quarter of fiscal year 2022. As of February 25, 2021, the company is raising its revenue guidance previously provided on December 1, 2020 for its first quarter of fiscal year 2022 and full fiscal year 2022. As of February 25, 2021 the company is initiating its operating cash flow guidance, GAAP earnings per share guidance, non-GAAP earnings per share guidance, GAAP operating margin guidance and non-GAAP operating margin guidance for its full fiscal year 2022."
+    ],
+    "eligibility": "pending exact quarterly actuals, image-table extraction, source-version and acquisition-scope verification"
+  },
+  {
+    "id": 47421,
+    "title": "Salesforce Announces Strong First Quarter Fiscal 2022 Results",
+    "source": "https://www.salesforce.com/news/press-releases/2021/05/27/salesforce-reports-q1-fy22-results/",
+    "reported_fiscal_year": 2022,
+    "reported_quarter": 1,
+    "published_utc": "2021-05-27 20:06:21+00:00",
+    "modified_utc": "2021-05-27 20:06:22+00:00",
+    "available_after_utc": "2021-05-27 20:06:22+00:00",
+    "modified_delay_hours": 0.0002777777777777778,
+    "body_sha256": "ef10bbdf3405414a0821a2888cb6b9643965bfd314b012829a99aaf0d251a5d9",
+    "editor_notes": [],
+    "financial_image_sources": [
+      "https://www.salesforce.com/news/wp-content/uploads/sites/3/2021/05/Table1.png?w=1000",
+      "https://www.salesforce.com/news/wp-content/uploads/sites/3/2021/05/Table2.png?w=1000"
+    ],
+    "table_count": 0,
+    "guidance_paragraphs": [
+      "Raises FY22 Revenue Guidance to $25.9 Billion to $26.0 Billion",
+      "Initiates Second Quarter FY22 Revenue Guidance of $6.22 Billion to $6.23 Billion, up Approximately 21% Year-Over-Year",
+      "\u201cWe had the best first quarter in our company\u2019s history,\u201d said Marc Benioff, Chair & CEO, Salesforce. \u201cWe believe our Customer 360 platform is proving to be the most relevant technology for companies accelerating out of the pandemic. With incredible momentum throughout our core business, we\u2019re raising our revenue guidance for this fiscal year by $250 million to approximately $26 billion and non-GAAP operating margin to 18 percent. We\u2019re on our path to reach $50 billion in revenue in FY26.\u201d",
+      "As of May 27, 2021, the company is initiating its revenue guidance, GAAP earnings per share guidance, non-GAAP earnings per share guidance, and current remaining performance obligation growth guidance for its second quarter of fiscal year 2022. As of May 27, 2021, the company is raising its revenue guidance previously provided on December 1, 2020 and updated on February 25, 2021 for its full fiscal year 2022. As of May 27, 2021 the company is raising its operating cash flow guidance, GAAP earnings per share guidance, non-GAAP earnings per share guidance, GAAP operating margin guidance and non-GAAP operating margin guidance previously provided on February 25, 2021 for its full fiscal year 2022."
+    ],
+    "eligibility": "pending exact quarterly actuals, image-table extraction, source-version and acquisition-scope verification"
+  },
+  {
+    "id": 50154,
+    "title": "Salesforce Announces Strong Second Quarter Fiscal 2022 Results",
+    "source": "https://www.salesforce.com/news/press-releases/2021/08/25/salesforce-reports-q2-2022-results-update/",
+    "reported_fiscal_year": 2022,
+    "reported_quarter": 2,
+    "published_utc": "2021-08-25 20:09:20+00:00",
+    "modified_utc": "2021-08-25 20:09:21+00:00",
+    "available_after_utc": "2021-08-25 20:09:21+00:00",
+    "modified_delay_hours": 0.0002777777777777778,
+    "body_sha256": "753c88b8cf61f18ff6bb124685e2863781dbe62447ef705dcf4a473341ee154a",
+    "editor_notes": [],
+    "financial_image_sources": [
+      "https://www.salesforce.com/news/wp-content/uploads/sites/3/2021/08/tabl-1.png?w=1000",
+      "https://www.salesforce.com/news/wp-content/uploads/sites/3/2021/08/tabl-2.png?w=1000"
+    ],
+    "table_count": 0,
+    "guidance_paragraphs": [
+      "Raises FY22 Revenue Guidance to $26.2 Billion to $26.3 Billion",
+      "Initiates Third Quarter FY22 Revenue Guidance of $6.78 Billion to $6.79 Billion, up Approximately 25% Year-Over-Year",
+      "As of August 25, 2021, the company is initiating its revenue guidance, GAAP earnings per share guidance, non-GAAP earnings per share guidance, and current remaining performance obligation growth guidance for its third quarter of fiscal year 2022. As of August 25, 2021, the company is raising its revenue guidance previously provided on December 1, 2020 and updated on February 25, 2021 and May 27, 2021 for its full fiscal year 2022. As of August 25, 2021 the company is raising its operating cash flow guidance, GAAP earnings per share guidance, non-GAAP earnings per share guidance, GAAP operating margin guidance and non-GAAP operating margin guidance previously provided on February 25, 2021 and updated on May 27, 2021 for its full fiscal year 2022."
+    ],
+    "eligibility": "pending exact quarterly actuals, image-table extraction, source-version and acquisition-scope verification"
+  },
+  {
+    "id": 52875,
+    "title": "Salesforce Announces Strong Third Quarter Fiscal 2022 Results",
+    "source": "https://www.salesforce.com/news/press-releases/2021/11/30/q3-fy22-results-newsroom/",
+    "reported_fiscal_year": 2022,
+    "reported_quarter": 3,
+    "published_utc": "2021-11-30 21:11:06+00:00",
+    "modified_utc": "2021-12-01 01:00:01+00:00",
+    "available_after_utc": "2021-12-01 01:00:01+00:00",
+    "modified_delay_hours": 3.8152777777777778,
+    "body_sha256": "e828e2079526e067274d479162da47e5fa2a4d30b1a963e27a8d4759fe7313c7",
+    "editor_notes": [],
+    "financial_image_sources": [
+      "https://www.salesforce.com/news/wp-content/uploads/sites/3/2021/11/top.png?w=1000",
+      "https://www.salesforce.com/news/wp-content/uploads/sites/3/2021/11/btm.png?w=1000"
+    ],
+    "table_count": 0,
+    "guidance_paragraphs": [
+      "Reiterates FY23 Revenue Guidance of $31.7 Billion to $31.8 Billion",
+      "Initiates Fourth Quarter FY22 Revenue Guidance of $7.224 Billion to $7.234 Billion, up Approximately 24% Year-Over-Year",
+      "Raises FY22 Revenue Guidance to $26.39 Billion to $26.40 Billion, up Approximately 24% Year-Over-Year",
+      "Initiates First Quarter FY23 Revenue Guidance of $7.215 Billion to $7.250 Billion, up Approximately 21% to 22% Year-Over-Year",
+      "As of November 30, 2021, the company is initiating its revenue guidance, GAAP earnings per share guidance, non-GAAP earnings per share guidance, and current remaining performance obligation growth guidance for its fourth quarter of fiscal year 2022. As of November 30, 2021, the company is raising its revenue guidance previously\u00a0 updated on September 23, 2021 for its full fiscal year 2022. As of November 30, 2021 the company is raising its operating cash flow guidance, GAAP earnings per share guidance, non-GAAP earnings per share guidance, GAAP operating margin guidance and non-GAAP operating margin guidance previously updated on August 25, 2021 for its full fiscal year 2022. As of November 30, 2021 the company is initiating its revenue guidance for its first quarter of fiscal year 2023. As of November 30, 2021 the company is reiterating its revenue guidance, GAAP operating margin guidance and non-GAAP operating margin guidance for its full fiscal year 2023 previously provided on September 23, 2021.",
+      "(2) The percentages shown above have been calculated based on the midpoint of the low and high ends of the revenue guidance for full years FY22 and FY23."
+    ],
+    "eligibility": "pending exact quarterly actuals, image-table extraction, source-version and acquisition-scope verification"
+  },
+  {
+    "id": 54615,
+    "title": "Salesforce Announces Record Fourth Quarter and Full Year Fiscal 2022 Results",
+    "source": "https://www.salesforce.com/news/press-releases/2022/03/01/update-salesforce-reports-q4-results/",
+    "reported_fiscal_year": 2022,
+    "reported_quarter": 4,
+    "published_utc": "2022-03-01 21:08:04+00:00",
+    "modified_utc": "2022-03-01 21:08:05+00:00",
+    "available_after_utc": "2022-03-01 21:08:05+00:00",
+    "modified_delay_hours": 0.0002777777777777778,
+    "body_sha256": "5de285458a4ed6183434b2897d67164aa08703589822b881e6eadb3caa64c3f7",
+    "editor_notes": [],
+    "financial_image_sources": [
+      "https://www.salesforce.com/news/wp-content/uploads/sites/3/2022/03/top.png?w=1024",
+      "https://www.salesforce.com/news/wp-content/uploads/sites/3/2022/03/btm.png?w=1024"
+    ],
+    "table_count": 0,
+    "guidance_paragraphs": [
+      "Raises FY23 Revenue Guidance to $32.0 Billion to $32.1 Billion",
+      "Raises First Quarter FY23 Revenue Guidance to $7.37 Billion to $7.38 Billion, up Approximately 24% Year-Over-Year",
+      "\u201cWe had another phenomenal quarter and full-year of financial results,\u201d said Marc Benioff, Chair and Co-CEO of Salesforce. \u201cAs we continue to see tremendous demand from customers, we\u2019re raising our FY23 revenue guidance to $32.1 billion at the high-end of range, with non-GAAP operating margin of 20%, and operating cash flow growth of 22% year-over-year.\u201d",
+      "As of March 1, 2022, the company is initiating its first quarter and full fiscal year 2023 GAAP and non-GAAP earnings per share guidance, its first quarter current remaining performance obligation growth guidance, and its full fiscal year 2023 operating cash flow growth guidance. As of March 1, 2022, the company is raising its revenue guidance previously updated on November 30, 2021 for its first quarter and full fiscal year 2023. As of March 1, 2022 the company is raising its GAAP operating margin guidance and reiterating its non-GAAP operating margin guidance previously updated on November 30, 2021 for its full fiscal year 2023."
+    ],
+    "eligibility": "pending exact quarterly actuals, image-table extraction, source-version and acquisition-scope verification"
+  },
+  {
+    "id": 56762,
+    "title": "Salesforce Announces Strong First Quarter Fiscal 2023 Results",
+    "source": "https://www.salesforce.com/news/press-releases/2022/05/31/q1-fy23-results-update/",
+    "reported_fiscal_year": 2023,
+    "reported_quarter": 1,
+    "published_utc": "2022-05-31 20:07:47+00:00",
+    "modified_utc": "2022-05-31 20:08:35+00:00",
+    "available_after_utc": "2022-05-31 20:08:35+00:00",
+    "modified_delay_hours": 0.013333333333333334,
+    "body_sha256": "cc38de0d84de3843afacd45793a732c5357a2e3a06568fc1d817d2c5bfe9b10b",
+    "editor_notes": [],
+    "financial_image_sources": [
+      "https://www.salesforce.com/news/wp-content/uploads/sites/3/2022/05/earngraph.png?w=1000"
+    ],
+    "table_count": 0,
+    "guidance_paragraphs": [
+      "Initiates Second Quarter FY23 Revenue Guidance of $7.69 Billion to $7.70 Billion, up ~21% Year-Over-Year",
+      "Updates Full Year FY23 Revenue Guidance to $31.7 Billion to $31.8 Billion, up ~20% Year-Over-Year",
+      "As of May 31, 2022, the company is initiating its second quarter GAAP and non-GAAP earnings (loss) per share guidance, second quarter current remaining performance obligation growth guidance, and second quarter revenue guidance. As of May 31, 2022, the company is updating its full year FY23 revenue guidance, full year FY23 GAAP and non-GAAP earnings per share guidance, full year GAAP operating margin guidance, and full year non-GAAP operating margin guidance. As of May 31, 2022 the company is reiterating its full year FY23 operating cash flow guidance."
+    ],
+    "eligibility": "pending exact quarterly actuals, image-table extraction, source-version and acquisition-scope verification"
+  },
+  {
+    "id": 58186,
+    "title": "Salesforce Announces Strong Second Quarter Fiscal 2023 Results",
+    "source": "https://www.salesforce.com/news/press-releases/2022/08/24/q2-fy23-results-earnings-update/",
+    "reported_fiscal_year": 2023,
+    "reported_quarter": 2,
+    "published_utc": "2022-08-24 20:08:28+00:00",
+    "modified_utc": "2022-08-24 20:08:29+00:00",
+    "available_after_utc": "2022-08-24 20:08:29+00:00",
+    "modified_delay_hours": 0.0002777777777777778,
+    "body_sha256": "a5c7e87731a8964fe3738b3e01ba90b65b211806f7962997d8724c637e2665e6",
+    "editor_notes": [],
+    "financial_image_sources": [
+      "https://www.salesforce.com/news/wp-content/uploads/sites/3/2022/08/ear.png?w=1024"
+    ],
+    "table_count": 0,
+    "guidance_paragraphs": [
+      "Third Quarter FY23 Revenue Guidance of $7.82 Billion to $7.83 Billion, up ~14% Y/Y, 18% CC",
+      "Full Year FY23 Revenue Guidance of $30.9 Billion to $31.0 Billion, up ~17% Y/Y, 20% in CC",
+      "As of August 24, 2022, the company is initiating its third quarter GAAP and non-GAAP EPS guidance, current remaining performance obligation growth guidance, and revenue guidance. The company is updating its full year FY23 revenue guidance, GAAP and non-GAAP EPS guidance, GAAP and non-GAAP operating margin guidance, and operating cash flow guidance."
+    ],
+    "eligibility": "pending exact quarterly actuals, image-table extraction, source-version and acquisition-scope verification"
+  },
+  {
+    "id": 61070,
+    "title": "Salesforce Announces Solid Third Quarter Fiscal 2023 Results",
+    "source": "https://www.salesforce.com/news/press-releases/2022/11/30/q3-fy23-results-update/",
+    "reported_fiscal_year": 2023,
+    "reported_quarter": 3,
+    "published_utc": "2022-11-30 21:05:37+00:00",
+    "modified_utc": "2022-11-30 21:05:38+00:00",
+    "available_after_utc": "2022-11-30 21:05:38+00:00",
+    "modified_delay_hours": 0.0002777777777777778,
+    "body_sha256": "0da138120268d23250e56c4c17bcc697f8a4d23ecbfc5bc368ae6d445404b083",
+    "editor_notes": [],
+    "financial_image_sources": [
+      "https://www.salesforce.com/news/wp-content/uploads/sites/3/2022/11/t1.png?w=1000",
+      "https://www.salesforce.com/news/wp-content/uploads/sites/3/2022/11/t2.png?w=1000"
+    ],
+    "table_count": 0,
+    "guidance_paragraphs": [
+      "Fourth Quarter FY23 Revenue Guidance of $7.932 Billion to $8.032 Billion, up 8% to 10% Y/Y, 12% to 13% CC",
+      "Full Year FY23 Revenue Guidance of $30.9 Billion to $31.0 Billion, up 17% Y/Y, 20% CC",
+      "As of November 30, 2022, the Company is initiating its fourth quarter GAAP and non-GAAP EPS guidance, current remaining performance obligation growth guidance, and revenue guidance. The Company is updating its full year FY23 revenue guidance, GAAP and non-GAAP EPS guidance, GAAP and non-GAAP operating margin guidance, and operating cash flow guidance."
+    ],
+    "eligibility": "pending exact quarterly actuals, image-table extraction, source-version and acquisition-scope verification"
+  },
+  {
+    "id": 63081,
+    "title": "Salesforce Announces Strong Fourth Quarter and Full Fiscal 2023 Results",
+    "source": "https://www.salesforce.com/news/press-releases/2023/03/01/q4-fy23-results-update/",
+    "reported_fiscal_year": 2023,
+    "reported_quarter": 4,
+    "published_utc": "2023-03-01 21:00:00+00:00",
+    "modified_utc": "2023-08-30 21:38:25+00:00",
+    "available_after_utc": "2023-08-30 21:38:25+00:00",
+    "modified_delay_hours": 4368.640277777778,
+    "body_sha256": "7d7ab65cd52d31e8153805065c1398216f153a39da0d2566002e9cfcd25d5edc",
+    "editor_notes": [
+      "Editor\u2019s Note: AI Cloud, Einstein GPT, and other cloud GPT products are now Einstein. For the latest on Salesforce Einstein, go here ."
+    ],
+    "financial_image_sources": [
+      "https://www.salesforce.com/news/wp-content/uploads/sites/3/2023/03/Screenshot-2023-03-01-at-8.39.21-AM.png?w=954",
+      "https://www.salesforce.com/news/wp-content/uploads/sites/3/2023/03/Screenshot-2023-03-01-at-8.40.42-AM.png?w=1024"
+    ],
+    "table_count": 0,
+    "guidance_paragraphs": [
+      "Full Year FY24 Revenue Guidance of $34.5 Billion to $34.7 Billion, up ~10% Y/Y",
+      "As of March 1, 2023, the Company is initiating its first quarter GAAP and non-GAAP EPS guidance, current remaining performance obligation growth guidance, and revenue guidance. The Company is initiating its full year FY24 revenue guidance, GAAP and non-GAAP EPS guidance, GAAP and non-GAAP operating margin guidance, and operating cash flow guidance."
+    ],
+    "eligibility": "pending exact quarterly actuals, image-table extraction, source-version and acquisition-scope verification"
+  },
+  {
+    "id": 66177,
+    "title": "Salesforce Announces Strong First Quarter Fiscal 2024 Results",
+    "source": "https://www.salesforce.com/news/press-releases/2023/05/31/fy24-q1-earnings/",
+    "reported_fiscal_year": 2024,
+    "reported_quarter": 1,
+    "published_utc": "2023-05-31 20:05:00+00:00",
+    "modified_utc": "2023-05-31 20:07:38+00:00",
+    "available_after_utc": "2023-05-31 20:07:38+00:00",
+    "modified_delay_hours": 0.04388888888888889,
+    "body_sha256": "8d110cc76f110bf9a0077b5057642ce1521b8eaf4b3ab3dca20c04bb704fe6c8",
+    "editor_notes": [],
+    "financial_image_sources": [
+      "https://www.salesforce.com/news/wp-content/uploads/sites/3/2023/05/1-1.png?w=1024",
+      "https://www.salesforce.com/news/wp-content/uploads/sites/3/2023/05/3-1.png?w=1024"
+    ],
+    "table_count": 0,
+    "guidance_paragraphs": [
+      "Initiates Second Quarter FY24 Revenue Guidance of $8.51 Billion to $8.53 Billion, up ~10% Y/Y",
+      "Reiterates Full Year FY24 Revenue Guidance of $34.5 Billion to $34.7 Billion, up ~10% Y/Y",
+      "As of May 31, 2023, the Company is initiating its second quarter GAAP and non-GAAP EPS guidance, current remaining performance obligation growth guidance, and revenue guidance. The Company is reiterating its full year FY24 revenue guidance and updating its GAAP and non-GAAP EPS guidance, GAAP and non-GAAP operating margin guidance, and operating cash flow guidance."
+    ],
+    "eligibility": "pending exact quarterly actuals, image-table extraction, source-version and acquisition-scope verification"
+  },
+  {
+    "id": 69964,
+    "title": "Salesforce Announces Strong Second Quarter Fiscal 2024 Results",
+    "source": "https://www.salesforce.com/news/press-releases/2023/08/30/fy24-q2-earnings/",
+    "reported_fiscal_year": 2024,
+    "reported_quarter": 2,
+    "published_utc": "2023-08-30 20:05:00+00:00",
+    "modified_utc": "2023-08-30 22:12:48+00:00",
+    "available_after_utc": "2023-08-30 22:12:48+00:00",
+    "modified_delay_hours": 2.13,
+    "body_sha256": "fbaa04ce67bcacbf2dd2e750499b8e36919d8b87e4d36a9fd7bb11e992f3459d",
+    "editor_notes": [],
+    "financial_image_sources": [
+      "https://www.salesforce.com/news/wp-content/uploads/sites/3/2023/08/Screenshot-2023-08-30-at-11.36.19-AM.png?w=1024",
+      "https://www.salesforce.com/news/wp-content/uploads/sites/3/2023/08/Screenshot-2023-08-30-at-11.38.37-AM.png?w=1024"
+    ],
+    "table_count": 0,
+    "guidance_paragraphs": [
+      "Initiates Third Quarter FY24 Revenue Guidance of $8.70 Billion to $8.72 Billion, up ~11% Y/Y",
+      "Raises Full Year FY24 Revenue Guidance to $34.7 Billion to $34.8 Billion, up ~11% Y/Y",
+      "\u201cOur transformation drove our strong second quarter results, delivering revenue of $8.6 billion and record GAAP and non-GAAP operating margins,\u201d said Marc Benioff, Chair and CEO of Salesforce. \u201cBased on our performance and what we see in the back half of the year, we\u2019re raising our fiscal year \u201824 revenue, operating margin, and operating cash flow growth guidance. As the #1 AI CRM, with industry-leading clouds, Einstein, Data Cloud, MuleSoft, Slack and Tableau, all integrated on one trusted, unified platform, we\u2019re leading our customers into the new AI era.\u201d",
+      "As of August 30, 2023, the Company is initiating its third quarter GAAP and non-GAAP diluted EPS guidance, current remaining performance obligation growth guidance, and revenue guidance. The Company is raising its full year FY24 revenue guidance, GAAP and non-GAAP diluted EPS guidance, GAAP and non-GAAP operating margin guidance, and operating cash flow growth guidance."
+    ],
+    "eligibility": "pending exact quarterly actuals, image-table extraction, source-version and acquisition-scope verification"
+  },
+  {
+    "id": 72531,
+    "title": "Salesforce Announces Strong Third Quarter Fiscal 2024 Results",
+    "source": "https://www.salesforce.com/news/press-releases/2023/11/29/fy24-q3-earnings/",
+    "reported_fiscal_year": 2024,
+    "reported_quarter": 3,
+    "published_utc": "2023-11-29 21:02:00+00:00",
+    "modified_utc": "2024-09-16 18:09:47+00:00",
+    "available_after_utc": "2024-09-16 18:09:47+00:00",
+    "modified_delay_hours": 7005.129722222222,
+    "body_sha256": "8f48e23ee148f8018a259d79ec11e0fbc24f424d488e085d49bc1e2e969eddb3",
+    "editor_notes": [],
+    "financial_image_sources": [
+      "https://www.salesforce.com/news/wp-content/uploads/sites/3/2023/11/table-1.png?w=1024",
+      "https://www.salesforce.com/news/wp-content/uploads/sites/3/2023/11/table-2.png?w=1024"
+    ],
+    "table_count": 0,
+    "guidance_paragraphs": [
+      "Initiates Fourth Quarter FY24 Revenue Guidance of $9.18 Billion to $9.23 Billion, up 10% Y/Y",
+      "Narrows Full Year FY24 Revenue Guidance to $34.75 Billion to $34.8 Billion, up 11% Y/Y",
+      "\u201cWe had another strong quarter of executing on our profitable growth plan we set in motion last year, delivering $8.7 billion in revenue and again raising our operating margin guidance for this fiscal year,\u201d said Marc Benioff, Chair and CEO, Salesforce. \u201cWe\u2019re now the third largest enterprise software company by revenue, the number one AI CRM and the number one enterprise apps company.\u00a0 Most importantly, we\u2019re bringing CRM, data, AI and trust together in a single, integrated platform, leading our customers into a new era of incredible productivity and growth.\u201d",
+      "As of November 29, 2023, the Company is initiating its fourth quarter GAAP and non-GAAP diluted EPS guidance, current remaining performance obligation growth guidance, and revenue guidance. The Company is updating its full year FY24 revenue guidance and raising its GAAP and non-GAAP diluted EPS guidance, GAAP and non-GAAP operating margin guidance, and operating cash flow growth guidance."
+    ],
+    "eligibility": "pending exact quarterly actuals, image-table extraction, source-version and acquisition-scope verification"
+  },
+  {
+    "id": 75291,
+    "title": "Salesforce Announces Strong Fourth Quarter Fiscal 2024 Results",
+    "source": "https://www.salesforce.com/news/press-releases/2024/02/28/fy24-q4-earnings/",
+    "reported_fiscal_year": 2024,
+    "reported_quarter": 4,
+    "published_utc": "2024-02-28 21:01:00+00:00",
+    "modified_utc": "2025-03-28 22:24:57+00:00",
+    "available_after_utc": "2025-03-28 22:24:57+00:00",
+    "modified_delay_hours": 9457.399166666666,
+    "body_sha256": "840b0f52133f03d37f6f9eebf44b50ab3a1fdaf3596b25c562d9e9742bb22129",
+    "editor_notes": [
+      "Editor\u2019s note: Einstein 1 Platform is now the Salesforce Platform. For the latest, go here ."
+    ],
+    "financial_image_sources": [
+      "https://www.salesforce.com/news/wp-content/uploads/sites/3/2024/02/Screenshot-2024-02-28-at-10.58.47\u202fAM.png?w=991",
+      "https://www.salesforce.com/news/wp-content/uploads/sites/3/2024/02/Screenshot-2024-02-28-at-10.59.41\u202fAM.png?w=984",
+      "https://www.salesforce.com/news/wp-content/uploads/sites/3/2024/02/Screenshot-2024-02-28-at-11.00.14\u202fAM.png?w=998"
+    ],
+    "table_count": 0,
+    "guidance_paragraphs": [
+      "Initiates Full Year FY25 Revenue Guidance of $37.7 Billion to $38.0 Billion, up 8% \u2013 9% Y/Y",
+      "Initiates Full Year FY25 Subscription & Support Revenue Growth Guidance of Approximately 10% Y/Y, Slightly Above 10% Y/Y CC",
+      "As of February 28, 2024, the Company is initiating its first quarter GAAP and non-GAAP diluted EPS guidance, current remaining performance obligation growth guidance, and revenue guidance. The Company is initiating its full year FY25 revenue guidance, GAAP and non-GAAP diluted EPS guidance, GAAP and non-GAAP operating margin guidance, subscription and support revenue growth guidance, and operating cash flow growth guidance."
+    ],
+    "eligibility": "pending exact quarterly actuals, image-table extraction, source-version and acquisition-scope verification"
+  },
+  {
+    "id": 77788,
+    "title": "Salesforce Announces First Quarter Fiscal 2025 Results",
+    "source": "https://www.salesforce.com/news/press-releases/2024/05/29/fy25-q1-earnings/",
+    "reported_fiscal_year": 2025,
+    "reported_quarter": 1,
+    "published_utc": "2024-05-29 20:02:00+00:00",
+    "modified_utc": "2024-05-29 22:42:30+00:00",
+    "available_after_utc": "2024-05-29 22:42:30+00:00",
+    "modified_delay_hours": 2.675,
+    "body_sha256": "097222d3781dd26dea4955ed3a1fe3eed5cc33d4755143ffe9bd1890ffd76e20",
+    "editor_notes": [],
+    "financial_image_sources": [
+      "https://www.salesforce.com/news/wp-content/uploads/sites/3/2024/05/Screenshot-2024-05-29-at-10.28.16\u202fAM.png?w=790",
+      "https://www.salesforce.com/news/wp-content/uploads/sites/3/2024/05/Screenshot-2024-05-29-at-10.28.43\u202fAM.png?w=789"
+    ],
+    "table_count": 0,
+    "guidance_paragraphs": [
+      "Initiates Second Quarter FY25 Revenue Guidance of $9.20 Billion to $9.25 Billion, up 7% \u2013 8% Y/Y",
+      "Maintains Full Year FY25 Revenue Guidance of $37.7 Billion to $38.0 Billion, up 8% \u2013 9% Y/Y and Lowers Full Year FY25 Subscription & Support Revenue Growth Guidance to Slightly Below 10% \u00a0 Y/Y & Approximately 10% in CC"
+    ],
+    "eligibility": "pending exact quarterly actuals, image-table extraction, source-version and acquisition-scope verification"
+  },
+  {
+    "id": 80617,
+    "title": "Salesforce Announces Second Quarter Fiscal 2025 Results",
+    "source": "https://www.salesforce.com/news/press-releases/2024/08/28/fy25-q2-earnings/",
+    "reported_fiscal_year": 2025,
+    "reported_quarter": 2,
+    "published_utc": "2024-08-28 20:01:00+00:00",
+    "modified_utc": "2024-09-16 13:10:58+00:00",
+    "available_after_utc": "2024-09-16 13:10:58+00:00",
+    "modified_delay_hours": 449.1661111111111,
+    "body_sha256": "3af78698bf06da25c64b58af02c71033d604b3c1253adc914631a1b3c9c54b83",
+    "editor_notes": [],
+    "financial_image_sources": [
+      "https://www.salesforce.com/news/wp-content/uploads/sites/3/2024/08/Screenshot-2024-08-28-at-12.22.06\u202fPM.png?w=929",
+      "https://www.salesforce.com/news/wp-content/uploads/sites/3/2024/08/Screenshot-2024-08-28-at-11.21.51\u202fAM.png?w=887"
+    ],
+    "table_count": 0,
+    "guidance_paragraphs": [
+      "Initiates Third Quarter FY25 Revenue Guidance of $9.31 Billion to $9.36 Billion, up 7% Y/Y",
+      "Maintains Full Year FY25 Revenue Guidance of $37.7 Billion to $38.0 Billion, up 8% \u2013 9% Y/Y and Maintains Full Year FY25 Subscription & Support Revenue Growth Guidance of Slightly Below 10% \u00a0 Y/Y & Approximately 10% in CC",
+      "\u201cIn Q2, we delivered strong performance across revenue, cash flow, margin and cRPO, and raised our fiscal year non-GAAP operating margin and cash flow growth guidance,\u201d said Marc Benioff, Chair and CEO, Salesforce.\u00a0 \u201cWith our new Agentforce AI platform, we\u2019re reimagining enterprise software for a new world where humans with autonomous Agents drive customer success together. Salesforce is the only company with the leading apps, trusted data and agent-first platform to deliver this vision at scale and help companies realize the incredible benefits of AI.\u201d"
+    ],
+    "eligibility": "pending exact quarterly actuals, image-table extraction, source-version and acquisition-scope verification"
+  },
+  {
+    "id": 83617,
+    "title": "Salesforce Announces Third Quarter Fiscal 2025 Results",
+    "source": "https://www.salesforce.com/news/press-releases/2024/12/03/salesforce-announces-third-quarter-fiscal-2025-results/",
+    "reported_fiscal_year": 2025,
+    "reported_quarter": 3,
+    "published_utc": "2024-12-03 21:01:00+00:00",
+    "modified_utc": "2024-12-03 21:04:29+00:00",
+    "available_after_utc": "2024-12-03 21:04:29+00:00",
+    "modified_delay_hours": 0.058055555555555555,
+    "body_sha256": "d9c9e4f4e1eb82d9254c8a0382d3043ddf94184fd587010aa0bd916ff55a8e4c",
+    "editor_notes": [],
+    "financial_image_sources": [
+      "https://www.salesforce.com/news/wp-content/uploads/sites/3/2024/12/Screenshot-2024-12-03-at-10.57.29\u202fAM.png?w=1024",
+      "https://www.salesforce.com/news/wp-content/uploads/sites/3/2024/12/Screenshot-2024-12-03-at-10.58.16\u202fAM.png?w=1024",
+      "https://www.salesforce.com/news/wp-content/uploads/sites/3/2024/12/Screenshot-2024-12-03-at-10.59.26\u202fAM.png?w=1024"
+    ],
+    "table_count": 0,
+    "guidance_paragraphs": [
+      "Initiates Fourth Quarter FY25 Revenue Guidance of $9.90 Billion \u2013 $10.10 Billion, up 7% \u2013 9% Y/Y",
+      "Raises Low End of Full Year FY25 Revenue Guidance to $37.8 Billion to $38.0 Billion, up 8% \u2013 9% Y/Y and Maintains Full Year FY25 Subscription & Support Revenue Growth Guidance of Slightly Below 10% Y/Y & Approximately 10% in CC"
+    ],
+    "eligibility": "pending exact quarterly actuals, image-table extraction, source-version and acquisition-scope verification"
+  },
+  {
+    "id": 84882,
+    "title": "Salesforce Announces Fourth Quarter and Fiscal Year 2025 Results",
+    "source": "https://www.salesforce.com/news/press-releases/2025/02/26/fy25-q4-earnings/",
+    "reported_fiscal_year": 2025,
+    "reported_quarter": 4,
+    "published_utc": "2025-02-26 21:03:09+00:00",
+    "modified_utc": "2025-02-26 21:03:10+00:00",
+    "available_after_utc": "2025-02-26 21:03:10+00:00",
+    "modified_delay_hours": 0.0002777777777777778,
+    "body_sha256": "07aad3fdaad0f8823684bef55562213ac11f796d8cf2fcbe522086c614598863",
+    "editor_notes": [],
+    "financial_image_sources": [
+      "https://www.salesforce.com/news/wp-content/uploads/sites/3/2025/02/Screenshot-2025-02-26-at-9.20.19\u202fAM.png?w=1024",
+      "https://www.salesforce.com/news/wp-content/uploads/sites/3/2025/02/Screenshot-2025-02-26-at-9.21.13\u202fAM.png?w=1024",
+      "https://www.salesforce.com/news/wp-content/uploads/sites/3/2025/02/Screenshot-2025-02-26-at-9.21.54\u202fAM.png?w=1024"
+    ],
+    "table_count": 0,
+    "guidance_paragraphs": [
+      "Initiates revenue guidance of $40.5 billion to $40.9 billion, up 7% \u2013 8% both Y/Y & in CC",
+      "Initiates subscription & support revenue growth guidance of approximately 8.5% Y/Y & approximately 9% in CC"
+    ],
+    "eligibility": "pending exact quarterly actuals, image-table extraction, source-version and acquisition-scope verification"
+  },
+  {
+    "id": 87643,
+    "title": "Salesforce Reports Record First Quarter Fiscal 2026 Results Exceeds Guidance Across All Metrics; cRPO up 12% Y/Y",
+    "source": "https://www.salesforce.com/news/press-releases/2025/05/28/fy26-q1-earnings/",
+    "reported_fiscal_year": 2026,
+    "reported_quarter": 1,
+    "published_utc": "2025-05-28 20:03:01+00:00",
+    "modified_utc": "2025-08-16 00:29:42+00:00",
+    "available_after_utc": "2025-08-16 00:29:42+00:00",
+    "modified_delay_hours": 1900.4447222222223,
+    "body_sha256": "554ab0678af143e839428fd05431d5111b3d885e7b5cc3566f5dff0d15e2eb90",
+    "editor_notes": [],
+    "financial_image_sources": [
+      "https://www.salesforce.com/news/wp-content/uploads/sites/3/2025/05/table-1-1.png?w=1024",
+      "https://www.salesforce.com/news/wp-content/uploads/sites/3/2025/05/table-2-1.png?w=1024",
+      "https://www.salesforce.com/news/wp-content/uploads/sites/3/2025/05/table-3.png?w=1024"
+    ],
+    "table_count": 0,
+    "guidance_paragraphs": [
+      "Initiates second quarter FY26 revenue guidance of $10.11 billion to $10.16 billion, up 8% \u2013 9% Y/Y and 7% \u2013 8% in CC",
+      "Raises full year FY26 revenue guidance to $41.0 billion to $41.3 billion, up 8% \u2013 9% Y/Y and 8% in CC"
+    ],
+    "eligibility": "pending exact quarterly actuals, image-table extraction, source-version and acquisition-scope verification"
+  },
+  {
+    "id": 89373,
+    "title": "Salesforce Reports Record Second Quarter Fiscal 2026 Results",
+    "source": "https://www.salesforce.com/news/press-releases/2025/09/03/fy26-q2-earnings/",
+    "reported_fiscal_year": 2026,
+    "reported_quarter": 2,
+    "published_utc": "2025-09-03 20:02:09+00:00",
+    "modified_utc": "2025-09-03 20:02:10+00:00",
+    "available_after_utc": "2025-09-03 20:02:10+00:00",
+    "modified_delay_hours": 0.0002777777777777778,
+    "body_sha256": "43acde308eb56d371f8cfaa705e173b5f1ddc9f8057aacec520397908d7f0462",
+    "editor_notes": [],
+    "financial_image_sources": [
+      "https://www.salesforce.com/news/wp-content/uploads/sites/3/2025/09/table-1.png?strip=all&quality=95",
+      "https://www.salesforce.com/news/wp-content/uploads/sites/3/2025/09/table-2.png?strip=all&quality=95"
+    ],
+    "table_count": 0,
+    "guidance_paragraphs": [
+      "Exceeds Guidance Across All Metrics; Subscription & Support Revenue up 11% Y/Y, 9% in CC",
+      "Initiates third quarter FY26 revenue guidance of $10.24 billion to $10.29 billion, up 8% \u2013 9% Y/Y and 8% in CC",
+      "Raises low end of full year FY26 revenue guidance to $41.1 billion to $41.3 billion, up 8.5% \u2013 9% Y/Y and 8% in CC"
+    ],
+    "eligibility": "pending exact quarterly actuals, image-table extraction, source-version and acquisition-scope verification"
+  },
+  {
+    "id": 91311,
+    "title": "Salesforce Delivers Record Third Quarter Fiscal 2026 Results Driven by Agentforce & Data 360",
+    "source": "https://www.salesforce.com/news/press-releases/2025/12/03/fy26-q3-earnings/",
+    "reported_fiscal_year": 2026,
+    "reported_quarter": 3,
+    "published_utc": "2025-12-03 21:01:43+00:00",
+    "modified_utc": "2025-12-03 21:46:34+00:00",
+    "available_after_utc": "2025-12-03 21:46:34+00:00",
+    "modified_delay_hours": 0.7475,
+    "body_sha256": "556162ecc6c55e98111acbc19e6775da213297a1efd9e29321e20e2cbc0a6d1a",
+    "editor_notes": [],
+    "financial_image_sources": [
+      "https://www.salesforce.com/news/wp-content/uploads/sites/3/2025/12/Screenshot-2025-12-03-at-9.35.25-AM.png?strip=all&quality=95",
+      "https://www.salesforce.com/news/wp-content/uploads/sites/3/2025/12/Non-GAAP-operating-margin.png?strip=all&quality=95",
+      "https://www.salesforce.com/news/wp-content/uploads/sites/3/2025/12/Screenshot-2025-12-03-at-9.40.45-AM.png?strip=all&quality=95"
+    ],
+    "table_count": 0,
+    "guidance_paragraphs": [
+      "Raises full year FY26 revenue guidance to $41.45 billion to $41.55 billion, up 9% \u2013 10% Y/Y and approximately 9% in CC, including approximately 80bps Informatica contribution",
+      "\u201cWe are raising fiscal year 2026 revenue guidance to $41.45 billion to $41.55 billion, and Q3 cRPO was exceptional, up 11% year-over-year at $29.4 billion, signaling a powerful pipeline of future revenue,\u201d said Marc Benioff, Chair and CEO, Salesforce. \u201cOur Agentforce and Data 360 products are the momentum drivers, hitting nearly $1.4 billion in ARR\u2014an explosive 114% year-over-year gain. We now have over 9,500 paid Agentforce deals and 3.2 trillion tokens processed, underscoring our leadership in building the Agentic Enterprise and driving real outcomes.\u201d"
+    ],
+    "eligibility": "pending exact quarterly actuals, image-table extraction, source-version and acquisition-scope verification"
+  },
+  {
+    "id": 92431,
+    "title": "Salesforce Delivers Record Fourth Quarter Fiscal 2026 Results",
+    "source": "https://www.salesforce.com/news/press-releases/2026/02/25/fy26-q4-earnings/",
+    "reported_fiscal_year": 2026,
+    "reported_quarter": 4,
+    "published_utc": "2026-02-25 21:02:18+00:00",
+    "modified_utc": "2026-02-25 21:02:19+00:00",
+    "available_after_utc": "2026-02-25 21:02:19+00:00",
+    "modified_delay_hours": 0.0002777777777777778,
+    "body_sha256": "c1ef43fff0041b38710d884edd51b96d255bb82125cb76ae3e8f036736cdef0a",
+    "editor_notes": [],
+    "financial_image_sources": [
+      "https://www.salesforce.com/news/wp-content/uploads/sites/3/2026/02/table-1.png?w=1024",
+      "https://www.salesforce.com/news/wp-content/uploads/sites/3/2026/02/table-2.png?w=1024",
+      "https://www.salesforce.com/news/wp-content/uploads/sites/3/2026/02/table-3.png?w=1024"
+    ],
+    "table_count": 0,
+    "guidance_paragraphs": [
+      "Initiates full year FY27 revenue guidance of $45.8 billion to $46.2 billion, up 10% \u2013 11% Y/Y and in CC, including approximately 3pts Informatica contribution",
+      "Initiates full year FY27 subscription & support revenue growth guidance of slightly under 12% Y/Y and approximately 11% in CC, including approximately 3pts Informatica contribution"
+    ],
+    "eligibility": "pending exact quarterly actuals, image-table extraction, source-version and acquisition-scope verification"
+  },
+  {
+    "id": 93791,
+    "title": "Salesforce Delivers Record First Quarter Fiscal 2027 Results",
+    "source": "https://www.salesforce.com/news/press-releases/2026/05/27/fy27-q1-earnings/",
+    "reported_fiscal_year": 2027,
+    "reported_quarter": 1,
+    "published_utc": "2026-05-27 20:02:00+00:00",
+    "modified_utc": "2026-05-27 20:02:24+00:00",
+    "available_after_utc": "2026-05-27 20:02:24+00:00",
+    "modified_delay_hours": 0.006666666666666667,
+    "body_sha256": "6414a4bc348c83dadaa2924cf0f08bca609e3eb45d53c34bfe6594f6236192db",
+    "editor_notes": [],
+    "financial_image_sources": [
+      "https://www.salesforce.com/news/wp-content/uploads/sites/3/2026/05/Screenshot-2026-05-27-at-10.24.43-AM.png?w=1024",
+      "https://www.salesforce.com/news/wp-content/uploads/sites/3/2026/05/Screenshot-2026-05-27-at-10.25.52-AM.png?w=1024",
+      "https://www.salesforce.com/news/wp-content/uploads/sites/3/2026/05/Screenshot-2026-05-27-at-10.26.35-AM.png?w=1024"
+    ],
+    "table_count": 0,
+    "guidance_paragraphs": [
+      "Initiates second quarter FY27 revenue guidance of $11.27 billion to $11.35 billion, up 10% \u2013 11% Y/Y and 10% in CC, including slightly above 4pts Informatica contribution",
+      "Raises midpoint of full year FY27 revenue guidance, now expects full year FY27 revenue of $45.9 billion to $46.2 billion, up 11% Y/Y and 10% \u2013 11% in CC, including approximately 3pts Informatica contribution",
+      "Maintains full year FY27 subscription & support revenue growth guidance of slightly under 12% Y/Y and approximately 11% in CC, including approximately 3pts Informatica contribution"
+    ],
+    "eligibility": "pending exact quarterly actuals, image-table extraction, source-version and acquisition-scope verification"
+  },
+  {
+    "id": 94791,
+    "title": "Salesforce Delivers Record Second Quarter Fiscal 2027 Results",
+    "source": "https://www.salesforce.com/news/press-releases/2026/08/26/fy27-q2-earnings/",
+    "reported_fiscal_year": 2027,
+    "reported_quarter": 2,
+    "published_utc": "2026-08-26 20:02:36+00:00",
+    "modified_utc": "2026-08-26 20:02:37+00:00",
+    "available_after_utc": "2026-08-26 20:02:37+00:00",
+    "modified_delay_hours": 0.0002777777777777778,
+    "body_sha256": "30c5ec24cef30fcc99289be893600941dc8ffce4d1b5aaf866940e5a514a5e1f",
+    "editor_notes": [],
+    "financial_image_sources": [
+      "https://www.salesforce.com/news/wp-content/uploads/sites/3/2026/08/Screenshot-2026-08-26-at-11.52.00-AM.png?w=1024",
+      "https://www.salesforce.com/news/wp-content/uploads/sites/3/2026/08/Screenshot-2026-08-26-at-11.52.51-AM.png?w=1024",
+      "https://www.salesforce.com/news/wp-content/uploads/sites/3/2026/08/Screenshot-2026-08-26-at-11.53.30-AM.png?w=1024"
+    ],
+    "table_count": 0,
+    "guidance_paragraphs": [
+      "Salesforce raises full year FY27 revenue guidance to $46.1 billion to $46.4 billion, up 11% \u2013 12% Y/Y and 11% Y/Y in CC. In June, Salesforce announced separate definitive agreements to acquire Contentful and Fin. The Company now expects both transactions to close independently in the coming weeks, during the third quarter of Salesforce\u2019s fiscal year 2027. These acquisitions have been incorporated into all metrics within the Company\u2019s updated guidance, with the exception of cRPO; the guidance is conditional upon the closing of these transactions. With the U.S. dollar strengthening in Q2, Salesforce now expects a reduced currency tailwind for the business relative to prior guidance. This currency movement has been incorporated into the Company\u2019s updated guidance.",
+      "Initiates third quarter FY27 revenue guidance of $11.42 billion to $11.5 billion, up 11% \u2013 12% Y/Y and in CC, including slightly above 4pts Informatica contribution",
+      "Raises full year FY27 revenue guidance, now expects full year FY27 revenue of $46.1 billion to $46.4 billion, up 11% \u2013 12% Y/Y and 11% in CC, including slightly above 3pts Informatica contribution. The $200M raise, $300 million CC, reflects $100 million of organic growth, $200 million from the pending Contentful and Fin acquisitions, and $100M FX headwind",
+      "Raises full year FY27 subscription and support revenue growth guidance to slightly above 12% Y/Y and slightly under 12% in CC, including slightly above 3pts Informatica contribution"
+    ],
+    "eligibility": "pending exact quarterly actuals, image-table extraction, source-version and acquisition-scope verification"
+  }
+]

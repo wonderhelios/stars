@@ -1,0 +1,28 @@
+daily distance20_mix_k1_p0 -0.6 1.0
+daily distance20_single_k1_p0 -0.743 1.0
+daily binary20_mix_k1_p0 -0.057 1.0
+daily binary20_single_k1_p0 0.054 1.0
+daily distance60_mix_k1_p0 -0.481 1.0
+daily distance60_single_k1_p0 -0.479 1.0
+daily binary60_mix_k1_p0 -0.064 1.0
+daily binary60_single_k1_p0 0.132 1.0
+daily distance120_mix_k1_p0 -0.599 1.0
+daily distance120_single_k1_p0 -0.882 1.0
+daily binary120_mix_k1_p0 -0.177 1.0
+daily binary120_single_k1_p0 -0.265 1.0
+daily distance252_mix_k1_p0 -0.588 1.0
+daily distance252_single_k1_p0 -0.732 1.0
+daily binary252_mix_k1_p0 -0.427 1.0
+daily binary252_single_k1_p0 -0.744 1.0
+daily high52_mix_k1_p0 -0.252 1.0
+daily high52_single_k1_p0 -0.256 1.0
+daily channel20_mix_k1_p0 0.03 1.0
+daily channel20_single_k1_p0 0.514 1.0
+daily channel120_mix_k1_p0 -0.339 1.0
+daily channel120_single_k1_p0 -0.387 1.0
+hold mix 3 1.029 0.781 1
+hold mix 5 1.121 0.532 1
+hold mix 10 INSOLVENT
+hold single 3 1.175 0.858 1
+hold single 5 1.34 0.598 1
+hold single 10 1.304 0.354 1

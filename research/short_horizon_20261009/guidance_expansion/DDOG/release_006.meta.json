@@ -1,0 +1,18 @@
+{
+  "url": "https://www.globenewswire.com/news-release/2021/08/05/2275436/0/en/datadog-announces-second-quarter-2021-financial-results.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "f692b249583c9b2790ea4699c11692ab74a95d4c9dee70a78f919e2e7c255711",
+  "retrieved_utc": "2026-10-09T03:23:19Z",
+  "attempts": [
+    {
+      "url": "https://www.globenewswire.com/news-release/2021/08/05/2275436/0/en/datadog-announces-second-quarter-2021-financial-results.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "f692b249583c9b2790ea4699c11692ab74a95d4c9dee70a78f919e2e7c255711",
+      "retrieved_utc": "2026-10-09T03:23:19Z"
+    }
+  ]
+}

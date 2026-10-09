@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2026-fourth-quarter-results-302698740.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "95205ebfab0fc2d01a5a695536e20e333fbb33236dc7fa829c306bce3ffd4c04",
+  "retrieved_utc": "2026-10-09T03:24:47Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2026-fourth-quarter-results-302698740.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "95205ebfab0fc2d01a5a695536e20e333fbb33236dc7fa829c306bce3ffd4c04",
+      "retrieved_utc": "2026-10-09T03:24:47Z"
+    }
+  ]
+}

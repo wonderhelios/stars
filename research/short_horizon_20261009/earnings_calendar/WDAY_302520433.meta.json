@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/workday-to-announce-fiscal-2026-second-quarter-financial-results-on-august-21-2025-302520433.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "f835f6e6f301990b10b07de646765287507dbf995f8f9f3367a1374d5c1631d8",
+  "retrieved_utc": "2026-10-09T04:11:08Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/workday-to-announce-fiscal-2026-second-quarter-financial-results-on-august-21-2025-302520433.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "f835f6e6f301990b10b07de646765287507dbf995f8f9f3367a1374d5c1631d8",
+      "retrieved_utc": "2026-10-09T04:11:08Z"
+    }
+  ]
+}

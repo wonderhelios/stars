@@ -1,0 +1,26 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/veeva-announces-fiscal-2022-first-quarter-results-301301286.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "3798b1aa97a0008e82214cd691c5bfe0f10820dc8ff608f9215195824859e117",
+  "retrieved_utc": "2026-10-09T03:10:15Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/veeva-announces-fiscal-2022-first-quarter-results-301301286.html",
+      "status": 0,
+      "exit_code": 35,
+      "error": "curl: (35) LibreSSL SSL_connect: SSL_ERROR_SYSCALL in connection to www.prnewswire.com:443 \n",
+      "sha256": null,
+      "retrieved_utc": "2026-10-09T03:10:09Z"
+    },
+    {
+      "url": "https://www.prnewswire.com/news-releases/veeva-announces-fiscal-2022-first-quarter-results-301301286.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "3798b1aa97a0008e82214cd691c5bfe0f10820dc8ff608f9215195824859e117",
+      "retrieved_utc": "2026-10-09T03:10:15Z"
+    }
+  ]
+}

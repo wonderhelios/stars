@@ -1,0 +1,2121 @@
+[
+  {
+    "symbol": "ADSK",
+    "source": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2020-fourth-quarter-and-full-year-results-301012907.html",
+    "source_file": "release_301012907.html",
+    "sha256": "98afec350734031f420b0c39c29f1b3825ddc8df588c96a797fbdf48c51327a6",
+    "published": "2020-02-27 16:01:00-05:00",
+    "modified": "2020-02-27 16:01:00-05:00",
+    "available_after": "2020-02-27 16:01:00-05:00",
+    "title": "Autodesk, Inc. Announces Fiscal 2020 Fourth Quarter And Full-Year Results",
+    "preliminary": false,
+    "actual_source_row": [
+      "Total net revenue",
+      "899.3",
+      "737.3",
+      "3,274.3",
+      "2,569.8"
+    ],
+    "scope_review_excerpts": [
+      "Acquisitions, Mergers and Takeovers",
+      "Total ARR was $3.43 billion , an increase of 25 percent as reported, and 26 percent on a constant currency basis. Acquisitions from the fourth quarter of last year contributed $126 million or 3 percentage points of the growth. On a sequential basis, total ARR increased 6 percent as reported, and 7 percent on a constant currency basis.",
+      "Subscription plan ARR was $3.11 billion , an increase of 41 percent as reported, and 43 percent on a constant currency basis. Acquisitions from the fourth quarter of last year contributed $126 million or 4 percentage points of the growth. On a sequential basis, subscription plan ARR increased 9 percent as reported, and on a constant currency basis. Subscription plan ARR includes $639 million related to the maintenance-to-subscription (M2S) program.",
+      "Cloud ARR increased 102 percent to $255 million . Acquisitions from the fourth quarter of last year contributed $126 million or 72 percentage points of the growth. On a sequential basis, total cloud ARR increased 10 percent.",
+      "Total revenue was $899 million , an increase of 22 percent as reported, and 23 percent on a constant currency basis. Acquisitions from the fourth quarter of last year contributed $32 million or 3 percentage points of the growth.",
+      "Total revenue increased 27 percent to $3.27 billion . Total revenue includes a $106 million contribution from the fourth quarter fiscal 2019 acquisitions, and 4 percentage points.",
+      "Total subscriptions increased 539,000 from fiscal 2019 to 4.87 million at the end of fiscal 2020. Acquisitions from fourth quarter of fiscal 2019 added 79,000 subscriptions during the year and contributed 205,000 to the year-end balance.",
+      "Subscription plan subscriptions increased 934,000 from the end of fiscal 2019 to 4.47 million at the end of fiscal 2020. Subscription plan subscriptions benefited from 70,000 maintenance subscribers that converted to product subscription under the maintenance-to-subscription program. Acquisitions from fourth quarter of fiscal 2019 contributed 205,000 to the year-end balance.",
+      "Total ARPS increased 11 percent to $704 . Included in total ARPS is the negative impact of $4 from the fourth quarter fiscal 2019 acquisitions.",
+      "(1) Non-GAAP earnings per diluted share excludes $0.43 related to stock-based compensation expense, $0.08 for the amortization of acquisition-related intangibles, $0.01 for acquisition-related costs, partially offset by ($0.06) related to a GAAP-only tax benefit.",
+      "(2) Non-GAAP operating margin excludes approximately 9% related to stock-based compensation expense, approximately 2% for the amortization of acquisition-related intangibles, and less than 1% related to acquisition-related costs.",
+      "(3) Non-GAAP earnings per diluted share excludes $1.65 related to stock-based compensation expense, $0.29 for the amortization of acquisition-related intangibles, $0.04 related to acquisition-related costs, partially offset by ($0.17) related to a GAAP-only tax benefit.",
+      "Annualized Recurring Revenue (ARR): Represents the annualized value of total monthly recurring revenue for the preceding three months. \"Maintenance plan ARR\" captures ARR relating to traditional maintenance attached to perpetual licenses. \"Subscription plan ARR\" captures ARR relating to subscription offerings. Refer to the definition of recurring revenue below for more details on what is included within ARR. Recurring revenue acquired with the acquisition of a business is captured when total subscriptions are captured in our systems and may cause variability in the comparison of this calculation.",
+      "Recurring Revenue: Consists of the revenue for the period from our traditional maintenance plans and revenue from our subscription plan offerings. It excludes subscription revenue related to consumer product offerings, select Creative Finishing product offerings, education offerings, and third party products. Recurring revenue acquired with the acquisition of a business is captured when total subscriptions are captured in our systems and may cause variability in the comparison of this calculation.",
+      "Total Subscriptions: Consists of subscriptions from our maintenance plans and subscription plan offerings that are active and paid as of the fiscal year end date. For certain cloud service offerings and EBAs, subscriptions represent the monthly average activity reported within the last three months of the fiscal quarter end date.\u00a0 Total subscriptions do not include education offerings, consumer product offerings, select Creative Finishing product offerings, Autodesk Buzzsaw, Autodesk Constructware, and third party products.\u00a0 Subscriptions acquired with the acquisition of a business are captured once the data conforms to our subscription count methodology and when added, may cause variability in comparison of this calculation.",
+      "Changes in operating assets and liabilities, net of acquisitions:",
+      "Acquisitions, net of cash acquired",
+      "Acquisition related costs"
+    ],
+    "reported_fiscal_year": 2020,
+    "reported_quarter": 4,
+    "reported_quarter_end": "2020-01-31",
+    "actual_revenue_million": 899.3,
+    "fiscal_year": 2021,
+    "next_quarter": 1,
+    "next_quarter_end": "2020-04-30",
+    "quarter_range_million": [
+      880.0,
+      895.0
+    ],
+    "annual_range_million": [
+      3930.0,
+      3990.0
+    ],
+    "guidance_source": {
+      "quarter": {
+        "fiscal_year": 2021,
+        "quarter": 1,
+        "ending": "2020-04-30",
+        "range_million": [
+          880.0,
+          895.0
+        ],
+        "header": "Q1 FY21 (ending April 30, 2020)",
+        "source_row": [
+          "Revenue (in millions)",
+          "$880 - $895"
+        ]
+      },
+      "annual": {
+        "fiscal_year": 2021,
+        "quarter": null,
+        "ending": "2021-01-31",
+        "range_million": [
+          3930.0,
+          3990.0
+        ],
+        "header": "FY21 (ending January 31, 2021)",
+        "source_row": [
+          "Revenue (in millions) (1)",
+          "$3,930 - $3,990 Up 20% - 22%"
+        ]
+      }
+    },
+    "remaining_year_revision_million": null,
+    "previous_source": null,
+    "comparison_status": "initial_or_different_year"
+  },
+  {
+    "symbol": "ADSK",
+    "source": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2021-first-quarter-results-301066369.html",
+    "source_file": "release_301066369.html",
+    "sha256": "cbfc579e828be06d30edf2429d7cda747e9ae1ad4342ec01e19cbb77e1cd9def",
+    "published": "2020-05-27 16:01:00-04:00",
+    "modified": "2020-05-27 16:01:00-04:00",
+    "available_after": "2020-05-27 16:01:00-04:00",
+    "title": "Autodesk, Inc. Announces Fiscal 2021 First Quarter Results",
+    "preliminary": false,
+    "actual_source_row": [
+      "Total net revenue",
+      "885.7",
+      "735.5"
+    ],
+    "scope_review_excerpts": [
+      "Acquisitions, Mergers and Takeovers",
+      "(1) Non-GAAP earnings per diluted share excludes $0.42 related to stock-based compensation expense, $0.08 for the amortization of acquisition-related intangibles, $0.01 for acquisition related costs, and ($0.04) related to GAAP-only tax charges.",
+      "(2) Non-GAAP operating margin excludes approximately 11% related to stock-based compensation expense, approximately 2% for the amortization of acquisition-related intangibles, and less than 1% related to acquisition-related costs.",
+      "(3) Non-GAAP earnings per diluted share excludes $1.76 related to stock-based compensation expense, $0.29 for the amortization of acquisition-related intangibles, $0.08 related to losses on strategic investments and dispositions, $0.03 related to acquisition-related costs, partially offset by ($0.15) related to a GAAP-only tax benefit.",
+      "Net Revenue Retention Rate (NR3): Measures the year-over-year change in subscription and maintenance revenue for the population of customers that existed one year ago (\"base customers\").\u00a0 Net revenue retention rate is calculated by dividing the current quarter subscription and maintenance revenue related to base customers by the total corresponding quarter subscription and maintenance revenue from one year ago. Subscription and maintenance revenue is based on USD reported revenue, and fluctuations caused by changes in foreign currency exchange rates and hedge gains or losses have not been eliminated. Subscription and maintenance revenue related to acquired companies, one year after acquisition, has been captured as existing customers until such data conforms to the calculation methodology. This may cause variability in the comparison. Beginning with the first quarter of fiscal 2021, Autodesk modified its definition of NR3 to the definition above.\u00a0 The effect of this change is not material for the period presented.",
+      "Recurring Revenue: Consists of the revenue for the period from our traditional maintenance plans and revenue from our subscription plan offerings. It excludes subscription revenue related to consumer product offerings, select Creative Finishing product offerings, education offerings, and third-party products. Recurring revenue acquired with the acquisition of a business is captured when total subscriptions are captured in our systems and may cause variability in the comparison of this calculation.",
+      "Acquisition related costs"
+    ],
+    "reported_fiscal_year": 2021,
+    "reported_quarter": 1,
+    "reported_quarter_end": "2020-04-30",
+    "actual_revenue_million": 885.7,
+    "fiscal_year": 2021,
+    "next_quarter": 2,
+    "next_quarter_end": "2020-07-31",
+    "quarter_range_million": [
+      890.0,
+      905.0
+    ],
+    "annual_range_million": [
+      3675.0,
+      3775.0
+    ],
+    "guidance_source": {
+      "quarter": {
+        "fiscal_year": 2021,
+        "quarter": 2,
+        "ending": "2020-07-31",
+        "range_million": [
+          890.0,
+          905.0
+        ],
+        "header": "Q2 FY21 (ending July 31, 2020)",
+        "source_row": [
+          "Revenue (in millions)",
+          "$890 - $905"
+        ]
+      },
+      "annual": {
+        "fiscal_year": 2021,
+        "quarter": null,
+        "ending": "2021-01-31",
+        "range_million": [
+          3675.0,
+          3775.0
+        ],
+        "header": "FY21 (ending January 31, 2021)",
+        "source_row": [
+          "Revenue (in millions) (1)",
+          "$3,675 - $3,775 Up 12% - 15%"
+        ]
+      }
+    },
+    "remaining_year_revision_million": -233.20000000000005,
+    "previous_source": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2020-fourth-quarter-and-full-year-results-301012907.html",
+    "comparison_status": "numerically_comparable_scope_review_pending",
+    "realized_surprise_million": -1.7999999999999545
+  },
+  {
+    "symbol": "ADSK",
+    "source": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2021-second-quarter-results-301118184.html",
+    "source_file": "release_301118184.html",
+    "sha256": "5677102b024ffe8b6a4d94788252ac3df4918bc99db1e6f3505bb553d779f0ee",
+    "published": "2020-08-25 16:01:00-04:00",
+    "modified": "2020-08-25 16:01:00-04:00",
+    "available_after": "2020-08-25 16:01:00-04:00",
+    "title": "Autodesk, Inc. Announces Fiscal 2021 Second Quarter Results",
+    "preliminary": false,
+    "actual_source_row": [
+      "Total net revenue",
+      "913.1",
+      "796.8",
+      "1,798.8",
+      "1,532.3"
+    ],
+    "scope_review_excerpts": [
+      "Acquisitions, Mergers and Takeovers",
+      "(1) Non-GAAP earnings per diluted share excludes $0.45 related to stock-based compensation expense, $0.07 for the amortization of acquisition-related intangibles, $0.01 for acquisition-related costs, and ($0.04) related to GAAP-only tax charges.",
+      "(2) Non-GAAP operating margin excludes approximately 11% related to stock-based compensation expense, approximately 2% for the amortization of acquisition-related intangibles, and less than 1% related to acquisition-related costs.",
+      "(3) Non-GAAP earnings per diluted share excludes $1.80 related to stock-based compensation expense, $0.30 for the amortization of acquisition-related intangibles, $0.14 related to losses on strategic investments and dispositions, $0.04 related to acquisition-related costs, partially offset by ($0.19) related to a GAAP-only tax benefit.",
+      "Net Revenue Retention Rate (NR3): Measures the year-over-year change in subscription and maintenance revenue for the population of customers that existed one year ago (\"base customers\").\u00a0 Net revenue retention rate is calculated by dividing the current quarter subscription and maintenance revenue related to base customers by the total corresponding quarter subscription and maintenance revenue from one year ago. Subscription and maintenance revenue is based on USD reported revenue, and fluctuations caused by changes in foreign currency exchange rates and hedge gains or losses have not been eliminated. Subscription and maintenance revenue related to acquired companies, one year after acquisition, has been captured as existing customers until such data conforms to the calculation methodology. This may cause variability in the comparison. Beginning with the first quarter of fiscal 2021, Autodesk modified its definition of NR3 to the definition above.\u00a0 The effect of this change is not material for the periods presented.",
+      "Recurring Revenue: Consists of the revenue for the period from our traditional maintenance plans and revenue from our subscription plan offerings. It excludes subscription revenue related to consumer product offerings, select Creative Finishing product offerings, education offerings, and third-party products. Recurring revenue acquired with the acquisition of a business is captured when total subscriptions are captured in our systems and may cause variability in the comparison of this calculation.",
+      "Acquisition-related costs"
+    ],
+    "reported_fiscal_year": 2021,
+    "reported_quarter": 2,
+    "reported_quarter_end": "2020-07-31",
+    "actual_revenue_million": 913.1,
+    "fiscal_year": 2021,
+    "next_quarter": 3,
+    "next_quarter_end": "2020-10-31",
+    "quarter_range_million": [
+      930.0,
+      945.0
+    ],
+    "annual_range_million": [
+      3715.0,
+      3765.0
+    ],
+    "guidance_source": {
+      "quarter": {
+        "fiscal_year": 2021,
+        "quarter": 3,
+        "ending": "2020-10-31",
+        "range_million": [
+          930.0,
+          945.0
+        ],
+        "header": "Q3 FY21 (ending October 31, 2020)",
+        "source_row": [
+          "Revenue (in millions)",
+          "$930 - $945"
+        ]
+      },
+      "annual": {
+        "fiscal_year": 2021,
+        "quarter": null,
+        "ending": "2021-01-31",
+        "range_million": [
+          3715.0,
+          3765.0
+        ],
+        "header": "FY21 (ending January 31, 2021)",
+        "source_row": [
+          "Revenue (in millions) (1)",
+          "$3,715 - $3,765 Up 13.5% - 15.0%"
+        ]
+      }
+    },
+    "remaining_year_revision_million": -0.6000000000000227,
+    "previous_source": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2021-first-quarter-results-301066369.html",
+    "comparison_status": "numerically_comparable_scope_review_pending",
+    "realized_surprise_million": 15.600000000000023
+  },
+  {
+    "symbol": "ADSK",
+    "source": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2021-third-quarter-results-301179972.html",
+    "source_file": "release_301179972.html",
+    "sha256": "542b1f0a2299e598582c4e69a283f337bc59ff89278abbee732c8aaceac47407",
+    "published": "2020-11-24 16:02:00-05:00",
+    "modified": "2020-11-24 16:02:00-05:00",
+    "available_after": "2020-11-24 16:02:00-05:00",
+    "title": "Autodesk, Inc. Announces Fiscal 2021 Third Quarter Results",
+    "preliminary": false,
+    "actual_source_row": [
+      "Total net revenue",
+      "952.4",
+      "842.7",
+      "2,751.2",
+      "2,375.0"
+    ],
+    "scope_review_excerpts": [
+      "Acquisitions, Mergers and Takeovers",
+      "(1) Non-GAAP earnings per diluted share excludes $0.49 related to stock-based compensation expense, $0.07 for the amortization of purchased intangibles, $0.01 for acquisition-related costs, partially offset by ($0.06) related to GAAP-only tax benefit.",
+      "(2) Non-GAAP operating margin excludes approximately 11% related to stock-based compensation expense, approximately 2% for the amortization of purchased intangibles, and less than 1% related to acquisition-related costs.",
+      "(3) Non-GAAP earnings per diluted share excludes $1.80 related to stock-based compensation expense, $0.30 for the amortization of purchased intangibles, $0.14 related to losses on strategic investments and dispositions, $0.06 related to acquisition-related costs, partially offset by ($0.25) related to a GAAP-only tax benefit.",
+      "Net Revenue Retention Rate (NR3): Measures the year-over-year change in subscription and maintenance revenue for the population of customers that existed one year ago (\"base customers\").\u00a0 Net revenue retention rate is calculated by dividing the current quarter subscription and maintenance revenue related to base customers by the total corresponding quarter subscription and maintenance revenue from one year ago. Subscription and maintenance revenue is based on USD reported revenue, and fluctuations caused by changes in foreign currency exchange rates and hedge gains or losses have not been eliminated. Subscription and maintenance revenue related to acquired companies, one year after acquisition, has been captured as existing customers until such data conforms to the calculation methodology. This may cause variability in the comparison. Beginning with the first quarter of fiscal 2021, Autodesk modified its definition of NR3 to the definition above.\u00a0 The effect of this change is not material for the periods presented.",
+      "Recurring Revenue: Consists of the revenue for the period from our traditional maintenance plans and revenue from our subscription plan offerings. It excludes subscription revenue related to consumer product offerings, select Creative Finishing product offerings, education offerings, and third-party products. Recurring revenue acquired with the acquisition of a business is captured when total subscriptions are captured in our systems and may cause variability in the comparison of this calculation.",
+      "Acquisitions, net of cash acquired",
+      "Acquisition-related costs"
+    ],
+    "reported_fiscal_year": 2021,
+    "reported_quarter": 3,
+    "reported_quarter_end": "2020-10-31",
+    "actual_revenue_million": 952.4,
+    "fiscal_year": 2021,
+    "next_quarter": 4,
+    "next_quarter_end": "2021-01-31",
+    "quarter_range_million": [
+      999.0,
+      1014.0
+    ],
+    "annual_range_million": [
+      3750.0,
+      3765.0
+    ],
+    "guidance_source": {
+      "quarter": {
+        "fiscal_year": 2021,
+        "quarter": 4,
+        "ending": "2021-01-31",
+        "range_million": [
+          999.0,
+          1014.0
+        ],
+        "header": "Q4 FY21 (ending January 31, 2021)",
+        "source_row": [
+          "Revenue (in millions)",
+          "$999 - $1,014"
+        ]
+      },
+      "annual": {
+        "fiscal_year": 2021,
+        "quarter": null,
+        "ending": "2021-01-31",
+        "range_million": [
+          3750.0,
+          3765.0
+        ],
+        "header": "FY21 (ending January 31, 2021)",
+        "source_row": [
+          "Revenue (in millions) (1)",
+          "$3,750 - $3,765 Up 15%"
+        ]
+      }
+    },
+    "remaining_year_revision_million": 2.6000000000000227,
+    "previous_source": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2021-second-quarter-results-301118184.html",
+    "comparison_status": "numerically_comparable_scope_review_pending",
+    "realized_surprise_million": 14.899999999999977
+  },
+  {
+    "symbol": "ADSK",
+    "source": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2021-fourth-quarter-and-full-year-results-301236041.html",
+    "source_file": "release_301236041.html",
+    "sha256": "c4d932fb440f9fa018dd7fff9c9f0e821ca98747a18a1f4234af94e131d40118",
+    "published": "2021-02-25 16:05:00-05:00",
+    "modified": "2021-02-25 16:05:00-05:00",
+    "available_after": "2021-02-25 16:05:00-05:00",
+    "title": "Autodesk, Inc. Announces Fiscal 2021 Fourth Quarter And Full-Year Results",
+    "preliminary": false,
+    "actual_source_row": [
+      "Total net revenue",
+      "1,039.2",
+      "899.3",
+      "3,790.4",
+      "3,274.3"
+    ],
+    "scope_review_excerpts": [
+      "Acquisitions, Mergers and Takeovers",
+      "Guidance does not include the impact of the acquisition of Innovyze.",
+      "Non-GAAP earnings per diluted share excludes $0.51 related to stock-based compensation expense, $0.07 for the amortization of purchased intangibles, $0.02 for acquisition-related costs, partially offset by ($0.08) related to a GAAP-only tax benefit.",
+      "Non-GAAP operating margin excludes approximately 13% related to stock-based compensation expense, approximately 1% for the amortization of purchased intangibles, and less than 1% related to acquisition-related costs.",
+      "Non-GAAP earnings per diluted share excludes $2.44 related to stock-based compensation expense, $0.27 for the amortization of purchased intangibles, $0.04 related to acquisition-related costs, partially offset by ($0.36) related to a GAAP-only tax benefit.",
+      "Net Revenue Retention Rate (NR3): Measures the year-over-year change in subscription and maintenance revenue for the population of customers that existed one year ago (\"base customers\").\u00a0 Net revenue retention rate is calculated by dividing the current quarter subscription and maintenance revenue related to base customers by the total corresponding quarter subscription and maintenance revenue from one year ago. Subscription and maintenance revenue is based on USD reported revenue, and fluctuations caused by changes in foreign currency exchange rates and hedge gains or losses have not been eliminated. Subscription and maintenance revenue related to acquired companies, one year after acquisition, has been captured as existing customers until such data conforms to the calculation methodology. This may cause variability in the comparison. Beginning with the first quarter of fiscal 2021, Autodesk modified its definition of NR3 to the definition above.\u00a0 The effect of this change is not material for the periods presented.",
+      "Recurring Revenue: Consists of the revenue for the period from our traditional maintenance plans and revenue from our subscription plan offerings. It excludes subscription revenue related to consumer product offerings, select Creative Finishing product offerings, education offerings, and third-party products. Recurring revenue acquired with the acquisition of a business is captured when total subscriptions are captured in our systems and may cause variability in the comparison of this calculation.",
+      "Total Subscriptions: Consists of subscriptions from our maintenance plans and subscription plan offerings that are active and paid as of the fiscal year end date. For certain cloud service offerings and EBAs, subscriptions represent the monthly average activity reported within the last three months of the fiscal quarter end date.\u00a0 Total subscriptions do not include education offerings, consumer product offerings, select Creative Finishing product offerings, Autodesk Buzzsaw, Autodesk Constructware, and third-party products.\u00a0 Subscriptions acquired with the acquisition of a business are captured once the data conforms to our subscription count methodology and when added, may cause variability in comparison of this calculation.",
+      "Acquisition-related costs"
+    ],
+    "reported_fiscal_year": 2021,
+    "reported_quarter": 4,
+    "reported_quarter_end": "2021-01-31",
+    "actual_revenue_million": 1039.2,
+    "fiscal_year": 2022,
+    "next_quarter": 1,
+    "next_quarter_end": "2021-04-30",
+    "quarter_range_million": [
+      955.0,
+      970.0
+    ],
+    "annual_range_million": [
+      4265.0,
+      4345.0
+    ],
+    "guidance_source": {
+      "quarter": {
+        "fiscal_year": 2022,
+        "quarter": 1,
+        "ending": "2021-04-30",
+        "range_million": [
+          955.0,
+          970.0
+        ],
+        "header": "Q1 FY22 (ending April 30, 2021)",
+        "source_row": [
+          "Revenue (in millions)",
+          "$955 - $970"
+        ]
+      },
+      "annual": {
+        "fiscal_year": 2022,
+        "quarter": null,
+        "ending": "2022-01-31",
+        "range_million": [
+          4265.0,
+          4345.0
+        ],
+        "header": "FY22 (ending January 31, 2022)",
+        "source_row": [
+          "Revenue (in millions) (3)",
+          "$4,265 - $4,345 Up 13% - 15%"
+        ]
+      }
+    },
+    "remaining_year_revision_million": null,
+    "previous_source": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2021-third-quarter-results-301179972.html",
+    "comparison_status": "initial_or_different_year"
+  },
+  {
+    "symbol": "ADSK",
+    "source": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2022-first-quarter-results-301301172.html",
+    "source_file": "release_301301172.html",
+    "sha256": "229d795da7ba2c2dc642e5fafd6930ad2fe5f7c8dadd007615a95ff3a52ab65f",
+    "published": "2021-05-27 16:05:00-04:00",
+    "modified": "2021-05-27 16:05:00-04:00",
+    "available_after": "2021-05-27 16:05:00-04:00",
+    "title": "Autodesk, Inc. Announces Fiscal 2022 First Quarter Results",
+    "preliminary": false,
+    "actual_source_row": [
+      "Total net revenue",
+      "989.3",
+      "885.7"
+    ],
+    "scope_review_excerpts": [
+      "Acquisitions, Mergers and Takeovers",
+      "\"Momentum in our end markets and customer adoption of cloud services is building,\" said Debbie Clifford , Autodesk CFO. \"We are raising our FY22 revenue guidance to reflect a partial year contribution from acquisitions and remain on track to achieve our FY23 financial goals.\"",
+      "Non-GAAP earnings per diluted share excludes $0.68 related to stock-based compensation expense, $0.11 for the amortization of purchased intangibles, $0.02 for acquisition-related costs, partially offset by ($0.08) related to GAAP-only tax benefit.",
+      "Non-GAAP operating margin excludes approximately 13% related to stock-based compensation expense, approximately 2% for the amortization of purchased intangibles, and 1% related to acquisition-related costs.",
+      "Non-GAAP earnings per diluted share excludes $2.54 related to stock-based compensation expense, $0.39 for the amortization of purchased intangibles, $0.09 related to acquisition-related costs, partially offset by ($0.02) related to gains on strategic investments and dispositions, and ($0.47) related to a GAAP-only tax benefit.",
+      "Net Revenue Retention Rate (NR3): Measures the year-over-year change in subscription and maintenance revenue for the population of customers that existed one year ago (\"base customers\").\u00a0 Net revenue retention rate is calculated by dividing the current quarter subscription and maintenance revenue related to base customers by the total corresponding quarter subscription and maintenance revenue from one year ago. Subscription and maintenance revenue is based on USD reported revenue, and fluctuations caused by changes in foreign currency exchange rates and hedge gains or losses have not been eliminated. Subscription and maintenance revenue related to acquired companies, one year after acquisition, has been captured as existing customers until such data conforms to the calculation methodology. This may cause variability in the comparison.",
+      "Recurring Revenue: Consists of the revenue for the period from our traditional maintenance plans and revenue from our subscription plan offerings. It excludes subscription revenue related to consumer product offerings, select Creative Finishing product offerings, and third-party products. Recurring revenue acquired with the acquisition of a business is captured when total subscriptions are captured in our systems and may cause variability in the comparison of this calculation.",
+      "Acquisition-related costs"
+    ],
+    "reported_fiscal_year": 2022,
+    "reported_quarter": 1,
+    "reported_quarter_end": "2021-04-30",
+    "actual_revenue_million": 989.3,
+    "fiscal_year": 2022,
+    "next_quarter": 2,
+    "next_quarter_end": "2021-07-31",
+    "quarter_range_million": [
+      1045.0,
+      1060.0
+    ],
+    "annual_range_million": [
+      4305.0,
+      4385.0
+    ],
+    "guidance_source": {
+      "quarter": {
+        "fiscal_year": 2022,
+        "quarter": 2,
+        "ending": "2021-07-31",
+        "range_million": [
+          1045.0,
+          1060.0
+        ],
+        "header": "Q2 FY22 (ending July 31, 2021)",
+        "source_row": [
+          "Revenue (in millions)",
+          "$1,045 - $1,060"
+        ]
+      },
+      "annual": {
+        "fiscal_year": 2022,
+        "quarter": null,
+        "ending": "2022-01-31",
+        "range_million": [
+          4305.0,
+          4385.0
+        ],
+        "header": "FY22 (ending January 31, 2022)",
+        "source_row": [
+          "Revenue (in millions) (2)",
+          "$4,305 - $4,385 Up 14% - 16%"
+        ]
+      }
+    },
+    "remaining_year_revision_million": 13.200000000000045,
+    "previous_source": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2021-fourth-quarter-and-full-year-results-301236041.html",
+    "comparison_status": "numerically_comparable_scope_review_pending",
+    "realized_surprise_million": 26.799999999999955
+  },
+  {
+    "symbol": "ADSK",
+    "source": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2022-second-quarter-results-301362938.html",
+    "source_file": "release_301362938.html",
+    "sha256": "73527a0049ff8b9314e881ecc4ef8d94a02983cbd96ae63d54c8173967500784",
+    "published": "2021-08-25 16:05:00-04:00",
+    "modified": "2021-08-25 16:05:00-04:00",
+    "available_after": "2021-08-25 16:05:00-04:00",
+    "title": "Autodesk, Inc. Announces Fiscal 2022 Second Quarter Results",
+    "preliminary": false,
+    "actual_source_row": [
+      "Total net revenue",
+      "1,059.7",
+      "913.1",
+      "2,049.0",
+      "1,798.8"
+    ],
+    "scope_review_excerpts": [
+      "Acquisitions, Mergers and Takeovers",
+      "Non-GAAP earnings per diluted share excludes $0.64 related to stock-based compensation expense, $0.10 for the amortization of purchased intangibles, $0.02 for acquisition-related costs, partially offset by ($0.04) related to GAAP-only tax benefit.",
+      "Non-GAAP operating margin excludes approximately 13% related to stock-based compensation expense, approximately 2% for the amortization of purchased intangibles, and 1% related to acquisition-related costs.",
+      "Non-GAAP earnings per diluted share excludes $2.49 related to stock-based compensation expense, $0.40 for the amortization of purchased intangibles, $0.10 related to acquisition-related costs, partially offset by ($0.03) related to gains on strategic investments and dispositions, and ($0.48) related to a GAAP-only tax benefit.",
+      "Net Revenue Retention Rate (NR3): Measures the year-over-year change in subscription and maintenance revenue for the population of customers that existed one year ago (\"base customers\").\u00a0 Net revenue retention rate is calculated by dividing the current quarter subscription and maintenance revenue related to base customers by the total corresponding quarter subscription and maintenance revenue from one year ago. Subscription and maintenance revenue is based on USD reported revenue, and fluctuations caused by changes in foreign currency exchange rates and hedge gains or losses have not been eliminated. Subscription and maintenance revenue related to acquired companies, one year after acquisition, has been captured as existing customers until such data conforms to the calculation methodology. This may cause variability in the comparison.",
+      "Recurring Revenue: Consists of the revenue for the period from our traditional maintenance plans and revenue from our subscription plan offerings. It excludes subscription revenue related to consumer product offerings, select Creative Finishing product offerings, and third-party products. Recurring revenue acquired with the acquisition of a business is captured when total subscriptions are captured in our systems and may cause variability in the comparison of this calculation.",
+      "Acquisition-related costs"
+    ],
+    "reported_fiscal_year": 2022,
+    "reported_quarter": 2,
+    "reported_quarter_end": "2021-07-31",
+    "actual_revenue_million": 1059.7,
+    "fiscal_year": 2022,
+    "next_quarter": 3,
+    "next_quarter_end": "2021-10-31",
+    "quarter_range_million": [
+      1110.0,
+      1125.0
+    ],
+    "annual_range_million": [
+      4345.0,
+      4385.0
+    ],
+    "guidance_source": {
+      "quarter": {
+        "fiscal_year": 2022,
+        "quarter": 3,
+        "ending": "2021-10-31",
+        "range_million": [
+          1110.0,
+          1125.0
+        ],
+        "header": "Q3 FY22 (ending October 31, 2021)",
+        "source_row": [
+          "Revenue (in millions)",
+          "$1,110 - $1,125"
+        ]
+      },
+      "annual": {
+        "fiscal_year": 2022,
+        "quarter": null,
+        "ending": "2022-01-31",
+        "range_million": [
+          4345.0,
+          4385.0
+        ],
+        "header": "FY22 (ending January 31, 2022)",
+        "source_row": [
+          "Revenue (in millions) (2)",
+          "$4,345 - $4,385 Up 15% - 16%"
+        ]
+      }
+    },
+    "remaining_year_revision_million": 12.799999999999955,
+    "previous_source": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2022-first-quarter-results-301301172.html",
+    "comparison_status": "numerically_comparable_scope_review_pending",
+    "realized_surprise_million": 7.2000000000000455
+  },
+  {
+    "symbol": "ADSK",
+    "source": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2022-third-quarter-results-301431093.html",
+    "source_file": "release_301431093.html",
+    "sha256": "ca2d56c6210f57abd285b6274c0e8a98c6d0afdf8a0285724e70e218c0dfc19b",
+    "published": "2021-11-23 16:01:00-05:00",
+    "modified": "2021-11-23 16:01:00-05:00",
+    "available_after": "2021-11-23 16:01:00-05:00",
+    "title": "Autodesk, Inc. Announces Fiscal 2022 Third Quarter Results",
+    "preliminary": false,
+    "actual_source_row": [
+      "Total net revenue",
+      "1,125.8",
+      "952.4",
+      "3,174.8",
+      "2,751.2"
+    ],
+    "scope_review_excerpts": [
+      "Acquisitions, Mergers and Takeovers",
+      "(1) Non-GAAP earnings per diluted share excludes $0.62 related to stock-based compensation expense, $0.11 for the amortization of purchased intangibles, $0.02 for acquisition-related costs, partially offset by ($0.05) related to GAAP-only tax benefit.",
+      "(3) Non-GAAP operating margin excludes approximately 13% related to stock-based compensation expense, approximately 2% for the amortization of purchased intangibles, and 1% related to acquisition-related costs.",
+      "(4) Non-GAAP earnings per diluted share excludes $2.48 related to stock-based compensation expense, $0.41 for the amortization of purchased intangibles, $0.12 related to acquisition-related costs, partially offset by ($0.06) related to gains on strategic investments and dispositions, and ($0.51) related to a GAAP-only tax benefit.",
+      "Net Revenue Retention Rate (NR3): Measures the year-over-year change in subscription and maintenance revenue for the population of customers that existed one year ago (\"base customers\").\u00a0 Net revenue retention rate is calculated by dividing the current quarter subscription and maintenance revenue related to base customers by the total corresponding quarter subscription and maintenance revenue from one year ago. Subscription and maintenance revenue is based on USD reported revenue, and fluctuations caused by changes in foreign currency exchange rates and hedge gains or losses have not been eliminated. Subscription and maintenance revenue related to acquired companies, one year after acquisition, has been captured as existing customers until such data conforms to the calculation methodology. This may cause variability in the comparison.",
+      "Recurring Revenue: Consists of the revenue for the period from our traditional maintenance plans and revenue from our subscription plan offerings. It excludes subscription revenue related to consumer product offerings, select Creative Finishing product offerings, and third-party products. Recurring revenue acquired with the acquisition of a business is captured when total subscriptions are captured in our systems and may cause variability in the comparison of this calculation.",
+      "Acquisition-related costs"
+    ],
+    "reported_fiscal_year": 2022,
+    "reported_quarter": 3,
+    "reported_quarter_end": "2021-10-31",
+    "actual_revenue_million": 1125.8,
+    "fiscal_year": 2022,
+    "next_quarter": 4,
+    "next_quarter_end": "2022-01-31",
+    "quarter_range_million": [
+      1185.0,
+      1200.0
+    ],
+    "annual_range_million": [
+      4360.0,
+      4375.0
+    ],
+    "guidance_source": {
+      "quarter": {
+        "fiscal_year": 2022,
+        "quarter": 4,
+        "ending": "2022-01-31",
+        "range_million": [
+          1185.0,
+          1200.0
+        ],
+        "header": "Q4 FY22 (ending January 31, 2022)",
+        "source_row": [
+          "Revenue (in millions)",
+          "$1,185 - $1,200"
+        ]
+      },
+      "annual": {
+        "fiscal_year": 2022,
+        "quarter": null,
+        "ending": "2022-01-31",
+        "range_million": [
+          4360.0,
+          4375.0
+        ],
+        "header": "FY22 (ending January 31, 2022)",
+        "source_row": [
+          "Revenue (in millions) (2)",
+          "$4,360 - $4,375 Up Approx. 15%"
+        ]
+      }
+    },
+    "remaining_year_revision_million": -5.7999999999999545,
+    "previous_source": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2022-second-quarter-results-301362938.html",
+    "comparison_status": "numerically_comparable_scope_review_pending",
+    "realized_surprise_million": 8.299999999999955
+  },
+  {
+    "symbol": "ADSK",
+    "source": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2022-fourth-quarter-and-full-year-results-301490017.html",
+    "source_file": "release_301490017.html",
+    "sha256": "2ebc5c6a7ad5d055e687920880436262f123395848549fff19e1e0773b0ff50b",
+    "published": "2022-02-24 16:01:00-05:00",
+    "modified": "2022-02-24 16:01:00-05:00",
+    "available_after": "2022-02-24 16:01:00-05:00",
+    "title": "AUTODESK, INC. ANNOUNCES FISCAL 2022 FOURTH QUARTER AND FULL-YEAR RESULTS",
+    "preliminary": false,
+    "actual_source_row": [
+      "Total net revenue",
+      "1,211.6",
+      "1,039.2",
+      "4,386.4",
+      "3,790.4"
+    ],
+    "scope_review_excerpts": [
+      "Acquisitions, Mergers and Takeovers",
+      "(1) Non-GAAP earnings per diluted share excludes $0.65 related to stock-based compensation expense, $0.10 for the amortization of purchased intangibles, $0.03 for lease-related asset impairments and other charges, $0.02 for acquisition-related costs, partially offset by ($0.16) related to GAAP-only tax charges.",
+      "(3) Non-GAAP operating margin excludes approximately 13% related to stock-based compensation expense, approximately 2% for the amortization of purchased intangibles, less than 1% related to acquisition-related costs, and less than 1% related to lease-related asset impairments and other charges.",
+      "(4) Non-GAAP earnings per diluted share excludes $2.94 related to stock-based compensation expense, $0.41 for the amortization of purchased intangibles, $0.08 related to lease-related asset impairments and other charges, and $0.03 related to acquisition-related costs, partially offset by ($0.74) related to GAAP-only tax charges.",
+      "Net Revenue Retention Rate (NR3): Measures the year-over-year change in subscription and maintenance revenue for the population of customers that existed one year ago (\"base customers\"). Net revenue retention rate is calculated by dividing the current quarter subscription and maintenance revenue related to base customers by the total corresponding quarter subscription and maintenance revenue from one year ago. Subscription and maintenance revenue is based on USD reported revenue, and fluctuations caused by changes in foreign currency exchange rates and hedge gains or losses have not been eliminated. Subscription and maintenance revenue related to acquired companies, one year after acquisition, has been captured as existing customers until such data conforms to the calculation methodology. This may cause variability in the comparison.",
+      "Recurring Revenue: Consists of the revenue for the period from our traditional maintenance plans and revenue from our subscription plan offerings. It excludes subscription revenue related to consumer product offerings, select Creative Finishing product offerings, and third-party products. Recurring revenue acquired with the acquisition of a business is captured when total subscriptions are captured in our systems and may cause variability in the comparison of this calculation.",
+      "Total Subscriptions : Consists of subscriptions from our maintenance plans and subscription plan offerings that are active and paid as of the fiscal year end date. For certain cloud service offerings and EBAs, subscriptions represent the monthly average activity reported within the last three months of the fiscal quarter end date. Total subscriptions do not include education offerings, consumer product offerings, select Creative Finishing product offerings, Autodesk Buzzsaw, Autodesk Constructware, and third-party products. Subscriptions acquired with the acquisition of a business are captured once the data conforms to our subscription count methodology and when added, may cause variability in comparison of this calculation.",
+      "Acquisition-related costs"
+    ],
+    "reported_fiscal_year": 2022,
+    "reported_quarter": 4,
+    "reported_quarter_end": "2022-01-31",
+    "actual_revenue_million": 1211.6,
+    "fiscal_year": 2023,
+    "next_quarter": 1,
+    "next_quarter_end": "2022-04-30",
+    "quarter_range_million": [
+      1145.0,
+      1160.0
+    ],
+    "annual_range_million": [
+      5020.0,
+      5120.0
+    ],
+    "guidance_source": {
+      "quarter": {
+        "fiscal_year": 2023,
+        "quarter": 1,
+        "ending": "2022-04-30",
+        "range_million": [
+          1145.0,
+          1160.0
+        ],
+        "header": "Q1 FY23 (ending April 30, 2022)",
+        "source_row": [
+          "Revenue (in millions)",
+          "$1,145 - $1,160"
+        ]
+      },
+      "annual": {
+        "fiscal_year": 2023,
+        "quarter": null,
+        "ending": "2023-01-31",
+        "range_million": [
+          5020.0,
+          5120.0
+        ],
+        "header": "FY23 (ending January 31, 2023)",
+        "source_row": [
+          "Revenue (in millions) (2)",
+          "$5,020 - $5,120 Up 14% - 17%"
+        ]
+      }
+    },
+    "remaining_year_revision_million": null,
+    "previous_source": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2022-third-quarter-results-301431093.html",
+    "comparison_status": "initial_or_different_year"
+  },
+  {
+    "symbol": "ADSK",
+    "source": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2023-first-quarter-results-301556131.html",
+    "source_file": "release_301556131.html",
+    "sha256": "91528d7c967f4da49eab9e1c1c0c37b65a8dfca03d3931e2df688aa090b512e8",
+    "published": "2022-05-26 16:01:00-04:00",
+    "modified": "2022-05-26 16:01:00-04:00",
+    "available_after": "2022-05-26 16:01:00-04:00",
+    "title": "AUTODESK, INC. ANNOUNCES FISCAL 2023 FIRST QUARTER RESULTS",
+    "preliminary": false,
+    "actual_source_row": [
+      "Total net revenue",
+      "1,170",
+      "989"
+    ],
+    "scope_review_excerpts": [
+      "Acquisitions, Mergers and Takeovers",
+      "(1) Non-GAAP earnings per diluted share excludes $0.80 related to stock-based compensation expense, $0.11 for the amortization of purchased intangibles, $0.02 for lease-related impairments and other charges, $0.01 for acquisition-related costs, partially offset by ($0.12) related to GAAP-only tax charges.",
+      "(3) Non-GAAP operating margin excludes approximately 13% related to stock-based compensation expense, approximately 2% for the amortization of purchased intangibles, less than 1% related to acquisition-related costs, and less than 1% related to lease-related asset impairments and other charges.",
+      "(4) Non-GAAP earnings per diluted share excludes $3.04 related to stock-based compensation expense, $0.45 for the amortization of purchased intangibles, $0.07 related to lease-related asset impairments and other charges. $0.03 related to acquisition-related costs, partially offset by ($0.40) related to GAAP-only tax charges.",
+      "Net Revenue Retention Rate (NR3): Measures the year-over-year change in Recurring Revenue for the population of customers that existed one year ago (\"base customers\").\u00a0 Net revenue retention rate is calculated by dividing the current quarter Recurring Revenue related to base customers by the total corresponding quarter Recurring Revenue from one year ago. Recurring Revenue is based on USD reported revenue, and fluctuations caused by changes in foreign currency exchange rates and hedge gains or losses have not been eliminated. Recurring Revenue related to acquired companies, one year after acquisition, has been captured as existing customers until such data conforms to the calculation methodology. This may cause variability in the comparison.",
+      "Recurring Revenue: Consists of the revenue for the period from our traditional maintenance plans, our subscription plan offerings, and certain Other revenue. It excludes subscription revenue related to third-party products. Recurring revenue acquired with the acquisition of a business is captured when total subscriptions are captured in our systems and may cause variability in the comparison of this calculation.",
+      "Acquisition-related costs"
+    ],
+    "reported_fiscal_year": 2023,
+    "reported_quarter": 1,
+    "reported_quarter_end": "2022-04-30",
+    "actual_revenue_million": 1170.0,
+    "fiscal_year": 2023,
+    "next_quarter": 2,
+    "next_quarter_end": "2022-07-31",
+    "quarter_range_million": [
+      1220.0,
+      1235.0
+    ],
+    "annual_range_million": [
+      4960.0,
+      5060.0
+    ],
+    "guidance_source": {
+      "quarter": {
+        "fiscal_year": 2023,
+        "quarter": 2,
+        "ending": "2022-07-31",
+        "range_million": [
+          1220.0,
+          1235.0
+        ],
+        "header": "Q2 FY23 (ending July 31, 2022)",
+        "source_row": [
+          "Revenue (in millions)",
+          "$1,220 - $1,235"
+        ]
+      },
+      "annual": {
+        "fiscal_year": 2023,
+        "quarter": null,
+        "ending": "2023-01-31",
+        "range_million": [
+          4960.0,
+          5060.0
+        ],
+        "header": "FY23 (ending January 31, 2023)",
+        "source_row": [
+          "Revenue (in millions) (2)",
+          "$4,960 - $5,060 Up 13% - 15%"
+        ]
+      }
+    },
+    "remaining_year_revision_million": -77.5,
+    "previous_source": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2022-fourth-quarter-and-full-year-results-301490017.html",
+    "comparison_status": "numerically_comparable_scope_review_pending",
+    "realized_surprise_million": 17.5
+  },
+  {
+    "symbol": "ADSK",
+    "source": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2023-second-quarter-results-301611859.html",
+    "source_file": "release_301611859.html",
+    "sha256": "fc9dcb09c8d8e62dd1ef8bbb93e0afab95cb9a9526a864b3cd6f24e5f3de45f3",
+    "published": "2022-08-24 16:01:00-04:00",
+    "modified": "2022-08-24 16:01:00-04:00",
+    "available_after": "2022-08-24 16:01:00-04:00",
+    "title": "AUTODESK, INC. ANNOUNCES FISCAL 2023 SECOND QUARTER RESULTS",
+    "preliminary": false,
+    "actual_source_row": [
+      "Total net revenue",
+      "1,237",
+      "1,060",
+      "2,407",
+      "2,049"
+    ],
+    "scope_review_excerpts": [
+      "Acquisitions, Mergers and Takeovers",
+      "(1) Non-GAAP earnings per diluted share excludes $0.74 related to stock-based compensation expense, $0.11 for the amortization of purchased intangibles, and $0.01 for acquisition-related costs, partially offset by ($0.10) related to GAAP-only tax charges.",
+      "(3) Non-GAAP operating margin excludes approximately 13% related to stock-based compensation expense, approximately 2% for the amortization of purchased intangibles, less than 1% related to acquisition-related costs, and less than 1% related to lease-related asset impairments and other charges.",
+      "(4) Non-GAAP earnings per diluted share excludes $2.95 related to stock-based compensation expense, $0.44 for the amortization of purchased intangibles, $0.08 related to lease-related asset impairments and other charges, and $0.04 related to acquisition-related costs, partially offset by ($0.39) related to GAAP-only tax charges.",
+      "Net Revenue Retention Rate (NR3): Measures the year-over-year change in Recurring Revenue for the population of customers that existed one year ago (\"base customers\"). Net revenue retention rate is calculated by dividing the current quarter Recurring Revenue related to base customers by the total corresponding quarter Recurring Revenue from one year ago. Recurring Revenue is based on USD reported revenue, and fluctuations caused by changes in foreign currency exchange rates and hedge gains or losses have not been eliminated. Recurring Revenue related to acquired companies, one year after acquisition, has been captured as existing customers until such data conforms to the calculation methodology. This may cause variability in the comparison.",
+      "Recurring Revenue: Consists of the revenue for the period from our traditional maintenance plans, our subscription plan offerings, and certain Other revenue. It excludes subscription revenue related to third-party products. Recurring revenue acquired with the acquisition of a business is captured when total subscriptions are captured in our systems and may cause variability in the comparison of this calculation.",
+      "Acquisition-related costs"
+    ],
+    "reported_fiscal_year": 2023,
+    "reported_quarter": 2,
+    "reported_quarter_end": "2022-07-31",
+    "actual_revenue_million": 1237.0,
+    "fiscal_year": 2023,
+    "next_quarter": 3,
+    "next_quarter_end": "2022-10-31",
+    "quarter_range_million": [
+      1275.0,
+      1290.0
+    ],
+    "annual_range_million": [
+      4985.0,
+      5035.0
+    ],
+    "guidance_source": {
+      "quarter": {
+        "fiscal_year": 2023,
+        "quarter": 3,
+        "ending": "2022-10-31",
+        "range_million": [
+          1275.0,
+          1290.0
+        ],
+        "header": "Q3 FY23 (ending October 31, 2022)",
+        "source_row": [
+          "Revenue (in millions)",
+          "$1,275 - $1,290"
+        ]
+      },
+      "annual": {
+        "fiscal_year": 2023,
+        "quarter": null,
+        "ending": "2023-01-31",
+        "range_million": [
+          4985.0,
+          5035.0
+        ],
+        "header": "FY23 (ending January 31, 2023)",
+        "source_row": [
+          "Revenue (in millions) (2)",
+          "$4,985 - $5,035 Up 14% - 15%"
+        ]
+      }
+    },
+    "remaining_year_revision_million": -9.5,
+    "previous_source": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2023-first-quarter-results-301556131.html",
+    "comparison_status": "numerically_comparable_scope_review_pending",
+    "realized_surprise_million": 9.5
+  },
+  {
+    "symbol": "ADSK",
+    "source": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2023-third-quarter-results-301685521.html",
+    "source_file": "release_301685521.html",
+    "sha256": "bb1439e7f7115a7c0e91b6f7fe1cf0a9cde0851f72b32f2f920f1ec505b52dd8",
+    "published": "2022-11-22 16:01:00-05:00",
+    "modified": "2022-11-22 16:01:00-05:00",
+    "available_after": "2022-11-22 16:01:00-05:00",
+    "title": "AUTODESK, INC. ANNOUNCES FISCAL 2023 THIRD QUARTER RESULTS",
+    "preliminary": false,
+    "actual_source_row": [
+      "Total net revenue",
+      "1,280",
+      "1,126",
+      "3,687",
+      "3,175"
+    ],
+    "scope_review_excerpts": [
+      "Acquisitions, Mergers and Takeovers",
+      "Under\u00a0the share repurchase program, Autodesk may repurchase shares from time to time through various\u00a0means. The share repurchase program does not have an expiration date and the pace and timing of repurchases will depend on factors such as cash generation from operations, available surplus, the volume of employee stock plan activity, cash requirements for acquisitions, economic and market conditions, stock price and legal and regulatory requirements.",
+      "(1) Non-GAAP earnings per diluted share excludes $0.74 related to stock-based compensation expense, $0.11 for the amortization of purchased intangibles, $0.04 for lease-related asset impairments and other charges, and $0.01 for acquisition-related costs, partially offset by ($0.12) related to GAAP-only tax charges.",
+      "(3) Non-GAAP operating margin excludes approximately 13% related to stock-based compensation expense, approximately 2% for the amortization of purchased intangibles, less than 1% related to acquisition-related costs, and less than 1% related to lease-related asset impairments and other charges.",
+      "(4) Non-GAAP earnings per diluted share excludes $3.02 related to stock-based compensation expense, $0.43 for the amortization of purchased intangibles, $0.13 related to lease-related asset impairments and other charges, and $0.04 related to acquisition-related costs, partially offset by ($0.46) related to GAAP-only tax charges and ($0.03) related to gains on strategic investments and dispositions.",
+      "Net Revenue Retention Rate (NR3): Measures the year-over-year change in Recurring Revenue for the population of customers that existed one year ago (\"base customers\").\u00a0 Net revenue retention rate is calculated by dividing the current quarter Recurring Revenue related to base customers by the total corresponding quarter Recurring Revenue from one year ago. Recurring Revenue is based on USD reported revenue, and fluctuations caused by changes in foreign currency exchange rates and hedge gains or losses have not been eliminated. Recurring Revenue related to acquired companies, one year after acquisition, has been captured as existing customers until such data conforms to the calculation methodology. This may cause variability in the comparison.",
+      "Recurring Revenue: Consists of the revenue for the period from our traditional maintenance plans, our subscription plan offerings, and certain Other revenue. It excludes subscription revenue related to third-party products. Recurring revenue acquired with the acquisition of a business is captured when total subscriptions are captured in our systems and may cause variability in the comparison of this calculation.",
+      "Acquisition-related costs"
+    ],
+    "reported_fiscal_year": 2023,
+    "reported_quarter": 3,
+    "reported_quarter_end": "2022-10-31",
+    "actual_revenue_million": 1280.0,
+    "fiscal_year": 2023,
+    "next_quarter": 4,
+    "next_quarter_end": "2023-01-31",
+    "quarter_range_million": [
+      1303.0,
+      1318.0
+    ],
+    "annual_range_million": [
+      4990.0,
+      5005.0
+    ],
+    "guidance_source": {
+      "quarter": {
+        "fiscal_year": 2023,
+        "quarter": 4,
+        "ending": "2023-01-31",
+        "range_million": [
+          1303.0,
+          1318.0
+        ],
+        "header": "Q4 FY23 (ending January 31, 2023)",
+        "source_row": [
+          "Revenue (in millions)",
+          "$1,303 - $1,318"
+        ]
+      },
+      "annual": {
+        "fiscal_year": 2023,
+        "quarter": null,
+        "ending": "2023-01-31",
+        "range_million": [
+          4990.0,
+          5005.0
+        ],
+        "header": "FY23 (ending January 31, 2023)",
+        "source_row": [
+          "Revenue (in millions) (2)",
+          "$4,990 - $5,005 Up Approx. 14%"
+        ]
+      }
+    },
+    "remaining_year_revision_million": -10.0,
+    "previous_source": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2023-second-quarter-results-301611859.html",
+    "comparison_status": "numerically_comparable_scope_review_pending",
+    "realized_surprise_million": -2.5
+  },
+  {
+    "symbol": "ADSK",
+    "source": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2023-fourth-quarter-and-full-year-results-301754839.html",
+    "source_file": "release_301754839.html",
+    "sha256": "e917794c7fc2c42a1cda0eb43e9355964c961fe8a1793ac1af94354d1c5008d0",
+    "published": "2023-02-23 16:01:00-05:00",
+    "modified": "2023-02-23 16:01:00-05:00",
+    "available_after": "2023-02-23 16:01:00-05:00",
+    "title": "AUTODESK, INC. ANNOUNCES FISCAL 2023 FOURTH QUARTER AND FULL-YEAR RESULTS",
+    "preliminary": false,
+    "actual_source_row": [
+      "Total net revenue",
+      "1,318",
+      "1,211",
+      "5,005",
+      "4,386"
+    ],
+    "scope_review_excerpts": [
+      "Acquisitions, Mergers and Takeovers",
+      "(1) Non-GAAP earnings per diluted share excludes $0.75 related to stock-based compensation expense, $0.09 for the amortization of purchased intangibles, $0.01 for acquisition-related costs, partially offset by ($0.09) related to GAAP-only tax charges.",
+      "(3) Non-GAAP operating margin excludes approximately 13% related to stock-based compensation expense, approximately 2% for the amortization of purchased intangibles and less than 1% related to acquisition-related costs.",
+      "(4) Non-GAAP earnings per diluted share excludes $3.31 related to stock-based compensation expense, $0.37 for the amortization of purchased intangibles, and $0.02 related to acquisition-related costs, partially offset by ($0.35) related to GAAP-only tax charges.",
+      "Net Revenue Retention Rate (NR3): Measures the year-over-year change in Recurring Revenue for the population of customers that existed one year ago (\"base customers\").\u00a0 Net revenue retention rate is calculated by dividing the current quarter Recurring Revenue related to base customers by the total corresponding quarter Recurring Revenue from one year ago. Recurring Revenue is based on USD reported revenue, and fluctuations caused by changes in foreign currency exchange rates and hedge gains or losses have not been eliminated. Recurring Revenue related to acquired companies, one year after acquisition, has been captured as existing customers until such data conforms to the calculation methodology. This may cause variability in the comparison.",
+      "Recurring Revenue: Consists of the revenue for the period from our traditional maintenance plans, our subscription plan offerings, and certain Other revenue. It excludes subscription revenue related to third-party products. Recurring revenue acquired with the acquisition of a business is captured when total subscriptions are captured in our systems and may cause variability in the comparison of this calculation.",
+      "Total Subscriptions : Consists of subscriptions from our maintenance plans and subscription plan offerings that are active and paid as of the fiscal year end date. For certain cloud service offerings and EBAs, subscriptions represent the monthly average activity reported within the last three months of the fiscal quarter end date. Total subscriptions do not include education offerings, consumer product offerings, select Creative Finishing product offerings, Autodesk Buzzsaw, Autodesk Constructware, and third-party products. Subscriptions acquired with the acquisition of a business are captured once the data conforms to our subscription count methodology and when added, may cause variability in comparison of this calculation.",
+      "Acquisition-related costs"
+    ],
+    "reported_fiscal_year": 2023,
+    "reported_quarter": 4,
+    "reported_quarter_end": "2023-01-31",
+    "actual_revenue_million": 1318.0,
+    "fiscal_year": 2024,
+    "next_quarter": 1,
+    "next_quarter_end": "2023-04-30",
+    "quarter_range_million": [
+      1260.0,
+      1275.0
+    ],
+    "annual_range_million": [
+      5355.0,
+      5455.0
+    ],
+    "guidance_source": {
+      "quarter": {
+        "fiscal_year": 2024,
+        "quarter": 1,
+        "ending": "2023-04-30",
+        "range_million": [
+          1260.0,
+          1275.0
+        ],
+        "header": "Q1 FY24 (ending April 30, 2023)",
+        "source_row": [
+          "Revenue (in millions)",
+          "$1,260 - $1,275"
+        ]
+      },
+      "annual": {
+        "fiscal_year": 2024,
+        "quarter": null,
+        "ending": "2024-01-31",
+        "range_million": [
+          5355.0,
+          5455.0
+        ],
+        "header": "FY24 (ending January 31, 2024)",
+        "source_row": [
+          "Revenue (in millions) (2)",
+          "$5,355 - $5,455 Up 7% - 9%"
+        ]
+      }
+    },
+    "remaining_year_revision_million": null,
+    "previous_source": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2023-third-quarter-results-301685521.html",
+    "comparison_status": "initial_or_different_year"
+  },
+  {
+    "symbol": "ADSK",
+    "source": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2024-first-quarter-results-301835017.html",
+    "source_file": "release_301835017.html",
+    "sha256": "2b2f7c367e9294f84d727242efb5def7567dc8d5bf28c0907485d5775aed0273",
+    "published": "2023-05-25 16:01:00-04:00",
+    "modified": "2023-05-25 16:01:00-04:00",
+    "available_after": "2023-05-25 16:01:00-04:00",
+    "title": "AUTODESK, INC. ANNOUNCES FISCAL 2024 FIRST QUARTER RESULTS",
+    "preliminary": false,
+    "actual_source_row": [
+      "Total net revenue",
+      "1,269",
+      "1,170"
+    ],
+    "scope_review_excerpts": [
+      "Acquisitions, Mergers and Takeovers",
+      "(1) Non-GAAP earnings per diluted share excludes $0.90 related to stock-based compensation expense, $0.09 for the\u00a0amortization of both purchased intangibles and developed technologies, $0.01 for acquisition-related costs, partially offset by ($0.11) related to GAAP-only tax charges.",
+      "(3) Non-GAAP operating margin excludes approximately 13% related to stock-based compensation expense, approximately 2% for the amortization of both purchased intangibles and developed technologies, and less than 1% related to acquisition-related costs.",
+      "(4) Non-GAAP earnings per diluted share excludes $3.33 related to stock-based compensation expense, $0.36 for the amortization of both purchased intangibles and developed technologies, and $0.03 related to acquisition-related costs, partially offset by ($0.33) related to GAAP-only tax charges.",
+      "Net Revenue Retention Rate (NR3): Measures the year-over-year change in Recurring Revenue for the population of customers that existed one year ago (\"base customers\").\u00a0 Net revenue retention rate is calculated by dividing the current quarter Recurring Revenue related to base customers by the total corresponding quarter Recurring Revenue from one year ago. Recurring Revenue is based on USD reported revenue, and fluctuations caused by changes in foreign currency exchange rates and hedge gains or losses have not been eliminated. Recurring Revenue related to acquired companies, one year after acquisition, has been captured as existing customers until such data conforms to the calculation methodology. This may cause variability in the comparison.",
+      "Recurring Revenue: Consists of the revenue for the period from our traditional maintenance plans, our subscription plan offerings, and certain Other revenue. It excludes subscription revenue related to third-party products. Recurring revenue acquired with the acquisition of a business is captured when total subscriptions are captured in our systems and may cause variability in the comparison of this calculation.",
+      "Acquisition-related costs"
+    ],
+    "reported_fiscal_year": 2024,
+    "reported_quarter": 1,
+    "reported_quarter_end": "2023-04-30",
+    "actual_revenue_million": 1269.0,
+    "fiscal_year": 2024,
+    "next_quarter": 2,
+    "next_quarter_end": "2023-07-31",
+    "quarter_range_million": [
+      1315.0,
+      1325.0
+    ],
+    "annual_range_million": [
+      5355.0,
+      5455.0
+    ],
+    "guidance_source": {
+      "quarter": {
+        "fiscal_year": 2024,
+        "quarter": 2,
+        "ending": "2023-07-31",
+        "range_million": [
+          1315.0,
+          1325.0
+        ],
+        "header": "Q2 FY24 (ending July 31, 2023)",
+        "source_row": [
+          "Revenue (in millions)",
+          "$1,315 - $1,325"
+        ]
+      },
+      "annual": {
+        "fiscal_year": 2024,
+        "quarter": null,
+        "ending": "2024-01-31",
+        "range_million": [
+          5355.0,
+          5455.0
+        ],
+        "header": "FY24 (ending January 31, 2024)",
+        "source_row": [
+          "Revenue (in millions) (2)",
+          "$5,355 - $5,455 Up 7% - 9%"
+        ]
+      }
+    },
+    "remaining_year_revision_million": -1.5,
+    "previous_source": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2023-fourth-quarter-and-full-year-results-301754839.html",
+    "comparison_status": "numerically_comparable_scope_review_pending",
+    "realized_surprise_million": 1.5
+  },
+  {
+    "symbol": "ADSK",
+    "source": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2024-second-quarter-results-301908360.html",
+    "source_file": "release_301908360.html",
+    "sha256": "25006751ee3e86ccdce93e4fc5132752c2610d4d3a3cd7c4698c9f67f5fdb0ee",
+    "published": "2023-08-23 16:01:00-04:00",
+    "modified": "2023-08-23 16:01:00-04:00",
+    "available_after": "2023-08-23 16:01:00-04:00",
+    "title": "AUTODESK, INC. ANNOUNCES FISCAL 2024 SECOND QUARTER RESULTS",
+    "preliminary": false,
+    "actual_source_row": [
+      "Total net revenue",
+      "1,345",
+      "1,237",
+      "2,614",
+      "2,407"
+    ],
+    "scope_review_excerpts": [
+      "Acquisitions, Mergers and Takeovers",
+      "(1) Non-GAAP earnings per diluted share excludes $0.85 related to stock-based compensation expense, $0.10 for the amortization of both purchased intangibles and developed technologies, and $0.01 for acquisition-related costs, partially offset by ($0.01) related to GAAP-only tax charges.",
+      "(3) Non-GAAP operating margin excludes approximately 13% related to stock-based compensation expense, approximately 2% for the amortization of both purchased intangibles and developed technologies, less than 1% related to acquisition-related costs and less than 1% related to lease-related asset impairments.",
+      "(4) Non-GAAP earnings per diluted share excludes $3.34 related to stock-based compensation expense, $0.39 for the amortization of both purchased intangibles and developed technologies, $0.07 related to losses on strategic investments and dispositions, net, $0.04 related to acquisition-related costs, and $0.03 for lease-related asset impairments, partially offset by ($0.32) related to GAAP-only tax charges.",
+      "Net Revenue Retention Rate (NR3): Measures the year-over-year change in Recurring Revenue for the population of customers that existed one year ago (\"base customers\").\u00a0 Net revenue retention rate is calculated by dividing the current quarter Recurring Revenue related to base customers by the total corresponding quarter Recurring Revenue from one year ago. Recurring Revenue is based on USD reported revenue, and fluctuations caused by changes in foreign currency exchange rates and hedge gains or losses have not been eliminated. Recurring Revenue related to acquired companies, one year after acquisition, has been captured as existing customers until such data conforms to the calculation methodology. This may cause variability in the comparison.",
+      "Recurring Revenue: Consists of the revenue for the period from our traditional maintenance plans, our subscription plan offerings, and certain Other revenue. It excludes subscription revenue related to third-party products. Recurring revenue acquired with the acquisition of a business is captured when total subscriptions are captured in our systems and may cause variability in the comparison of this calculation.",
+      "Acquisition-related costs"
+    ],
+    "reported_fiscal_year": 2024,
+    "reported_quarter": 2,
+    "reported_quarter_end": "2023-07-31",
+    "actual_revenue_million": 1345.0,
+    "fiscal_year": 2024,
+    "next_quarter": 3,
+    "next_quarter_end": "2023-10-31",
+    "quarter_range_million": [
+      1380.0,
+      1395.0
+    ],
+    "annual_range_million": [
+      5405.0,
+      5455.0
+    ],
+    "guidance_source": {
+      "quarter": {
+        "fiscal_year": 2024,
+        "quarter": 3,
+        "ending": "2023-10-31",
+        "range_million": [
+          1380.0,
+          1395.0
+        ],
+        "header": "Q3 FY24 (ending October 31, 2023)",
+        "source_row": [
+          "Revenue (in millions)",
+          "$1,380 - $1,395"
+        ]
+      },
+      "annual": {
+        "fiscal_year": 2024,
+        "quarter": null,
+        "ending": "2024-01-31",
+        "range_million": [
+          5405.0,
+          5455.0
+        ],
+        "header": "FY24 (ending January 31, 2024)",
+        "source_row": [
+          "Revenue (in millions) (2)",
+          "$5,405 - $5,455 Up 8% - 9%"
+        ]
+      }
+    },
+    "remaining_year_revision_million": 0.0,
+    "previous_source": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2024-first-quarter-results-301835017.html",
+    "comparison_status": "numerically_comparable_scope_review_pending",
+    "realized_surprise_million": 25.0
+  },
+  {
+    "symbol": "ADSK",
+    "source": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2024-third-quarter-results-301995206.html",
+    "source_file": "release_301995206.html",
+    "sha256": "bfd39950ad842954058b9995532fda25fc6f03724393b35ef7dfab51930a4236",
+    "published": "2023-11-21 16:01:00-05:00",
+    "modified": "2023-11-21 16:01:00-05:00",
+    "available_after": "2023-11-21 16:01:00-05:00",
+    "title": "AUTODESK, INC. ANNOUNCES FISCAL 2024 THIRD QUARTER RESULTS",
+    "preliminary": false,
+    "actual_source_row": [
+      "Total net revenue",
+      "1,414",
+      "1,280",
+      "4,028",
+      "3,687"
+    ],
+    "scope_review_excerpts": [
+      "Acquisitions, Mergers and Takeovers",
+      "(1) Non-GAAP earnings per diluted share excludes $0.75 related to stock-based compensation expense, $0.11 for the amortization of both purchased intangibles and developed technologies, $0.06 for acquisition-related costs.",
+      "(3) Non-GAAP operating margin excludes approximately 13% related to stock-based compensation expense, approximately 2% for the amortization of both purchased intangibles and developed technologies, less than 1% related to acquisition-related costs and less than 1% related to lease-related asset impairments and other charges.",
+      "(4) Non-GAAP earnings per diluted share excludes $3.27 related to stock-based compensation expense, $0.39 for the amortization of both purchased intangibles and developed technologies, $0.12 related to losses on strategic investments, $0.13 related to acquisition-related costs, and $0.03 for lease-related asset impairments and other charges, partially offset by ($0.39) related to GAAP-only tax charges.",
+      "Net Revenue Retention Rate (NR3): Measures the year-over-year change in Recurring Revenue for the population of customers that existed one year ago (\"base customers\").\u00a0 Net revenue retention rate is calculated by dividing the current quarter Recurring Revenue related to base customers by the total corresponding quarter Recurring Revenue from one year ago. Recurring Revenue is based on USD reported revenue, and fluctuations caused by changes in foreign currency exchange rates and hedge gains or losses have not been eliminated. Recurring Revenue related to acquired companies, one year after acquisition, has been captured as existing customers until such data conforms to the calculation methodology. This may cause variability in the comparison.",
+      "Recurring Revenue: Consists of the revenue for the period from our traditional maintenance plans, our subscription plan offerings, and certain Other revenue. It excludes subscription revenue related to third-party products. Recurring revenue acquired with the acquisition of a business is captured when total subscriptions are captured in our systems and may cause variability in the comparison of this calculation.",
+      "Acquisition-related costs"
+    ],
+    "reported_fiscal_year": 2024,
+    "reported_quarter": 3,
+    "reported_quarter_end": "2023-10-31",
+    "actual_revenue_million": 1414.0,
+    "fiscal_year": 2024,
+    "next_quarter": 4,
+    "next_quarter_end": "2024-01-31",
+    "quarter_range_million": [
+      1422.0,
+      1437.0
+    ],
+    "annual_range_million": [
+      5450.0,
+      5465.0
+    ],
+    "guidance_source": {
+      "quarter": {
+        "fiscal_year": 2024,
+        "quarter": 4,
+        "ending": "2024-01-31",
+        "range_million": [
+          1422.0,
+          1437.0
+        ],
+        "header": "Q4 FY24 (ending January 31, 2024)",
+        "source_row": [
+          "Revenue (in millions)",
+          "$1,422 - $1,437"
+        ]
+      },
+      "annual": {
+        "fiscal_year": 2024,
+        "quarter": null,
+        "ending": "2024-01-31",
+        "range_million": [
+          5450.0,
+          5465.0
+        ],
+        "header": "FY24 (ending January 31, 2024)",
+        "source_row": [
+          "Revenue (in millions) (2)",
+          "$5,450 - $5,465 Up approx. 9%"
+        ]
+      }
+    },
+    "remaining_year_revision_million": 1.0,
+    "previous_source": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2024-second-quarter-results-301908360.html",
+    "comparison_status": "numerically_comparable_scope_review_pending",
+    "realized_surprise_million": 26.5
+  },
+  {
+    "symbol": "ADSK",
+    "source": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2024-fourth-quarter-and-full-year-results-302076225.html",
+    "source_file": "release_302076225.html",
+    "sha256": "042280edb8227a5f89868e66e64aa264c2444bec758404260fd6f8535bb1342a",
+    "published": "2024-02-29 16:01:00-05:00",
+    "modified": "2024-02-29 16:01:00-05:00",
+    "available_after": "2024-02-29 16:01:00-05:00",
+    "title": "AUTODESK, INC. ANNOUNCES FISCAL 2024 FOURTH QUARTER AND FULL-YEAR RESULTS",
+    "preliminary": false,
+    "actual_source_row": [
+      "Total net revenue",
+      "1,469",
+      "1,318",
+      "5,497",
+      "5,005"
+    ],
+    "scope_review_excerpts": [
+      "Acquisitions, Mergers and Takeovers",
+      "\"Autodesk remains resilient and underlying demand for our products and services is robust. As a result, revenue grew 14 percent at constant currency in the fourth quarter,\" said Debbie Clifford , Autodesk CFO. \"Adjusting the mid-point of our guidance to exclude noise from the new transaction model, acquisitions, the absence of EBA true-up revenue, and FX, we expect underlying revenue to grow more than 10 percent in fiscal 25.\"",
+      "(1) Non-GAAP earnings per diluted share excludes $0.72 related to stock-based compensation expense, $0.11 for the amortization of both purchased intangibles and developed technologies, and $0.08 for acquisition-related costs, partially offset by ($0.14) related to GAAP-only tax charges.",
+      "(2) Non-GAAP operating margin excludes approximately 12% related to stock-based compensation expense, approximately 2% for the amortization of both purchased intangibles and developed technologies, and approximately 1% related to acquisition-related costs.",
+      "(3) Non-GAAP earnings per diluted share excludes $3.39 related to stock-based compensation expense, $0.50 for the amortization of both purchased intangibles and developed technologies, and $0.26 related to acquisition-related costs, partially offset by ($0.67) related to GAAP-only tax charges.",
+      "Net Revenue Retention Rate (NR3): Measures the year-over-year change in Recurring Revenue for the population of customers that existed one year ago (\"base customers\").\u00a0 Net revenue retention rate is calculated by dividing the current quarter Recurring Revenue related to base customers by the total corresponding quarter Recurring Revenue from one year ago. Recurring Revenue is based on USD reported revenue, and fluctuations caused by changes in foreign currency exchange rates and hedge gains or losses have not been eliminated. Recurring Revenue related to acquired companies, one year after acquisition, has been captured as existing customers until such data conforms to the calculation methodology. This may cause variability in the comparison.",
+      "Recurring Revenue: Consists of the revenue for the period from our traditional maintenance plans, our subscription plan offerings, and certain Other revenue. It excludes subscription revenue related to third-party products. Recurring revenue acquired with the acquisition of a business is captured when total subscriptions are captured in our systems and may cause variability in the comparison of this calculation.",
+      "Total Subscriptions : Consists of subscriptions from our maintenance plans and subscription plan offerings that are active and paid as of the fiscal year end date. For certain cloud service offerings and EBAs, subscriptions represent the monthly average activity reported within the last three months of the fiscal quarter end date. Total subscriptions do not include education offerings, consumer product offerings, and third-party products. Subscriptions acquired with the acquisition of a business are captured once the data conforms to our subscription count methodology and when added, may cause variability in comparison of this calculation.",
+      "Acquisition-related costs"
+    ],
+    "reported_fiscal_year": 2024,
+    "reported_quarter": 4,
+    "reported_quarter_end": "2024-01-31",
+    "actual_revenue_million": 1469.0,
+    "fiscal_year": 2025,
+    "next_quarter": 1,
+    "next_quarter_end": "2024-04-30",
+    "quarter_range_million": [
+      1385.0,
+      1400.0
+    ],
+    "annual_range_million": [
+      5990.0,
+      6090.0
+    ],
+    "guidance_source": {
+      "quarter": {
+        "fiscal_year": 2025,
+        "quarter": 1,
+        "ending": "2024-04-30",
+        "range_million": [
+          1385.0,
+          1400.0
+        ],
+        "header": "Q1 FY25 (ending April 30, 2024)",
+        "source_row": [
+          "Revenue (in millions)",
+          "$1,385 - $1,400"
+        ]
+      },
+      "annual": {
+        "fiscal_year": 2025,
+        "quarter": null,
+        "ending": "2025-01-31",
+        "range_million": [
+          5990.0,
+          6090.0
+        ],
+        "header": "FY25 (ending January 31, 2025)",
+        "source_row": [
+          "Revenue (in millions) (1)",
+          "$5,990 - $6,090 Up 9% - 11%"
+        ]
+      }
+    },
+    "remaining_year_revision_million": null,
+    "previous_source": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2024-third-quarter-results-301995206.html",
+    "comparison_status": "initial_or_different_year"
+  },
+  {
+    "symbol": "ADSK",
+    "source": "https://www.prnewswire.com/news-releases/autodesk-reports-results-of-audit-committee-investigation-provides-preliminary-results-for-first-quarter-fiscal-2025-and-business-outlook-302160946.html",
+    "source_file": "release_302160946.html",
+    "sha256": "c0fdc13c807b183c42c3c41accd8e614e57e64345ae77ef4194f6c9175e3bbf3",
+    "published": "2024-05-31 16:05:00-04:00",
+    "modified": "2024-05-31 16:05:00-04:00",
+    "available_after": "2024-05-31 16:05:00-04:00",
+    "title": "Autodesk reports results of audit committee investigation Provides preliminary results for first quarter fiscal 2025 and business outlook",
+    "preliminary": true,
+    "actual_source_row": null,
+    "scope_review_excerpts": [
+      "Acquisitions, Mergers and Takeovers",
+      "SAN FRANCISCO , May 31, 2024 /PRNewswire/ -- Autodesk , Inc. (NASDAQ: ADSK ) announces the results of the Audit Committee investigation. As previously announced on April 1, 2024 , the Audit Committee of the Board of Directors initiated an internal investigation regarding the company's free cash flow and non-GAAP operating margin practices. The Committee has completed its planned procedures with respect to the investigation. The company's management has determined that there will be no restatement or adjustment of any audited or unaudited, filed or previously announced, GAAP or non-GAAP financial statements.",
+      "\"We appreciate your patience as we work through this important process. We take situations like this very seriously and are grateful to put the investigation behind us,\" said Andrew Anagnost , Autodesk president and CEO. \"In the first quarter of fiscal 2025, we generated broad-based growth in AEC and manufacturing across products and regions. The new transaction model implementation is on track. Our strong start sets us up well to achieve our goals for the year.\"",
+      "(1) Non-GAAP earnings per diluted share excludes approximately $0.69 related to stock-based compensation expense, $0.05 and $0.07 for the amortization of purchased intangibles and developed technologies, respectively, $0.07 for acquisition-related costs, and $0.02 for valuation allowance on deferred tax assets, partially offset by ($0.19) related to GAAP-only tax charges.",
+      "(1) Non-GAAP earnings per diluted share excludes $0.80 related to stock-based compensation expense, $0.15 for the amortization of both purchased intangibles and developed technologies, and $0.07 for acquisition-related costs, partially offset by ($0.16) related to GAAP-only tax charges.",
+      "(2) Non-GAAP operating margin excludes approximately 11% related to stock-based compensation expense, approximately 2% for the amortization of both purchased intangibles and developed technologies, and approximately 1% related to acquisition-related costs.",
+      "(3) Non-GAAP earnings per diluted share excludes $3.16 related to stock-based compensation expense, $0.57 for the amortization of both purchased intangibles and developed technologies, and $0.20 related to acquisition-related costs, partially offset by ($0.65) related to GAAP-only tax charges."
+    ],
+    "reported_fiscal_year": 2025,
+    "reported_quarter": 1,
+    "actual_revenue_million": null,
+    "approximate_actual_text": "approximately $1.42 billion",
+    "reported_quarter_end": "2024-04-30",
+    "fiscal_year": 2025,
+    "next_quarter": 2,
+    "next_quarter_end": "2024-07-31",
+    "quarter_range_million": [
+      1475.0,
+      1490.0
+    ],
+    "annual_range_million": [
+      5990.0,
+      6090.0
+    ],
+    "guidance_source": {
+      "quarter": {
+        "fiscal_year": 2025,
+        "quarter": 2,
+        "ending": "2024-07-31",
+        "range_million": [
+          1475.0,
+          1490.0
+        ],
+        "header": "Q2 FY25 (ending July 31, 2024)",
+        "source_row": [
+          "Revenue (in millions)",
+          "$1,475 - $1,490"
+        ]
+      },
+      "annual": {
+        "fiscal_year": 2025,
+        "quarter": null,
+        "ending": "2025-01-31",
+        "range_million": [
+          5990.0,
+          6090.0
+        ],
+        "header": "FY25 (ending January 31, 2025)",
+        "source_row": [
+          "Revenue (in millions) (1)",
+          "$5,990 - $6,090 Up 9% - 11%"
+        ]
+      }
+    },
+    "remaining_year_revision_million": null,
+    "previous_source": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2024-fourth-quarter-and-full-year-results-302076225.html",
+    "comparison_status": "preliminary_actual_only_approximate_no_signal"
+  },
+  {
+    "symbol": "ADSK",
+    "source": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2025-first-quarter-results-302169849.html",
+    "source_file": "release_302169849.html",
+    "sha256": "42a87cdcca7df1e1a077239b85b5fc2ef7758e39f7a9340c213121c93c81cb77",
+    "published": "2024-06-11 16:01:00-04:00",
+    "modified": "2024-06-11 16:01:00-04:00",
+    "available_after": "2024-06-11 16:01:00-04:00",
+    "title": "AUTODESK, INC. ANNOUNCES FISCAL 2025 FIRST QUARTER RESULTS",
+    "preliminary": false,
+    "actual_source_row": [
+      "Total net revenue",
+      "1,417",
+      "1,269"
+    ],
+    "scope_review_excerpts": [
+      "Acquisitions, Mergers and Takeovers",
+      "(1) Non-GAAP earnings per diluted share excludes $0.80 related to stock-based compensation expense, $0.15 for the amortization of both purchased intangibles and developed technologies, and $0.07 for acquisition-related costs, partially offset by ($0.16) related to GAAP-only tax charges.",
+      "(2) Non-GAAP operating margin excludes approximately 11% related to stock-based compensation expense, approximately 2% for the amortization of both purchased intangibles and developed technologies, and approximately 1% related to acquisition-related costs.",
+      "(3) Non-GAAP earnings per diluted share excludes $3.16 related to stock-based compensation expense, $0.57 for the amortization of both purchased intangibles and developed technologies, and $0.20 related to acquisition-related costs, partially offset by ($0.65) related to GAAP-only tax charges.",
+      "Net Revenue Retention Rate (NR3): Measures the year-over-year change in Recurring Revenue for the population of customers that existed one year ago (\"base customers\").\u00a0 Net revenue retention rate is calculated by dividing the current quarter Recurring Revenue related to base customers by the total corresponding quarter Recurring Revenue from one year ago. Recurring Revenue is based on USD reported revenue, and fluctuations caused by changes in foreign currency exchange rates and hedge gains or losses have not been eliminated. Recurring Revenue related to acquired companies, one year after acquisition, has been captured as existing customers until such data conforms to the calculation methodology. This may cause variability in the comparison.",
+      "Recurring Revenue: Consists of the revenue for the period from our traditional maintenance plans, our subscription plan offerings, and certain Other revenue. It excludes subscription revenue related to third-party products. Recurring revenue acquired with the acquisition of a business is captured when total subscriptions are captured in our systems and may cause variability in the comparison of this calculation.",
+      "Solution Provider : Solution Provider is the name of our channel partners who primarily serve our new transaction model customers worldwide. Solution Providers may also be resellers in relation to Autodesk solutions.",
+      "Acquisition-related costs"
+    ],
+    "reported_fiscal_year": 2025,
+    "reported_quarter": 1,
+    "reported_quarter_end": "2024-04-30",
+    "actual_revenue_million": 1417.0,
+    "fiscal_year": 2025,
+    "next_quarter": 2,
+    "next_quarter_end": "2024-07-31",
+    "quarter_range_million": [
+      1475.0,
+      1490.0
+    ],
+    "annual_range_million": [
+      5990.0,
+      6090.0
+    ],
+    "guidance_source": {
+      "quarter": {
+        "fiscal_year": 2025,
+        "quarter": 2,
+        "ending": "2024-07-31",
+        "range_million": [
+          1475.0,
+          1490.0
+        ],
+        "header": "Q2 FY25 (ending July 31, 2024)",
+        "source_row": [
+          "Revenue (in millions)",
+          "$1,475 - $1,490"
+        ]
+      },
+      "annual": {
+        "fiscal_year": 2025,
+        "quarter": null,
+        "ending": "2025-01-31",
+        "range_million": [
+          5990.0,
+          6090.0
+        ],
+        "header": "FY25 (ending January 31, 2025)",
+        "source_row": [
+          "Revenue (in millions) (1)",
+          "$5,990 - $6,090 Up 9% - 11%"
+        ]
+      }
+    },
+    "remaining_year_revision_million": null,
+    "previous_source": "https://www.prnewswire.com/news-releases/autodesk-reports-results-of-audit-committee-investigation-provides-preliminary-results-for-first-quarter-fiscal-2025-and-business-outlook-302160946.html",
+    "comparison_status": "repeated_reported_quarter_no_signal"
+  },
+  {
+    "symbol": "ADSK",
+    "source": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2025-second-quarter-results-302234360.html",
+    "source_file": "release_302234360.html",
+    "sha256": "1753531b515e18140d0e7d40c69773e5632c1a5bfe5c17484d6c3712f0a97cb3",
+    "published": "2024-08-29 16:01:00-04:00",
+    "modified": "2024-08-29 16:01:00-04:00",
+    "available_after": "2024-08-29 16:01:00-04:00",
+    "title": "AUTODESK, INC. ANNOUNCES FISCAL 2025 SECOND QUARTER RESULTS",
+    "preliminary": false,
+    "actual_source_row": [
+      "Total net revenue",
+      "1,505",
+      "1,345",
+      "2,922",
+      "2,614"
+    ],
+    "scope_review_excerpts": [
+      "Acquisitions, Mergers and Takeovers",
+      "\"We generated broad-based growth across products and regions in architecture, engineering and construction (AEC) and manufacturing in the second quarter. Overall, macroeconomic, policy, and geopolitical challenges, and the underlying momentum of the business, were consistent with the last few quarters,\" said Betsy Rafael , Autodesk interim CFO. \"Given our sustained momentum in the second quarter, and smooth launch of the new transaction model in North America , we are raising the mid-points of our billings, revenue, earnings per share, and free cash flow guidance ranges.\"",
+      "(1) Non-GAAP earnings per diluted share excludes $0.83 related to stock-based compensation expense, $0.16 for the amortization of both purchased intangibles and developed technologies, and $0.05 for acquisition-related costs, partially offset by ($0.17) related to GAAP-only tax charges.",
+      "(2) Non-GAAP operating margin excludes approximately 11% related to stock-based compensation expense, approximately 2% for the amortization of both purchased intangibles and developed technologies, and approximately 1% related to acquisition-related costs.",
+      "(3) Non-GAAP earnings per diluted share excludes $3.14 related to stock-based compensation expense, $0.60 for the amortization of both purchased intangibles and developed technologies, $0.22 related to acquisition-related costs, and $0.03 related to losses on strategic investments, partially offset by ($0.69) related to GAAP-only tax charges.",
+      "Net Revenue Retention Rate (NR3): Measures the year-over-year change in Recurring Revenue for the population of customers that existed one year ago (\"base customers\").\u00a0 Net revenue retention rate is calculated by dividing the current quarter Recurring Revenue related to base customers by the total corresponding quarter Recurring Revenue from one year ago. Recurring Revenue is based on USD reported revenue, and fluctuations caused by changes in foreign currency exchange rates and hedge gains or losses have not been eliminated. Recurring Revenue related to acquired companies, one year after acquisition, has been captured as existing customers until such data conforms to the calculation methodology. This may cause variability in the comparison.",
+      "Recurring Revenue: Consists of the revenue for the period from our traditional maintenance plans, our subscription plan offerings, and certain Other revenue. It excludes subscription revenue related to third-party products. Recurring revenue acquired with the acquisition of a business is captured when total subscriptions are captured in our systems and may cause variability in the comparison of this calculation.",
+      "Solution Provider : Solution Provider is the name of our channel partners who primarily serve our new transaction model customers worldwide. Solution Providers may also be resellers in relation to Autodesk solutions.",
+      "Acquisition-related costs"
+    ],
+    "reported_fiscal_year": 2025,
+    "reported_quarter": 2,
+    "reported_quarter_end": "2024-07-31",
+    "actual_revenue_million": 1505.0,
+    "fiscal_year": 2025,
+    "next_quarter": 3,
+    "next_quarter_end": "2024-10-31",
+    "quarter_range_million": [
+      1555.0,
+      1570.0
+    ],
+    "annual_range_million": [
+      6080.0,
+      6130.0
+    ],
+    "guidance_source": {
+      "quarter": {
+        "fiscal_year": 2025,
+        "quarter": 3,
+        "ending": "2024-10-31",
+        "range_million": [
+          1555.0,
+          1570.0
+        ],
+        "header": "Q3 FY25 (ending October 31, 2024)",
+        "source_row": [
+          "Revenue (in millions)",
+          "$1,555 - $1,570"
+        ]
+      },
+      "annual": {
+        "fiscal_year": 2025,
+        "quarter": null,
+        "ending": "2025-01-31",
+        "range_million": [
+          6080.0,
+          6130.0
+        ],
+        "header": "FY25 (ending January 31, 2025)",
+        "source_row": [
+          "Revenue (in millions) (1)",
+          "$6,080 - $6,130 Up approx. 11%"
+        ]
+      }
+    },
+    "remaining_year_revision_million": 42.5,
+    "previous_source": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2025-first-quarter-results-302169849.html",
+    "comparison_status": "numerically_comparable_scope_review_pending",
+    "realized_surprise_million": 22.5
+  },
+  {
+    "symbol": "ADSK",
+    "source": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2025-third-quarter-results-302316794.html",
+    "source_file": "release_302316794.html",
+    "sha256": "4f4e398fbc772408a8a6b3590a2ae2dc46bc3014ee26b7a885333b8da365aa34",
+    "published": "2024-11-26 16:01:00-05:00",
+    "modified": "2024-11-26 16:01:41-05:00",
+    "available_after": "2024-11-26 16:01:41-05:00",
+    "title": "AUTODESK, INC. ANNOUNCES FISCAL 2025 THIRD QUARTER RESULTS",
+    "preliminary": false,
+    "actual_source_row": [
+      "Total net revenue",
+      "1,570",
+      "1,414",
+      "4,492",
+      "4,028"
+    ],
+    "scope_review_excerpts": [
+      "Acquisitions, Mergers and Takeovers",
+      "\"We generated broad-based underlying growth across products and regions. Overall, macroeconomic, policy, and geopolitical challenges, and the underlying momentum of the business, were consistent with the last few quarters with continued strong renewal rates and headwinds to new business growth,\" said Betsy Rafael , Autodesk interim CFO. \"Given Autodesk's sustained momentum in the third quarter, and smooth launch of the new transaction model in Western Europe , we are raising the midpoints of our billings, revenue, margins, earnings per share, and free cash flow guidance ranges.\"",
+      "(1) Non-GAAP earnings per diluted share excludes $0.85 related to stock-based compensation expense, $0.17 for the amortization of both purchased intangibles and developed technologies, and $0.05 for acquisition-related costs, partially offset by ($0.18) related to GAAP-only tax charges.",
+      "(2) Non-GAAP operating margin excludes approximately 11% related to stock-based compensation expense, approximately 2% for the amortization of both purchased intangibles and developed technologies, and approximately 1% related to acquisition-related costs.",
+      "(3) Non-GAAP earnings per diluted share excludes $3.15 related to stock-based compensation expense, $0.61 for the amortization of both purchased intangibles and developed technologies, $0.23 related to acquisition-related costs, and $0.04 related to losses on strategic investments, partially offset by ($0.69) related to GAAP-only tax charges.",
+      "Net Revenue Retention Rate (NR3): Measures the year-over-year change in Recurring Revenue for the population of customers that existed one year ago (\"base customers\").\u00a0 Net revenue retention rate is calculated by dividing the current quarter Recurring Revenue related to base customers by the total corresponding quarter Recurring Revenue from one year ago. Recurring Revenue is based on USD reported revenue, and fluctuations caused by changes in foreign currency exchange rates and hedge gains or losses have not been eliminated. Recurring Revenue related to acquired companies, one year after acquisition, has been captured as existing customers until such data conforms to the calculation methodology. This may cause variability in the comparison.",
+      "Recurring Revenue: Consists of the revenue for the period from our traditional maintenance plans, our subscription plan offerings, and certain Other revenue. It excludes subscription revenue related to third-party products. Recurring revenue acquired with the acquisition of a business is captured when total subscriptions are captured in our systems and may cause variability in the comparison of this calculation.",
+      "Solution Provider : Solution Provider is the name of our channel partners who primarily serve our new transaction model customers worldwide. Solution Providers may also be resellers in relation to Autodesk solutions.",
+      "Acquisition-related costs"
+    ],
+    "reported_fiscal_year": 2025,
+    "reported_quarter": 3,
+    "reported_quarter_end": "2024-10-31",
+    "actual_revenue_million": 1570.0,
+    "fiscal_year": 2025,
+    "next_quarter": 4,
+    "next_quarter_end": "2025-01-31",
+    "quarter_range_million": [
+      1623.0,
+      1638.0
+    ],
+    "annual_range_million": [
+      6115.0,
+      6130.0
+    ],
+    "guidance_source": {
+      "quarter": {
+        "fiscal_year": 2025,
+        "quarter": 4,
+        "ending": "2025-01-31",
+        "range_million": [
+          1623.0,
+          1638.0
+        ],
+        "header": "Q4 FY25 (ending January 31, 2025)",
+        "source_row": [
+          "Revenue (in millions)",
+          "$1,623 - $1,638"
+        ]
+      },
+      "annual": {
+        "fiscal_year": 2025,
+        "quarter": null,
+        "ending": "2025-01-31",
+        "range_million": [
+          6115.0,
+          6130.0
+        ],
+        "header": "FY25 (ending January 31, 2025)",
+        "source_row": [
+          "Revenue (in millions) (1)",
+          "$6,115 - $6,130 Up approx. 11%"
+        ]
+      }
+    },
+    "remaining_year_revision_million": 10.0,
+    "previous_source": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2025-second-quarter-results-302234360.html",
+    "comparison_status": "numerically_comparable_scope_review_pending",
+    "realized_surprise_million": 7.5
+  },
+  {
+    "symbol": "ADSK",
+    "source": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2025-fourth-quarter-and-full-year-results-302387861.html",
+    "source_file": "release_302387861.html",
+    "sha256": "52c6c7ea39267ff2d90bb7acc375638198c1bada9f79e2276c4f0ce20fff88b3",
+    "published": "2025-02-27 16:01:00-05:00",
+    "modified": "2025-02-27 16:01:39-05:00",
+    "available_after": "2025-02-27 16:01:39-05:00",
+    "title": "AUTODESK, INC. ANNOUNCES FISCAL 2025 FOURTH QUARTER AND FULL-YEAR RESULTS",
+    "preliminary": false,
+    "actual_source_row": [
+      "Total net revenue",
+      "1,639",
+      "1,469",
+      "6,131",
+      "5,497"
+    ],
+    "scope_review_excerpts": [
+      "Acquisitions, Mergers and Takeovers",
+      "\"The fourth quarter and full year fiscal 25 results are strong,\" said Janesh Moorjani , Autodesk CFO. \"The completion of the new transaction model launch in the fourth quarter marked a significant milestone, and we have now initiated the optimization phase of our sales and marketing plan. Once our sales and marketing optimization is complete, we expect to deliver GAAP margins among the best in the industry.\"",
+      "(1) See supplemental materials available on our investor relations website for growth rates excluding currency movements and the new transaction model.",
+      "Net Revenue Retention Rate (NR3): Measures the year-over-year change in Recurring Revenue for the population of customers that existed one year ago (\"base customers\").\u00a0 Net revenue retention rate is calculated by dividing the current quarter Recurring Revenue related to base customers by the total corresponding quarter Recurring Revenue from one year ago. Recurring Revenue is based on USD reported revenue, and fluctuations caused by changes in foreign currency exchange rates and hedge gains or losses have not been eliminated. Recurring Revenue related to acquired companies, one year after acquisition, has been captured as existing customers until such data conforms to the calculation methodology. This may cause variability in the comparison.",
+      "Recurring Revenue: Consists of the revenue for the period from our traditional maintenance plans, our subscription plan offerings, and certain Other revenue. It excludes subscription revenue related to third-party products. Recurring revenue acquired with the acquisition of a business is captured when total subscriptions are captured in our systems and may cause variability in the comparison of this calculation.",
+      "Solution Provider : Solution Provider is the name of our channel partners who primarily serve our new transaction model customers worldwide. Solution Providers may also be resellers in relation to Autodesk solutions .",
+      "Total Subscriptions : Consists of subscriptions from our maintenance plans and subscription plan offerings that are active and paid as of the fiscal year end date. For certain cloud service offerings and EBAs, subscriptions represent the monthly average activity reported within the last three months of the fiscal quarter end date. Total subscriptions do not include education offerings, consumer product offerings, and third-party products. Subscriptions acquired with the acquisition of a business are captured once the data conforms to our subscription count methodology and when added, may cause variability in comparison of this calculation.",
+      "Acquisition-related costs"
+    ],
+    "reported_fiscal_year": 2025,
+    "reported_quarter": 4,
+    "reported_quarter_end": "2025-01-31",
+    "actual_revenue_million": 1639.0,
+    "fiscal_year": 2026,
+    "next_quarter": 1,
+    "next_quarter_end": "2025-04-30",
+    "quarter_range_million": [
+      1600.0,
+      1610.0
+    ],
+    "annual_range_million": [
+      6895.0,
+      6965.0
+    ],
+    "guidance_source": {
+      "quarter": {
+        "fiscal_year": 2026,
+        "quarter": 1,
+        "ending": "2025-04-30",
+        "range_million": [
+          1600.0,
+          1610.0
+        ],
+        "header": "Q1 FY26 (ending April 30, 2025)",
+        "source_row": [
+          "Revenue (in millions)",
+          "$1,600 - $1,610"
+        ]
+      },
+      "annual": {
+        "fiscal_year": 2026,
+        "quarter": null,
+        "ending": "2026-01-31",
+        "range_million": [
+          6895.0,
+          6965.0
+        ],
+        "header": "FY26 (ending January 31, 2026)",
+        "source_row": [
+          "Revenue (in millions) (1)",
+          "$6,895 - $6,965"
+        ]
+      }
+    },
+    "remaining_year_revision_million": null,
+    "previous_source": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2025-third-quarter-results-302316794.html",
+    "comparison_status": "initial_or_different_year"
+  },
+  {
+    "symbol": "ADSK",
+    "source": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2026-first-quarter-results-302463539.html",
+    "source_file": "release_302463539.html",
+    "sha256": "6f8be4502d1ad2b8e67fc752ee262faaa3e064e4c010460d7aeac84820f4d4e5",
+    "published": "2025-05-22 16:01:00-04:00",
+    "modified": "2025-05-22 16:01:35-04:00",
+    "available_after": "2025-05-22 16:01:35-04:00",
+    "title": "AUTODESK, INC. ANNOUNCES FISCAL 2026 FIRST QUARTER RESULTS",
+    "preliminary": false,
+    "actual_source_row": [
+      "Total net revenue",
+      "1,633",
+      "1,417"
+    ],
+    "scope_review_excerpts": [
+      "Acquisitions, Mergers and Takeovers",
+      "(1) See supplemental materials available on our investor relations website for growth rates excluding currency movements and the new transaction model. (2) See GAAP to Non-GAAP reconciliation at the end of this document. (3) Free cash flow is cash flow from operating activities less approximately $50 million of capital expenditures, and includes restructuring and other related cash outflows of $105 to $115 million, and an anticipated discrete cash benefit of $130 to $150 million from the utilization of US deferred tax assets.",
+      "Net Revenue Retention Rate (NR3): Measures the year-over-year change in Recurring Revenue for the population of customers that existed one year ago (\"base customers\").\u00a0 Net revenue retention rate is calculated by dividing the current quarter Recurring Revenue related to base customers by the total corresponding quarter Recurring Revenue from one year ago. Recurring Revenue is based on USD reported revenue, and fluctuations caused by changes in foreign currency exchange rates and hedge gains or losses have not been eliminated. Recurring Revenue related to acquired companies, one year after acquisition, has been captured as existing customers until such data conforms to the calculation methodology. This may cause variability in the comparison.",
+      "Recurring Revenue: Consists of the revenue for the period from our traditional maintenance plans, our subscription plan offerings and certain Other revenue. It excludes subscription revenue related to third-party products. Recurring revenue acquired with the acquisition of a business is captured when total subscriptions are captured in our systems and may cause variability in the comparison of this calculation.",
+      "Solution Provider : Solution Provider is the name of our channel partners who primarily serve our new transaction model customers worldwide. Solution Providers may also be resellers in relation to Autodesk solutions.",
+      "Acquisition-related costs"
+    ],
+    "reported_fiscal_year": 2026,
+    "reported_quarter": 1,
+    "reported_quarter_end": "2025-04-30",
+    "actual_revenue_million": 1633.0,
+    "fiscal_year": 2026,
+    "next_quarter": 2,
+    "next_quarter_end": "2025-07-31",
+    "quarter_range_million": [
+      1720.0,
+      1730.0
+    ],
+    "annual_range_million": [
+      6925.0,
+      6995.0
+    ],
+    "guidance_source": {
+      "quarter": {
+        "fiscal_year": 2026,
+        "quarter": 2,
+        "ending": "2025-07-31",
+        "range_million": [
+          1720.0,
+          1730.0
+        ],
+        "header": "Q2 FY26 (ending July 31, 2025)",
+        "source_row": [
+          "Revenue (in millions)",
+          "$1,720 - $1,730"
+        ]
+      },
+      "annual": {
+        "fiscal_year": 2026,
+        "quarter": null,
+        "ending": "2026-01-31",
+        "range_million": [
+          6925.0,
+          6995.0
+        ],
+        "header": "FY26 (ending January 31, 2026)",
+        "source_row": [
+          "Revenue (in millions) (1)",
+          "$6,925 - $6,995"
+        ]
+      }
+    },
+    "remaining_year_revision_million": 2.0,
+    "previous_source": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2025-fourth-quarter-and-full-year-results-302387861.html",
+    "comparison_status": "numerically_comparable_scope_review_pending",
+    "realized_surprise_million": 28.0
+  },
+  {
+    "symbol": "ADSK",
+    "source": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2026-second-quarter-results-302540893.html",
+    "source_file": "release_302540893.html",
+    "sha256": "d80e8c82f28b7f023e190ee31d374235b289dc93daab8e1f97057896c1892b02",
+    "published": "2025-08-28 16:01:00-04:00",
+    "modified": "2025-08-28 16:02:02-04:00",
+    "available_after": "2025-08-28 16:02:02-04:00",
+    "title": "AUTODESK, INC. ANNOUNCES FISCAL 2026 SECOND QUARTER RESULTS",
+    "preliminary": false,
+    "actual_source_row": [
+      "Total net revenue",
+      "1,763",
+      "1,505",
+      "3,396",
+      "2,922"
+    ],
+    "scope_review_excerpts": [
+      "Acquisitions, Mergers and Takeovers",
+      "(1) See supplemental materials available on our investor relations website for growth rates excluding currency movements and the new transaction model.",
+      "Net Revenue Retention Rate (NR3): Measures the year-over-year change in Recurring Revenue for the population of customers that existed one year ago (\"base customers\").\u00a0 Net revenue retention rate is calculated by dividing the current quarter Recurring Revenue related to base customers by the total corresponding quarter Recurring Revenue from one year ago. Recurring Revenue is based on USD reported revenue, and fluctuations caused by changes in foreign currency exchange rates and hedge gains or losses have not been eliminated. Recurring Revenue related to acquired companies, one year after acquisition, has been captured as existing customers until such data conforms to the calculation methodology. This may cause variability in the comparison.",
+      "Recurring Revenue: Consists of the revenue for the period from our traditional maintenance plans, our subscription plan offerings and certain Other revenue. It excludes subscription revenue related to third-party products. Recurring revenue acquired with the acquisition of a business is captured when total subscriptions are captured in our systems and may cause variability in the comparison of this calculation.",
+      "Solution Provider: Solution Provider is the name of our channel partners who primarily serve our new transaction model customers worldwide. Solution Providers may also be resellers in relation to Autodesk solutions.",
+      "Acquisition-related costs"
+    ],
+    "reported_fiscal_year": 2026,
+    "reported_quarter": 2,
+    "reported_quarter_end": "2025-07-31",
+    "actual_revenue_million": 1763.0,
+    "fiscal_year": 2026,
+    "next_quarter": 3,
+    "next_quarter_end": "2025-10-31",
+    "quarter_range_million": [
+      1800.0,
+      1810.0
+    ],
+    "annual_range_million": [
+      7025.0,
+      7075.0
+    ],
+    "guidance_source": {
+      "quarter": {
+        "fiscal_year": 2026,
+        "quarter": 3,
+        "ending": "2025-10-31",
+        "range_million": [
+          1800.0,
+          1810.0
+        ],
+        "header": "Q3 FY26 (ending October 31, 2025)",
+        "source_row": [
+          "Revenue (in millions)",
+          "$1,800 - $1,810"
+        ]
+      },
+      "annual": {
+        "fiscal_year": 2026,
+        "quarter": null,
+        "ending": "2026-01-31",
+        "range_million": [
+          7025.0,
+          7075.0
+        ],
+        "header": "FY26 (ending January 31, 2026)",
+        "source_row": [
+          "Revenue (in millions) (1)",
+          "$7,025 - $7,075"
+        ]
+      }
+    },
+    "remaining_year_revision_million": 52.0,
+    "previous_source": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2026-first-quarter-results-302463539.html",
+    "comparison_status": "numerically_comparable_scope_review_pending",
+    "realized_surprise_million": 38.0
+  },
+  {
+    "symbol": "ADSK",
+    "source": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2026-third-quarter-results-302625697.html",
+    "source_file": "release_302625697.html",
+    "sha256": "9553eb19ea7da68e6c56a9eb3cb27fcc175b12e1b91a0aa4a123d11cea143cc1",
+    "published": "2025-11-25 16:01:00-05:00",
+    "modified": "2025-11-25 16:01:59-05:00",
+    "available_after": "2025-11-25 16:01:59-05:00",
+    "title": "AUTODESK, INC. ANNOUNCES FISCAL 2026 THIRD QUARTER RESULTS",
+    "preliminary": false,
+    "actual_source_row": [
+      "Total net revenue",
+      "1,853",
+      "1,570",
+      "5,249",
+      "4,492"
+    ],
+    "scope_review_excerpts": [
+      "Acquisitions, Mergers and Takeovers",
+      "(1) See supplemental materials available on our investor relations website for growth rates excluding currency movements and the new transaction model.",
+      "Net Revenue Retention Rate (NR3): Measures the year-over-year change in Recurring Revenue for the population of customers that existed one year ago (\"base customers\").\u00a0 Net revenue retention rate is calculated by dividing the current quarter Recurring Revenue related to base customers by the total corresponding quarter Recurring Revenue from one year ago. Recurring Revenue is based on USD reported revenue, and fluctuations caused by changes in foreign currency exchange rates and hedge gains or losses have not been eliminated. Recurring Revenue related to acquired companies, one year after acquisition, has been captured as existing customers until such data conforms to the calculation methodology. This may cause variability in the comparison.",
+      "Recurring Revenue: Consists of the revenue for the period from our traditional maintenance plans, our subscription plan offerings and certain Other revenue. It excludes subscription revenue related to third-party products. Recurring revenue acquired with the acquisition of a business is captured when total subscriptions are captured in our systems and may cause variability in the comparison of this calculation.",
+      "Solution Provider: Solution Provider is the name of our channel partners who primarily serve our new transaction model customers worldwide. Solution Providers may also be resellers in relation to Autodesk solutions.",
+      "Acquisition-related costs"
+    ],
+    "reported_fiscal_year": 2026,
+    "reported_quarter": 3,
+    "reported_quarter_end": "2025-10-31",
+    "actual_revenue_million": 1853.0,
+    "fiscal_year": 2026,
+    "next_quarter": 4,
+    "next_quarter_end": "2026-01-31",
+    "quarter_range_million": [
+      1901.0,
+      1917.0
+    ],
+    "annual_range_million": [
+      7150.0,
+      7165.0
+    ],
+    "guidance_source": {
+      "quarter": {
+        "fiscal_year": 2026,
+        "quarter": 4,
+        "ending": "2026-01-31",
+        "range_million": [
+          1901.0,
+          1917.0
+        ],
+        "header": "Q4 FY26 (ending January 31, 2026)",
+        "source_row": [
+          "Revenue (in millions)",
+          "$1,901 - $1,917"
+        ]
+      },
+      "annual": {
+        "fiscal_year": 2026,
+        "quarter": null,
+        "ending": "2026-01-31",
+        "range_million": [
+          7150.0,
+          7165.0
+        ],
+        "header": "FY26 (ending January 31, 2026)",
+        "source_row": [
+          "Revenue (in millions) (1)",
+          "$7,150 - $7,165"
+        ]
+      }
+    },
+    "remaining_year_revision_million": 59.5,
+    "previous_source": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2026-second-quarter-results-302540893.html",
+    "comparison_status": "numerically_comparable_scope_review_pending",
+    "realized_surprise_million": 48.0
+  },
+  {
+    "symbol": "ADSK",
+    "source": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2026-fourth-quarter-results-302698740.html",
+    "source_file": "release_302698740.html",
+    "sha256": "95205ebfab0fc2d01a5a695536e20e333fbb33236dc7fa829c306bce3ffd4c04",
+    "published": "2026-02-26 16:01:00-05:00",
+    "modified": "2026-02-26 16:02:00-05:00",
+    "available_after": "2026-02-26 16:02:00-05:00",
+    "title": "AUTODESK, INC. ANNOUNCES FISCAL 2026 FOURTH QUARTER RESULTS",
+    "preliminary": false,
+    "actual_source_row": [
+      "Total net revenue",
+      "1,957",
+      "1,639",
+      "7,206",
+      "6,131"
+    ],
+    "scope_review_excerpts": [
+      "Acquisitions, Mergers and Takeovers",
+      "(1) See supplemental materials available on our investor relations website for growth rates excluding currency movements and the new transaction model.",
+      "Net Revenue Retention Rate (NR3): Measures the year-over-year change in Recurring Revenue for the population of customers that existed one year ago (\"base customers\").\u00a0 Net revenue retention rate is calculated by dividing the current quarter Recurring Revenue related to base customers by the total corresponding quarter Recurring Revenue from one year ago. Recurring Revenue is based on USD reported revenue, and fluctuations caused by changes in foreign currency exchange rates and hedge gains or losses have not been eliminated. Recurring Revenue related to acquired companies, one year after acquisition, has been captured as existing customers until such data conforms to the calculation methodology. This may cause variability in the comparison.",
+      "Recurring Revenue: Consists of the revenue for the period from our traditional maintenance plans, our subscription plan offerings, and certain Other revenue. It excludes subscription revenue related to third-party products. Recurring revenue acquired with the acquisition of a business is captured when total subscriptions are captured in our systems and may cause variability in the comparison of this calculation.",
+      "Solution Provider : Solution Provider is the name of our channel partners who primarily serve our new transaction model customers worldwide. Solution Providers may also be resellers in relation to Autodesk solutions .",
+      "Acquisition-related costs"
+    ],
+    "reported_fiscal_year": 2026,
+    "reported_quarter": 4,
+    "reported_quarter_end": "2026-01-31",
+    "actual_revenue_million": 1957.0,
+    "fiscal_year": 2027,
+    "next_quarter": 1,
+    "next_quarter_end": "2026-04-30",
+    "quarter_range_million": [
+      1885.0,
+      1900.0
+    ],
+    "annual_range_million": [
+      8100.0,
+      8170.0
+    ],
+    "guidance_source": {
+      "quarter": {
+        "fiscal_year": 2027,
+        "quarter": 1,
+        "ending": "2026-04-30",
+        "range_million": [
+          1885.0,
+          1900.0
+        ],
+        "header": "Q1 FY27 (ending April 30, 2026)",
+        "source_row": [
+          "Revenue (in millions)",
+          "$1,885 - $1,900"
+        ]
+      },
+      "annual": {
+        "fiscal_year": 2027,
+        "quarter": null,
+        "ending": "2027-01-31",
+        "range_million": [
+          8100.0,
+          8170.0
+        ],
+        "header": "FY27 (ending January 31, 2027)",
+        "source_row": [
+          "Revenue (in millions) (1)",
+          "$8,100 - $8,170"
+        ]
+      }
+    },
+    "remaining_year_revision_million": null,
+    "previous_source": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2026-third-quarter-results-302625697.html",
+    "comparison_status": "initial_or_different_year"
+  },
+  {
+    "symbol": "ADSK",
+    "source": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2027-first-quarter-results-302784940.html",
+    "source_file": "release_302784940.html",
+    "sha256": "e85d5cf71823133c5255a1fdbfccf8feb070cbf31c8a3d59970e25e8ed87681c",
+    "published": "2026-05-28 16:03:00-04:00",
+    "modified": "2026-05-28 16:03:30-04:00",
+    "available_after": "2026-05-28 16:03:30-04:00",
+    "title": "AUTODESK, INC. ANNOUNCES FISCAL 2027 FIRST QUARTER RESULTS",
+    "preliminary": false,
+    "actual_source_row": [
+      "Total net revenue",
+      "1,934",
+      "1,633"
+    ],
+    "scope_review_excerpts": [
+      "Acquisitions, Mergers and Takeovers",
+      "\"We delivered strong first quarter results with solid execution of our plans and consistent momentum in our markets. Our sales reorganization is proceeding as expected,\" said Janesh Moorjani, Autodesk CFO. \"We have raised our fiscal 27 guidance to reflect the strength of the business in the first quarter. Our guidance assumes that the underlying momentum of the business will remain strong and continues to reflect potential disruption from our sales restructuring consistent with the plan we set out in February. The acquisition of MaintainX will bring a strategic asset into Autodesk and support our focus on durable, long-term growth and shareholder value creation. We will include the impact of the acquisition in our guidance after the transaction closes.\"",
+      "Acquisition-related costs",
+      "Amortization of developed technologies and purchased intangibles.\u00a0\u00a0Autodesk incurs amortization of acquisition-related developed technology and purchased intangibles in connection with acquisitions of certain businesses and technologies. Amortization of developed technologies and purchased intangibles is inconsistent in amount and frequency and is significantly affected by the timing and size of Autodesk's acquisitions.\u00a0 Management finds it useful to exclude these variable charges from our cost of revenues to assist in budgeting, planning and forecasting future periods. Investors should note that the use of intangible assets contributed to our revenues earned during the periods presented and will contribute to Autodesk's future period revenues as well. Amortization of developed technologies and purchased intangible assets will recur in future periods.",
+      "Acquisition-related costs.\u00a0Autodesk excludes certain acquisition-related costs, including due diligence costs, professional fees in connection with an acquisition, certain financing costs, and certain integration-related expenses.\u00a0 These expenses are unpredictable, and dependent on factors that may be outside of Autodesk's control and unrelated to the continuing operations of the acquired business or Autodesk.\u00a0 In addition, the size and complexity of an acquisition, which often drives the magnitude of acquisition-related costs, may not be indicative of such future costs.\u00a0 Autodesk believes excluding acquisition-related costs facilitates the comparison of its financial results to the Autodesk's historical operating results and to other companies in its industry."
+    ],
+    "reported_fiscal_year": 2027,
+    "reported_quarter": 1,
+    "reported_quarter_end": "2026-04-30",
+    "actual_revenue_million": 1934.0,
+    "fiscal_year": 2027,
+    "next_quarter": 2,
+    "next_quarter_end": "2026-07-31",
+    "quarter_range_million": [
+      2005.0,
+      2015.0
+    ],
+    "annual_range_million": [
+      8155.0,
+      8215.0
+    ],
+    "guidance_source": {
+      "quarter": {
+        "fiscal_year": 2027,
+        "quarter": 2,
+        "ending": "2026-07-31",
+        "range_million": [
+          2005.0,
+          2015.0
+        ],
+        "header": "Q2 FY27 (ending July 31, 2026)",
+        "source_row": [
+          "Revenue (in millions)",
+          "$2,005 - $2,015"
+        ]
+      },
+      "annual": {
+        "fiscal_year": 2027,
+        "quarter": null,
+        "ending": "2027-01-31",
+        "range_million": [
+          8155.0,
+          8215.0
+        ],
+        "header": "FY27 (ending January 31, 2027)",
+        "source_row": [
+          "Revenue (in millions)",
+          "$8,155 - $8,215"
+        ]
+      }
+    },
+    "remaining_year_revision_million": 8.5,
+    "previous_source": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2026-fourth-quarter-results-302698740.html",
+    "comparison_status": "numerically_comparable_scope_review_pending",
+    "realized_surprise_million": 41.5
+  },
+  {
+    "symbol": "ADSK",
+    "source": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2027-second-quarter-results-302861696.html",
+    "source_file": "release_302861696.html",
+    "sha256": "0eacba367fc8c0426445ec63ebd362453d286f0d8c2ffd62f34b43e4c63730e9",
+    "published": "2026-08-27 16:01:00-04:00",
+    "modified": "2026-08-27 16:01:00-04:00",
+    "available_after": "2026-08-27 16:01:00-04:00",
+    "title": "AUTODESK, INC. ANNOUNCES FISCAL 2027 SECOND QUARTER RESULTS",
+    "preliminary": false,
+    "actual_source_row": [
+      "Total net revenue",
+      "2,046",
+      "1,763",
+      "3,980",
+      "3,396"
+    ],
+    "scope_review_excerpts": [
+      "Acquisitions, Mergers and Takeovers",
+      "\"We delivered strong second quarter results with consistent execution and momentum. Our sales reorganization is proceeding as expected,\" said Janesh Moorjani, Autodesk CFO. \"We have increased our fiscal 27 billings and revenue growth guidance to reflect higher underlying growth expectations, as well as the incremental contribution from MaintainX. Our fiscal 27 non-GAAP margin guidance is unchanged, reflecting higher underlying margins from operating leverage and benefits from our go-to-market optimization, offset by margin dilution from the MaintainX acquisition. We've narrowed our fiscal 27 free cash flow expectations reflecting stronger underlying expectations offset by the operating and net financing costs for MaintainX and including approximately $45 million of transaction expenses related to the MaintainX acquisition.\"",
+      "(2) Free cash flow is cash flow from operating activities less approximately $70 million of capital expenditures. Free cash flow includes approximately $45 million of transaction expenses related to the MaintainX acquisition.",
+      "Acquisition-related costs",
+      "Amortization of developed technologies and purchased intangibles.\u00a0\u00a0Autodesk incurs amortization of acquisition-related developed technology and purchased intangibles in connection with acquisitions of certain businesses and technologies. Amortization of developed technologies and purchased intangibles is inconsistent in amount and frequency and is significantly affected by the timing and size of Autodesk's acquisitions. Management finds it useful to exclude these variable charges from our cost of revenues to assist in budgeting, planning and forecasting future periods. Investors should note that the use of intangible assets contributed to our revenues earned during the periods presented and will contribute to Autodesk's future period revenues as well. Amortization of developed technologies and purchased intangible assets will recur in future periods.",
+      "Acquisition-related costs.\u00a0Autodesk excludes certain acquisition-related costs, including due diligence costs, professional fees in connection with an acquisition, certain financing costs, and certain integration-related expenses.\u00a0\u00a0These expenses are unpredictable, and dependent on factors that may be outside of Autodesk's control and unrelated to the continuing operations of the acquired business or Autodesk.\u00a0\u00a0In addition, the size and complexity of an acquisition, which often drives the magnitude of acquisition-related costs, may not be indicative of such future costs.\u00a0\u00a0Autodesk believes excluding acquisition-related costs facilitates the comparison of its financial results to the Autodesk's historical operating results and to other companies in its industry."
+    ],
+    "reported_fiscal_year": 2027,
+    "reported_quarter": 2,
+    "reported_quarter_end": "2026-07-31",
+    "actual_revenue_million": 2046.0,
+    "fiscal_year": 2027,
+    "next_quarter": 3,
+    "next_quarter_end": "2026-10-31",
+    "quarter_range_million": [
+      2125.0,
+      2140.0
+    ],
+    "annual_range_million": [
+      8295.0,
+      8345.0
+    ],
+    "guidance_source": {
+      "quarter": {
+        "fiscal_year": 2027,
+        "quarter": 3,
+        "ending": "2026-10-31",
+        "range_million": [
+          2125.0,
+          2140.0
+        ],
+        "header": "Q3 FY27 (ending October 31, 2026)",
+        "source_row": [
+          "Revenue (in millions)",
+          "$2,125 - $2,140"
+        ]
+      },
+      "annual": {
+        "fiscal_year": 2027,
+        "quarter": null,
+        "ending": "2027-01-31",
+        "range_million": [
+          8295.0,
+          8345.0
+        ],
+        "header": "FY27 (ending January 31, 2027)",
+        "source_row": [
+          "Revenue (in millions)",
+          "$8,295 - $8,345"
+        ]
+      }
+    },
+    "remaining_year_revision_million": 99.0,
+    "previous_source": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2027-first-quarter-results-302784940.html",
+    "comparison_status": "numerically_comparable_scope_review_pending",
+    "realized_surprise_million": 36.0
+  }
+]

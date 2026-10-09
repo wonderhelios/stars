@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2024-third-quarter-results-301995206.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "bfd39950ad842954058b9995532fda25fc6f03724393b35ef7dfab51930a4236",
+  "retrieved_utc": "2026-10-09T03:25:31Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2024-third-quarter-results-301995206.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "bfd39950ad842954058b9995532fda25fc6f03724393b35ef7dfab51930a4236",
+      "retrieved_utc": "2026-10-09T03:25:31Z"
+    }
+  ]
+}

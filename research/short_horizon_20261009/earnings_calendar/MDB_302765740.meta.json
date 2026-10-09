@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-date-of-first-quarter-fiscal-2027-earnings-call-302765740.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "3759f22d3ab32b9ee08a6f0618ac887ad9fef3befaaade10dd0cf5f7e2966c5b",
+  "retrieved_utc": "2026-10-09T04:08:23Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-date-of-first-quarter-fiscal-2027-earnings-call-302765740.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "3759f22d3ab32b9ee08a6f0618ac887ad9fef3befaaade10dd0cf5f7e2966c5b",
+      "retrieved_utc": "2026-10-09T04:08:23Z"
+    }
+  ]
+}

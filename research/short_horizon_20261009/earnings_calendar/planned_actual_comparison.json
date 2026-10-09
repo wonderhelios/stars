@@ -1,0 +1,1592 @@
+[
+  {
+    "symbol": "SNPS",
+    "fiscal_year": 2020,
+    "quarter": 1,
+    "notice": "https://www.prnewswire.com/news-releases/synopsys-announces-earnings-release-date-for-first-quarter-fiscal-year-2020-300999636.html",
+    "planned_date": "2020-02-19",
+    "observed_releases": [
+      {
+        "date": "2020-02-19",
+        "source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-first-quarter-fiscal-year-2020-301007745.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "MDB",
+    "fiscal_year": 2020,
+    "quarter": 4,
+    "notice": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-date-of-fourth-quarter-and-full-year-fiscal-2020-earnings-call-301009126.html",
+    "planned_date": "2020-03-17",
+    "observed_releases": [
+      {
+        "date": "2020-03-17",
+        "source": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-fourth-quarter-and-full-year-fiscal-2020-financial-results-301025756.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "SNPS",
+    "fiscal_year": 2020,
+    "quarter": 2,
+    "notice": "https://www.prnewswire.com/news-releases/synopsys-announces-earnings-release-date-for-second-quarter-fiscal-year-2020-301054268.html",
+    "planned_date": "2020-05-20",
+    "observed_releases": [
+      {
+        "date": "2020-05-20",
+        "source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-second-quarter-fiscal-year-2020-301062899.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "MDB",
+    "fiscal_year": 2021,
+    "quarter": 1,
+    "notice": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-date-of-first-quarter-fiscal-2021-earnings-call-301062008.html",
+    "planned_date": "2020-06-04",
+    "observed_releases": [
+      {
+        "date": "2020-06-04",
+        "source": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-first-quarter-fiscal-2021-financial-results-301071036.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "SNPS",
+    "fiscal_year": 2020,
+    "quarter": 3,
+    "notice": "https://www.prnewswire.com/news-releases/synopsys-announces-earnings-release-date-for-third-quarter-fiscal-year-2020-301106998.html",
+    "planned_date": "2020-08-19",
+    "observed_releases": [
+      {
+        "date": "2020-08-19",
+        "source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-third-quarter-fiscal-year-2020-301115089.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "MDB",
+    "fiscal_year": 2021,
+    "quarter": 2,
+    "notice": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-date-of-second-quarter-fiscal-2021-earnings-call-301112067.html",
+    "planned_date": "2020-09-02",
+    "observed_releases": [
+      {
+        "date": "2020-09-02",
+        "source": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-second-quarter-fiscal-2021-financial-results-301123342.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "SNPS",
+    "fiscal_year": 2020,
+    "quarter": 4,
+    "notice": "https://www.prnewswire.com/news-releases/synopsys-announces-earnings-release-date-for-fourth-quarter-and-fiscal-year-2020-301171273.html",
+    "planned_date": "2020-12-02",
+    "observed_releases": [
+      {
+        "date": "2020-12-02",
+        "source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-fourth-quarter-and-fiscal-year-2020-301185085.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "MDB",
+    "fiscal_year": 2021,
+    "quarter": 3,
+    "notice": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-date-of-third-quarter-fiscal-2021-earnings-call-301176424.html",
+    "planned_date": "2020-12-08",
+    "observed_releases": [
+      {
+        "date": "2020-12-08",
+        "source": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-third-quarter-fiscal-2021-financial-results-301188829.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "SNPS",
+    "fiscal_year": 2021,
+    "quarter": 1,
+    "notice": "https://www.prnewswire.com/news-releases/synopsys-announces-earnings-release-date-for-first-quarter-fiscal-year-2021-301221612.html",
+    "planned_date": "2021-02-17",
+    "observed_releases": [
+      {
+        "date": "2021-02-17",
+        "source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-first-quarter-fiscal-year-2021-301230285.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "MDB",
+    "fiscal_year": 2021,
+    "quarter": 4,
+    "notice": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-date-of-fourth-quarter-and-full-year-fiscal-2021-earnings-call-301231875.html",
+    "planned_date": "2021-03-09",
+    "observed_releases": [
+      {
+        "date": "2021-03-09",
+        "source": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-fourth-quarter-and-full-year-fiscal-2021-financial-results-301243910.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "DDOG",
+    "fiscal_year": 2021,
+    "quarter": 1,
+    "notice": "https://www.prnewswire.com/news-releases/datadog-announces-date-of-first-quarter-fiscal-year-2021-earnings-call-301269989.html",
+    "planned_date": "2021-05-06",
+    "observed_releases": [
+      {
+        "date": "2021-05-06",
+        "source": "https://www.globenewswire.com/news-release/2021/05/06/2225061/0/en/datadog-announces-first-quarter-results.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "SNPS",
+    "fiscal_year": 2021,
+    "quarter": 2,
+    "notice": "https://www.prnewswire.com/news-releases/synopsys-announces-earnings-release-date-for-second-quarter-fiscal-year-2021-301284891.html",
+    "planned_date": "2021-05-19",
+    "observed_releases": [
+      {
+        "date": "2021-05-19",
+        "source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-second-quarter-fiscal-year-2021-301295232.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "VEEV",
+    "fiscal_year": 2022,
+    "quarter": 1,
+    "notice": "https://www.prnewswire.com/news-releases/veeva-to-release-fiscal-2022-first-quarter-results-on-may-27-2021-301285002.html",
+    "planned_date": "2021-05-27",
+    "observed_releases": [
+      {
+        "date": "2021-05-27",
+        "source": "https://www.prnewswire.com/news-releases/veeva-announces-fiscal-2022-first-quarter-results-301301286.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "MDB",
+    "fiscal_year": 2022,
+    "quarter": 1,
+    "notice": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-date-of-first-quarter-fiscal-2022-earnings-call-301291147.html",
+    "planned_date": "2021-06-03",
+    "observed_releases": [
+      {
+        "date": "2021-06-03",
+        "source": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-first-quarter-fiscal-2022-financial-results-301305606.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "DDOG",
+    "fiscal_year": 2021,
+    "quarter": 2,
+    "notice": "https://www.prnewswire.com/news-releases/datadog-announces-date-of-second-quarter-fiscal-year-2021-earnings-call-301334373.html",
+    "planned_date": "2021-08-05",
+    "observed_releases": [
+      {
+        "date": "2021-08-05",
+        "source": "https://www.globenewswire.com/news-release/2021/08/05/2275436/0/en/datadog-announces-second-quarter-2021-financial-results.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "SNPS",
+    "fiscal_year": 2021,
+    "quarter": 3,
+    "notice": "https://www.prnewswire.com/news-releases/synopsys-announces-earnings-release-date-for-third-quarter-fiscal-year-2021-301348641.html",
+    "planned_date": "2021-08-18",
+    "observed_releases": [
+      {
+        "date": "2021-08-18",
+        "source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-third-quarter-fiscal-year-2021-301358246.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "VEEV",
+    "fiscal_year": 2022,
+    "quarter": 2,
+    "notice": "https://www.prnewswire.com/news-releases/veeva-to-release-fiscal-2022-second-quarter-results-on-september-1-2021-301348745.html",
+    "planned_date": "2021-09-01",
+    "observed_releases": [
+      {
+        "date": "2021-09-01",
+        "source": "https://www.prnewswire.com/news-releases/veeva-announces-fiscal-2022-second-quarter-results-301367764.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "MDB",
+    "fiscal_year": 2022,
+    "quarter": 2,
+    "notice": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-date-of-second-quarter-fiscal-2022-earnings-call-301354697.html",
+    "planned_date": "2021-09-02",
+    "observed_releases": [
+      {
+        "date": "2021-09-02",
+        "source": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-second-quarter-fiscal-2022-financial-results-301368784.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "DDOG",
+    "fiscal_year": 2021,
+    "quarter": 3,
+    "notice": "https://www.prnewswire.com/news-releases/datadog-announces-date-of-third-quarter-fiscal-year-2021-earnings-call-301399800.html",
+    "planned_date": "2021-11-04",
+    "observed_releases": [
+      {
+        "date": "2021-11-04",
+        "source": "https://www.prnewswire.com/news-releases/datadog-announces-third-quarter-2021-financial-results-301416918.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "VEEV",
+    "fiscal_year": 2022,
+    "quarter": 3,
+    "notice": "https://www.prnewswire.com/news-releases/veeva-to-release-fiscal-2022-third-quarter-results-on-december-1-2021-301414775.html",
+    "planned_date": "2021-12-01",
+    "observed_releases": [
+      {
+        "date": "2021-12-01",
+        "source": "https://www.prnewswire.com/news-releases/veeva-announces-fiscal-2022-third-quarter-results-301435572.html"
+      },
+      {
+        "date": "2021-12-01",
+        "source": "https://www.prnewswire.com/news-releases/veeva-announces-fiscal-2022-third-quarter-results-301435572.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "SNPS",
+    "fiscal_year": 2021,
+    "quarter": 4,
+    "notice": "https://www.prnewswire.com/news-releases/synopsys-announces-earnings-release-date-for-fourth-quarter-and-fiscal-year-2021-301421533.html",
+    "planned_date": "2021-12-01",
+    "observed_releases": [
+      {
+        "date": "2021-12-01",
+        "source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-fourth-quarter-and-fiscal-year-2021-301435472.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "MDB",
+    "fiscal_year": 2022,
+    "quarter": 3,
+    "notice": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-date-of-third-quarter-fiscal-2022-earnings-call-301422526.html",
+    "planned_date": "2021-12-06",
+    "observed_releases": [
+      {
+        "date": "2021-12-06",
+        "source": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-third-quarter-fiscal-2022-financial-results-301438283.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "DDOG",
+    "fiscal_year": 2021,
+    "quarter": 4,
+    "notice": "https://www.prnewswire.com/news-releases/datadog-announces-date-of-fourth-quarter-and-fiscal-year-2021-earnings-call-301465341.html",
+    "planned_date": "2022-02-10",
+    "observed_releases": [
+      {
+        "date": "2022-02-10",
+        "source": "https://www.prnewswire.com/news-releases/datadog-announces-fourth-quarter-and-fiscal-year-2021-financial-results-301479300.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "VEEV",
+    "fiscal_year": 2022,
+    "quarter": 4,
+    "notice": "https://www.prnewswire.com/news-releases/veeva-to-release-fiscal-2022-fourth-quarter-and-full-year-results-on-march-2-2022-301473046.html",
+    "planned_date": "2022-03-02",
+    "observed_releases": [
+      {
+        "date": "2022-03-02",
+        "source": "https://www.prnewswire.com/news-releases/veeva-announces-fourth-quarter-and-fiscal-year-2022-results-301494433.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "SNPS",
+    "fiscal_year": 2022,
+    "quarter": 1,
+    "notice": "https://www.prnewswire.com/news-releases/synopsys-announces-earnings-release-date-for-first-quarter-fiscal-year-2022-301474244.html",
+    "planned_date": "2022-02-16",
+    "observed_releases": [
+      {
+        "date": "2022-02-16",
+        "source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-first-quarter-fiscal-year-2022-301483982.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "WDAY",
+    "fiscal_year": 2022,
+    "quarter": 4,
+    "notice": "https://www.prnewswire.com/news-releases/workday-announces-date-of-fiscal-2022-fourth-quarter-and-full-year-financial-results-301476885.html",
+    "planned_date": "2022-02-28",
+    "observed_releases": [
+      {
+        "date": "2022-02-28",
+        "source": "https://www.prnewswire.com/news-releases/workday-announces-fiscal-2022-fourth-quarter-and-full-year-financial-results-301491903.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "MDB",
+    "fiscal_year": 2022,
+    "quarter": 4,
+    "notice": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-date-of-fourth-quarter-and-full-year-fiscal-2022-earnings-call-301485477.html",
+    "planned_date": "2022-03-08",
+    "observed_releases": [
+      {
+        "date": "2022-03-08",
+        "source": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-fourth-quarter-and-full-year-fiscal-2022-financial-results-301498378.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "DDOG",
+    "fiscal_year": 2022,
+    "quarter": 1,
+    "notice": "https://www.prnewswire.com/news-releases/datadog-announces-date-of-first-quarter-fiscal-year-2022-earnings-call-301525934.html",
+    "planned_date": "2022-05-05",
+    "observed_releases": [
+      {
+        "date": "2022-05-05",
+        "source": "https://www.prnewswire.com/news-releases/datadog-announces-first-quarter-2022-financial-results-301540337.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "SNPS",
+    "fiscal_year": 2022,
+    "quarter": 2,
+    "notice": "https://www.prnewswire.com/news-releases/synopsys-announces-earnings-release-date-for-second-quarter-fiscal-year-2022-301539904.html",
+    "planned_date": "2022-05-18",
+    "observed_releases": [
+      {
+        "date": "2022-05-18",
+        "source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-second-quarter-fiscal-year-2022-301550428.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "VEEV",
+    "fiscal_year": 2023,
+    "quarter": 1,
+    "notice": "https://www.prnewswire.com/news-releases/veeva-to-release-fiscal-2023-first-quarter-results-on-june-1-2022-301540062.html",
+    "planned_date": "2022-06-01",
+    "observed_releases": [
+      {
+        "date": "2022-06-01",
+        "source": "https://www.prnewswire.com/news-releases/veeva-announces-fiscal-2023-first-quarter-results-301559503.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "WDAY",
+    "fiscal_year": 2023,
+    "quarter": 1,
+    "notice": "https://www.prnewswire.com/news-releases/workday-announces-date-of-fiscal-2023-first-quarter-financial-results-301540214.html",
+    "planned_date": "2022-05-26",
+    "observed_releases": [
+      {
+        "date": "2022-05-26",
+        "source": "https://www.prnewswire.com/news-releases/workday-announces-fiscal-2023-first-quarter-financial-results-301556068.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "MDB",
+    "fiscal_year": 2023,
+    "quarter": 1,
+    "notice": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-date-of-first-quarter-fiscal-2023-earnings-call-301549218.html",
+    "planned_date": "2022-06-01",
+    "observed_releases": [
+      {
+        "date": "2022-06-01",
+        "source": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-first-quarter-fiscal-2023-financial-results-301559515.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "DDOG",
+    "fiscal_year": 2022,
+    "quarter": 2,
+    "notice": "https://www.prnewswire.com/news-releases/datadog-announces-date-of-second-quarter-fiscal-year-2022-earnings-call-301586203.html",
+    "planned_date": "2022-08-04",
+    "observed_releases": [
+      {
+        "date": "2022-08-04",
+        "source": "https://www.prnewswire.com/news-releases/datadog-announces-second-quarter-2022-financial-results-301599525.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "WDAY",
+    "fiscal_year": 2023,
+    "quarter": 2,
+    "notice": "https://www.prnewswire.com/news-releases/workday-announces-date-of-fiscal-2023-second-quarter-financial-results-301598456.html",
+    "planned_date": "2022-08-25",
+    "observed_releases": [
+      {
+        "date": "2022-08-25",
+        "source": "https://www.prnewswire.com/news-releases/workday-announces-fiscal-2023-second-quarter-financial-results-301612714.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "SNPS",
+    "fiscal_year": 2022,
+    "quarter": 3,
+    "notice": "https://www.prnewswire.com/news-releases/synopsys-announces-earnings-release-date-for-third-quarter-fiscal-year-2022-301599311.html",
+    "planned_date": "2022-08-17",
+    "observed_releases": [
+      {
+        "date": "2022-08-17",
+        "source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-third-quarter-fiscal-year-2022-301607799.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "VEEV",
+    "fiscal_year": 2023,
+    "quarter": 2,
+    "notice": "https://www.prnewswire.com/news-releases/veeva-to-release-fiscal-2023-second-quarter-results-on-august-31-2022-301599391.html",
+    "planned_date": "2022-08-31",
+    "observed_releases": [
+      {
+        "date": "2022-08-31",
+        "source": "https://www.prnewswire.com/news-releases/veeva-announces-fiscal-2023-second-quarter-results-301615784.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "MDB",
+    "fiscal_year": 2023,
+    "quarter": 2,
+    "notice": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-date-of-second-quarter-fiscal-2023-earnings-call-301604546.html",
+    "planned_date": "2022-08-31",
+    "observed_releases": [
+      {
+        "date": "2022-08-31",
+        "source": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-second-quarter-fiscal-2023-financial-results-301615816.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "DDOG",
+    "fiscal_year": 2022,
+    "quarter": 3,
+    "notice": "https://www.prnewswire.com/news-releases/datadog-announces-date-of-third-quarter-fiscal-year-2022-earnings-call-301649059.html",
+    "planned_date": "2022-11-03",
+    "observed_releases": [
+      {
+        "date": "2022-11-03",
+        "source": "https://www.prnewswire.com/news-releases/datadog-announces-third-quarter-2022-financial-results-301666905.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "WDAY",
+    "fiscal_year": 2023,
+    "quarter": 3,
+    "notice": "https://www.prnewswire.com/news-releases/workday-announces-date-of-fiscal-2023-third-quarter-financial-results-301666856.html",
+    "planned_date": "2022-11-29",
+    "observed_releases": [
+      {
+        "date": "2022-11-29",
+        "source": "https://www.prnewswire.com/news-releases/workday-announces-fiscal-2023-third-quarter-financial-results-301689424.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "VEEV",
+    "fiscal_year": 2023,
+    "quarter": 3,
+    "notice": "https://www.prnewswire.com/news-releases/veeva-to-release-fiscal-2023-third-quarter-results-on-december-1-2022-301673597.html",
+    "planned_date": "2022-12-01",
+    "observed_releases": [
+      {
+        "date": "2022-12-01",
+        "source": "https://www.prnewswire.com/news-releases/veeva-announces-fiscal-2023-third-quarter-results-301691971.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "SNPS",
+    "fiscal_year": 2022,
+    "quarter": 4,
+    "notice": "https://www.prnewswire.com/news-releases/synopsys-announces-earnings-release-date-for-fourth-quarter-and-fiscal-year-2022-301673569.html",
+    "planned_date": "2022-11-30",
+    "observed_releases": [
+      {
+        "date": "2022-11-30",
+        "source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-fourth-quarter-and-fiscal-year-2022-301690554.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "MDB",
+    "fiscal_year": 2023,
+    "quarter": 3,
+    "notice": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-date-of-third-quarter-fiscal-2023-earnings-call-301679167.html",
+    "planned_date": "2022-12-06",
+    "observed_releases": [
+      {
+        "date": "2022-12-06",
+        "source": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-third-quarter-fiscal-2023-financial-results-301696344.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "DDOG",
+    "fiscal_year": 2022,
+    "quarter": 4,
+    "notice": "https://www.prnewswire.com/news-releases/datadog-announces-date-of-fourth-quarter-and-fiscal-year-2022-earnings-call-301726031.html",
+    "planned_date": "2023-02-16",
+    "observed_releases": [
+      {
+        "date": "2023-02-16",
+        "source": "https://www.prnewswire.com/news-releases/datadog-announces-fourth-quarter-and-fiscal-year-2022-financial-results-301748267.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "VEEV",
+    "fiscal_year": 2023,
+    "quarter": 4,
+    "notice": "https://www.prnewswire.com/news-releases/veeva-to-release-fiscal-2023-fourth-quarter-and-full-year-results-on-march-1-2023-301735245.html",
+    "planned_date": "2023-03-01",
+    "observed_releases": [
+      {
+        "date": "2023-03-01",
+        "source": "https://www.prnewswire.com/news-releases/veeva-announces-fourth-quarter-and-fiscal-year-2023-results-301760062.html"
+      },
+      {
+        "date": "2023-03-01",
+        "source": "https://www.prnewswire.com/news-releases/veeva-announces-fourth-quarter-and-fiscal-year-2023-results-301760062.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "SNPS",
+    "fiscal_year": 2023,
+    "quarter": 1,
+    "notice": "https://www.prnewswire.com/news-releases/synopsys-announces-earnings-release-date-for-first-quarter-fiscal-year-2023-301736479.html",
+    "planned_date": "2023-02-15",
+    "observed_releases": [
+      {
+        "date": "2023-02-15",
+        "source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-first-quarter-fiscal-year-2023-301747982.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "WDAY",
+    "fiscal_year": 2023,
+    "quarter": 4,
+    "notice": "https://www.prnewswire.com/news-releases/workday-announces-date-of-fiscal-2023-fourth-quarter-and-full-year-financial-results-301741435.html",
+    "planned_date": "2023-02-27",
+    "observed_releases": [
+      {
+        "date": "2023-02-27",
+        "source": "https://www.prnewswire.com/news-releases/workday-announces-fiscal-2023-fourth-quarter-and-full-year-financial-results-301756889.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "MDB",
+    "fiscal_year": 2023,
+    "quarter": 4,
+    "notice": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-date-of-fourth-quarter-and-full-year-fiscal-2023-earnings-call-301748186.html",
+    "planned_date": "2023-03-08",
+    "observed_releases": [
+      {
+        "date": "2023-03-08",
+        "source": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-fourth-quarter-and-full-year-fiscal-2023-financial-results-301766227.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "DDOG",
+    "fiscal_year": 2023,
+    "quarter": 1,
+    "notice": "https://www.prnewswire.com/news-releases/datadog-announces-date-of-first-quarter-fiscal-year-2023-earnings-call-301796114.html",
+    "planned_date": "2023-05-04",
+    "observed_releases": [
+      {
+        "date": "2023-05-04",
+        "source": "https://www.prnewswire.com/news-releases/datadog-announces-first-quarter-2023-financial-results-301815254.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "SNPS",
+    "fiscal_year": 2023,
+    "quarter": 2,
+    "notice": "https://www.prnewswire.com/news-releases/synopsys-announces-earnings-release-date-for-second-quarter-fiscal-year-2023-301815106.html",
+    "planned_date": "2023-05-17",
+    "observed_releases": [
+      {
+        "date": "2023-05-17",
+        "source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-second-quarter-fiscal-year-2023-301827509.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "VEEV",
+    "fiscal_year": 2024,
+    "quarter": 1,
+    "notice": "https://www.prnewswire.com/news-releases/veeva-to-release-fiscal-2024-first-quarter-results-on-may-31-2023-301815321.html",
+    "planned_date": "2023-05-31",
+    "observed_releases": [
+      {
+        "date": "2023-05-31",
+        "source": "https://www.prnewswire.com/news-releases/veeva-announces-fiscal-2024-first-quarter-results-301839187.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "WDAY",
+    "fiscal_year": 2024,
+    "quarter": 1,
+    "notice": "https://www.prnewswire.com/news-releases/workday-announces-date-of-fiscal-2024-first-quarter-financial-results-301815314.html",
+    "planned_date": "2023-05-25",
+    "observed_releases": [
+      {
+        "date": "2023-05-25",
+        "source": "https://www.prnewswire.com/news-releases/workday-announces-fiscal-2024-first-quarter-financial-results-301835116.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "MDB",
+    "fiscal_year": 2024,
+    "quarter": 1,
+    "notice": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-date-of-first-quarter-fiscal-2024-earnings-call-301826478.html",
+    "planned_date": "2023-06-01",
+    "observed_releases": [
+      {
+        "date": "2023-06-01",
+        "source": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-first-quarter-fiscal-2024-financial-results-301840651.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "DDOG",
+    "fiscal_year": 2023,
+    "quarter": 2,
+    "notice": "https://www.prnewswire.com/news-releases/datadog-announces-date-of-second-quarter-fiscal-year-2023-earnings-call-301876947.html",
+    "planned_date": "2023-08-08",
+    "observed_releases": [
+      {
+        "date": "2023-08-08",
+        "source": "https://www.prnewswire.com/news-releases/datadog-announces-second-quarter-2023-financial-results-301895068.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "SNPS",
+    "fiscal_year": 2023,
+    "quarter": 3,
+    "notice": "https://www.prnewswire.com/news-releases/synopsys-announces-earnings-release-date-for-third-quarter-fiscal-year-2023-301878923.html",
+    "planned_date": "2023-08-16",
+    "observed_releases": [
+      {
+        "date": "2023-08-16",
+        "source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-third-quarter-fiscal-year-2023-301902862.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "WDAY",
+    "fiscal_year": 2024,
+    "quarter": 2,
+    "notice": "https://www.prnewswire.com/news-releases/workday-announces-date-of-fiscal-2024-second-quarter-financial-results-301892161.html",
+    "planned_date": "2023-08-24",
+    "observed_releases": [
+      {
+        "date": "2023-08-24",
+        "source": "https://www.prnewswire.com/news-releases/workday-announces-fiscal-2024-second-quarter-financial-results-301909592.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "VEEV",
+    "fiscal_year": 2024,
+    "quarter": 2,
+    "notice": "https://www.prnewswire.com/news-releases/veeva-to-release-fiscal-2024-second-quarter-results-on-august-30-2023-301895919.html",
+    "planned_date": "2023-08-30",
+    "observed_releases": [
+      {
+        "date": "2023-08-30",
+        "source": "https://www.prnewswire.com/news-releases/veeva-announces-fiscal-2024-second-quarter-results-301914147.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "MDB",
+    "fiscal_year": 2024,
+    "quarter": 2,
+    "notice": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-date-of-second-quarter-fiscal-2024-earnings-call-301897687.html",
+    "planned_date": "2023-08-31",
+    "observed_releases": [
+      {
+        "date": "2023-08-31",
+        "source": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-second-quarter-fiscal-2024-financial-results-301915271.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "DDOG",
+    "fiscal_year": 2023,
+    "quarter": 3,
+    "notice": "https://www.prnewswire.com/news-releases/datadog-announces-date-of-third-quarter-fiscal-year-2023-earnings-call-301959135.html",
+    "planned_date": "2023-11-07",
+    "observed_releases": [
+      {
+        "date": "2023-11-07",
+        "source": "https://www.prnewswire.com/news-releases/datadog-announces-third-quarter-2023-financial-results-301979031.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "SNPS",
+    "fiscal_year": 2023,
+    "quarter": 4,
+    "notice": "https://www.prnewswire.com/news-releases/synopsys-announces-earnings-release-date-for-fourth-quarter-and-fiscal-year-2023-301971715.html",
+    "planned_date": "2023-11-29",
+    "observed_releases": [
+      {
+        "date": "2023-11-29",
+        "source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-fourth-quarter-and-fiscal-year-2023-302001040.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "WDAY",
+    "fiscal_year": 2024,
+    "quarter": 3,
+    "notice": "https://www.prnewswire.com/news-releases/workday-announces-date-of-fiscal-2024-third-quarter-financial-results-301974965.html",
+    "planned_date": "2023-11-28",
+    "observed_releases": [
+      {
+        "date": "2023-11-28",
+        "source": "https://www.prnewswire.com/news-releases/workday-announces-fiscal-2024-third-quarter-financial-results-301999619.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "MDB",
+    "fiscal_year": 2024,
+    "quarter": 3,
+    "notice": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-date-of-third-quarter-fiscal-2024-earnings-call-301983856.html",
+    "planned_date": "2023-12-05",
+    "observed_releases": [
+      {
+        "date": "2023-12-05",
+        "source": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-third-quarter-fiscal-2024-financial-results-302006667.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "VEEV",
+    "fiscal_year": 2024,
+    "quarter": 3,
+    "notice": "https://www.prnewswire.com/news-releases/veeva-to-release-fiscal-2024-third-quarter-results-on-december-6-2023-301989689.html",
+    "planned_date": "2023-12-06",
+    "observed_releases": [
+      {
+        "date": "2023-12-06",
+        "source": "https://www.prnewswire.com/news-releases/veeva-announces-fiscal-2024-third-quarter-results-302008083.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "DDOG",
+    "fiscal_year": 2023,
+    "quarter": 4,
+    "notice": "https://www.prnewswire.com/news-releases/datadog-announces-date-of-fourth-quarter-and-fiscal-year-2023-earnings-call-302035970.html",
+    "planned_date": "2024-02-13",
+    "observed_releases": [
+      {
+        "date": "2024-02-13",
+        "source": "https://www.prnewswire.com/news-releases/datadog-announces-fourth-quarter-and-fiscal-year-2023-financial-results-302059989.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "SNPS",
+    "fiscal_year": 2024,
+    "quarter": 1,
+    "notice": "https://www.prnewswire.com/news-releases/synopsys-announces-earnings-release-date-for-first-quarter-fiscal-year-2024-302045100.html",
+    "planned_date": "2024-02-21",
+    "observed_releases": [
+      {
+        "date": "2024-02-21",
+        "source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-first-quarter-fiscal-year-2024-302067821.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "VEEV",
+    "fiscal_year": 2024,
+    "quarter": 4,
+    "notice": "https://www.prnewswire.com/news-releases/veeva-to-release-fiscal-2024-fourth-quarter-and-full-year-results-on-february-29-2024-302055227.html",
+    "planned_date": "2024-02-29",
+    "observed_releases": [
+      {
+        "date": "2024-02-29",
+        "source": "https://www.prnewswire.com/news-releases/veeva-announces-fourth-quarter-and-fiscal-year-2024-results-302076388.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "WDAY",
+    "fiscal_year": 2024,
+    "quarter": 4,
+    "notice": "https://www.prnewswire.com/news-releases/workday-announces-date-of-fiscal-2024-fourth-quarter-and-full-year-financial-results-302056899.html",
+    "planned_date": "2024-02-26",
+    "observed_releases": [
+      {
+        "date": "2024-02-26",
+        "source": "https://www.prnewswire.com/news-releases/workday-announces-fiscal-2024-fourth-quarter-and-full-year-financial-results-302071484.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "MDB",
+    "fiscal_year": 2024,
+    "quarter": 4,
+    "notice": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-date-of-fourth-quarter-and-full-year-fiscal-2024-earnings-call-302067703.html",
+    "planned_date": "2024-03-07",
+    "observed_releases": [
+      {
+        "date": "2024-03-07",
+        "source": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-fourth-quarter-and-full-year-fiscal-2024-financial-results-302083476.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "DDOG",
+    "fiscal_year": 2024,
+    "quarter": 1,
+    "notice": "https://www.prnewswire.com/news-releases/datadog-announces-date-of-first-quarter-fiscal-year-2024-earnings-call-302116980.html",
+    "planned_date": "2024-05-07",
+    "observed_releases": [
+      {
+        "date": "2024-05-07",
+        "source": "https://www.prnewswire.com/news-releases/datadog-announces-first-quarter-2024-financial-results-302137234.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "SNPS",
+    "fiscal_year": 2024,
+    "quarter": 2,
+    "notice": "https://www.prnewswire.com/news-releases/synopsys-announces-earnings-release-date-for-second-quarter-fiscal-year-2024-302125106.html",
+    "planned_date": "2024-05-22",
+    "observed_releases": [
+      {
+        "date": "2024-05-22",
+        "source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-second-quarter-fiscal-year-2024-302153264.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "WDAY",
+    "fiscal_year": 2025,
+    "quarter": 1,
+    "notice": "https://www.prnewswire.com/news-releases/workday-announces-date-of-fiscal-2025-first-quarter-financial-results-302133830.html",
+    "planned_date": "2024-05-23",
+    "observed_releases": [
+      {
+        "date": "2024-05-23",
+        "source": "https://www.prnewswire.com/news-releases/workday-announces-fiscal-2025-first-quarter-financial-results-302154545.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "VEEV",
+    "fiscal_year": 2025,
+    "quarter": 1,
+    "notice": "https://www.prnewswire.com/news-releases/veeva-to-release-fiscal-2025-first-quarter-results-on-may-30-2024-302140101.html",
+    "planned_date": "2024-05-30",
+    "observed_releases": [
+      {
+        "date": "2024-05-30",
+        "source": "https://www.prnewswire.com/news-releases/veeva-announces-fiscal-2025-first-quarter-results-302159990.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "MDB",
+    "fiscal_year": 2025,
+    "quarter": 1,
+    "notice": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-date-of-first-quarter-fiscal-2025-earnings-call-302141907.html",
+    "planned_date": "2024-05-30",
+    "observed_releases": [
+      {
+        "date": "2024-05-30",
+        "source": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-first-quarter-fiscal-2025-financial-results-302159949.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "DDOG",
+    "fiscal_year": 2024,
+    "quarter": 2,
+    "notice": "https://www.prnewswire.com/news-releases/datadog-announces-date-of-second-quarter-fiscal-year-2024-earnings-call-302199809.html",
+    "planned_date": "2024-08-08",
+    "observed_releases": [
+      {
+        "date": "2024-08-08",
+        "source": "https://www.prnewswire.com/news-releases/datadog-announces-second-quarter-2024-financial-results-302217275.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "SNPS",
+    "fiscal_year": 2024,
+    "quarter": 3,
+    "notice": "https://www.prnewswire.com/news-releases/synopsys-announces-earnings-release-date-for-third-quarter-fiscal-year-2024-302203040.html",
+    "planned_date": "2024-08-21",
+    "observed_releases": [
+      {
+        "date": "2024-08-21",
+        "source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-third-quarter-fiscal-year-2024-302227772.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "WDAY",
+    "fiscal_year": 2025,
+    "quarter": 2,
+    "notice": "https://www.prnewswire.com/news-releases/workday-announces-date-of-fiscal-2025-second-quarter-financial-results-302213081.html",
+    "planned_date": "2024-08-22",
+    "observed_releases": [
+      {
+        "date": "2024-08-22",
+        "source": "https://www.prnewswire.com/news-releases/workday-announces-fiscal-2025-second-quarter-financial-results-302228869.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "VEEV",
+    "fiscal_year": 2025,
+    "quarter": 2,
+    "notice": "https://www.prnewswire.com/news-releases/veeva-to-release-fiscal-2025-second-quarter-results-on-august-28-2024-302217105.html",
+    "planned_date": "2024-08-28",
+    "observed_releases": [
+      {
+        "date": "2024-08-28",
+        "source": "https://www.prnewswire.com/news-releases/veeva-announces-fiscal-2025-second-quarter-results-302233348.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "MDB",
+    "fiscal_year": 2025,
+    "quarter": 2,
+    "notice": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-date-of-second-quarter-fiscal-2025-earnings-call-302218146.html",
+    "planned_date": "2024-08-29",
+    "observed_releases": [
+      {
+        "date": "2024-08-29",
+        "source": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-second-quarter-fiscal-2025-financial-results-302234446.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "DDOG",
+    "fiscal_year": 2024,
+    "quarter": 3,
+    "notice": "https://www.prnewswire.com/news-releases/datadog-announces-date-of-third-quarter-fiscal-year-2024-earnings-call-302279429.html",
+    "planned_date": "2024-11-07",
+    "observed_releases": [
+      {
+        "date": "2024-11-07",
+        "source": "https://www.prnewswire.com/news-releases/datadog-announces-third-quarter-2024-financial-results-302298136.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "SNPS",
+    "fiscal_year": 2024,
+    "quarter": 4,
+    "notice": "https://www.prnewswire.com/news-releases/synopsys-announces-earnings-release-date-for-fourth-quarter-and-fiscal-year-2024-302290607.html",
+    "planned_date": "2024-12-04",
+    "observed_releases": [
+      {
+        "date": "2024-12-04",
+        "source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-fourth-quarter-and-fiscal-year-2024-302322901.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "WDAY",
+    "fiscal_year": 2025,
+    "quarter": 3,
+    "notice": "https://www.prnewswire.com/news-releases/workday-announces-date-of-fiscal-2025-third-quarter-financial-results-302294451.html",
+    "planned_date": "2024-11-26",
+    "observed_releases": [
+      {
+        "date": "2024-11-26",
+        "source": "https://www.prnewswire.com/news-releases/workday-announces-fiscal-2025-third-quarter-financial-results-302316893.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "VEEV",
+    "fiscal_year": 2025,
+    "quarter": 3,
+    "notice": "https://www.prnewswire.com/news-releases/veeva-to-release-fiscal-2025-third-quarter-results-on-december-5-2024-302306370.html",
+    "planned_date": "2024-12-05",
+    "observed_releases": [
+      {
+        "date": "2024-12-05",
+        "source": "https://www.prnewswire.com/news-releases/veeva-announces-fiscal-2025-third-quarter-results-302324307.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "MDB",
+    "fiscal_year": 2025,
+    "quarter": 3,
+    "notice": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-date-of-third-quarter-fiscal-2025-earnings-call-302309005.html",
+    "planned_date": "2024-12-09",
+    "observed_releases": [
+      {
+        "date": "2024-12-09",
+        "source": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-third-quarter-fiscal-2025-financial-results-302326649.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "SNPS",
+    "fiscal_year": 2025,
+    "quarter": 1,
+    "notice": "https://www.prnewswire.com/news-releases/synopsys-announces-earnings-release-date-for-first-quarter-fiscal-year-2025-302361112.html",
+    "planned_date": "2025-02-26",
+    "observed_releases": [
+      {
+        "date": "2025-02-26",
+        "source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-first-quarter-fiscal-year-2025-302386200.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "WDAY",
+    "fiscal_year": 2025,
+    "quarter": 4,
+    "notice": "https://www.prnewswire.com/news-releases/workday-announces-date-of-fiscal-2025-fourth-quarter-and-full-year-financial-results-302366880.html",
+    "planned_date": "2025-02-25",
+    "observed_releases": [
+      {
+        "date": "2025-02-25",
+        "source": "https://www.prnewswire.com/news-releases/workday-announces-fiscal-2025-fourth-quarter-and-full-year-financial-results-302385173.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "MDB",
+    "fiscal_year": 2025,
+    "quarter": 4,
+    "notice": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-date-of-fourth-quarter-and-full-year-fiscal-2025-earnings-call-302375268.html",
+    "planned_date": "2025-03-05",
+    "observed_releases": [
+      {
+        "date": "2025-03-05",
+        "source": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-fourth-quarter-and-full-year-fiscal-2025-financial-results-302393702.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "VEEV",
+    "fiscal_year": 2025,
+    "quarter": 4,
+    "notice": "https://www.prnewswire.com/news-releases/veeva-to-release-fiscal-2025-fourth-quarter-and-full-year-results-on-march-5-2025-302375264.html",
+    "planned_date": "2025-03-05",
+    "observed_releases": [
+      {
+        "date": "2025-03-05",
+        "source": "https://www.prnewswire.com/news-releases/veeva-announces-fourth-quarter-and-fiscal-year-2025-results-302393667.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "WDAY",
+    "fiscal_year": 2026,
+    "quarter": 1,
+    "notice": "https://www.prnewswire.com/news-releases/workday-announces-date-of-fiscal-2026-first-quarter-financial-results-302443424.html",
+    "planned_date": "2025-05-22",
+    "observed_releases": [
+      {
+        "date": "2025-05-22",
+        "source": "https://www.prnewswire.com/news-releases/workday-announces-fiscal-2026-first-quarter-financial-results-302463675.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "SNPS",
+    "fiscal_year": 2025,
+    "quarter": 2,
+    "notice": "https://www.prnewswire.com/news-releases/synopsys-announces-earnings-release-date-for-second-quarter-fiscal-year-2025-302448986.html",
+    "planned_date": "2025-05-28",
+    "observed_releases": [
+      {
+        "date": "2025-05-28",
+        "source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-second-quarter-fiscal-year-2025-302467545.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "VEEV",
+    "fiscal_year": 2026,
+    "quarter": 1,
+    "notice": "https://www.prnewswire.com/news-releases/veeva-to-release-fiscal-2026-first-quarter-results-on-may-28-2025-302449019.html",
+    "planned_date": "2025-05-28",
+    "observed_releases": [
+      {
+        "date": "2025-05-28",
+        "source": "https://www.prnewswire.com/news-releases/veeva-announces-fiscal-2026-first-quarter-results-302467581.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "DDOG",
+    "fiscal_year": 2025,
+    "quarter": 2,
+    "notice": "https://www.globenewswire.com/news-release/2025/07/17/3117586/0/en/datadog-announces-date-of-second-quarter-fiscal-year-2025-earnings-call.html",
+    "planned_date": "2025-08-07",
+    "observed_releases": [
+      {
+        "date": "2025-08-07",
+        "source": "https://www.globenewswire.com/news-release/2025/08/07/3129085/0/en/datadog-announces-second-quarter-2025-financial-results.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "SNPS",
+    "fiscal_year": 2025,
+    "quarter": 3,
+    "notice": "https://www.prnewswire.com/news-releases/synopsys-announces-earnings-release-date-for-third-quarter-fiscal-year-2025-302517729.html",
+    "planned_date": "2025-09-09",
+    "observed_releases": [
+      {
+        "date": "2025-09-09",
+        "source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-third-quarter-fiscal-year-2025-302551316.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "WDAY",
+    "fiscal_year": 2026,
+    "quarter": 2,
+    "notice": "https://www.prnewswire.com/news-releases/workday-to-announce-fiscal-2026-second-quarter-financial-results-on-august-21-2025-302520433.html",
+    "planned_date": "2025-08-21",
+    "observed_releases": [
+      {
+        "date": "2025-08-21",
+        "source": "https://www.prnewswire.com/news-releases/workday-announces-fiscal-2026-second-quarter-financial-results-302536160.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "MDB",
+    "fiscal_year": 2026,
+    "quarter": 2,
+    "notice": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-date-of-second-quarter-fiscal-2026-earnings-call-302522408.html",
+    "planned_date": "2025-08-26",
+    "observed_releases": [
+      {
+        "date": "2025-08-26",
+        "source": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-second-quarter-fiscal-2026-financial-results-302539302.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "VEEV",
+    "fiscal_year": 2026,
+    "quarter": 2,
+    "notice": "https://www.prnewswire.com/news-releases/veeva-to-release-fiscal-2026-second-quarter-results-on-august-27-2025-302523386.html",
+    "planned_date": "2025-08-27",
+    "observed_releases": [
+      {
+        "date": "2025-08-27",
+        "source": "https://www.prnewswire.com/news-releases/veeva-announces-fiscal-2026-second-quarter-results-302540372.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "SNPS",
+    "fiscal_year": 2025,
+    "quarter": 4,
+    "notice": "https://www.prnewswire.com/news-releases/synopsys-announces-earnings-release-date-for-fourth-quarter-and-fiscal-year-2025-302600267.html",
+    "planned_date": "2025-12-10",
+    "observed_releases": [
+      {
+        "date": "2025-12-10",
+        "source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-fourth-quarter-and-fiscal-year-2025-302638321.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "VEEV",
+    "fiscal_year": 2026,
+    "quarter": 3,
+    "notice": "https://www.prnewswire.com/news-releases/veeva-to-release-fiscal-2026-third-quarter-results-on-november-20-2025-302600289.html",
+    "planned_date": "2025-11-20",
+    "observed_releases": [
+      {
+        "date": "2025-11-20",
+        "source": "https://www.prnewswire.com/news-releases/veeva-announces-fiscal-2026-third-quarter-results-302622267.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "WDAY",
+    "fiscal_year": 2026,
+    "quarter": 3,
+    "notice": "https://www.prnewswire.com/news-releases/workday-to-announce-fiscal-2026-third-quarter-financial-results-on-november-25-2025-302603187.html",
+    "planned_date": "2025-11-25",
+    "observed_releases": [
+      {
+        "date": "2025-11-25",
+        "source": "https://www.prnewswire.com/news-releases/workday-announces-fiscal-2026-third-quarter-financial-results-302626004.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "MDB",
+    "fiscal_year": 2026,
+    "quarter": 3,
+    "notice": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-date-of-third-quarter-fiscal-2026-earnings-call-302604510.html",
+    "planned_date": "2025-12-01",
+    "observed_releases": [
+      {
+        "date": "2025-12-01",
+        "source": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-third-quarter-fiscal-2026-financial-results-302629494.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "DDOG",
+    "fiscal_year": 2025,
+    "quarter": 4,
+    "notice": "https://www.globenewswire.com/news-release/2026/01/20/3222250/0/en/datadog-announces-date-of-fourth-quarter-and-fiscal-year-2025-earnings-call.html",
+    "planned_date": "2026-02-10",
+    "observed_releases": [
+      {
+        "date": "2026-02-10",
+        "source": "https://www.globenewswire.com/news-release/2026/02/10/3235171/0/en/datadog-announces-fourth-quarter-and-fiscal-year-2025-financial-results.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "SNPS",
+    "fiscal_year": 2026,
+    "quarter": 1,
+    "notice": "https://www.prnewswire.com/news-releases/synopsys-announces-earnings-release-date-for-first-quarter-fiscal-year-2026-302671564.html",
+    "planned_date": "2026-02-25",
+    "observed_releases": [
+      {
+        "date": "2026-02-25",
+        "source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-first-quarter-fiscal-year-2026-302697317.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "WDAY",
+    "fiscal_year": 2026,
+    "quarter": 4,
+    "notice": "https://www.prnewswire.com/news-releases/workday-announces-date-of-fiscal-2026-fourth-quarter-and-full-year-financial-results-on-february-24th-2026-302676960.html",
+    "planned_date": "2026-02-24",
+    "observed_releases": [
+      {
+        "date": "2026-02-24",
+        "source": "https://www.prnewswire.com/news-releases/workday-announces-fiscal-2026-fourth-quarter-and-full-year-financial-results-302696152.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "MDB",
+    "fiscal_year": 2026,
+    "quarter": 4,
+    "notice": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-date-of-fourth-quarter-and-full-fiscal-2026-earnings-call-302679439.html",
+    "planned_date": "2026-03-02",
+    "observed_releases": [
+      {
+        "date": "2026-03-02",
+        "source": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-fourth-quarter-fiscal-2026-financial-results-302701531.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "VEEV",
+    "fiscal_year": 2026,
+    "quarter": 4,
+    "notice": "https://www.prnewswire.com/news-releases/veeva-to-release-fiscal-2026-fourth-quarter-and-full-year-results-on-march-4-2026-302685584.html",
+    "planned_date": "2026-03-04",
+    "observed_releases": [
+      {
+        "date": "2026-03-04",
+        "source": "https://www.prnewswire.com/news-releases/veeva-announces-fourth-quarter-and-fiscal-year-2026-results-302704492.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "DDOG",
+    "fiscal_year": 2026,
+    "quarter": 1,
+    "notice": "https://www.globenewswire.com/news-release/2026/04/16/3275811/0/en/datadog-announces-date-of-first-quarter-fiscal-year-2026-earnings-call.html",
+    "planned_date": "2026-05-07",
+    "observed_releases": [
+      {
+        "date": "2026-05-07",
+        "source": "https://www.globenewswire.com/news-release/2026/05/07/3289822/0/en/datadog-announces-first-quarter-2026-financial-results.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "SNPS",
+    "fiscal_year": 2026,
+    "quarter": 2,
+    "notice": "https://www.prnewswire.com/news-releases/synopsys-announces-earnings-release-date-for-second-quarter-fiscal-year-2026-302754643.html",
+    "planned_date": "2026-05-27",
+    "observed_releases": [
+      {
+        "date": "2026-05-27",
+        "source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-second-quarter-fiscal-year-2026-302783403.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "WDAY",
+    "fiscal_year": 2027,
+    "quarter": 1,
+    "notice": "https://www.prnewswire.com/news-releases/workday-to-announce-fiscal-2027-first-quarter-financial-results-on-may-21-2026-302759586.html",
+    "planned_date": "2026-05-21",
+    "observed_releases": [
+      {
+        "date": "2026-05-21",
+        "source": "https://www.prnewswire.com/news-releases/workday-announces-fiscal-2027-first-quarter-financial-results-302779478.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "MDB",
+    "fiscal_year": 2027,
+    "quarter": 1,
+    "notice": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-date-of-first-quarter-fiscal-2027-earnings-call-302765740.html",
+    "planned_date": "2026-05-28",
+    "observed_releases": [
+      {
+        "date": "2026-05-28",
+        "source": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-first-quarter-fiscal-2027-financial-results-302784757.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "VEEV",
+    "fiscal_year": 2027,
+    "quarter": 1,
+    "notice": "https://www.prnewswire.com/news-releases/veeva-to-release-fiscal-2027-first-quarter-results-on-june-3-2026-302771259.html",
+    "planned_date": "2026-06-03",
+    "observed_releases": [
+      {
+        "date": "2026-06-03",
+        "source": "https://www.prnewswire.com/news-releases/veeva-announces-fiscal-2027-first-quarter-results-302790659.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "DDOG",
+    "fiscal_year": 2026,
+    "quarter": 2,
+    "notice": "https://www.globenewswire.com/news-release/2026/07/16/3328791/0/en/datadog-announces-date-of-second-quarter-fiscal-year-2026-earnings-call.html",
+    "planned_date": "2026-08-06",
+    "observed_releases": [
+      {
+        "date": "2026-08-06",
+        "source": "https://www.globenewswire.com/news-release/2026/08/06/3340086/0/en/datadog-announces-second-quarter-2026-financial-results.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "SNPS",
+    "fiscal_year": 2026,
+    "quarter": 3,
+    "notice": "https://www.prnewswire.com/news-releases/synopsys-announces-earnings-release-date-for-third-quarter-fiscal-year-2026-302832399.html",
+    "planned_date": "2026-08-26",
+    "observed_releases": [
+      {
+        "date": "2026-08-26",
+        "source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-third-quarter-fiscal-year-2026-302860810.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "WDAY",
+    "fiscal_year": 2027,
+    "quarter": 2,
+    "notice": "https://www.prnewswire.com/news-releases/workday-to-announce-fiscal-2027-second-quarter-financial-results-on-august-27-2026-302840439.html",
+    "planned_date": "2026-08-27",
+    "observed_releases": [
+      {
+        "date": "2026-08-27",
+        "source": "https://www.prnewswire.com/news-releases/workday-announces-fiscal-2027-second-quarter-financial-results-302862164.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "MDB",
+    "fiscal_year": 2027,
+    "quarter": 2,
+    "notice": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-date-of-second-quarter-fiscal-2027-earnings-call-302842874.html",
+    "planned_date": "2026-09-01",
+    "observed_releases": [
+      {
+        "date": "2026-09-01",
+        "source": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-second-quarter-fiscal-2027-financial-results-302866656.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  },
+  {
+    "symbol": "VEEV",
+    "fiscal_year": 2027,
+    "quarter": 2,
+    "notice": "https://www.prnewswire.com/news-releases/veeva-to-release-fiscal-2027-second-quarter-results-on-august-26-2026-302844047.html",
+    "planned_date": "2026-08-26",
+    "observed_releases": [
+      {
+        "date": "2026-08-26",
+        "source": "https://www.prnewswire.com/news-releases/veeva-announces-fiscal-2027-second-quarter-results-302860933.html"
+      }
+    ],
+    "status": "matches_observed_date"
+  }
+]

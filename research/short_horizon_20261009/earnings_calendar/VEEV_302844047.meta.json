@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/veeva-to-release-fiscal-2027-second-quarter-results-on-august-26-2026-302844047.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "41b290d08fbfa7a3c5b81a5ecec8fcd74ceff836c05ffe95f4445a93984556b2",
+  "retrieved_utc": "2026-10-09T04:09:58Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/veeva-to-release-fiscal-2027-second-quarter-results-on-august-26-2026-302844047.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "41b290d08fbfa7a3c5b81a5ecec8fcd74ceff836c05ffe95f4445a93984556b2",
+      "retrieved_utc": "2026-10-09T04:09:58Z"
+    }
+  ]
+}

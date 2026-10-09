@@ -1,0 +1,18 @@
+{
+  "url": "https://www.globenewswire.com/news-release/2025/11/06/3182403/0/en/datadog-announces-third-quarter-2025-financial-results.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "161f492d525a9dc367039c4e8d72ccb8754d3bb2f93aa145dfc106a77896e3b4",
+  "retrieved_utc": "2026-10-09T03:23:28Z",
+  "attempts": [
+    {
+      "url": "https://www.globenewswire.com/news-release/2025/11/06/3182403/0/en/datadog-announces-third-quarter-2025-financial-results.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "161f492d525a9dc367039c4e8d72ccb8754d3bb2f93aa145dfc106a77896e3b4",
+      "retrieved_utc": "2026-10-09T03:23:28Z"
+    }
+  ]
+}

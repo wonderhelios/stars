@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/workday-announces-fiscal-2027-second-quarter-financial-results-302862164.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "2f6433387c30c868563a6293b67532f9f9aa18d8918cbfaf732c46dbfebf6705",
+  "retrieved_utc": "2026-10-09T03:29:24Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/workday-announces-fiscal-2027-second-quarter-financial-results-302862164.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "2f6433387c30c868563a6293b67532f9f9aa18d8918cbfaf732c46dbfebf6705",
+      "retrieved_utc": "2026-10-09T03:29:24Z"
+    }
+  ]
+}

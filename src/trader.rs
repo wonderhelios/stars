@@ -33,6 +33,16 @@ pub struct TradeConfig {
     pub slippage: f64,
     /// exchange minimum order value
     pub min_order_usd: f64,
+    /// **按净值比例的最小下单额**（0.01 = 1%）。
+    ///
+    /// 为什么需要它：`min_order_usd` 是绝对值，而仓位大小随账号缩放 ——
+    /// 同一个 $10 门槛，对 $580 的账号是「一个仓位的 17.7%」（粗得几乎不调仓），
+    /// 对 $2900 的账号是「3.8%」（每天微调一堆）。这就是"HL 不需要调、TxFlow 一大堆要调"
+    /// 的真实原因：**两个账号用同一个策略，但执行粒度差了 5 倍**。
+    ///
+    /// 有效门槛 = max(min_order_usd, 净值 × min_order_pct)。
+    /// 保留绝对下限是因为交易所本身有最小下单量，比例不能低于它。
+    pub min_order_pct: f64,
     /// skip adjustments smaller than this share of the target notional
     pub rebalance_band: f64,
     /// fraction of equity actually deployed, leaving room for fees and slippage
@@ -47,6 +57,21 @@ pub struct TradeConfig {
     pub rebalance_slices: u32,
 }
 
+impl TradeConfig {
+    /// 有效最小下单额：绝对下限与"净值的比例"取大者。
+    ///
+    /// 比例设成 0（默认）时行为与旧版完全一致，不会影响既有配置。
+    pub fn effective_min_order_usd(&self, equity: f64) -> f64 {
+        let pct = if self.min_order_pct.is_finite() && self.min_order_pct > 0.0 {
+            equity * self.min_order_pct
+        } else {
+            0.0
+        };
+        self.min_order_usd.max(pct)
+    }
+}
+
+
 impl Default for TradeConfig {
     fn default() -> Self {
         Self {
@@ -57,6 +82,7 @@ impl Default for TradeConfig {
             target_positions: 5,
             slippage: 0.005,
             min_order_usd: 10.0,
+            min_order_pct: 0.0,
             rebalance_band: 0.02,
             margin_buffer: 0.90,
             min_position_usd: 15.0,
@@ -447,7 +473,7 @@ pub fn build_plan(
         };
         let notional = w.abs() * deployable * cfg.leverage;
         let size = round_size(notional / mid, m.sz_decimals);
-        if size * mid >= cfg.min_order_usd {
+        if size * mid >= cfg.effective_min_order_usd(acct.equity) {
             wanted.insert(coin.clone(), (if *w > 0.0 { size } else { -size }, *w > 0.0));
         } else {
             plan.notes.push(format!(
@@ -481,7 +507,7 @@ pub fn build_plan(
         let flip = cur * target < 0.0;
         if target == 0.0 || flip {
             let size = round_size(cur.abs(), m.sz_decimals);
-            if size * mid >= cfg.min_order_usd {
+            if size * mid >= cfg.effective_min_order_usd(acct.equity) {
                 closes.push(Order {
                     coin: coin.clone(),
                     buy: cur < 0.0, // buy to close a short
@@ -504,7 +530,7 @@ pub fn build_plan(
             // 复利门槛用「该仓自身的目标名义」算比例带，而不是全组合平均值：
             // 小仓位过去被平均值抬高门槛，长期跟不上净值增长。
             let pos_target = (cur + delta).abs() * mid;
-            let threshold = cfg.min_order_usd.max(pos_target * cfg.rebalance_band);
+            let threshold = cfg.effective_min_order_usd(acct.equity).max(pos_target * cfg.rebalance_band);
             if dnotional >= threshold {
                 opens.push(Order {
                     coin: coin.clone(),
@@ -541,7 +567,7 @@ pub fn build_plan(
             let Some(mid) = mids.get(coin) else { continue };
             let Some(m) = markets.get(coin) else { continue };
             let size = round_size(target.abs(), m.sz_decimals);
-            if size * mid >= cfg.min_order_usd {
+            if size * mid >= cfg.effective_min_order_usd(acct.equity) {
                 opens.push(Order {
                     coin: coin.clone(),
                     buy: *is_long,
@@ -745,7 +771,7 @@ fn account_meets_targets(account: &Acct, plan: &Plan, cfg: &TradeConfig) -> bool
         let actual=account.positions.get(coin).map(|p|p.size).unwrap_or(0.);
         let tolerance=(10f64.powi(-*decimals)).max(1e-10);
         (actual-target).abs() <= tolerance && (actual*target >= 0. || actual.abs() <= tolerance)
-            && (actual-target).abs()*mid <= cfg.min_order_usd
+            && (actual-target).abs()*mid <= cfg.effective_min_order_usd(account.equity)
     })
 }
 
@@ -877,7 +903,7 @@ async fn execute_inner(
             let delta = o.target - actual;
             let dsize = round_size(delta.abs(), o.sz_decimals);
             let dnotional = dsize * o.mid;
-            if dnotional < cfg.min_order_usd {
+            if dnotional < cfg.effective_min_order_usd(plan.equity) {
                 orders[i] = format!(
                     "{} 已到位（差 ${:.2}），跳过",
                     o.coin, dnotional

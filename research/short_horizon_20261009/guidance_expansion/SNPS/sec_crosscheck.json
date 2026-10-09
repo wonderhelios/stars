@@ -1,0 +1,673 @@
+{
+  "expected": 27,
+  "verified": 27,
+  "issues": [],
+  "records": [
+    {
+      "source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-first-quarter-fiscal-year-2020-301007745.html",
+      "actual_fiscal_end": "2020-02-01",
+      "presented_calendar_end": "2020-01-31",
+      "period_basis": "Synopsys' first quarter of fiscal year 2020 and 2019 ended on February 1, 2020 and February 2, 2019, respectively.",
+      "expected_dollars": 834381000,
+      "method": "original_quarter",
+      "filings": [
+        {
+          "start": "2019-11-01",
+          "end": "2020-01-31",
+          "val": 834381000,
+          "accn": "0000883241-20-000006",
+          "fy": 2020,
+          "fp": "Q1",
+          "form": "10-Q",
+          "filed": "2020-02-21",
+          "concept": "RevenueFromContractWithCustomerExcludingAssessedTax"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-second-quarter-fiscal-year-2020-301062899.html",
+      "actual_fiscal_end": "2020-05-02",
+      "presented_calendar_end": "2020-04-30",
+      "period_basis": "Synopsys' second quarter of fiscal year 2020 and 2019 ended on May 2, 2020 and May 4, 2019, respectively.",
+      "expected_dollars": 861327000,
+      "method": "original_quarter",
+      "filings": [
+        {
+          "start": "2020-02-01",
+          "end": "2020-04-30",
+          "val": 861327000,
+          "accn": "0000883241-20-000009",
+          "fy": 2020,
+          "fp": "Q2",
+          "form": "10-Q",
+          "filed": "2020-05-22",
+          "concept": "RevenueFromContractWithCustomerExcludingAssessedTax"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-third-quarter-fiscal-year-2020-301115089.html",
+      "actual_fiscal_end": "2020-08-01",
+      "presented_calendar_end": "2020-07-31",
+      "period_basis": "Synopsys' third quarter of fiscal year 2020 and 2019 ended on August 1, 2020 and August 3, 2019, respectively.",
+      "expected_dollars": 964134000,
+      "method": "original_quarter",
+      "filings": [
+        {
+          "start": "2020-05-01",
+          "end": "2020-07-31",
+          "val": 964134000,
+          "accn": "0000883241-20-000012",
+          "fy": 2020,
+          "fp": "Q3",
+          "form": "10-Q",
+          "filed": "2020-08-21",
+          "concept": "RevenueFromContractWithCustomerExcludingAssessedTax"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-fourth-quarter-and-fiscal-year-2020-301185085.html",
+      "actual_fiscal_end": "2020-10-31",
+      "presented_calendar_end": "2020-10-31",
+      "period_basis": "Synopsys' fourth quarter of fiscal year 2020 and 2019 ended on October 31, 2020 and November 2, 2019, respectively.",
+      "expected_dollars": 1025439000,
+      "method": "annual_minus_original_nine_month",
+      "filings": [
+        {
+          "start": "2019-11-01",
+          "end": "2020-10-31",
+          "val": 3685281000,
+          "accn": "0000883241-20-000015",
+          "fy": 2020,
+          "fp": "FY",
+          "form": "10-K",
+          "filed": "2020-12-15",
+          "concept": "RevenueFromContractWithCustomerExcludingAssessedTax"
+        },
+        {
+          "start": "2019-11-01",
+          "end": "2020-07-31",
+          "val": 2659842000,
+          "accn": "0000883241-20-000012",
+          "fy": 2020,
+          "fp": "Q3",
+          "form": "10-Q",
+          "filed": "2020-08-21",
+          "concept": "RevenueFromContractWithCustomerExcludingAssessedTax"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-first-quarter-fiscal-year-2021-301230285.html",
+      "actual_fiscal_end": "2021-01-30",
+      "presented_calendar_end": "2021-01-31",
+      "period_basis": "Synopsys' first quarter of fiscal year 2021 and 2020 ended on January 30, 2021 and February 1, 2020, respectively.",
+      "expected_dollars": 970321000,
+      "method": "original_quarter",
+      "filings": [
+        {
+          "start": "2020-11-01",
+          "end": "2021-01-31",
+          "val": 970321000,
+          "accn": "0000883241-21-000009",
+          "fy": 2021,
+          "fp": "Q1",
+          "form": "10-Q",
+          "filed": "2021-02-19",
+          "concept": "RevenueFromContractWithCustomerExcludingAssessedTax"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-second-quarter-fiscal-year-2021-301295232.html",
+      "actual_fiscal_end": "2021-05-01",
+      "presented_calendar_end": "2021-04-30",
+      "period_basis": "Synopsys' second quarter of fiscal year 2021 and 2020 ended on May 1, 2021 and May 2, 2020, respectively.",
+      "expected_dollars": 1024323000,
+      "method": "original_quarter",
+      "filings": [
+        {
+          "start": "2021-02-01",
+          "end": "2021-04-30",
+          "val": 1024323000,
+          "accn": "0000883241-21-000012",
+          "fy": 2021,
+          "fp": "Q2",
+          "form": "10-Q",
+          "filed": "2021-05-21",
+          "concept": "RevenueFromContractWithCustomerExcludingAssessedTax"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-third-quarter-fiscal-year-2021-301358246.html",
+      "actual_fiscal_end": "2021-07-31",
+      "presented_calendar_end": "2021-07-31",
+      "period_basis": "Synopsys' third quarter of fiscal year 2021 and 2020 ended on July 31, 2021 and August 1, 2020, respectively.",
+      "expected_dollars": 1057130000,
+      "method": "original_quarter",
+      "filings": [
+        {
+          "start": "2021-05-01",
+          "end": "2021-07-31",
+          "val": 1057130000,
+          "accn": "0000883241-21-000017",
+          "fy": 2021,
+          "fp": "Q3",
+          "form": "10-Q",
+          "filed": "2021-08-20",
+          "concept": "RevenueFromContractWithCustomerExcludingAssessedTax"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-fourth-quarter-and-fiscal-year-2021-301435472.html",
+      "actual_fiscal_end": "2021-10-30",
+      "presented_calendar_end": "2021-10-31",
+      "period_basis": "Synopsys' fourth quarter of fiscal year 2021 and 2020 ended on October 30, 2021 and October 31, 2020, respectively.",
+      "expected_dollars": 1152419000,
+      "method": "annual_minus_original_nine_month",
+      "filings": [
+        {
+          "start": "2020-11-01",
+          "end": "2021-10-31",
+          "val": 4204193000,
+          "accn": "0000883241-21-000022",
+          "fy": 2021,
+          "fp": "FY",
+          "form": "10-K",
+          "filed": "2021-12-13",
+          "concept": "RevenueFromContractWithCustomerExcludingAssessedTax"
+        },
+        {
+          "start": "2020-11-01",
+          "end": "2021-07-31",
+          "val": 3051774000,
+          "accn": "0000883241-21-000017",
+          "fy": 2021,
+          "fp": "Q3",
+          "form": "10-Q",
+          "filed": "2021-08-20",
+          "concept": "RevenueFromContractWithCustomerExcludingAssessedTax"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-first-quarter-fiscal-year-2022-301483982.html",
+      "actual_fiscal_end": "2022-01-29",
+      "presented_calendar_end": "2022-01-31",
+      "period_basis": "Synopsys' first quarter of fiscal year 2022 and 2021 ended on January 29, 2022 and January 30, 2021, respectively.",
+      "expected_dollars": 1270255000,
+      "method": "original_quarter",
+      "filings": [
+        {
+          "start": "2021-11-01",
+          "end": "2022-01-31",
+          "val": 1270255000,
+          "accn": "0000883241-22-000003",
+          "fy": 2022,
+          "fp": "Q1",
+          "form": "10-Q",
+          "filed": "2022-02-18",
+          "concept": "RevenueFromContractWithCustomerExcludingAssessedTax"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-second-quarter-fiscal-year-2022-301550428.html",
+      "actual_fiscal_end": "2022-04-30",
+      "presented_calendar_end": "2022-04-30",
+      "period_basis": "Synopsys' second quarter of fiscal year 2022 and 2021 ended on April 30, 2022 and May 1, 2021, respectively.",
+      "expected_dollars": 1279229000,
+      "method": "original_quarter",
+      "filings": [
+        {
+          "start": "2022-02-01",
+          "end": "2022-04-30",
+          "val": 1279229000,
+          "accn": "0000883241-22-000011",
+          "fy": 2022,
+          "fp": "Q2",
+          "form": "10-Q",
+          "filed": "2022-05-20",
+          "concept": "RevenueFromContractWithCustomerExcludingAssessedTax"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-third-quarter-fiscal-year-2022-301607799.html",
+      "actual_fiscal_end": "2022-07-30",
+      "presented_calendar_end": "2022-07-31",
+      "period_basis": "Synopsys' third quarter of fiscal year 2022 and 2021 ended on July 30, 2022 and July 31, 2021, respectively.",
+      "expected_dollars": 1247766000,
+      "method": "original_quarter",
+      "filings": [
+        {
+          "start": "2022-05-01",
+          "end": "2022-07-31",
+          "val": 1247766000,
+          "accn": "0000883241-22-000014",
+          "fy": 2022,
+          "fp": "Q3",
+          "form": "10-Q",
+          "filed": "2022-08-19",
+          "concept": "RevenueFromContractWithCustomerExcludingAssessedTax"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-fourth-quarter-and-fiscal-year-2022-301690554.html",
+      "actual_fiscal_end": "2022-10-29",
+      "presented_calendar_end": "2022-10-31",
+      "period_basis": "Synopsys' fourth quarter of fiscal year 2022 and 2021 ended on October 29, 2022 and October 30, 2021, respectively.",
+      "expected_dollars": 1284292000,
+      "method": "annual_minus_original_nine_month",
+      "filings": [
+        {
+          "start": "2021-11-01",
+          "end": "2022-10-31",
+          "val": 5081542000,
+          "accn": "0000883241-22-000017",
+          "fy": 2022,
+          "fp": "FY",
+          "form": "10-K",
+          "filed": "2022-12-12",
+          "concept": "RevenueFromContractWithCustomerExcludingAssessedTax"
+        },
+        {
+          "start": "2021-11-01",
+          "end": "2022-07-31",
+          "val": 3797250000,
+          "accn": "0000883241-22-000014",
+          "fy": 2022,
+          "fp": "Q3",
+          "form": "10-Q",
+          "filed": "2022-08-19",
+          "concept": "RevenueFromContractWithCustomerExcludingAssessedTax"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-first-quarter-fiscal-year-2023-301747982.html",
+      "actual_fiscal_end": "2023-01-28",
+      "presented_calendar_end": "2023-01-31",
+      "period_basis": "Synopsys' first quarter of fiscal year 2023 and 2022 ended on January 28, 2023 and January 29, 2022, respectively.",
+      "expected_dollars": 1361340000,
+      "method": "original_quarter",
+      "filings": [
+        {
+          "start": "2022-11-01",
+          "end": "2023-01-31",
+          "val": 1361340000,
+          "accn": "0000883241-23-000005",
+          "fy": 2023,
+          "fp": "Q1",
+          "form": "10-Q",
+          "filed": "2023-02-17",
+          "concept": "RevenueFromContractWithCustomerExcludingAssessedTax"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-second-quarter-fiscal-year-2023-301827509.html",
+      "actual_fiscal_end": "2023-04-29",
+      "presented_calendar_end": "2023-04-30",
+      "period_basis": "Synopsys' second quarter of fiscal year 2023 and 2022 ended on April 29, 2023 and April 30, 2022, respectively.",
+      "expected_dollars": 1394863000,
+      "method": "original_quarter",
+      "filings": [
+        {
+          "start": "2023-02-01",
+          "end": "2023-04-30",
+          "val": 1394863000,
+          "accn": "0000883241-23-000012",
+          "fy": 2023,
+          "fp": "Q2",
+          "form": "10-Q",
+          "filed": "2023-05-19",
+          "concept": "RevenueFromContractWithCustomerExcludingAssessedTax"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-third-quarter-fiscal-year-2023-301902862.html",
+      "actual_fiscal_end": "2023-07-29",
+      "presented_calendar_end": "2023-07-31",
+      "period_basis": "Synopsys' third quarter of fiscal year 2023 and 2022 ended on July 29, 2023 and July 30, 2022, respectively.",
+      "expected_dollars": 1487288000,
+      "method": "original_quarter",
+      "filings": [
+        {
+          "start": "2023-05-01",
+          "end": "2023-07-31",
+          "val": 1487288000,
+          "accn": "0000883241-23-000016",
+          "fy": 2023,
+          "fp": "Q3",
+          "form": "10-Q",
+          "filed": "2023-08-18",
+          "concept": "RevenueFromContractWithCustomerExcludingAssessedTax"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-fourth-quarter-and-fiscal-year-2023-302001040.html",
+      "actual_fiscal_end": "2023-10-28",
+      "presented_calendar_end": "2023-10-31",
+      "period_basis": "Synopsys' fourth quarter of fiscal year 2023 and 2022 ended on October 28, 2023 and October 29, 2022, respectively.",
+      "expected_dollars": 1599128000,
+      "method": "annual_minus_original_nine_month",
+      "filings": [
+        {
+          "start": "2022-11-01",
+          "end": "2023-10-31",
+          "val": 5842619000,
+          "accn": "0000883241-23-000019",
+          "fy": 2023,
+          "fp": "FY",
+          "form": "10-K",
+          "filed": "2023-12-12",
+          "concept": "RevenueFromContractWithCustomerExcludingAssessedTax"
+        },
+        {
+          "start": "2022-11-01",
+          "end": "2023-07-31",
+          "val": 4243491000,
+          "accn": "0000883241-23-000016",
+          "fy": 2023,
+          "fp": "Q3",
+          "form": "10-Q",
+          "filed": "2023-08-18",
+          "concept": "RevenueFromContractWithCustomerExcludingAssessedTax"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-first-quarter-fiscal-year-2024-302067821.html",
+      "actual_fiscal_end": "2024-02-03",
+      "presented_calendar_end": "2024-01-31",
+      "period_basis": "Synopsys' first quarter of fiscal year 2024 and 2023 ended on February 3, 2024 and January 28, 2023, respectively.",
+      "expected_dollars": 1649230000,
+      "method": "original_quarter",
+      "filings": [
+        {
+          "start": "2023-11-01",
+          "end": "2024-01-31",
+          "val": 1649230000,
+          "accn": "0000883241-24-000013",
+          "fy": 2024,
+          "fp": "Q1",
+          "form": "10-Q",
+          "filed": "2024-02-23",
+          "concept": "RevenueFromContractWithCustomerExcludingAssessedTax"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-second-quarter-fiscal-year-2024-302153264.html",
+      "actual_fiscal_end": "2024-05-04",
+      "presented_calendar_end": "2024-04-30",
+      "period_basis": "Synopsys' second quarter of fiscal year 2024 and 2023 ended on May 4, 2024 and April 29, 2023, respectively.",
+      "expected_dollars": 1454712000,
+      "method": "original_quarter",
+      "filings": [
+        {
+          "start": "2024-02-01",
+          "end": "2024-04-30",
+          "val": 1454712000,
+          "accn": "0000883241-24-000016",
+          "fy": 2024,
+          "fp": "Q2",
+          "form": "10-Q",
+          "filed": "2024-05-24",
+          "concept": "RevenueFromContractWithCustomerExcludingAssessedTax"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-third-quarter-fiscal-year-2024-302227772.html",
+      "actual_fiscal_end": "2024-08-03",
+      "presented_calendar_end": "2024-07-31",
+      "period_basis": "Synopsys' third quarter of fiscal year 2024 and 2023 ended on August 3, 2024 and July 29, 2023, respectively.",
+      "expected_dollars": 1525749000,
+      "method": "original_quarter",
+      "filings": [
+        {
+          "start": "2024-05-01",
+          "end": "2024-07-31",
+          "val": 1525749000,
+          "accn": "0000883241-24-000021",
+          "fy": 2024,
+          "fp": "Q3",
+          "form": "10-Q",
+          "filed": "2024-08-23",
+          "concept": "RevenueFromContractWithCustomerExcludingAssessedTax"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-fourth-quarter-and-fiscal-year-2024-302322901.html",
+      "actual_fiscal_end": "2024-11-02",
+      "presented_calendar_end": "2024-10-31",
+      "period_basis": "Synopsys' fourth quarter of fiscal year 2024 and 2023 ended on November 2, 2024 and October 28, 2023, respectively.",
+      "expected_dollars": 1635986000,
+      "method": "annual_minus_original_nine_month",
+      "filings": [
+        {
+          "start": "2023-11-01",
+          "end": "2024-10-31",
+          "val": 6127436000,
+          "accn": "0000883241-24-000024",
+          "fy": 2024,
+          "fp": "FY",
+          "form": "10-K",
+          "filed": "2024-12-19",
+          "concept": "RevenueFromContractWithCustomerExcludingAssessedTax"
+        },
+        {
+          "start": "2023-11-01",
+          "end": "2024-07-31",
+          "val": 4491450000,
+          "accn": "0000883241-24-000021",
+          "fy": 2024,
+          "fp": "Q3",
+          "form": "10-Q",
+          "filed": "2024-08-23",
+          "concept": "RevenueFromContractWithCustomerExcludingAssessedTax"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-first-quarter-fiscal-year-2025-302386200.html",
+      "actual_fiscal_end": "2025-01-31",
+      "presented_calendar_end": "2025-01-31",
+      "period_basis": "Synopsys' first quarter of fiscal year 2025 and 2024 ended on January 31, 2025 and February 3, 2024, respectively.",
+      "expected_dollars": 1455315000,
+      "method": "original_quarter",
+      "filings": [
+        {
+          "start": "2024-11-01",
+          "end": "2025-01-31",
+          "val": 1455315000,
+          "accn": "0000883241-25-000014",
+          "fy": 2025,
+          "fp": "Q1",
+          "form": "10-Q",
+          "filed": "2025-02-26",
+          "concept": "RevenueFromContractWithCustomerExcludingAssessedTax"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-second-quarter-fiscal-year-2025-302467545.html",
+      "actual_fiscal_end": "2025-04-30",
+      "presented_calendar_end": "2025-04-30",
+      "period_basis": "Synopsys' second quarter of fiscal year 2025 and 2024 ended on April 30, 2025 and May 4, 2024, respectively.",
+      "expected_dollars": 1604266000,
+      "method": "original_quarter",
+      "filings": [
+        {
+          "start": "2025-02-01",
+          "end": "2025-04-30",
+          "val": 1604266000,
+          "accn": "0000883241-25-000017",
+          "fy": 2025,
+          "fp": "Q2",
+          "form": "10-Q",
+          "filed": "2025-05-28",
+          "concept": "RevenueFromContractWithCustomerExcludingAssessedTax"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-third-quarter-fiscal-year-2025-302551316.html",
+      "actual_fiscal_end": "2025-07-31",
+      "presented_calendar_end": "2025-07-31",
+      "period_basis": "Synopsys' third quarter of fiscal year 2025 and 2024 ended on July 31, 2025 and August 3, 2024, respectively.",
+      "expected_dollars": 1739737000,
+      "method": "original_quarter",
+      "filings": [
+        {
+          "start": "2025-05-01",
+          "end": "2025-07-31",
+          "val": 1739737000,
+          "accn": "0000883241-25-000024",
+          "fy": 2025,
+          "fp": "Q3",
+          "form": "10-Q",
+          "filed": "2025-09-09",
+          "concept": "RevenueFromContractWithCustomerExcludingAssessedTax"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-fourth-quarter-and-fiscal-year-2025-302638321.html",
+      "actual_fiscal_end": "2025-10-31",
+      "presented_calendar_end": "2025-10-31",
+      "period_basis": "Synopsys' fourth quarter of fiscal year 2025 and 2024 ended on October 31, 2025 and November 2, 2024, respectively.",
+      "expected_dollars": 2254860000,
+      "method": "annual_minus_original_nine_month",
+      "filings": [
+        {
+          "start": "2024-11-01",
+          "end": "2025-10-31",
+          "val": 7054178000,
+          "accn": "0000883241-25-000028",
+          "fy": 2025,
+          "fp": "FY",
+          "form": "10-K",
+          "filed": "2025-12-22",
+          "frame": "CY2025",
+          "concept": "RevenueFromContractWithCustomerExcludingAssessedTax"
+        },
+        {
+          "start": "2024-11-01",
+          "end": "2025-07-31",
+          "val": 4799318000,
+          "accn": "0000883241-25-000024",
+          "fy": 2025,
+          "fp": "Q3",
+          "form": "10-Q",
+          "filed": "2025-09-09",
+          "concept": "RevenueFromContractWithCustomerExcludingAssessedTax"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-first-quarter-fiscal-year-2026-302697317.html",
+      "actual_fiscal_end": "2026-01-31",
+      "presented_calendar_end": "2026-01-31",
+      "period_basis": "Calendar fiscal quarters after FY2025 change; independently verify against original SEC period.",
+      "expected_dollars": 2408798000,
+      "method": "original_quarter",
+      "filings": [
+        {
+          "start": "2025-11-01",
+          "end": "2026-01-31",
+          "val": 2408798000,
+          "accn": "0000883241-26-000014",
+          "fy": 2026,
+          "fp": "Q1",
+          "form": "10-Q",
+          "filed": "2026-02-25",
+          "frame": "CY2025Q4",
+          "concept": "RevenueFromContractWithCustomerExcludingAssessedTax"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-second-quarter-fiscal-year-2026-302783403.html",
+      "actual_fiscal_end": "2026-04-30",
+      "presented_calendar_end": "2026-04-30",
+      "period_basis": "Calendar fiscal quarters after FY2025 change; independently verify against original SEC period.",
+      "expected_dollars": 2275985000,
+      "method": "original_quarter",
+      "filings": [
+        {
+          "start": "2026-02-01",
+          "end": "2026-04-30",
+          "val": 2275985000,
+          "accn": "0000883241-26-000018",
+          "fy": 2026,
+          "fp": "Q2",
+          "form": "10-Q",
+          "filed": "2026-05-27",
+          "frame": "CY2026Q1",
+          "concept": "RevenueFromContractWithCustomerExcludingAssessedTax"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-third-quarter-fiscal-year-2026-302860810.html",
+      "actual_fiscal_end": "2026-07-31",
+      "presented_calendar_end": "2026-07-31",
+      "period_basis": "Calendar fiscal quarters after FY2025 change; independently verify against original SEC period.",
+      "expected_dollars": 2476822000,
+      "method": "original_quarter",
+      "filings": [
+        {
+          "start": "2026-05-01",
+          "end": "2026-07-31",
+          "val": 2476822000,
+          "accn": "0000883241-26-000025",
+          "fy": 2026,
+          "fp": "Q3",
+          "form": "10-Q",
+          "filed": "2026-08-26",
+          "frame": "CY2026Q2",
+          "concept": "RevenueFromContractWithCustomerExcludingAssessedTax"
+        }
+      ],
+      "error_dollars": 0
+    }
+  ],
+  "source_sha256": "7e9b6e13ac2481586b56f1db93af14b9b014a1b7f92af2a09075d7cbd51526d4",
+  "scope": "Later independent verification of announced actual values and true financial periods; not an input to announcement-time signals."
+}

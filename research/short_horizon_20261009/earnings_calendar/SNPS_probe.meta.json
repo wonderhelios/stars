@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/synopsys-announces-earnings-release-date-for-third-quarter-fiscal-year-2026-302832399.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "cdb517b80781844104bb4c84a0a1cb9e6a5a1b5b1adc03af9da8167586f2bd11",
+  "retrieved_utc": "2026-10-09T04:02:29Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/synopsys-announces-earnings-release-date-for-third-quarter-fiscal-year-2026-302832399.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "cdb517b80781844104bb4c84a0a1cb9e6a5a1b5b1adc03af9da8167586f2bd11",
+      "retrieved_utc": "2026-10-09T04:02:29Z"
+    }
+  ]
+}

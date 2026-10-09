@@ -1,0 +1,54 @@
+2023-06-14 BTC {'selected': 6}
+2023-06-14 ETH {'selected': 6}
+2023-07-26 BTC {'selected': 6}
+2023-07-26 ETH {'selected': 6}
+2023-09-20 BTC {'selected': 6}
+2023-09-20 ETH {'selected': 6}
+2023-11-01 BTC {'selected': 6}
+2023-11-01 ETH {'selected': 5, 'no_pair_in_prior_hour': 1}
+2023-12-13 BTC {'selected': 6}
+2023-12-13 ETH {'selected': 6}
+2024-01-31 BTC {'selected': 6}
+2024-01-31 ETH {'selected': 6}
+2024-03-20 BTC {'selected': 6}
+2024-03-20 ETH {'selected': 5, 'no_pair_in_prior_hour': 1}
+2024-05-01 BTC {'selected': 6}
+2024-05-01 ETH {'selected': 6}
+2024-06-12 BTC {'selected': 6}
+2024-06-12 ETH {'selected': 5, 'no_pair_in_prior_hour': 1}
+2024-07-31 BTC {'selected': 6}
+2024-07-31 ETH {'selected': 5, 'no_pair_in_prior_hour': 1}
+2024-09-18 BTC {'selected': 6}
+2024-09-18 ETH {'selected': 5, 'no_pair_in_prior_hour': 1}
+2024-11-07 BTC {'selected': 6}
+2024-11-07 ETH {'selected': 5, 'no_pair_in_prior_hour': 1}
+2024-12-18 BTC {'selected': 6}
+2024-12-18 ETH {'selected': 6}
+2025-01-29 BTC {'selected': 6}
+2025-01-29 ETH {'selected': 6}
+2025-03-19 BTC {'selected': 6}
+2025-03-19 ETH {'selected': 5, 'no_pair_in_prior_hour': 1}
+2025-05-07 BTC {'selected': 6}
+2025-05-07 ETH {'selected': 6}
+2025-06-18 BTC {'selected': 4, 'no_pair_in_prior_hour': 2}
+2025-06-18 ETH {'selected': 6}
+2025-07-30 BTC {'selected': 6}
+2025-07-30 ETH {'selected': 5, 'no_pair_in_prior_hour': 1}
+2025-09-17 BTC {'selected': 6}
+2025-09-17 ETH {'selected': 6}
+2025-10-29 BTC {'selected': 5, 'no_pair_in_prior_hour': 1}
+2025-10-29 ETH {'selected': 6}
+2025-12-10 BTC {'no_pair_in_prior_hour': 1, 'selected': 5}
+2025-12-10 ETH {'selected': 6}
+2026-01-28 BTC {'selected': 6}
+2026-01-28 ETH {'selected': 4, 'no_pair_in_prior_hour': 2}
+2026-03-18 BTC {'selected': 5, 'no_pair_in_prior_hour': 1}
+2026-03-18 ETH {'selected': 4, 'no_pair_in_prior_hour': 2}
+2026-04-29 BTC {'selected': 6}
+2026-04-29 ETH {'selected': 6}
+2026-06-17 BTC {'selected': 6}
+2026-06-17 ETH {'selected': 4, 'no_pair_in_prior_hour': 2}
+2026-07-29 BTC {'selected': 6}
+2026-07-29 ETH {'selected': 3, 'no_pair_in_prior_hour': 3}
+2026-09-16 BTC {'selected': 4, 'no_pair_in_prior_hour': 2}
+2026-09-16 ETH {'selected': 4, 'no_pair_in_prior_hour': 2}

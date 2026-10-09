@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/veeva-to-release-fiscal-2022-first-quarter-results-on-may-27-2021-301285002.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "47f5d19e8a170e9c0b6e0f795ffb199836f93b544b5cb1ed5b15eb86f7987119",
+  "retrieved_utc": "2026-10-09T04:10:16Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/veeva-to-release-fiscal-2022-first-quarter-results-on-may-27-2021-301285002.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "47f5d19e8a170e9c0b6e0f795ffb199836f93b544b5cb1ed5b15eb86f7987119",
+      "retrieved_utc": "2026-10-09T04:10:16Z"
+    }
+  ]
+}

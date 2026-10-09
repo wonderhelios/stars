@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-second-quarter-fiscal-2024-financial-results-301915271.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "c74639a69bf2b4d7ba3888ca61c8b3e5cd841946afe4227c1fecbb2b3eecbd07",
+  "retrieved_utc": "2026-10-09T03:22:58Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-second-quarter-fiscal-2024-financial-results-301915271.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "c74639a69bf2b4d7ba3888ca61c8b3e5cd841946afe4227c1fecbb2b3eecbd07",
+      "retrieved_utc": "2026-10-09T03:22:58Z"
+    }
+  ]
+}

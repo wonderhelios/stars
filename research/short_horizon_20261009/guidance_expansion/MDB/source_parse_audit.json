@@ -1,0 +1,12 @@
+{
+  "releases": 27,
+  "parsed": 27,
+  "errors": 0,
+  "quarter_gaps": [],
+  "actual_vs_rounded_max_difference": 0.04800000000000182,
+  "modification_lag_max_seconds": 127.0,
+  "comparable_pairs": 20,
+  "independent_official_directory_status": "normal request HTTP403; available earlier search snapshot not a complete archived directory",
+  "accounting_scope_and_interim_guidance_review": "pending",
+  "market_performance_read": false
+}

@@ -1,0 +1,3602 @@
+[
+  {
+    "configuration": "SPY_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20201216.htm",
+    "available_after": "2021-01-07 01:00:00-05:00",
+    "planned_date": "2021-01-27",
+    "entry": "2021-01-26 14:30:00+00:00",
+    "exit": "2021-01-26 21:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "SPY_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20201216.htm",
+    "available_after": "2021-01-07 01:00:00-05:00",
+    "planned_date": "2021-01-27",
+    "entry": "2021-01-26 14:30:00+00:00",
+    "exit": "2021-01-27 21:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "GLD_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20201216.htm",
+    "available_after": "2021-01-07 01:00:00-05:00",
+    "planned_date": "2021-01-27",
+    "entry": "2021-01-26 14:30:00+00:00",
+    "exit": "2021-01-26 21:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "GLD_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20201216.htm",
+    "available_after": "2021-01-07 01:00:00-05:00",
+    "planned_date": "2021-01-27",
+    "entry": "2021-01-26 14:30:00+00:00",
+    "exit": "2021-01-27 21:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "TLT_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20201216.htm",
+    "available_after": "2021-01-07 01:00:00-05:00",
+    "planned_date": "2021-01-27",
+    "entry": "2021-01-26 14:30:00+00:00",
+    "exit": "2021-01-26 21:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "TLT_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20201216.htm",
+    "available_after": "2021-01-07 01:00:00-05:00",
+    "planned_date": "2021-01-27",
+    "entry": "2021-01-26 14:30:00+00:00",
+    "exit": "2021-01-27 21:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "mix_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20201216.htm",
+    "available_after": "2021-01-07 01:00:00-05:00",
+    "planned_date": "2021-01-27",
+    "entry": "2021-01-26 14:30:00+00:00",
+    "exit": "2021-01-26 21:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "mix_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20201216.htm",
+    "available_after": "2021-01-07 01:00:00-05:00",
+    "planned_date": "2021-01-27",
+    "entry": "2021-01-26 14:30:00+00:00",
+    "exit": "2021-01-27 21:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "SPY_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20210127.htm",
+    "available_after": "2021-02-18 01:00:00-05:00",
+    "planned_date": "2021-03-17",
+    "entry": "2021-03-16 13:30:00+00:00",
+    "exit": "2021-03-16 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "SPY_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20210127.htm",
+    "available_after": "2021-02-18 01:00:00-05:00",
+    "planned_date": "2021-03-17",
+    "entry": "2021-03-16 13:30:00+00:00",
+    "exit": "2021-03-17 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "GLD_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20210127.htm",
+    "available_after": "2021-02-18 01:00:00-05:00",
+    "planned_date": "2021-03-17",
+    "entry": "2021-03-16 13:30:00+00:00",
+    "exit": "2021-03-16 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "GLD_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20210127.htm",
+    "available_after": "2021-02-18 01:00:00-05:00",
+    "planned_date": "2021-03-17",
+    "entry": "2021-03-16 13:30:00+00:00",
+    "exit": "2021-03-17 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "TLT_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20210127.htm",
+    "available_after": "2021-02-18 01:00:00-05:00",
+    "planned_date": "2021-03-17",
+    "entry": "2021-03-16 13:30:00+00:00",
+    "exit": "2021-03-16 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "TLT_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20210127.htm",
+    "available_after": "2021-02-18 01:00:00-05:00",
+    "planned_date": "2021-03-17",
+    "entry": "2021-03-16 13:30:00+00:00",
+    "exit": "2021-03-17 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "mix_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20210127.htm",
+    "available_after": "2021-02-18 01:00:00-05:00",
+    "planned_date": "2021-03-17",
+    "entry": "2021-03-16 13:30:00+00:00",
+    "exit": "2021-03-16 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "mix_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20210127.htm",
+    "available_after": "2021-02-18 01:00:00-05:00",
+    "planned_date": "2021-03-17",
+    "entry": "2021-03-16 13:30:00+00:00",
+    "exit": "2021-03-17 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "SPY_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20210317.htm",
+    "available_after": "2021-04-08 01:00:00-04:00",
+    "planned_date": "2021-04-28",
+    "entry": "2021-04-27 13:30:00+00:00",
+    "exit": "2021-04-27 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "SPY_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20210317.htm",
+    "available_after": "2021-04-08 01:00:00-04:00",
+    "planned_date": "2021-04-28",
+    "entry": "2021-04-27 13:30:00+00:00",
+    "exit": "2021-04-28 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "GLD_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20210317.htm",
+    "available_after": "2021-04-08 01:00:00-04:00",
+    "planned_date": "2021-04-28",
+    "entry": "2021-04-27 13:30:00+00:00",
+    "exit": "2021-04-27 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "GLD_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20210317.htm",
+    "available_after": "2021-04-08 01:00:00-04:00",
+    "planned_date": "2021-04-28",
+    "entry": "2021-04-27 13:30:00+00:00",
+    "exit": "2021-04-28 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "TLT_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20210317.htm",
+    "available_after": "2021-04-08 01:00:00-04:00",
+    "planned_date": "2021-04-28",
+    "entry": "2021-04-27 13:30:00+00:00",
+    "exit": "2021-04-27 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "TLT_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20210317.htm",
+    "available_after": "2021-04-08 01:00:00-04:00",
+    "planned_date": "2021-04-28",
+    "entry": "2021-04-27 13:30:00+00:00",
+    "exit": "2021-04-28 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "mix_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20210317.htm",
+    "available_after": "2021-04-08 01:00:00-04:00",
+    "planned_date": "2021-04-28",
+    "entry": "2021-04-27 13:30:00+00:00",
+    "exit": "2021-04-27 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "mix_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20210317.htm",
+    "available_after": "2021-04-08 01:00:00-04:00",
+    "planned_date": "2021-04-28",
+    "entry": "2021-04-27 13:30:00+00:00",
+    "exit": "2021-04-28 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "SPY_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20210428.htm",
+    "available_after": "2021-05-20 01:00:00-04:00",
+    "planned_date": "2021-06-16",
+    "entry": "2021-06-15 13:30:00+00:00",
+    "exit": "2021-06-15 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "SPY_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20210428.htm",
+    "available_after": "2021-05-20 01:00:00-04:00",
+    "planned_date": "2021-06-16",
+    "entry": "2021-06-15 13:30:00+00:00",
+    "exit": "2021-06-16 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "GLD_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20210428.htm",
+    "available_after": "2021-05-20 01:00:00-04:00",
+    "planned_date": "2021-06-16",
+    "entry": "2021-06-15 13:30:00+00:00",
+    "exit": "2021-06-15 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "GLD_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20210428.htm",
+    "available_after": "2021-05-20 01:00:00-04:00",
+    "planned_date": "2021-06-16",
+    "entry": "2021-06-15 13:30:00+00:00",
+    "exit": "2021-06-16 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "TLT_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20210428.htm",
+    "available_after": "2021-05-20 01:00:00-04:00",
+    "planned_date": "2021-06-16",
+    "entry": "2021-06-15 13:30:00+00:00",
+    "exit": "2021-06-15 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "TLT_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20210428.htm",
+    "available_after": "2021-05-20 01:00:00-04:00",
+    "planned_date": "2021-06-16",
+    "entry": "2021-06-15 13:30:00+00:00",
+    "exit": "2021-06-16 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "mix_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20210428.htm",
+    "available_after": "2021-05-20 01:00:00-04:00",
+    "planned_date": "2021-06-16",
+    "entry": "2021-06-15 13:30:00+00:00",
+    "exit": "2021-06-15 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "mix_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20210428.htm",
+    "available_after": "2021-05-20 01:00:00-04:00",
+    "planned_date": "2021-06-16",
+    "entry": "2021-06-15 13:30:00+00:00",
+    "exit": "2021-06-16 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "SPY_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20210616.htm",
+    "available_after": "2021-07-08 01:00:00-04:00",
+    "planned_date": "2021-07-28",
+    "entry": "2021-07-27 13:30:00+00:00",
+    "exit": "2021-07-27 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "SPY_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20210616.htm",
+    "available_after": "2021-07-08 01:00:00-04:00",
+    "planned_date": "2021-07-28",
+    "entry": "2021-07-27 13:30:00+00:00",
+    "exit": "2021-07-28 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "GLD_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20210616.htm",
+    "available_after": "2021-07-08 01:00:00-04:00",
+    "planned_date": "2021-07-28",
+    "entry": "2021-07-27 13:30:00+00:00",
+    "exit": "2021-07-27 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "GLD_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20210616.htm",
+    "available_after": "2021-07-08 01:00:00-04:00",
+    "planned_date": "2021-07-28",
+    "entry": "2021-07-27 13:30:00+00:00",
+    "exit": "2021-07-28 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "TLT_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20210616.htm",
+    "available_after": "2021-07-08 01:00:00-04:00",
+    "planned_date": "2021-07-28",
+    "entry": "2021-07-27 13:30:00+00:00",
+    "exit": "2021-07-27 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "TLT_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20210616.htm",
+    "available_after": "2021-07-08 01:00:00-04:00",
+    "planned_date": "2021-07-28",
+    "entry": "2021-07-27 13:30:00+00:00",
+    "exit": "2021-07-28 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "mix_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20210616.htm",
+    "available_after": "2021-07-08 01:00:00-04:00",
+    "planned_date": "2021-07-28",
+    "entry": "2021-07-27 13:30:00+00:00",
+    "exit": "2021-07-27 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "mix_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20210616.htm",
+    "available_after": "2021-07-08 01:00:00-04:00",
+    "planned_date": "2021-07-28",
+    "entry": "2021-07-27 13:30:00+00:00",
+    "exit": "2021-07-28 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "SPY_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20210728.htm",
+    "available_after": "2021-08-19 01:00:00-04:00",
+    "planned_date": "2021-09-22",
+    "entry": "2021-09-21 13:30:00+00:00",
+    "exit": "2021-09-21 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "SPY_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20210728.htm",
+    "available_after": "2021-08-19 01:00:00-04:00",
+    "planned_date": "2021-09-22",
+    "entry": "2021-09-21 13:30:00+00:00",
+    "exit": "2021-09-22 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "GLD_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20210728.htm",
+    "available_after": "2021-08-19 01:00:00-04:00",
+    "planned_date": "2021-09-22",
+    "entry": "2021-09-21 13:30:00+00:00",
+    "exit": "2021-09-21 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "GLD_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20210728.htm",
+    "available_after": "2021-08-19 01:00:00-04:00",
+    "planned_date": "2021-09-22",
+    "entry": "2021-09-21 13:30:00+00:00",
+    "exit": "2021-09-22 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "TLT_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20210728.htm",
+    "available_after": "2021-08-19 01:00:00-04:00",
+    "planned_date": "2021-09-22",
+    "entry": "2021-09-21 13:30:00+00:00",
+    "exit": "2021-09-21 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "TLT_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20210728.htm",
+    "available_after": "2021-08-19 01:00:00-04:00",
+    "planned_date": "2021-09-22",
+    "entry": "2021-09-21 13:30:00+00:00",
+    "exit": "2021-09-22 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "mix_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20210728.htm",
+    "available_after": "2021-08-19 01:00:00-04:00",
+    "planned_date": "2021-09-22",
+    "entry": "2021-09-21 13:30:00+00:00",
+    "exit": "2021-09-21 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "mix_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20210728.htm",
+    "available_after": "2021-08-19 01:00:00-04:00",
+    "planned_date": "2021-09-22",
+    "entry": "2021-09-21 13:30:00+00:00",
+    "exit": "2021-09-22 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "SPY_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20211103.htm",
+    "available_after": "2021-11-25 01:00:00-05:00",
+    "planned_date": "2021-12-15",
+    "entry": "2021-12-14 14:30:00+00:00",
+    "exit": "2021-12-14 21:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "SPY_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20211103.htm",
+    "available_after": "2021-11-25 01:00:00-05:00",
+    "planned_date": "2021-12-15",
+    "entry": "2021-12-14 14:30:00+00:00",
+    "exit": "2021-12-15 21:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "GLD_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20211103.htm",
+    "available_after": "2021-11-25 01:00:00-05:00",
+    "planned_date": "2021-12-15",
+    "entry": "2021-12-14 14:30:00+00:00",
+    "exit": "2021-12-14 21:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "GLD_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20211103.htm",
+    "available_after": "2021-11-25 01:00:00-05:00",
+    "planned_date": "2021-12-15",
+    "entry": "2021-12-14 14:30:00+00:00",
+    "exit": "2021-12-15 21:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "TLT_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20211103.htm",
+    "available_after": "2021-11-25 01:00:00-05:00",
+    "planned_date": "2021-12-15",
+    "entry": "2021-12-14 14:30:00+00:00",
+    "exit": "2021-12-14 21:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "TLT_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20211103.htm",
+    "available_after": "2021-11-25 01:00:00-05:00",
+    "planned_date": "2021-12-15",
+    "entry": "2021-12-14 14:30:00+00:00",
+    "exit": "2021-12-15 21:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "mix_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20211103.htm",
+    "available_after": "2021-11-25 01:00:00-05:00",
+    "planned_date": "2021-12-15",
+    "entry": "2021-12-14 14:30:00+00:00",
+    "exit": "2021-12-14 21:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "mix_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20211103.htm",
+    "available_after": "2021-11-25 01:00:00-05:00",
+    "planned_date": "2021-12-15",
+    "entry": "2021-12-14 14:30:00+00:00",
+    "exit": "2021-12-15 21:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "SPY_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20211215.htm",
+    "available_after": "2022-01-06 01:00:00-05:00",
+    "planned_date": "2022-01-26",
+    "entry": "2022-01-25 14:30:00+00:00",
+    "exit": "2022-01-25 21:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "SPY_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20211215.htm",
+    "available_after": "2022-01-06 01:00:00-05:00",
+    "planned_date": "2022-01-26",
+    "entry": "2022-01-25 14:30:00+00:00",
+    "exit": "2022-01-26 21:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "GLD_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20211215.htm",
+    "available_after": "2022-01-06 01:00:00-05:00",
+    "planned_date": "2022-01-26",
+    "entry": "2022-01-25 14:30:00+00:00",
+    "exit": "2022-01-25 21:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "GLD_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20211215.htm",
+    "available_after": "2022-01-06 01:00:00-05:00",
+    "planned_date": "2022-01-26",
+    "entry": "2022-01-25 14:30:00+00:00",
+    "exit": "2022-01-26 21:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "TLT_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20211215.htm",
+    "available_after": "2022-01-06 01:00:00-05:00",
+    "planned_date": "2022-01-26",
+    "entry": "2022-01-25 14:30:00+00:00",
+    "exit": "2022-01-25 21:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "TLT_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20211215.htm",
+    "available_after": "2022-01-06 01:00:00-05:00",
+    "planned_date": "2022-01-26",
+    "entry": "2022-01-25 14:30:00+00:00",
+    "exit": "2022-01-26 21:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "mix_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20211215.htm",
+    "available_after": "2022-01-06 01:00:00-05:00",
+    "planned_date": "2022-01-26",
+    "entry": "2022-01-25 14:30:00+00:00",
+    "exit": "2022-01-25 21:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "mix_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20211215.htm",
+    "available_after": "2022-01-06 01:00:00-05:00",
+    "planned_date": "2022-01-26",
+    "entry": "2022-01-25 14:30:00+00:00",
+    "exit": "2022-01-26 21:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "SPY_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20220126.htm",
+    "available_after": "2022-02-17 01:00:00-05:00",
+    "planned_date": "2022-03-16",
+    "entry": "2022-03-15 13:30:00+00:00",
+    "exit": "2022-03-15 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "SPY_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20220126.htm",
+    "available_after": "2022-02-17 01:00:00-05:00",
+    "planned_date": "2022-03-16",
+    "entry": "2022-03-15 13:30:00+00:00",
+    "exit": "2022-03-16 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "GLD_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20220126.htm",
+    "available_after": "2022-02-17 01:00:00-05:00",
+    "planned_date": "2022-03-16",
+    "entry": "2022-03-15 13:30:00+00:00",
+    "exit": "2022-03-15 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "GLD_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20220126.htm",
+    "available_after": "2022-02-17 01:00:00-05:00",
+    "planned_date": "2022-03-16",
+    "entry": "2022-03-15 13:30:00+00:00",
+    "exit": "2022-03-16 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "TLT_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20220126.htm",
+    "available_after": "2022-02-17 01:00:00-05:00",
+    "planned_date": "2022-03-16",
+    "entry": "2022-03-15 13:30:00+00:00",
+    "exit": "2022-03-15 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "TLT_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20220126.htm",
+    "available_after": "2022-02-17 01:00:00-05:00",
+    "planned_date": "2022-03-16",
+    "entry": "2022-03-15 13:30:00+00:00",
+    "exit": "2022-03-16 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "mix_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20220126.htm",
+    "available_after": "2022-02-17 01:00:00-05:00",
+    "planned_date": "2022-03-16",
+    "entry": "2022-03-15 13:30:00+00:00",
+    "exit": "2022-03-15 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "mix_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20220126.htm",
+    "available_after": "2022-02-17 01:00:00-05:00",
+    "planned_date": "2022-03-16",
+    "entry": "2022-03-15 13:30:00+00:00",
+    "exit": "2022-03-16 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "SPY_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20220316.htm",
+    "available_after": "2022-04-07 01:00:00-04:00",
+    "planned_date": "2022-05-04",
+    "entry": "2022-05-03 13:30:00+00:00",
+    "exit": "2022-05-03 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "SPY_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20220316.htm",
+    "available_after": "2022-04-07 01:00:00-04:00",
+    "planned_date": "2022-05-04",
+    "entry": "2022-05-03 13:30:00+00:00",
+    "exit": "2022-05-04 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "GLD_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20220316.htm",
+    "available_after": "2022-04-07 01:00:00-04:00",
+    "planned_date": "2022-05-04",
+    "entry": "2022-05-03 13:30:00+00:00",
+    "exit": "2022-05-03 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "GLD_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20220316.htm",
+    "available_after": "2022-04-07 01:00:00-04:00",
+    "planned_date": "2022-05-04",
+    "entry": "2022-05-03 13:30:00+00:00",
+    "exit": "2022-05-04 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "TLT_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20220316.htm",
+    "available_after": "2022-04-07 01:00:00-04:00",
+    "planned_date": "2022-05-04",
+    "entry": "2022-05-03 13:30:00+00:00",
+    "exit": "2022-05-03 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "TLT_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20220316.htm",
+    "available_after": "2022-04-07 01:00:00-04:00",
+    "planned_date": "2022-05-04",
+    "entry": "2022-05-03 13:30:00+00:00",
+    "exit": "2022-05-04 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "mix_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20220316.htm",
+    "available_after": "2022-04-07 01:00:00-04:00",
+    "planned_date": "2022-05-04",
+    "entry": "2022-05-03 13:30:00+00:00",
+    "exit": "2022-05-03 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "mix_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20220316.htm",
+    "available_after": "2022-04-07 01:00:00-04:00",
+    "planned_date": "2022-05-04",
+    "entry": "2022-05-03 13:30:00+00:00",
+    "exit": "2022-05-04 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "SPY_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20220504.htm",
+    "available_after": "2022-05-26 01:00:00-04:00",
+    "planned_date": "2022-06-15",
+    "entry": "2022-06-14 13:30:00+00:00",
+    "exit": "2022-06-14 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "SPY_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20220504.htm",
+    "available_after": "2022-05-26 01:00:00-04:00",
+    "planned_date": "2022-06-15",
+    "entry": "2022-06-14 13:30:00+00:00",
+    "exit": "2022-06-15 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "GLD_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20220504.htm",
+    "available_after": "2022-05-26 01:00:00-04:00",
+    "planned_date": "2022-06-15",
+    "entry": "2022-06-14 13:30:00+00:00",
+    "exit": "2022-06-14 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "GLD_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20220504.htm",
+    "available_after": "2022-05-26 01:00:00-04:00",
+    "planned_date": "2022-06-15",
+    "entry": "2022-06-14 13:30:00+00:00",
+    "exit": "2022-06-15 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "TLT_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20220504.htm",
+    "available_after": "2022-05-26 01:00:00-04:00",
+    "planned_date": "2022-06-15",
+    "entry": "2022-06-14 13:30:00+00:00",
+    "exit": "2022-06-14 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "TLT_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20220504.htm",
+    "available_after": "2022-05-26 01:00:00-04:00",
+    "planned_date": "2022-06-15",
+    "entry": "2022-06-14 13:30:00+00:00",
+    "exit": "2022-06-15 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "mix_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20220504.htm",
+    "available_after": "2022-05-26 01:00:00-04:00",
+    "planned_date": "2022-06-15",
+    "entry": "2022-06-14 13:30:00+00:00",
+    "exit": "2022-06-14 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "mix_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20220504.htm",
+    "available_after": "2022-05-26 01:00:00-04:00",
+    "planned_date": "2022-06-15",
+    "entry": "2022-06-14 13:30:00+00:00",
+    "exit": "2022-06-15 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "SPY_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20220615.htm",
+    "available_after": "2022-07-07 01:00:00-04:00",
+    "planned_date": "2022-07-27",
+    "entry": "2022-07-26 13:30:00+00:00",
+    "exit": "2022-07-26 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "SPY_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20220615.htm",
+    "available_after": "2022-07-07 01:00:00-04:00",
+    "planned_date": "2022-07-27",
+    "entry": "2022-07-26 13:30:00+00:00",
+    "exit": "2022-07-27 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "GLD_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20220615.htm",
+    "available_after": "2022-07-07 01:00:00-04:00",
+    "planned_date": "2022-07-27",
+    "entry": "2022-07-26 13:30:00+00:00",
+    "exit": "2022-07-26 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "GLD_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20220615.htm",
+    "available_after": "2022-07-07 01:00:00-04:00",
+    "planned_date": "2022-07-27",
+    "entry": "2022-07-26 13:30:00+00:00",
+    "exit": "2022-07-27 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "TLT_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20220615.htm",
+    "available_after": "2022-07-07 01:00:00-04:00",
+    "planned_date": "2022-07-27",
+    "entry": "2022-07-26 13:30:00+00:00",
+    "exit": "2022-07-26 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "TLT_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20220615.htm",
+    "available_after": "2022-07-07 01:00:00-04:00",
+    "planned_date": "2022-07-27",
+    "entry": "2022-07-26 13:30:00+00:00",
+    "exit": "2022-07-27 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "mix_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20220615.htm",
+    "available_after": "2022-07-07 01:00:00-04:00",
+    "planned_date": "2022-07-27",
+    "entry": "2022-07-26 13:30:00+00:00",
+    "exit": "2022-07-26 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "mix_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20220615.htm",
+    "available_after": "2022-07-07 01:00:00-04:00",
+    "planned_date": "2022-07-27",
+    "entry": "2022-07-26 13:30:00+00:00",
+    "exit": "2022-07-27 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "SPY_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20220727.htm",
+    "available_after": "2022-08-18 01:00:00-04:00",
+    "planned_date": "2022-09-21",
+    "entry": "2022-09-20 13:30:00+00:00",
+    "exit": "2022-09-20 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "SPY_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20220727.htm",
+    "available_after": "2022-08-18 01:00:00-04:00",
+    "planned_date": "2022-09-21",
+    "entry": "2022-09-20 13:30:00+00:00",
+    "exit": "2022-09-21 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "GLD_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20220727.htm",
+    "available_after": "2022-08-18 01:00:00-04:00",
+    "planned_date": "2022-09-21",
+    "entry": "2022-09-20 13:30:00+00:00",
+    "exit": "2022-09-20 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "GLD_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20220727.htm",
+    "available_after": "2022-08-18 01:00:00-04:00",
+    "planned_date": "2022-09-21",
+    "entry": "2022-09-20 13:30:00+00:00",
+    "exit": "2022-09-21 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "TLT_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20220727.htm",
+    "available_after": "2022-08-18 01:00:00-04:00",
+    "planned_date": "2022-09-21",
+    "entry": "2022-09-20 13:30:00+00:00",
+    "exit": "2022-09-20 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "TLT_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20220727.htm",
+    "available_after": "2022-08-18 01:00:00-04:00",
+    "planned_date": "2022-09-21",
+    "entry": "2022-09-20 13:30:00+00:00",
+    "exit": "2022-09-21 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "mix_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20220727.htm",
+    "available_after": "2022-08-18 01:00:00-04:00",
+    "planned_date": "2022-09-21",
+    "entry": "2022-09-20 13:30:00+00:00",
+    "exit": "2022-09-20 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "mix_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20220727.htm",
+    "available_after": "2022-08-18 01:00:00-04:00",
+    "planned_date": "2022-09-21",
+    "entry": "2022-09-20 13:30:00+00:00",
+    "exit": "2022-09-21 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "SPY_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20220921.htm",
+    "available_after": "2022-10-13 01:00:00-04:00",
+    "planned_date": "2022-11-02",
+    "entry": "2022-11-01 13:30:00+00:00",
+    "exit": "2022-11-01 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "SPY_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20220921.htm",
+    "available_after": "2022-10-13 01:00:00-04:00",
+    "planned_date": "2022-11-02",
+    "entry": "2022-11-01 13:30:00+00:00",
+    "exit": "2022-11-02 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "GLD_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20220921.htm",
+    "available_after": "2022-10-13 01:00:00-04:00",
+    "planned_date": "2022-11-02",
+    "entry": "2022-11-01 13:30:00+00:00",
+    "exit": "2022-11-01 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "GLD_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20220921.htm",
+    "available_after": "2022-10-13 01:00:00-04:00",
+    "planned_date": "2022-11-02",
+    "entry": "2022-11-01 13:30:00+00:00",
+    "exit": "2022-11-02 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "TLT_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20220921.htm",
+    "available_after": "2022-10-13 01:00:00-04:00",
+    "planned_date": "2022-11-02",
+    "entry": "2022-11-01 13:30:00+00:00",
+    "exit": "2022-11-01 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "TLT_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20220921.htm",
+    "available_after": "2022-10-13 01:00:00-04:00",
+    "planned_date": "2022-11-02",
+    "entry": "2022-11-01 13:30:00+00:00",
+    "exit": "2022-11-02 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "mix_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20220921.htm",
+    "available_after": "2022-10-13 01:00:00-04:00",
+    "planned_date": "2022-11-02",
+    "entry": "2022-11-01 13:30:00+00:00",
+    "exit": "2022-11-01 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "mix_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20220921.htm",
+    "available_after": "2022-10-13 01:00:00-04:00",
+    "planned_date": "2022-11-02",
+    "entry": "2022-11-01 13:30:00+00:00",
+    "exit": "2022-11-02 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "SPY_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20221102.htm",
+    "available_after": "2022-11-24 01:00:00-05:00",
+    "planned_date": "2022-12-14",
+    "entry": "2022-12-13 14:30:00+00:00",
+    "exit": "2022-12-13 21:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "SPY_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20221102.htm",
+    "available_after": "2022-11-24 01:00:00-05:00",
+    "planned_date": "2022-12-14",
+    "entry": "2022-12-13 14:30:00+00:00",
+    "exit": "2022-12-14 21:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "GLD_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20221102.htm",
+    "available_after": "2022-11-24 01:00:00-05:00",
+    "planned_date": "2022-12-14",
+    "entry": "2022-12-13 14:30:00+00:00",
+    "exit": "2022-12-13 21:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "GLD_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20221102.htm",
+    "available_after": "2022-11-24 01:00:00-05:00",
+    "planned_date": "2022-12-14",
+    "entry": "2022-12-13 14:30:00+00:00",
+    "exit": "2022-12-14 21:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "TLT_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20221102.htm",
+    "available_after": "2022-11-24 01:00:00-05:00",
+    "planned_date": "2022-12-14",
+    "entry": "2022-12-13 14:30:00+00:00",
+    "exit": "2022-12-13 21:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "TLT_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20221102.htm",
+    "available_after": "2022-11-24 01:00:00-05:00",
+    "planned_date": "2022-12-14",
+    "entry": "2022-12-13 14:30:00+00:00",
+    "exit": "2022-12-14 21:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "mix_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20221102.htm",
+    "available_after": "2022-11-24 01:00:00-05:00",
+    "planned_date": "2022-12-14",
+    "entry": "2022-12-13 14:30:00+00:00",
+    "exit": "2022-12-13 21:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "mix_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20221102.htm",
+    "available_after": "2022-11-24 01:00:00-05:00",
+    "planned_date": "2022-12-14",
+    "entry": "2022-12-13 14:30:00+00:00",
+    "exit": "2022-12-14 21:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "SPY_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20221214.htm",
+    "available_after": "2023-01-05 01:00:00-05:00",
+    "planned_date": "2023-02-01",
+    "entry": "2023-01-31 14:30:00+00:00",
+    "exit": "2023-01-31 21:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "SPY_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20221214.htm",
+    "available_after": "2023-01-05 01:00:00-05:00",
+    "planned_date": "2023-02-01",
+    "entry": "2023-01-31 14:30:00+00:00",
+    "exit": "2023-02-01 21:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "GLD_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20221214.htm",
+    "available_after": "2023-01-05 01:00:00-05:00",
+    "planned_date": "2023-02-01",
+    "entry": "2023-01-31 14:30:00+00:00",
+    "exit": "2023-01-31 21:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "GLD_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20221214.htm",
+    "available_after": "2023-01-05 01:00:00-05:00",
+    "planned_date": "2023-02-01",
+    "entry": "2023-01-31 14:30:00+00:00",
+    "exit": "2023-02-01 21:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "TLT_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20221214.htm",
+    "available_after": "2023-01-05 01:00:00-05:00",
+    "planned_date": "2023-02-01",
+    "entry": "2023-01-31 14:30:00+00:00",
+    "exit": "2023-01-31 21:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "TLT_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20221214.htm",
+    "available_after": "2023-01-05 01:00:00-05:00",
+    "planned_date": "2023-02-01",
+    "entry": "2023-01-31 14:30:00+00:00",
+    "exit": "2023-02-01 21:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "mix_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20221214.htm",
+    "available_after": "2023-01-05 01:00:00-05:00",
+    "planned_date": "2023-02-01",
+    "entry": "2023-01-31 14:30:00+00:00",
+    "exit": "2023-01-31 21:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "mix_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20221214.htm",
+    "available_after": "2023-01-05 01:00:00-05:00",
+    "planned_date": "2023-02-01",
+    "entry": "2023-01-31 14:30:00+00:00",
+    "exit": "2023-02-01 21:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "SPY_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20230201.htm",
+    "available_after": "2023-02-23 01:00:00-05:00",
+    "planned_date": "2023-03-22",
+    "entry": "2023-03-21 13:30:00+00:00",
+    "exit": "2023-03-21 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "SPY_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20230201.htm",
+    "available_after": "2023-02-23 01:00:00-05:00",
+    "planned_date": "2023-03-22",
+    "entry": "2023-03-21 13:30:00+00:00",
+    "exit": "2023-03-22 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "GLD_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20230201.htm",
+    "available_after": "2023-02-23 01:00:00-05:00",
+    "planned_date": "2023-03-22",
+    "entry": "2023-03-21 13:30:00+00:00",
+    "exit": "2023-03-21 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "GLD_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20230201.htm",
+    "available_after": "2023-02-23 01:00:00-05:00",
+    "planned_date": "2023-03-22",
+    "entry": "2023-03-21 13:30:00+00:00",
+    "exit": "2023-03-22 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "TLT_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20230201.htm",
+    "available_after": "2023-02-23 01:00:00-05:00",
+    "planned_date": "2023-03-22",
+    "entry": "2023-03-21 13:30:00+00:00",
+    "exit": "2023-03-21 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "TLT_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20230201.htm",
+    "available_after": "2023-02-23 01:00:00-05:00",
+    "planned_date": "2023-03-22",
+    "entry": "2023-03-21 13:30:00+00:00",
+    "exit": "2023-03-22 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "mix_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20230201.htm",
+    "available_after": "2023-02-23 01:00:00-05:00",
+    "planned_date": "2023-03-22",
+    "entry": "2023-03-21 13:30:00+00:00",
+    "exit": "2023-03-21 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "mix_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20230201.htm",
+    "available_after": "2023-02-23 01:00:00-05:00",
+    "planned_date": "2023-03-22",
+    "entry": "2023-03-21 13:30:00+00:00",
+    "exit": "2023-03-22 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "SPY_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20230322.htm",
+    "available_after": "2023-04-13 01:00:00-04:00",
+    "planned_date": "2023-05-03",
+    "entry": "2023-05-02 13:30:00+00:00",
+    "exit": "2023-05-02 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "SPY_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20230322.htm",
+    "available_after": "2023-04-13 01:00:00-04:00",
+    "planned_date": "2023-05-03",
+    "entry": "2023-05-02 13:30:00+00:00",
+    "exit": "2023-05-03 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "GLD_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20230322.htm",
+    "available_after": "2023-04-13 01:00:00-04:00",
+    "planned_date": "2023-05-03",
+    "entry": "2023-05-02 13:30:00+00:00",
+    "exit": "2023-05-02 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "GLD_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20230322.htm",
+    "available_after": "2023-04-13 01:00:00-04:00",
+    "planned_date": "2023-05-03",
+    "entry": "2023-05-02 13:30:00+00:00",
+    "exit": "2023-05-03 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "TLT_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20230322.htm",
+    "available_after": "2023-04-13 01:00:00-04:00",
+    "planned_date": "2023-05-03",
+    "entry": "2023-05-02 13:30:00+00:00",
+    "exit": "2023-05-02 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "TLT_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20230322.htm",
+    "available_after": "2023-04-13 01:00:00-04:00",
+    "planned_date": "2023-05-03",
+    "entry": "2023-05-02 13:30:00+00:00",
+    "exit": "2023-05-03 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "mix_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20230322.htm",
+    "available_after": "2023-04-13 01:00:00-04:00",
+    "planned_date": "2023-05-03",
+    "entry": "2023-05-02 13:30:00+00:00",
+    "exit": "2023-05-02 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "mix_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20230322.htm",
+    "available_after": "2023-04-13 01:00:00-04:00",
+    "planned_date": "2023-05-03",
+    "entry": "2023-05-02 13:30:00+00:00",
+    "exit": "2023-05-03 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "SPY_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20230503.htm",
+    "available_after": "2023-05-25 01:00:00-04:00",
+    "planned_date": "2023-06-14",
+    "entry": "2023-06-13 13:30:00+00:00",
+    "exit": "2023-06-13 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "SPY_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20230503.htm",
+    "available_after": "2023-05-25 01:00:00-04:00",
+    "planned_date": "2023-06-14",
+    "entry": "2023-06-13 13:30:00+00:00",
+    "exit": "2023-06-14 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "GLD_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20230503.htm",
+    "available_after": "2023-05-25 01:00:00-04:00",
+    "planned_date": "2023-06-14",
+    "entry": "2023-06-13 13:30:00+00:00",
+    "exit": "2023-06-13 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "GLD_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20230503.htm",
+    "available_after": "2023-05-25 01:00:00-04:00",
+    "planned_date": "2023-06-14",
+    "entry": "2023-06-13 13:30:00+00:00",
+    "exit": "2023-06-14 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "TLT_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20230503.htm",
+    "available_after": "2023-05-25 01:00:00-04:00",
+    "planned_date": "2023-06-14",
+    "entry": "2023-06-13 13:30:00+00:00",
+    "exit": "2023-06-13 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "TLT_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20230503.htm",
+    "available_after": "2023-05-25 01:00:00-04:00",
+    "planned_date": "2023-06-14",
+    "entry": "2023-06-13 13:30:00+00:00",
+    "exit": "2023-06-14 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "mix_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20230503.htm",
+    "available_after": "2023-05-25 01:00:00-04:00",
+    "planned_date": "2023-06-14",
+    "entry": "2023-06-13 13:30:00+00:00",
+    "exit": "2023-06-13 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "mix_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20230503.htm",
+    "available_after": "2023-05-25 01:00:00-04:00",
+    "planned_date": "2023-06-14",
+    "entry": "2023-06-13 13:30:00+00:00",
+    "exit": "2023-06-14 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "SPY_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20230614.htm",
+    "available_after": "2023-07-06 01:00:00-04:00",
+    "planned_date": "2023-07-26",
+    "entry": "2023-07-25 13:30:00+00:00",
+    "exit": "2023-07-25 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "SPY_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20230614.htm",
+    "available_after": "2023-07-06 01:00:00-04:00",
+    "planned_date": "2023-07-26",
+    "entry": "2023-07-25 13:30:00+00:00",
+    "exit": "2023-07-26 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "GLD_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20230614.htm",
+    "available_after": "2023-07-06 01:00:00-04:00",
+    "planned_date": "2023-07-26",
+    "entry": "2023-07-25 13:30:00+00:00",
+    "exit": "2023-07-25 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "GLD_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20230614.htm",
+    "available_after": "2023-07-06 01:00:00-04:00",
+    "planned_date": "2023-07-26",
+    "entry": "2023-07-25 13:30:00+00:00",
+    "exit": "2023-07-26 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "TLT_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20230614.htm",
+    "available_after": "2023-07-06 01:00:00-04:00",
+    "planned_date": "2023-07-26",
+    "entry": "2023-07-25 13:30:00+00:00",
+    "exit": "2023-07-25 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "TLT_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20230614.htm",
+    "available_after": "2023-07-06 01:00:00-04:00",
+    "planned_date": "2023-07-26",
+    "entry": "2023-07-25 13:30:00+00:00",
+    "exit": "2023-07-26 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "mix_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20230614.htm",
+    "available_after": "2023-07-06 01:00:00-04:00",
+    "planned_date": "2023-07-26",
+    "entry": "2023-07-25 13:30:00+00:00",
+    "exit": "2023-07-25 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "mix_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20230614.htm",
+    "available_after": "2023-07-06 01:00:00-04:00",
+    "planned_date": "2023-07-26",
+    "entry": "2023-07-25 13:30:00+00:00",
+    "exit": "2023-07-26 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "SPY_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20230726.htm",
+    "available_after": "2023-08-17 01:00:00-04:00",
+    "planned_date": "2023-09-20",
+    "entry": "2023-09-19 13:30:00+00:00",
+    "exit": "2023-09-19 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "SPY_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20230726.htm",
+    "available_after": "2023-08-17 01:00:00-04:00",
+    "planned_date": "2023-09-20",
+    "entry": "2023-09-19 13:30:00+00:00",
+    "exit": "2023-09-20 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "GLD_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20230726.htm",
+    "available_after": "2023-08-17 01:00:00-04:00",
+    "planned_date": "2023-09-20",
+    "entry": "2023-09-19 13:30:00+00:00",
+    "exit": "2023-09-19 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "GLD_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20230726.htm",
+    "available_after": "2023-08-17 01:00:00-04:00",
+    "planned_date": "2023-09-20",
+    "entry": "2023-09-19 13:30:00+00:00",
+    "exit": "2023-09-20 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "TLT_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20230726.htm",
+    "available_after": "2023-08-17 01:00:00-04:00",
+    "planned_date": "2023-09-20",
+    "entry": "2023-09-19 13:30:00+00:00",
+    "exit": "2023-09-19 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "TLT_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20230726.htm",
+    "available_after": "2023-08-17 01:00:00-04:00",
+    "planned_date": "2023-09-20",
+    "entry": "2023-09-19 13:30:00+00:00",
+    "exit": "2023-09-20 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "mix_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20230726.htm",
+    "available_after": "2023-08-17 01:00:00-04:00",
+    "planned_date": "2023-09-20",
+    "entry": "2023-09-19 13:30:00+00:00",
+    "exit": "2023-09-19 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "mix_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20230726.htm",
+    "available_after": "2023-08-17 01:00:00-04:00",
+    "planned_date": "2023-09-20",
+    "entry": "2023-09-19 13:30:00+00:00",
+    "exit": "2023-09-20 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "SPY_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20230920.htm",
+    "available_after": "2023-10-12 01:00:00-04:00",
+    "planned_date": "2023-11-01",
+    "entry": "2023-10-31 13:30:00+00:00",
+    "exit": "2023-10-31 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "SPY_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20230920.htm",
+    "available_after": "2023-10-12 01:00:00-04:00",
+    "planned_date": "2023-11-01",
+    "entry": "2023-10-31 13:30:00+00:00",
+    "exit": "2023-11-01 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "GLD_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20230920.htm",
+    "available_after": "2023-10-12 01:00:00-04:00",
+    "planned_date": "2023-11-01",
+    "entry": "2023-10-31 13:30:00+00:00",
+    "exit": "2023-10-31 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "GLD_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20230920.htm",
+    "available_after": "2023-10-12 01:00:00-04:00",
+    "planned_date": "2023-11-01",
+    "entry": "2023-10-31 13:30:00+00:00",
+    "exit": "2023-11-01 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "TLT_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20230920.htm",
+    "available_after": "2023-10-12 01:00:00-04:00",
+    "planned_date": "2023-11-01",
+    "entry": "2023-10-31 13:30:00+00:00",
+    "exit": "2023-10-31 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "TLT_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20230920.htm",
+    "available_after": "2023-10-12 01:00:00-04:00",
+    "planned_date": "2023-11-01",
+    "entry": "2023-10-31 13:30:00+00:00",
+    "exit": "2023-11-01 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "mix_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20230920.htm",
+    "available_after": "2023-10-12 01:00:00-04:00",
+    "planned_date": "2023-11-01",
+    "entry": "2023-10-31 13:30:00+00:00",
+    "exit": "2023-10-31 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "mix_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20230920.htm",
+    "available_after": "2023-10-12 01:00:00-04:00",
+    "planned_date": "2023-11-01",
+    "entry": "2023-10-31 13:30:00+00:00",
+    "exit": "2023-11-01 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "SPY_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20231101.htm",
+    "available_after": "2023-11-22 01:00:00-05:00",
+    "planned_date": "2023-12-13",
+    "entry": "2023-12-12 14:30:00+00:00",
+    "exit": "2023-12-12 21:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "SPY_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20231101.htm",
+    "available_after": "2023-11-22 01:00:00-05:00",
+    "planned_date": "2023-12-13",
+    "entry": "2023-12-12 14:30:00+00:00",
+    "exit": "2023-12-13 21:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "GLD_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20231101.htm",
+    "available_after": "2023-11-22 01:00:00-05:00",
+    "planned_date": "2023-12-13",
+    "entry": "2023-12-12 14:30:00+00:00",
+    "exit": "2023-12-12 21:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "GLD_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20231101.htm",
+    "available_after": "2023-11-22 01:00:00-05:00",
+    "planned_date": "2023-12-13",
+    "entry": "2023-12-12 14:30:00+00:00",
+    "exit": "2023-12-13 21:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "TLT_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20231101.htm",
+    "available_after": "2023-11-22 01:00:00-05:00",
+    "planned_date": "2023-12-13",
+    "entry": "2023-12-12 14:30:00+00:00",
+    "exit": "2023-12-12 21:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "TLT_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20231101.htm",
+    "available_after": "2023-11-22 01:00:00-05:00",
+    "planned_date": "2023-12-13",
+    "entry": "2023-12-12 14:30:00+00:00",
+    "exit": "2023-12-13 21:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "mix_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20231101.htm",
+    "available_after": "2023-11-22 01:00:00-05:00",
+    "planned_date": "2023-12-13",
+    "entry": "2023-12-12 14:30:00+00:00",
+    "exit": "2023-12-12 21:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "mix_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20231101.htm",
+    "available_after": "2023-11-22 01:00:00-05:00",
+    "planned_date": "2023-12-13",
+    "entry": "2023-12-12 14:30:00+00:00",
+    "exit": "2023-12-13 21:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "SPY_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20231213.htm",
+    "available_after": "2024-01-04 01:00:00-05:00",
+    "planned_date": "2024-01-31",
+    "entry": "2024-01-30 14:30:00+00:00",
+    "exit": "2024-01-30 21:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "SPY_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20231213.htm",
+    "available_after": "2024-01-04 01:00:00-05:00",
+    "planned_date": "2024-01-31",
+    "entry": "2024-01-30 14:30:00+00:00",
+    "exit": "2024-01-31 21:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "GLD_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20231213.htm",
+    "available_after": "2024-01-04 01:00:00-05:00",
+    "planned_date": "2024-01-31",
+    "entry": "2024-01-30 14:30:00+00:00",
+    "exit": "2024-01-30 21:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "GLD_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20231213.htm",
+    "available_after": "2024-01-04 01:00:00-05:00",
+    "planned_date": "2024-01-31",
+    "entry": "2024-01-30 14:30:00+00:00",
+    "exit": "2024-01-31 21:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "TLT_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20231213.htm",
+    "available_after": "2024-01-04 01:00:00-05:00",
+    "planned_date": "2024-01-31",
+    "entry": "2024-01-30 14:30:00+00:00",
+    "exit": "2024-01-30 21:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "TLT_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20231213.htm",
+    "available_after": "2024-01-04 01:00:00-05:00",
+    "planned_date": "2024-01-31",
+    "entry": "2024-01-30 14:30:00+00:00",
+    "exit": "2024-01-31 21:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "mix_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20231213.htm",
+    "available_after": "2024-01-04 01:00:00-05:00",
+    "planned_date": "2024-01-31",
+    "entry": "2024-01-30 14:30:00+00:00",
+    "exit": "2024-01-30 21:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "mix_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20231213.htm",
+    "available_after": "2024-01-04 01:00:00-05:00",
+    "planned_date": "2024-01-31",
+    "entry": "2024-01-30 14:30:00+00:00",
+    "exit": "2024-01-31 21:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "SPY_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20240131.htm",
+    "available_after": "2024-02-22 01:00:00-05:00",
+    "planned_date": "2024-03-20",
+    "entry": "2024-03-19 13:30:00+00:00",
+    "exit": "2024-03-19 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "SPY_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20240131.htm",
+    "available_after": "2024-02-22 01:00:00-05:00",
+    "planned_date": "2024-03-20",
+    "entry": "2024-03-19 13:30:00+00:00",
+    "exit": "2024-03-20 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "GLD_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20240131.htm",
+    "available_after": "2024-02-22 01:00:00-05:00",
+    "planned_date": "2024-03-20",
+    "entry": "2024-03-19 13:30:00+00:00",
+    "exit": "2024-03-19 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "GLD_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20240131.htm",
+    "available_after": "2024-02-22 01:00:00-05:00",
+    "planned_date": "2024-03-20",
+    "entry": "2024-03-19 13:30:00+00:00",
+    "exit": "2024-03-20 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "TLT_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20240131.htm",
+    "available_after": "2024-02-22 01:00:00-05:00",
+    "planned_date": "2024-03-20",
+    "entry": "2024-03-19 13:30:00+00:00",
+    "exit": "2024-03-19 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "TLT_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20240131.htm",
+    "available_after": "2024-02-22 01:00:00-05:00",
+    "planned_date": "2024-03-20",
+    "entry": "2024-03-19 13:30:00+00:00",
+    "exit": "2024-03-20 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "mix_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20240131.htm",
+    "available_after": "2024-02-22 01:00:00-05:00",
+    "planned_date": "2024-03-20",
+    "entry": "2024-03-19 13:30:00+00:00",
+    "exit": "2024-03-19 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "mix_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20240131.htm",
+    "available_after": "2024-02-22 01:00:00-05:00",
+    "planned_date": "2024-03-20",
+    "entry": "2024-03-19 13:30:00+00:00",
+    "exit": "2024-03-20 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "SPY_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20240320.htm",
+    "available_after": "2024-04-11 01:00:00-04:00",
+    "planned_date": "2024-05-01",
+    "entry": "2024-04-30 13:30:00+00:00",
+    "exit": "2024-04-30 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "SPY_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20240320.htm",
+    "available_after": "2024-04-11 01:00:00-04:00",
+    "planned_date": "2024-05-01",
+    "entry": "2024-04-30 13:30:00+00:00",
+    "exit": "2024-05-01 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "GLD_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20240320.htm",
+    "available_after": "2024-04-11 01:00:00-04:00",
+    "planned_date": "2024-05-01",
+    "entry": "2024-04-30 13:30:00+00:00",
+    "exit": "2024-04-30 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "GLD_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20240320.htm",
+    "available_after": "2024-04-11 01:00:00-04:00",
+    "planned_date": "2024-05-01",
+    "entry": "2024-04-30 13:30:00+00:00",
+    "exit": "2024-05-01 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "TLT_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20240320.htm",
+    "available_after": "2024-04-11 01:00:00-04:00",
+    "planned_date": "2024-05-01",
+    "entry": "2024-04-30 13:30:00+00:00",
+    "exit": "2024-04-30 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "TLT_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20240320.htm",
+    "available_after": "2024-04-11 01:00:00-04:00",
+    "planned_date": "2024-05-01",
+    "entry": "2024-04-30 13:30:00+00:00",
+    "exit": "2024-05-01 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "mix_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20240320.htm",
+    "available_after": "2024-04-11 01:00:00-04:00",
+    "planned_date": "2024-05-01",
+    "entry": "2024-04-30 13:30:00+00:00",
+    "exit": "2024-04-30 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "mix_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20240320.htm",
+    "available_after": "2024-04-11 01:00:00-04:00",
+    "planned_date": "2024-05-01",
+    "entry": "2024-04-30 13:30:00+00:00",
+    "exit": "2024-05-01 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "SPY_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20240501.htm",
+    "available_after": "2024-05-23 01:00:00-04:00",
+    "planned_date": "2024-06-12",
+    "entry": "2024-06-11 13:30:00+00:00",
+    "exit": "2024-06-11 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "SPY_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20240501.htm",
+    "available_after": "2024-05-23 01:00:00-04:00",
+    "planned_date": "2024-06-12",
+    "entry": "2024-06-11 13:30:00+00:00",
+    "exit": "2024-06-12 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "GLD_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20240501.htm",
+    "available_after": "2024-05-23 01:00:00-04:00",
+    "planned_date": "2024-06-12",
+    "entry": "2024-06-11 13:30:00+00:00",
+    "exit": "2024-06-11 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "GLD_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20240501.htm",
+    "available_after": "2024-05-23 01:00:00-04:00",
+    "planned_date": "2024-06-12",
+    "entry": "2024-06-11 13:30:00+00:00",
+    "exit": "2024-06-12 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "TLT_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20240501.htm",
+    "available_after": "2024-05-23 01:00:00-04:00",
+    "planned_date": "2024-06-12",
+    "entry": "2024-06-11 13:30:00+00:00",
+    "exit": "2024-06-11 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "TLT_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20240501.htm",
+    "available_after": "2024-05-23 01:00:00-04:00",
+    "planned_date": "2024-06-12",
+    "entry": "2024-06-11 13:30:00+00:00",
+    "exit": "2024-06-12 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "mix_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20240501.htm",
+    "available_after": "2024-05-23 01:00:00-04:00",
+    "planned_date": "2024-06-12",
+    "entry": "2024-06-11 13:30:00+00:00",
+    "exit": "2024-06-11 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "mix_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20240501.htm",
+    "available_after": "2024-05-23 01:00:00-04:00",
+    "planned_date": "2024-06-12",
+    "entry": "2024-06-11 13:30:00+00:00",
+    "exit": "2024-06-12 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "SPY_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20240612.htm",
+    "available_after": "2024-07-04 01:00:00-04:00",
+    "planned_date": "2024-07-31",
+    "entry": "2024-07-30 13:30:00+00:00",
+    "exit": "2024-07-30 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "SPY_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20240612.htm",
+    "available_after": "2024-07-04 01:00:00-04:00",
+    "planned_date": "2024-07-31",
+    "entry": "2024-07-30 13:30:00+00:00",
+    "exit": "2024-07-31 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "GLD_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20240612.htm",
+    "available_after": "2024-07-04 01:00:00-04:00",
+    "planned_date": "2024-07-31",
+    "entry": "2024-07-30 13:30:00+00:00",
+    "exit": "2024-07-30 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "GLD_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20240612.htm",
+    "available_after": "2024-07-04 01:00:00-04:00",
+    "planned_date": "2024-07-31",
+    "entry": "2024-07-30 13:30:00+00:00",
+    "exit": "2024-07-31 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "TLT_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20240612.htm",
+    "available_after": "2024-07-04 01:00:00-04:00",
+    "planned_date": "2024-07-31",
+    "entry": "2024-07-30 13:30:00+00:00",
+    "exit": "2024-07-30 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "TLT_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20240612.htm",
+    "available_after": "2024-07-04 01:00:00-04:00",
+    "planned_date": "2024-07-31",
+    "entry": "2024-07-30 13:30:00+00:00",
+    "exit": "2024-07-31 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "mix_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20240612.htm",
+    "available_after": "2024-07-04 01:00:00-04:00",
+    "planned_date": "2024-07-31",
+    "entry": "2024-07-30 13:30:00+00:00",
+    "exit": "2024-07-30 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "mix_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20240612.htm",
+    "available_after": "2024-07-04 01:00:00-04:00",
+    "planned_date": "2024-07-31",
+    "entry": "2024-07-30 13:30:00+00:00",
+    "exit": "2024-07-31 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "SPY_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20240731.htm",
+    "available_after": "2024-08-22 01:00:00-04:00",
+    "planned_date": "2024-09-18",
+    "entry": "2024-09-17 13:30:00+00:00",
+    "exit": "2024-09-17 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "SPY_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20240731.htm",
+    "available_after": "2024-08-22 01:00:00-04:00",
+    "planned_date": "2024-09-18",
+    "entry": "2024-09-17 13:30:00+00:00",
+    "exit": "2024-09-18 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "GLD_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20240731.htm",
+    "available_after": "2024-08-22 01:00:00-04:00",
+    "planned_date": "2024-09-18",
+    "entry": "2024-09-17 13:30:00+00:00",
+    "exit": "2024-09-17 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "GLD_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20240731.htm",
+    "available_after": "2024-08-22 01:00:00-04:00",
+    "planned_date": "2024-09-18",
+    "entry": "2024-09-17 13:30:00+00:00",
+    "exit": "2024-09-18 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "TLT_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20240731.htm",
+    "available_after": "2024-08-22 01:00:00-04:00",
+    "planned_date": "2024-09-18",
+    "entry": "2024-09-17 13:30:00+00:00",
+    "exit": "2024-09-17 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "TLT_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20240731.htm",
+    "available_after": "2024-08-22 01:00:00-04:00",
+    "planned_date": "2024-09-18",
+    "entry": "2024-09-17 13:30:00+00:00",
+    "exit": "2024-09-18 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "mix_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20240731.htm",
+    "available_after": "2024-08-22 01:00:00-04:00",
+    "planned_date": "2024-09-18",
+    "entry": "2024-09-17 13:30:00+00:00",
+    "exit": "2024-09-17 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "mix_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20240731.htm",
+    "available_after": "2024-08-22 01:00:00-04:00",
+    "planned_date": "2024-09-18",
+    "entry": "2024-09-17 13:30:00+00:00",
+    "exit": "2024-09-18 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "SPY_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20240918.htm",
+    "available_after": "2024-10-10 01:00:00-04:00",
+    "planned_date": "2024-11-07",
+    "entry": "2024-11-06 14:30:00+00:00",
+    "exit": "2024-11-06 21:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "SPY_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20240918.htm",
+    "available_after": "2024-10-10 01:00:00-04:00",
+    "planned_date": "2024-11-07",
+    "entry": "2024-11-06 14:30:00+00:00",
+    "exit": "2024-11-07 21:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "GLD_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20240918.htm",
+    "available_after": "2024-10-10 01:00:00-04:00",
+    "planned_date": "2024-11-07",
+    "entry": "2024-11-06 14:30:00+00:00",
+    "exit": "2024-11-06 21:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "GLD_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20240918.htm",
+    "available_after": "2024-10-10 01:00:00-04:00",
+    "planned_date": "2024-11-07",
+    "entry": "2024-11-06 14:30:00+00:00",
+    "exit": "2024-11-07 21:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "TLT_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20240918.htm",
+    "available_after": "2024-10-10 01:00:00-04:00",
+    "planned_date": "2024-11-07",
+    "entry": "2024-11-06 14:30:00+00:00",
+    "exit": "2024-11-06 21:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "TLT_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20240918.htm",
+    "available_after": "2024-10-10 01:00:00-04:00",
+    "planned_date": "2024-11-07",
+    "entry": "2024-11-06 14:30:00+00:00",
+    "exit": "2024-11-07 21:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "mix_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20240918.htm",
+    "available_after": "2024-10-10 01:00:00-04:00",
+    "planned_date": "2024-11-07",
+    "entry": "2024-11-06 14:30:00+00:00",
+    "exit": "2024-11-06 21:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "mix_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20240918.htm",
+    "available_after": "2024-10-10 01:00:00-04:00",
+    "planned_date": "2024-11-07",
+    "entry": "2024-11-06 14:30:00+00:00",
+    "exit": "2024-11-07 21:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "SPY_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20241107.htm",
+    "available_after": "2024-11-27 01:00:00-05:00",
+    "planned_date": "2024-12-18",
+    "entry": "2024-12-17 14:30:00+00:00",
+    "exit": "2024-12-17 21:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "SPY_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20241107.htm",
+    "available_after": "2024-11-27 01:00:00-05:00",
+    "planned_date": "2024-12-18",
+    "entry": "2024-12-17 14:30:00+00:00",
+    "exit": "2024-12-18 21:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "GLD_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20241107.htm",
+    "available_after": "2024-11-27 01:00:00-05:00",
+    "planned_date": "2024-12-18",
+    "entry": "2024-12-17 14:30:00+00:00",
+    "exit": "2024-12-17 21:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "GLD_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20241107.htm",
+    "available_after": "2024-11-27 01:00:00-05:00",
+    "planned_date": "2024-12-18",
+    "entry": "2024-12-17 14:30:00+00:00",
+    "exit": "2024-12-18 21:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "TLT_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20241107.htm",
+    "available_after": "2024-11-27 01:00:00-05:00",
+    "planned_date": "2024-12-18",
+    "entry": "2024-12-17 14:30:00+00:00",
+    "exit": "2024-12-17 21:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "TLT_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20241107.htm",
+    "available_after": "2024-11-27 01:00:00-05:00",
+    "planned_date": "2024-12-18",
+    "entry": "2024-12-17 14:30:00+00:00",
+    "exit": "2024-12-18 21:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "mix_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20241107.htm",
+    "available_after": "2024-11-27 01:00:00-05:00",
+    "planned_date": "2024-12-18",
+    "entry": "2024-12-17 14:30:00+00:00",
+    "exit": "2024-12-17 21:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "mix_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20241107.htm",
+    "available_after": "2024-11-27 01:00:00-05:00",
+    "planned_date": "2024-12-18",
+    "entry": "2024-12-17 14:30:00+00:00",
+    "exit": "2024-12-18 21:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "SPY_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20241218.htm",
+    "available_after": "2025-01-09 01:00:00-05:00",
+    "planned_date": "2025-01-29",
+    "entry": "2025-01-28 14:30:00+00:00",
+    "exit": "2025-01-28 21:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "SPY_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20241218.htm",
+    "available_after": "2025-01-09 01:00:00-05:00",
+    "planned_date": "2025-01-29",
+    "entry": "2025-01-28 14:30:00+00:00",
+    "exit": "2025-01-29 21:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "GLD_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20241218.htm",
+    "available_after": "2025-01-09 01:00:00-05:00",
+    "planned_date": "2025-01-29",
+    "entry": "2025-01-28 14:30:00+00:00",
+    "exit": "2025-01-28 21:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "GLD_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20241218.htm",
+    "available_after": "2025-01-09 01:00:00-05:00",
+    "planned_date": "2025-01-29",
+    "entry": "2025-01-28 14:30:00+00:00",
+    "exit": "2025-01-29 21:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "TLT_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20241218.htm",
+    "available_after": "2025-01-09 01:00:00-05:00",
+    "planned_date": "2025-01-29",
+    "entry": "2025-01-28 14:30:00+00:00",
+    "exit": "2025-01-28 21:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "TLT_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20241218.htm",
+    "available_after": "2025-01-09 01:00:00-05:00",
+    "planned_date": "2025-01-29",
+    "entry": "2025-01-28 14:30:00+00:00",
+    "exit": "2025-01-29 21:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "mix_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20241218.htm",
+    "available_after": "2025-01-09 01:00:00-05:00",
+    "planned_date": "2025-01-29",
+    "entry": "2025-01-28 14:30:00+00:00",
+    "exit": "2025-01-28 21:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "mix_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20241218.htm",
+    "available_after": "2025-01-09 01:00:00-05:00",
+    "planned_date": "2025-01-29",
+    "entry": "2025-01-28 14:30:00+00:00",
+    "exit": "2025-01-29 21:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "SPY_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20250129.htm",
+    "available_after": "2025-02-20 01:00:00-05:00",
+    "planned_date": "2025-03-19",
+    "entry": "2025-03-18 13:30:00+00:00",
+    "exit": "2025-03-18 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "SPY_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20250129.htm",
+    "available_after": "2025-02-20 01:00:00-05:00",
+    "planned_date": "2025-03-19",
+    "entry": "2025-03-18 13:30:00+00:00",
+    "exit": "2025-03-19 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "GLD_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20250129.htm",
+    "available_after": "2025-02-20 01:00:00-05:00",
+    "planned_date": "2025-03-19",
+    "entry": "2025-03-18 13:30:00+00:00",
+    "exit": "2025-03-18 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "GLD_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20250129.htm",
+    "available_after": "2025-02-20 01:00:00-05:00",
+    "planned_date": "2025-03-19",
+    "entry": "2025-03-18 13:30:00+00:00",
+    "exit": "2025-03-19 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "TLT_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20250129.htm",
+    "available_after": "2025-02-20 01:00:00-05:00",
+    "planned_date": "2025-03-19",
+    "entry": "2025-03-18 13:30:00+00:00",
+    "exit": "2025-03-18 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "TLT_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20250129.htm",
+    "available_after": "2025-02-20 01:00:00-05:00",
+    "planned_date": "2025-03-19",
+    "entry": "2025-03-18 13:30:00+00:00",
+    "exit": "2025-03-19 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "mix_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20250129.htm",
+    "available_after": "2025-02-20 01:00:00-05:00",
+    "planned_date": "2025-03-19",
+    "entry": "2025-03-18 13:30:00+00:00",
+    "exit": "2025-03-18 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "mix_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20250129.htm",
+    "available_after": "2025-02-20 01:00:00-05:00",
+    "planned_date": "2025-03-19",
+    "entry": "2025-03-18 13:30:00+00:00",
+    "exit": "2025-03-19 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "SPY_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20250319.htm",
+    "available_after": "2025-04-10 01:00:00-04:00",
+    "planned_date": "2025-05-07",
+    "entry": "2025-05-06 13:30:00+00:00",
+    "exit": "2025-05-06 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "SPY_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20250319.htm",
+    "available_after": "2025-04-10 01:00:00-04:00",
+    "planned_date": "2025-05-07",
+    "entry": "2025-05-06 13:30:00+00:00",
+    "exit": "2025-05-07 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "GLD_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20250319.htm",
+    "available_after": "2025-04-10 01:00:00-04:00",
+    "planned_date": "2025-05-07",
+    "entry": "2025-05-06 13:30:00+00:00",
+    "exit": "2025-05-06 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "GLD_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20250319.htm",
+    "available_after": "2025-04-10 01:00:00-04:00",
+    "planned_date": "2025-05-07",
+    "entry": "2025-05-06 13:30:00+00:00",
+    "exit": "2025-05-07 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "TLT_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20250319.htm",
+    "available_after": "2025-04-10 01:00:00-04:00",
+    "planned_date": "2025-05-07",
+    "entry": "2025-05-06 13:30:00+00:00",
+    "exit": "2025-05-06 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "TLT_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20250319.htm",
+    "available_after": "2025-04-10 01:00:00-04:00",
+    "planned_date": "2025-05-07",
+    "entry": "2025-05-06 13:30:00+00:00",
+    "exit": "2025-05-07 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "mix_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20250319.htm",
+    "available_after": "2025-04-10 01:00:00-04:00",
+    "planned_date": "2025-05-07",
+    "entry": "2025-05-06 13:30:00+00:00",
+    "exit": "2025-05-06 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "mix_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20250319.htm",
+    "available_after": "2025-04-10 01:00:00-04:00",
+    "planned_date": "2025-05-07",
+    "entry": "2025-05-06 13:30:00+00:00",
+    "exit": "2025-05-07 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "SPY_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20250507.htm",
+    "available_after": "2025-05-29 01:00:00-04:00",
+    "planned_date": "2025-06-18",
+    "entry": "2025-06-17 13:30:00+00:00",
+    "exit": "2025-06-17 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "SPY_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20250507.htm",
+    "available_after": "2025-05-29 01:00:00-04:00",
+    "planned_date": "2025-06-18",
+    "entry": "2025-06-17 13:30:00+00:00",
+    "exit": "2025-06-18 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "GLD_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20250507.htm",
+    "available_after": "2025-05-29 01:00:00-04:00",
+    "planned_date": "2025-06-18",
+    "entry": "2025-06-17 13:30:00+00:00",
+    "exit": "2025-06-17 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "GLD_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20250507.htm",
+    "available_after": "2025-05-29 01:00:00-04:00",
+    "planned_date": "2025-06-18",
+    "entry": "2025-06-17 13:30:00+00:00",
+    "exit": "2025-06-18 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "TLT_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20250507.htm",
+    "available_after": "2025-05-29 01:00:00-04:00",
+    "planned_date": "2025-06-18",
+    "entry": "2025-06-17 13:30:00+00:00",
+    "exit": "2025-06-17 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "TLT_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20250507.htm",
+    "available_after": "2025-05-29 01:00:00-04:00",
+    "planned_date": "2025-06-18",
+    "entry": "2025-06-17 13:30:00+00:00",
+    "exit": "2025-06-18 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "mix_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20250507.htm",
+    "available_after": "2025-05-29 01:00:00-04:00",
+    "planned_date": "2025-06-18",
+    "entry": "2025-06-17 13:30:00+00:00",
+    "exit": "2025-06-17 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "mix_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20250507.htm",
+    "available_after": "2025-05-29 01:00:00-04:00",
+    "planned_date": "2025-06-18",
+    "entry": "2025-06-17 13:30:00+00:00",
+    "exit": "2025-06-18 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "SPY_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20250618.htm",
+    "available_after": "2025-07-10 01:00:00-04:00",
+    "planned_date": "2025-07-30",
+    "entry": "2025-07-29 13:30:00+00:00",
+    "exit": "2025-07-29 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "SPY_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20250618.htm",
+    "available_after": "2025-07-10 01:00:00-04:00",
+    "planned_date": "2025-07-30",
+    "entry": "2025-07-29 13:30:00+00:00",
+    "exit": "2025-07-30 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "GLD_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20250618.htm",
+    "available_after": "2025-07-10 01:00:00-04:00",
+    "planned_date": "2025-07-30",
+    "entry": "2025-07-29 13:30:00+00:00",
+    "exit": "2025-07-29 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "GLD_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20250618.htm",
+    "available_after": "2025-07-10 01:00:00-04:00",
+    "planned_date": "2025-07-30",
+    "entry": "2025-07-29 13:30:00+00:00",
+    "exit": "2025-07-30 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "TLT_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20250618.htm",
+    "available_after": "2025-07-10 01:00:00-04:00",
+    "planned_date": "2025-07-30",
+    "entry": "2025-07-29 13:30:00+00:00",
+    "exit": "2025-07-29 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "TLT_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20250618.htm",
+    "available_after": "2025-07-10 01:00:00-04:00",
+    "planned_date": "2025-07-30",
+    "entry": "2025-07-29 13:30:00+00:00",
+    "exit": "2025-07-30 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "mix_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20250618.htm",
+    "available_after": "2025-07-10 01:00:00-04:00",
+    "planned_date": "2025-07-30",
+    "entry": "2025-07-29 13:30:00+00:00",
+    "exit": "2025-07-29 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "mix_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20250618.htm",
+    "available_after": "2025-07-10 01:00:00-04:00",
+    "planned_date": "2025-07-30",
+    "entry": "2025-07-29 13:30:00+00:00",
+    "exit": "2025-07-30 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "SPY_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20250730.htm",
+    "available_after": "2025-08-21 01:00:00-04:00",
+    "planned_date": "2025-09-17",
+    "entry": "2025-09-16 13:30:00+00:00",
+    "exit": "2025-09-16 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "SPY_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20250730.htm",
+    "available_after": "2025-08-21 01:00:00-04:00",
+    "planned_date": "2025-09-17",
+    "entry": "2025-09-16 13:30:00+00:00",
+    "exit": "2025-09-17 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "GLD_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20250730.htm",
+    "available_after": "2025-08-21 01:00:00-04:00",
+    "planned_date": "2025-09-17",
+    "entry": "2025-09-16 13:30:00+00:00",
+    "exit": "2025-09-16 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "GLD_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20250730.htm",
+    "available_after": "2025-08-21 01:00:00-04:00",
+    "planned_date": "2025-09-17",
+    "entry": "2025-09-16 13:30:00+00:00",
+    "exit": "2025-09-17 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "TLT_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20250730.htm",
+    "available_after": "2025-08-21 01:00:00-04:00",
+    "planned_date": "2025-09-17",
+    "entry": "2025-09-16 13:30:00+00:00",
+    "exit": "2025-09-16 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "TLT_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20250730.htm",
+    "available_after": "2025-08-21 01:00:00-04:00",
+    "planned_date": "2025-09-17",
+    "entry": "2025-09-16 13:30:00+00:00",
+    "exit": "2025-09-17 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "mix_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20250730.htm",
+    "available_after": "2025-08-21 01:00:00-04:00",
+    "planned_date": "2025-09-17",
+    "entry": "2025-09-16 13:30:00+00:00",
+    "exit": "2025-09-16 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "mix_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20250730.htm",
+    "available_after": "2025-08-21 01:00:00-04:00",
+    "planned_date": "2025-09-17",
+    "entry": "2025-09-16 13:30:00+00:00",
+    "exit": "2025-09-17 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "SPY_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20250917.htm",
+    "available_after": "2025-10-09 01:00:00-04:00",
+    "planned_date": "2025-10-29",
+    "entry": "2025-10-28 13:30:00+00:00",
+    "exit": "2025-10-28 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "SPY_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20250917.htm",
+    "available_after": "2025-10-09 01:00:00-04:00",
+    "planned_date": "2025-10-29",
+    "entry": "2025-10-28 13:30:00+00:00",
+    "exit": "2025-10-29 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "GLD_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20250917.htm",
+    "available_after": "2025-10-09 01:00:00-04:00",
+    "planned_date": "2025-10-29",
+    "entry": "2025-10-28 13:30:00+00:00",
+    "exit": "2025-10-28 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "GLD_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20250917.htm",
+    "available_after": "2025-10-09 01:00:00-04:00",
+    "planned_date": "2025-10-29",
+    "entry": "2025-10-28 13:30:00+00:00",
+    "exit": "2025-10-29 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "TLT_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20250917.htm",
+    "available_after": "2025-10-09 01:00:00-04:00",
+    "planned_date": "2025-10-29",
+    "entry": "2025-10-28 13:30:00+00:00",
+    "exit": "2025-10-28 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "TLT_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20250917.htm",
+    "available_after": "2025-10-09 01:00:00-04:00",
+    "planned_date": "2025-10-29",
+    "entry": "2025-10-28 13:30:00+00:00",
+    "exit": "2025-10-29 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "mix_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20250917.htm",
+    "available_after": "2025-10-09 01:00:00-04:00",
+    "planned_date": "2025-10-29",
+    "entry": "2025-10-28 13:30:00+00:00",
+    "exit": "2025-10-28 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "mix_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20250917.htm",
+    "available_after": "2025-10-09 01:00:00-04:00",
+    "planned_date": "2025-10-29",
+    "entry": "2025-10-28 13:30:00+00:00",
+    "exit": "2025-10-29 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "SPY_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20251029.htm",
+    "available_after": "2025-11-20 01:00:00-05:00",
+    "planned_date": "2025-12-10",
+    "entry": "2025-12-09 14:30:00+00:00",
+    "exit": "2025-12-09 21:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "SPY_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20251029.htm",
+    "available_after": "2025-11-20 01:00:00-05:00",
+    "planned_date": "2025-12-10",
+    "entry": "2025-12-09 14:30:00+00:00",
+    "exit": "2025-12-10 21:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "GLD_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20251029.htm",
+    "available_after": "2025-11-20 01:00:00-05:00",
+    "planned_date": "2025-12-10",
+    "entry": "2025-12-09 14:30:00+00:00",
+    "exit": "2025-12-09 21:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "GLD_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20251029.htm",
+    "available_after": "2025-11-20 01:00:00-05:00",
+    "planned_date": "2025-12-10",
+    "entry": "2025-12-09 14:30:00+00:00",
+    "exit": "2025-12-10 21:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "TLT_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20251029.htm",
+    "available_after": "2025-11-20 01:00:00-05:00",
+    "planned_date": "2025-12-10",
+    "entry": "2025-12-09 14:30:00+00:00",
+    "exit": "2025-12-09 21:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "TLT_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20251029.htm",
+    "available_after": "2025-11-20 01:00:00-05:00",
+    "planned_date": "2025-12-10",
+    "entry": "2025-12-09 14:30:00+00:00",
+    "exit": "2025-12-10 21:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "mix_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20251029.htm",
+    "available_after": "2025-11-20 01:00:00-05:00",
+    "planned_date": "2025-12-10",
+    "entry": "2025-12-09 14:30:00+00:00",
+    "exit": "2025-12-09 21:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "mix_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20251029.htm",
+    "available_after": "2025-11-20 01:00:00-05:00",
+    "planned_date": "2025-12-10",
+    "entry": "2025-12-09 14:30:00+00:00",
+    "exit": "2025-12-10 21:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "SPY_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20251210.htm",
+    "available_after": "2025-12-31 01:00:00-05:00",
+    "planned_date": "2026-01-28",
+    "entry": "2026-01-27 14:30:00+00:00",
+    "exit": "2026-01-27 21:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "SPY_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20251210.htm",
+    "available_after": "2025-12-31 01:00:00-05:00",
+    "planned_date": "2026-01-28",
+    "entry": "2026-01-27 14:30:00+00:00",
+    "exit": "2026-01-28 21:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "GLD_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20251210.htm",
+    "available_after": "2025-12-31 01:00:00-05:00",
+    "planned_date": "2026-01-28",
+    "entry": "2026-01-27 14:30:00+00:00",
+    "exit": "2026-01-27 21:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "GLD_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20251210.htm",
+    "available_after": "2025-12-31 01:00:00-05:00",
+    "planned_date": "2026-01-28",
+    "entry": "2026-01-27 14:30:00+00:00",
+    "exit": "2026-01-28 21:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "TLT_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20251210.htm",
+    "available_after": "2025-12-31 01:00:00-05:00",
+    "planned_date": "2026-01-28",
+    "entry": "2026-01-27 14:30:00+00:00",
+    "exit": "2026-01-27 21:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "TLT_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20251210.htm",
+    "available_after": "2025-12-31 01:00:00-05:00",
+    "planned_date": "2026-01-28",
+    "entry": "2026-01-27 14:30:00+00:00",
+    "exit": "2026-01-28 21:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "mix_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20251210.htm",
+    "available_after": "2025-12-31 01:00:00-05:00",
+    "planned_date": "2026-01-28",
+    "entry": "2026-01-27 14:30:00+00:00",
+    "exit": "2026-01-27 21:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "mix_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20251210.htm",
+    "available_after": "2025-12-31 01:00:00-05:00",
+    "planned_date": "2026-01-28",
+    "entry": "2026-01-27 14:30:00+00:00",
+    "exit": "2026-01-28 21:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "SPY_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20260128.htm",
+    "available_after": "2026-02-19 01:00:00-05:00",
+    "planned_date": "2026-03-18",
+    "entry": "2026-03-17 13:30:00+00:00",
+    "exit": "2026-03-17 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "SPY_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20260128.htm",
+    "available_after": "2026-02-19 01:00:00-05:00",
+    "planned_date": "2026-03-18",
+    "entry": "2026-03-17 13:30:00+00:00",
+    "exit": "2026-03-18 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "GLD_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20260128.htm",
+    "available_after": "2026-02-19 01:00:00-05:00",
+    "planned_date": "2026-03-18",
+    "entry": "2026-03-17 13:30:00+00:00",
+    "exit": "2026-03-17 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "GLD_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20260128.htm",
+    "available_after": "2026-02-19 01:00:00-05:00",
+    "planned_date": "2026-03-18",
+    "entry": "2026-03-17 13:30:00+00:00",
+    "exit": "2026-03-18 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "TLT_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20260128.htm",
+    "available_after": "2026-02-19 01:00:00-05:00",
+    "planned_date": "2026-03-18",
+    "entry": "2026-03-17 13:30:00+00:00",
+    "exit": "2026-03-17 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "TLT_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20260128.htm",
+    "available_after": "2026-02-19 01:00:00-05:00",
+    "planned_date": "2026-03-18",
+    "entry": "2026-03-17 13:30:00+00:00",
+    "exit": "2026-03-18 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "mix_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20260128.htm",
+    "available_after": "2026-02-19 01:00:00-05:00",
+    "planned_date": "2026-03-18",
+    "entry": "2026-03-17 13:30:00+00:00",
+    "exit": "2026-03-17 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "mix_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20260128.htm",
+    "available_after": "2026-02-19 01:00:00-05:00",
+    "planned_date": "2026-03-18",
+    "entry": "2026-03-17 13:30:00+00:00",
+    "exit": "2026-03-18 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "SPY_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20260318.htm",
+    "available_after": "2026-04-09 01:00:00-04:00",
+    "planned_date": "2026-04-29",
+    "entry": "2026-04-28 13:30:00+00:00",
+    "exit": "2026-04-28 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "SPY_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20260318.htm",
+    "available_after": "2026-04-09 01:00:00-04:00",
+    "planned_date": "2026-04-29",
+    "entry": "2026-04-28 13:30:00+00:00",
+    "exit": "2026-04-29 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "GLD_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20260318.htm",
+    "available_after": "2026-04-09 01:00:00-04:00",
+    "planned_date": "2026-04-29",
+    "entry": "2026-04-28 13:30:00+00:00",
+    "exit": "2026-04-28 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "GLD_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20260318.htm",
+    "available_after": "2026-04-09 01:00:00-04:00",
+    "planned_date": "2026-04-29",
+    "entry": "2026-04-28 13:30:00+00:00",
+    "exit": "2026-04-29 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "TLT_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20260318.htm",
+    "available_after": "2026-04-09 01:00:00-04:00",
+    "planned_date": "2026-04-29",
+    "entry": "2026-04-28 13:30:00+00:00",
+    "exit": "2026-04-28 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "TLT_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20260318.htm",
+    "available_after": "2026-04-09 01:00:00-04:00",
+    "planned_date": "2026-04-29",
+    "entry": "2026-04-28 13:30:00+00:00",
+    "exit": "2026-04-29 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "mix_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20260318.htm",
+    "available_after": "2026-04-09 01:00:00-04:00",
+    "planned_date": "2026-04-29",
+    "entry": "2026-04-28 13:30:00+00:00",
+    "exit": "2026-04-28 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "mix_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20260318.htm",
+    "available_after": "2026-04-09 01:00:00-04:00",
+    "planned_date": "2026-04-29",
+    "entry": "2026-04-28 13:30:00+00:00",
+    "exit": "2026-04-29 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "SPY_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20260429.htm",
+    "available_after": "2026-05-21 01:00:00-04:00",
+    "planned_date": "2026-06-17",
+    "entry": "2026-06-16 13:30:00+00:00",
+    "exit": "2026-06-16 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "SPY_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20260429.htm",
+    "available_after": "2026-05-21 01:00:00-04:00",
+    "planned_date": "2026-06-17",
+    "entry": "2026-06-16 13:30:00+00:00",
+    "exit": "2026-06-17 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "GLD_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20260429.htm",
+    "available_after": "2026-05-21 01:00:00-04:00",
+    "planned_date": "2026-06-17",
+    "entry": "2026-06-16 13:30:00+00:00",
+    "exit": "2026-06-16 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "GLD_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20260429.htm",
+    "available_after": "2026-05-21 01:00:00-04:00",
+    "planned_date": "2026-06-17",
+    "entry": "2026-06-16 13:30:00+00:00",
+    "exit": "2026-06-17 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "TLT_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20260429.htm",
+    "available_after": "2026-05-21 01:00:00-04:00",
+    "planned_date": "2026-06-17",
+    "entry": "2026-06-16 13:30:00+00:00",
+    "exit": "2026-06-16 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "TLT_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20260429.htm",
+    "available_after": "2026-05-21 01:00:00-04:00",
+    "planned_date": "2026-06-17",
+    "entry": "2026-06-16 13:30:00+00:00",
+    "exit": "2026-06-17 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "mix_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20260429.htm",
+    "available_after": "2026-05-21 01:00:00-04:00",
+    "planned_date": "2026-06-17",
+    "entry": "2026-06-16 13:30:00+00:00",
+    "exit": "2026-06-16 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "mix_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20260429.htm",
+    "available_after": "2026-05-21 01:00:00-04:00",
+    "planned_date": "2026-06-17",
+    "entry": "2026-06-16 13:30:00+00:00",
+    "exit": "2026-06-17 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "SPY_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20260617.htm",
+    "available_after": "2026-07-09 01:00:00-04:00",
+    "planned_date": "2026-07-29",
+    "entry": "2026-07-28 13:30:00+00:00",
+    "exit": "2026-07-28 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "SPY_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20260617.htm",
+    "available_after": "2026-07-09 01:00:00-04:00",
+    "planned_date": "2026-07-29",
+    "entry": "2026-07-28 13:30:00+00:00",
+    "exit": "2026-07-29 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "GLD_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20260617.htm",
+    "available_after": "2026-07-09 01:00:00-04:00",
+    "planned_date": "2026-07-29",
+    "entry": "2026-07-28 13:30:00+00:00",
+    "exit": "2026-07-28 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "GLD_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20260617.htm",
+    "available_after": "2026-07-09 01:00:00-04:00",
+    "planned_date": "2026-07-29",
+    "entry": "2026-07-28 13:30:00+00:00",
+    "exit": "2026-07-29 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "TLT_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20260617.htm",
+    "available_after": "2026-07-09 01:00:00-04:00",
+    "planned_date": "2026-07-29",
+    "entry": "2026-07-28 13:30:00+00:00",
+    "exit": "2026-07-28 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "TLT_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20260617.htm",
+    "available_after": "2026-07-09 01:00:00-04:00",
+    "planned_date": "2026-07-29",
+    "entry": "2026-07-28 13:30:00+00:00",
+    "exit": "2026-07-29 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "mix_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20260617.htm",
+    "available_after": "2026-07-09 01:00:00-04:00",
+    "planned_date": "2026-07-29",
+    "entry": "2026-07-28 13:30:00+00:00",
+    "exit": "2026-07-28 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "mix_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20260617.htm",
+    "available_after": "2026-07-09 01:00:00-04:00",
+    "planned_date": "2026-07-29",
+    "entry": "2026-07-28 13:30:00+00:00",
+    "exit": "2026-07-29 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "SPY_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20260729.htm",
+    "available_after": "2026-08-20 01:00:00-04:00",
+    "planned_date": "2026-09-16",
+    "entry": "2026-09-15 13:30:00+00:00",
+    "exit": "2026-09-15 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "SPY_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20260729.htm",
+    "available_after": "2026-08-20 01:00:00-04:00",
+    "planned_date": "2026-09-16",
+    "entry": "2026-09-15 13:30:00+00:00",
+    "exit": "2026-09-16 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "GLD_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20260729.htm",
+    "available_after": "2026-08-20 01:00:00-04:00",
+    "planned_date": "2026-09-16",
+    "entry": "2026-09-15 13:30:00+00:00",
+    "exit": "2026-09-15 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "GLD_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20260729.htm",
+    "available_after": "2026-08-20 01:00:00-04:00",
+    "planned_date": "2026-09-16",
+    "entry": "2026-09-15 13:30:00+00:00",
+    "exit": "2026-09-16 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "TLT_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20260729.htm",
+    "available_after": "2026-08-20 01:00:00-04:00",
+    "planned_date": "2026-09-16",
+    "entry": "2026-09-15 13:30:00+00:00",
+    "exit": "2026-09-15 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "TLT_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20260729.htm",
+    "available_after": "2026-08-20 01:00:00-04:00",
+    "planned_date": "2026-09-16",
+    "entry": "2026-09-15 13:30:00+00:00",
+    "exit": "2026-09-16 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  },
+  {
+    "configuration": "mix_pre1",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20260729.htm",
+    "available_after": "2026-08-20 01:00:00-04:00",
+    "planned_date": "2026-09-16",
+    "entry": "2026-09-15 13:30:00+00:00",
+    "exit": "2026-09-15 20:00:00+00:00",
+    "hours": 6.5,
+    "eligible": true
+  },
+  {
+    "configuration": "mix_event2",
+    "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20260729.htm",
+    "available_after": "2026-08-20 01:00:00-04:00",
+    "planned_date": "2026-09-16",
+    "entry": "2026-09-15 13:30:00+00:00",
+    "exit": "2026-09-16 20:00:00+00:00",
+    "hours": 30.5,
+    "eligible": true
+  }
+]

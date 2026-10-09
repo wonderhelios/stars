@@ -1,0 +1,11 @@
+{
+  "invalid": true,
+  "reason": "frozen baseline raised insolvent",
+  "failure_t": 1709424000000,
+  "failure_equity": -145711.32625004917,
+  "factor": "channel20",
+  "mode": "mix",
+  "period": 10,
+  "phase": 3,
+  "key": "channel20_mix_k10_p3"
+}

@@ -1,0 +1,240 @@
+[
+  {
+    "symbol": "GOOGL",
+    "downloaded_utc": "2026-10-09T01:58:45.408804+00:00",
+    "cik": 1652044,
+    "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001652044.json",
+    "name": "Alphabet Inc.",
+    "name_verified": true,
+    "sha256": "a017f26ee88cb4a639d1c1ddb06d53b4afe22f0ac89cabec7cd67c88919fe1c5"
+  },
+  {
+    "symbol": "MSFT",
+    "downloaded_utc": "2026-10-09T01:58:48.463466+00:00",
+    "cik": 789019,
+    "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000789019.json",
+    "name": "MICROSOFT CORPORATION",
+    "name_verified": true,
+    "sha256": "f8aae2965b20ad0df44bdf7ccbedf797d275b6b8dc030154a7a311361bb7246f"
+  },
+  {
+    "symbol": "AAPL",
+    "downloaded_utc": "2026-10-09T01:58:51.714481+00:00",
+    "cik": 320193,
+    "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000320193.json",
+    "name": "Apple Inc.",
+    "name_verified": true,
+    "sha256": "73a86c6aedc31f77cac2ea4df5f80f0b3bd7e6eb58bb4e01444fbedf3afb9c43"
+  },
+  {
+    "symbol": "AMZN",
+    "downloaded_utc": "2026-10-09T01:59:28.564187+00:00",
+    "error": "curl: (28) Operation timed out after 45004 milliseconds with 3021882 bytes received\n"
+  },
+  {
+    "symbol": "META",
+    "downloaded_utc": "2026-10-09T02:00:13.589969+00:00",
+    "cik": 1326801,
+    "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001326801.json",
+    "name": "Meta Platforms, Inc.",
+    "name_verified": true,
+    "sha256": "7518e76d6dac2d016e1a3d1dec1cc55ff9ea3bdd58a151b16fcaa067a6c9d94e"
+  },
+  {
+    "symbol": "NVDA",
+    "downloaded_utc": "2026-10-09T02:00:17.799746+00:00",
+    "error": "curl: (35) LibreSSL SSL_connect: SSL_ERROR_SYSCALL in connection to data.sec.gov:443 \n"
+  },
+  {
+    "symbol": "AMD",
+    "downloaded_utc": "2026-10-09T02:00:22.820746+00:00",
+    "cik": 2488,
+    "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000002488.json",
+    "name": "ADVANCED MICRO DEVICES INC",
+    "name_verified": true,
+    "sha256": "21a29c75076d90fced568785d855fc427a15c7458bc0bb153a9dedd88ad3349e"
+  },
+  {
+    "symbol": "INTC",
+    "downloaded_utc": "2026-10-09T02:00:28.567452+00:00",
+    "error": "curl: (35) LibreSSL SSL_connect: SSL_ERROR_SYSCALL in connection to data.sec.gov:443 \n"
+  },
+  {
+    "symbol": "ORCL",
+    "downloaded_utc": "2026-10-09T02:00:33.587230+00:00",
+    "cik": 1341439,
+    "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001341439.json",
+    "name": "Oracle Corporation",
+    "name_verified": true,
+    "sha256": "65523545f040abaea1dfcf321da2a5aec85e7f34387244b0ffcb26e4c8707f7d"
+  },
+  {
+    "symbol": "CRM",
+    "downloaded_utc": "2026-10-09T02:00:36.778031+00:00",
+    "error": "curl: (28) Operation timed out after 45000 milliseconds with 2922546 bytes received\n"
+  },
+  {
+    "symbol": "ADBE",
+    "downloaded_utc": "2026-10-09T02:01:21.803013+00:00",
+    "error": "curl: (28) Operation timed out after 45009 milliseconds with 2874059 bytes received\n"
+  },
+  {
+    "symbol": "INTU",
+    "downloaded_utc": "2026-10-09T02:02:06.828831+00:00",
+    "cik": 896878,
+    "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000896878.json",
+    "name": "INTUIT INC.",
+    "name_verified": true,
+    "sha256": "456f89ae1757bb5a6ee0990f8b759e3d694222b0107c33ee4b163ee85a478d8a"
+  },
+  {
+    "symbol": "NOW",
+    "downloaded_utc": "2026-10-09T02:02:12.869315+00:00",
+    "cik": 1373715,
+    "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001373715.json",
+    "name": "ServiceNow, Inc.",
+    "name_verified": true,
+    "sha256": "1131b67e8d2d6cd6415cafa82c8874cb2139016e4c8d7e04b1728837a8bbec2c"
+  },
+  {
+    "symbol": "VEEV",
+    "downloaded_utc": "2026-10-09T02:02:17.761458+00:00",
+    "cik": 1393052,
+    "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001393052.json",
+    "name": "Veeva Systems Inc.",
+    "name_verified": true,
+    "sha256": "c2624d24b7f8e7939be966eb22c27d2d0b6f1b361bf51656bff51b88a4588804"
+  },
+  {
+    "symbol": "GWRE",
+    "downloaded_utc": "2026-10-09T02:02:17.781757+00:00",
+    "cik": 1528396,
+    "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001528396.json",
+    "name": "Guidewire Software, Inc.",
+    "name_verified": true,
+    "sha256": "1bcfe0669ef1e428cae9f4f40ded456766c027e1e669ce68608dc5b0e725e4b3"
+  },
+  {
+    "symbol": "TYL",
+    "downloaded_utc": "2026-10-09T02:02:23.627491+00:00",
+    "cik": 860731,
+    "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000860731.json",
+    "name": "TYLER TECHNOLOGIES, INC.",
+    "name_verified": true,
+    "sha256": "2a4ec793c0bf7f9da9d3133f93327d4f328746f361fc9ef0a3c52acc4b9ae922"
+  },
+  {
+    "symbol": "ADSK",
+    "downloaded_utc": "2026-10-09T02:02:26.747457+00:00",
+    "error": "curl: (28) Operation timed out after 45009 milliseconds with 3457242 bytes received\n"
+  },
+  {
+    "symbol": "ANSS",
+    "downloaded_utc": "2026-10-09T02:03:11.779147+00:00",
+    "error": "curl: (28) Operation timed out after 45011 milliseconds with 2854855 bytes received\n"
+  },
+  {
+    "symbol": "CDNS",
+    "downloaded_utc": "2026-10-09T02:03:56.809347+00:00",
+    "cik": 813672,
+    "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000813672.json",
+    "name": "CADENCE DESIGN SYSTEMS, INC.",
+    "name_verified": true,
+    "sha256": "0bfb80dcfb082f1368b0f19c256ca5b35585e20bda411cea2163627b55f0955b"
+  },
+  {
+    "symbol": "SNPS",
+    "downloaded_utc": "2026-10-09T02:04:01.505314+00:00",
+    "cik": 883241,
+    "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000883241.json",
+    "name": "SYNOPSYS INC",
+    "name_verified": true,
+    "sha256": "7e9b6e13ac2481586b56f1db93af14b9b014a1b7f92af2a09075d7cbd51526d4"
+  },
+  {
+    "symbol": "PAYC",
+    "downloaded_utc": "2026-10-09T02:04:07.557480+00:00",
+    "cik": 1590955,
+    "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001590955.json",
+    "name": "Paycom Software, Inc.",
+    "name_verified": true,
+    "sha256": "588556b7e71a89bf4e8a6ac0b9fed255fc1e5c15953d5c5b77b35778fb5ea3dd"
+  },
+  {
+    "symbol": "PCTY",
+    "downloaded_utc": "2026-10-09T02:04:11.762455+00:00",
+    "cik": 1591698,
+    "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001591698.json",
+    "name": "PAYLOCITY HOLDING CORPORATION",
+    "name_verified": true,
+    "sha256": "0892d204921923b02c569de0a75187f7c7b69a1de913a6ffe8ff6ee502259ce3"
+  },
+  {
+    "symbol": "WDAY",
+    "downloaded_utc": "2026-10-09T02:04:17.125782+00:00",
+    "cik": 1327811,
+    "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001327811.json",
+    "name": "WORKDAY, INC.",
+    "name_verified": true,
+    "sha256": "831819baad53b4b4f5b72b5d1f24144e90c5cd42ff9e6263eecdd0dff87c648d"
+  },
+  {
+    "symbol": "TEAM",
+    "downloaded_utc": "2026-10-09T02:04:21.806401+00:00",
+    "cik": 1650372,
+    "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001650372.json",
+    "name": "Atlassian Corporation",
+    "name_verified": true,
+    "sha256": "4a2efe51ce98d780879cf2bee5128ff8e06d7d89e61b09e1af42e11bab7feb7d"
+  },
+  {
+    "symbol": "DDOG",
+    "downloaded_utc": "2026-10-09T02:04:25.862122+00:00",
+    "cik": 1561550,
+    "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001561550.json",
+    "name": "Datadog, Inc.",
+    "name_verified": true,
+    "sha256": "d3c4561fd839e25b1cde245ff3ca1f821b2a70e70d34688c5ede40bbc0f600a2"
+  },
+  {
+    "symbol": "ZS",
+    "downloaded_utc": "2026-10-09T02:04:47.674937+00:00",
+    "cik": 1713683,
+    "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001713683.json",
+    "name": "Zscaler Inc",
+    "name_verified": true,
+    "sha256": "06053c252007a7d76d154eb77a698c48c832f9b4d6ad121a33b41d14a27a1434"
+  },
+  {
+    "symbol": "CRWD",
+    "downloaded_utc": "2026-10-09T02:04:53.158959+00:00",
+    "cik": 1535527,
+    "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001535527.json",
+    "name": "CrowdStrike Holdings, Inc.",
+    "name_verified": true,
+    "sha256": "a71a92f1f11bd3032271ca55be7a7770a96a846ec809f925829ef952fd5f3fa1"
+  },
+  {
+    "symbol": "NET",
+    "downloaded_utc": "2026-10-09T02:05:02.880423+00:00",
+    "cik": 1477333,
+    "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001477333.json",
+    "name": "Cloudflare, Inc.",
+    "name_verified": true,
+    "sha256": "04cc636210456fc5163996c546c38dd049e53b5f9ce59b8f824f1725b06afe11"
+  },
+  {
+    "symbol": "MDB",
+    "downloaded_utc": "2026-10-09T02:05:08.150204+00:00",
+    "cik": 1441816,
+    "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001441816.json",
+    "name": "MONGODB, INC.",
+    "name_verified": true,
+    "sha256": "8947052d6912d9ac6b35470f5e331ef6fe1f4b4cf782fab20822c9cb66738997"
+  },
+  {
+    "symbol": "HUBS",
+    "downloaded_utc": "2026-10-09T02:05:13.402577+00:00",
+    "error": "curl: (35) LibreSSL SSL_connect: SSL_ERROR_SYSCALL in connection to data.sec.gov:443 \n"
+  }
+]

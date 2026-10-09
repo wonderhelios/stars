@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/workday-announces-date-of-fiscal-2023-fourth-quarter-and-full-year-financial-results-301741435.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "25af9a2c769231404f27d2a91059eb0df526a44fb5767303cb6eb68469bfed78",
+  "retrieved_utc": "2026-10-09T04:11:17Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/workday-announces-date-of-fiscal-2023-fourth-quarter-and-full-year-financial-results-301741435.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "25af9a2c769231404f27d2a91059eb0df526a44fb5767303cb6eb68469bfed78",
+      "retrieved_utc": "2026-10-09T04:11:17Z"
+    }
+  ]
+}

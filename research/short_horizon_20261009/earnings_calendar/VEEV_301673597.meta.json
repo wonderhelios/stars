@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/veeva-to-release-fiscal-2023-third-quarter-results-on-december-1-2022-301673597.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "ab32563ea4ab5cc4cbdc87fed4b5d9126d1aec67e7931b616550a8ab4addae10",
+  "retrieved_utc": "2026-10-09T04:10:28Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/veeva-to-release-fiscal-2023-third-quarter-results-on-december-1-2022-301673597.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "ab32563ea4ab5cc4cbdc87fed4b5d9126d1aec67e7931b616550a8ab4addae10",
+      "retrieved_utc": "2026-10-09T04:10:28Z"
+    }
+  ]
+}

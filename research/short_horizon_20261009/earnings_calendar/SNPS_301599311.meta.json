@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/synopsys-announces-earnings-release-date-for-third-quarter-fiscal-year-2022-301599311.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "d428ac3343eeb720dd2caa1afc962357e4db5f357ec43b299978f7cd47ec9cd6",
+  "retrieved_utc": "2026-10-09T04:09:00Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/synopsys-announces-earnings-release-date-for-third-quarter-fiscal-year-2022-301599311.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "d428ac3343eeb720dd2caa1afc962357e4db5f357ec43b299978f7cd47ec9cd6",
+      "retrieved_utc": "2026-10-09T04:09:00Z"
+    }
+  ]
+}

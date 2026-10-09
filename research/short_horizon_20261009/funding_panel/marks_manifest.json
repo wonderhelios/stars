@@ -1,0 +1,130 @@
+[
+  {
+    "coin": "BTC",
+    "rows": 4128,
+    "exact_mark": 3218,
+    "proxy_mark": 910,
+    "max_lag_ms": 29,
+    "status": "complete"
+  },
+  {
+    "coin": "ETH",
+    "rows": 4128,
+    "exact_mark": 3218,
+    "proxy_mark": 910,
+    "max_lag_ms": 29,
+    "status": "complete"
+  },
+  {
+    "coin": "SOL",
+    "rows": 4128,
+    "exact_mark": 3218,
+    "proxy_mark": 910,
+    "max_lag_ms": 29,
+    "status": "complete"
+  },
+  {
+    "coin": "XRP",
+    "rows": 4128,
+    "exact_mark": 3218,
+    "proxy_mark": 910,
+    "max_lag_ms": 29,
+    "status": "complete"
+  },
+  {
+    "coin": "DOGE",
+    "rows": 4128,
+    "exact_mark": 3218,
+    "proxy_mark": 910,
+    "max_lag_ms": 29,
+    "status": "complete"
+  },
+  {
+    "coin": "ADA",
+    "rows": 4128,
+    "exact_mark": 3218,
+    "proxy_mark": 910,
+    "max_lag_ms": 29,
+    "status": "complete"
+  },
+  {
+    "coin": "AVAX",
+    "rows": 4128,
+    "exact_mark": 3218,
+    "proxy_mark": 910,
+    "max_lag_ms": 29,
+    "status": "complete"
+  },
+  {
+    "coin": "LINK",
+    "rows": 4128,
+    "exact_mark": 3218,
+    "proxy_mark": 910,
+    "max_lag_ms": 29,
+    "status": "complete"
+  },
+  {
+    "coin": "LTC",
+    "rows": 4128,
+    "exact_mark": 3218,
+    "proxy_mark": 910,
+    "max_lag_ms": 29,
+    "status": "complete"
+  },
+  {
+    "coin": "BCH",
+    "rows": 4128,
+    "exact_mark": 3218,
+    "proxy_mark": 910,
+    "max_lag_ms": 29,
+    "status": "complete"
+  },
+  {
+    "coin": "DOT",
+    "rows": 4128,
+    "exact_mark": 3218,
+    "proxy_mark": 910,
+    "max_lag_ms": 29,
+    "status": "complete"
+  },
+  {
+    "coin": "ATOM",
+    "rows": 4128,
+    "exact_mark": 3218,
+    "proxy_mark": 910,
+    "max_lag_ms": 29,
+    "status": "complete"
+  },
+  {
+    "coin": "BNB",
+    "rows": 4128,
+    "exact_mark": 3218,
+    "proxy_mark": 910,
+    "max_lag_ms": 29,
+    "status": "complete"
+  },
+  {
+    "coin": "NEAR",
+    "rows": 4128,
+    "exact_mark": 3218,
+    "proxy_mark": 910,
+    "max_lag_ms": 29,
+    "status": "complete"
+  },
+  {
+    "coin": "APT",
+    "rows": 4128,
+    "exact_mark": 3218,
+    "proxy_mark": 910,
+    "max_lag_ms": 29,
+    "status": "complete"
+  },
+  {
+    "coin": "ARB",
+    "rows": 3884,
+    "exact_mark": 3218,
+    "proxy_mark": 666,
+    "max_lag_ms": 29,
+    "status": "complete"
+  }
+]

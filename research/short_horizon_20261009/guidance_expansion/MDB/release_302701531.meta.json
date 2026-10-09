@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-fourth-quarter-fiscal-2026-financial-results-302701531.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "d9ecb10e06ca4ec211b893f3560e3c506c64c218147b48b46ee16e98e50ba93e",
+  "retrieved_utc": "2026-10-09T03:22:02Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-fourth-quarter-fiscal-2026-financial-results-302701531.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "d9ecb10e06ca4ec211b893f3560e3c506c64c218147b48b46ee16e98e50ba93e",
+      "retrieved_utc": "2026-10-09T03:22:02Z"
+    }
+  ]
+}

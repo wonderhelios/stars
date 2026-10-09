@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/workday-announces-date-of-fiscal-2023-second-quarter-financial-results-301598456.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "14dddbc6b40b1b276e24d7af9df8d92d5bd4fd1398a14cbdc9992020db5d2877",
+  "retrieved_utc": "2026-10-09T04:10:47Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/workday-announces-date-of-fiscal-2023-second-quarter-financial-results-301598456.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "14dddbc6b40b1b276e24d7af9df8d92d5bd4fd1398a14cbdc9992020db5d2877",
+      "retrieved_utc": "2026-10-09T04:10:47Z"
+    }
+  ]
+}

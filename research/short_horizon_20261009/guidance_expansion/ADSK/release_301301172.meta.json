@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2022-first-quarter-results-301301172.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "229d795da7ba2c2dc642e5fafd6930ad2fe5f7c8dadd007615a95ff3a52ab65f",
+  "retrieved_utc": "2026-10-09T03:26:36Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2022-first-quarter-results-301301172.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "229d795da7ba2c2dc642e5fafd6930ad2fe5f7c8dadd007615a95ff3a52ab65f",
+      "retrieved_utc": "2026-10-09T03:26:36Z"
+    }
+  ]
+}

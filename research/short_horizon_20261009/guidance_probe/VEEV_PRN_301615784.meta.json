@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/veeva-announces-fiscal-2023-second-quarter-results-301615784.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "30d0bda514c37c3c6971ee347932dbe62754846617b2df6541babc40c79993bb",
+  "retrieved_utc": "2026-10-09T03:09:36Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/veeva-announces-fiscal-2023-second-quarter-results-301615784.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "30d0bda514c37c3c6971ee347932dbe62754846617b2df6541babc40c79993bb",
+      "retrieved_utc": "2026-10-09T03:09:36Z"
+    }
+  ]
+}

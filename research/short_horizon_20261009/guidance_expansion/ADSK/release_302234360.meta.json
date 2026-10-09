@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2025-second-quarter-results-302234360.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "1753531b515e18140d0e7d40c69773e5632c1a5bfe5c17484d6c3712f0a97cb3",
+  "retrieved_utc": "2026-10-09T03:25:17Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2025-second-quarter-results-302234360.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "1753531b515e18140d0e7d40c69773e5632c1a5bfe5c17484d6c3712f0a97cb3",
+      "retrieved_utc": "2026-10-09T03:25:17Z"
+    }
+  ]
+}

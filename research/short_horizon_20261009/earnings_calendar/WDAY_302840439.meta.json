@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/workday-to-announce-fiscal-2027-second-quarter-financial-results-on-august-27-2026-302840439.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "d877dbaa5a1777e37469d2c41aa22f4299afb98147451f7fd9e646fe6207fd2d",
+  "retrieved_utc": "2026-10-09T04:02:36Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/workday-to-announce-fiscal-2027-second-quarter-financial-results-on-august-27-2026-302840439.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "d877dbaa5a1777e37469d2c41aa22f4299afb98147451f7fd9e646fe6207fd2d",
+      "retrieved_utc": "2026-10-09T04:02:36Z"
+    }
+  ]
+}

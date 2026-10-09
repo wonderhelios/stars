@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/synopsys-announces-earnings-release-date-for-fourth-quarter-and-fiscal-year-2022-301673569.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "29ee3af3359e9cbcd98ef69678b94a9ee13f0be0e885cfebde853e05bd3932ad",
+  "retrieved_utc": "2026-10-09T04:09:36Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/synopsys-announces-earnings-release-date-for-fourth-quarter-and-fiscal-year-2022-301673569.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "29ee3af3359e9cbcd98ef69678b94a9ee13f0be0e885cfebde853e05bd3932ad",
+      "retrieved_utc": "2026-10-09T04:09:36Z"
+    }
+  ]
+}

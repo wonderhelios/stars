@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/synopsys-announces-earnings-release-date-for-second-quarter-fiscal-year-2020-301054268.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "b17590da8ad86e9c681f03299be07786f66340bb3e5efc107628eb4e9b689db0",
+  "retrieved_utc": "2026-10-09T04:09:30Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/synopsys-announces-earnings-release-date-for-second-quarter-fiscal-year-2020-301054268.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "b17590da8ad86e9c681f03299be07786f66340bb3e5efc107628eb4e9b689db0",
+      "retrieved_utc": "2026-10-09T04:09:30Z"
+    }
+  ]
+}

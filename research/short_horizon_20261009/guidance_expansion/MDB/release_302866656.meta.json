@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-second-quarter-fiscal-2027-financial-results-302866656.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "d5acf5d98f9898df9a1563953f17e61a42176186a67a60b2916cb68fc5f8b57f",
+  "retrieved_utc": "2026-10-09T03:21:53Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-second-quarter-fiscal-2027-financial-results-302866656.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "d5acf5d98f9898df9a1563953f17e61a42176186a67a60b2916cb68fc5f8b57f",
+      "retrieved_utc": "2026-10-09T03:21:53Z"
+    }
+  ]
+}

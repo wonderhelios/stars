@@ -1,0 +1,12 @@
+[
+  {
+    "profile": "https://www.prnewswire.com/news/workday-inc./",
+    "termination": "end_or_repeated",
+    "pages": 4
+  },
+  {
+    "profile": "https://www.prnewswire.com/news/workday%2C-inc./",
+    "termination": "end_or_repeated",
+    "pages": 2
+  }
+]

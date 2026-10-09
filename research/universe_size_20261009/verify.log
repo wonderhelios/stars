@@ -1,0 +1,66 @@
+{
+  "baseline": {
+    "original_run_exact": true,
+    "min_equity_cap": 20567,
+    "top_n_binding_days": 0,
+    "no_missing_quotes": true
+  },
+  "K3": {
+    "original_run_exact": true,
+    "min_equity_cap": 7228,
+    "top_n_binding_days": 0,
+    "no_missing_quotes": true
+  },
+  "K5": {
+    "original_run_exact": true,
+    "min_equity_cap": 18227,
+    "top_n_binding_days": 0,
+    "no_missing_quotes": true
+  },
+  "K8": {
+    "original_run_exact": true,
+    "min_equity_cap": 26742,
+    "top_n_binding_days": 0,
+    "no_missing_quotes": true
+  },
+  "K12": {
+    "original_run_exact": true,
+    "min_equity_cap": 36511,
+    "top_n_binding_days": 0,
+    "no_missing_quotes": true
+  },
+  "K20": {
+    "original_run_exact": true,
+    "min_equity_cap": 33949,
+    "top_n_binding_days": 0,
+    "no_missing_quotes": true
+  },
+  "N30_K5": {
+    "original_run_exact": true,
+    "min_equity_cap": 19183,
+    "top_n_binding_days": 498,
+    "no_missing_quotes": true
+  },
+  "N50_K8": {
+    "original_run_exact": true,
+    "min_equity_cap": 26742,
+    "top_n_binding_days": 33,
+    "no_missing_quotes": true
+  },
+  "N50_K12": {
+    "original_run_exact": true,
+    "min_equity_cap": 36511,
+    "top_n_binding_days": 33,
+    "no_missing_quotes": true
+  },
+  "N80_K15": {
+    "original_run_exact": true,
+    "min_equity_cap": 31722,
+    "top_n_binding_days": 0,
+    "no_missing_quotes": true
+  },
+  "bootstrap_sufficient_moments_vs_direct": true,
+  "drawdown_all_120_paths_independent_pandas_match": true,
+  "original_baseline_sha256": "3ac84286295d5c8ff6c27b1332554d39d84981496bc040480a85428a3a019511",
+  "source_unchanged": true
+}

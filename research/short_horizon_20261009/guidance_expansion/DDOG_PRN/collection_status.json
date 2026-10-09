@@ -1,0 +1,12 @@
+{
+  "catalogued_releases": 13,
+  "downloaded": 13,
+  "complete_download": true,
+  "profiles": [
+    {
+      "profile": "https://www.prnewswire.com/news/datadog%2C-inc./",
+      "termination": "end_or_repeated",
+      "pages": 3
+    }
+  ]
+}

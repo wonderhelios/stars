@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/synopsys-announces-earnings-release-date-for-fourth-quarter-and-fiscal-year-2020-301171273.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "67ad873dd71a132fdf38eee0006813e17e4948f9ce37acc1cc0a778a9d2fddff",
+  "retrieved_utc": "2026-10-09T04:09:48Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/synopsys-announces-earnings-release-date-for-fourth-quarter-and-fiscal-year-2020-301171273.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "67ad873dd71a132fdf38eee0006813e17e4948f9ce37acc1cc0a778a9d2fddff",
+      "retrieved_utc": "2026-10-09T04:09:48Z"
+    }
+  ]
+}

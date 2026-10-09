@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/datadog-announces-third-quarter-2021-financial-results-301416918.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "5bedcf018434ed3d9970841632907f049af45e4901890d2629ee3c98be48e449",
+  "retrieved_utc": "2026-10-09T03:35:06Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/datadog-announces-third-quarter-2021-financial-results-301416918.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "5bedcf018434ed3d9970841632907f049af45e4901890d2629ee3c98be48e449",
+      "retrieved_utc": "2026-10-09T03:35:06Z"
+    }
+  ]
+}

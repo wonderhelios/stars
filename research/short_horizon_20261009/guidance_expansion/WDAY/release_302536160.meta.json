@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/workday-announces-fiscal-2026-second-quarter-financial-results-302536160.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "9d9f8f91e366d37a3a92642b436faa2297a5d1251d143f7e2598047d4d8e7725",
+  "retrieved_utc": "2026-10-09T03:28:13Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/workday-announces-fiscal-2026-second-quarter-financial-results-302536160.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "9d9f8f91e366d37a3a92642b436faa2297a5d1251d143f7e2598047d4d8e7725",
+      "retrieved_utc": "2026-10-09T03:28:13Z"
+    }
+  ]
+}

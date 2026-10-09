@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-first-quarter-fiscal-2022-financial-results-301305606.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "2103997eed27844e861003897c0df5bb55f8550449bb03f3d5d7106e8fb35d88",
+  "retrieved_utc": "2026-10-09T03:23:47Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-first-quarter-fiscal-2022-financial-results-301305606.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "2103997eed27844e861003897c0df5bb55f8550449bb03f3d5d7106e8fb35d88",
+      "retrieved_utc": "2026-10-09T03:23:47Z"
+    }
+  ]
+}

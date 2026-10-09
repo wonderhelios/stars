@@ -1,0 +1,1412 @@
+<!DOCTYPE html>
+<html lang="en-US" class="no-js">
+	<head>
+		<meta charset="UTF-8" /><script type="text/javascript">(window.NREUM||(NREUM={})).init={privacy:{cookies_enabled:true},ajax:{deny_list:["bam.nr-data.net"]}};(window.NREUM||(NREUM={})).loader_config={licenseKey:"NRJS-d1aad62634166c22251",applicationID:"757606115",browserID:"772331449"};;/*! For license information please see nr-loader-rum-1.323.0.min.js.LICENSE.txt */
+(()=>{var e={8122(e,t,r){"use strict";r.d(t,{a:()=>i});var n=r(944);function i(e,t){try{if(!e||"object"!=typeof e)return(0,n.R)(3);if(!t||"object"!=typeof t)return(0,n.R)(4);const r=Object.create(Object.getPrototypeOf(t),Object.getOwnPropertyDescriptors(t)),a=0===Object.keys(r).length?e:r;for(let s in a)if(void 0!==e[s])try{if(null===e[s]){r[s]=null;continue}Array.isArray(e[s])&&Array.isArray(t[s])?r[s]=Array.from(new Set([...e[s],...t[s]])):e[s]instanceof Map||e[s]instanceof Set||e[s]instanceof Date||e[s]instanceof RegExp?r[s]=e[s]:"object"==typeof e[s]&&null!==t[s]&&"object"==typeof t[s]?r[s]=i(e[s],t[s]):r[s]=e[s]}catch(e){r[s]||(0,n.R)(1,e)}return r}catch(e){(0,n.R)(2,e)}}},2555(e,t,r){"use strict";r.d(t,{f:()=>s});var n=r(384),i=r(8122);const a={beacon:n.NT.beacon,errorBeacon:n.NT.errorBeacon,licenseKey:void 0,applicationID:void 0,sa:void 0,queueTime:void 0,applicationTime:void 0,ttGuid:void 0,user:void 0,account:void 0,product:void 0,extra:void 0,jsAttributes:{},userAttributes:void 0,atts:void 0,transactionName:void 0,tNamePlain:void 0};function s(e){try{return!!e.licenseKey&&!!e.errorBeacon&&!!e.applicationID}catch(e){return!1}}r.d(t,["D",0,e=>(0,i.a)(e,a)])},7699(e,t,r){"use strict";var n=r(860);const i={[n.K7.logging]:!0,[n.K7.genericEvents]:!0,[n.K7.jserrors]:!0,[n.K7.ajax]:!0};r.d(t,["It",0,1e6,"KC",0,i,"qh",0,"SESSION_ERROR"])},9324(e,t,r){"use strict";r.d(t,["xv",0,"1.323.0"])},981(e,t,r){"use strict";r.d(t,["R",0,{AJAX:"AjaxRequest",PA:"PageAction",UA:"UserAction",BP:"BrowserPerformance",WS:"WebSocket",SPV:"SecurityPolicyViolation",JSE:"JavaScriptError",LOG:"Log",PVE:"PageView",PVT:"PageViewTiming",SR:"SessionReplay",ST:"SessionTrace",BI:"BrowserInteraction"}])},6154(e,t,r){"use strict";var n=r(1863);const i="undefined"!=typeof window&&!!window.document,a="undefined"!=typeof WorkerGlobalScope&&("undefined"!=typeof self&&self instanceof WorkerGlobalScope&&self.navigator instanceof WorkerNavigator||"undefined"!=typeof globalThis&&globalThis instanceof WorkerGlobalScope&&globalThis.navigator instanceof WorkerNavigator),s=i?window:"undefined"!=typeof WorkerGlobalScope&&("undefined"!=typeof self&&self instanceof WorkerGlobalScope&&self||"undefined"!=typeof globalThis&&globalThis instanceof WorkerGlobalScope&&globalThis),o=Boolean("hidden"===s?.document?.visibilityState),c=""+s?.location,u=/iPad|iPhone|iPod/.test(s.navigator?.userAgent),d=u&&"undefined"==typeof SharedWorker,l=((()=>{const e=s.navigator?.userAgent?.match(/Firefox[/\s](\d+\.\d+)/);Array.isArray(e)&&e.length>=2&&e[1]})(),Date.now()-(0,n.t)());r.d(t,["OF",0,u,"RI",0,i,"WN",0,l,"bv",0,a,"gm",0,s,"m",0,c,"mw",0,o,"sb",0,d,"zk",0,()=>{const e=s?.performance?.getEntriesByType?.("navigation")?.[0];if(e&&e.responseStart>0&&e.responseStart<s.performance.now())return e}])},3241(e,t,r){"use strict";r.d(t,{W:()=>i});var n=r(6154);function i(e={}){try{n.gm.dispatchEvent(new CustomEvent("newrelic",{detail:e}))}catch(e){}}},1687(e,t,r){"use strict";r.d(t,{Ak:()=>o,Ze:()=>u,x3:()=>c});var n=r(3241),i=r(3606),a=r(860),s=r(2646);function o(e,t){if(!e)return;const r={staged:!1,priority:a.P3[t]||0};e.runtime.drainRegistry.get(t)||e.runtime.drainRegistry.set(t,r)}function c(e,t){if(!e)return;const r=e.runtime.drainRegistry;r&&(r.get(t)&&r.delete(t),l(e,t,!1),r.size&&d(e))}function u(e,t="feature",r=!1){if(e){if(!e.runtime.drainRegistry.get(t)||r)return l(e,t);e.runtime.drainRegistry.get(t).staged=!0,d(e)}}function d(e){if(!e)return;const t=Array.from(e.runtime.drainRegistry);t.every(([e,t])=>t.staged)&&(t.sort((e,t)=>e[1].priority-t[1].priority),t.forEach(([t])=>{e.runtime.drainRegistry.delete(t),l(e,t)}))}function l(e,t,r=!0){if(!e)return;const a=e.ee,o=i.i.handlers;if(a&&!a.aborted&&a.backlog&&o){if((0,n.W)({type:"lifecycle",name:"drain",feature:t}),r){const e=a.backlog[t],r=o[t];if(r){for(let t=0;e&&t<e.length;++t)f(e[t],r);Object.entries(r).forEach(([e,t])=>{Object.values(t||{}).forEach(t=>{t[0]?.on&&t[0].context()instanceof s.y&&!t[0].listeners(e).includes(t[1])&&t[0].on(e,t[1])})})}}a.isolatedBacklog||delete o[t],a.backlog[t]=null,a.emit("drain-"+t,[])}}function f(e,t){var r=e[1];Object.values(t[r]||{}).forEach(t=>{var r=e[0];if(t[0]===r){var n=t[1],i=e[3],a=e[2];n.apply(i,a)}})}},7836(e,t,r){"use strict";var n=r(384),i=r(8990),a=r(2646),s=r(5607);const o="nr@context:".concat(s.W),c=function e(t,r){var n={},s={},d={},l=!1;try{l=16===r.length&&u.initializedAgents?.[r]?.runtime.isolatedBacklog}catch(e){}var f={on:p,addEventListener:p,removeEventListener:function(e,t){var r=n[e];if(!r)return;for(var i=0;i<r.length;i++)r[i]===t&&r.splice(i,1)},emit:function(e,r,n,i,a){!1!==a&&(a=!0);if(c.aborted&&!i)return;t&&a&&t.emit(e,r,n);var o=g(n);m(e).forEach(e=>{e.apply(o,r)});var u=v()[s[e]];u&&u.push([f,e,r,o]);return o},get:h,listeners:m,context:g,buffer:function(e,t){const r=v();if(t=t||"feature",f.aborted)return;Object.entries(e||{}).forEach(([e,n])=>{s[n]=t,t in r||(r[t]=[])})},abort:function(){f._aborted=!0,Object.keys(f.backlog).forEach(e=>{delete f.backlog[e]})},isBuffering:function(e){return!!v()[s[e]]},debugId:r,backlog:l?{}:t&&"object"==typeof t.backlog?t.backlog:{},isolatedBacklog:l};return Object.defineProperty(f,"aborted",{get:()=>{let e=f._aborted||!1;return e||(t&&(e=t.aborted),e)}}),f;function g(e){return e&&e instanceof a.y?e:e?(0,i.I)(e,o,()=>new a.y(o)):new a.y(o)}function p(e,t){n[e]=m(e).concat(t)}function m(e){return n[e]||[]}function h(t){return d[t]=d[t]||e(f,t)}function v(){return f.backlog}}(void 0,"globalEE"),u=(0,n.Zm)();u.ee||(u.ee=c),r.d(t,["P",0,o,"ee",0,c])},2646(e,t,r){"use strict";r.d(t,{y:()=>n});class n{constructor(e){this.contextId=e}}},9908(e,t,r){"use strict";r.d(t,{d:()=>n,p:()=>i});var n=r(7836).ee.get("handle");function i(e,t,r,i,a){a?(a.buffer([e],i),a.emit(e,t,r)):(n.buffer([e],i),n.emit(e,t,r))}},3606(e,t,r){"use strict";r.d(t,{i:()=>a});var n=r(9908);a.on=s;var i=a.handlers={};function a(e,t,r,a){s(a||n.d,i,e,t,r)}function s(e,t,r,i,a){a||(a="feature"),e||(e=n.d);var s=t[a]=t[a]||{};(s[r]=s[r]||[]).push([e,i])}},3878(e,t,r){"use strict";function n(e,t){return{capture:e,passive:!1,signal:t}}function i(e,t,r=!1,i){window.addEventListener(e,t,n(r,i))}function a(e,t,r=!1,i){document.addEventListener(e,t,n(r,i))}r.d(t,{DD:()=>a,jT:()=>n,sp:()=>i})},5607(e,t,r){"use strict";const n=(0,r(9566).bz)();r.d(t,["W",0,n])},9566(e,t,r){"use strict";r.d(t,{LA:()=>s,bz:()=>a});var n=r(6154);function i(e,t){return e?15&e[t]:16*Math.random()|0}function a(){const e=n.gm?.crypto||n.gm?.msCrypto;let t,r=0;return e&&e.getRandomValues&&(t=e.getRandomValues(new Uint8Array(30))),"xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".split("").map(e=>"x"===e?i(t,r++).toString(16):"y"===e?(3&i()|8).toString(16):e).join("")}function s(e){const t=n.gm?.crypto||n.gm?.msCrypto;let r,a=0;t&&t.getRandomValues&&(r=t.getRandomValues(new Uint8Array(e)));const s=[];for(var o=0;o<e;o++)s.push(i(r,a++).toString(16));return s.join("")}},2614(e,t,r){"use strict";r.d(t,["BB",0,18e5,"Wt",0,"NRBA_SESSION::","iL",0,{SAME_TAB:"same-tab",CROSS_TAB:"cross-tab"},"tS",0,{STARTED:"session-started",PAUSE:"session-pause",RESET:"session-reset",RESUME:"session-resume",UPDATE:"session-update"},"wk",0,144e5])},1863(e,t,r){"use strict";function n(){return Math.floor(performance.now())}r.d(t,{t:()=>n})},944(e,t,r){"use strict";r.d(t,{R:()=>i});var n=r(3241);function i(e,t){"function"==typeof console.debug&&(console.debug("New Relic Warning: https://github.com/newrelic/newrelic-browser-agent/blob/main/docs/warning-codes.md#".concat(e),t),(0,n.W)({drained:null,type:"data",name:"warn",feature:"warn",data:{code:e,secondary:t}}))}},8990(e,t,r){"use strict";r.d(t,{I:()=>i});var n=Object.prototype.hasOwnProperty;function i(e,t,r){if(n.call(e,t))return e[t];var i=r();if(Object.defineProperty&&Object.keys)try{return Object.defineProperty(e,t,{value:i,writable:!0,enumerable:!1}),i}catch(e){}return e[t]=i,i}},6389(e,t,r){"use strict";function n(e,t=500,r={}){const n=r?.leading||!1;let i;return(...r)=>{n&&void 0===i&&(e.apply(this,r),i=setTimeout(()=>{i=clearTimeout(i)},t)),n||(clearTimeout(i),i=setTimeout(()=>{e.apply(this,r)},t))}}function i(e){let t=!1;return(...r)=>{t||(t=!0,e.apply(this,r))}}r.d(t,{J:()=>i,s:()=>n})},1910(e,t,r){"use strict";r.d(t,{i:()=>a});var n=r(944);const i=new Map;function a(...e){return e.every(e=>{if(i.has(e))return i.get(e);const t="function"==typeof e?e.toString():"",r=t.includes("[native code]"),a=t.includes("nrWrapper");return r||a||(0,n.R)(64,e?.name||t),i.set(e,r),r})}},5289(e,t,r){"use strict";r.d(t,{GG:()=>s,Qr:()=>c,sB:()=>o});var n=r(3878),i=r(6389);function a(){return"undefined"==typeof document||"complete"===document.readyState}function s(e,t){if(a())return e();const r=(0,i.J)(e),s=setInterval(()=>{a()&&(clearInterval(s),r())},500);(0,n.sp)("load",r,t)}function o(e){if(a())return e();(0,n.DD)("DOMContentLoaded",e)}function c(e){if(a())return e();(0,n.sp)("popstate",e)}},384(e,t,r){"use strict";r.d(t,{Zm:()=>c,bQ:()=>d,dV:()=>u,pV:()=>l});var n=r(6154),i=r(1863),a=r(944),s=r(1910);const o={beacon:"bam.nr-data.net",errorBeacon:"bam.nr-data.net"};function c(){return n.gm.NREUM||(n.gm.NREUM={}),void 0===n.gm.newrelic&&(n.gm.newrelic=n.gm.NREUM),n.gm.NREUM}function u(){let e=c();return e.o||(e.o={ST:n.gm.setTimeout,SI:n.gm.setImmediate||n.gm.setInterval,CT:n.gm.clearTimeout,XHR:n.gm.XMLHttpRequest,REQ:n.gm.Request,EV:n.gm.Event,PR:n.gm.Promise,MO:n.gm.MutationObserver,FETCH:n.gm.fetch,WS:n.gm.WebSocket},(0,s.i)(...Object.values(e.o))),e}function d(e,t){let r=c();r.initializedAgents??={},t.initializedAt={ms:(0,i.t)(),date:new Date},r.initializedAgents[e]=t,2===Object.keys(r.initializedAgents).length&&(0,a.R)(69)}function l(){return function(){let e=c();const t=e.info||{};e.info={beacon:o.beacon,errorBeacon:o.errorBeacon,...t}}(),function(){let e=c();const t=e.init||{};e.init={...t}}(),u(),function(){let e=c();const t=e.loader_config||{};e.loader_config={...t}}(),c()}r.d(t,["NT",0,o])},2843(e,t,r){"use strict";r.d(t,{G:()=>a,u:()=>i});var n=r(3878);function i(e,t=!1,r,i){(0,n.DD)("visibilitychange",function(){if(t)return void("hidden"===document.visibilityState&&e());e(document.visibilityState)},r,i)}function a(e,t,r){(0,n.sp)("pagehide",e,t,r)}},9300(e,t,r){"use strict";r(860).K7.ajax;r.d(t,["mo",0,{NONE:"none",FAILURES:"failures",ALL:"all"}])},3969(e,t,r){"use strict";const n=r(860).K7.metrics;r.d(t,["TZ",0,n,"XG",0,"storeEventMetrics","xV",0,"storeSupportabilityMetrics"])},6630(e,t,r){"use strict";const n=r(860).K7.pageViewEvent;r.d(t,["T",0,n])},782(e,t,r){"use strict";const n=r(860).K7.pageViewTiming;r.d(t,["T",0,n])},4234(e,t,r){"use strict";r.d(t,{W:()=>i});var n=r(1687);class i{constructor(e,t){this.agentRef=e,this.ee=e?.ee,this.featureName=t,this.blocked=!1}deregisterDrain(){(0,n.x3)(this.agentRef,this.featureName)}}},7767(e,t,r){"use strict";var n=r(6154);r.d(t,["V",0,e=>n.RI&&!0===e?.privacy.cookies_enabled])},8362(e,t,r){"use strict";r.d(t,{d:()=>a});var n=r(9566),i=r(1741);class a extends i.W{agentIdentifier=(0,n.LA)(16)}},1741(e,t,r){"use strict";r.d(t,{W:()=>a});var n=r(944),i=r(4261);class a{#e(e,...t){if(this[e]!==a.prototype[e])return this[e](...t);(0,n.R)(35,e)}addPageAction(e,t){return this.#e(i.hG,e,t)}register(e){return this.#e(i.eY,e)}recordCustomEvent(e,t){return this.#e(i.fF,e,t)}setPageViewName(e,t){return this.#e(i.Fw,e,t)}setCustomAttribute(e,t,r){return this.#e(i.cD,e,t,r)}noticeError(e,t){return this.#e(i.o5,e,t)}setUserId(e,t=!1){return this.#e(i.Dl,e,t)}setApplicationVersion(e){return this.#e(i.nb,e)}setErrorHandler(e){return this.#e(i.bt,e)}addRelease(e,t){return this.#e(i.k6,e,t)}log(e,t){return this.#e("log",e,t)}start(){return this.#e("start")}finished(e){return this.#e(i.BL,e)}recordReplay(){return this.#e(i.CH)}pauseReplay(){return this.#e(i.Tb)}addToTrace(e){return this.#e(i.U2,e)}setCurrentRouteName(e){return this.#e(i.PA,e)}interaction(e){return this.#e(i.dT,e)}wrapLogger(e,t,r){return this.#e(i.Wb,e,t,r)}measure(e,t){return this.#e(i.V1,e,t)}consent(e){return this.#e(i.Pv,e)}}},4261(e,t,r){"use strict";r.d(t,["BL",0,"finished","CH",0,"recordReplay","Dl",0,"setUserId","Fw",0,"setPageViewName","PA",0,"setCurrentRouteName","Pv",0,"consent","Tb",0,"pauseReplay","U2",0,"addToTrace","V1",0,"measure","Wb",0,"wrapLogger","bt",0,"setErrorHandler","cD",0,"setCustomAttribute","dT",0,"interaction","eY",0,"register","fF",0,"recordCustomEvent","hG",0,"addPageAction","k6",0,"addRelease","nb",0,"setApplicationVersion","o5",0,"noticeError"])},1738(e,t,r){"use strict";r.d(t,{U:()=>l,Y:()=>d});var n=r(3241),i=r(9908),a=r(1863),s=r(944),o=r(3969),c=r(8362),u=r(860);function d(e,t,r,a){const d=a||r;!d||d[e]&&d[e]!==c.d.prototype[e]||(d[e]=function(){(0,i.p)(o.xV,["API/"+e+"/called"],void 0,u.K7.metrics,r.ee),(0,n.W)({drained:!!r.runtime?.activatedFeatures,type:"data",name:"api",feature:"api-"+e,data:{}});try{return t.apply(this,arguments)}catch(e){(0,s.R)(23,e)}})}function l(e,t,r,n,s){const o=e.info;null===r?delete o.jsAttributes[t]:o.jsAttributes[t]=r,(s||null===r)&&(0,i.p)("api-"+n,[(0,a.t)(),t,r],void 0,"session",e.ee)}},8374(e,t,r){r.nc=(()=>{try{return document?.currentScript?.nonce}catch(e){}return""})()},860(e,t,r){"use strict";const n="events",i="jserrors",a="browser/blobs",s="browser/logs",o={ajax:"ajax",genericEvents:"generic_events",jserrors:i,logging:"logging",metrics:"metrics",pageAction:"page_action",pageViewEvent:"page_view_event",pageViewTiming:"page_view_timing",sessionReplay:"session_replay",sessionTrace:"session_trace",softNav:"soft_navigations"},c={[o.pageViewEvent]:1,[o.pageViewTiming]:2,[o.metrics]:3,[o.jserrors]:4,[o.softNav]:5,[o.ajax]:6,[o.sessionTrace]:7,[o.sessionReplay]:8,[o.logging]:9,[o.genericEvents]:10},u={[o.pageViewEvent]:"rum",[o.pageViewTiming]:n,[o.ajax]:n,[o.softNav]:n,[o.metrics]:i,[o.jserrors]:i,[o.sessionTrace]:a,[o.sessionReplay]:a,[o.logging]:s,[o.genericEvents]:"ins"};r.d(t,["$J",0,u,"K7",0,o,"P3",0,c,"XX",0,i,"Yy",0,s,"df",0,a,"hg",0,"connect"])}};const t={};function r(n){const i=t[n];if(void 0!==i)return i.exports;const a=t[n]={exports:{}};return e[n](a,a.exports,r),a.exports}r.m=e,r.d=(e,t)=>{if(Array.isArray(t))for(var n=0;n<t.length;){var i=t[n++],a=t[n++];r.o(e,i)?0===a&&n++:0===a?Object.defineProperty(e,i,{enumerable:!0,value:t[n++]}):Object.defineProperty(e,i,{enumerable:!0,get:a})}else for(var i in t)r.o(t,i)&&!r.o(e,i)&&Object.defineProperty(e,i,{enumerable:!0,get:t[i]})},r.f={},r.e=e=>Promise.all(Object.keys(r.f).reduce((t,n)=>(r.f[n](e,t),t),[])),r.u=e=>"nr-rum-1.323.0.min.js",r.o=(e,t)=>Object.prototype.hasOwnProperty.call(e,t),(()=>{const e={},t="NRBA-1.323.0.PROD:";r.l=(n,i,a,s)=>{if(e[n])return void e[n].push(i);let o,c;if(void 0!==a){const e=document.getElementsByTagName("script");for(var u=0;u<e.length;u++){const r=e[u];if(r.getAttribute("src")==n||r.getAttribute("data-webpack")==t+a){o=r;break}}}if(!o){c=!0;var d={296:"sha512-zhTI1o3vPu0UcYWUELiLeb9P46+LBW0K7R4KO/PafMc68L5tJ2mSHyvZtcNeG9Cw/PTZstuo62K1wwaoAsHdXQ=="};o=document.createElement("script"),o.charset="utf-8",r.nc&&o.setAttribute("nonce",r.nc),o.setAttribute("data-webpack",t+a),o.src=n,0!==o.src.indexOf(window.location.origin+"/")&&(o.crossOrigin="anonymous"),d[s]&&(o.integrity=d[s])}e[n]=[i];const l=(t,r)=>{o.onerror=o.onload=null,clearTimeout(f);const i=e[n];if(delete e[n],o.parentNode?.removeChild(o),i?.forEach(e=>e(r)),t)return t(r)},f=setTimeout(l.bind(null,void 0,{type:"timeout",target:o}),12e4);o.onerror=l.bind(null,o.onerror),o.onload=l.bind(null,o.onload),c&&document.head.appendChild(o)}})(),r.r=e=>{Symbol.toStringTag&&Object.defineProperty(e,Symbol.toStringTag,{value:"Module"}),Object.defineProperty(e,"__esModule",{value:!0})},r.p="https://js-agent.newrelic.com/",(()=>{const e={374:0,840:0};r.f.j=(t,n)=>{let i=r.o(e,t)?e[t]:void 0;if(0!==i)if(i)n.push(i[2]);else{const a=new Promise((r,n)=>i=e[t]=[r,n]);n.push(i[2]=a);const s=r.p+r.u(t),o=new Error,c=n=>{if(r.o(e,t)&&(i=e[t],0!==i&&(e[t]=void 0),i)){const e=n&&("load"===n.type?"missing":n.type),r=n&&n.target&&n.target.src;o.message="Loading chunk "+t+" failed: ("+e+": "+r+")",o.name="ChunkLoadError",o.type=e,o.request=r,i[1](o)}};r.l(s,c,"chunk-"+t,t)}};const t=(t,n)=>{let[i,a,s]=n;var o,c,u=0;if(i.some(t=>0!==e[t])){for(o in a)r.o(a,o)&&(r.m[o]=a[o]);if(s)s(r)}for(t&&t(n);u<i.length;u++)c=i[u],r.o(e,c)&&e[c]&&e[c][0](),e[c]=0},n=self["webpackChunk:NRBA-1.323.0.PROD"]=self["webpackChunk:NRBA-1.323.0.PROD"]||[];n.forEach(t.bind(null,0)),n.push=t.bind(null,n.push.bind(n))})(),(()=>{"use strict";r(8374);var e=r(8362),t=r(860);const n=Object.values(t.K7);var i=r(384),a=r(1741);var s=r(2555),o=r(981);t.K7.genericEvents,o.R.PA,o.R.UA,o.R.BP;const c={RESOURCES:"experimental.resources",REGISTER:"register"};var u=r(9300);const d=e=>{if(!e||"string"!=typeof e)return!1;try{document.createDocumentFragment().querySelector(e)}catch{return!1}return!0};var l=r(2614),f=r(944),g=r(8122);const p="[data-nr-mask]",m=e=>(0,g.a)(e,(()=>{const e={feature_flags:[],experimental:{register:!1,resources:!1,iframe_bridge:!1,iframe_domains:[]},mask_selector:"*",block_selector:"[data-nr-block]",mask_input_options:{color:!1,date:!1,"datetime-local":!1,email:!1,month:!1,number:!1,range:!1,search:!1,tel:!1,text:!1,time:!1,url:!1,week:!1,textarea:!1,select:!1,password:!0}};return{ajax:{deny_list:void 0,block_internal:!0,enabled:!0,autoStart:!0,capture_payloads:u.mo.NONE},api:{register:{get enabled(){return e.feature_flags.includes(c.REGISTER)||e.experimental.register},set enabled(t){e.experimental.register=t},duplicate_data_to_container:!1,get allow_iframe_bridge(){return e.feature_flags.includes(c.IFRAME_BRIDGE)||e.experimental.iframe_bridge},set allow_iframe_bridge(t){e.experimental.iframe_bridge=t},get iframe_domains(){return e.experimental.iframe_domains},set iframe_domains(t){Array.isArray(t)?e.experimental.iframe_domains=t:(0,f.R)(1,t)}}},browser_consent_mode:{enabled:!1},distributed_tracing:{enabled:void 0,exclude_newrelic_header:void 0,cors_use_newrelic_header:void 0,cors_use_tracecontext_headers:void 0,allowed_origins:void 0},get feature_flags(){return e.feature_flags},set feature_flags(t){e.feature_flags=t},generic_events:{enabled:!0,autoStart:!0},harvest:{interval:30},jserrors:{enabled:!0,autoStart:!0},logging:{enabled:!0,autoStart:!0},metrics:{enabled:!0,autoStart:!0},obfuscate:void 0,page_action:{enabled:!0},page_view_event:{enabled:!0,autoStart:!0},page_view_timing:{enabled:!0,autoStart:!0},performance:{capture_marks:!1,capture_measures:!1,capture_detail:!0,resources:{get enabled(){return e.feature_flags.includes(c.RESOURCES)||e.experimental.resources},set enabled(t){e.experimental.resources=t},asset_types:[],first_party_domains:[],ignore_newrelic:!0}},privacy:{cookies_enabled:!0},proxy:{assets:void 0,beacon:void 0},session:{expiresMs:l.wk,inactiveMs:l.BB},session_replay:{autoStart:!0,enabled:!1,preload:!1,sampling_rate:10,error_sampling_rate:100,collect_fonts:!1,inline_images:!1,fix_stylesheets:!0,mask_all_inputs:!0,get mask_text_selector(){return e.mask_selector},set mask_text_selector(t){d(t)?e.mask_selector="".concat(t,",").concat(p):""===t||null===t?e.mask_selector=p:(0,f.R)(5,t)},get block_class(){return"nr-block"},get ignore_class(){return"nr-ignore"},get mask_text_class(){return"nr-mask"},get block_selector(){return e.block_selector},set block_selector(t){d(t)?e.block_selector+=",".concat(t):""!==t&&(0,f.R)(6,t)},get mask_input_options(){return e.mask_input_options},set mask_input_options(t){t&&"object"==typeof t?e.mask_input_options={...t,password:!0}:(0,f.R)(7,t)}},session_trace:{enabled:!0,autoStart:!0},soft_navigations:{enabled:!0,autoStart:!0},ssl:void 0,user_actions:{enabled:!0,elementAttributes:["id","className","tagName","type"]},web_sockets:{enabled:!1}}})());var h=r(6154),v=r(9324);let b=0;const y={buildEnv:"PROD",distMethod:"CDN",version:v.xv,originTime:h.WN},_={consented:!1},w={activatedFeatures:void 0,appMetadata:{},configured:!1,get consented(){return this.session?.state?.consent||_.consented},set consented(e){_.consented=e},customTransaction:void 0,denyList:[],disabled:!1,drainRegistry:new Map,connector:void 0,harvester:void 0,v2Target:void 0,isolatedBacklog:!1,isRecording:!1,loaderType:void 0,maxBytes:3e4,obfuscator:void 0,onerror:void 0,ptid:void 0,releaseIds:{},session:void 0,timeKeeper:void 0,registeredEntities:[],jsAttributesMetadata:{bytes:0},get harvestCount(){return++b},listeningForIframeMessages:!1},R="BA";var A=r(7836),x=r(3241);const E={accountID:void 0,trustKey:void 0,agentID:void 0,licenseKey:void 0,applicationID:void 0,xpid:void 0};var S=r(9908);const k="newrelic-iframe-";function T(e,t={},n,o){let{init:c,info:u,loader_config:d,runtime:l={},exposed:f=!0}=t;if(!u){const e=(0,i.pV)();c=e.init,u=e.info,d=e.loader_config}var p;e.init=m(c||{}),e.loader_config=(p=d||{},(0,g.a)(p,E)),u.jsAttributes??={},h.bv&&(u.jsAttributes.isWorker=!0),e.info=(0,s.D)(u);const v=e.init;e.runtime??=(e=>{const t=(0,g.a)(e,w),r=Object.keys(y).reduce((e,t)=>(e[t]={value:y[t],writable:!1,configurable:!0,enumerable:!0},e),{});return Object.defineProperties(t,r)})(l),e.runtime.v2Target??={type:R,instance:e.agentIdentifier,get id(){return e.runtime.appMetadata?.agents?.[0]?.entityGuid},get attributes(){return{"entity.guid":this.id,appId:e.info.applicationID}}},v.proxy.assets&&(e=>{const t=e.startsWith("http");e+="/",r.p=t?e:"https://"+e})(v.proxy.assets),e.runtime.configured||(Object.defineProperty(e,"beacons",{get:()=>[e.info.beacon,e.info.errorBeacon,e.init.proxy.assets,e.init.proxy.beacon].filter(Boolean)}),Object.defineProperty(e.runtime,"denyList",{get:()=>[...e.init.ajax.deny_list||[],...e.init.ajax.block_internal?e.beacons:[]]}),e.runtime.ptid=e.agentIdentifier,function(e){const t=(0,i.pV)();Object.getOwnPropertyNames(a.W.prototype).forEach(r=>{const n=a.W.prototype[r];if("function"!=typeof n||"constructor"===n)return;let i=t[r];e[r]&&!1!==e.exposed&&"micro-agent"!==e.runtime?.loaderType&&(t[r]=(...t)=>{const n=e[r](...t);return i?i(...t):n})})}(e),e.runtime.loaderType=n,e.ee=A.ee.get(e.agentIdentifier),e.exposed=f,(0,x.W)({drained:!!e.runtime.activatedFeatures,type:"lifecycle",name:"initialize",feature:void 0,data:e.config}),e.init.api.register.allow_iframe_bridge&&h.gm.addEventListener("message",t=>{"string"==typeof t.data?.type&&t.data.type.startsWith(k)&&(0,S.p)("iframe-message",[t],void 0,"IFRAME",e.ee)}),e.runtime.configured=!0)}var j=r(1863),P=r(4261),N=r(1738);var O=r(1687),M=r(4234),I=r(5289),D=r(7767);function V(e){return!!(0,i.dV)().o.MO&&(0,D.V)(e)&&!0===e?.session_trace.enabled}var W=r(6389),B=r(7699);const C=new WeakSet,K=new WeakMap;class U extends M.W{constructor(e,t){super(e,t),this.abortHandler=void 0,this.featAggregate=void 0,this.loadedSuccessfully=void 0,this.onAggregateImported=new Promise(e=>{this.loadedSuccessfully=e}),this.deferred=Promise.resolve(),!1===e.init[this.featureName].autoStart?this.deferred=new Promise((t,r)=>{this.ee.on("manual-start-all",(0,W.J)(()=>{(0,O.Ak)(e,this.featureName),t()}))}):(0,O.Ak)(e,t)}importAggregator(e,t,n={}){if(this.featAggregate)return;const i=async()=>{if(await this.deferred,this.#t(e),!(0,s.f)(e.info))return(0,f.R)(43),e.ee.abort(),void this.loadedSuccessfully(!1);try{await async function(e,t,n){if(K.has(e))return K.get(e);const i=(async()=>{if((0,D.V)(e.init))try{const{setupAgentSession:t}=await r.e(296).then(r.bind(r,1768));t(e)}catch(e){(0,f.R)(20,e),t.emit("internal-error",[e]),(0,S.p)(B.qh,[e],void 0,n,t)}if(e.init.api.register.allow_iframe_bridge)try{const{setupIframeMFEMessageListener:t}=await Promise.resolve().then(function(){const e=new Error("Cannot find module '../../loaders/configure/iframe-message-handler'");throw e.code="MODULE_NOT_FOUND",e});t(e)}catch(e){(0,f.R)(23,e)}const[{Connector:i},{Harvester:a}]=await Promise.all([r.e(296).then(r.bind(r,6589)),r.e(296).then(r.bind(r,5237))]);e.runtime.connector=new i(e),e.runtime.harvester=new a(e);const s=Object.values(e.features).filter(t=>e.runtime.drainRegistry.has(t.featureName));Promise.all(s.map(e=>e.onAggregateImported)).then(()=>e.runtime.harvester.startTimer())})();K.set(e,i),await i}(e,this.ee,this.featureName)}catch(e){return(0,f.R)(79,e),this.ee.abort(),void this.loadedSuccessfully(!1)}try{if(!this.#r(this.featureName,e.runtime.session,e.init))return this.abortHandler?.(),(0,O.Ze)(this.agentRef,this.featureName),void this.loadedSuccessfully(!1);const{Aggregate:r}=await t();this.featAggregate=new r(e,n),e.runtime.harvester.initializedAggregates.push(this.featAggregate),this.loadedSuccessfully(!0)}catch(e){(0,f.R)(34,e),this.abortHandler?.(),(0,O.Ze)(this.agentRef,this.featureName,!0),this.loadedSuccessfully(!1)}};h.RI?(0,I.GG)(()=>i(),!0):i()}#r(e,r,n){if(this.blocked)return!1;switch(e){case t.K7.sessionReplay:return V(n)&&!!r;case t.K7.sessionTrace:return!!r;default:return!0}}#t(e){if(!C.has(e)&&(C.add(e),!(0,s.f)(e.info))){const t=(0,i.pV)();let r={...t.info?.jsAttributes};try{r={...r,...e.info?.jsAttributes}}catch(e){}T(e,{...t,info:{...t.info,jsAttributes:r},runtime:e.runtime},e.runtime.loaderType)}}}var L=r(6630);class F extends U{static featureName=L.T;constructor(e){var t;super(e,L.T),this.setupInspectionEvents(),t=e,(0,N.Y)(P.Fw,function(e,r){"string"==typeof e&&("/"!==e.charAt(0)&&(e="/"+e),t.runtime.customTransaction=(r||"http://custom.transaction")+e,(0,S.p)("api-"+P.Fw,[(0,j.t)()],void 0,void 0,t.ee))},t),this.importAggregator(e,()=>e.init.feature_flags.includes("rum_v2")?r.e(296).then(r.bind(r,908)):r.e(296).then(r.bind(r,7927)))}setupInspectionEvents(){const e=(e,t)=>{e&&(0,x.W)({timeStamp:e.timeStamp,loaded:"complete"===e.target.readyState,type:"window",name:t,data:e.target.location+""})};(0,I.sB)(t=>{e(t,"DOMContentLoaded")}),(0,I.GG)(t=>{e(t,"load")}),(0,I.Qr)(t=>{e(t,"navigate")}),this.ee.on(l.tS.UPDATE,(e,t)=>{(0,x.W)({type:"lifecycle",name:"session",data:t})})}}class G extends e.d{constructor(e){var t;(super(),h.gm)?(this.features={},(0,i.bQ)(this.agentIdentifier,this),this.desiredFeatures=new Set(e.features||[]),this.desiredFeatures.add(F),T(this,e,e.loaderType||"agent"),t=this,(0,N.Y)(P.cD,function(e,r,n=!1){if("string"==typeof e){if(["string","number","boolean"].includes(typeof r)||null===r)return(0,N.U)(t,e,r,P.cD,n);(0,f.R)(40,typeof r)}else(0,f.R)(39,typeof e)},t),function(e){(0,N.Y)(P.Dl,function(t,r=!1){if("string"!=typeof t&&null!==t)return void(0,f.R)(41,typeof t);const n=e.info.jsAttributes["enduser.id"];r&&null!=n&&n!==t?(0,S.p)("api-setUserIdAndResetSession",[t],void 0,"session",e.ee):(0,N.U)(e,"enduser.id",t,P.Dl,!0)},e)}(this),function(e){(0,N.Y)(P.nb,function(t){if("string"==typeof t||null===t)return(0,N.U)(e,"application.version",t,P.nb,!1);(0,f.R)(42,typeof t)},e)}(this),function(e){(0,N.Y)("start",function(){e.ee.emit("manual-start-all")},e)}(this),function(e){(0,N.Y)(P.Pv,function(t=!0){if("boolean"==typeof t){if((0,S.p)("api-"+P.Pv,[t],void 0,"session",e.ee),e.runtime.consented=t,t){const t=e.features.page_view_event;t.onAggregateImported.then(e=>{const r=t.featAggregate;e&&!r.sentRum&&r.sendRum?.()})}}else(0,f.R)(65,typeof t)},e)}(this),this.run()):(0,f.R)(21)}get config(){return{info:this.info,init:this.init,loader_config:this.loader_config,runtime:this.runtime}}get api(){return this}run(){try{const e=function(e){const t={};return n.forEach(r=>{t[r]=!!e[r]?.enabled}),t}(this.init),r=[...this.desiredFeatures],i=this.init.feature_flags.includes("rum_v2");r.sort((e,r)=>t.P3[e.featureName]-t.P3[r.featureName]),r.forEach(r=>{if(!e[r.featureName]&&(i||r.featureName!==t.K7.pageViewEvent))return;const n=function(e){switch(e){case t.K7.ajax:return[t.K7.jserrors];case t.K7.sessionTrace:return[t.K7.ajax,t.K7.pageViewEvent];case t.K7.sessionReplay:return[t.K7.sessionTrace];case t.K7.pageViewTiming:return[t.K7.pageViewEvent];default:return[]}}(r.featureName).filter(e=>!(e in this.features));n.length>0&&(0,f.R)(36,{targetFeature:r.featureName,missingDependencies:n}),this.features[r.featureName]=new r(this)})}catch(e){(0,f.R)(22,e);for(const e in this.features)this.features[e].abortHandler?.();const t=(0,i.Zm)();delete t.initializedAgents[this.agentIdentifier]?.features,delete this.sharedAggregator;return t.ee.get(this.agentIdentifier).abort(),!1}}}var H=r(2843),z=r(782);class Y extends U{static featureName=z.T;constructor(e){super(e,z.T),h.RI&&((0,H.u)(()=>(0,S.p)("docHidden",[(0,j.t)()],void 0,z.T,this.ee),!0),(0,H.G)(()=>(0,S.p)("winPagehide",[(0,j.t)()],void 0,z.T,this.ee)),this.importAggregator(e,()=>r.e(296).then(r.bind(r,9981))))}}var Z=r(3969);class q extends U{static featureName=Z.TZ;constructor(e){super(e,Z.TZ),this.importAggregator(e,()=>r.e(296).then(r.bind(r,9623)))}}new G({features:[F,Y,q],loaderType:"lite"})})()})();</script>
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<link rel="preconnect" href="https://a.sfdcstatic.com">
+				<!-- OneTrust Cookies Consent Notice start -->
+				<script src="https://a.sfdcstatic.com/digital/one-trust/core/stable/scripttemplates/otSDKStub.js" data-domain-script="8e783e8c-0ad0-475d-8fca-4a03afa0a02a"></script>
+		<script>
+			/* OneTrust callback */
+			function OptanonWrapper() {
+				var ot_link = document.querySelector('a.optanon-toggle-display');
+				if (ot_link) {
+					ot_link.addEventListener('click', event => {
+						Optanon.ToggleInfoDisplay();
+						// ot_modal.style.display = "block";
+					});
+				}
+
+				function getCookie(name) {
+					var value = "; " + document.cookie;
+					var parts = value.split("; " + name + "=");
+					if (parts.length == 2) {
+						return parts.pop().split(";").shift();
+					}
+				}
+
+				function removeElement(element) {
+					if (!getCookie('OptanonAlertBoxClosed') && element) {
+						element.style.display = "none";
+					}
+				}
+
+				// Push a oneTrust group update event to dataLayer
+				if (window.dataLayer) {
+					window.dataLayer.push({event: 'OneTrustGroupsUpdated'});
+				}
+
+				//Check if user's cookies are enabled, if not remove One Trust from page
+				var cookies = ("cookie" in document && (document.cookie.length > 0 || (document.cookie = "test").indexOf.call(document.cookie, "test") > -1));
+				if (!cookies) {
+					var box = document.querySelector('#onetrust-consent-sdk');
+					box.remove();
+					return;
+				}
+
+				try {
+					//Check if current page is Privacy page, if so do not display One Trust modal
+					if(digitalData) {
+						if(digitalData.page.pagename.indexOf(":company:privacy") > -1){
+							var el = document.querySelector("#onetrust-consent-sdk");
+							removeElement(el);
+						}
+					}
+					/* reinitialize active groups after user updates consent */
+					if (SfdcWwwBase.gdpr) {
+						SfdcWwwBase.gdpr.init();
+					}
+				} catch(err) {
+					console.error(err.message)
+				}
+			}
+		</script>
+		<!-- OneTrust Cookies Consent Notice end -->
+				<script>
+			(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+			new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+			j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+			'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+		})(window,document,'script','dataLayer','GTM-WRXS6TH');
+		</script>
+		<script>(function(html){html.className = html.className.replace(/\bno-js\b/,'js')})(document.documentElement);</script>
+<link rel="alternate" hreflang="en-nz" href="https://www.salesforce.com/au/news/press-releases/2023/05/31/fy24-q1-earnings/" /><link rel="alternate" hreflang="x-default" href="https://www.salesforce.com/news/press-releases/2023/05/31/fy24-q1-earnings/" /><link rel="alternate" hreflang="en-us" href="https://www.salesforce.com/news/press-releases/2023/05/31/fy24-q1-earnings/" /><link rel="alternate" hreflang="en-au" href="https://www.salesforce.com/au/news/press-releases/2023/05/31/fy24-q1-earnings/" /><link rel="alternate" hreflang="en-in" href="https://www.salesforce.com/in/news/press-releases/2023/05/31/fy24-q1-earnings/" /><meta name="theme-color" content="#0D9DDA" /><link rel="preload" as="font" href="https://www.salesforce.com/news/wp-content/client-mu-plugins/salesforce-shared/dist/fonts/salesforce-sans/SalesforceSans-Regular.woff2" type="font/woff2" crossorigin>
+<link rel="preload" as="font" href="https://www.salesforce.com/news/wp-content/client-mu-plugins/salesforce-shared/dist/fonts/salesforce-sans/SalesforceSans-Bold.woff2" type="font/woff2" crossorigin>
+<link rel="preload" as="font" href="https://a.sfdcstatic.com/shared/fonts/avant-garde/AvantGardeForSalesforceW05-Dm.woff2" type="font/woff2" crossorigin>
+<meta name='robots' content='index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1' />
+
+	<!-- This site is optimized with the Yoast SEO Premium plugin v28.2 (Yoast SEO v28.2) - https://yoast.com/product/yoast-seo-premium-wordpress/ -->
+	<title>Salesforce Announces Strong First Quarter Fiscal 2024 Results - Salesforce</title>
+	<meta name="description" content="San Francisco — May 31, 2023 - Salesforce (NYSE: CRM), the global leader in CRM, today announced results for its first quarter fiscal 2024 ended April 30," />
+	<link rel="canonical" href="https://www.salesforce.com/news/press-releases/2023/05/31/fy24-q1-earnings/" />
+	<meta property="og:locale" content="en_US" />
+	<meta property="og:type" content="article" />
+	<meta property="og:title" content="Salesforce Announces Strong First Quarter Fiscal 2024 Results" />
+	<meta property="og:description" content="San Francisco — May 31, 2023 - Salesforce (NYSE: CRM), the global leader in CRM, today announced results for its first quarter fiscal 2024 ended April 30," />
+	<meta property="og:url" content="https://www.salesforce.com/news/press-releases/2023/05/31/fy24-q1-earnings/" />
+	<meta property="og:site_name" content="Salesforce" />
+	<meta property="article:publisher" content="https://www.facebook.com/salesforce/" />
+	<meta property="article:modified_time" content="2023-05-31T20:07:38+00:00" />
+	<meta property="og:image" content="https://www.salesforce.com/news/wp-content/uploads/sites/3/2023/05/q1-newsroom-tile-1200x675-1.jpg" />
+	<meta property="og:image:width" content="1200" />
+	<meta property="og:image:height" content="675" />
+	<meta property="og:image:type" content="image/jpeg" />
+	<meta name="twitter:card" content="summary_large_image" />
+	<meta name="twitter:site" content="@salesforcenews" />
+	<meta name="twitter:label1" content="Est. reading time" />
+	<meta name="twitter:data1" content="5 minutes" />
+	<meta name="twitter:label2" content="Written by" />
+	<meta name="twitter:data2" content="Erika Symczak" />
+	<script type="application/ld+json" class="yoast-schema-graph">{"@context":"https:\/\/schema.org","@graph":[{"@type":"NewsArticle","@id":"https:\/\/www.salesforce.com\/news\/press-releases\/2023\/05\/31\/fy24-q1-earnings\/#article","isPartOf":{"@id":"https:\/\/www.salesforce.com\/news\/press-releases\/2023\/05\/31\/fy24-q1-earnings\/"},"author":[{"@id":"https:\/\/www.salesforce.com\/news\/#\/schema\/person\/image\/264a1b64797c5fb8db92cb20ff3355b5"}],"headline":"Salesforce Announces Strong First Quarter Fiscal 2024 Results","datePublished":"2023-05-31T20:05:00+00:00","dateModified":"2023-05-31T20:07:38+00:00","mainEntityOfPage":{"@id":"https:\/\/www.salesforce.com\/news\/press-releases\/2023\/05\/31\/fy24-q1-earnings\/"},"wordCount":852,"publisher":{"@id":"https:\/\/www.salesforce.com\/news\/#organization"},"image":{"@id":"https:\/\/www.salesforce.com\/news\/press-releases\/2023\/05\/31\/fy24-q1-earnings\/#primaryimage"},"thumbnailUrl":"https:\/\/www.salesforce.com\/news\/wp-content\/uploads\/sites\/3\/2023\/05\/q1-newsroom-tile-1200x675-1.jpg","inLanguage":"en-US","dateline":"“Salesforce significantly exceeded our non – GAAP margin target for the quarter","articleBody":"San Francisco — May 31, 2023 – Salesforce (NYSE: CRM), the global leader in CRM, today announced results for its first quarter fiscal 2024 ended April 30, 2023. First Quarter Revenue of $8.25 Billion, up 11% Year-Over-Year (“Y\/Y”), up 13% Constant Currency (“CC”) First Quarter GAAP Operating Margin of 5.0% and Non-GAAP Operating Margin of 27.6% Current Remaining Performance Obligation of $24.1 Billion, up 12% Y\/Y, 12% CC First Quarter GAAP Diluted Earnings per Share (“EPS”) of $0.20 and Non-GAAP Diluted EPS of $1.69 Returned $2.1 Billion in First Quarter to Stockholders in the Form of Share Repurchases Initiates Second Quarter FY24 Revenue Guidance of $8.51 Billion to $8.53 Billion, up ~10% Y\/Y Reiterates Full Year FY24 Revenue Guidance of $34.5 Billion to $34.7 Billion, up ~10% Y\/Y Raises Full Year FY24 GAAP Operating Margin Guidance to ~11.4% and Non-GAAP Operating Margin Guidance to ~28.0% “Salesforce significantly exceeded our non-GAAP margin target for the quarter — up 1,000 basis points year-over-year, and we are raising our FY24 non-GAAP operating margin guidance to a 550 basis point increase year-over-year,” said Marc Benioff, Chair and CEO of Salesforce. “At the same time, we are leading the next major revolution in CRM — infusing trusted, secure generative AI across our entire product portfolio. Salesforce’s generative AI ecosystem wields Einstein GPT, Slack GPT, and Tableau GPT, delivering trusted power across our product portfolio. Our Salesforce GPT Trust Layer will shield customer data, enabling productive automation and intelligent enterprise enhancements securely.” At the same time, we are leading the next major revolution in CRM — infusing trusted, secure generative AI across our entire product portfolio. Salesforce’s generative AI ecosystem wields Einstein GPT, Slack GPT, and Tableau GPT, delivering trusted power across our product portfolio. Marc Benioff, Chair and CEO of Salesforce “Q1 represented another strong step forward as we accelerate our transformation and profitable growth strategy,” said Amy Weaver, President and CFO of Salesforce. “Our team delivered another double-digit growth quarter on the top and bottom line as we help customers increase productivity, drive efficiency, and become AI-first companies.” Salesforce delivered the following results for its fiscal first quarter: Revenue: Total first quarter revenue was $8.25 billion, an increase of 11% Y\/Y, and 13% CC. Subscription and support revenues were $7.64 billion, an increase of 11% Y\/Y. Professional services and other revenues were $0.61 billion, an increase of 9% Y\/Y. Operating Margin: First quarter GAAP operating margin was 5.0%. First quarter non-GAAP operating margin was 27.6%. Restructuring impacted first quarter GAAP operating margin by (860) bps. Earnings per Share: First quarter GAAP diluted earnings per share was $0.20, and non-GAAP diluted EPS was $1.69. Losses on the Company’s strategic investments negatively impacted GAAP diluted earnings per share by $(0.11) based on a U.S. tax rate of 25% and non-GAAP diluted EPS by $(0.11) based on a non-GAAP tax rate of 23.5%. Restructuring impacted first quarter GAAP diluted earnings per share by (72) cents. Cash Flow: Cash generated from operations for the first quarter was $4.49 billion, an increase of 22% Y\/Y. Free cash flow was $4.25 billion, an increase of 21% Y\/Y. Restructuring impacted first quarter operating cash flow growth by (910) bps. Remaining Performance Obligation: Remaining performance obligation ended the first quarter at $46.7 billion, an increase of 11% Y\/Y. Current remaining performance obligation ended at $24.1 billion, an increase of 12% Y\/Y, and 12% CC. Forward Looking Guidance As of May 31, 2023, the Company is initiating its second quarter GAAP and non-GAAP EPS guidance, current remaining performance obligation growth guidance, and revenue guidance. The Company is reiterating its full year FY24 revenue guidance and updating its GAAP and non-GAAP EPS guidance, GAAP and non-GAAP operating margin guidance, and operating cash flow guidance. Our guidance assumes no change to the value of the Company’s strategic investment portfolio as it is not possible to forecast future gains and losses. In addition, the guidance below is based on estimated GAAP tax rates that reflect the Company’s currently available information, and excludes forecasted discrete tax items such as the tax effects of stock-based compensation. The GAAP tax rates may fluctuate due to discrete tax items and related effects in conjunction with certain provisions in the Tax Cuts and Jobs Act, future acquisitions or other transactions. Open Image Modal Image Modal The following is a per share reconciliation of GAAP diluted earnings per share to non-GAAP diluted earnings per share guidance for the next quarter and the full year: Open Image Modal Image Modal For additional information regarding non-GAAP financial measures see the reconciliation of results and related explanations below. Management will provide further commentary around these guidance assumptions on its earnings call. Product Releases and Enhancements Three times a year Salesforce delivers new product releases, services, or enhancements to current products and services. These releases are a result of significant research and development investments made over multiple years, designed to help customers drive cost savings, boost efficiency, and build trust. To view our major product releases and other highlights as part of the Spring’23 Product Release, visit: www.salesforce.com\/products\/innovation\/spring-23-release\/ Quarterly Conference Call  Salesforce plans to host a conference call at 2:00 p.m. (PT) \/ 5:00 p.m. (ET) to discuss its financial results with the investment community. A live webcast and replay details of the event will be available on the Salesforce Investor Relations website at www.salesforce.com\/investor. ","articleSection":"Company News","keywords":["Digital Transformation","Earnings"]},{"@type":"WebPage","@id":"https:\/\/www.salesforce.com\/news\/press-releases\/2023\/05\/31\/fy24-q1-earnings\/","url":"https:\/\/www.salesforce.com\/news\/press-releases\/2023\/05\/31\/fy24-q1-earnings\/","name":"Salesforce Announces Strong First Quarter Fiscal 2024 Results - Salesforce","isPartOf":{"@id":"https:\/\/www.salesforce.com\/news\/#website"},"primaryImageOfPage":{"@id":"https:\/\/www.salesforce.com\/news\/press-releases\/2023\/05\/31\/fy24-q1-earnings\/#primaryimage"},"image":{"@id":"https:\/\/www.salesforce.com\/news\/press-releases\/2023\/05\/31\/fy24-q1-earnings\/#primaryimage"},"thumbnailUrl":"https:\/\/www.salesforce.com\/news\/wp-content\/uploads\/sites\/3\/2023\/05\/q1-newsroom-tile-1200x675-1.jpg","datePublished":"2023-05-31T20:05:00+00:00","dateModified":"2023-05-31T20:07:38+00:00","description":"San Francisco — May 31, 2023 - Salesforce (NYSE: CRM), the global leader in CRM, today announced results for its first quarter fiscal 2024 ended April 30,","breadcrumb":{"@id":"https:\/\/www.salesforce.com\/news\/press-releases\/2023\/05\/31\/fy24-q1-earnings\/#breadcrumb"},"inLanguage":"en-US","potentialAction":[{"@type":"ReadAction","target":["https:\/\/www.salesforce.com\/news\/press-releases\/2023\/05\/31\/fy24-q1-earnings\/"]}]},{"@type":"ImageObject","inLanguage":"en-US","@id":"https:\/\/www.salesforce.com\/news\/press-releases\/2023\/05\/31\/fy24-q1-earnings\/#primaryimage","url":"https:\/\/www.salesforce.com\/news\/wp-content\/uploads\/sites\/3\/2023\/05\/q1-newsroom-tile-1200x675-1.jpg","contentUrl":"https:\/\/www.salesforce.com\/news\/wp-content\/uploads\/sites\/3\/2023\/05\/q1-newsroom-tile-1200x675-1.jpg","width":1200,"height":675},{"@type":"BreadcrumbList","@id":"https:\/\/www.salesforce.com\/news\/press-releases\/2023\/05\/31\/fy24-q1-earnings\/#breadcrumb","itemListElement":[{"@type":"ListItem","position":1,"name":"News Explorer","item":"https:\/\/www.salesforce.com\/news\/news-explorer\/"},{"@type":"ListItem","position":2,"name":"Salesforce Announces Strong First Quarter Fiscal 2024 Results"}]},{"@type":"WebSite","@id":"https:\/\/www.salesforce.com\/news\/#website","url":"https:\/\/www.salesforce.com\/news\/","name":"Salesforce","description":"Get the latest Salesforce press releases, announcements, stories, and media contacts. See today’s CRM news.","publisher":{"@id":"https:\/\/www.salesforce.com\/news\/#organization"},"potentialAction":[{"@type":"SearchAction","target":{"@type":"EntryPoint","urlTemplate":"https:\/\/www.salesforce.com\/news\/?s={search_term_string}"},"query-input":{"@type":"PropertyValueSpecification","valueRequired":true,"valueName":"search_term_string"}}],"inLanguage":"en-US"},{"@type":"Organization","@id":"https:\/\/www.salesforce.com\/news\/#organization","name":"Salesforce","url":"https:\/\/www.salesforce.com\/news\/","logo":{"@type":"ImageObject","inLanguage":"en-US","@id":"https:\/\/www.salesforce.com\/news\/#\/schema\/logo\/image\/","url":"https:\/\/www.salesforce.com\/news\/wp-content\/uploads\/sites\/3\/2020\/08\/default.jpg","contentUrl":"https:\/\/www.salesforce.com\/news\/wp-content\/uploads\/sites\/3\/2020\/08\/default.jpg","width":1200,"height":630,"caption":"Salesforce"},"image":{"@id":"https:\/\/www.salesforce.com\/news\/#\/schema\/logo\/image\/"},"sameAs":["https:\/\/www.facebook.com\/salesforce\/","https:\/\/x.com\/salesforcenews","https:\/\/www.linkedin.com\/company\/salesforce\/"]},{"@type":"Person","@id":"https:\/\/www.salesforce.com\/news\/#\/schema\/person\/image\/264a1b64797c5fb8db92cb20ff3355b5","name":"Erika Symczak","image":{"@type":"ImageObject","inLanguage":"en-US","@id":"https:\/\/secure.gravatar.com\/avatar\/961a7d74204dee008624fa1bced4d625e32f61919f78483acec409b2c37326af?s=96&d=mm&r=gf9ac7313ba2a95e0dae286cc80061dd4","url":"https:\/\/secure.gravatar.com\/avatar\/961a7d74204dee008624fa1bced4d625e32f61919f78483acec409b2c37326af?s=96&d=mm&r=g","contentUrl":"https:\/\/secure.gravatar.com\/avatar\/961a7d74204dee008624fa1bced4d625e32f61919f78483acec409b2c37326af?s=96&d=mm&r=g","caption":"Erika Symczak"},"url":"https:\/\/www.salesforce.com\/news\/stories\/author\/esymczak\/"}]}</script>
+	<!-- / Yoast SEO Premium plugin. -->
+
+
+<link rel='dns-prefetch' href='//www.salesforce.com' />
+<link rel='dns-prefetch' href='//a.sfdcstatic.com' />
+<link rel='dns-prefetch' href='//public.tableau.com' />
+<link rel='dns-prefetch' href='//cdn.optimizely.com' />
+<link rel="alternate" type="application/rss+xml" title="Salesforce &raquo; Feed" href="https://www.salesforce.com/news/feed/" />
+<link rel="alternate" type="application/rss+xml" title="Salesforce &raquo; Comments Feed" href="https://www.salesforce.com/news/comments/feed/" />
+<link rel="alternate" title="oEmbed (JSON)" type="application/json+oembed" href="https://www.salesforce.com/news/wp-json/oembed/1.0/embed?url=https%3A%2F%2Fwww.salesforce.com%2Fnews%2Fpress-releases%2F2023%2F05%2F31%2Ffy24-q1-earnings%2F" />
+<link rel="alternate" title="oEmbed (XML)" type="text/xml+oembed" href="https://www.salesforce.com/news/wp-json/oembed/1.0/embed?url=https%3A%2F%2Fwww.salesforce.com%2Fnews%2Fpress-releases%2F2023%2F05%2F31%2Ffy24-q1-earnings%2F&#038;format=xml" />
+<link rel='stylesheet' id='wp-img-auto-sizes-contain-css' href='https://www.salesforce.com/news/news/press-releases/2023/05/31/fy24-q1-earnings/?bc=HL&#038;ver=1791477234&#038;ver=1791477234' media='all' />
+<style id="wp-img-auto-sizes-contain-inline-css">
+img:is([sizes=auto i],[sizes^="auto," i]){contain-intrinsic-size:3000px 1500px}
+/*# sourceURL=wp-img-auto-sizes-contain-inline-css */
+</style>
+<link rel='stylesheet' id='wp-block-library-css' href='https://www.salesforce.com/news/news/press-releases/2023/05/31/fy24-q1-earnings/?bc=HL&#038;ver=1791477234&#038;ver=1791477234' media='all' />
+<style id="wp-block-library-inline-css">
+:root{--wp-block-synced-color:#7a00df;--wp-block-synced-color--rgb:122,0,223;--wp-bound-block-color:var(--wp-block-synced-color);--wp-editor-canvas-background:#ddd;--wp-admin-theme-color:#007cba;--wp-admin-theme-color--rgb:0,124,186;--wp-admin-theme-color-darker-10:#006ba1;--wp-admin-theme-color-darker-10--rgb:0,107,160.5;--wp-admin-theme-color-darker-20:#005a87;--wp-admin-theme-color-darker-20--rgb:0,90,135;--wp-admin-border-width-focus:2px}@media (min-resolution:192dpi){:root{--wp-admin-border-width-focus:1.5px}}.wp-element-button{cursor:pointer}:root .has-very-light-gray-background-color{background-color:#eee}:root .has-very-dark-gray-background-color{background-color:#313131}:root .has-very-light-gray-color{color:#eee}:root .has-very-dark-gray-color{color:#313131}:root .has-vivid-green-cyan-to-vivid-cyan-blue-gradient-background{background:linear-gradient(135deg,#00d084,#0693e3)}:root .has-purple-crush-gradient-background{background:linear-gradient(135deg,#34e2e4,#4721fb 50%,#ab1dfe)}:root .has-hazy-dawn-gradient-background{background:linear-gradient(135deg,#faaca8,#dad0ec)}:root .has-subdued-olive-gradient-background{background:linear-gradient(135deg,#fafae1,#67a671)}:root .has-atomic-cream-gradient-background{background:linear-gradient(135deg,#fdd79a,#004a59)}:root .has-nightshade-gradient-background{background:linear-gradient(135deg,#330968,#31cdcf)}:root .has-midnight-gradient-background{background:linear-gradient(135deg,#020381,#2874fc)}:root{--wp--preset--font-size--normal:16px;--wp--preset--font-size--huge:42px}.has-regular-font-size{font-size:1em}.has-larger-font-size{font-size:2.625em}.has-normal-font-size{font-size:var(--wp--preset--font-size--normal)}.has-huge-font-size{font-size:var(--wp--preset--font-size--huge)}:root .has-text-align-center{text-align:center}:root .has-text-align-left{text-align:left}:root .has-text-align-right{text-align:right}.has-fit-text{white-space:nowrap!important}#end-resizable-editor-section{display:none}.aligncenter{clear:both}.items-justified-left{justify-content:flex-start}.items-justified-center{justify-content:center}.items-justified-right{justify-content:flex-end}.items-justified-space-between{justify-content:space-between}.screen-reader-text{word-wrap:normal!important;border:0;clip-path:inset(50%);height:1px;margin:-1px;overflow:hidden;padding:0;position:absolute;width:1px;word-break:normal!important}.screen-reader-text:focus{background-color:#ddd;clip-path:none;color:#444;display:block;font-size:1em;height:auto;left:5px;line-height:normal;padding:15px 23px 14px;text-decoration:none;top:5px;width:auto;z-index:100000}html :where(.has-border-color){border-style:solid}html :where([style^=border-color],[style*=";border-color"],[style*="; border-color"]){border-style:solid}html :where([style^=border-top-color],[style*=";border-top-color"],[style*="; border-top-color"]){border-top-style:solid}html :where([style^=border-right-color],[style*=";border-right-color"],[style*="; border-right-color"]){border-right-style:solid}html :where([style^=border-bottom-color],[style*=";border-bottom-color"],[style*="; border-bottom-color"]){border-bottom-style:solid}html :where([style^=border-left-color],[style*=";border-left-color"],[style*="; border-left-color"]){border-left-style:solid}html :where([style^=border-width],[style*=";border-width"],[style*="; border-width"]){border-style:solid}html :where([style^=border-top-width],[style*=";border-top-width"],[style*="; border-top-width"]){border-top-style:solid}html :where([style^=border-right-width],[style*=";border-right-width"],[style*="; border-right-width"]){border-right-style:solid}html :where([style^=border-bottom-width],[style*=";border-bottom-width"],[style*="; border-bottom-width"]){border-bottom-style:solid}html :where([style^=border-left-width],[style*=";border-left-width"],[style*="; border-left-width"]){border-left-style:solid}html :where(img[class*=wp-image-]){height:auto;max-width:100%}:where(figure){margin:0 0 1em}html :where(.is-position-sticky){--wp-admin--admin-bar--position-offset:var(--wp-admin--admin-bar--height,0px)}@media screen and (max-width:600px){html :where(.is-position-sticky){--wp-admin--admin-bar--position-offset:0px}}
+
+/*# sourceURL=/news/press-releases/2023/05/31/fy24-q1-earnings/?bc=HL&ver=1791477234 */
+</style>
+<link rel='stylesheet' id='wp-block-styles-placeholder-css' href='https://www.salesforce.com/news/news/press-releases/2023/05/31/fy24-q1-earnings/?bc=HL&#038;ver=1791477234&#038;ver=1791477234' media='all' />
+
+<link rel='stylesheet' id='wp-global-styles-placeholder-css' href='https://www.salesforce.com/news/news/press-releases/2023/05/31/fy24-q1-earnings/?bc=HL&#038;ver=1791477234&#038;ver=1791477234' media='all' />
+<style id="global-styles-inline-css">
+:root{--wp--preset--aspect-ratio--square: 1;--wp--preset--aspect-ratio--4-3: 4/3;--wp--preset--aspect-ratio--3-4: 3/4;--wp--preset--aspect-ratio--3-2: 3/2;--wp--preset--aspect-ratio--2-3: 2/3;--wp--preset--aspect-ratio--16-9: 16/9;--wp--preset--aspect-ratio--9-16: 9/16;--wp--preset--color--black: #000000;--wp--preset--color--cyan-bluish-gray: #abb8c3;--wp--preset--color--white: #ffffff;--wp--preset--color--pale-pink: #f78da7;--wp--preset--color--vivid-red: #cf2e2e;--wp--preset--color--luminous-vivid-orange: #ff6900;--wp--preset--color--luminous-vivid-amber: #fcb900;--wp--preset--color--light-green-cyan: #7bdcb5;--wp--preset--color--vivid-green-cyan: #00d084;--wp--preset--color--pale-cyan-blue: #8ed1fc;--wp--preset--color--vivid-cyan-blue: #0693e3;--wp--preset--color--vivid-purple: #9b51e0;--wp--preset--gradient--vivid-cyan-blue-to-vivid-purple: linear-gradient(135deg,rgb(6,147,227) 0%,rgb(155,81,224) 100%);--wp--preset--gradient--light-green-cyan-to-vivid-green-cyan: linear-gradient(135deg,rgb(122,220,180) 0%,rgb(0,208,130) 100%);--wp--preset--gradient--luminous-vivid-amber-to-luminous-vivid-orange: linear-gradient(135deg,rgb(252,185,0) 0%,rgb(255,105,0) 100%);--wp--preset--gradient--luminous-vivid-orange-to-vivid-red: linear-gradient(135deg,rgb(255,105,0) 0%,rgb(207,46,46) 100%);--wp--preset--gradient--very-light-gray-to-cyan-bluish-gray: linear-gradient(135deg,rgb(238,238,238) 0%,rgb(169,184,195) 100%);--wp--preset--gradient--cool-to-warm-spectrum: linear-gradient(135deg,rgb(74,234,220) 0%,rgb(151,120,209) 20%,rgb(207,42,186) 40%,rgb(238,44,130) 60%,rgb(251,105,98) 80%,rgb(254,248,76) 100%);--wp--preset--gradient--blush-light-purple: linear-gradient(135deg,rgb(255,206,236) 0%,rgb(152,150,240) 100%);--wp--preset--gradient--blush-bordeaux: linear-gradient(135deg,rgb(254,205,165) 0%,rgb(254,45,45) 50%,rgb(107,0,62) 100%);--wp--preset--gradient--luminous-dusk: linear-gradient(135deg,rgb(255,203,112) 0%,rgb(199,81,192) 50%,rgb(65,88,208) 100%);--wp--preset--gradient--pale-ocean: linear-gradient(135deg,rgb(255,245,203) 0%,rgb(182,227,212) 50%,rgb(51,167,181) 100%);--wp--preset--gradient--electric-grass: linear-gradient(135deg,rgb(202,248,128) 0%,rgb(113,206,126) 100%);--wp--preset--gradient--midnight: linear-gradient(135deg,rgb(2,3,129) 0%,rgb(40,116,252) 100%);--wp--preset--gradient--lavender: linear-gradient(180deg, rgba(115, 3, 148, 0.1) 0%, rgba(255, 255, 255, 0) 100%);--wp--preset--gradient--frostbite: linear-gradient(180deg, rgba(88, 103, 232, 0.1) 0%, rgba(255, 255, 255, 0) 100%);--wp--preset--gradient--seafoam: linear-gradient(180deg, rgba(4, 225, 203, 0.1) 0%, rgba(255, 255, 255, 0) 100%);--wp--preset--gradient--in-focus-one: radial-gradient(circle, rgba(207,233,254,1) 1%, rgba(255,255,255,1) 100%);--wp--preset--gradient--rounded-gradient: linear-gradient(180deg, rgba(27, 150, 255, 0.00) 42.27%, rgba(27, 150, 255, 0.11) 100%);--wp--preset--gradient--rounded-green: linear-gradient(180deg, rgba(1, 228, 202, 0.00) 48.51%, rgba(1, 228, 202, 0.22) 100%);--wp--preset--font-size--small: 16px;--wp--preset--font-size--medium: 20px;--wp--preset--font-size--large: 24px;--wp--preset--font-size--x-large: 32px;--wp--preset--font-size--2-x-large: 40px;--wp--preset--font-size--3-x-large: 48px;--wp--preset--font-size--4-x-large: 56px;--wp--preset--font-size--5-x-large: 80px;--wp--preset--spacing--20: 0.44rem;--wp--preset--spacing--30: 0.67rem;--wp--preset--spacing--40: 1rem;--wp--preset--spacing--50: 1.5rem;--wp--preset--spacing--60: 2.25rem;--wp--preset--spacing--70: 3.38rem;--wp--preset--spacing--80: 5.06rem;--wp--preset--shadow--natural: 6px 6px 9px rgba(0, 0, 0, 0.2);--wp--preset--shadow--deep: 12px 12px 50px rgba(0, 0, 0, 0.4);--wp--preset--shadow--sharp: 6px 6px 0px rgba(0, 0, 0, 0.2);--wp--preset--shadow--outlined: 6px 6px 0px -3px rgb(255, 255, 255), 6px 6px rgb(0, 0, 0);--wp--preset--shadow--crisp: 6px 6px 0px rgb(0, 0, 0);}.wp-block-button{--wp--preset--dimension--25: 25%;--wp--preset--dimension--50: 50%;--wp--preset--dimension--75: 75%;--wp--preset--dimension--100: 100%;}:where(body) { margin: 0; }:where(.is-layout-flex){gap: 0.5em;}:where(.is-layout-grid){gap: 0.5em;}body .is-layout-flex{display: flex;}.is-layout-flex{flex-wrap: wrap;align-items: center;}.is-layout-flex > :is(*, div){margin: 0;}body .is-layout-grid{display: grid;}.is-layout-grid > :is(*, div){margin: 0;}body{padding-top: 0px;padding-right: 0px;padding-bottom: 0px;padding-left: 0px;}:root :where(.wp-element-button, .wp-block-button__link){background-color: #32373c;border-width: 0;color: #fff;font-family: inherit;font-size: inherit;font-style: inherit;font-weight: inherit;letter-spacing: inherit;line-height: inherit;padding-top: calc(0.667em + 2px);padding-right: calc(1.333em + 2px);padding-bottom: calc(0.667em + 2px);padding-left: calc(1.333em + 2px);text-decoration: none;text-transform: inherit;}.has-black-color{color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-color{color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-color{color: var(--wp--preset--color--white) !important;}.has-pale-pink-color{color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-color{color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-color{color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-color{color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-color{color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-color{color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-color{color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-color{color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-color{color: var(--wp--preset--color--vivid-purple) !important;}.has-black-background-color{background-color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-background-color{background-color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-background-color{background-color: var(--wp--preset--color--white) !important;}.has-pale-pink-background-color{background-color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-background-color{background-color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-background-color{background-color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-background-color{background-color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-background-color{background-color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-background-color{background-color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-background-color{background-color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-background-color{background-color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-background-color{background-color: var(--wp--preset--color--vivid-purple) !important;}.has-black-border-color{border-color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-border-color{border-color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-border-color{border-color: var(--wp--preset--color--white) !important;}.has-pale-pink-border-color{border-color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-border-color{border-color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-border-color{border-color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-border-color{border-color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-border-color{border-color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-border-color{border-color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-border-color{border-color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-border-color{border-color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-border-color{border-color: var(--wp--preset--color--vivid-purple) !important;}.has-vivid-cyan-blue-to-vivid-purple-gradient-background{background: var(--wp--preset--gradient--vivid-cyan-blue-to-vivid-purple) !important;}.has-light-green-cyan-to-vivid-green-cyan-gradient-background{background: var(--wp--preset--gradient--light-green-cyan-to-vivid-green-cyan) !important;}.has-luminous-vivid-amber-to-luminous-vivid-orange-gradient-background{background: var(--wp--preset--gradient--luminous-vivid-amber-to-luminous-vivid-orange) !important;}.has-luminous-vivid-orange-to-vivid-red-gradient-background{background: var(--wp--preset--gradient--luminous-vivid-orange-to-vivid-red) !important;}.has-very-light-gray-to-cyan-bluish-gray-gradient-background{background: var(--wp--preset--gradient--very-light-gray-to-cyan-bluish-gray) !important;}.has-cool-to-warm-spectrum-gradient-background{background: var(--wp--preset--gradient--cool-to-warm-spectrum) !important;}.has-blush-light-purple-gradient-background{background: var(--wp--preset--gradient--blush-light-purple) !important;}.has-blush-bordeaux-gradient-background{background: var(--wp--preset--gradient--blush-bordeaux) !important;}.has-luminous-dusk-gradient-background{background: var(--wp--preset--gradient--luminous-dusk) !important;}.has-pale-ocean-gradient-background{background: var(--wp--preset--gradient--pale-ocean) !important;}.has-electric-grass-gradient-background{background: var(--wp--preset--gradient--electric-grass) !important;}.has-midnight-gradient-background{background: var(--wp--preset--gradient--midnight) !important;}.has-lavender-gradient-background{background: var(--wp--preset--gradient--lavender) !important;}.has-frostbite-gradient-background{background: var(--wp--preset--gradient--frostbite) !important;}.has-seafoam-gradient-background{background: var(--wp--preset--gradient--seafoam) !important;}.has-in-focus-one-gradient-background{background: var(--wp--preset--gradient--in-focus-one) !important;}.has-rounded-gradient-gradient-background{background: var(--wp--preset--gradient--rounded-gradient) !important;}.has-rounded-green-gradient-background{background: var(--wp--preset--gradient--rounded-green) !important;}.has-small-font-size{font-size: var(--wp--preset--font-size--small) !important;}.has-medium-font-size{font-size: var(--wp--preset--font-size--medium) !important;}.has-large-font-size{font-size: var(--wp--preset--font-size--large) !important;}.has-x-large-font-size{font-size: var(--wp--preset--font-size--x-large) !important;}.has-2-x-large-font-size{font-size: var(--wp--preset--font-size--2-x-large) !important;}.has-3-x-large-font-size{font-size: var(--wp--preset--font-size--3-x-large) !important;}.has-4-x-large-font-size{font-size: var(--wp--preset--font-size--4-x-large) !important;}.has-5-x-large-font-size{font-size: var(--wp--preset--font-size--5-x-large) !important;}
+/*# sourceURL=global-styles-inline-css */
+</style>
+
+<link rel='stylesheet' id='dashicons-css' href='https://www.salesforce.com/news/wp-includes/css/dashicons.min.css?ver=7.1.3' media='all' />
+<link rel='stylesheet' id='admin-bar-css' href='https://www.salesforce.com/news/wp-includes/css/admin-bar.min.css?ver=7.1.3' media='all' />
+<style id="admin-bar-inline-css">
+#wp-admin-bar-my-sites-search.hide-if-no-js {
+	display: none;
+}
+#wp-admin-bar-my-sites-search label[for="my-sites-search-text"] {
+	clip: rect(1px, 1px, 1px, 1px);
+	position: absolute !important;
+	height: 1px;
+	width: 1px;
+	overflow: hidden;
+}
+#wp-admin-bar-my-sites-search {
+	height: 38px;
+}
+#wp-admin-bar-my-sites-search .ab-item {
+	height: 34px;
+}
+#wp-admin-bar-my-sites-search input {
+	padding: 0 2px;
+	width: calc( 100% - 4px );
+}
+	
+/*# sourceURL=admin-bar-inline-css */
+</style>
+<style id="jetpack-stats-inline-css">
+img#wpstats{display:none}
+/*# sourceURL=jetpack-stats-inline-css */
+</style>
+<link rel='stylesheet' id='frontend-css' href='https://www.salesforce.com/news/wp-content/themes/newsroom/dist/css/frontend.css?ver=42044b038515f3c35a2c' media='all' />
+<link rel='stylesheet' id='duet-css-css' href='https://www.salesforce.com/news/wp-content/themes/newsroom/assets/third-party/duet/themes/default.css?ver=42044b038515f3c35a2c' media='all' />
+<link rel='stylesheet' id='wp-block-paragraph-css' href='https://www.salesforce.com/news/wp-includes/blocks/paragraph/style.min.css?ver=7.1.3' media='all' />
+<link rel='stylesheet' id='wp-block-list-item-css' href='https://www.salesforce.com/news/news/press-releases/2023/05/31/fy24-q1-earnings/?bc=HL&#038;ver=1791477234&#038;ver=1791477234' media='all' />
+<link rel='stylesheet' id='wp-block-list-css' href='https://www.salesforce.com/news/wp-includes/blocks/list/style.min.css?ver=7.1.3' media='all' />
+<link rel='stylesheet' id='wp-block-quote-css' href='https://www.salesforce.com/news/wp-includes/blocks/quote/style.min.css?ver=7.1.3' media='all' />
+<link rel='stylesheet' id='wp-block-heading-css' href='https://www.salesforce.com/news/wp-includes/blocks/heading/style.min.css?ver=7.1.3' media='all' />
+<link rel='stylesheet' id='wp-block-image-css' href='https://www.salesforce.com/news/wp-includes/blocks/image/style.min.css?ver=7.1.3' media='all' />
+<script id="wp-hooks-js" src="https://www.salesforce.com/news/wp-includes/js/dist/hooks.min.js?ver=f0f188028580e8dc1255"></script>
+<script id="wp-i18n-js" src="https://www.salesforce.com/news/wp-includes/js/dist/i18n.min.js?ver=1dfe7db3940c23ea9216"></script>
+<script id="wp-i18n-js-after">
+wp.i18n.setLocaleData( { 'text direction\u0004ltr': [ 'ltr' ] } );
+//# sourceURL=wp-i18n-js-after
+</script>
+<script id="salesforce-shared-top-js" src="https://www.salesforce.com/news/wp-content/client-mu-plugins/salesforce-shared/dist/js/top.js?ver=1791477234"></script>
+<script id="salesforce-shared-bottom-js-extra">
+var sfAnalyticsData = {"pageName":"Salesforce Announces Strong First Quarter Fiscal 2024 Results"};
+//# sourceURL=salesforce-shared-bottom-js-extra
+</script>
+<script id="salesforce-shared-bottom-js" src="https://www.salesforce.com/news/wp-content/client-mu-plugins/salesforce-shared/dist/js/bottom.js?ver=1791477234"></script>
+<script type="module" src="https://a.sfdcstatic.com/digital/xsf/components/v1-stable/navs.js?ver=2.0.0"></script><script id="jquery-core-js" src="https://www.salesforce.com/news/wp-includes/js/jquery/jquery.min.js?ver=3.7.1"></script>
+<script id="jquery-migrate-js" src="https://www.salesforce.com/news/wp-includes/js/jquery/jquery-migrate.min.js?ver=3.4.1"></script>
+<script type="module" src="https://www.salesforce.com/news/wp-content/themes/newsroom/assets/third-party/duet/duet.esm.js?ver=42044b038515f3c35a2c"></script><script id="duet-js" nomodule src="https://www.salesforce.com/news/wp-content/themes/newsroom/assets/third-party/duet/duet.js?ver=42044b038515f3c35a2c"></script>
+<script id="tableau-js-js" src="//public.tableau.com/javascripts/api/tableau-2.min.js?ver=42044b038515f3c35a2c"></script>
+<script type="text/javascript" id="optimizely-web-script" data-src="https://cdn.optimizely.com/js/30112420344.js?ver=0.1.0" referrerpolicy="no-referrer-when-downgrade" data-handle="optimizely-main"></script><script type="text/javascript" id="optimizely-ga-datalayer-script" data-src="https://www.salesforce.com/news/wp-content/client-mu-plugins/salesforce-shared/assets/js/lib/optimizely-ga-datalayer.js?ver=1790786536"></script><script type="text/javascript" id="optimizely-gdpr-script" src="https://www.salesforce.com/news/wp-content/client-mu-plugins/salesforce-shared/dist/js/optimizely-gdpr.js?ver=1791477234"></script><link rel="https://api.w.org/" href="https://www.salesforce.com/news/wp-json/" /><link rel="alternate" title="JSON" type="application/json" href="https://www.salesforce.com/news/wp-json/wp/v2/sf_press_release/66177" /><link rel='shortlink' href='https://www.salesforce.com/news/?p=66177' />
+<!-- V: NOT SET --><!-- Stream WordPress user activity plugin v4.3.0 -->
+	<script type="text/javascript">
+		window.sfdcBase = window.sfdcBase || {};
+		if (!sfdcBase.env) window.sfdcBase.env = ({
+			'www.salesforce.com': 'PROD',
+			'www-uat1.salesforce.com': 'UAT',
+			'www-perf.salesforce.com': 'PERF',
+			'www-qa1.salesforce.com': 'QA',
+			'www-int.salesforce.com': 'INT',
+		})[location.hostname] ?? 'PROD';
+		window.sfdcBase.ssoEnabled=true;
+		var mfePlugin = {"active":true}	</script>
+			<script type="text/javascript" src="https://static.cloud.coveo.com/coveo.analytics.js/coveoua.js"></script>
+		<script>
+			coveoua("init", "xx24e65ef6-c6f0-4a55-b6b9-e7fd84967788");
+			coveoua("send", "pageview", {
+			contentIdKey: "@clickableuri",
+			contentIdValue: window.location.href
+			});
+		</script>
+
+	<link rel="icon" href="https://www.salesforce.com/news/wp-content/uploads/sites/3/2026/07/salesforce-favicon.svg?w=32" sizes="32x32" />
+<link rel="icon" href="https://www.salesforce.com/news/wp-content/uploads/sites/3/2026/07/salesforce-favicon.svg?w=192" sizes="192x192" />
+<link rel="apple-touch-icon" href="https://www.salesforce.com/news/wp-content/uploads/sites/3/2026/07/salesforce-favicon.svg?w=180" />
+<meta name="msapplication-TileImage" content="https://www.salesforce.com/news/wp-content/uploads/sites/3/2026/07/salesforce-favicon.svg?w=270" />
+<style id="wp-custom-css">
+.wp-block-image:not(.is-style-rounded) img {
+	border-radius: 1rem!important;
+}
+
+.margin-0 {
+	margin: 0!important;
+}
+
+.underline-none a {
+	text-decoration: none!important;
+}
+
+.wp-block-post-title a {
+	text-decoration: none!important;
+}
+
+.has-text-color a:hover,
+.has-text-color p {
+	color: inherit;
+}
+
+.wp-block-post-featured-image img {
+	height: inherit!important;
+}
+
+.wp-block-post-featured-image {
+	height: 0;
+}
+
+
+.anchor-link-gap {
+	margin-top: -60px;
+	padding-top: 60px;
+}
+
+.page-template-page-assets-library .collection__actions--download {
+	display: none;
+}
+
+.page-template-page-assets-library .collection__actions a:last-child:before {
+	display: none;
+}
+
+.wp-block-post-featured-image {
+  margin-top: 0;
+}
+
+/* For "Media Resources on the Future of CRM" */
+.wp-block-gallery.has-nested-images.is-cropped figure.wp-block-image:not(#individual-image) a.is-downloadable {
+	height: 24px;
+	width: 24px;
+}
+.wp-block-gallery.has-nested-images figure.wp-block-image .wp-element-caption {
+	border-radius: 0 0 1rem 1rem;
+	padding: 16px 8px;
+}
+.downloadable-image__wrapper {
+	height: 100%;
+    width: 100%;
+}
+
+
+@media screen and ( max-width: 47.9375em ) {
+  .wp-block-post-featured-image {
+    margin: 0;
+  }
+}
+
+.wp-block-post-featured-image a {
+  display: block;
+}
+
+@media (min-width: 30em) {
+	.secondary-title {
+		white-space: nowrap;
+	}
+}
+
+@media (max-width: 400px) {
+	.secondary-title{ font-size: 19px;
+	}
+}
+
+/* DF Homepage Work */
+.has-in-focus-one-gradient-background:before {
+	background: radial-gradient(circle, rgba(207,233,254,1) 4%, rgba(255,255,255,1) 83%);
+}
+
+.card--shadow-border {
+	min-height: 28rem;
+}
+
+.card--shadow-border .card__headline {
+	font-size: 1.2rem;
+}
+
+.image-asset-wrapper img {
+	object-fit: contain;
+}
+
+/* target UAT and prod page IDs for card height issue on desktop */
+.page-id-64822 .tns-inner {
+	margin-bottom: 2px !important;
+}
+
+
+@media screen and (max-width: 768px) {
+.tns-inner {
+    margin-left: 0 !important;
+	}
+	
+.wp-block-columns.are-vertically-aligned-center.is-layout-flex.wp-container-18.wp-block-columns-is-layout-flex {
+    flex-direction: column-reverse;
+	}
+	
+	.image-asset-wrapper.image-vertical-bottom.image-horizontal-left {
+    display: none;
+	}
+}
+
+@media screen and (max-width: 1024px) {
+	.image-asset-wrapper.image-vertical-bottom.image-horizontal-left {
+		display: none;
+	}
+	.cat-desktop-spacer {
+		display: none;
+	}
+	.digital-transformation-columns {
+		flex-direction: column-reverse;
+	}
+	.image-asset-wrapper.image-vertical-top.image-horizontal-right img {
+		max-height: 140px;
+		top: 200px;
+	}
+	#h-salesforce-in-focus {
+		margin-bottom: 30px;
+		max-width: 250px;
+	}
+}
+
+.slider {
+	height: fit-content;
+  padding-bottom: 20px;
+}
+.has-in-focus-one-gradient-background {
+	background: radial-gradient(circle, rgba(207,233,254,1) 2%, rgba(255,255,255,1) 50%);
+}
+
+.image-asset-wrapper.image-vertical-bottom.image-horizontal-left img {
+	max-width: 550px;
+    bottom: 55px;
+	width: 25%;
+}
+
+/* Hide Subscribe Footer on one page only */
+.page-id-68994 .newsletter-signup--footer {
+    display: none;
+}
+
+/* Make Image Compare block controller SF blue instead of white */
+.sf-blue div.jx-control {
+    color: var(--c-brand-400);
+}
+
+/* Set image modal z-index above Context Navigation to ensure close icon is accessible */
+
+.image-modal {
+	z-index: 20000 !important;
+}
+
+/* Override Content Cluster background with Data Cloud background */
+
+.has-data-cloud-background {
+		background-image: url(https://www.salesforce.com/news/wp-content/uploads/sites/3/2024/04/data-cloud-bg.png);
+}
+
+@media screen and (max-width: 1024px) {
+.has-data-cloud-background {
+	background-image: url(https://www.salesforce.com/news/wp-content/uploads/sites/3/2024/04/data-cloud-bg-mobile.png);
+	}
+}
+
+/* Override Content Cluster background with generic gradient background */
+
+.has-generic-gradient-background {
+		background-image: url(https://www.salesforce.com/news/wp-content/uploads/sites/3/2024/07/content-cluster-gradient-bg.png);
+}
+
+@media screen and (max-width: 1024px) {
+.has-generic-gradient-background {
+	background-image: url(https://www.salesforce.com/news/wp-content/uploads/sites/3/2024/07/content-cluster-gradient-bg.png);
+	}
+}
+</style>
+	
+<script>(window.BOOMR_mq=window.BOOMR_mq||[]).push(["addVar",{"rua.upush":"false","rua.cpush":"false","rua.upre":"false","rua.cpre":"false","rua.uprl":"false","rua.cprl":"false","rua.cprf":"false","rua.trans":"","rua.cook":"false","rua.ims":"false","rua.ufprl":"false","rua.cfprl":"false","rua.isuxp":"false","rua.texp":"norulematch","rua.ceh":"false","rua.ueh":"false","rua.ieh.st":"0"}]);</script>
+                                <script>!function(e){var n="https://s.go-mpulse.net/boomerang/";if("False"=="True")e.BOOMR_config=e.BOOMR_config||{},e.BOOMR_config.PageParams=e.BOOMR_config.PageParams||{},e.BOOMR_config.PageParams.pci=!0,n="https://s2.go-mpulse.net/boomerang/";if(window.BOOMR_API_key="NCPYV-VGJPP-N4J93-8HN3B-8B6S3",function(){function e(){if(!i){var e=document.createElement("script");e.id="boomr-scr-as",e.src=window.BOOMR.url,e.async=!0,o.parentNode.appendChild(e),i=!0}}function t(e){i=!0;var n,t,a,r,d=document,O=window;if(window.BOOMR.snippetMethod=e?"if":"i",t=function(e,n){var t=d.createElement("script");t.id=n||"boomr-if-as",t.src=window.BOOMR.url,BOOMR_lstart=(new Date).getTime(),e=e||d.body,e.appendChild(t)},!window.addEventListener&&window.attachEvent&&navigator.userAgent.match(/MSIE [67]\./))return window.BOOMR.snippetMethod="s",void t(o.parentNode,"boomr-async");a=document.createElement("IFRAME"),a.src="about:blank",a.title="",a.role="presentation",a.loading="eager",r=(a.frameElement||a).style,r.width=0,r.height=0,r.border=0,r.display="none",o.parentNode.appendChild(a);try{O=a.contentWindow,d=O.document.open()}catch(_){n=document.domain,a.src="javascript:var d=document.open();d.domain='"+n+"';void(0);",O=a.contentWindow,d=O.document.open()}if(n)d._boomrl=function(){this.domain=n,t()},d.write("<bo"+"dy onload='document._boomrl();'>");else if(O._boomrl=function(){t()},O.addEventListener)O.addEventListener("load",O._boomrl,!1);else if(O.attachEvent)O.attachEvent("onload",O._boomrl);d.close()}function a(e){window.BOOMR_onload=e&&e.timeStamp||(new Date).getTime()}if(!window.BOOMR||!window.BOOMR.version&&!window.BOOMR.snippetExecuted){window.BOOMR=window.BOOMR||{},window.BOOMR.snippetStart=(new Date).getTime(),window.BOOMR.snippetExecuted=!0,window.BOOMR.snippetVersion=12,window.BOOMR.url=n+"NCPYV-VGJPP-N4J93-8HN3B-8B6S3";var o=document.currentScript||document.getElementsByTagName("script")[0],i=!1,r=document.createElement("link");if(r.relList&&"function"==typeof r.relList.supports&&r.relList.supports("preload")&&"as"in r)window.BOOMR.snippetMethod="p",r.href=window.BOOMR.url,r.rel="preload",r.as="script",r.addEventListener("load",e),r.addEventListener("error",function(){t(!0)}),setTimeout(function(){if(!i)t(!0)},3e3),BOOMR_lstart=(new Date).getTime(),o.parentNode.appendChild(r);else t(!1);if(window.addEventListener)window.addEventListener("load",a,!1);else if(window.attachEvent)window.attachEvent("onload",a)}}(),"".length>0)if(e&&"performance"in e&&e.performance&&"function"==typeof e.performance.setResourceTimingBufferSize)e.performance.setResourceTimingBufferSize();!function(){if(BOOMR=e.BOOMR||{},BOOMR.plugins=BOOMR.plugins||{},!BOOMR.plugins.AK){var n=""=="true"?1:0,t="",a="naopg2ix3gees2wilzxa-f-195c97d49-clientnsv4-s.akamaihd.net",o="false"=="true"?2:1,i={"ak.v":"41","ak.cp":"1093204","ak.ai":parseInt("638429",10),"ak.ol":"0","ak.cr":0,"ak.ipv":4,"ak.proto":"h2","ak.rid":"ea4f770","ak.r":50728,"ak.a2":n,"ak.m":"dsca","ak.n":"essl","ak.cport":63397,"ak.gh":"23.217.102.50","ak.quicv":"","ak.tlsv":"tls1.3","ak.0rtt":"","ak.0rtt.ed":"","ak.csrc":"-","ak.acc":"","ak.t":"1791516270","ak.ak":"hOBiQwZUYzCg5VSAfCLimQ==zzU7++8+MwtRogXtzI5FXHVLd2vwliFGxzJeMiXH9e8vDj4wLoa6S1jaquS3jfaCL/M5MF7MN9Y5wvPtWJfEv8dJJZKYY+QIY77SR6OYQ76wAwyGNnTu16hfLD7R1+Blz1gbyxCKK5Da0OtHKsDPhpNNLL8CyiuUcNn68gmLINcEcXi3urHm4fcHOyY1ZkyqnpQPdN3LbDWNZwZZ5l8DBHeKjLWw0c2IBMUHl0DBHvGBYlCNPQBo+A4v3+u2LTq6CUjQkPcd87R6DnZLihsvi07xNgGhCRd0+3fQ5zDLtR/W7w+oAsbOOFeQ64T1Erok4ZDvxpkiwQRr5TybVvP4xU49uCws8UUidG+ivuiJI3qfFDFyX0lRZWDEV2O7ZRaEmzDIXuSttjKKlp4fgo09lgirNJf1nZzjCcTVg0HJOLM=","ak.pv":"1182","ak.dpoabenc":"","ak.tf":o};if(""!==t)i["ak.ruds"]=t;var r={i:!1,av:function(n){var t="http.initiator";if(n&&(!n[t]||"spa_hard"===n[t]))i["ak.feo"]=void 0!==e.aFeoApplied?1:0,BOOMR.addVar(i)},rv:function(){var e=["ak.cport","ak.cr","ak.csrc","ak.gh","ak.ipv","ak.m","ak.n","ak.ol","ak.proto","ak.quicv","ak.tlsv","ak.0rtt","ak.0rtt.ed","ak.r","ak.acc","ak.t","ak.tf"];BOOMR.removeVar(e)}};BOOMR.plugins.AK={akVars:i,akDNSPreFetchDomain:a,init:function(){if(!r.i){var e=BOOMR.subscribe;e("before_beacon",r.av,null,null),e("onbeacon",r.rv,null,null),r.i=!0}return this},is_complete:function(){return!0}}}}()}(window);</script></head>
+	<body class="wp-singular sf_press_release-template-default single single-sf_press_release postid-66177 wp-theme-newsroom theme-newsroom has-context-nav cxt-has-fixed-nav">
+			<a href="#main-content" class="screen-reader-text-content">
+		<div class="screen-reader-container">
+			Skip to Content		</div>
+	</a>
+
+			<hgf-c360nav
+			id="c360-hgf-nav"
+			search="false"
+			origin="https://wp.sfdcdigital.com/en-us/wp-json"
+			show-region-selector="true"
+			home-href="/"
+			context-nav-enabled="true"
+			locale="us"
+							show-button-main="true"
+				button-override-main-label="Try for Free"
+				button-override-main-href="https://www.salesforce.com/form/signup/freetrial-salesforce-starter/?d=pb"
+				button-override-main-target="_blank"
+				button-override-main-variant="trial"
+								>
+		</hgf-c360nav>
+
+		<script>
+			const navElement = document.getElementById('c360-hgf-nav');
+
+			/**
+			 * Extract values from the "ak_loc" cookie that is set on the Salesforce sites.
+			 *
+			 * @param {string} key The key of the value to return. If empty, the entire cookie value is returned.
+			 *
+			 * @returns {string|undefined}
+			 */
+			const getLocaleCookieValue = (key) => {
+				// Get the value for the ak_loc cookie if it exists.
+				const cookieValue = document.cookie
+					.split('; ')
+					.find((row) => row.startsWith('ak_loc='))
+					?.split('=')[1];
+
+				if ('string' !== typeof cookieValue) {
+					return;
+				}
+
+				if (!key) {
+					return cookieValue;
+				}
+
+				// Parse the cookie to get the value for one of the key/value pairs within it. Example cookie for a visitor in London: cc:GB,ct:LONDON,st:EN,msa:EN,pmsa:EN
+				const countryValue = cookieValue
+					.split(',')
+					.find((row) => row.startsWith(`${key}:`))
+					?.split(':')[1];
+
+				return countryValue.toLowerCase();
+			};
+
+			/**
+			 * Potentially override the global nav based on the country value in the "ak_loc" cookie.
+			 * The only use case for this functionality at the moment is showing the UK nav on the
+			 * EU blog site when visiting from Great Britain.
+			 */
+			const maybeOverrideGlobalNav = () => {
+				if (!navElement) {
+					return;
+				}
+
+				const siteLocale = 'us';
+				const localeLangMapping = {"au":"en-au","uk":"en-gb","gb":"en-gb","br":"pt-br","de":"de-de","ap":"en-ap","in":"en-in","jp":"ja-jp","mx":"es-mx","ca":"en-ca","es":"es-es","eu":"en-eu","fr":"fr-fr","it":"it-it","nl":"nl-nl","il":"en-eu","se":"sv-se","kr":"ko-kr"};
+				const navOriginUrlPattern = 'https://wp.sfdcdigital.com/%s/wp-json';
+
+				// Get the value for the "cc" (country) key within the "ak_loc" cookie.
+				let countryCookieValue = getLocaleCookieValue('cc');
+
+				if (!countryCookieValue || 'string' !== typeof countryCookieValue) {
+					return;
+				}
+
+				// If the country value is not "gb" or "uk", do nothing.
+				if (!['gb', 'uk'].includes(countryCookieValue)) {
+					return;
+				}
+
+				const navOriginUrl = navOriginUrlPattern.replace('%s', localeLangMapping[countryCookieValue]);
+				const replacementNav = navElement.cloneNode(true);
+				replacementNav.setAttribute('origin', navOriginUrl);
+				replacementNav.setAttribute('locale', 'uk');
+
+				navElement.replaceWith(replacementNav);
+			};
+
+			/**
+			 * Register events.
+			 */
+			const registerEvents = () => {
+				if (!navElement) {
+					return;
+				}
+
+				const addTrackingEvent = function (event) {
+					if (event.detail && event.detail.event) {
+						dataLayer.push(event.detail)
+					}
+				};
+
+				document.addEventListener("www_track", addTrackingEvent, false);
+			};
+
+			maybeOverrideGlobalNav();
+			registerEvents();
+		</script>
+			<!-- Google Tag Manager (noscript) -->
+		<noscript>
+			<iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WRXS6TH" height="0" width="0" style="display:none;visibility:hidden"></iframe>
+		</noscript>
+		<!-- End Google Tag Manager (noscript) -->
+			<div class="context-nav-wrapper">
+		<hgf-c360contextnav data="{&quot;isLogoEnabled&quot;:true,&quot;variation&quot;:&quot;static&quot;,&quot;propertyTitle&quot;:{&quot;label&quot;:&quot;News &amp; Insights&quot;,&quot;ariaLabel&quot;:&quot;News &amp; Insights&quot;,&quot;url&quot;:&quot;/news/&quot;,&quot;target&quot;:&quot;&quot;},&quot;propertyLogo&quot;:{&quot;src&quot;:&quot;https://a.sfdcstatic.com/shared/images/c360-nav/mobile_logo.png&quot;,&quot;alt&quot;:&quot;Property Logo&quot;},&quot;menuGroup&quot;:{&quot;menuItems&quot;:[{&quot;ID&quot;:76742,&quot;link&quot;:{&quot;label&quot;:&quot;Latest&quot;,&quot;ariaLabel&quot;:&quot;Latest&quot;,&quot;url&quot;:&quot;/news/&quot;,&quot;target&quot;:&quot;_self&quot;}},{&quot;ID&quot;:76743,&quot;title&quot;:&quot;News&quot;,&quot;submenu&quot;:[{&quot;ID&quot;:&quot;4&quot;,&quot;menuItems&quot;:[{&quot;ID&quot;:76744,&quot;link&quot;:{&quot;label&quot;:&quot;All News&quot;,&quot;ariaLabel&quot;:&quot;All News&quot;,&quot;url&quot;:&quot;https://www.salesforce.com/news/all-news/&quot;,&quot;target&quot;:&quot;_self&quot;}},{&quot;ID&quot;:81608,&quot;link&quot;:{&quot;label&quot;:&quot;Salesforce Platform&quot;,&quot;ariaLabel&quot;:&quot;Salesforce Platform&quot;,&quot;url&quot;:&quot;https://www.salesforce.com/news/products/salesforce-platform/&quot;,&quot;target&quot;:&quot;_self&quot;}},{&quot;ID&quot;:76746,&quot;link&quot;:{&quot;label&quot;:&quot;Agentforce&quot;,&quot;ariaLabel&quot;:&quot;Agentforce&quot;,&quot;url&quot;:&quot;https://www.salesforce.com/news/products/agentforce/&quot;,&quot;target&quot;:&quot;_self&quot;}},{&quot;ID&quot;:93302,&quot;link&quot;:{&quot;label&quot;:&quot;Data 360&quot;,&quot;ariaLabel&quot;:&quot;Data 360&quot;,&quot;url&quot;:&quot;https://www.salesforce.com/news/products/data-360/&quot;,&quot;target&quot;:&quot;_self&quot;}},{&quot;ID&quot;:76749,&quot;link&quot;:{&quot;label&quot;:&quot;Customer 360 Apps&quot;,&quot;ariaLabel&quot;:&quot;Customer 360 Apps&quot;,&quot;url&quot;:&quot;https://www.salesforce.com/news/products/customer-360/&quot;,&quot;target&quot;:&quot;_self&quot;}},{&quot;ID&quot;:76748,&quot;link&quot;:{&quot;label&quot;:&quot;Slack&quot;,&quot;ariaLabel&quot;:&quot;Slack&quot;,&quot;url&quot;:&quot;https://slack.com/blog/news&quot;,&quot;target&quot;:&quot;_blank&quot;}}]}]},{&quot;ID&quot;:76751,&quot;title&quot;:&quot;Topics&quot;,&quot;submenu&quot;:[{&quot;ID&quot;:&quot;5&quot;,&quot;menuItems&quot;:[{&quot;ID&quot;:76752,&quot;link&quot;:{&quot;label&quot;:&quot;All Topics&quot;,&quot;ariaLabel&quot;:&quot;All Topics&quot;,&quot;url&quot;:&quot;https://www.salesforce.com/news/all-stories/&quot;,&quot;target&quot;:&quot;_self&quot;}},{&quot;ID&quot;:94057,&quot;link&quot;:{&quot;label&quot;:&quot;Agents&quot;,&quot;ariaLabel&quot;:&quot;Agents&quot;,&quot;url&quot;:&quot;https://www.salesforce.com/news/topics/agents/&quot;,&quot;target&quot;:&quot;_self&quot;}},{&quot;ID&quot;:94058,&quot;link&quot;:{&quot;label&quot;:&quot;Digital Transformation&quot;,&quot;ariaLabel&quot;:&quot;Digital Transformation&quot;,&quot;url&quot;:&quot;https://www.salesforce.com/news/topics/digital-transformation/&quot;,&quot;target&quot;:&quot;_self&quot;}},{&quot;ID&quot;:94059,&quot;link&quot;:{&quot;label&quot;:&quot;Customer Success&quot;,&quot;ariaLabel&quot;:&quot;Customer Success&quot;,&quot;url&quot;:&quot;https://www.salesforce.com/news/topics/customer-success/&quot;,&quot;target&quot;:&quot;_self&quot;}},{&quot;ID&quot;:94060,&quot;link&quot;:{&quot;label&quot;:&quot;Future of Work&quot;,&quot;ariaLabel&quot;:&quot;Future of Work&quot;,&quot;url&quot;:&quot;https://www.salesforce.com/news/topics/future-of-work/&quot;,&quot;target&quot;:&quot;_self&quot;}},{&quot;ID&quot;:76755,&quot;link&quot;:{&quot;label&quot;:&quot;Stakeholder Capitalism&quot;,&quot;ariaLabel&quot;:&quot;Stakeholder Capitalism&quot;,&quot;url&quot;:&quot;/news/topics/business-as-a-platform-for-change/&quot;,&quot;target&quot;:&quot;_self&quot;}}]}]},{&quot;ID&quot;:76758,&quot;title&quot;:&quot;Press Resources&quot;,&quot;submenu&quot;:[{&quot;ID&quot;:&quot;6&quot;,&quot;menuItems&quot;:[{&quot;ID&quot;:78876,&quot;link&quot;:{&quot;label&quot;:&quot;Search All Articles&quot;,&quot;ariaLabel&quot;:&quot;Search All Articles&quot;,&quot;url&quot;:&quot;https://www.salesforce.com/news/news-explorer/&quot;,&quot;target&quot;:&quot;_self&quot;}},{&quot;ID&quot;:76760,&quot;link&quot;:{&quot;label&quot;:&quot;Press Releases &amp; News Announcements&quot;,&quot;ariaLabel&quot;:&quot;Press Releases &amp; News Announcements&quot;,&quot;url&quot;:&quot;/news/press-releases/&quot;,&quot;target&quot;:&quot;_self&quot;}},{&quot;ID&quot;:82369,&quot;link&quot;:{&quot;label&quot;:&quot;Media Library&quot;,&quot;ariaLabel&quot;:&quot;Media Library&quot;,&quot;url&quot;:&quot;https://www.salesforce.com/news/media-library/&quot;,&quot;target&quot;:&quot;_self&quot;}},{&quot;ID&quot;:76762,&quot;link&quot;:{&quot;label&quot;:&quot;Stat Library&quot;,&quot;ariaLabel&quot;:&quot;Stat Library&quot;,&quot;url&quot;:&quot;/news/stat-library/&quot;,&quot;target&quot;:&quot;_self&quot;}},{&quot;ID&quot;:76763,&quot;link&quot;:{&quot;label&quot;:&quot;History&quot;,&quot;ariaLabel&quot;:&quot;History&quot;,&quot;url&quot;:&quot;/news/stories/the-history-of-salesforce/&quot;,&quot;target&quot;:&quot;_self&quot;}},{&quot;ID&quot;:76764,&quot;link&quot;:{&quot;label&quot;:&quot;Executive Leadership&quot;,&quot;ariaLabel&quot;:&quot;Executive Leadership&quot;,&quot;url&quot;:&quot;https://www.salesforce.com/company/leadership/&quot;,&quot;target&quot;:&quot;_blank&quot;}},{&quot;ID&quot;:76765,&quot;link&quot;:{&quot;label&quot;:&quot;Investor Relations&quot;,&quot;ariaLabel&quot;:&quot;Investor Relations&quot;,&quot;url&quot;:&quot;https://investor.salesforce.com/&quot;,&quot;target&quot;:&quot;_blank&quot;}},{&quot;ID&quot;:76766,&quot;link&quot;:{&quot;label&quot;:&quot;Research Reports&quot;,&quot;ariaLabel&quot;:&quot;Research Reports&quot;,&quot;url&quot;:&quot;https://www.salesforce.com/resources/research-reports/&quot;,&quot;target&quot;:&quot;_blank&quot;}}]}]},{&quot;ID&quot;:76768,&quot;link&quot;:{&quot;label&quot;:&quot;The 360 Blog&quot;,&quot;ariaLabel&quot;:&quot;The 360 Blog&quot;,&quot;url&quot;:&quot;/blog/&quot;,&quot;target&quot;:&quot;_blank&quot;}}]},&quot;utilityNavigation&quot;:{&quot;inMobileHeader&quot;:false,&quot;ctasecondary&quot;:{&quot;cta&quot;:{&quot;label&quot;:&quot;Newsletter&quot;,&quot;ariaLabel&quot;:&quot;Newsletter&quot;,&quot;url&quot;:&quot;&quot;,&quot;target&quot;:&quot;&quot;,&quot;variant&quot;:&quot;secondary&quot;}}}}"></hgf-c360contextnav>
+	</div>
+	
+		<a href="#footer" class="screen-reader-text-content">
+			<div class="screen-reader-container">
+				Skip to Footer			</div>
+		</a>
+
+		
+		<main id="main-content">
+<div class="sf-progress-indicator" id="progress-indicator">
+	<progress class="sf-progress-indicator__percentage screen-reader-hidden" id="progress-indicator-percentage" max="100" value="0" aria-label="Article progress">0%</progress>
+</div>
+		<article class="single single--article layout layout--post">
+			<div class="single__header layout__column layout__column--top">
+				
+<header class="post__header">
+	<div class="container">
+		<div class="hero-v2 hero-v2--">
+
+			<div class="hero__taxonomies">
+
+				
+<a href="https://www.salesforce.com/news/topics/company-news/" class="sf-tag topic topic--company-news sf-tag--company-news" aria-label="Filed under Company News">
+	Company News</a>
+			</div>
+
+			<h1 class="h2">Salesforce Announces Strong First Quarter Fiscal 2024 Results</h1>
+
+			<article class="card card--list card--authors card--authors-0">
+			<div class="card__contents card__contents--row">
+			<div class="card__meta">
+					<script>
+		window.dataLayer = window.dataLayer || [];
+		dataLayer.push({
+			'event': 'publishDate',
+			'publishDate': '2023-05-31'
+		});
+	</script>
+<div class="post__info">
+			<time class="post__date label" datetime="2023-05-31">May 31, 2023</time>
+				<span class="post__reading-time label">
+			4 min read		</span>
+	</div>
+			</div>
+		</div>
+	</article>
+
+			<div class="hero-v2__ornaments-container">
+				<figure class="hero-v2__image"><span class="img-object-fit"><img src="https://www.salesforce.com/news/wp-content/uploads/sites/3/2023/05/q1-newsroom-tile-1200x675-1.jpg?w=300" sizes="(min-width: 48em) 500px, 100vw" srcset="https://www.salesforce.com/news/wp-content/uploads/sites/3/2023/05/q1-newsroom-tile-1200x675-1.jpg 1200w, https://www.salesforce.com/news/wp-content/uploads/sites/3/2023/05/q1-newsroom-tile-1200x675-1.jpg?w=300&amp;h=169 300w, https://www.salesforce.com/news/wp-content/uploads/sites/3/2023/05/q1-newsroom-tile-1200x675-1.jpg?w=768&amp;h=432 768w, https://www.salesforce.com/news/wp-content/uploads/sites/3/2023/05/q1-newsroom-tile-1200x675-1.jpg?w=1024&amp;h=576 1024w, https://www.salesforce.com/news/wp-content/uploads/sites/3/2023/05/q1-newsroom-tile-1200x675-1.jpg?w=264&amp;h=149 264w, https://www.salesforce.com/news/wp-content/uploads/sites/3/2023/05/q1-newsroom-tile-1200x675-1.jpg?w=500&amp;h=281 500w, https://www.salesforce.com/news/wp-content/uploads/sites/3/2023/05/q1-newsroom-tile-1200x675-1.jpg?w=150&amp;h=84 150w, https://www.salesforce.com/news/wp-content/uploads/sites/3/2023/05/q1-newsroom-tile-1200x675-1.jpg?w=314&amp;h=177 314w, https://www.salesforce.com/news/wp-content/uploads/sites/3/2023/05/q1-newsroom-tile-1200x675-1.jpg?w=343&amp;h=193 343w" alt="" loading="eager" fetchpriority="high" /></span></figure>			</div>
+
+			<div class="media-buttons">
+		<a href="https://www.salesforce.com/news/media-library/" class="button-download" target="_blank" rel="noopener noreferrer">
+		<svg xmlns="http://www.w3.org/2000/svg" width="13" height="10" fill="none"><path fill="currentColor" fill-rule="evenodd" d="M2.442 7.096h3a.355.355 0 0 0 .346-.346V1.327c0-.392-.415-.692-.738-.692H2.442a.355.355 0 0 0-.346.346V6.75c0 .185.161.346.346.346Zm9.162-5.4c-.139-.046-.277.07-.277.23v5.747a.355.355 0 0 1-.346.346H1.519a.355.355 0 0 1-.346-.346V1.95c0-.162-.185-.277-.323-.208-.346.162-.6.531-.6.97v5.307c0 .508.415.923.923.923h3.808c.184 0 .346.162.346.346 0 .185.161.347.346.347h1.154a.355.355 0 0 0 .346-.347c0-.184.162-.346.346-.346h3.808a.926.926 0 0 0 .923-.923V2.712c0-.485-.162-.9-.646-1.016Zm-4.546 5.4h3a.355.355 0 0 0 .346-.346V.98a.355.355 0 0 0-.346-.345H7.45c-.346 0-.739.3-.739.692V6.75c0 .185.162.346.347.346Z" clip-rule="evenodd" /></svg>
+		Media Library	</a>
+</div>
+		</div>
+	</div>
+</header>
+			</div>
+
+			<section class="layout__column--content">
+				
+<p class="wp-block-paragraph"><strong>San Francisco <strong>—</strong> May 31, 2023 &#8211;</strong> Salesforce (NYSE: CRM), the global leader in CRM, today announced results for its first quarter fiscal 2024 ended April 30, 2023.</p>
+
+
+
+<ul class="wp-block-list">
+<li><strong>First Quarter Revenue of $8.25 Billion, up 11% Year-Over-Year (&#8220;Y/Y&#8221;), up 13% Constant Currency (&#8220;CC&#8221;)</strong></li>
+
+
+
+<li><strong>First Quarter GAAP Operating Margin of 5.0% and Non-GAAP Operating Margin of 27.6%</strong></li>
+
+
+
+<li><strong>Current Remaining Performance Obligation of $24.1 Billion, up 12% Y/Y, 12% CC</strong></li>
+
+
+
+<li><strong>First Quarter GAAP Diluted Earnings per Share (&#8220;EPS&#8221;) of $0.20 and Non-GAAP Diluted EPS of $1.69</strong></li>
+
+
+
+<li><strong>Returned $2.1 Billion in First Quarter to Stockholders in the Form of Share Repurchases</strong></li>
+
+
+
+<li><strong>Initiates Second Quarter FY24 Revenue Guidance of $8.51 Billion to $8.53 Billion, up ~10% Y/Y</strong></li>
+
+
+
+<li><strong>Reiterates Full Year FY24 Revenue Guidance of $34.5 Billion to $34.7 Billion, up ~10% Y/Y</strong></li>
+
+
+
+<li><strong>Raises Full Year FY24 GAAP Operating Margin Guidance to ~11.4% and Non-GAAP Operating Margin Guidance to ~28.0%</strong></li>
+</ul>
+
+
+
+<p class="wp-block-paragraph">“Salesforce significantly exceeded our non-GAAP margin target for the quarter — up 1,000 basis points year-over-year, and we are raising our FY24 non-GAAP operating margin guidance to a 550 basis point increase year-over-year,” said Marc Benioff, Chair and CEO of Salesforce. “At the same time, we are leading the next major revolution in CRM — infusing trusted, secure generative AI across our entire product portfolio. Salesforce&#8217;s generative AI ecosystem wields Einstein GPT, Slack GPT, and Tableau GPT, delivering trusted power across our product portfolio. Our Salesforce GPT Trust Layer will shield customer data, enabling productive automation and intelligent enterprise enhancements securely.”</p>
+
+
+
+<blockquote class="wp-block-quote is-layout-flow wp-block-quote-is-layout-flow">
+<p class="wp-block-paragraph">At the same time, we are leading the next major revolution in CRM — infusing trusted, secure generative AI across our entire product portfolio. Salesforce&#8217;s generative AI ecosystem wields Einstein GPT, Slack GPT, and Tableau GPT, delivering trusted power across our product portfolio.</p>
+<cite>Marc Benioff, Chair and CEO of Salesforce</cite></blockquote>
+
+
+
+<p class="wp-block-paragraph">&#8220;Q1 represented another strong step forward as we accelerate our transformation and profitable growth strategy,” said Amy Weaver, President and CFO of Salesforce. “Our team delivered another double-digit growth quarter on the top and bottom line as we help customers increase productivity, drive efficiency, and become AI-first companies.&#8221;</p>
+
+
+
+<p class="wp-block-paragraph">Salesforce delivered the following results for its fiscal first quarter:</p>
+
+
+
+<ul class="wp-block-list">
+<li><strong>Revenue</strong>: Total first quarter revenue was $8.25 billion, an increase of 11% Y/Y, and 13% CC. Subscription and support revenues were $7.64 billion, an increase of 11% Y/Y. Professional services and other revenues were $0.61 billion, an increase of 9% Y/Y.</li>
+
+
+
+<li><strong>Operating Margin: </strong>First quarter GAAP operating margin was 5.0%. First quarter non-GAAP operating margin was 27.6%. Restructuring impacted first quarter GAAP operating margin by (860) bps.</li>
+
+
+
+<li><strong>Earnings per Share</strong>: First quarter GAAP diluted earnings per share was $0.20, and non-GAAP diluted EPS was $1.69. Losses on the Company’s strategic investments negatively impacted GAAP diluted earnings per share by $(0.11) based on a U.S. tax rate of 25% and non-GAAP diluted EPS by $(0.11) based on a non-GAAP tax rate of 23.5%. Restructuring impacted first quarter GAAP diluted earnings per share by (72) cents.</li>
+
+
+
+<li><strong>Cash Flow</strong>: Cash generated from operations for the first quarter was $4.49 billion, an increase of 22% Y/Y. Free cash flow was $4.25 billion, an increase of 21% Y/Y. Restructuring impacted first quarter operating cash flow growth by (910) bps.</li>
+
+
+
+<li><strong>Remaining Performance Obligation</strong>: Remaining performance obligation ended the first quarter at $46.7 billion, an increase of 11% Y/Y. Current remaining performance obligation ended at $24.1 billion, an increase of 12% Y/Y, and 12% CC.</li>
+</ul>
+
+
+
+<h2 class="wp-block-heading" id="h-forward-looking-guidance">Forward Looking Guidance</h2>
+
+
+
+<p class="wp-block-paragraph">As of May 31, 2023, the Company is initiating its second quarter GAAP and non-GAAP EPS guidance, current remaining performance obligation growth guidance, and revenue guidance. The Company is reiterating its full year FY24 revenue guidance and updating its GAAP and non-GAAP EPS guidance, GAAP and non-GAAP operating margin guidance, and operating cash flow guidance.</p>
+
+
+
+<p class="wp-block-paragraph">Our guidance assumes no change to the value of the Company&#8217;s strategic investment portfolio as it is not possible to forecast future gains and losses. In addition, the guidance below is based on estimated GAAP tax rates that reflect the Company’s currently available information, and excludes forecasted discrete tax items such as the tax effects of stock-based compensation. The GAAP tax rates may fluctuate due to discrete tax items and related effects in conjunction with certain provisions in the Tax Cuts and Jobs Act, future acquisitions or other transactions.</p>
+
+
+<div class="wp-block-image"><div class="wp-block-image__wrapper">
+<figure class="aligncenter size-large prevent-download"><a href="#" class="wp-block-image__modal-toggle" aria-expanded="false" data-modal-id="66190-modal"><span class="screen-reader-text">Open Image Modal</span><img loading="lazy" decoding="async" height="994" width="1024" src="https://www.salesforce.com/news/wp-content/uploads/sites/3/2023/05/1-1.png?w=1024" alt="" class="wp-image-66190" srcset="https://www.salesforce.com/news/wp-content/uploads/sites/3/2023/05/1-1.png 1036w, https://www.salesforce.com/news/wp-content/uploads/sites/3/2023/05/1-1.png?w=300&amp;h=291 300w, https://www.salesforce.com/news/wp-content/uploads/sites/3/2023/05/1-1.png?w=768&amp;h=746 768w, https://www.salesforce.com/news/wp-content/uploads/sites/3/2023/05/1-1.png?w=1024&amp;h=994 1024w, https://www.salesforce.com/news/wp-content/uploads/sites/3/2023/05/1-1.png?w=264&amp;h=256 264w, https://www.salesforce.com/news/wp-content/uploads/sites/3/2023/05/1-1.png?w=376&amp;h=365 376w, https://www.salesforce.com/news/wp-content/uploads/sites/3/2023/05/1-1.png?w=150&amp;h=146 150w, https://www.salesforce.com/news/wp-content/uploads/sites/3/2023/05/1-1.png?w=199&amp;h=193 199w" sizes="auto, (max-width: 1024px) 100vw, 1024px" /></a></figure>
+<div id="66190-modal" class="image-modal" aria-hidden="true" aria-labelledby="image-dialog-title"><div class="image-modal__overlay" tabindex="-1" data-a11y-dialog-hide></div><div class="image-modal__content" role="dialog"><button class="image-modal__close-button" type="button" data-a11y-dialog-hide aria-label="Close this image dialog window"><svg viewBox="0 0 26 25" height="16" width="16" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><rect x=".626" y="22.753" width="32" height="3" rx="1.5" transform="rotate(-45 .626 22.753)"/><rect x="2.747" y=".125" width="32" height="3" rx="1.5" transform="rotate(45 2.747 .125)"/></svg></button><h1 id="image-dialog-title" class="screen-reader-text">Image Modal</h1>
+<figure class="wp-block-image aligncenter size-large prevent-download"><img loading="lazy" decoding="async" width="1036" height="1006" src="https://www.salesforce.com/news/wp-content/uploads/sites/3/2023/05/1-1.png?w=1024" alt="" class="wp-image-66190" srcset="https://www.salesforce.com/news/wp-content/uploads/sites/3/2023/05/1-1.png 1036w, https://www.salesforce.com/news/wp-content/uploads/sites/3/2023/05/1-1.png?w=300&amp;h=291 300w, https://www.salesforce.com/news/wp-content/uploads/sites/3/2023/05/1-1.png?w=768&amp;h=746 768w, https://www.salesforce.com/news/wp-content/uploads/sites/3/2023/05/1-1.png?w=1024&amp;h=994 1024w, https://www.salesforce.com/news/wp-content/uploads/sites/3/2023/05/1-1.png?w=264&amp;h=256 264w, https://www.salesforce.com/news/wp-content/uploads/sites/3/2023/05/1-1.png?w=376&amp;h=365 376w, https://www.salesforce.com/news/wp-content/uploads/sites/3/2023/05/1-1.png?w=150&amp;h=146 150w, https://www.salesforce.com/news/wp-content/uploads/sites/3/2023/05/1-1.png?w=199&amp;h=193 199w" sizes="auto, (max-width: 1036px) 100vw, 1036px" /></figure>
+</div></div></div></div>
+
+
+<p class="wp-block-paragraph">The following is a per share reconciliation of GAAP diluted earnings per share to non-GAAP diluted earnings per share guidance for the next quarter and the full year:</p>
+
+
+<div class="wp-block-image__wrapper">
+<figure class="wp-block-image size-large prevent-download"><a href="#" class="wp-block-image__modal-toggle" aria-expanded="false" data-modal-id="66192-modal"><span class="screen-reader-text">Open Image Modal</span><img loading="lazy" decoding="async" height="611" width="1024" src="https://www.salesforce.com/news/wp-content/uploads/sites/3/2023/05/3-1.png?w=1024" alt="" class="wp-image-66192" srcset="https://www.salesforce.com/news/wp-content/uploads/sites/3/2023/05/3-1.png 1046w, https://www.salesforce.com/news/wp-content/uploads/sites/3/2023/05/3-1.png?w=300&amp;h=179 300w, https://www.salesforce.com/news/wp-content/uploads/sites/3/2023/05/3-1.png?w=768&amp;h=458 768w, https://www.salesforce.com/news/wp-content/uploads/sites/3/2023/05/3-1.png?w=1024&amp;h=611 1024w, https://www.salesforce.com/news/wp-content/uploads/sites/3/2023/05/3-1.png?w=264&amp;h=157 264w, https://www.salesforce.com/news/wp-content/uploads/sites/3/2023/05/3-1.png?w=500&amp;h=298 500w, https://www.salesforce.com/news/wp-content/uploads/sites/3/2023/05/3-1.png?w=150&amp;h=89 150w, https://www.salesforce.com/news/wp-content/uploads/sites/3/2023/05/3-1.png?w=324&amp;h=193 324w" sizes="auto, (max-width: 1024px) 100vw, 1024px" /></a></figure>
+<div id="66192-modal" class="image-modal" aria-hidden="true" aria-labelledby="image-dialog-title"><div class="image-modal__overlay" tabindex="-1" data-a11y-dialog-hide></div><div class="image-modal__content" role="dialog"><button class="image-modal__close-button" type="button" data-a11y-dialog-hide aria-label="Close this image dialog window"><svg viewBox="0 0 26 25" height="16" width="16" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><rect x=".626" y="22.753" width="32" height="3" rx="1.5" transform="rotate(-45 .626 22.753)"/><rect x="2.747" y=".125" width="32" height="3" rx="1.5" transform="rotate(45 2.747 .125)"/></svg></button><h1 id="image-dialog-title" class="screen-reader-text">Image Modal</h1>
+<figure class="wp-block-image size-large prevent-download"><img loading="lazy" decoding="async" width="1046" height="624" src="https://www.salesforce.com/news/wp-content/uploads/sites/3/2023/05/3-1.png?w=1024" alt="" class="wp-image-66192" srcset="https://www.salesforce.com/news/wp-content/uploads/sites/3/2023/05/3-1.png 1046w, https://www.salesforce.com/news/wp-content/uploads/sites/3/2023/05/3-1.png?w=300&amp;h=179 300w, https://www.salesforce.com/news/wp-content/uploads/sites/3/2023/05/3-1.png?w=768&amp;h=458 768w, https://www.salesforce.com/news/wp-content/uploads/sites/3/2023/05/3-1.png?w=1024&amp;h=611 1024w, https://www.salesforce.com/news/wp-content/uploads/sites/3/2023/05/3-1.png?w=264&amp;h=157 264w, https://www.salesforce.com/news/wp-content/uploads/sites/3/2023/05/3-1.png?w=500&amp;h=298 500w, https://www.salesforce.com/news/wp-content/uploads/sites/3/2023/05/3-1.png?w=150&amp;h=89 150w, https://www.salesforce.com/news/wp-content/uploads/sites/3/2023/05/3-1.png?w=324&amp;h=193 324w" sizes="auto, (max-width: 1046px) 100vw, 1046px" /></figure>
+</div></div></div>
+
+
+<p class="wp-block-paragraph">For additional information regarding non-GAAP financial measures see the reconciliation of results and related explanations below.</p>
+
+
+
+<p class="wp-block-paragraph">Management will provide further commentary around these guidance assumptions on its earnings call.</p>
+
+
+
+<h4 class="wp-block-heading">Product Releases and Enhancements</h4>
+
+
+
+<p class="wp-block-paragraph">Three times a year Salesforce delivers new product releases, services, or enhancements to current products and services. These releases are a result of significant research and development investments made over multiple years, designed to help customers drive cost savings, boost efficiency, and build trust.</p>
+
+
+
+<p class="wp-block-paragraph">To view our major product releases and other highlights as part of the Spring&#8217;23 Product Release, visit: www.salesforce.com/products/innovation/spring-23-release/</p>
+
+
+
+<h4 class="wp-block-heading">Quarterly Conference Call </h4>
+
+
+
+<p class="wp-block-paragraph">Salesforce plans to host a conference call at 2:00 p.m. (PT) / 5:00 p.m. (ET) to discuss its financial results with the investment community. A live webcast and replay details of the event will be available on the Salesforce Investor Relations website at www.salesforce.com/investor. </p>
+			</section>
+
+			<div class="layout__column layout__column--right-sidebar-top layout__column--has-newsletter-cta">
+				
+<div class="post__social post__social--v2 post__social--top post__social--has-title post__social--title-position-above">
+
+			<h2 class="screen-reader-mobile-only post__social-title">Share article</h2>
+	
+	<ul class="social-nav social-nav-v2">
+					<li class="social-nav__item">
+				<a
+					aria-label="Share on LinkedIn (Opens in a new tab)"
+					href="http://www.linkedin.com/shareArticle?mini=true&#038;url=https%3A%2F%2Fwww.salesforce.com%2Fnews%2Fpress-releases%2F2023%2F05%2F31%2Ffy24-q1-earnings%2F%3Futm_source%3DLinkedIn%26utm_medium%3Dorganic_social%26utm_campaign%3Dus_cbaw%26utm_content%3Dnewsroom-ctt&#038;title=Salesforce%20Announces%20Strong%20First%20Quarter%20Fiscal%202024%20Results"
+					target="_blank"
+				>
+					
+<svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" fill="none"><path fill="#032D60" d="M16.625 0H4.375A4.375 4.375 0 0 0 0 4.375v12.25A4.375 4.375 0 0 0 4.375 21h12.25A4.375 4.375 0 0 0 21 16.625V4.375A4.375 4.375 0 0 0 16.625 0M7 16.625H4.375V7H7zM5.687 5.89a1.54 1.54 0 0 1-1.53-1.543c0-.852.685-1.544 1.53-1.544.846 0 1.532.692 1.532 1.544S6.534 5.89 5.687 5.89M17.5 16.625h-2.625v-4.903c0-2.947-3.5-2.724-3.5 0v4.903H8.75V7h2.625v1.544c1.222-2.262 6.125-2.43 6.125 2.167z" /></svg>
+				</a>
+			</li>
+					<li class="social-nav__item">
+				<a
+					aria-label="Share on Twitter (Opens in a new tab)"
+					href="https://x.com/intent/tweet?text=Salesforce%20Announces%20Strong%20First%20Quarter%20Fiscal%202024%20Results&#038;url=https%3A%2F%2Fwww.salesforce.com%2Fnews%2Fpress-releases%2F2023%2F05%2F31%2Ffy24-q1-earnings%2F%3Futm_source%3DX%26utm_medium%3Dorganic_social%26utm_campaign%3Dus_cbaw%26utm_content%3Dnewsroom-ctt&#038;via=salesforce"
+					target="_blank"
+				>
+					
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="#032D60" viewbox="0 0 32 32"><path d="M17.4 14.8 23 8.3h-1.3L16.8 14 13 8.3H8.5l5.9 8.5-5.9 6.8h1.3l5.1-6 4.1 6h4.5zm-1.8 2.1-.6-.8-4.7-6.8h2l3.8 5.5.6.8 5 7.1h-2z" /></svg>
+				</a>
+			</li>
+					<li class="social-nav__item">
+				<a
+					aria-label="Share on Facebook (Opens in a new tab)"
+					href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fwww.salesforce.com%2Fnews%2Fpress-releases%2F2023%2F05%2F31%2Ffy24-q1-earnings%2F%3Futm_source%3DFacebook%26utm_medium%3Dorganic_social%26utm_campaign%3Dus_cbaw%26utm_content%3Dnewsroom-ctt"
+					target="_blank"
+				>
+					
+<svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" fill="none"><path fill="#032D60" d="M19 9.5a9.5 9.5 0 0 0-19 0c0 4.742 3.474 8.672 8.016 9.385v-6.639H5.604V9.5h2.412V7.407c0-2.38 1.418-3.696 3.588-3.696 1.04 0 2.127.185 2.127.185v2.338h-1.198c-1.18 0-1.549.733-1.549 1.484V9.5h2.635l-.421 2.746h-2.214v6.639C15.526 18.172 19 14.242 19 9.5" /></svg>
+				</a>
+			</li>
+		
+					<li class="social-nav__item">
+				<button
+					class="copy-share js-copy-link"
+					aria-label="Copy link to clipboard"
+					href="#"
+					data-clipboard-text='"Salesforce Announces Strong First Quarter Fiscal 2024 Results" https://www.salesforce.com/news/press-releases/2023/05/31/fy24-q1-earnings/'
+				>
+					
+<svg xmlns="http://www.w3.org/2000/svg" width="20" height="10" fill="none"><path fill="#032D60" d="M14.586.406h-3.667V2.24h3.667a2.76 2.76 0 0 1 2.75 2.75 2.76 2.76 0 0 1-2.75 2.75h-3.667v1.833h3.667a4.585 4.585 0 0 0 4.583-4.583A4.585 4.585 0 0 0 14.586.406m-5.5 7.334H5.419a2.76 2.76 0 0 1-2.75-2.75 2.76 2.76 0 0 1 2.75-2.75h3.667V.406H5.419A4.585 4.585 0 0 0 .836 4.99a4.585 4.585 0 0 0 4.583 4.583h3.667zm-2.75-3.667h7.333v1.833H6.336z" /></svg>
+				</button>
+			</li>
+			</ul>
+</div>
+
+									<div class="layout__column-content--sticky">
+				
+				
+<div class="justforyou__container">
+	
+	
+<div class="newsletter-article-cta newsletter-article-cta--top">
+	<h2 class="post__social-title newsletter-article-cta__heading">
+		Get the latest Salesforce News &amp; Insights, straight to your inbox	</h2>
+	<button type="button" class="btn btn-primary form-subscribe-modal-open newsletter-article-cta__button">
+		Subscribe now	</button>
+</div>
+
+	<div class="justforyou  justforyou--right-rail">
+
+	
+		<header class="justforyou__header">
+			<h2 class="justforyou__title">Just For You</h2>
+		</header>
+
+		<div class="justforyou__list">
+			
+<article class="card card--v2 js-intersection">
+			<a href="https://www.salesforce.com/news/press-releases/2026/07/07/1-billion-ai-transformation-investment-switzerland/" class="card__thumbnail" aria-label="Read Salesforce Deepens Commitment to Switzerland with $1 Billion Investment to Accelerate Agentic AI Transformation" tabindex="-1" target="_blank">
+			<span class="img-object-fit"><img src="https://www.salesforce.com/news/wp-content/uploads/sites/3/2026/07/781_0726_T04_-Salesforce-Deepens-Commitment-to-Switzerland-with-X-Billion-Investment_b_1_v2_070226.png?w=300" sizes="100vw" srcset="https://www.salesforce.com/news/wp-content/uploads/sites/3/2026/07/781_0726_T04_-Salesforce-Deepens-Commitment-to-Switzerland-with-X-Billion-Investment_b_1_v2_070226.png 1200w, https://www.salesforce.com/news/wp-content/uploads/sites/3/2026/07/781_0726_T04_-Salesforce-Deepens-Commitment-to-Switzerland-with-X-Billion-Investment_b_1_v2_070226.png?w=300&amp;h=169 300w, https://www.salesforce.com/news/wp-content/uploads/sites/3/2026/07/781_0726_T04_-Salesforce-Deepens-Commitment-to-Switzerland-with-X-Billion-Investment_b_1_v2_070226.png?w=768&amp;h=433 768w, https://www.salesforce.com/news/wp-content/uploads/sites/3/2026/07/781_0726_T04_-Salesforce-Deepens-Commitment-to-Switzerland-with-X-Billion-Investment_b_1_v2_070226.png?w=1024&amp;h=577 1024w, https://www.salesforce.com/news/wp-content/uploads/sites/3/2026/07/781_0726_T04_-Salesforce-Deepens-Commitment-to-Switzerland-with-X-Billion-Investment_b_1_v2_070226.png?w=264&amp;h=149 264w, https://www.salesforce.com/news/wp-content/uploads/sites/3/2026/07/781_0726_T04_-Salesforce-Deepens-Commitment-to-Switzerland-with-X-Billion-Investment_b_1_v2_070226.png?w=500&amp;h=282 500w, https://www.salesforce.com/news/wp-content/uploads/sites/3/2026/07/781_0726_T04_-Salesforce-Deepens-Commitment-to-Switzerland-with-X-Billion-Investment_b_1_v2_070226.png?w=150&amp;h=85 150w, https://www.salesforce.com/news/wp-content/uploads/sites/3/2026/07/781_0726_T04_-Salesforce-Deepens-Commitment-to-Switzerland-with-X-Billion-Investment_b_1_v2_070226.png?w=314&amp;h=177 314w, https://www.salesforce.com/news/wp-content/uploads/sites/3/2026/07/781_0726_T04_-Salesforce-Deepens-Commitment-to-Switzerland-with-X-Billion-Investment_b_1_v2_070226.png?w=343&amp;h=193 343w" alt="View of the Swiss flag" loading="eager" /></span>		</a>
+	
+	<div class="card__contents">
+
+		<header>
+			
+			<h2 class="card__title h4">
+				<a href="https://www.salesforce.com/news/press-releases/2026/07/07/1-billion-ai-transformation-investment-switzerland/" target="_blank">
+					Salesforce Deepens Commitment to Switzerland with $1 Billion Investment to Accelerate Agentic AI Transformation				</a>
+			</h2>
+		</header>
+		<div class="card__meta">
+			
+<span class="read-time">
+	3 min read</span>
+		</div>
+	</div>
+</article>
+
+<article class="card card--v2 js-intersection">
+			<a href="https://www.salesforce.com/news/press-releases/2026/06/16/1-billion-ai-transformation-investment-italy/" class="card__thumbnail" aria-label="Read Salesforce Announces $1 Billion Investment in Italy to Accelerate Agentic AI Transformation and Growth" tabindex="-1" target="_blank">
+			<span class="img-object-fit"><img src="https://www.salesforce.com/news/wp-content/uploads/sites/3/2026/06/Salesforce-Announces-1-Billion-Investment-in-Italy-to-Accelerate-Agentic-AI-Transformation-and-Growth_3.png?w=300" sizes="100vw" srcset="https://www.salesforce.com/news/wp-content/uploads/sites/3/2026/06/Salesforce-Announces-1-Billion-Investment-in-Italy-to-Accelerate-Agentic-AI-Transformation-and-Growth_3.png 1200w, https://www.salesforce.com/news/wp-content/uploads/sites/3/2026/06/Salesforce-Announces-1-Billion-Investment-in-Italy-to-Accelerate-Agentic-AI-Transformation-and-Growth_3.png?w=300&amp;h=169 300w, https://www.salesforce.com/news/wp-content/uploads/sites/3/2026/06/Salesforce-Announces-1-Billion-Investment-in-Italy-to-Accelerate-Agentic-AI-Transformation-and-Growth_3.png?w=768&amp;h=432 768w, https://www.salesforce.com/news/wp-content/uploads/sites/3/2026/06/Salesforce-Announces-1-Billion-Investment-in-Italy-to-Accelerate-Agentic-AI-Transformation-and-Growth_3.png?w=1024&amp;h=576 1024w, https://www.salesforce.com/news/wp-content/uploads/sites/3/2026/06/Salesforce-Announces-1-Billion-Investment-in-Italy-to-Accelerate-Agentic-AI-Transformation-and-Growth_3.png?w=264&amp;h=149 264w, https://www.salesforce.com/news/wp-content/uploads/sites/3/2026/06/Salesforce-Announces-1-Billion-Investment-in-Italy-to-Accelerate-Agentic-AI-Transformation-and-Growth_3.png?w=500&amp;h=281 500w, https://www.salesforce.com/news/wp-content/uploads/sites/3/2026/06/Salesforce-Announces-1-Billion-Investment-in-Italy-to-Accelerate-Agentic-AI-Transformation-and-Growth_3.png?w=150&amp;h=84 150w, https://www.salesforce.com/news/wp-content/uploads/sites/3/2026/06/Salesforce-Announces-1-Billion-Investment-in-Italy-to-Accelerate-Agentic-AI-Transformation-and-Growth_3.png?w=314&amp;h=177 314w, https://www.salesforce.com/news/wp-content/uploads/sites/3/2026/06/Salesforce-Announces-1-Billion-Investment-in-Italy-to-Accelerate-Agentic-AI-Transformation-and-Growth_3.png?w=343&amp;h=193 343w" alt="Salesforce Announces $1 Billion Investment in Italy to Accelerate Agentic AI Transformation and Growth_3" loading="eager" /></span>		</a>
+	
+	<div class="card__contents">
+
+		<header>
+			
+			<h2 class="card__title h4">
+				<a href="https://www.salesforce.com/news/press-releases/2026/06/16/1-billion-ai-transformation-investment-italy/" target="_blank">
+					Salesforce Announces $1 Billion Investment in Italy to Accelerate Agentic AI Transformation and Growth				</a>
+			</h2>
+		</header>
+		<div class="card__meta">
+			
+<span class="read-time">
+	4 min read</span>
+		</div>
+	</div>
+</article>
+		</div>
+
+	
+	</div>
+</div>
+
+									</div>
+							</div>
+
+			<div class="layout__column layout__column--right-sidebar-bottom">
+				
+<div class="post__social post__social--v2 post__social--has-title post__social--title-position-above">
+
+			<h2 class="screen-reader-mobile-only post__social-title">Share article</h2>
+	
+	<ul class="social-nav social-nav-v2">
+					<li class="social-nav__item">
+				<a
+					aria-label="Share on LinkedIn (Opens in a new tab)"
+					href="http://www.linkedin.com/shareArticle?mini=true&#038;url=https%3A%2F%2Fwww.salesforce.com%2Fnews%2Fpress-releases%2F2023%2F05%2F31%2Ffy24-q1-earnings%2F%3Futm_source%3DLinkedIn%26utm_medium%3Dorganic_social%26utm_campaign%3Dus_cbaw%26utm_content%3Dnewsroom-ctt&#038;title=Salesforce%20Announces%20Strong%20First%20Quarter%20Fiscal%202024%20Results"
+					target="_blank"
+				>
+					
+<svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" fill="none"><path fill="#032D60" d="M16.625 0H4.375A4.375 4.375 0 0 0 0 4.375v12.25A4.375 4.375 0 0 0 4.375 21h12.25A4.375 4.375 0 0 0 21 16.625V4.375A4.375 4.375 0 0 0 16.625 0M7 16.625H4.375V7H7zM5.687 5.89a1.54 1.54 0 0 1-1.53-1.543c0-.852.685-1.544 1.53-1.544.846 0 1.532.692 1.532 1.544S6.534 5.89 5.687 5.89M17.5 16.625h-2.625v-4.903c0-2.947-3.5-2.724-3.5 0v4.903H8.75V7h2.625v1.544c1.222-2.262 6.125-2.43 6.125 2.167z" /></svg>
+				</a>
+			</li>
+					<li class="social-nav__item">
+				<a
+					aria-label="Share on Twitter (Opens in a new tab)"
+					href="https://x.com/intent/tweet?text=Salesforce%20Announces%20Strong%20First%20Quarter%20Fiscal%202024%20Results&#038;url=https%3A%2F%2Fwww.salesforce.com%2Fnews%2Fpress-releases%2F2023%2F05%2F31%2Ffy24-q1-earnings%2F%3Futm_source%3DX%26utm_medium%3Dorganic_social%26utm_campaign%3Dus_cbaw%26utm_content%3Dnewsroom-ctt&#038;via=salesforce"
+					target="_blank"
+				>
+					
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="#032D60" viewbox="0 0 32 32"><path d="M17.4 14.8 23 8.3h-1.3L16.8 14 13 8.3H8.5l5.9 8.5-5.9 6.8h1.3l5.1-6 4.1 6h4.5zm-1.8 2.1-.6-.8-4.7-6.8h2l3.8 5.5.6.8 5 7.1h-2z" /></svg>
+				</a>
+			</li>
+					<li class="social-nav__item">
+				<a
+					aria-label="Share on Facebook (Opens in a new tab)"
+					href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fwww.salesforce.com%2Fnews%2Fpress-releases%2F2023%2F05%2F31%2Ffy24-q1-earnings%2F%3Futm_source%3DFacebook%26utm_medium%3Dorganic_social%26utm_campaign%3Dus_cbaw%26utm_content%3Dnewsroom-ctt"
+					target="_blank"
+				>
+					
+<svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" fill="none"><path fill="#032D60" d="M19 9.5a9.5 9.5 0 0 0-19 0c0 4.742 3.474 8.672 8.016 9.385v-6.639H5.604V9.5h2.412V7.407c0-2.38 1.418-3.696 3.588-3.696 1.04 0 2.127.185 2.127.185v2.338h-1.198c-1.18 0-1.549.733-1.549 1.484V9.5h2.635l-.421 2.746h-2.214v6.639C15.526 18.172 19 14.242 19 9.5" /></svg>
+				</a>
+			</li>
+		
+					<li class="social-nav__item">
+				<button
+					class="copy-share js-copy-link"
+					aria-label="Copy link to clipboard"
+					href="#"
+					data-clipboard-text='"Salesforce Announces Strong First Quarter Fiscal 2024 Results" https://www.salesforce.com/news/press-releases/2023/05/31/fy24-q1-earnings/'
+				>
+					
+<svg xmlns="http://www.w3.org/2000/svg" width="20" height="10" fill="none"><path fill="#032D60" d="M14.586.406h-3.667V2.24h3.667a2.76 2.76 0 0 1 2.75 2.75 2.76 2.76 0 0 1-2.75 2.75h-3.667v1.833h3.667a4.585 4.585 0 0 0 4.583-4.583A4.585 4.585 0 0 0 14.586.406m-5.5 7.334H5.419a2.76 2.76 0 0 1-2.75-2.75 2.76 2.76 0 0 1 2.75-2.75h3.667V.406H5.419A4.585 4.585 0 0 0 .836 4.99a4.585 4.585 0 0 0 4.583 4.583h3.667zm-2.75-3.667h7.333v1.833H6.336z" /></svg>
+				</button>
+			</li>
+			</ul>
+</div>
+
+<div class="newsletter-article-cta newsletter-article-cta--bottom">
+	<h2 class="post__social-title newsletter-article-cta__heading">
+		Get the latest Salesforce News &amp; Insights, straight to your inbox	</h2>
+	<button type="button" class="btn btn-primary form-subscribe-modal-open newsletter-article-cta__button">
+		Subscribe now	</button>
+</div>
+
+<div class="justforyou__container">
+	
+	
+	<div class="justforyou justforyou--bottom-right-rail justforyou--right-rail">
+
+	
+		<header class="justforyou__header">
+			<h2 class="justforyou__title">Just For You</h2>
+		</header>
+
+		<div class="justforyou__list">
+			
+<article class="card card--v2 js-intersection">
+			<a href="https://www.salesforce.com/news/press-releases/2026/07/07/1-billion-ai-transformation-investment-switzerland/" class="card__thumbnail" aria-label="Read Salesforce Deepens Commitment to Switzerland with $1 Billion Investment to Accelerate Agentic AI Transformation" tabindex="-1" target="_blank">
+			<span class="img-object-fit"><img src="https://www.salesforce.com/news/wp-content/uploads/sites/3/2026/07/781_0726_T04_-Salesforce-Deepens-Commitment-to-Switzerland-with-X-Billion-Investment_b_1_v2_070226.png?w=300" sizes="100vw" srcset="https://www.salesforce.com/news/wp-content/uploads/sites/3/2026/07/781_0726_T04_-Salesforce-Deepens-Commitment-to-Switzerland-with-X-Billion-Investment_b_1_v2_070226.png 1200w, https://www.salesforce.com/news/wp-content/uploads/sites/3/2026/07/781_0726_T04_-Salesforce-Deepens-Commitment-to-Switzerland-with-X-Billion-Investment_b_1_v2_070226.png?w=300&amp;h=169 300w, https://www.salesforce.com/news/wp-content/uploads/sites/3/2026/07/781_0726_T04_-Salesforce-Deepens-Commitment-to-Switzerland-with-X-Billion-Investment_b_1_v2_070226.png?w=768&amp;h=433 768w, https://www.salesforce.com/news/wp-content/uploads/sites/3/2026/07/781_0726_T04_-Salesforce-Deepens-Commitment-to-Switzerland-with-X-Billion-Investment_b_1_v2_070226.png?w=1024&amp;h=577 1024w, https://www.salesforce.com/news/wp-content/uploads/sites/3/2026/07/781_0726_T04_-Salesforce-Deepens-Commitment-to-Switzerland-with-X-Billion-Investment_b_1_v2_070226.png?w=264&amp;h=149 264w, https://www.salesforce.com/news/wp-content/uploads/sites/3/2026/07/781_0726_T04_-Salesforce-Deepens-Commitment-to-Switzerland-with-X-Billion-Investment_b_1_v2_070226.png?w=500&amp;h=282 500w, https://www.salesforce.com/news/wp-content/uploads/sites/3/2026/07/781_0726_T04_-Salesforce-Deepens-Commitment-to-Switzerland-with-X-Billion-Investment_b_1_v2_070226.png?w=150&amp;h=85 150w, https://www.salesforce.com/news/wp-content/uploads/sites/3/2026/07/781_0726_T04_-Salesforce-Deepens-Commitment-to-Switzerland-with-X-Billion-Investment_b_1_v2_070226.png?w=314&amp;h=177 314w, https://www.salesforce.com/news/wp-content/uploads/sites/3/2026/07/781_0726_T04_-Salesforce-Deepens-Commitment-to-Switzerland-with-X-Billion-Investment_b_1_v2_070226.png?w=343&amp;h=193 343w" alt="View of the Swiss flag" loading="eager" /></span>		</a>
+	
+	<div class="card__contents">
+
+		<header>
+			
+			<h2 class="card__title h4">
+				<a href="https://www.salesforce.com/news/press-releases/2026/07/07/1-billion-ai-transformation-investment-switzerland/" target="_blank">
+					Salesforce Deepens Commitment to Switzerland with $1 Billion Investment to Accelerate Agentic AI Transformation				</a>
+			</h2>
+		</header>
+		<div class="card__meta">
+			
+<span class="read-time">
+	3 min read</span>
+		</div>
+	</div>
+</article>
+
+<article class="card card--v2 js-intersection">
+			<a href="https://www.salesforce.com/news/press-releases/2026/06/16/1-billion-ai-transformation-investment-italy/" class="card__thumbnail" aria-label="Read Salesforce Announces $1 Billion Investment in Italy to Accelerate Agentic AI Transformation and Growth" tabindex="-1" target="_blank">
+			<span class="img-object-fit"><img src="https://www.salesforce.com/news/wp-content/uploads/sites/3/2026/06/Salesforce-Announces-1-Billion-Investment-in-Italy-to-Accelerate-Agentic-AI-Transformation-and-Growth_3.png?w=300" sizes="100vw" srcset="https://www.salesforce.com/news/wp-content/uploads/sites/3/2026/06/Salesforce-Announces-1-Billion-Investment-in-Italy-to-Accelerate-Agentic-AI-Transformation-and-Growth_3.png 1200w, https://www.salesforce.com/news/wp-content/uploads/sites/3/2026/06/Salesforce-Announces-1-Billion-Investment-in-Italy-to-Accelerate-Agentic-AI-Transformation-and-Growth_3.png?w=300&amp;h=169 300w, https://www.salesforce.com/news/wp-content/uploads/sites/3/2026/06/Salesforce-Announces-1-Billion-Investment-in-Italy-to-Accelerate-Agentic-AI-Transformation-and-Growth_3.png?w=768&amp;h=432 768w, https://www.salesforce.com/news/wp-content/uploads/sites/3/2026/06/Salesforce-Announces-1-Billion-Investment-in-Italy-to-Accelerate-Agentic-AI-Transformation-and-Growth_3.png?w=1024&amp;h=576 1024w, https://www.salesforce.com/news/wp-content/uploads/sites/3/2026/06/Salesforce-Announces-1-Billion-Investment-in-Italy-to-Accelerate-Agentic-AI-Transformation-and-Growth_3.png?w=264&amp;h=149 264w, https://www.salesforce.com/news/wp-content/uploads/sites/3/2026/06/Salesforce-Announces-1-Billion-Investment-in-Italy-to-Accelerate-Agentic-AI-Transformation-and-Growth_3.png?w=500&amp;h=281 500w, https://www.salesforce.com/news/wp-content/uploads/sites/3/2026/06/Salesforce-Announces-1-Billion-Investment-in-Italy-to-Accelerate-Agentic-AI-Transformation-and-Growth_3.png?w=150&amp;h=84 150w, https://www.salesforce.com/news/wp-content/uploads/sites/3/2026/06/Salesforce-Announces-1-Billion-Investment-in-Italy-to-Accelerate-Agentic-AI-Transformation-and-Growth_3.png?w=314&amp;h=177 314w, https://www.salesforce.com/news/wp-content/uploads/sites/3/2026/06/Salesforce-Announces-1-Billion-Investment-in-Italy-to-Accelerate-Agentic-AI-Transformation-and-Growth_3.png?w=343&amp;h=193 343w" alt="Salesforce Announces $1 Billion Investment in Italy to Accelerate Agentic AI Transformation and Growth_3" loading="eager" /></span>		</a>
+	
+	<div class="card__contents">
+
+		<header>
+			
+			<h2 class="card__title h4">
+				<a href="https://www.salesforce.com/news/press-releases/2026/06/16/1-billion-ai-transformation-investment-italy/" target="_blank">
+					Salesforce Announces $1 Billion Investment in Italy to Accelerate Agentic AI Transformation and Growth				</a>
+			</h2>
+		</header>
+		<div class="card__meta">
+			
+<span class="read-time">
+	4 min read</span>
+		</div>
+	</div>
+</article>
+		</div>
+
+	
+	</div>
+</div>
+			</div>
+
+			<div class="layout__column layout__column--bottom">
+				<div class="layout_column-section">
+					
+	<div class="related-topics">
+
+		<h2 class="related-topics__title">Explore related content by topic</h2>
+
+		<ul class="topic-list">
+
+		
+			<li>
+				<a class="label-secondary" href="https://www.salesforce.com/news/topics/company-news/" aria-label="Filed under Company News">
+					Company News				</a>
+			</li>
+
+			
+			<li>
+				<a class="label-secondary" href="https://www.salesforce.com/news/topics/digital-transformation/" aria-label="Filed under Digital Transformation">
+					Digital Transformation				</a>
+			</li>
+
+			
+			<li>
+				<a class="label-secondary" href="https://www.salesforce.com/news/topics/earnings/" aria-label="Filed under Earnings">
+					Earnings				</a>
+			</li>
+
+			
+		</ul>
+	</div>
+				</div>
+									<div class="layout_column-section about-salesforce">
+						<div class="box">
+	<div class="box__content-container typography-display-8">
+		<h3 class="typography-display-6">About Salesforce</h3>
+		<p dir="ltr">Salesforce helps organizations of any size become agentic enterprises - integrating humans, agents, apps, and data on a trusted, unified platform to unlock unprecedented growth and innovation.</p>
+<p dir="ltr">Visit <a class="c-link c-link--underline" href="http://www.salesforce.com/" target="_blank" rel="noopener noreferrer" data-stringify-link="http://www.salesforce.com" data-sk="tooltip_parent">www.salesforce.com</a> for more information.</p>
+	</div>
+</div>
+					</div>
+								</div>
+		</article>
+
+		
+<div class="justforyou__container">
+	
+	
+	<div class="justforyou  justforyou--bottom">
+
+	
+				
+					<div class="container container--375 justforyou__wrapper">
+				<header class="justforyou__header">
+					<h2 class="justforyou__title">
+						Related Articles					</h2>
+				</header>
+
+				<!-- Related Posts Row One -->
+				<div class="justforyou__grid">
+					
+<article class="card card--v2 js-intersection">
+			<a href="https://www.salesforce.com/news/press-releases/2026/06/15/salesforce-signs-definitive-agreement-to-acquire-fin/" class="card__thumbnail" aria-label="Read Salesforce Signs Definitive Agreement to Acquire Fin" tabindex="-1" target="_blank">
+			<span class="img-object-fit"><img src="https://www.salesforce.com/news/wp-content/uploads/sites/3/2026/06/Option-02.png?w=300" sizes="100vw" srcset="https://www.salesforce.com/news/wp-content/uploads/sites/3/2026/06/Option-02.png 1920w, https://www.salesforce.com/news/wp-content/uploads/sites/3/2026/06/Option-02.png?w=300&amp;h=169 300w, https://www.salesforce.com/news/wp-content/uploads/sites/3/2026/06/Option-02.png?w=768&amp;h=432 768w, https://www.salesforce.com/news/wp-content/uploads/sites/3/2026/06/Option-02.png?w=1024&amp;h=576 1024w, https://www.salesforce.com/news/wp-content/uploads/sites/3/2026/06/Option-02.png?w=1536&amp;h=864 1536w, https://www.salesforce.com/news/wp-content/uploads/sites/3/2026/06/Option-02.png?w=264&amp;h=149 264w, https://www.salesforce.com/news/wp-content/uploads/sites/3/2026/06/Option-02.png?w=500&amp;h=281 500w, https://www.salesforce.com/news/wp-content/uploads/sites/3/2026/06/Option-02.png?w=150&amp;h=84 150w, https://www.salesforce.com/news/wp-content/uploads/sites/3/2026/06/Option-02.png?w=314&amp;h=177 314w, https://www.salesforce.com/news/wp-content/uploads/sites/3/2026/06/Option-02.png?w=343&amp;h=193 343w, https://www.salesforce.com/news/wp-content/uploads/sites/3/2026/06/Option-02.png?w=1414&amp;h=796 1414w, https://www.salesforce.com/news/wp-content/uploads/sites/3/2026/06/Option-02.png?w=1218&amp;h=685 1218w" alt="Salesforce and Fin company logos on a light blue gradient background." loading="eager" /></span>		</a>
+	
+	<div class="card__contents">
+
+		<header>
+			
+			<h2 class="card__title h4">
+				<a href="https://www.salesforce.com/news/press-releases/2026/06/15/salesforce-signs-definitive-agreement-to-acquire-fin/" target="_blank">
+					Salesforce Signs Definitive Agreement to Acquire Fin				</a>
+			</h2>
+		</header>
+		<div class="card__meta">
+			
+<span class="read-time">
+	4 min read</span>
+		</div>
+	</div>
+</article>
+
+<article class="card card--v2 js-intersection">
+			<a href="https://www.salesforce.com/news/press-releases/2026/06/01/2-billion-ai-transformation-investment-france/" class="card__thumbnail" aria-label="Read Salesforce Deepens Commitment to France with $2 Billion Investment to Accelerate AI Transformation" tabindex="-1" target="_blank">
+			<span class="img-object-fit"><img src="https://www.salesforce.com/news/wp-content/uploads/sites/3/2026/05/Salesforce-Deepens-Commitment-to-France-with-2-Billion-Investment-to-Accelerate-AI-Transformation.png?w=300" sizes="100vw" srcset="https://www.salesforce.com/news/wp-content/uploads/sites/3/2026/05/Salesforce-Deepens-Commitment-to-France-with-2-Billion-Investment-to-Accelerate-AI-Transformation.png 1200w, https://www.salesforce.com/news/wp-content/uploads/sites/3/2026/05/Salesforce-Deepens-Commitment-to-France-with-2-Billion-Investment-to-Accelerate-AI-Transformation.png?w=300&amp;h=169 300w, https://www.salesforce.com/news/wp-content/uploads/sites/3/2026/05/Salesforce-Deepens-Commitment-to-France-with-2-Billion-Investment-to-Accelerate-AI-Transformation.png?w=768&amp;h=432 768w, https://www.salesforce.com/news/wp-content/uploads/sites/3/2026/05/Salesforce-Deepens-Commitment-to-France-with-2-Billion-Investment-to-Accelerate-AI-Transformation.png?w=1024&amp;h=576 1024w, https://www.salesforce.com/news/wp-content/uploads/sites/3/2026/05/Salesforce-Deepens-Commitment-to-France-with-2-Billion-Investment-to-Accelerate-AI-Transformation.png?w=264&amp;h=149 264w, https://www.salesforce.com/news/wp-content/uploads/sites/3/2026/05/Salesforce-Deepens-Commitment-to-France-with-2-Billion-Investment-to-Accelerate-AI-Transformation.png?w=500&amp;h=281 500w, https://www.salesforce.com/news/wp-content/uploads/sites/3/2026/05/Salesforce-Deepens-Commitment-to-France-with-2-Billion-Investment-to-Accelerate-AI-Transformation.png?w=150&amp;h=84 150w, https://www.salesforce.com/news/wp-content/uploads/sites/3/2026/05/Salesforce-Deepens-Commitment-to-France-with-2-Billion-Investment-to-Accelerate-AI-Transformation.png?w=314&amp;h=177 314w, https://www.salesforce.com/news/wp-content/uploads/sites/3/2026/05/Salesforce-Deepens-Commitment-to-France-with-2-Billion-Investment-to-Accelerate-AI-Transformation.png?w=343&amp;h=193 343w" alt="View of the Eiffel Tower in France." loading="eager" /></span>		</a>
+	
+	<div class="card__contents">
+
+		<header>
+			
+			<h2 class="card__title h4">
+				<a href="https://www.salesforce.com/news/press-releases/2026/06/01/2-billion-ai-transformation-investment-france/" target="_blank">
+					Salesforce Deepens Commitment to France with $2 Billion Investment to Accelerate AI Transformation				</a>
+			</h2>
+		</header>
+		<div class="card__meta">
+			
+<span class="read-time">
+	4 min read</span>
+		</div>
+	</div>
+</article>
+
+<article class="card card--v2 js-intersection">
+			<a href="https://www.salesforce.com/news/press-releases/2026/03/16/25-billion-share-repurchase-2026/" class="card__thumbnail" aria-label="Read Salesforce Commences Largest-Ever $25 Billion Accelerated Share Repurchase" tabindex="-1" target="_blank">
+			<span class="img-object-fit"><img src="https://www.salesforce.com/news/wp-content/uploads/sites/3/2026/03/Salesforce-Commences-Largest-Ever-25-Billion-Accelerated-Share-Repurchase.png?w=300" sizes="100vw" srcset="https://www.salesforce.com/news/wp-content/uploads/sites/3/2026/03/Salesforce-Commences-Largest-Ever-25-Billion-Accelerated-Share-Repurchase.png 1200w, https://www.salesforce.com/news/wp-content/uploads/sites/3/2026/03/Salesforce-Commences-Largest-Ever-25-Billion-Accelerated-Share-Repurchase.png?w=300&amp;h=169 300w, https://www.salesforce.com/news/wp-content/uploads/sites/3/2026/03/Salesforce-Commences-Largest-Ever-25-Billion-Accelerated-Share-Repurchase.png?w=768&amp;h=432 768w, https://www.salesforce.com/news/wp-content/uploads/sites/3/2026/03/Salesforce-Commences-Largest-Ever-25-Billion-Accelerated-Share-Repurchase.png?w=1024&amp;h=576 1024w, https://www.salesforce.com/news/wp-content/uploads/sites/3/2026/03/Salesforce-Commences-Largest-Ever-25-Billion-Accelerated-Share-Repurchase.png?w=264&amp;h=149 264w, https://www.salesforce.com/news/wp-content/uploads/sites/3/2026/03/Salesforce-Commences-Largest-Ever-25-Billion-Accelerated-Share-Repurchase.png?w=500&amp;h=281 500w, https://www.salesforce.com/news/wp-content/uploads/sites/3/2026/03/Salesforce-Commences-Largest-Ever-25-Billion-Accelerated-Share-Repurchase.png?w=150&amp;h=84 150w, https://www.salesforce.com/news/wp-content/uploads/sites/3/2026/03/Salesforce-Commences-Largest-Ever-25-Billion-Accelerated-Share-Repurchase.png?w=314&amp;h=177 314w, https://www.salesforce.com/news/wp-content/uploads/sites/3/2026/03/Salesforce-Commences-Largest-Ever-25-Billion-Accelerated-Share-Repurchase.png?w=343&amp;h=193 343w" alt="Salesforce logo on building exterior." loading="eager" /></span>		</a>
+	
+	<div class="card__contents">
+
+		<header>
+			
+			<h2 class="card__title h4">
+				<a href="https://www.salesforce.com/news/press-releases/2026/03/16/25-billion-share-repurchase-2026/" target="_blank">
+					Salesforce Commences Largest-Ever $25 Billion Accelerated Share Repurchase				</a>
+			</h2>
+		</header>
+		<div class="card__meta">
+			
+<span class="read-time">
+	3 min read</span>
+		</div>
+	</div>
+</article>
+
+<article class="card card--v2 js-intersection">
+			<a href="https://www.salesforce.com/news/stories/salesforce-signs-definitive-agreement-to-acquire-momentum/" class="card__thumbnail" aria-label="Read Salesforce Signs Definitive Agreement to Acquire Momentum" tabindex="-1" target="_blank">
+			<span class="img-object-fit"><img src="https://www.salesforce.com/news/wp-content/uploads/sites/3/2026/02/Momentum-Announcement.png?w=300" sizes="100vw" srcset="https://www.salesforce.com/news/wp-content/uploads/sites/3/2026/02/Momentum-Announcement.png 1200w, https://www.salesforce.com/news/wp-content/uploads/sites/3/2026/02/Momentum-Announcement.png?w=300&amp;h=169 300w, https://www.salesforce.com/news/wp-content/uploads/sites/3/2026/02/Momentum-Announcement.png?w=768&amp;h=432 768w, https://www.salesforce.com/news/wp-content/uploads/sites/3/2026/02/Momentum-Announcement.png?w=1024&amp;h=576 1024w, https://www.salesforce.com/news/wp-content/uploads/sites/3/2026/02/Momentum-Announcement.png?w=264&amp;h=149 264w, https://www.salesforce.com/news/wp-content/uploads/sites/3/2026/02/Momentum-Announcement.png?w=500&amp;h=281 500w, https://www.salesforce.com/news/wp-content/uploads/sites/3/2026/02/Momentum-Announcement.png?w=150&amp;h=84 150w, https://www.salesforce.com/news/wp-content/uploads/sites/3/2026/02/Momentum-Announcement.png?w=314&amp;h=177 314w, https://www.salesforce.com/news/wp-content/uploads/sites/3/2026/02/Momentum-Announcement.png?w=343&amp;h=193 343w" alt="Salesforce and Momenetum logos on a light blue gradient background." loading="eager" /></span>		</a>
+	
+	<div class="card__contents">
+
+		<header>
+			
+			<h2 class="card__title h4">
+				<a href="https://www.salesforce.com/news/stories/salesforce-signs-definitive-agreement-to-acquire-momentum/" target="_blank">
+					Salesforce Signs Definitive Agreement to Acquire Momentum				</a>
+			</h2>
+		</header>
+		<div class="card__meta">
+			
+<span class="read-time">
+	2 min read</span>
+		</div>
+	</div>
+</article>
+				</div>
+
+				
+			</div>
+			
+	</div>
+</div>
+
+		
+<div class="bottom-bar-wrapper">
+	<div class="bottom-bar">
+		<div class="icon">
+			<img src="https://www.salesforce.com/news/wp-content/themes/newsroom/assets/images/subscribe-astro@1x.png" alt="Astro"/>
+		</div>
+		<div class="text">
+			<p>Get the latest Salesforce News</p>
+		</div>
+		<div class="btn-container">
+			<button name="Subscribe" class="button button--brand form-subscribe-modal-open">Subscribe</button>
+		</div>
+	</div>
+	<button class="close-btn">
+		<span class="screen-reader-text">Close</span>
+	</button>
+</div>
+	</main>
+
+	<div class="">
+		
+<footer class="footer" id="footer">
+
+	
+<section class="newsletter newsletter--default newsletter--no-js">
+	<header class="newsletter__header">
+		<h2 class="newsletter__title">
+			Insight, Opinion, News, and Data		</h2>
+		<p class="newsletter__subtitle">
+			Sign up for Salesforce News &amp; Insights, direct to your inbox.		</p>
+	</header>
+
+	<iframe src="https://cloud.mail.salesforce.com/newsroomsignup"
+		class="newsletter__iframe"
+		title="Insight, Opinion, News, and Data"
+	>
+	</iframe>
+
+</section>
+
+		<div class="footer__wrapper">
+		<a href="https://www.salesforce.com/news" class="footer__logo-wrapper js-intersection" aria-label="Go to Newsroom Homepage">
+			<div class="footer__logo">
+				<span class="screen-reader-text">Footer Logo</span>
+				
+<svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 63 44" fill="none" aria-hidden="true"><path d="M26.223 4.797a10.973 10.973 0 017.985-3.413c4.166 0 7.777 2.306 9.72 5.742a13.664 13.664 0 015.486-1.153C56.913 5.973 63 12.084 63 19.625c0 7.541-6.087 13.653-13.586 13.653-.926 0-1.805-.093-2.685-.277a9.936 9.936 0 01-8.656 5.074c-1.55 0-3.032-.37-4.351-.992-1.736 4.036-5.74 6.872-10.415 6.872a11.31 11.31 0 01-10.624-7.38c-.694.139-1.412.231-2.152.231C4.698 36.76 0 32.032 0 26.175c0-3.92 2.106-7.334 5.254-9.179a12.005 12.005 0 01-.995-4.843C4.259 5.443 9.72 0 16.479 0c3.981 0 7.499 1.868 9.744 4.797z" fill="#00B3FF" /><path d="M9.12 22.785c-.047.092.023.115.023.138.115.092.231.139.37.208.648.346 1.25.438 1.875.438 1.296 0 2.106-.692 2.106-1.776v-.023c0-1.015-.903-1.384-1.76-1.66l-.115-.046c-.648-.208-1.204-.392-1.204-.808v-.023c0-.369.325-.622.834-.622.555 0 1.226.184 1.643.415 0 0 .116.069.162-.046.023-.07.232-.646.255-.715.023-.07-.023-.116-.07-.139-.486-.3-1.157-.484-1.851-.484h-.14c-1.18 0-2.013.715-2.013 1.73v.023c0 1.084.903 1.43 1.76 1.66l.138.046c.625.185 1.157.346 1.157.784v.023c0 .392-.347.692-.902.692-.209 0-.903 0-1.667-.484-.092-.046-.139-.092-.208-.138-.046-.023-.139-.07-.162.069l-.232.738zM28.051 22.785c-.046.092.023.115.023.138.116.092.232.139.37.208.649.346 1.25.438 1.875.438 1.296 0 2.106-.692 2.106-1.776v-.023c0-1.015-.902-1.384-1.759-1.66l-.115-.046c-.648-.208-1.204-.392-1.204-.808v-.023c0-.369.324-.622.833-.622.556 0 1.227.184 1.644.415 0 0 .115.069.162-.046.023-.07.231-.646.254-.715.023-.07-.023-.116-.07-.139-.485-.3-1.156-.484-1.85-.484h-.14c-1.18 0-2.013.715-2.013 1.73v.023c0 1.084.902 1.43 1.759 1.66l.139.046c.625.185 1.157.346 1.157.784v.023c0 .392-.347.692-.903.692-.208 0-.902 0-1.666-.484-.093-.046-.139-.092-.208-.138-.024-.023-.14-.047-.163.069l-.23.738zM42.031 19.464a2.921 2.921 0 00-.486-.922c-.232-.254-.51-.485-.833-.623-.324-.161-.718-.23-1.158-.23-.44 0-.833.069-1.157.23a2.812 2.812 0 00-.833.623 2.519 2.519 0 00-.486.922 3.658 3.658 0 00-.162 1.153c0 .415.046.807.162 1.153s.278.67.486.923c.231.253.51.484.833.622.324.139.718.231 1.157.231.44 0 .834-.07 1.158-.23.324-.139.601-.37.833-.623a2.52 2.52 0 00.486-.923c.116-.346.162-.738.162-1.153 0-.415-.046-.784-.162-1.153zm-1.088 1.153c0 .623-.115 1.107-.347 1.453-.231.346-.579.508-1.041.508-.486 0-.81-.162-1.042-.508-.231-.346-.347-.83-.347-1.453 0-.622.116-1.107.347-1.453.231-.346.556-.507 1.041-.507.487 0 .834.162 1.042.507.232.346.347.83.347 1.453z" fill="#fff" /><path fill-rule="evenodd" clip-rule="evenodd" d="M50.896 22.44c-.046-.116-.139-.07-.139-.07-.162.07-.324.115-.51.138-.184.023-.37.047-.6.047-.533 0-.927-.162-1.228-.462-.3-.3-.462-.807-.462-1.476 0-.6.138-1.06.416-1.407.255-.345.671-.53 1.204-.53.44 0 .787.046 1.134.162 0 0 .092.046.116-.07.092-.253.162-.438.254-.738.023-.092-.046-.115-.07-.115a6.273 6.273 0 00-.717-.184c-.231-.046-.509-.046-.81-.046-.463 0-.856.069-1.203.23a2.746 2.746 0 00-.88.623 2.609 2.609 0 00-.532.922 3.648 3.648 0 00-.185 1.153c0 .9.231 1.615.717 2.145s1.204.807 2.13.807c.555 0 1.11-.115 1.527-.277 0 0 .07-.046.046-.138l-.208-.715zM56.405 19.256a2.437 2.437 0 00-.463-.853c-.231-.254-.463-.438-.694-.53a2.468 2.468 0 00-1.042-.208c-.463 0-.88.07-1.203.23a2.133 2.133 0 00-.834.646 2.305 2.305 0 00-.485.946 3.757 3.757 0 00-.162 1.153c0 .415.046.807.162 1.153.115.346.277.669.532.922.231.254.555.462.926.6.37.138.81.208 1.319.208 1.065 0 1.62-.231 1.828-.37.047-.022.07-.069.023-.184l-.231-.669c-.046-.092-.139-.069-.139-.069-.255.092-.625.277-1.504.277-.556 0-.995-.162-1.25-.438-.278-.277-.394-.669-.417-1.2h3.657s.093 0 .116-.092c-.023.023.093-.691-.139-1.522zm-3.634.761c.047-.346.14-.622.301-.853.232-.346.556-.53 1.042-.53s.787.184 1.018.53c.139.23.208.53.232.853H52.77zM27.173 19.256a2.437 2.437 0 00-.463-.853c-.232-.254-.463-.438-.695-.53a2.468 2.468 0 00-1.041-.208c-.463 0-.88.07-1.204.23a2.133 2.133 0 00-.833.646 2.305 2.305 0 00-.486.946 3.757 3.757 0 00-.162 1.153c0 .415.046.807.162 1.153s.278.669.532.922c.232.254.556.462.926.6.37.138.81.208 1.32.208 1.064 0 1.62-.231 1.828-.37.046-.022.07-.069.023-.184l-.231-.669c-.047-.092-.14-.069-.14-.069-.254.092-.624.277-1.504.277-.555 0-.995-.162-1.25-.438-.277-.277-.393-.669-.416-1.2h3.657s.092 0 .115-.092c-.023.023.093-.691-.138-1.522zm-3.634.761c.046-.346.139-.622.3-.853.232-.346.556-.53 1.042-.53s.787.184 1.019.53c.139.23.208.53.231.853H23.54z" fill="#fff" /><path d="M17.105 19.856c-.139 0-.347-.023-.579-.023-.323 0-.624.046-.902.115a2.29 2.29 0 00-.764.346 1.881 1.881 0 00-.532.6c-.14.23-.185.53-.185.83 0 .323.046.6.162.83.115.23.277.415.486.577a2.4 2.4 0 00.74.323c.278.069.602.092.972.092s.741-.023 1.111-.092c.348-.07.787-.139.926-.185.116-.023.255-.07.255-.07.092-.022.092-.114.092-.114v-3.321c0-.738-.185-1.269-.578-1.615-.394-.322-.95-.507-1.667-.507-.277 0-.717.046-.972.092 0 0-.787.162-1.134.415 0 0-.07.047-.023.139l.255.692c.023.092.115.069.115.069s.023 0 .07-.023c.694-.37 1.597-.37 1.597-.37.393 0 .694.07.902.231.209.162.301.392.301.877v.161c-.37-.046-.648-.069-.648-.069zm-1.458 2.56c-.139-.116-.162-.139-.208-.208a.935.935 0 01-.116-.484c0-.323.116-.553.324-.715 0 0 .324-.277 1.065-.254.532 0 .995.093.995.093v1.66s-.463.092-.995.138c-.741.023-1.065-.23-1.065-.23z" fill="#fff" /><path fill-rule="evenodd" clip-rule="evenodd" d="M46.545 17.988c.023-.092-.023-.115-.046-.138a2.52 2.52 0 00-.602-.093c-.463-.023-.717.046-.949.162a1.579 1.579 0 00-.625.461v-.438c0-.07-.046-.116-.115-.116h-.926c-.07 0-.116.047-.116.116v5.42c0 .069.046.115.116.115h.949c.07 0 .115-.047.115-.116v-2.744c0-.369.047-.738.116-.945.07-.231.185-.416.324-.531.139-.138.278-.23.44-.277a1.9 1.9 0 01.486-.069c.185 0 .393.046.393.046.07 0 .116-.046.14-.092.092-.184.277-.669.3-.761zM37.54 15.451a1.737 1.737 0 00-.37-.092 2.896 2.896 0 00-.486-.046c-.671 0-1.18.184-1.55.553-.37.37-.602.923-.741 1.66l-.047.255h-.833s-.092 0-.115.115l-.14.76c0 .07.024.116.116.116h.81l-.81 4.543c-.069.37-.138.67-.208.9-.07.23-.162.392-.255.507-.092.115-.185.208-.324.254-.115.046-.277.069-.44.069-.092 0-.207-.023-.3-.023-.093-.023-.139-.046-.208-.07 0 0-.093-.045-.14.07-.022.069-.254.669-.277.738-.023.069 0 .138.046.138.116.046.185.07.324.092.209.047.37.047.533.047.347 0 .648-.047.902-.139a1.67 1.67 0 00.672-.461 2.31 2.31 0 00.462-.807 8.31 8.31 0 00.324-1.222l.834-4.636h1.203s.093 0 .116-.115l.139-.761c0-.07-.023-.115-.116-.115h-1.157c0-.023.07-.439.185-.83a.964.964 0 01.255-.393.598.598 0 01.3-.184c.116-.046.255-.046.394-.046.116 0 .208.023.3.023.116.023.163.046.186.046.116.046.139 0 .162-.046l.278-.761c.07-.092 0-.116-.023-.139zM21.225 23.338c0 .07-.046.115-.116.115h-.972c-.07 0-.116-.046-.116-.115v-7.772c0-.069.047-.115.116-.115h.972c.07 0 .116.046.116.115v7.772z" fill="#fff" /></svg>
+			</div>
+		</a>
+
+		<nav class="js-intersection">
+			<div id="primary-footer-nav" class="footer__menu"><ul><li id="menu-item-74761" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-74761"><a href="/news/all-news/">News</a></li>
+<li id="menu-item-74762" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-74762"><a href="/news/all-stories/">Stories</a></li>
+<li id="menu-item-74763" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-74763"><a href="/news/press-releases/">Press Releases</a></li>
+</ul></div>		</nav>
+
+		<div class="footer__social-menu js-intersection">
+			<span class="footer__social-menu-label">Follow us</span>
+
+			
+<div class="post__social post__social--v2 post__social--has-title post__social--title-position-above">
+
+			<h2 class="screen-reader-mobile-only post__social-title">Share article</h2>
+	
+	<ul class="social-nav social-nav-v2">
+					<li class="social-nav__item">
+				<a
+					aria-label="Share on LinkedIn (Opens in a new tab)"
+					href="https://www.linkedin.com/showcase/salesforce-news"
+					target="_blank"
+				>
+					
+<svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" fill="none"><path fill="#032D60" d="M16.625 0H4.375A4.375 4.375 0 0 0 0 4.375v12.25A4.375 4.375 0 0 0 4.375 21h12.25A4.375 4.375 0 0 0 21 16.625V4.375A4.375 4.375 0 0 0 16.625 0M7 16.625H4.375V7H7zM5.687 5.89a1.54 1.54 0 0 1-1.53-1.543c0-.852.685-1.544 1.53-1.544.846 0 1.532.692 1.532 1.544S6.534 5.89 5.687 5.89M17.5 16.625h-2.625v-4.903c0-2.947-3.5-2.724-3.5 0v4.903H8.75V7h2.625v1.544c1.222-2.262 6.125-2.43 6.125 2.167z" /></svg>
+				</a>
+			</li>
+					<li class="social-nav__item">
+				<a
+					aria-label="Share on Twitter (Opens in a new tab)"
+					href="https://x.com/SalesforceNews"
+					target="_blank"
+				>
+					
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="#032D60" viewbox="0 0 32 32"><path d="M17.4 14.8 23 8.3h-1.3L16.8 14 13 8.3H8.5l5.9 8.5-5.9 6.8h1.3l5.1-6 4.1 6h4.5zm-1.8 2.1-.6-.8-4.7-6.8h2l3.8 5.5.6.8 5 7.1h-2z" /></svg>
+				</a>
+			</li>
+					<li class="social-nav__item">
+				<a
+					aria-label="Share on Facebook (Opens in a new tab)"
+					href="https://www.facebook.com/salesforce"
+					target="_blank"
+				>
+					
+<svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" fill="none"><path fill="#032D60" d="M19 9.5a9.5 9.5 0 0 0-19 0c0 4.742 3.474 8.672 8.016 9.385v-6.639H5.604V9.5h2.412V7.407c0-2.38 1.418-3.696 3.588-3.696 1.04 0 2.127.185 2.127.185v2.338h-1.198c-1.18 0-1.549.733-1.549 1.484V9.5h2.635l-.421 2.746h-2.214v6.639C15.526 18.172 19 14.242 19 9.5" /></svg>
+				</a>
+			</li>
+		
+					<li class="social-nav__item">
+				<a
+					aria-label="Contact the newsroom by email"
+					href="mailto:pr@salesforce.com"
+					target="_blank"
+				>
+					
+<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none"><path d="M10.826 12.885c.23.23.577.23.807 0l8.693-8.077c.154-.308.115-.808-.5-.808l-17.193.038c-.461 0-.846.424-.5.808zm9.654-4.923a.464.464 0 0 0-.77-.347l-6.807 6.27a2.43 2.43 0 0 1-1.654.654 2.58 2.58 0 0 1-1.654-.616l-6.77-6.308a.455.455 0 0 0-.768.347c-.039-.116-.039 8.73-.039 8.73 0 .846.692 1.539 1.539 1.539H18.94c.846 0 1.539-.693 1.539-1.539z" clip-rule="evenodd" /></svg>
+				</a>
+			</li>
+			</ul>
+</div>
+		</div>
+
+	</div>
+	
+</footer>
+		
+<div class="footer-secondary">
+	<div class="footer-secondary__wrapper">
+		<div class="footer-secondary__menu-global-wrapper">
+			<button
+				id="js-global-submenu-button"
+				class="footer-secondary__menu-global"
+				aria-expanded="false"
+			>
+				<svg viewbox="0 0 24 23" fill="none" xmlns="http://www.w3.org/2000/svg" class="globe-icon"><path d="M12 .697C5.383.697 0 5.69 0 11.829c0 6.14 5.383 11.133 12 11.133s12-4.994 12-11.133C24 5.69 18.617.697 12 .697zm0 1.855c.18 0 .453.101.813.493.359.391.726 1.033 1.062 1.884.156.399.309.856.438 1.334H9.686c.13-.478.282-.935.438-1.334.336-.851.703-1.493 1.063-1.884.359-.392.632-.493.812-.493zm-3.188.464a9.497 9.497 0 00-.593 1.276c-.235.598-.422 1.264-.594 1.971H4a10.017 10.017 0 014.813-3.247zm6.376 0A10.017 10.017 0 0120 6.263h-3.625c-.172-.707-.36-1.373-.594-1.971a9.481 9.481 0 00-.594-1.276zM2.812 8.118h4.47c-.13.881-.22 1.816-.25 2.784h-4.97a8.724 8.724 0 01.75-2.784zm6.5 0h5.376c.14.87.242 1.805.28 2.784H9.032a23.3 23.3 0 01.281-2.784zm7.407 0h4.468c.403.867.649 1.805.75 2.784H16.97a24.801 24.801 0 00-.25-2.784zm-14.657 4.64h4.97c.03.967.12 1.902.25 2.782h-4.47a8.723 8.723 0 01-.75-2.783zm6.97 0h5.937a23.31 23.31 0 01-.281 2.782H9.311c-.14-.87-.242-1.804-.28-2.783zm7.937 0h4.968a8.725 8.725 0 01-.75 2.782H16.72a24.8 24.8 0 00.25-2.783zM4 17.395h3.625c.172.707.36 1.373.594 1.971.18.46.37.888.594 1.276A10.016 10.016 0 014 17.396zm5.688 0h4.624c-.128.478-.28.935-.437 1.334-.336.851-.703 1.493-1.063 1.884-.359.391-.632.493-.812.493-.18 0-.453-.102-.813-.493-.359-.391-.726-1.033-1.062-1.884a12.915 12.915 0 01-.438-1.334zm6.687 0H20a10.016 10.016 0 01-4.813 3.247c.223-.388.415-.815.594-1.276.235-.598.422-1.264.594-1.971z" /></svg>				<span>Worldwide</span>
+				<svg width="16" height="16" viewbox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M13 5.7l-.7-.7L8 9.5 3.7 5l-.7.7L8 11z" fill-rule="evenodd" /></svg>			</button>
+
+			
+<div
+	class="global-submenu"
+	id="js-global-submenu"
+	aria-hidden="true"
+>
+	<div class="global-submenu__container">
+		<p class="global-submenu__heading h6" id="americas">Americas</p>
+		<ul class="global-submenu__list">
+			<li class="global-submenu__link">
+				<a href="https://www.salesforce.com/mx/" target="_blank" lang="pt">América Latina (Español)</a>
+			</li>
+			<li class="global-submenu__link">
+				<a href="https://www.salesforce.com/br/" target="_blank" lang="pt">Brasil (Português)</a>
+			</li>
+			<li class="global-submenu__link">
+				<a href="https://www.salesforce.com/ca/" target="_blank">Canada (English)</a>
+			</li>
+			<li class="global-submenu__link">
+				<a href="https://www.salesforce.com/fr-ca/" target="_blank">Canada (Français)</a>
+			</li>
+			<li class="global-submenu__link">
+				<a href="https://www.salesforce.com/" target="_blank">United States (English)</a>
+			</li>
+		</ul>
+	</div>
+
+	<div class="global-submenu__container">
+		<p class="global-submenu__heading h6">Europe, Middle East, and Africa</p>
+		<ul class="global-submenu__list">
+			<li class="global-submenu__link">
+				<a href="https://www.salesforce.com/es" target="_blank" lang="de">España (Español)</a>
+			</li>
+			<li class="global-submenu__link">
+				<a href="https://www.salesforce.com/de/" target="_blank" lang="de">Deutschland (Deutsch)</a>
+			</li>
+			<li class="global-submenu__link">
+				<a href="https://www.salesforce.com/fr/" target="_blank" lang="fr">France (Français)</a>
+			</li>
+			<li class="global-submenu__link">
+				<a href="https://www.salesforce.com/it/" target="_blank" lang="fr">Italia (Italiano)</a>
+			</li>
+			<li class="global-submenu__link">
+				<a href="https://www.salesforce.com/nl/" target="_blank" lang="nl">Nederland (Nederlands)</a>
+			</li>
+			<li class="global-submenu__link">
+				<a href="https://www.salesforce.com/se/" target="_blank" lang="nl">Sverige (Svenska)</a>
+			</li>
+			<li class="global-submenu__link">
+				<a href="https://www.salesforce.com/uk/" target="_blank">United Kingdom (English)</a>
+			</li>
+			<li class="global-submenu__link">
+				<a href="https://www.salesforce.com/eu/" target="_blank">All other countries (English)</a>
+			</li>
+		</ul>
+	</div>
+
+	<div class="global-submenu__container">
+		<p id="asia-pacific" class="global-submenu__heading h6">Asia Pacific</p>
+		<ul class="global-submenu__list">
+			<li class="global-submenu__link">
+				<a href="https://www.salesforce.com/au/" target="_blank">Australia (English)</a>
+			</li>
+			<li class="global-submenu__link">
+				<a href="https://www.salesforce.com/in/" target="_blank">India (English)</a>
+			</li>
+			<li class="global-submenu__link">
+				<a href="https://www.salesforce.com/jp/" target="_blank" lang="ja">日本 (日本語)</a>
+			</li>
+			<li class="global-submenu__link">
+				<a href="https://www.salesforce.com/cn/" target="_blank">中国 (简体中文)</a>
+			</li>
+			<li class="global-submenu__link">
+				<a href="https://www.salesforce.com/hk/" target="_blank">香港 (繁體中文)</a>
+			</li>
+			<li class="global-submenu__link">
+				<a href="https://www.salesforce.com/tw/" target="_blank">台灣 (繁體中文)</a>
+			</li>
+			<li class="global-submenu__link">
+				<a href="https://www.salesforce.com/kr/" target="_blank">한국 (한국어)</a>
+			</li>
+			<li class="global-submenu__link">
+				<a href="https://www.salesforce.com/my/" target="_blank">Malaysia (English)</a>
+			</li>
+			<li class="global-submenu__link">
+				<a href="https://www.salesforce.com/th/" target="_blank">ประเทศไทย (ไทย)</a>
+			</li>
+			<li class="global-submenu__link">
+				<a href="https://www.salesforce.com/ap/" target="_blank">All other countries (English)</a>
+			</li>
+		</ul>
+	</div>
+</div>
+		</div>
+		<div class="footer-secondary__menu-links">
+			<p class="footer-secondary__copyright">
+							© Copyright 2026 Salesforce, inc. <a href="https://www.salesforce.com/company/legal/intellectual/">All rights reserved. </a>Various trademarks held by their respective owners. Salesforce, inc. Salesforce Tower, 415 Mission Street, 3rd Floor, San Francisco, CA 94105, United States
+						</p>
+
+			<nav>
+				<div class="menu-secondary-footer-container"><ul id="footer-secondary-nav" class="footer-secondary__menu"><li id="menu-item-37543" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-37543"><a href="https://www.salesforce.com/company/legal/">Legal</a></li>
+<li id="menu-item-37544" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-37544"><a href="https://www.salesforce.com/company/legal/sfdc-website-terms-of-service/">Terms of Service</a></li>
+<li id="menu-item-36374" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-36374"><a href="https://www.salesforce.com/company/privacy/">Privacy Information</a></li>
+<li id="menu-item-36375" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-36375"><a href="https://www.salesforce.com/company/disclosure/">Responsible Disclosure</a></li>
+<li id="menu-item-36376" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-36376"><a href="https://trust.salesforce.com/">Trust</a></li>
+<li id="menu-item-36377" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-36377"><a href="https://www.salesforce.com/form/contact/contactme/">Contact</a></li>
+<li class="menu-item"><a class="page-footer_link optanon-toggle-display" href="javascript:void(0)">Cookie Preferences</a></li><li><a href=/form/other/privacy-request/?d=cta-footer-1><img src="https://www.salesforce.com/content/dam/web/global/svg-icons/icon-cpra.svg" class="footer-link-icon" alt="" />Your Privacy Choices</a></li></ul></div>			</nav>
+		</div>
+	</div>
+</div>
+	</div>
+
+	<div class="skip-links screen-reader-text">
+		<a href="#main">Skip to Content</a>
+		<a href="#header">Skip to Header</a>
+	</div>
+
+		<div class="form-subscribe-modal">
+		
+<section class="newsletter newsletter--modal newsletter--no-js">
+	<header class="newsletter__header">
+		<h2 class="newsletter__title">
+			Insight, Opinion, News, and Data		</h2>
+		<p class="newsletter__subtitle">
+			Sign up for Salesforce News &amp; Insights, direct to your inbox.		</p>
+	</header>
+
+	<iframe src="https://cloud.mail.salesforce.com/newsroomsignup"
+		class="newsletter__iframe"
+		title="Insight, Opinion, News, and Data"
+	>
+	</iframe>
+
+</section>
+	</div>
+	
+		<div class="copy-event-message" aria-hidden="true">
+		<span>Copied</span>
+	</div>
+	<script type="speculationrules">
+{"prefetch":[{"source":"document","where":{"and":[{"href_matches":"/news/*"},{"not":{"href_matches":["/news/wp-*.php","/news/wp-admin/*","/news/wp-content/uploads/sites/3/*","/news/wp-content/*","/news/wp-content/plugins/*","/news/wp-content/themes/newsroom/*","/news/*\\?(.+)"]}},{"not":{"selector_matches":"a[rel~=\"nofollow\"]"}},{"not":{"selector_matches":".no-prefetch, .no-prefetch a"}}]},"eagerness":"conservative"}]}
+</script>
+<script id="hoverintent-js-js" src="https://www.salesforce.com/news/wp-includes/js/hoverintent-js.min.js?ver=2.2.1"></script>
+<script id="admin-bar-js" src="https://www.salesforce.com/news/wp-includes/js/admin-bar.min.js?ver=7.1.3"></script>
+<script id="admin-bar-js-after">
+jQuery(document).ready( function($) {
+	$('#wp-admin-bar-my-sites-search.hide-if-no-js').show();
+	$('#wp-admin-bar-my-sites-search input').keyup( function( ) {
+		var searchValRegex = new RegExp( $(this).val(), 'i');
+		$('#wp-admin-bar-my-sites-list > li.menupop').hide().filter(function() {
+			return searchValRegex.test( $(this).find('> a').text() );
+		}).show();
+	});
+});
+//# sourceURL=admin-bar-js-after
+</script>
+<script id="salesforce-shared-frontend-js" src="https://www.salesforce.com/news/wp-content/client-mu-plugins/salesforce-shared/dist/js/frontend.js?ver=1791477234"></script>
+<script id="wp-dom-ready-js" src="https://www.salesforce.com/news/wp-includes/js/dist/dom-ready.min.js?ver=3fe927cab37bf38d6a23"></script>
+<script id="wp-a11y-js" src="https://www.salesforce.com/news/wp-includes/js/dist/a11y.min.js?ver=31c6cec5a4ff7aff483d"></script>
+<script id="frontend-js-extra">
+var NEWSROOM = {"ajaxurl":"https://www.salesforce.com/news/wp-admin/admin-ajax.php","ajaxnonce":"23d7b3b821","autosuggestEndpoint":"https://www.salesforce.com/news/wp-json/newsroom/v1/assets/autosuggest","collections":[{"label":"Company Logos","url":"https://www.salesforce.com/news/media-collection/company-logos-and-video/","keywords":""},{"label":"Culture","url":"https://www.salesforce.com/news/media-collection/culture/","keywords":""},{"label":"Dreamforce","url":"https://www.salesforce.com/news/media-collection/dreamforce/","keywords":""},{"label":"Dreamforce 2022","url":"https://www.salesforce.com/news/media-collection/dreamforce-2022/","keywords":""},{"label":"Dreamforce 2023","url":"https://www.salesforce.com/news/media-collection/dreamforce-2023/","keywords":""},{"label":"Dreamforce 2024","url":"https://www.salesforce.com/news/media-collection/dreamforce-2024/","keywords":""},{"label":"Dreamforce 2024 Onsite Photography","url":"https://www.salesforce.com/news/media-collection/dreamforce-2024-onsite-photography/","keywords":""},{"label":"Dreamforce 2024 Product Media","url":"https://www.salesforce.com/news/media-collection/dreamforce-2024-product-media/","keywords":""},{"label":"Dreamforce 2025","url":"https://www.salesforce.com/news/media-collection/dreamforce-2025/","keywords":""},{"label":"Dreamforce 2026","url":"https://www.salesforce.com/news/media-collection/dreamforce-2026/","keywords":""},{"label":"Events","url":"https://www.salesforce.com/news/media-collection/events/","keywords":""},{"label":"Leadership","url":"https://www.salesforce.com/news/media-collection/leadership/","keywords":""},{"label":"Real Estate","url":"https://www.salesforce.com/news/media-collection/real-estate/","keywords":""},{"label":"Salesforce Characters","url":"https://www.salesforce.com/news/media-collection/salesforce-characters/","keywords":""},{"label":"Salesforce Tower Atlanta","url":"https://www.salesforce.com/news/media-collection/salesforce-tower-atlanta/","keywords":""},{"label":"Salesforce Tower Chicago","url":"https://www.salesforce.com/news/media-collection/salesforce-tower-chicago/","keywords":""},{"label":"Salesforce Tower Dublin","url":"https://www.salesforce.com/news/media-collection/salesforce-tower-dublin/","keywords":""},{"label":"Salesforce Tower Indianapolis","url":"https://www.salesforce.com/news/media-collection/salesforce-tower-indianapolis/","keywords":""},{"label":"Salesforce Tower London","url":"https://www.salesforce.com/news/media-collection/salesforce-tower-london/","keywords":""},{"label":"Salesforce Tower New York","url":"https://www.salesforce.com/news/media-collection/salesforce-tower-new-york/","keywords":""},{"label":"Salesforce Tower San Francisco","url":"https://www.salesforce.com/news/media-collection/salesforce-tower-san-francisco/","keywords":""},{"label":"Salesforce Tower Sydney","url":"https://www.salesforce.com/news/media-collection/salesforce-tower-sydney/","keywords":""},{"label":"Spokespeople","url":"https://www.salesforce.com/news/media-collection/spokespeople/","keywords":""}],"marketingCloudNewsletterFormUrl":"https://cloud.mail.salesforce.com/newsroomsignup","search_results_page":"https://www.salesforce.com/news/media-library/search"};
+//# sourceURL=frontend-js-extra
+</script>
+<script id="frontend-js" src="https://www.salesforce.com/news/wp-content/themes/newsroom/dist/js/frontend.js?ver=42044b038515f3c35a2c"></script>
+<script id="jetpack-stats-js-before">
+_stq = window._stq || [];
+_stq.push([ "view", {"v":"ext","blog":"218239395","post":"66177","tz":"-7","srv":"wp-bn.salesforce.com","hp":"vip","j":"1:16.2"} ]);
+_stq.push([ "clickTrackerInit", "218239395", "66177" ]);
+//# sourceURL=jetpack-stats-js-before
+</script>
+<script data-wp-strategy="defer" defer fetchpriority="low" id="jetpack-stats-js" src="https://stats.wp.com/e-202641.js"></script>
+	<script type="text/javascript">window.NREUM||(NREUM={});NREUM.info={"beacon":"bam.nr-data.net","licenseKey":"NRJS-d1aad62634166c22251","applicationID":"757606115","transactionName":"ZFJQZEdYV0AFVRUNXl0YZ0JcFlBdAFMZSkFbRw==","queueTime":0,"applicationTime":419,"atts":"SBVTEg9CRE4=","errorBeacon":"bam.nr-data.net","agent":""}</script><script type="text/javascript"  src="/FE_mMN/tsPYv/bhFKg/xhS8/Yak9wt3V5waO2QkYr1/c3wnAQ/LWMGFQI/AUxA"></script><link rel="stylesheet" type="text/css"  href="/FE_mMN/tsPYv/bhFKg/xhS8/kQk9OS/WQ0TAQ/ZgUANBk/rNjxX"><script  src="/FE_mMN/tsPYv/bhFKg/xhS8/Yak9OS/WQ0TAQ/Q15lPj1/NP3Mo" async defer></script><div id="sec-overlay" style="display:none;"><div id="sec-container"></div></div></body>
+</html>

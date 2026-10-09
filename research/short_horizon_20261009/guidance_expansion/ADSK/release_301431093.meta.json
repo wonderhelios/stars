@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2022-third-quarter-results-301431093.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "ca2d56c6210f57abd285b6274c0e8a98c6d0afdf8a0285724e70e218c0dfc19b",
+  "retrieved_utc": "2026-10-09T03:26:27Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2022-third-quarter-results-301431093.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "ca2d56c6210f57abd285b6274c0e8a98c6d0afdf8a0285724e70e218c0dfc19b",
+      "retrieved_utc": "2026-10-09T03:26:27Z"
+    }
+  ]
+}

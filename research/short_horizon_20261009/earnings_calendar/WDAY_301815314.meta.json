@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/workday-announces-date-of-fiscal-2024-first-quarter-financial-results-301815314.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "decb47886157e110db8d3b464f2def2115dce0f14b7611f32a2fc009616cefa4",
+  "retrieved_utc": "2026-10-09T04:11:44Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/workday-announces-date-of-fiscal-2024-first-quarter-financial-results-301815314.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "decb47886157e110db8d3b464f2def2115dce0f14b7611f32a2fc009616cefa4",
+      "retrieved_utc": "2026-10-09T04:11:44Z"
+    }
+  ]
+}

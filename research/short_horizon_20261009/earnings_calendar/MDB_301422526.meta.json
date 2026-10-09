@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-date-of-third-quarter-fiscal-2022-earnings-call-301422526.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "b6f11e847dd8cce2b57500f456be8b2c896edbced7a7ce094ceafc0cee846e10",
+  "retrieved_utc": "2026-10-09T04:08:45Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-date-of-third-quarter-fiscal-2022-earnings-call-301422526.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "b6f11e847dd8cce2b57500f456be8b2c896edbced7a7ce094ceafc0cee846e10",
+      "retrieved_utc": "2026-10-09T04:08:45Z"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/synopsys-announces-earnings-release-date-for-first-quarter-fiscal-year-2024-302045100.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "ae77e7faa35b8a8d288c9389e5b2521b2c71fa26e06abe41f104a4619a9c3ae3",
+  "retrieved_utc": "2026-10-09T04:09:10Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/synopsys-announces-earnings-release-date-for-first-quarter-fiscal-year-2024-302045100.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "ae77e7faa35b8a8d288c9389e5b2521b2c71fa26e06abe41f104a4619a9c3ae3",
+      "retrieved_utc": "2026-10-09T04:09:10Z"
+    }
+  ]
+}

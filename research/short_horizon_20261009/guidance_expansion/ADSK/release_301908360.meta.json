@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2024-second-quarter-results-301908360.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "25006751ee3e86ccdce93e4fc5132752c2610d4d3a3cd7c4698c9f67f5fdb0ee",
+  "retrieved_utc": "2026-10-09T03:25:35Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2024-second-quarter-results-301908360.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "25006751ee3e86ccdce93e4fc5132752c2610d4d3a3cd7c4698c9f67f5fdb0ee",
+      "retrieved_utc": "2026-10-09T03:25:35Z"
+    }
+  ]
+}

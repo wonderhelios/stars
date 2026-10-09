@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/synopsys-announces-earnings-release-date-for-fourth-quarter-and-fiscal-year-2023-301971715.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "7eb5008b208ea5619c40c149db060b63b2f1ec8d26dc5848de03a1e0a8577e18",
+  "retrieved_utc": "2026-10-09T04:09:49Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/synopsys-announces-earnings-release-date-for-fourth-quarter-and-fiscal-year-2023-301971715.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "7eb5008b208ea5619c40c149db060b63b2f1ec8d26dc5848de03a1e0a8577e18",
+      "retrieved_utc": "2026-10-09T04:09:49Z"
+    }
+  ]
+}

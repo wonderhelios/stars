@@ -1,0 +1,16 @@
+{
+  "start": "2021-05-28",
+  "end": "2026-10-07",
+  "source_count": 22,
+  "positive_revision_events": 8,
+  "spec_sha256": "7d3dbbe2c921cd6b604fbd69aa52921af49e853b414130770b6dca5e4deb0cc4",
+  "code_sha256": {
+    "guidance_extract.py": "bf65708f9d88f42197af9add7c58f87537d911e395d456f3ed03cd84def9ed53",
+    "guidance_screen.py": "ba14028b690b6d3fc7c4f29144f2be6d248d5240856f9a9e2c0ff685e8f4cda8",
+    "screen.py": "0c3ca297fe43ee03ef5de63dc5eb8b5b1d1581f0d92f83ba44b06b12f1d137c8"
+  },
+  "data_sha256": {
+    "VEEV": "192cc22fbdd4ccf5f209b7950a581c5cef53586ac306bb1dc4c07bfe2a4a403b",
+    "QQQ": "a431bc5ee1b70f0124d1d66ef1e8b1cd0c5a0c6c197d054fcb5ac1d1a6dd583d"
+  }
+}

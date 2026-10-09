@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/datadog-announces-second-quarter-2024-financial-results-302217275.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "5bea4734f4a856505893fff7e50f3a4b9b554664ffbdddcb554fc381d53832af",
+  "retrieved_utc": "2026-10-09T03:33:57Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/datadog-announces-second-quarter-2024-financial-results-302217275.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "5bea4734f4a856505893fff7e50f3a4b9b554664ffbdddcb554fc381d53832af",
+      "retrieved_utc": "2026-10-09T03:33:57Z"
+    }
+  ]
+}

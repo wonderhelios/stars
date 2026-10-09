@@ -1,0 +1,70 @@
+{
+  "start": "2021-01-01",
+  "end": "2026-10-07",
+  "events": 47,
+  "configurations": {
+    "SPY_pre1": {
+      "assets": [
+        "SPY"
+      ],
+      "hold": 1
+    },
+    "SPY_event2": {
+      "assets": [
+        "SPY"
+      ],
+      "hold": 2
+    },
+    "GLD_pre1": {
+      "assets": [
+        "GLD"
+      ],
+      "hold": 1
+    },
+    "GLD_event2": {
+      "assets": [
+        "GLD"
+      ],
+      "hold": 2
+    },
+    "TLT_pre1": {
+      "assets": [
+        "TLT"
+      ],
+      "hold": 1
+    },
+    "TLT_event2": {
+      "assets": [
+        "TLT"
+      ],
+      "hold": 2
+    },
+    "mix_pre1": {
+      "assets": [
+        "SPY",
+        "GLD",
+        "TLT"
+      ],
+      "hold": 1
+    },
+    "mix_event2": {
+      "assets": [
+        "SPY",
+        "GLD",
+        "TLT"
+      ],
+      "hold": 2
+    }
+  },
+  "spec_sha256": "7b6914dd535fd59857a408bcc130ebb26ec992260ebd3436efbfbab4ece2dc65",
+  "code_sha256": {
+    "macro_calendar_parse.py": "14c651ce065eab6b395b0ba0a16373ceac93644910068468b076c0cc00b08781",
+    "macro_calendar_screen.py": "be9e18cc995b9e2e2876ee1b5fded9d4e0831d56621ac18c0e1d98e01407b55f",
+    "screen.py": "5ae957eff8eeeed4866c103eea6efd88ed373539b5c14fee01e897782b2984f6"
+  },
+  "data_sha256": {
+    "SPY": "77b204edf4c3c15e095eb6d5de3c3ee7f17a9f20c3414482cb4022afd1cc1955",
+    "GLD": "1394356daa1ecc7f233a7ca2b333f89a1c3bc261405b2f83a6c39d3040068891",
+    "TLT": "20990b424687b839ba2e8aa291ccd184bc74d9e172eec2bf39c293d91b3e38c4"
+  }
+}

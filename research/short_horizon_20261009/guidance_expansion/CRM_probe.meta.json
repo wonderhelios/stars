@@ -1,0 +1,18 @@
+{
+  "url": "https://www.salesforce.com/news/press-releases/2025/05/28/fy26-q1-earnings/",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "4fc4f23d9a4c57a75ff02b2ce7f52ea9987de7a6b101921641412818afc35d20",
+  "retrieved_utc": "2026-10-09T03:19:58Z",
+  "attempts": [
+    {
+      "url": "https://www.salesforce.com/news/press-releases/2025/05/28/fy26-q1-earnings/",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "4fc4f23d9a4c57a75ff02b2ce7f52ea9987de7a6b101921641412818afc35d20",
+      "retrieved_utc": "2026-10-09T03:19:58Z"
+    }
+  ]
+}

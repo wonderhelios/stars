@@ -1,0 +1,2717 @@
+[
+  {
+    "name": "baseline",
+    "days": 1190,
+    "sharpe": 1.1175968192068342,
+    "daily_turnover": 1.5973376272882545,
+    "annual_cost": 0.4081197637721489,
+    "annual_arithmetic": 0.8905952827622139,
+    "cagr": 0.7772217484117085,
+    "total_return": 5.519678169496292,
+    "max_drawdown": -0.8089832752647412,
+    "decline_days": 224.0,
+    "recovery_days": 385.0,
+    "underwater_days": 609.0,
+    "phase_metrics": [
+      {
+        "days": 1190,
+        "sharpe": 1.1177652696307931,
+        "daily_turnover": 1.596812321630385,
+        "annual_cost": 0.4079855481765633,
+        "annual_arithmetic": 0.8907287007997235,
+        "cagr": 0.7774592957280686,
+        "total_return": 5.522518853356403,
+        "max_drawdown": -0.8089830930375641,
+        "peak": "2024-03-05",
+        "trough": "2024-10-15",
+        "recovery": "2025-11-04",
+        "recovered": true,
+        "decline_days": 224,
+        "recovery_days": 385,
+        "underwater_days": 609,
+        "longest_underwater": {
+          "days": 609,
+          "peak": "2024-03-05",
+          "end": "2025-11-04",
+          "recovered": true
+        }
+      },
+      {
+        "days": 1190,
+        "sharpe": 1.1177655341681445,
+        "daily_turnover": 1.5968111632354127,
+        "annual_cost": 0.40798525220664794,
+        "annual_arithmetic": 0.8907289338743546,
+        "cagr": 0.7774596692486925,
+        "total_return": 5.522523322090005,
+        "max_drawdown": -0.8089835309231647,
+        "peak": "2024-03-05",
+        "trough": "2024-10-15",
+        "recovery": "2025-11-04",
+        "recovered": true,
+        "decline_days": 224,
+        "recovery_days": 385,
+        "underwater_days": 609,
+        "longest_underwater": {
+          "days": 609,
+          "peak": "2024-03-05",
+          "end": "2025-11-04",
+          "recovered": true
+        }
+      },
+      {
+        "days": 1190,
+        "sharpe": 1.1172596538215651,
+        "daily_turnover": 1.5983893969989653,
+        "annual_cost": 0.4083884909332356,
+        "annual_arithmetic": 0.8903282136125636,
+        "cagr": 0.7767462802583646,
+        "total_return": 5.513992333042471,
+        "max_drawdown": -0.8089832018334946,
+        "peak": "2024-03-05",
+        "trough": "2024-10-15",
+        "recovery": "2025-11-04",
+        "recovered": true,
+        "decline_days": 224,
+        "recovery_days": 385,
+        "underwater_days": 609,
+        "longest_underwater": {
+          "days": 609,
+          "peak": "2024-03-05",
+          "end": "2025-11-04",
+          "recovered": true
+        }
+      }
+    ],
+    "delta": 0.0,
+    "phase_sd": 0.00023841195476565183,
+    "phase_delta_range": 0.0,
+    "corr": 1.0,
+    "subperiods": {
+      "2023-24": {
+        "sharpe": -0.01858913542203337,
+        "daily_turnover": 1.3656326192398278,
+        "annual_cost": 0.34891913421577603,
+        "annual_arithmetic": -0.014599060111792466,
+        "cagr": -0.27301497321606044,
+        "total_return": -0.37879251162779903,
+        "max_drawdown": -0.8089832752647412,
+        "decline_days": 224.0,
+        "recovery_days": 77.0,
+        "underwater_days": 301.0,
+        "days": 545,
+        "delta": 0.0
+      },
+      "2025-26": {
+        "sharpe": 2.0566323470104027,
+        "daily_turnover": 1.7931193782749093,
+        "annual_cost": 0.45814200114923936,
+        "annual_arithmetic": 1.6554494174386998,
+        "cagr": 2.782415535391181,
+        "total_return": 9.495169972011558,
+        "max_drawdown": -0.47499755624307377,
+        "decline_days": 76.0,
+        "recovery_days": 67.0,
+        "underwater_days": 143.0,
+        "days": 645,
+        "delta": 0.0
+      }
+    },
+    "original_full": {
+      "days": 1192,
+      "sharpe": 1.1292998945108697,
+      "daily_turnover": 1.5976523473323607,
+      "annual_cost": 0.40820017474341813,
+      "annual_arithmetic": 0.8994001037161335,
+      "cagr": 0.7935574670118992,
+      "total_return": 5.738629797390161,
+      "max_drawdown": -0.8089830930375639,
+      "peak": "2024-03-05",
+      "trough": "2024-10-15",
+      "recovery": "2025-11-04",
+      "recovered": true,
+      "decline_days": 224,
+      "recovery_days": 385,
+      "underwater_days": 609,
+      "longest_underwater": {
+        "days": 609,
+        "peak": "2024-03-05",
+        "end": "2025-11-04",
+        "recovered": true
+      }
+    },
+    "cost_cases": {
+      "0.0007": {
+        "sharpe": 1.1175968192068342,
+        "daily_turnover": 1.5973376272882545,
+        "annual_cost": 0.4081197637721489,
+        "annual_arithmetic": 0.8905952827622139,
+        "cagr": 0.7772217484117085,
+        "total_return": 5.519678169496292,
+        "max_drawdown": -0.8089832752647412,
+        "decline_days": 224.0,
+        "recovery_days": 385.0,
+        "underwater_days": 609.0,
+        "subperiods": {
+          "2023-24": {
+            "sharpe": -0.01858913542203337,
+            "delta": 0.0,
+            "annual_arithmetic": -0.014599060111792468
+          },
+          "2025-26": {
+            "sharpe": 2.0566323470104027,
+            "delta": 0.0,
+            "annual_arithmetic": 1.6554494174387
+          }
+        }
+      },
+      "0.00045": {
+        "sharpe": 1.3007590693384676,
+        "daily_turnover": 1.596932606774273,
+        "annual_cost": 0.26229618066267435,
+        "annual_arithmetic": 1.0356680257776898,
+        "cagr": 1.0556773696563808,
+        "total_return": 9.4789777408384,
+        "max_drawdown": -0.7858689133179992,
+        "decline_days": 224.0,
+        "recovery_days": 361.0,
+        "underwater_days": 585.0,
+        "subperiods": {
+          "2023-24": {
+            "sharpe": 0.1395134995600222,
+            "delta": 0.0,
+            "annual_arithmetic": 0.10945885544961627
+          },
+          "2025-26": {
+            "sharpe": 2.2609044913563356,
+            "delta": 0.0,
+            "annual_arithmetic": 1.8182788751246668
+          }
+        }
+      },
+      "0.00015": {
+        "sharpe": 1.5215978608512135,
+        "daily_turnover": 1.596469033583772,
+        "annual_cost": 0.08740667958871151,
+        "annual_arithmetic": 1.2102803512263403,
+        "cagr": 1.4490581199917294,
+        "total_return": 17.545716504175875,
+        "max_drawdown": -0.7543306984585669,
+        "decline_days": 224.0,
+        "recovery_days": 276.0,
+        "underwater_days": 500.0,
+        "subperiods": {
+          "2023-24": {
+            "sharpe": 0.32965908838200897,
+            "delta": 0.0,
+            "annual_arithmetic": 0.2583391540508929
+          },
+          "2025-26": {
+            "sharpe": 2.5076660554098513,
+            "delta": 0.0,
+            "annual_arithmetic": 2.0146337658939664
+          }
+        }
+      },
+      "0.00075": {
+        "sharpe": 1.080912818758269,
+        "daily_turnover": 1.5974182283960097,
+        "annual_cost": 0.4372932400234076,
+        "annual_arithmetic": 0.8615139626057559,
+        "cagr": 0.7260981642358746,
+        "total_return": 4.927867874478494,
+        "max_drawdown": -0.8133011857549666,
+        "decline_days": 224.0,
+        "recovery_days": 385.0,
+        "underwater_days": 609.0,
+        "subperiods": {
+          "2023-24": {
+            "sharpe": -0.05020114654925111,
+            "delta": 0.0,
+            "annual_arithmetic": -0.0394337152698233
+          },
+          "2025-26": {
+            "sharpe": 2.01568250810212,
+            "delta": 0.0,
+            "annual_arithmetic": 1.6227798299579894
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "K3",
+    "days": 1190,
+    "sharpe": 0.5659887403331226,
+    "daily_turnover": 1.7005376799932785,
+    "annual_cost": 0.4344873772382827,
+    "annual_arithmetic": 0.5294322135454911,
+    "cagr": 0.09886757103746457,
+    "total_return": 0.3598566789424711,
+    "max_drawdown": -0.9075712284564744,
+    "decline_days": 230.0,
+    "recovery_days": 471.0,
+    "underwater_days": 701.0,
+    "phase_metrics": [
+      {
+        "days": 1190,
+        "sharpe": 0.5661303467339264,
+        "daily_turnover": 1.7000125624711435,
+        "annual_cost": 0.43435320971137714,
+        "annual_arithmetic": 0.5295643281593464,
+        "cagr": 0.09901318457569284,
+        "total_return": 0.36044408286611374,
+        "max_drawdown": -0.9075716931578719,
+        "peak": "2024-03-05",
+        "trough": "2024-10-21",
+        "recovery": "2026-02-04",
+        "recovered": true,
+        "decline_days": 230,
+        "recovery_days": 471,
+        "underwater_days": 701,
+        "longest_underwater": {
+          "days": 701,
+          "peak": "2024-03-05",
+          "end": "2026-02-04",
+          "recovered": true
+        }
+      },
+      {
+        "days": 1190,
+        "sharpe": 0.5661324533986012,
+        "daily_turnover": 1.7000110801298642,
+        "annual_cost": 0.43435283097318034,
+        "annual_arithmetic": 0.5295665831112644,
+        "cagr": 0.09901507999002014,
+        "total_return": 0.36045173243387785,
+        "max_drawdown": -0.9075710569727026,
+        "peak": "2024-03-05",
+        "trough": "2024-10-21",
+        "recovery": "2026-02-04",
+        "recovered": true,
+        "decline_days": 230,
+        "recovery_days": 471,
+        "underwater_days": 701,
+        "longest_underwater": {
+          "days": 701,
+          "peak": "2024-03-05",
+          "end": "2026-02-04",
+          "recovered": true
+        }
+      },
+      {
+        "days": 1190,
+        "sharpe": 0.5657034208668402,
+        "daily_turnover": 1.7015893973788279,
+        "annual_cost": 0.4347560910302905,
+        "annual_arithmetic": 0.5291657293658628,
+        "cagr": 0.09857444854668072,
+        "total_return": 0.3586742215274217,
+        "max_drawdown": -0.9075709352388488,
+        "peak": "2024-03-05",
+        "trough": "2024-10-21",
+        "recovery": "2026-02-04",
+        "recovered": true,
+        "decline_days": 230,
+        "recovery_days": 471,
+        "underwater_days": 701,
+        "longest_underwater": {
+          "days": 701,
+          "peak": "2024-03-05",
+          "end": "2026-02-04",
+          "recovered": true
+        }
+      }
+    ],
+    "delta": -0.5516080788737118,
+    "phase_sd": 0.00020175316253408219,
+    "phase_delta_range": 7.868994214188518e-05,
+    "corr": 0.869849607378752,
+    "subperiods": {
+      "2023-24": {
+        "sharpe": -0.8509272707790898,
+        "daily_turnover": 1.4263950867828683,
+        "annual_cost": 0.36444394467302293,
+        "annual_arithmetic": -0.72713967027265,
+        "cagr": -0.666229233999355,
+        "total_return": -0.8057162294507169,
+        "max_drawdown": -0.9075712284564744,
+        "decline_days": 230.0,
+        "recovery_days": 71.0,
+        "underwater_days": 301.0,
+        "days": 545,
+        "delta": -0.8323381353570566
+      },
+      "2025-26": {
+        "sharpe": 1.5976733929449385,
+        "daily_turnover": 1.9321775455741677,
+        "annual_cost": 0.49367136289419994,
+        "annual_arithmetic": 1.5911867510352387,
+        "cagr": 2.0075325290474257,
+        "total_return": 5.999332361911461,
+        "max_drawdown": -0.6599887118348742,
+        "decline_days": 87.0,
+        "recovery_days": 38.0,
+        "underwater_days": 125.0,
+        "days": 645,
+        "delta": -0.45895895406546394
+      }
+    },
+    "original_full": {
+      "days": 1192,
+      "sharpe": 0.5764171491350557,
+      "daily_turnover": 1.700679433406608,
+      "annual_cost": 0.4345235952353883,
+      "annual_arithmetic": 0.5388417115667639,
+      "cagr": 0.10986170090587595,
+      "total_return": 0.40551974484017195,
+      "max_drawdown": -0.9075716931578719,
+      "peak": "2024-03-05",
+      "trough": "2024-10-21",
+      "recovery": "2026-02-04",
+      "recovered": true,
+      "decline_days": 230,
+      "recovery_days": 471,
+      "underwater_days": 701,
+      "longest_underwater": {
+        "days": 701,
+        "peak": "2024-03-05",
+        "end": "2026-02-04",
+        "recovered": true
+      }
+    },
+    "cost_cases": {
+      "0.0007": {
+        "sharpe": 0.5659887403331226,
+        "daily_turnover": 1.7005376799932785,
+        "annual_cost": 0.4344873772382827,
+        "annual_arithmetic": 0.5294322135454911,
+        "cagr": 0.09886757103746457,
+        "total_return": 0.3598566789424711,
+        "max_drawdown": -0.9075712284564744,
+        "decline_days": 230.0,
+        "recovery_days": 471.0,
+        "underwater_days": 701.0,
+        "subperiods": {
+          "2023-24": {
+            "sharpe": -0.8509272707790898,
+            "delta": -0.8323381353570565,
+            "annual_arithmetic": -0.7271396702726501
+          },
+          "2025-26": {
+            "sharpe": 1.5976733929449385,
+            "delta": -0.45895895406546416,
+            "annual_arithmetic": 1.5911867510352384
+          }
+        }
+      },
+      "0.00045": {
+        "sharpe": 0.7319651538970199,
+        "daily_turnover": 1.700124243927058,
+        "annual_cost": 0.2792454070650194,
+        "annual_arithmetic": 0.6841174426617179,
+        "cagr": 0.2839050560598738,
+        "total_return": 1.2586401430293992,
+        "max_drawdown": -0.8966653832208938,
+        "decline_days": 204.0,
+        "recovery_days": 388.0,
+        "underwater_days": 592.0,
+        "subperiods": {
+          "2023-24": {
+            "sharpe": -0.6998083155033393,
+            "delta": -0.8393218150633616,
+            "annual_arithmetic": -0.5973689833432009
+          },
+          "2025-26": {
+            "sharpe": 1.7756072108050205,
+            "delta": -0.48529728055131516,
+            "annual_arithmetic": 1.7669238026193623
+          }
+        }
+      },
+      "0.00015": {
+        "sharpe": 0.9311671930693638,
+        "daily_turnover": 1.6996391826487933,
+        "annual_cost": 0.09305524525002144,
+        "annual_arithmetic": 0.8694572560227103,
+        "cagr": 0.5469077089135485,
+        "total_return": 3.1467310332830998,
+        "max_drawdown": -0.8821753728835446,
+        "decline_days": 204.0,
+        "recovery_days": 381.0,
+        "underwater_days": 585.0,
+        "subperiods": {
+          "2023-24": {
+            "sharpe": -0.5176287160806089,
+            "delta": -0.8472878044626179,
+            "annual_arithmetic": -0.4413676023232141
+          },
+          "2025-26": {
+            "sharpe": 1.9888555266450278,
+            "delta": -0.5188105287648235,
+            "annual_arithmetic": 1.977053454159964
+          }
+        }
+      },
+      "0.00075": {
+        "sharpe": 0.5327129292326803,
+        "daily_turnover": 1.7006130707107696,
+        "annual_cost": 0.4655428281070732,
+        "annual_arithmetic": 0.49839155359933834,
+        "cagr": 0.06506808559933087,
+        "total_return": 0.22816805624164518,
+        "max_drawdown": -0.9098542881021517,
+        "decline_days": 230.0,
+        "recovery_days": 473.0,
+        "underwater_days": 703.0,
+        "subperiods": {
+          "2023-24": {
+            "sharpe": -0.8810784263502942,
+            "delta": -0.8308772798010431,
+            "annual_arithmetic": -0.7530688474177174
+          },
+          "2025-26": {
+            "sharpe": 1.5618997209943626,
+            "delta": -0.4537827871077573,
+            "annual_arithmetic": 1.555827086241657
+          }
+        }
+      }
+    },
+    "bootstrap": {
+      "20": {
+        "se": 0.3025762080119889,
+        "p": 0.9638,
+        "p_fwer": 0.9984,
+        "basic_ci95_low": -1.1345455878679656,
+        "basic_ci95_high": 0.04282441913399326
+      },
+      "10": {
+        "se": 0.2931509692415029,
+        "p": 0.9708,
+        "p_fwer": 1.0,
+        "basic_ci95_low": -1.1231676171872647,
+        "basic_ci95_high": 0.02341518416419741
+      },
+      "40": {
+        "se": 0.29942317285068737,
+        "p": 0.9678,
+        "p_fwer": 0.9976,
+        "basic_ci95_low": -1.1285182823741022,
+        "basic_ci95_high": 0.03781831009721759
+      }
+    },
+    "checks": {
+      "fwer": false,
+      "positive_subperiods": false,
+      "improvement_gt_phase_noise": false,
+      "turnover_le_baseline": false
+    },
+    "usable": false,
+    "protocol_both_improved": false,
+    "cost_075_both_improved": false,
+    "drawdown_improvement": -0.09858795319173319,
+    "risk_reduced": false,
+    "risk_all_starts": false
+  },
+  {
+    "name": "K5",
+    "days": 1190,
+    "sharpe": 1.052966764310075,
+    "daily_turnover": 1.5378125944849377,
+    "annual_cost": 0.39291111789090155,
+    "annual_arithmetic": 0.8214504227961816,
+    "cagr": 0.6785050351013627,
+    "total_return": 4.411401818303367,
+    "max_drawdown": -0.7713322948037972,
+    "decline_days": 224.0,
+    "recovery_days": 361.0,
+    "underwater_days": 585.0,
+    "phase_metrics": [
+      {
+        "days": 1190,
+        "sharpe": 1.0534103094437972,
+        "daily_turnover": 1.5372774479900788,
+        "annual_cost": 0.39277438796146513,
+        "annual_arithmetic": 0.8217952658005323,
+        "cagr": 0.6790839599159079,
+        "total_return": 4.417485151726314,
+        "max_drawdown": -0.7713318904196959,
+        "peak": "2024-03-05",
+        "trough": "2024-10-15",
+        "recovery": "2025-10-11",
+        "recovered": true,
+        "decline_days": 224,
+        "recovery_days": 361,
+        "underwater_days": 585,
+        "longest_underwater": {
+          "days": 585,
+          "peak": "2024-03-05",
+          "end": "2025-10-11",
+          "recovered": true
+        }
+      },
+      {
+        "days": 1190,
+        "sharpe": 1.053344514549393,
+        "daily_turnover": 1.53727949451897,
+        "annual_cost": 0.39277491084959687,
+        "annual_arithmetic": 0.8217440150242831,
+        "cagr": 0.6789979909482767,
+        "total_return": 4.41658088615602,
+        "max_drawdown": -0.7713319879486007,
+        "peak": "2024-03-05",
+        "trough": "2024-10-15",
+        "recovery": "2025-10-11",
+        "recovered": true,
+        "decline_days": 224,
+        "recovery_days": 361,
+        "underwater_days": 585,
+        "longest_underwater": {
+          "days": 585,
+          "peak": "2024-03-05",
+          "end": "2025-10-11",
+          "recovered": true
+        }
+      },
+      {
+        "days": 1190,
+        "sharpe": 1.0521454689370353,
+        "daily_turnover": 1.5388808409457642,
+        "annual_cost": 0.39318405486164276,
+        "annual_arithmetic": 0.8208119875637293,
+        "cagr": 0.6774331544399035,
+        "total_return": 4.400139417027768,
+        "max_drawdown": -0.7713330060430953,
+        "peak": "2024-03-05",
+        "trough": "2024-10-15",
+        "recovery": "2025-10-11",
+        "recovered": true,
+        "decline_days": 224,
+        "recovery_days": 361,
+        "underwater_days": 585,
+        "longest_underwater": {
+          "days": 585,
+          "peak": "2024-03-05",
+          "end": "2025-10-11",
+          "recovered": true
+        }
+      }
+    ],
+    "delta": -0.0646300548967591,
+    "phase_sd": 0.0005813643776295576,
+    "phase_delta_range": 0.0007592246975338668,
+    "corr": 0.9371259088675159,
+    "subperiods": {
+      "2023-24": {
+        "sharpe": -0.12754910265916042,
+        "daily_turnover": 1.2437549491654394,
+        "annual_cost": 0.3177793895117697,
+        "annual_arithmetic": -0.09554573438782395,
+        "cagr": -0.3126277321400539,
+        "total_return": -0.4286486097269376,
+        "max_drawdown": -0.7713322948037972,
+        "decline_days": 224.0,
+        "recovery_days": 77.0,
+        "underwater_days": 301.0,
+        "days": 545,
+        "delta": -0.10895996723712705
+      },
+      "2025-26": {
+        "sharpe": 1.9859872321272503,
+        "daily_turnover": 1.7862799071967619,
+        "annual_cost": 0.45639451628877264,
+        "annual_arithmetic": 1.596276633129954,
+        "cagr": 2.568947086262653,
+        "total_return": 8.471232420003378,
+        "max_drawdown": -0.47499794095359205,
+        "decline_days": 76.0,
+        "recovery_days": 67.0,
+        "underwater_days": 143.0,
+        "days": 645,
+        "delta": -0.0706451148831521
+      }
+    },
+    "original_full": {
+      "days": 1192,
+      "sharpe": 1.06624137199121,
+      "daily_turnover": 1.5379252415791205,
+      "annual_cost": 0.3929398992234653,
+      "annual_arithmetic": 0.831372776864779,
+      "cagr": 0.6957458810574311,
+      "total_return": 4.610941268940349,
+      "max_drawdown": -0.771331890419696,
+      "peak": "2024-03-05",
+      "trough": "2024-10-15",
+      "recovery": "2025-10-11",
+      "recovered": true,
+      "decline_days": 224,
+      "recovery_days": 361,
+      "underwater_days": 585,
+      "longest_underwater": {
+        "days": 585,
+        "peak": "2024-03-05",
+        "end": "2025-10-11",
+        "recovered": true
+      }
+    },
+    "cost_cases": {
+      "0.0007": {
+        "sharpe": 1.052966764310075,
+        "daily_turnover": 1.5378125944849377,
+        "annual_cost": 0.39291111789090155,
+        "annual_arithmetic": 0.8214504227961816,
+        "cagr": 0.6785050351013627,
+        "total_return": 4.411401818303367,
+        "max_drawdown": -0.7713322948037972,
+        "decline_days": 224.0,
+        "recovery_days": 361.0,
+        "underwater_days": 585.0,
+        "subperiods": {
+          "2023-24": {
+            "sharpe": -0.12754910265916042,
+            "delta": -0.10895996723712705,
+            "annual_arithmetic": -0.09554573438782393
+          },
+          "2025-26": {
+            "sharpe": 1.9859872321272503,
+            "delta": -0.0706451148831524,
+            "annual_arithmetic": 1.596276633129954
+          }
+        }
+      },
+      "0.00045": {
+        "sharpe": 1.2330509234000677,
+        "daily_turnover": 1.5374351370837573,
+        "annual_cost": 0.25252372126600714,
+        "annual_arithmetic": 0.9612340049505551,
+        "cagr": 0.9310829632922286,
+        "total_return": 7.546525101440051,
+        "max_drawdown": -0.7465512376552427,
+        "decline_days": 224.0,
+        "recovery_days": 279.0,
+        "underwater_days": 503.0,
+        "subperiods": {
+          "2023-24": {
+            "sharpe": 0.023556967705382372,
+            "delta": -0.11595653185463983,
+            "annual_arithmetic": 0.01763251559055913
+          },
+          "2025-26": {
+            "sharpe": 2.1897643202291763,
+            "delta": -0.07114017112715931,
+            "annual_arithmetic": 1.7585406897586133
+          }
+        }
+      },
+      "0.00015": {
+        "sharpe": 1.4497794006351832,
+        "daily_turnover": 1.5369818474823915,
+        "annual_cost": 0.08414975614966091,
+        "annual_arithmetic": 1.1292573446399816,
+        "cagr": 1.2852328035113418,
+        "total_return": 13.798297129222862,
+        "max_drawdown": -0.7132391101594387,
+        "decline_days": 224.0,
+        "recovery_days": 133.0,
+        "underwater_days": 357.0,
+        "subperiods": {
+          "2023-24": {
+            "sharpe": 0.2048393906791343,
+            "delta": -0.12481969770287468,
+            "annual_arithmetic": 0.15319414907140927
+          },
+          "2025-26": {
+            "sharpe": 2.435624991784854,
+            "delta": -0.07204106362499729,
+            "annual_arithmetic": 1.9539929129886198
+          }
+        }
+      },
+      "0.00075": {
+        "sharpe": 1.0169154346356242,
+        "daily_turnover": 1.537882930644643,
+        "annual_cost": 0.42099545226397117,
+        "annual_arithmetic": 0.7934441793822132,
+        "cagr": 0.6320068723445883,
+        "total_return": 3.937786328238887,
+        "max_drawdown": -0.7759896362398355,
+        "decline_days": 224.0,
+        "recovery_days": 361.0,
+        "underwater_days": 585.0,
+        "subperiods": {
+          "2023-24": {
+            "sharpe": -0.15773953903861118,
+            "delta": -0.10753839248936006,
+            "annual_arithmetic": -0.11817946844580558
+          },
+          "2025-26": {
+            "sharpe": 1.9451494090549726,
+            "delta": -0.07053309904714733,
+            "annual_arithmetic": 1.563730827546973
+          }
+        }
+      }
+    },
+    "bootstrap": {
+      "20": {
+        "se": 0.19310566531316173,
+        "p": 0.6516,
+        "p_fwer": 0.9112,
+        "basic_ci95_low": -0.40436184812012993,
+        "basic_ci95_high": 0.3464657974422189
+      },
+      "10": {
+        "se": 0.17659028792789805,
+        "p": 0.656,
+        "p_fwer": 0.9276,
+        "basic_ci95_low": -0.39798780448953996,
+        "basic_ci95_high": 0.297039837252566
+      },
+      "40": {
+        "se": 0.19430772895568096,
+        "p": 0.6408,
+        "p_fwer": 0.8948,
+        "basic_ci95_low": -0.38487347480333667,
+        "basic_ci95_high": 0.36402465834633363
+      }
+    },
+    "checks": {
+      "fwer": false,
+      "positive_subperiods": false,
+      "improvement_gt_phase_noise": false,
+      "turnover_le_baseline": true
+    },
+    "usable": false,
+    "protocol_both_improved": false,
+    "cost_075_both_improved": false,
+    "drawdown_improvement": 0.03765098046094406,
+    "risk_reduced": false,
+    "risk_all_starts": false
+  },
+  {
+    "name": "K8",
+    "days": 1190,
+    "sharpe": 1.4052656503639795,
+    "daily_turnover": 1.4563720365199495,
+    "annual_cost": 0.3721030553308471,
+    "annual_arithmetic": 0.9581129998560357,
+    "cagr": 1.0639702212942972,
+    "total_return": 9.617448417088186,
+    "max_drawdown": -0.5977242570556888,
+    "decline_days": 266.0,
+    "recovery_days": 123.0,
+    "underwater_days": 389.0,
+    "phase_metrics": [
+      {
+        "days": 1190,
+        "sharpe": 1.4059862371210246,
+        "daily_turnover": 1.4557738774268747,
+        "annual_cost": 0.3719502256825665,
+        "annual_arithmetic": 0.9586021657373691,
+        "cagr": 1.0649790919360385,
+        "total_return": 9.634359206582056,
+        "max_drawdown": -0.5977251411073973,
+        "peak": "2024-01-04",
+        "trough": "2024-09-26",
+        "recovery": "2025-01-27",
+        "recovered": true,
+        "decline_days": 266,
+        "recovery_days": 123,
+        "underwater_days": 389,
+        "longest_underwater": {
+          "days": 389,
+          "peak": "2024-01-04",
+          "end": "2025-01-27",
+          "recovered": true
+        }
+      },
+      {
+        "days": 1190,
+        "sharpe": 1.4059890308551042,
+        "daily_turnover": 1.4557749112542446,
+        "annual_cost": 0.37195048982545953,
+        "annual_arithmetic": 0.9586040280604483,
+        "cagr": 1.0649829443618901,
+        "total_return": 9.634423888809671,
+        "max_drawdown": -0.5977232591248275,
+        "peak": "2024-01-04",
+        "trough": "2024-09-26",
+        "recovery": "2025-01-27",
+        "recovered": true,
+        "decline_days": 266,
+        "recovery_days": 123,
+        "underwater_days": 389,
+        "longest_underwater": {
+          "days": 389,
+          "peak": "2024-01-04",
+          "end": "2025-01-27",
+          "recovered": true
+        }
+      },
+      {
+        "days": 1190,
+        "sharpe": 1.4038216831158095,
+        "daily_turnover": 1.4575673208787292,
+        "annual_cost": 0.3724084504845153,
+        "annual_arithmetic": 0.9571328057702899,
+        "cagr": 1.0619486275849634,
+        "total_return": 9.583562155872833,
+        "max_drawdown": -0.5977243709348418,
+        "peak": "2024-01-04",
+        "trough": "2024-09-26",
+        "recovery": "2025-01-27",
+        "recovered": true,
+        "decline_days": 266,
+        "recovery_days": 123,
+        "underwater_days": 389,
+        "longest_underwater": {
+          "days": 389,
+          "peak": "2024-01-04",
+          "end": "2025-01-27",
+          "recovered": true
+        }
+      }
+    ],
+    "delta": 0.28766883115714514,
+    "phase_sd": 0.0010210396700024685,
+    "phase_delta_range": 0.0016614673927153323,
+    "corr": 0.8521915681955395,
+    "subperiods": {
+      "2023-24": {
+        "sharpe": 0.4206585678254526,
+        "daily_turnover": 1.1948057503883345,
+        "annual_cost": 0.3052728692242195,
+        "annual_arithmetic": 0.2827027807456676,
+        "cagr": 0.056689237217238536,
+        "total_return": 0.08581858092721761,
+        "max_drawdown": -0.5977242570556888,
+        "decline_days": 266.0,
+        "recovery_days": 96.0,
+        "underwater_days": 362.0,
+        "days": 545,
+        "delta": 0.4392477032474859
+      },
+      "2025-26": {
+        "sharpe": 2.2187437982281213,
+        "daily_turnover": 1.67738541007302,
+        "annual_cost": 0.4285719722736565,
+        "annual_arithmetic": 1.5288084563136337,
+        "cagr": 2.6339699016991993,
+        "total_return": 8.778289501009716,
+        "max_drawdown": -0.4740215009091025,
+        "decline_days": 84.0,
+        "recovery_days": 41.0,
+        "underwater_days": 125.0,
+        "days": 645,
+        "delta": 0.16211145121771908
+      }
+    },
+    "original_full": {
+      "days": 1192,
+      "sharpe": 1.4205820697154,
+      "daily_turnover": 1.4570881452453932,
+      "annual_cost": 0.37228602111019793,
+      "annual_arithmetic": 0.9681536712614677,
+      "cagr": 1.08515542060954,
+      "total_return": 10.021162993216896,
+      "max_drawdown": -0.5977251411073978,
+      "peak": "2024-01-04",
+      "trough": "2024-09-26",
+      "recovery": "2025-01-27",
+      "recovered": true,
+      "decline_days": 266,
+      "recovery_days": 123,
+      "underwater_days": 389,
+      "longest_underwater": {
+        "days": 389,
+        "peak": "2024-01-04",
+        "end": "2025-01-27",
+        "recovered": true
+      }
+    },
+    "cost_cases": {
+      "0.0007": {
+        "sharpe": 1.4052656503639795,
+        "daily_turnover": 1.4563720365199495,
+        "annual_cost": 0.3721030553308471,
+        "annual_arithmetic": 0.9581129998560357,
+        "cagr": 1.0639702212942972,
+        "total_return": 9.617448417088186,
+        "max_drawdown": -0.5977242570556888,
+        "decline_days": 266.0,
+        "recovery_days": 123.0,
+        "underwater_days": 389.0,
+        "subperiods": {
+          "2023-24": {
+            "sharpe": 0.4206585678254526,
+            "delta": 0.43924770324748597,
+            "annual_arithmetic": 0.28270278074566757
+          },
+          "2025-26": {
+            "sharpe": 2.2187437982281213,
+            "delta": 0.16211145121771864,
+            "annual_arithmetic": 1.5288084563136337
+          }
+        }
+      },
+      "0.00045": {
+        "sharpe": 1.600752368059941,
+        "daily_turnover": 1.4560406868812856,
+        "annual_cost": 0.23915468282025112,
+        "annual_arithmetic": 1.0906278898533899,
+        "cagr": 1.3568028109919765,
+        "total_return": 15.363507388598881,
+        "max_drawdown": -0.5552211017265255,
+        "decline_days": 205.0,
+        "recovery_days": 116.0,
+        "underwater_days": 321.0,
+        "subperiods": {
+          "2023-24": {
+            "sharpe": 0.5830293740824506,
+            "delta": 0.44351587452242835,
+            "annual_arithmetic": 0.39150649684480876
+          },
+          "2025-26": {
+            "sharpe": 2.442015521705384,
+            "delta": 0.18111103034904819,
+            "annual_arithmetic": 1.6813583692172303
+          }
+        }
+      },
+      "0.00015": {
+        "sharpe": 1.8354080953777185,
+        "daily_turnover": 1.455641707800032,
+        "annual_cost": 0.07969638350205176,
+        "annual_arithmetic": 1.2494824458038403,
+        "cagr": 1.7628871065439153,
+        "total_return": 26.476739060109512,
+        "max_drawdown": -0.5253607565838604,
+        "decline_days": 78.0,
+        "recovery_days": 58.0,
+        "underwater_days": 136.0,
+        "subperiods": {
+          "2023-24": {
+            "sharpe": 0.7774755810367537,
+            "delta": 0.44781649265474477,
+            "annual_arithmetic": 0.5216091853280899
+          },
+          "2025-26": {
+            "sharpe": 2.7105722106975585,
+            "delta": 0.20290615528770717,
+            "annual_arithmetic": 1.8645071387639707
+          }
+        }
+      },
+      "0.00075": {
+        "sharpe": 1.365678938488711,
+        "daily_turnover": 1.456439396447774,
+        "annual_cost": 0.3987002847775782,
+        "annual_arithmetic": 0.9312088920438741,
+        "cagr": 1.0091455109734442,
+        "total_return": 8.725254046582593,
+        "max_drawdown": -0.6067324544183069,
+        "decline_days": 266.0,
+        "recovery_days": 124.0,
+        "underwater_days": 390.0,
+        "subperiods": {
+          "2023-24": {
+            "sharpe": 0.38770509753792903,
+            "delta": 0.43790624408718015,
+            "annual_arithmetic": 0.26056999775210354
+          },
+          "2025-26": {
+            "sharpe": 2.1735112905861294,
+            "delta": 0.15782878248400944,
+            "annual_arithmetic": 1.4978727639648275
+          }
+        }
+      }
+    },
+    "bootstrap": {
+      "20": {
+        "se": 0.30306300752574566,
+        "p": 0.1716,
+        "p_fwer": 0.4465,
+        "basic_ci95_low": -0.2849209775833609,
+        "basic_ci95_high": 0.8969025969483031
+      },
+      "10": {
+        "se": 0.2892516945359449,
+        "p": 0.1674,
+        "p_fwer": 0.4618,
+        "basic_ci95_low": -0.2755339772056824,
+        "basic_ci95_high": 0.8624013740437253
+      },
+      "40": {
+        "se": 0.3207939095570226,
+        "p": 0.1896,
+        "p_fwer": 0.4508,
+        "basic_ci95_low": -0.32452856347709114,
+        "basic_ci95_high": 0.9366842829126383
+      }
+    },
+    "checks": {
+      "fwer": false,
+      "positive_subperiods": true,
+      "improvement_gt_phase_noise": true,
+      "turnover_le_baseline": true
+    },
+    "usable": false,
+    "protocol_both_improved": true,
+    "cost_075_both_improved": true,
+    "drawdown_improvement": 0.21125901820905246,
+    "risk_reduced": true,
+    "risk_all_starts": true
+  },
+  {
+    "name": "K12",
+    "days": 1190,
+    "sharpe": 1.625112392330846,
+    "daily_turnover": 1.4029240014768274,
+    "annual_cost": 0.3584470823773294,
+    "annual_arithmetic": 1.0462726923050512,
+    "cagr": 1.310186379147047,
+    "total_return": 14.331677640486797,
+    "max_drawdown": -0.5595153736261969,
+    "decline_days": 78.0,
+    "recovery_days": 115.0,
+    "underwater_days": 193.0,
+    "phase_metrics": [
+      {
+        "days": 1190,
+        "sharpe": 1.6258780728530648,
+        "daily_turnover": 1.4023258336085997,
+        "annual_cost": 0.35829425048699726,
+        "annual_arithmetic": 1.0467626191663875,
+        "cagr": 1.3113174608789984,
+        "total_return": 14.356137217709152,
+        "max_drawdown": -0.5595154208530523,
+        "peak": "2024-07-10",
+        "trough": "2024-09-26",
+        "recovery": "2025-01-19",
+        "recovered": true,
+        "decline_days": 78,
+        "recovery_days": 115,
+        "underwater_days": 193,
+        "longest_underwater": {
+          "days": 193,
+          "peak": "2024-07-10",
+          "end": "2025-01-19",
+          "recovered": true
+        }
+      },
+      {
+        "days": 1190,
+        "sharpe": 1.625879209711345,
+        "daily_turnover": 1.4023268891466942,
+        "annual_cost": 0.3582945201769804,
+        "annual_arithmetic": 1.0467635213321478,
+        "cagr": 1.3113193613818315,
+        "total_return": 14.356178384347666,
+        "max_drawdown": -0.5595152820549809,
+        "peak": "2024-07-10",
+        "trough": "2024-09-26",
+        "recovery": "2025-01-19",
+        "recovered": true,
+        "decline_days": 78,
+        "recovery_days": 115,
+        "underwater_days": 193,
+        "longest_underwater": {
+          "days": 193,
+          "peak": "2024-07-10",
+          "end": "2025-01-19",
+          "recovered": true
+        }
+      },
+      {
+        "days": 1190,
+        "sharpe": 1.6235798944281286,
+        "daily_turnover": 1.4041192816751888,
+        "annual_cost": 0.35875247646801073,
+        "annual_arithmetic": 1.0452919364166182,
+        "cagr": 1.307922315180311,
+        "total_return": 14.282717319403572,
+        "max_drawdown": -0.5595154179705575,
+        "peak": "2024-07-10",
+        "trough": "2024-09-26",
+        "recovery": "2025-01-19",
+        "recovered": true,
+        "decline_days": 78,
+        "recovery_days": 115,
+        "underwater_days": 193,
+        "longest_underwater": {
+          "days": 193,
+          "peak": "2024-07-10",
+          "end": "2025-01-19",
+          "recovered": true
+        }
+      }
+    ],
+    "delta": 0.5075155731240119,
+    "phase_sd": 0.0010836397585566413,
+    "phase_delta_range": 0.0017934349366370839,
+    "corr": 0.784998961566204,
+    "subperiods": {
+      "2023-24": {
+        "sharpe": 0.7938647317258057,
+        "daily_turnover": 1.1745541038758445,
+        "annual_cost": 0.3000985735402783,
+        "annual_arithmetic": 0.5111544245058929,
+        "cagr": 0.35154349880285357,
+        "total_return": 0.5680117444965129,
+        "max_drawdown": -0.5595153736261969,
+        "decline_days": 78.0,
+        "recovery_days": 96.0,
+        "underwater_days": 174.0,
+        "days": 545,
+        "delta": 0.8124538671478391
+      },
+      "2025-26": {
+        "sharpe": 2.3292501985094596,
+        "daily_turnover": 1.5958877134032399,
+        "annual_cost": 0.4077493107745278,
+        "annual_arithmetic": 1.4984268875772082,
+        "cagr": 2.63386324932697,
+        "total_return": 8.777782377149329,
+        "max_drawdown": -0.3549302225864986,
+        "decline_days": 82.0,
+        "recovery_days": 43.0,
+        "underwater_days": 125.0,
+        "days": 645,
+        "delta": 0.2726178514990572
+      }
+    },
+    "original_full": {
+      "days": 1192,
+      "sharpe": 1.641085721792639,
+      "daily_turnover": 1.4037297793529875,
+      "annual_cost": 0.35865295862468827,
+      "annual_arithmetic": 1.0561662044666118,
+      "cagr": 1.3334594169584042,
+      "total_return": 14.914686342156392,
+      "max_drawdown": -0.5595154208530517,
+      "peak": "2024-07-10",
+      "trough": "2024-09-26",
+      "recovery": "2025-01-19",
+      "recovered": true,
+      "decline_days": 78,
+      "recovery_days": 115,
+      "underwater_days": 193,
+      "longest_underwater": {
+        "days": 193,
+        "peak": "2024-07-10",
+        "end": "2025-01-19",
+        "recovered": true
+      }
+    },
+    "cost_cases": {
+      "0.0007": {
+        "sharpe": 1.625112392330846,
+        "daily_turnover": 1.4029240014768274,
+        "annual_cost": 0.3584470823773294,
+        "annual_arithmetic": 1.0462726923050512,
+        "cagr": 1.310186379147047,
+        "total_return": 14.331677640486797,
+        "max_drawdown": -0.5595153736261969,
+        "decline_days": 78.0,
+        "recovery_days": 115.0,
+        "underwater_days": 193.0,
+        "subperiods": {
+          "2023-24": {
+            "sharpe": 0.7938647317258057,
+            "delta": 0.8124538671478391,
+            "annual_arithmetic": 0.5111544245058929
+          },
+          "2025-26": {
+            "sharpe": 2.3292501985094596,
+            "delta": 0.27261785149905693,
+            "annual_arithmetic": 1.4984268875772082
+          }
+        }
+      },
+      "0.00045": {
+        "sharpe": 1.8248349014095986,
+        "daily_turnover": 1.4026321112564208,
+        "annual_cost": 0.2303823242738671,
+        "annual_arithmetic": 1.1739848697144444,
+        "cagr": 1.6251475567121518,
+        "total_return": 22.25715397245244,
+        "max_drawdown": -0.544220419750943,
+        "decline_days": 78.0,
+        "recovery_days": 70.0,
+        "underwater_days": 148.0,
+        "subperiods": {
+          "2023-24": {
+            "sharpe": 0.9604633232164667,
+            "delta": 0.8209498236564444,
+            "annual_arithmetic": 0.6179833600863062
+          },
+          "2025-26": {
+            "sharpe": 2.5574738192188775,
+            "delta": 0.29656932786254186,
+            "annual_arithmetic": 1.6437845949041114
+          }
+        }
+      },
+      "0.00015": {
+        "sharpe": 2.0641837125355633,
+        "daily_turnover": 1.4022868006459082,
+        "annual_cost": 0.07677520233536346,
+        "annual_arithmetic": 1.3267789501417597,
+        "cagr": 2.0586997151808006,
+        "total_return": 37.281025764377866,
+        "max_drawdown": -0.5253609291412592,
+        "decline_days": 78.0,
+        "recovery_days": 58.0,
+        "underwater_days": 136.0,
+        "subperiods": {
+          "2023-24": {
+            "sharpe": 1.1597222371303886,
+            "delta": 0.8300631487483796,
+            "annual_arithmetic": 0.7455629468052286
+          },
+          "2025-26": {
+            "sharpe": 2.8314342972432605,
+            "delta": 0.32376824183340913,
+            "annual_arithmetic": 1.8178839452090614
+          }
+        }
+      },
+      "0.00075": {
+        "sharpe": 1.5849912670670427,
+        "daily_turnover": 1.4029881035240932,
+        "annual_cost": 0.38406799333972047,
+        "annual_arithmetic": 1.0205447558867664,
+        "cagr": 1.2514922090804796,
+        "total_return": 13.097789838474155,
+        "max_drawdown": -0.562519529596487,
+        "decline_days": 78.0,
+        "recovery_days": 115.0,
+        "underwater_days": 193.0,
+        "subperiods": {
+          "2023-24": {
+            "sharpe": 0.7600146552299513,
+            "delta": 0.8102158017792024,
+            "annual_arithmetic": 0.4893730212954168
+          },
+          "2025-26": {
+            "sharpe": 2.2836542705179004,
+            "delta": 0.26797176241578047,
+            "annual_arithmetic": 1.4693642835647287
+          }
+        }
+      }
+    },
+    "bootstrap": {
+      "20": {
+        "se": 0.3929211183173558,
+        "p": 0.0969,
+        "p_fwer": 0.2974,
+        "basic_ci95_low": -0.236100466862198,
+        "basic_ci95_high": 1.2585256459419834
+      },
+      "10": {
+        "se": 0.3739963103173614,
+        "p": 0.0912,
+        "p_fwer": 0.2986,
+        "basic_ci95_low": -0.23557253243772847,
+        "basic_ci95_high": 1.2259225519632975
+      },
+      "40": {
+        "se": 0.4113908007405093,
+        "p": 0.1108,
+        "p_fwer": 0.3012,
+        "basic_ci95_low": -0.2994104137245832,
+        "basic_ci95_high": 1.302736342949455
+      }
+    },
+    "checks": {
+      "fwer": false,
+      "positive_subperiods": true,
+      "improvement_gt_phase_noise": true,
+      "turnover_le_baseline": true
+    },
+    "usable": false,
+    "protocol_both_improved": true,
+    "cost_075_both_improved": true,
+    "drawdown_improvement": 0.24946790163854438,
+    "risk_reduced": true,
+    "risk_all_starts": true
+  },
+  {
+    "name": "K20",
+    "days": 1190,
+    "sharpe": 1.3976215608516032,
+    "daily_turnover": 1.3460581633901711,
+    "annual_cost": 0.34391786074618874,
+    "annual_arithmetic": 0.8308052804074517,
+    "cagr": 0.9203083208227444,
+    "total_return": 7.3920438677137765,
+    "max_drawdown": -0.5595152283954529,
+    "decline_days": 78.0,
+    "recovery_days": 85.0,
+    "underwater_days": 163.0,
+    "phase_metrics": [
+      {
+        "days": 1190,
+        "sharpe": 1.3984501814794956,
+        "daily_turnover": 1.3454600498627323,
+        "annual_cost": 0.3437650427399281,
+        "annual_arithmetic": 0.831295761224446,
+        "cagr": 0.9212495318617907,
+        "total_return": 7.405446720870113,
+        "max_drawdown": -0.5595154509759535,
+        "peak": "2024-07-10",
+        "trough": "2024-09-26",
+        "recovery": "2024-12-20",
+        "recovered": true,
+        "decline_days": 78,
+        "recovery_days": 85,
+        "underwater_days": 163,
+        "longest_underwater": {
+          "days": 163,
+          "peak": "2024-07-10",
+          "end": "2024-12-20",
+          "recovered": true
+        }
+      },
+      {
+        "days": 1190,
+        "sharpe": 1.3984489082629394,
+        "daily_turnover": 1.3454610529038418,
+        "annual_cost": 0.3437652990169316,
+        "annual_arithmetic": 0.8312952376110773,
+        "cagr": 0.9212483211356474,
+        "total_return": 7.405429451490612,
+        "max_drawdown": -0.5595153949626765,
+        "peak": "2024-07-10",
+        "trough": "2024-09-26",
+        "recovery": "2024-12-20",
+        "recovered": true,
+        "decline_days": 78,
+        "recovery_days": 85,
+        "underwater_days": 163,
+        "longest_underwater": {
+          "days": 163,
+          "peak": "2024-07-10",
+          "end": "2024-12-20",
+          "recovered": true
+        }
+      },
+      {
+        "days": 1190,
+        "sharpe": 1.395965592812374,
+        "daily_turnover": 1.3472533874039394,
+        "annual_cost": 0.3442232404817065,
+        "annual_arithmetic": 0.8298248423868319,
+        "cagr": 0.9184271094707952,
+        "total_return": 7.3652554307806035,
+        "max_drawdown": -0.5595148392477285,
+        "peak": "2024-07-10",
+        "trough": "2024-09-26",
+        "recovery": "2024-12-20",
+        "recovered": true,
+        "decline_days": 78,
+        "recovery_days": 85,
+        "underwater_days": 163,
+        "longest_underwater": {
+          "days": 163,
+          "peak": "2024-07-10",
+          "end": "2024-12-20",
+          "recovered": true
+        }
+      }
+    ],
+    "delta": 0.28002474164476876,
+    "phase_sd": 0.0011709463453352994,
+    "phase_delta_range": 0.0019789728578936128,
+    "corr": 0.7567357528103804,
+    "subperiods": {
+      "2023-24": {
+        "sharpe": 0.7620650916629262,
+        "daily_turnover": 1.1585776920202913,
+        "annual_cost": 0.29601660031118443,
+        "annual_arithmetic": 0.47579120825547244,
+        "cagr": 0.32051780019827514,
+        "total_return": 0.5145713592674677,
+        "max_drawdown": -0.5595152283954529,
+        "decline_days": 78.0,
+        "recovery_days": 85.0,
+        "underwater_days": 163.0,
+        "days": 545,
+        "delta": 0.7806542270849596
+      },
+      "2025-26": {
+        "sharpe": 1.9909254284245617,
+        "daily_turnover": 1.504471895012783,
+        "annual_cost": 0.384392569175766,
+        "annual_arithmetic": 1.1307784111405195,
+        "cagr": 1.6350232589279274,
+        "total_return": 4.540870576114243,
+        "max_drawdown": -0.33917783308353916,
+        "decline_days": 26.0,
+        "recovery_days": 74.0,
+        "underwater_days": 100.0,
+        "days": 645,
+        "delta": -0.06570691858584062
+      }
+    },
+    "original_full": {
+      "days": 1192,
+      "sharpe": 1.415257833036397,
+      "daily_turnover": 1.3469594079959553,
+      "annual_cost": 0.3441481287429666,
+      "annual_arithmetic": 0.8410608680983985,
+      "cagr": 0.9402563685463262,
+      "total_return": 7.711178223524005,
+      "max_drawdown": -0.5595154509759537,
+      "peak": "2024-07-10",
+      "trough": "2024-09-26",
+      "recovery": "2024-12-20",
+      "recovered": true,
+      "decline_days": 78,
+      "recovery_days": 85,
+      "underwater_days": 163,
+      "longest_underwater": {
+        "days": 163,
+        "peak": "2024-07-10",
+        "end": "2024-12-20",
+        "recovered": true
+      }
+    },
+    "cost_cases": {
+      "0.0007": {
+        "sharpe": 1.3976215608516032,
+        "daily_turnover": 1.3460581633901711,
+        "annual_cost": 0.34391786074618874,
+        "annual_arithmetic": 0.8308052804074517,
+        "cagr": 0.9203083208227444,
+        "total_return": 7.3920438677137765,
+        "max_drawdown": -0.5595152283954529,
+        "decline_days": 78.0,
+        "recovery_days": 85.0,
+        "underwater_days": 163.0,
+        "subperiods": {
+          "2023-24": {
+            "sharpe": 0.7620650916629262,
+            "delta": 0.7806542270849596,
+            "annual_arithmetic": 0.4757912082554725
+          },
+          "2025-26": {
+            "sharpe": 1.9909254284245617,
+            "delta": -0.06570691858584099,
+            "annual_arithmetic": 1.1307784111405192
+          }
+        }
+      },
+      "0.00045": {
+        "sharpe": 1.6047339122259763,
+        "daily_turnover": 1.345793889716619,
+        "annual_cost": 0.22104664638595464,
+        "annual_arithmetic": 0.9530976878562325,
+        "cagr": 1.1704452585300615,
+        "total_return": 11.509559523611784,
+        "max_drawdown": -0.5442206413742934,
+        "decline_days": 78.0,
+        "recovery_days": 68.0,
+        "underwater_days": 146.0,
+        "subperiods": {
+          "2023-24": {
+            "sharpe": 0.9310722095717504,
+            "delta": 0.7915587100117282,
+            "annual_arithmetic": 0.5808433260521676
+          },
+          "2025-26": {
+            "sharpe": 2.234148275885594,
+            "delta": -0.026756215470741473,
+            "annual_arithmetic": 1.2676381951170315
+          }
+        }
+      },
+      "0.00015": {
+        "sharpe": 1.8536819194685836,
+        "daily_turnover": 1.3455049353400443,
+        "annual_cost": 0.07366639520986742,
+        "annual_arithmetic": 1.0998581673312622,
+        "cagr": 1.5138298968996358,
+        "total_return": 19.193198173399615,
+        "max_drawdown": -0.5253607517343772,
+        "decline_days": 78.0,
+        "recovery_days": 58.0,
+        "underwater_days": 136.0,
+        "subperiods": {
+          "2023-24": {
+            "sharpe": 1.1335870822975538,
+            "delta": 0.8039279939155448,
+            "annual_arithmetic": 0.7065051389467214
+          },
+          "2025-26": {
+            "sharpe": 2.527125503085717,
+            "delta": 0.019459447675865604,
+            "annual_arithmetic": 1.432226230074789
+          }
+        }
+      },
+      "0.00075": {
+        "sharpe": 1.355915752587799,
+        "daily_turnover": 1.3461136934755997,
+        "annual_cost": 0.3684986235889454,
+        "annual_arithmetic": 0.8061058285785574,
+        "cagr": 0.8734260232619402,
+        "total_return": 6.742311580316344,
+        "max_drawdown": -0.5625197866638744,
+        "decline_days": 78.0,
+        "recovery_days": 85.0,
+        "underwater_days": 163.0,
+        "subperiods": {
+          "2023-24": {
+            "sharpe": 0.7276453691644348,
+            "delta": 0.7778465157136859,
+            "annual_arithmetic": 0.4543171865502397
+          },
+          "2025-26": {
+            "sharpe": 1.9422292814941988,
+            "delta": -0.07345322660792108,
+            "annual_arithmetic": 1.1033535958738026
+          }
+        }
+      }
+    },
+    "bootstrap": {
+      "20": {
+        "se": 0.4073688673643234,
+        "p": 0.254,
+        "p_fwer": 0.5714,
+        "basic_ci95_low": -0.4967451715597426,
+        "basic_ci95_high": 1.08061764552895
+      },
+      "10": {
+        "se": 0.39233299576654806,
+        "p": 0.2504,
+        "p_fwer": 0.59,
+        "basic_ci95_low": -0.4892569599155536,
+        "basic_ci95_high": 1.0336613323205366
+      },
+      "40": {
+        "se": 0.42377121679056196,
+        "p": 0.2672,
+        "p_fwer": 0.5582,
+        "basic_ci95_low": -0.545846778361609,
+        "basic_ci95_high": 1.0956430471458454
+      }
+    },
+    "checks": {
+      "fwer": false,
+      "positive_subperiods": true,
+      "improvement_gt_phase_noise": true,
+      "turnover_le_baseline": true
+    },
+    "usable": false,
+    "protocol_both_improved": false,
+    "cost_075_both_improved": false,
+    "drawdown_improvement": 0.24946804686928836,
+    "risk_reduced": true,
+    "risk_all_starts": true
+  },
+  {
+    "name": "N30_K5",
+    "days": 1190,
+    "sharpe": 1.1352920001016455,
+    "daily_turnover": 1.5139555007592644,
+    "annual_cost": 0.38681563044399203,
+    "annual_arithmetic": 0.8739767167892593,
+    "cagr": 0.7829066664417988,
+    "total_return": 5.587921151782133,
+    "max_drawdown": -0.7591633517566688,
+    "decline_days": 224.0,
+    "recovery_days": 284.0,
+    "underwater_days": 508.0,
+    "phase_metrics": [
+      {
+        "days": 1190,
+        "sharpe": 1.1357414045999363,
+        "daily_turnover": 1.5134203324537914,
+        "annual_cost": 0.3866788949419437,
+        "annual_arithmetic": 0.8743215299124766,
+        "cagr": 0.7835212748723519,
+        "total_return": 5.595323196571773,
+        "max_drawdown": -0.7591629464714185,
+        "peak": "2024-03-05",
+        "trough": "2024-10-15",
+        "recovery": "2025-07-26",
+        "recovered": true,
+        "decline_days": 224,
+        "recovery_days": 284,
+        "underwater_days": 508,
+        "longest_underwater": {
+          "days": 508,
+          "peak": "2024-03-05",
+          "end": "2025-07-26",
+          "recovered": true
+        }
+      },
+      {
+        "days": 1190,
+        "sharpe": 1.135673370606014,
+        "daily_turnover": 1.5134224205522189,
+        "annual_cost": 0.3866794284510919,
+        "annual_arithmetic": 0.8742688800987086,
+        "cagr": 0.7834279369247892,
+        "total_return": 5.594197958427201,
+        "max_drawdown": -0.759163449991621,
+        "peak": "2024-03-05",
+        "trough": "2024-10-15",
+        "recovery": "2025-07-26",
+        "recovered": true,
+        "decline_days": 224,
+        "recovery_days": 284,
+        "underwater_days": 508,
+        "longest_underwater": {
+          "days": 508,
+          "peak": "2024-03-05",
+          "end": "2025-07-26",
+          "recovered": true
+        }
+      },
+      {
+        "days": 1190,
+        "sharpe": 1.1344612250989867,
+        "daily_turnover": 1.515023749271783,
+        "annual_cost": 0.3870885679389406,
+        "annual_arithmetic": 0.8733397403565926,
+        "cagr": 0.7817707875282556,
+        "total_return": 5.574242300347425,
+        "max_drawdown": -0.759163658806967,
+        "peak": "2024-03-05",
+        "trough": "2024-10-15",
+        "recovery": "2025-07-26",
+        "recovered": true,
+        "decline_days": 224,
+        "recovery_days": 284,
+        "underwater_days": 508,
+        "longest_underwater": {
+          "days": 508,
+          "peak": "2024-03-05",
+          "end": "2025-07-26",
+          "recovered": true
+        }
+      }
+    ],
+    "delta": 0.01769518089481144,
+    "phase_sd": 0.0005881028735771293,
+    "phase_delta_range": 0.0007745636917215748,
+    "corr": 0.8790495063616862,
+    "subperiods": {
+      "2023-24": {
+        "sharpe": -0.009346623924718094,
+        "daily_turnover": 1.232610213706869,
+        "annual_cost": 0.31493190960210504,
+        "annual_arithmetic": -0.00713202582255697,
+        "cagr": -0.257452160093042,
+        "total_return": -0.35883137479914834,
+        "max_drawdown": -0.7591633517566688,
+        "decline_days": 224.0,
+        "recovery_days": 77.0,
+        "underwater_days": 301.0,
+        "days": 545,
+        "delta": 0.009242511497315276
+      },
+      "2025-26": {
+        "sharpe": 2.0912049222100646,
+        "daily_turnover": 1.7516813634624517,
+        "annual_cost": 0.4475545883646564,
+        "annual_arithmetic": 1.6184794527945925,
+        "cagr": 2.7372786879596656,
+        "total_return": 9.274865125922656,
+        "max_drawdown": -0.4611572133143101,
+        "decline_days": 87.0,
+        "recovery_days": 38.0,
+        "underwater_days": 125.0,
+        "days": 645,
+        "delta": 0.03457257519966254
+      }
+    },
+    "original_full": {
+      "days": 1192,
+      "sharpe": 1.1486578947936577,
+      "daily_turnover": 1.5141081547601756,
+      "annual_cost": 0.38685463354122485,
+      "annual_arithmetic": 0.883810909661099,
+      "cagr": 0.8010371975857242,
+      "total_return": 5.83083941519473,
+      "max_drawdown": -0.759162946471418,
+      "peak": "2024-03-05",
+      "trough": "2024-10-15",
+      "recovery": "2025-07-26",
+      "recovered": true,
+      "decline_days": 224,
+      "recovery_days": 284,
+      "underwater_days": 508,
+      "longest_underwater": {
+        "days": 508,
+        "peak": "2024-03-05",
+        "end": "2025-07-26",
+        "recovered": true
+      }
+    },
+    "cost_cases": {
+      "0.0007": {
+        "sharpe": 1.1352920001016455,
+        "daily_turnover": 1.5139555007592644,
+        "annual_cost": 0.38681563044399203,
+        "annual_arithmetic": 0.8739767167892593,
+        "cagr": 0.7829066664417988,
+        "total_return": 5.587921151782133,
+        "max_drawdown": -0.7591633517566688,
+        "decline_days": 224.0,
+        "recovery_days": 284.0,
+        "underwater_days": 508.0,
+        "subperiods": {
+          "2023-24": {
+            "sharpe": -0.009346623924718094,
+            "delta": 0.009242511497315276,
+            "annual_arithmetic": -0.007132025822557019
+          },
+          "2025-26": {
+            "sharpe": 2.0912049222100646,
+            "delta": 0.03457257519966195,
+            "annual_arithmetic": 1.6184794527945925
+          }
+        }
+      },
+      "0.00045": {
+        "sharpe": 1.3150835872833488,
+        "daily_turnover": 1.5135920637155735,
+        "annual_cost": 0.248607496465283,
+        "annual_arithmetic": 1.011688132676505,
+        "cagr": 1.0468008485959697,
+        "total_return": 9.33217790739421,
+        "max_drawdown": -0.7332370109296341,
+        "decline_days": 224.0,
+        "recovery_days": 251.0,
+        "underwater_days": 475.0,
+        "subperiods": {
+          "2023-24": {
+            "sharpe": 0.1377874891568099,
+            "delta": -0.001726010403212297,
+            "annual_arithmetic": 0.10506088981529935
+          },
+          "2025-26": {
+            "sharpe": 2.298843859902514,
+            "delta": 0.03793936854617819,
+            "annual_arithmetic": 1.777753012303415
+          }
+        }
+      },
+      "0.00015": {
+        "sharpe": 1.5304239716959438,
+        "daily_turnover": 1.513185400645612,
+        "annual_cost": 0.08284690068534725,
+        "annual_arithmetic": 1.176529870855271,
+        "cagr": 1.4141754759686542,
+        "total_return": 16.69829406980035,
+        "max_drawdown": -0.6984523510449329,
+        "decline_days": 224.0,
+        "recovery_days": 127.0,
+        "underwater_days": 351.0,
+        "subperiods": {
+          "2023-24": {
+            "sharpe": 0.31384096543391055,
+            "delta": -0.015818122948098423,
+            "annual_arithmetic": 0.2391127444420511
+          },
+          "2025-26": {
+            "sharpe": 2.5477717479991395,
+            "delta": 0.0401056925892882,
+            "annual_arithmetic": 1.9686110086772939
+          }
+        }
+      },
+      "0.00075": {
+        "sharpe": 1.099362787900515,
+        "daily_turnover": 1.5140190894566279,
+        "annual_cost": 0.4144627257387519,
+        "annual_arithmetic": 0.8464232282231471,
+        "cagr": 0.7343424572488715,
+        "total_return": 5.020679282986538,
+        "max_drawdown": -0.7640445127676186,
+        "decline_days": 224.0,
+        "recovery_days": 286.0,
+        "underwater_days": 510.0,
+        "subperiods": {
+          "2023-24": {
+            "sharpe": -0.03892582606224993,
+            "delta": 0.01127532048700118,
+            "annual_arithmetic": -0.02970670778114026
+          },
+          "2025-26": {
+            "sharpe": 2.0498631580925712,
+            "delta": 0.03418064999045134,
+            "annual_arithmetic": 1.5867190656221188
+          }
+        }
+      }
+    },
+    "bootstrap": {
+      "20": {
+        "se": 0.2570316901536837,
+        "p": 0.475,
+        "p_fwer": 0.81,
+        "basic_ci95_low": -0.476515392179088,
+        "basic_ci95_high": 0.5297478998142036
+      },
+      "10": {
+        "se": 0.253742291274968,
+        "p": 0.4762,
+        "p_fwer": 0.8374,
+        "basic_ci95_low": -0.48669048469930465,
+        "basic_ci95_high": 0.5136007232450139
+      },
+      "40": {
+        "se": 0.24989527893426217,
+        "p": 0.4748,
+        "p_fwer": 0.794,
+        "basic_ci95_low": -0.44449691313610673,
+        "basic_ci95_high": 0.5228968742902744
+      }
+    },
+    "checks": {
+      "fwer": false,
+      "positive_subperiods": false,
+      "improvement_gt_phase_noise": true,
+      "turnover_le_baseline": true
+    },
+    "usable": false,
+    "protocol_both_improved": true,
+    "cost_075_both_improved": true,
+    "drawdown_improvement": 0.049819923508072406,
+    "risk_reduced": false,
+    "risk_all_starts": false
+  },
+  {
+    "name": "N50_K8",
+    "days": 1190,
+    "sharpe": 1.409568928132372,
+    "daily_turnover": 1.4543035781795997,
+    "annual_cost": 0.3715745642248877,
+    "annual_arithmetic": 0.9610447389359716,
+    "cagr": 1.0700160976824313,
+    "total_return": 9.719182693840677,
+    "max_drawdown": -0.5977242570556888,
+    "decline_days": 266.0,
+    "recovery_days": 123.0,
+    "underwater_days": 389.0,
+    "phase_metrics": [
+      {
+        "days": 1190,
+        "sharpe": 1.4102894146254932,
+        "daily_turnover": 1.453705405048037,
+        "annual_cost": 0.37142173098977344,
+        "annual_arithmetic": 0.9615337646717357,
+        "cagr": 1.0710276830031766,
+        "total_return": 9.73625142774147,
+        "max_drawdown": -0.5977251411073973,
+        "peak": "2024-01-04",
+        "trough": "2024-09-26",
+        "recovery": "2025-01-27",
+        "recovered": true,
+        "decline_days": 266,
+        "recovery_days": 123,
+        "underwater_days": 389,
+        "longest_underwater": {
+          "days": 389,
+          "peak": "2024-01-04",
+          "end": "2025-01-27",
+          "recovered": true
+        }
+      },
+      {
+        "days": 1190,
+        "sharpe": 1.4102933800958468,
+        "daily_turnover": 1.453706466927209,
+        "annual_cost": 0.3714220022999019,
+        "annual_arithmetic": 0.9615366016448664,
+        "cagr": 1.0710334033428233,
+        "total_return": 9.736348109387972,
+        "max_drawdown": -0.5977232591248275,
+        "peak": "2024-01-04",
+        "trough": "2024-09-26",
+        "recovery": "2025-01-27",
+        "recovered": true,
+        "decline_days": 266,
+        "recovery_days": 123,
+        "underwater_days": 389,
+        "longest_underwater": {
+          "days": 389,
+          "peak": "2024-01-04",
+          "end": "2025-01-27",
+          "recovered": true
+        }
+      },
+      {
+        "days": 1190,
+        "sharpe": 1.408123989675776,
+        "daily_turnover": 1.455498862563553,
+        "annual_cost": 0.37187995938498775,
+        "annual_arithmetic": 0.9600638504913129,
+        "cagr": 1.0679872067012943,
+        "total_return": 9.68494854439259,
+        "max_drawdown": -0.5977243709348418,
+        "peak": "2024-01-04",
+        "trough": "2024-09-26",
+        "recovery": "2025-01-27",
+        "recovered": true,
+        "decline_days": 266,
+        "recovery_days": 123,
+        "underwater_days": 389,
+        "longest_underwater": {
+          "days": 389,
+          "peak": "2024-01-04",
+          "end": "2025-01-27",
+          "recovered": true
+        }
+      }
+    ],
+    "delta": 0.29197210892553777,
+    "phase_sd": 0.0010217270636040015,
+    "phase_delta_range": 0.0016635100734914143,
+    "corr": 0.8523710079999307,
+    "subperiods": {
+      "2023-24": {
+        "sharpe": 0.4408807272028778,
+        "daily_turnover": 1.1923209835040975,
+        "annual_cost": 0.30463801128529694,
+        "annual_arithmetic": 0.2962746984007018,
+        "cagr": 0.07113763924521231,
+        "total_return": 0.1080615036440548,
+        "max_drawdown": -0.5977242570556888,
+        "decline_days": 266.0,
+        "recovery_days": 96.0,
+        "underwater_days": 362.0,
+        "days": 545,
+        "delta": 0.45946986262491113
+      },
+      "2025-26": {
+        "sharpe": 2.2097081808623,
+        "daily_turnover": 1.6756687163162642,
+        "annual_cost": 0.42813335701880556,
+        "annual_arithmetic": 1.522749656907634,
+        "cagr": 2.611947206511811,
+        "total_return": 8.673815620593492,
+        "max_drawdown": -0.4740215080119188,
+        "decline_days": 84.0,
+        "recovery_days": 41.0,
+        "underwater_days": 125.0,
+        "days": 645,
+        "delta": 0.15307583385189746
+      }
+    },
+    "original_full": {
+      "days": 1192,
+      "sharpe": 1.4248800732687432,
+      "daily_turnover": 1.455023143457795,
+      "annual_cost": 0.3717584131534666,
+      "annual_arithmetic": 0.9710803514056761,
+      "cagr": 1.091252847984129,
+      "total_return": 10.126761342428514,
+      "max_drawdown": -0.5977251411073978,
+      "peak": "2024-01-04",
+      "trough": "2024-09-26",
+      "recovery": "2025-01-27",
+      "recovered": true,
+      "decline_days": 266,
+      "recovery_days": 123,
+      "underwater_days": 389,
+      "longest_underwater": {
+        "days": 389,
+        "peak": "2024-01-04",
+        "end": "2025-01-27",
+        "recovered": true
+      }
+    },
+    "cost_cases": {
+      "0.0007": {
+        "sharpe": 1.409568928132372,
+        "daily_turnover": 1.4543035781795997,
+        "annual_cost": 0.3715745642248877,
+        "annual_arithmetic": 0.9610447389359716,
+        "cagr": 1.0700160976824313,
+        "total_return": 9.719182693840677,
+        "max_drawdown": -0.5977242570556888,
+        "decline_days": 266.0,
+        "recovery_days": 123.0,
+        "underwater_days": 389.0,
+        "subperiods": {
+          "2023-24": {
+            "sharpe": 0.4408807272028778,
+            "delta": 0.4594698626249112,
+            "annual_arithmetic": 0.29627469840070175
+          },
+          "2025-26": {
+            "sharpe": 2.2097081808623,
+            "delta": 0.15307583385189716,
+            "annual_arithmetic": 1.5227496569076335
+          }
+        }
+      },
+      "0.00045": {
+        "sharpe": 1.6047688211675102,
+        "daily_turnover": 1.4539800482129503,
+        "annual_cost": 0.23881622291897706,
+        "annual_arithmetic": 1.0933649690939695,
+        "cagr": 1.3632419326923195,
+        "total_return": 15.509716445678544,
+        "max_drawdown": -0.5552211017265255,
+        "decline_days": 205.0,
+        "recovery_days": 116.0,
+        "underwater_days": 321.0,
+        "subperiods": {
+          "2023-24": {
+            "sharpe": 0.6029258507374439,
+            "delta": 0.46341235117742163,
+            "annual_arithmetic": 0.40484568565290807
+          },
+          "2025-26": {
+            "sharpe": 2.4327126928543774,
+            "delta": 0.17180820149804177,
+            "annual_arithmetic": 1.6751370768077345
+          }
+        }
+      },
+      "0.00015": {
+        "sharpe": 1.839142661945397,
+        "daily_turnover": 1.4535835619777304,
+        "annual_cost": 0.07958370001828075,
+        "annual_arithmetic": 1.2520264691044483,
+        "cagr": 1.7698981118121377,
+        "total_return": 26.704710830288235,
+        "max_drawdown": -0.5253607565838604,
+        "decline_days": 78.0,
+        "recovery_days": 58.0,
+        "underwater_days": 136.0,
+        "subperiods": {
+          "2023-24": {
+            "sharpe": 0.7969748766864203,
+            "delta": 0.46731578830441134,
+            "annual_arithmetic": 0.5346688685835274
+          },
+          "2025-26": {
+            "sharpe": 2.701070387289788,
+            "delta": 0.19340433187993655,
+            "annual_arithmetic": 1.8581658369864664
+          }
+        }
+      },
+      "0.00075": {
+        "sharpe": 1.3700386173483465,
+        "daily_turnover": 1.4543704578961343,
+        "annual_cost": 0.3981339128490668,
+        "annual_arithmetic": 0.9341793478867161,
+        "cagr": 1.0151091567917963,
+        "total_return": 8.819684425977394,
+        "max_drawdown": -0.6067324544183069,
+        "decline_days": 266.0,
+        "recovery_days": 124.0,
+        "underwater_days": 390.0,
+        "subperiods": {
+          "2023-24": {
+            "sharpe": 0.4079945479670561,
+            "delta": 0.4581956945163072,
+            "annual_arithmetic": 0.27418871184556837
+          },
+          "2025-26": {
+            "sharpe": 2.164526346917559,
+            "delta": 0.14884383881543917,
+            "annual_arithmetic": 1.4918458543090807
+          }
+        }
+      }
+    },
+    "bootstrap": {
+      "20": {
+        "se": 0.3028828475588435,
+        "p": 0.1687,
+        "p_fwer": 0.4391,
+        "basic_ci95_low": -0.2782944359014269,
+        "basic_ci95_high": 0.9003120596223497
+      },
+      "10": {
+        "se": 0.2888718372812463,
+        "p": 0.1604,
+        "p_fwer": 0.4552,
+        "basic_ci95_low": -0.27207701527519057,
+        "basic_ci95_high": 0.8688603500922498
+      },
+      "40": {
+        "se": 0.32040356620981536,
+        "p": 0.1812,
+        "p_fwer": 0.4458,
+        "basic_ci95_low": -0.3241054284842363,
+        "basic_ci95_high": 0.9373096493685731
+      }
+    },
+    "checks": {
+      "fwer": false,
+      "positive_subperiods": true,
+      "improvement_gt_phase_noise": true,
+      "turnover_le_baseline": true
+    },
+    "usable": false,
+    "protocol_both_improved": true,
+    "cost_075_both_improved": true,
+    "drawdown_improvement": 0.21125901820905246,
+    "risk_reduced": true,
+    "risk_all_starts": true
+  },
+  {
+    "name": "N50_K12",
+    "days": 1190,
+    "sharpe": 1.6287548402267877,
+    "daily_turnover": 1.402560552726834,
+    "annual_cost": 0.3583542212217061,
+    "annual_arithmetic": 1.0490540556681225,
+    "cagr": 1.3162051257070018,
+    "total_return": 14.46228899014666,
+    "max_drawdown": -0.5595153736261969,
+    "decline_days": 78.0,
+    "recovery_days": 115.0,
+    "underwater_days": 193.0,
+    "phase_metrics": [
+      {
+        "days": 1190,
+        "sharpe": 1.6295193142331594,
+        "daily_turnover": 1.4019623469446556,
+        "annual_cost": 0.35820137964435944,
+        "annual_arithmetic": 1.0495434274737758,
+        "cagr": 1.3173378455940257,
+        "total_return": 14.486928465023729,
+        "max_drawdown": -0.5595154208530523,
+        "peak": "2024-07-10",
+        "trough": "2024-09-26",
+        "recovery": "2025-01-19",
+        "recovered": true,
+        "decline_days": 78,
+        "recovery_days": 115,
+        "underwater_days": 193,
+        "longest_underwater": {
+          "days": 193,
+          "peak": "2024-07-10",
+          "end": "2025-01-19",
+          "recovered": true
+        }
+      },
+      {
+        "days": 1190,
+        "sharpe": 1.6295211068686666,
+        "daily_turnover": 1.40196345074619,
+        "annual_cost": 0.35820166166565154,
+        "annual_arithmetic": 1.0495447670505063,
+        "cagr": 1.3173407427609491,
+        "total_return": 14.486991590427198,
+        "max_drawdown": -0.5595152820549809,
+        "peak": "2024-07-10",
+        "trough": "2024-09-26",
+        "recovery": "2025-01-19",
+        "recovered": true,
+        "decline_days": 78,
+        "recovery_days": 115,
+        "underwater_days": 193,
+        "longest_underwater": {
+          "days": 193,
+          "peak": "2024-07-10",
+          "end": "2025-01-19",
+          "recovered": true
+        }
+      },
+      {
+        "days": 1190,
+        "sharpe": 1.6272240995785376,
+        "daily_turnover": 1.403755860489657,
+        "annual_cost": 0.3586596223551073,
+        "annual_arithmetic": 1.0480739724800856,
+        "cagr": 1.3139367887660307,
+        "total_return": 14.412946914989059,
+        "max_drawdown": -0.5595154179705575,
+        "peak": "2024-07-10",
+        "trough": "2024-09-26",
+        "recovery": "2025-01-19",
+        "recovered": true,
+        "decline_days": 78,
+        "recovery_days": 115,
+        "underwater_days": 193,
+        "longest_underwater": {
+          "days": 193,
+          "peak": "2024-07-10",
+          "end": "2025-01-19",
+          "recovered": true
+        }
+      }
+    ],
+    "delta": 0.5111580210199537,
+    "phase_sd": 0.0010823973400249701,
+    "phase_delta_range": 0.001791126943549548,
+    "corr": 0.7851732828762723,
+    "subperiods": {
+      "2023-24": {
+        "sharpe": 0.7864403640811446,
+        "daily_turnover": 1.1724848208457814,
+        "annual_cost": 0.2995698717260971,
+        "annual_arithmetic": 0.5066829560549868,
+        "cagr": 0.345169404184845,
+        "total_return": 0.556982755258317,
+        "max_drawdown": -0.5595153736261969,
+        "decline_days": 78.0,
+        "recovery_days": 96.0,
+        "underwater_days": 174.0,
+        "days": 545,
+        "delta": 0.805029499503178
+      },
+      "2025-26": {
+        "sharpe": 2.3426017782082647,
+        "daily_turnover": 1.5969656285022975,
+        "annual_cost": 0.40802471808233703,
+        "annual_arithmetic": 1.507336612705578,
+        "cagr": 2.6659634463488717,
+        "total_return": 8.930931438575437,
+        "max_drawdown": -0.3549302075331995,
+        "decline_days": 82.0,
+        "recovery_days": 43.0,
+        "underwater_days": 125.0,
+        "days": 645,
+        "delta": 0.28596943119786244
+      }
+    },
+    "original_full": {
+      "days": 1192,
+      "sharpe": 1.6447159060901957,
+      "daily_turnover": 1.4033669025659965,
+      "annual_cost": 0.35856024360561206,
+      "annual_arithmetic": 1.0589423469882495,
+      "cagr": 1.3395272644141825,
+      "total_return": 15.050234862451624,
+      "max_drawdown": -0.5595154208530517,
+      "peak": "2024-07-10",
+      "trough": "2024-09-26",
+      "recovery": "2025-01-19",
+      "recovered": true,
+      "decline_days": 78,
+      "recovery_days": 115,
+      "underwater_days": 193,
+      "longest_underwater": {
+        "days": 193,
+        "peak": "2024-07-10",
+        "end": "2025-01-19",
+        "recovered": true
+      }
+    },
+    "cost_cases": {
+      "0.0007": {
+        "sharpe": 1.6287548402267877,
+        "daily_turnover": 1.402560552726834,
+        "annual_cost": 0.3583542212217061,
+        "annual_arithmetic": 1.0490540556681225,
+        "cagr": 1.3162051257070018,
+        "total_return": 14.46228899014666,
+        "max_drawdown": -0.5595153736261969,
+        "decline_days": 78.0,
+        "recovery_days": 115.0,
+        "underwater_days": 193.0,
+        "subperiods": {
+          "2023-24": {
+            "sharpe": 0.7864403640811446,
+            "delta": 0.8050294995031779,
+            "annual_arithmetic": 0.5066829560549868
+          },
+          "2025-26": {
+            "sharpe": 2.3426017782082647,
+            "delta": 0.285969431197862,
+            "annual_arithmetic": 1.507336612705578
+          }
+        }
+      },
+      "0.00045": {
+        "sharpe": 1.8283663758670416,
+        "daily_turnover": 1.4022682764713366,
+        "annual_cost": 0.23032256441041707,
+        "annual_arithmetic": 1.176748483065129,
+        "cagr": 1.6319367405512422,
+        "total_return": 22.453826325861105,
+        "max_drawdown": -0.544220419750943,
+        "decline_days": 78.0,
+        "recovery_days": 70.0,
+        "underwater_days": 148.0,
+        "subperiods": {
+          "2023-24": {
+            "sharpe": 0.9526822771530381,
+            "delta": 0.8131687775930159,
+            "annual_arithmetic": 0.613352738103267
+          },
+          "2025-26": {
+            "sharpe": 2.5709511605407864,
+            "delta": 0.3100466691844508,
+            "annual_arithmetic": 1.652796050513524
+          }
+        }
+      },
+      "0.00015": {
+        "sharpe": 2.067559500633005,
+        "daily_turnover": 1.4019224383524644,
+        "annual_cost": 0.07675525349979741,
+        "annual_arithmetic": 1.3295081855742388,
+        "cagr": 2.0664994116086457,
+        "total_return": 37.60020131662889,
+        "max_drawdown": -0.5253609291412592,
+        "decline_days": 78.0,
+        "recovery_days": 58.0,
+        "underwater_days": 136.0,
+        "subperiods": {
+          "2023-24": {
+            "sharpe": 1.1514666258880801,
+            "delta": 0.8218075375060712,
+            "annual_arithmetic": 0.7407129785046661
+          },
+          "2025-26": {
+            "sharpe": 2.845063684426744,
+            "delta": 0.3373976290168925,
+            "annual_arithmetic": 1.8270173140283736
+          }
+        }
+      },
+      "0.00075": {
+        "sharpe": 1.5886603123510066,
+        "daily_turnover": 1.4026247344158957,
+        "annual_cost": 0.38396852104635154,
+        "annual_arithmetic": 1.0233323320773202,
+        "cagr": 1.2573727306075464,
+        "total_return": 13.21819134616714,
+        "max_drawdown": -0.562519529596487,
+        "decline_days": 78.0,
+        "recovery_days": 115.0,
+        "underwater_days": 193.0,
+        "subperiods": {
+          "2023-24": {
+            "sharpe": 0.7526689682303879,
+            "delta": 0.802870114779639,
+            "annual_arithmetic": 0.48493849562428776
+          },
+          "2025-26": {
+            "sharpe": 2.296981704143656,
+            "delta": 0.2812991960415361,
+            "annual_arithmetic": 1.4782542559019756
+          }
+        }
+      }
+    },
+    "bootstrap": {
+      "20": {
+        "se": 0.3931703290911189,
+        "p": 0.0965,
+        "p_fwer": 0.2934,
+        "basic_ci95_low": -0.22956979633602592,
+        "basic_ci95_high": 1.2650813525303002
+      },
+      "10": {
+        "se": 0.37513947054463764,
+        "p": 0.0896,
+        "p_fwer": 0.2972,
+        "basic_ci95_low": -0.23750718963578388,
+        "basic_ci95_high": 1.2284044180553055
+      },
+      "40": {
+        "se": 0.41009374427318035,
+        "p": 0.1074,
+        "p_fwer": 0.2946,
+        "basic_ci95_low": -0.2966910123303128,
+        "basic_ci95_high": 1.304046871442019
+      }
+    },
+    "checks": {
+      "fwer": false,
+      "positive_subperiods": true,
+      "improvement_gt_phase_noise": true,
+      "turnover_le_baseline": true
+    },
+    "usable": false,
+    "protocol_both_improved": true,
+    "cost_075_both_improved": true,
+    "drawdown_improvement": 0.24946790163854438,
+    "risk_reduced": true,
+    "risk_all_starts": true
+  },
+  {
+    "name": "N80_K15",
+    "days": 1190,
+    "sharpe": 1.6106529597209105,
+    "daily_turnover": 1.362166623427605,
+    "annual_cost": 0.3480335722857531,
+    "annual_arithmetic": 0.9890404279249463,
+    "cagr": 1.2227553781968843,
+    "total_return": 12.519562894085796,
+    "max_drawdown": -0.5595150375677854,
+    "decline_days": 78.0,
+    "recovery_days": 86.0,
+    "underwater_days": 164.0,
+    "phase_metrics": [
+      {
+        "days": 1190,
+        "sharpe": 1.6114561965883287,
+        "daily_turnover": 1.3615684841287379,
+        "annual_cost": 0.3478807476948925,
+        "annual_arithmetic": 0.9895309586229295,
+        "cagr": 1.2238447933019099,
+        "total_return": 12.541154125448344,
+        "max_drawdown": -0.559514923032802,
+        "peak": "2024-07-10",
+        "trough": "2024-09-26",
+        "recovery": "2024-12-21",
+        "recovered": true,
+        "decline_days": 78,
+        "recovery_days": 86,
+        "underwater_days": 164,
+        "longest_underwater": {
+          "days": 164,
+          "peak": "2024-07-10",
+          "end": "2024-12-21",
+          "recovered": true
+        }
+      },
+      {
+        "days": 1190,
+        "sharpe": 1.6114560715103938,
+        "daily_turnover": 1.3615695172505584,
+        "annual_cost": 0.34788101165751767,
+        "annual_arithmetic": 0.989530722206436,
+        "cagr": 1.2238443773938608,
+        "total_return": 12.541145868823733,
+        "max_drawdown": -0.5595153354378393,
+        "peak": "2024-07-10",
+        "trough": "2024-09-26",
+        "recovery": "2024-12-21",
+        "recovered": true,
+        "decline_days": 78,
+        "recovery_days": 86,
+        "underwater_days": 164,
+        "longest_underwater": {
+          "days": 164,
+          "peak": "2024-07-10",
+          "end": "2024-12-21",
+          "recovered": true
+        }
+      },
+      {
+        "days": 1190,
+        "sharpe": 1.6090466110640083,
+        "daily_turnover": 1.3633618689035192,
+        "annual_cost": 0.34833895750484917,
+        "annual_arithmetic": 0.9880596029454732,
+        "cagr": 1.220576963894882,
+        "total_return": 12.476388687985313,
+        "max_drawdown": -0.5595148542327149,
+        "peak": "2024-07-10",
+        "trough": "2024-09-26",
+        "recovery": "2024-12-21",
+        "recovered": true,
+        "decline_days": 78,
+        "recovery_days": 86,
+        "underwater_days": 164,
+        "longest_underwater": {
+          "days": 164,
+          "peak": "2024-07-10",
+          "end": "2024-12-21",
+          "recovered": true
+        }
+      }
+    ],
+    "delta": 0.49305614051407604,
+    "phase_sd": 0.0011358600293930872,
+    "phase_delta_range": 0.001903969715092435,
+    "corr": 0.7662272093870535,
+    "subperiods": {
+      "2023-24": {
+        "sharpe": 0.659199607481462,
+        "daily_turnover": 1.1647164661233813,
+        "annual_cost": 0.29758505709452393,
+        "annual_arithmetic": 0.41438057204985573,
+        "cagr": 0.23817760721059886,
+        "total_return": 0.37574924823063044,
+        "max_drawdown": -0.5595150375677854,
+        "decline_days": 78.0,
+        "recovery_days": 86.0,
+        "underwater_days": 164.0,
+        "days": 545,
+        "delta": 0.6777887429034953
+      },
+      "2025-26": {
+        "sharpe": 2.454366549408394,
+        "daily_turnover": 1.529004353242802,
+        "annual_cost": 0.3906606122535359,
+        "annual_arithmetic": 1.474605732501573,
+        "cagr": 2.644214400901024,
+        "total_return": 8.8270545194573,
+        "max_drawdown": -0.2835484302748648,
+        "decline_days": 82.0,
+        "recovery_days": 43.0,
+        "underwater_days": 125.0,
+        "days": 645,
+        "delta": 0.39773420239799195
+      }
+    },
+    "original_full": {
+      "days": 1192,
+      "sharpe": 1.6274401001088905,
+      "daily_turnover": 1.3630408146876896,
+      "annual_cost": 0.3482569281527047,
+      "annual_arithmetic": 0.9990305701992337,
+      "cagr": 1.2452941158753952,
+      "total_return": 13.033686829053753,
+      "max_drawdown": -0.5595149230328023,
+      "peak": "2024-07-10",
+      "trough": "2024-09-26",
+      "recovery": "2024-12-21",
+      "recovered": true,
+      "decline_days": 78,
+      "recovery_days": 86,
+      "underwater_days": 164,
+      "longest_underwater": {
+        "days": 164,
+        "peak": "2024-07-10",
+        "end": "2024-12-21",
+        "recovered": true
+      }
+    },
+    "cost_cases": {
+      "0.0007": {
+        "sharpe": 1.6106529597209105,
+        "daily_turnover": 1.362166623427605,
+        "annual_cost": 0.3480335722857531,
+        "annual_arithmetic": 0.9890404279249463,
+        "cagr": 1.2227553781968843,
+        "total_return": 12.519562894085796,
+        "max_drawdown": -0.5595150375677854,
+        "decline_days": 78.0,
+        "recovery_days": 86.0,
+        "underwater_days": 164.0,
+        "subperiods": {
+          "2023-24": {
+            "sharpe": 0.659199607481462,
+            "delta": 0.6777887429034953,
+            "annual_arithmetic": 0.4143805720498558
+          },
+          "2025-26": {
+            "sharpe": 2.454366549408394,
+            "delta": 0.3977342023979915,
+            "annual_arithmetic": 1.4746057325015731
+          }
+        }
+      },
+      "0.00045": {
+        "sharpe": 1.8140012713882412,
+        "daily_turnover": 1.3618852090145255,
+        "annual_cost": 0.22368964558063578,
+        "annual_arithmetic": 1.112996956262444,
+        "cagr": 1.516360645782223,
+        "total_return": 19.25956005226594,
+        "max_drawdown": -0.5442200259926965,
+        "decline_days": 78.0,
+        "recovery_days": 84.0,
+        "underwater_days": 162.0,
+        "subperiods": {
+          "2023-24": {
+            "sharpe": 0.8284244934849907,
+            "delta": 0.6889109939249685,
+            "annual_arithmetic": 0.5203487875922657
+          },
+          "2025-26": {
+            "sharpe": 2.6886102070874855,
+            "delta": 0.4277057157311499,
+            "annual_arithmetic": 1.6137616879294934
+          }
+        }
+      },
+      "0.00015": {
+        "sharpe": 2.058377603601935,
+        "daily_turnover": 1.3615658861073525,
+        "annual_cost": 0.07454573226437755,
+        "annual_arithmetic": 1.2617134962480285,
+        "cagr": 1.9200470120458633,
+        "total_return": 31.90779842530812,
+        "max_drawdown": -0.5253609823328672,
+        "decline_days": 78.0,
+        "recovery_days": 58.0,
+        "underwater_days": 136.0,
+        "subperiods": {
+          "2023-24": {
+            "sharpe": 1.0313814972166007,
+            "delta": 0.7017224088345917,
+            "annual_arithmetic": 0.6472450695347525
+          },
+          "2025-26": {
+            "sharpe": 2.9706303912113285,
+            "delta": 0.4629643358014772,
+            "annual_arithmetic": 1.7809155002150598
+          }
+        }
+      },
+      "0.00075": {
+        "sharpe": 1.5696215433034155,
+        "daily_turnover": 1.3622339691609004,
+        "annual_cost": 0.3729115490577965,
+        "annual_arithmetic": 0.9639405363893158,
+        "cagr": 1.167648160777493,
+        "total_return": 11.457082234382076,
+        "max_drawdown": -0.5625195444906087,
+        "decline_days": 78.0,
+        "recovery_days": 87.0,
+        "underwater_days": 165.0,
+        "subperiods": {
+          "2023-24": {
+            "sharpe": 0.6248593363278134,
+            "delta": 0.6750604828770645,
+            "annual_arithmetic": 0.39280827083974335
+          },
+          "2025-26": {
+            "sharpe": 2.407190471408036,
+            "delta": 0.3915079633059162,
+            "annual_arithmetic": 1.4465251638691872
+          }
+        }
+      }
+    },
+    "bootstrap": {
+      "20": {
+        "se": 0.39108470862575306,
+        "p": 0.1011,
+        "p_fwer": 0.3087,
+        "basic_ci95_low": -0.24266643364569074,
+        "basic_ci95_high": 1.2658194743388045
+      },
+      "10": {
+        "se": 0.37978707416783564,
+        "p": 0.1042,
+        "p_fwer": 0.321,
+        "basic_ci95_low": -0.26040746602097964,
+        "basic_ci95_high": 1.214545712912478
+      },
+      "40": {
+        "se": 0.4084726970105077,
+        "p": 0.1156,
+        "p_fwer": 0.3112,
+        "basic_ci95_low": -0.2912823216210052,
+        "basic_ci95_high": 1.2958214522339764
+      }
+    },
+    "checks": {
+      "fwer": false,
+      "positive_subperiods": true,
+      "improvement_gt_phase_noise": true,
+      "turnover_le_baseline": true
+    },
+    "usable": false,
+    "protocol_both_improved": true,
+    "cost_075_both_improved": true,
+    "drawdown_improvement": 0.2494682376969558,
+    "risk_reduced": true,
+    "risk_all_starts": true
+  }
+]

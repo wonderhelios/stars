@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2025-fourth-quarter-and-full-year-results-302387861.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "52c6c7ea39267ff2d90bb7acc375638198c1bada9f79e2276c4f0ce20fff88b3",
+  "retrieved_utc": "2026-10-09T03:25:03Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2025-fourth-quarter-and-full-year-results-302387861.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "52c6c7ea39267ff2d90bb7acc375638198c1bada9f79e2276c4f0ce20fff88b3",
+      "retrieved_utc": "2026-10-09T03:25:03Z"
+    }
+  ]
+}

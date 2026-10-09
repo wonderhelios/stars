@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/synopsys-announces-earnings-release-date-for-third-quarter-fiscal-year-2024-302203040.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "087e5ae3849a0b67d261f0159464305c4d412f5bfad25f1d69f7dc73dfbe4146",
+  "retrieved_utc": "2026-10-09T04:09:21Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/synopsys-announces-earnings-release-date-for-third-quarter-fiscal-year-2024-302203040.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "087e5ae3849a0b67d261f0159464305c4d412f5bfad25f1d69f7dc73dfbe4146",
+      "retrieved_utc": "2026-10-09T04:09:21Z"
+    }
+  ]
+}

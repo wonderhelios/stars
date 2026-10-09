@@ -1,0 +1,38 @@
+{
+  "rules": [
+    {
+      "symbol": "ADSK",
+      "published": "2021-05-27",
+      "source": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2022-first-quarter-results-301301172.html",
+      "action": "exclude_incomparable_guidance_pair",
+      "reason": "Prior FY2022 guidance explicitly excluded Innovyze; current guidance explicitly raises revenue for partial-year acquisitions. Future acquired revenue not separately quantified in these two releases.",
+      "registered_before_expansion_performance": true
+    },
+    {
+      "symbol": "ADSK",
+      "published": "2026-08-27",
+      "source": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2027-second-quarter-results-302861696.html",
+      "action": "exclude_incomparable_guidance_pair",
+      "reason": "Prior FY2027 guidance excluded pending MaintainX; current guidance includes incremental MaintainX revenue. Comparable organic remaining-year revision cannot be recovered from these releases alone.",
+      "registered_before_expansion_performance": true
+    },
+    {
+      "symbol": "ADSK",
+      "published": "2024-05-31",
+      "source": "https://www.prnewswire.com/news-releases/autodesk-reports-results-of-audit-committee-investigation-provides-preliminary-results-for-first-quarter-fiscal-2025-and-business-outlook-302160946.html",
+      "action": "no_new_signal",
+      "reason": "preliminary_actual_only_approximate_no_signal",
+      "registered_before_expansion_performance": true
+    },
+    {
+      "symbol": "ADSK",
+      "published": "2024-06-11",
+      "source": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2025-first-quarter-results-302169849.html",
+      "action": "no_new_signal",
+      "reason": "repeated_reported_quarter_no_signal",
+      "registered_before_expansion_performance": true
+    }
+  ],
+  "transaction_model": "FY2025 initial guidance already discusses the new transaction model; later reported GAAP revenue revisions are not automatically organic demand revisions. Need preserve this distinction; no performance-based exclusion.",
+  "remaining_review": "Other acquisition/measurement scope and non-quarterly updates still need completion."
+}

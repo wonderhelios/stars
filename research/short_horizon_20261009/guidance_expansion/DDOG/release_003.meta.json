@@ -1,0 +1,18 @@
+{
+  "url": "https://www.globenewswire.com/news-release/2020/11/10/2124285/0/en/datadog-announces-third-quarter-results.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "00a469eab4cc2a0c2209cae81b7e592ccb6b53d9297cd6691e4afd8ff700e81c",
+  "retrieved_utc": "2026-10-09T03:23:11Z",
+  "attempts": [
+    {
+      "url": "https://www.globenewswire.com/news-release/2020/11/10/2124285/0/en/datadog-announces-third-quarter-results.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "00a469eab4cc2a0c2209cae81b7e592ccb6b53d9297cd6691e4afd8ff700e81c",
+      "retrieved_utc": "2026-10-09T03:23:11Z"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/veeva-to-release-fiscal-2023-fourth-quarter-and-full-year-results-on-march-1-2023-301735245.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "c43e5d94293191dd649552eb8444bdfa417f871d3cba9c4952c114769d08baca",
+  "retrieved_utc": "2026-10-09T04:10:13Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/veeva-to-release-fiscal-2023-fourth-quarter-and-full-year-results-on-march-1-2023-301735245.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "c43e5d94293191dd649552eb8444bdfa417f871d3cba9c4952c114769d08baca",
+      "retrieved_utc": "2026-10-09T04:10:13Z"
+    }
+  ]
+}

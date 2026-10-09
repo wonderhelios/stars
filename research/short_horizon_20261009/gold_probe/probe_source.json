@@ -1,0 +1,7 @@
+{
+  "url": "https://datafeed.dukascopy.com/datafeed/XAUUSD/2024/08/BID_candles_hour_1.bi5",
+  "http_status": "429",
+  "returncode": 0,
+  "error": "",
+  "performance_tested": false
+}

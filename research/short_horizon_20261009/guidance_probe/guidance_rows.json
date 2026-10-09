@@ -1,0 +1,1096 @@
+[
+  {
+    "symbol": "VEEV",
+    "source": "https://www.prnewswire.com/news-releases/veeva-announces-fiscal-2022-first-quarter-results-301301286.html",
+    "source_file": "VEEV_PRN_301301286.html",
+    "sha256": "3798b1aa97a0008e82214cd691c5bfe0f10820dc8ff608f9215195824859e117",
+    "title": "Veeva Announces Fiscal 2022 First Quarter Results",
+    "published": "2021-05-27T16:05:00-04:00",
+    "modified": "2021-05-27T16:05:00-04:00",
+    "available_after": "2021-05-27T16:05:00-04:00",
+    "fiscal_year_end": "January 31, 2022",
+    "reported_fiscal_year": 2022,
+    "introduction": "Veeva is providing guidance for its fiscal year ending January 31, 2022 as follows:",
+    "bullets": [
+      "Total revenues between $1,815 and $1,825 million .",
+      "Non-GAAP operating income of about $710 million (2) .",
+      "Non-GAAP fully diluted net income per share of approximately $3.49 (2) ."
+    ],
+    "revenue_range_million": [
+      1815.0,
+      1825.0
+    ],
+    "eps_range": [
+      3.49,
+      3.49
+    ],
+    "actual_quarter": {
+      "quarter": "first",
+      "revenue_million": 433.6,
+      "source_text": "Revenues : Total revenues for the first quarter were $433.6 million , up from $337.1 million one year ago, an increase of 29% year over year. Subscription services revenues for the first quarter were $341.1 million , up from $270.2 million one year ago, an increase of 26% year over year."
+    },
+    "next_quarter_guidance": {
+      "quarter": "second",
+      "ending": "July 31, 2021",
+      "revenue_range_million": [
+        450.0,
+        452.0
+      ],
+      "source_text": "Veeva is providing guidance for its fiscal second quarter ending July 31, 2021 as follows: Total revenues between $450 and $452 million ."
+    },
+    "previous_source": null,
+    "previous_publication": null,
+    "revenue_midpoint_revision": null,
+    "eps_midpoint_revision": null,
+    "remaining_year_revision_million": null,
+    "realized_quarter_surprise_million": null
+  },
+  {
+    "symbol": "VEEV",
+    "source": "https://www.prnewswire.com/news-releases/veeva-announces-fiscal-2022-second-quarter-results-301367764.html",
+    "source_file": "VEEV_PRN_301367764.html",
+    "sha256": "f409fbfdd737dcab229ffbe7cb0cb672b0212aef394504fec34029be6ec362b5",
+    "title": "Veeva Announces Fiscal 2022 Second Quarter Results",
+    "published": "2021-09-01T16:05:00-04:00",
+    "modified": "2021-09-01T16:05:00-04:00",
+    "available_after": "2021-09-01T16:05:00-04:00",
+    "fiscal_year_end": "January 31, 2022",
+    "reported_fiscal_year": 2022,
+    "introduction": "Veeva is providing guidance for its fiscal year ending January 31, 2022 as follows:",
+    "bullets": [
+      "Total revenues between $1,830 and $1,835 million .",
+      "Non-GAAP operating income of about $730 million (2) .",
+      "Non-GAAP fully diluted net income per share of approximately $3.57 (2) ."
+    ],
+    "revenue_range_million": [
+      1830.0,
+      1835.0
+    ],
+    "eps_range": [
+      3.57,
+      3.57
+    ],
+    "actual_quarter": {
+      "quarter": "second",
+      "revenue_million": 455.6,
+      "source_text": "Revenues : Total revenues for the second quarter were $455.6 million , up from $353.7 million one year ago, an increase of 29% year over year. Subscription services revenues for the second quarter were $366.4 million , up from $283.5 million one year ago, an increase of 29% year over year."
+    },
+    "next_quarter_guidance": {
+      "quarter": "third",
+      "ending": "October 31, 2021",
+      "revenue_range_million": [
+        464.0,
+        466.0
+      ],
+      "source_text": "Financial Outlook: Veeva is providing guidance for its fiscal third quarter ending October 31, 2021 as follows: Total revenues between $464 and $466 million ."
+    },
+    "previous_source": "https://www.prnewswire.com/news-releases/veeva-announces-fiscal-2022-first-quarter-results-301301286.html",
+    "previous_publication": "2021-05-27T16:05:00-04:00",
+    "revenue_midpoint_revision": 0.006868131868131844,
+    "eps_midpoint_revision": 0.022922636103151817,
+    "remaining_year_revision_million": 7.899999999999977,
+    "realized_quarter_surprise_million": 4.600000000000023
+  },
+  {
+    "symbol": "VEEV",
+    "source": "https://www.prnewswire.com/news-releases/veeva-announces-fiscal-2022-third-quarter-results-301435572.html",
+    "source_file": "VEEV_PRN_301435572.html",
+    "sha256": "41ee0fab228b5c3031bcb290e116ecd669d913b4dcd7dc69c26a6b590c3a12e3",
+    "title": "Veeva Announces Fiscal 2022 Third Quarter Results",
+    "published": "2021-12-01T16:05:00-05:00",
+    "modified": "2021-12-01T16:05:00-05:00",
+    "available_after": "2021-12-01T16:05:00-05:00",
+    "fiscal_year_end": "January 31, 2022",
+    "reported_fiscal_year": 2022,
+    "introduction": "Veeva is providing guidance for its fiscal year ending January 31, 2022 as follows:",
+    "bullets": [
+      "Total revenues between $1,843 and $1,845 million .",
+      "Non-GAAP operating income of about $753 million (2) .",
+      "Non-GAAP fully diluted net income per share of approximately $3.69 (2) ."
+    ],
+    "revenue_range_million": [
+      1843.0,
+      1845.0
+    ],
+    "eps_range": [
+      3.69,
+      3.69
+    ],
+    "actual_quarter": {
+      "quarter": "third",
+      "revenue_million": 476.1,
+      "source_text": "Revenues : Total revenues for the third quarter were $476.1 million , up from $377.5 million one year ago, an increase of 26% year over year. Subscription services revenues for the third quarter were $380.7 million , up from $302.9 million one year ago, an increase of 26% year over year."
+    },
+    "next_quarter_guidance": {
+      "quarter": "fourth",
+      "ending": "January 31, 2022",
+      "revenue_range_million": [
+        478.0,
+        480.0
+      ],
+      "source_text": "Veeva is providing guidance for its fiscal fourth quarter ending January 31, 2022 as follows: Total revenues between $478 and $480 million ."
+    },
+    "previous_source": "https://www.prnewswire.com/news-releases/veeva-announces-fiscal-2022-second-quarter-results-301367764.html",
+    "previous_publication": "2021-09-01T16:05:00-04:00",
+    "revenue_midpoint_revision": 0.0062755798090041726,
+    "eps_midpoint_revision": 0.03361344537815136,
+    "remaining_year_revision_million": 0.39999999999997726,
+    "realized_quarter_surprise_million": 11.100000000000023
+  },
+  {
+    "symbol": "VEEV",
+    "source": "https://www.prnewswire.com/news-releases/veeva-announces-fiscal-2022-third-quarter-results-301435572.html",
+    "source_file": "VEEV_PRN_301435572.html",
+    "sha256": "41ee0fab228b5c3031bcb290e116ecd669d913b4dcd7dc69c26a6b590c3a12e3",
+    "title": "Veeva Announces Fiscal 2022 Third Quarter Results",
+    "published": "2021-12-01T16:05:00-05:00",
+    "modified": "2021-12-01T16:05:00-05:00",
+    "available_after": "2021-12-01T16:05:00-05:00",
+    "fiscal_year_end": "January 31, 2023",
+    "reported_fiscal_year": 2022,
+    "introduction": "Veeva is providing guidance for its fiscal year ending January 31, 2023 as follows:",
+    "bullets": [
+      "Total revenues between $2,150 and $2,170 million .",
+      "Subscription services revenues between $1,735 and $1,745 million .",
+      "Non-GAAP operating margin of roughly 38% (3) ."
+    ],
+    "revenue_range_million": [
+      2150.0,
+      2170.0
+    ],
+    "eps_range": null,
+    "actual_quarter": {
+      "quarter": "third",
+      "revenue_million": 476.1,
+      "source_text": "Revenues : Total revenues for the third quarter were $476.1 million , up from $377.5 million one year ago, an increase of 26% year over year. Subscription services revenues for the third quarter were $380.7 million , up from $302.9 million one year ago, an increase of 26% year over year."
+    },
+    "next_quarter_guidance": {
+      "quarter": "fourth",
+      "ending": "January 31, 2022",
+      "revenue_range_million": [
+        478.0,
+        480.0
+      ],
+      "source_text": "Veeva is providing guidance for its fiscal fourth quarter ending January 31, 2022 as follows: Total revenues between $478 and $480 million ."
+    },
+    "previous_source": null,
+    "previous_publication": null,
+    "revenue_midpoint_revision": null,
+    "eps_midpoint_revision": null,
+    "remaining_year_revision_million": null,
+    "realized_quarter_surprise_million": null
+  },
+  {
+    "symbol": "VEEV",
+    "source": "https://www.prnewswire.com/news-releases/veeva-announces-fourth-quarter-and-fiscal-year-2022-results-301494433.html",
+    "source_file": "VEEV_PRN_301494433.html",
+    "sha256": "279be6be68c0c3d0f1cd1a22afed86cfd29b571c60fb6d392d98f6e2092bcd1a",
+    "title": "Veeva Announces Fourth Quarter and Fiscal Year 2022 Results",
+    "published": "2022-03-02T16:05:00-05:00",
+    "modified": "2022-03-02T16:05:00-05:00",
+    "available_after": "2022-03-02T16:05:00-05:00",
+    "fiscal_year_end": "January 31, 2023",
+    "reported_fiscal_year": 2022,
+    "introduction": "Veeva is providing guidance for its fiscal year ending January 31, 2023 as follows:",
+    "bullets": [
+      "Total revenues between $2,160 and $2,170 million .",
+      "Non-GAAP operating income of about $825 million (5) .",
+      "Non-GAAP fully diluted net income per share of approximately $4.02 (5) ."
+    ],
+    "revenue_range_million": [
+      2160.0,
+      2170.0
+    ],
+    "eps_range": [
+      4.02,
+      4.02
+    ],
+    "actual_quarter": {
+      "quarter": "fourth",
+      "revenue_million": 485.5,
+      "source_text": "Revenues : Total revenues for the fourth quarter were $485.5 million , up from $396.8 million one year ago, an increase of 22% year over year. Subscription services revenues for the fourth quarter were $395.7 million , up from $322.8 million one year ago, an increase of 23% year over year."
+    },
+    "next_quarter_guidance": {
+      "quarter": "first",
+      "ending": "April 30, 2022",
+      "revenue_range_million": [
+        494.0,
+        496.0
+      ],
+      "source_text": "Veeva is providing guidance for its fiscal first quarter ending April 30, 2022 as follows: Total revenues between $494 and $496 million ."
+    },
+    "previous_source": "https://www.prnewswire.com/news-releases/veeva-announces-fiscal-2022-third-quarter-results-301435572.html",
+    "previous_publication": "2021-12-01T16:05:00-05:00",
+    "revenue_midpoint_revision": 0.0023148148148148806,
+    "eps_midpoint_revision": null,
+    "remaining_year_revision_million": null,
+    "realized_quarter_surprise_million": null
+  },
+  {
+    "symbol": "VEEV",
+    "source": "https://www.prnewswire.com/news-releases/veeva-announces-fiscal-2023-first-quarter-results-301559503.html",
+    "source_file": "VEEV_PRN_301559503.html",
+    "sha256": "724bbdca0203b495964634f42be12ae7a9b0662aa7338064de1c0e63622117ef",
+    "title": "Veeva Announces Fiscal 2023 First Quarter Results",
+    "published": "2022-06-01T16:05:00-04:00",
+    "modified": "2022-06-01T16:05:00-04:00",
+    "available_after": "2022-06-01T16:05:00-04:00",
+    "fiscal_year_end": "January 31, 2023",
+    "reported_fiscal_year": 2023,
+    "introduction": "Veeva is providing updated guidance for its fiscal year ending January 31, 2023 as follows:",
+    "bullets": [
+      "Total revenues between $2,165 and $2,175 million .",
+      "Non-GAAP operating income of about $835 million (2) .",
+      "Non-GAAP fully diluted net income per share of approximately $4.16 (2) ."
+    ],
+    "revenue_range_million": [
+      2165.0,
+      2175.0
+    ],
+    "eps_range": [
+      4.16,
+      4.16
+    ],
+    "actual_quarter": {
+      "quarter": "first",
+      "revenue_million": 505.1,
+      "source_text": "Revenues : Total revenues for the first quarter were $505.1 million , up from $433.6 million one year ago, an increase of 16% year over year. Subscription services revenues for the first quarter were $402.6 million , up from $341.1 million one year ago, an increase of 18% year over year."
+    },
+    "next_quarter_guidance": {
+      "quarter": "second",
+      "ending": "July 31, 2022",
+      "revenue_range_million": [
+        529.0,
+        531.0
+      ],
+      "source_text": "Veeva is providing guidance for its fiscal second quarter ending July 31, 2022 as follows: Total revenues between $529 and $531 million ."
+    },
+    "previous_source": "https://www.prnewswire.com/news-releases/veeva-announces-fourth-quarter-and-fiscal-year-2022-results-301494433.html",
+    "previous_publication": "2022-03-02T16:05:00-05:00",
+    "revenue_midpoint_revision": 0.002309468822170979,
+    "eps_midpoint_revision": 0.034825870646766344,
+    "remaining_year_revision_million": -5.100000000000023,
+    "realized_quarter_surprise_million": 10.100000000000023
+  },
+  {
+    "symbol": "VEEV",
+    "source": "https://www.prnewswire.com/news-releases/veeva-announces-fiscal-2023-second-quarter-results-301615784.html",
+    "source_file": "VEEV_PRN_301615784.html",
+    "sha256": "30d0bda514c37c3c6971ee347932dbe62754846617b2df6541babc40c79993bb",
+    "title": "Veeva Announces Fiscal 2023 Second Quarter Results",
+    "published": "2022-08-31T16:05:00-04:00",
+    "modified": "2022-08-31T16:05:00-04:00",
+    "available_after": "2022-08-31T16:05:00-04:00",
+    "fiscal_year_end": "January 31, 2023",
+    "reported_fiscal_year": 2023,
+    "introduction": "Veeva is providing updated guidance for its fiscal year ending January 31, 2023 as follows:",
+    "bullets": [
+      "Total revenues between $2,140 and $2,145 million .",
+      "Non-GAAP operating income of about $820 million (2) .",
+      "Non-GAAP fully diluted net income per share of approximately $4.17 (2) ."
+    ],
+    "revenue_range_million": [
+      2140.0,
+      2145.0
+    ],
+    "eps_range": [
+      4.17,
+      4.17
+    ],
+    "actual_quarter": {
+      "quarter": "second",
+      "revenue_million": 534.2,
+      "source_text": "Revenues : Total revenues for the second quarter were $534.2 million , up from $455.6 million one year ago, an increase of 17% year over year. Subscription services revenues for the second quarter were $428.6 million , up from $366.4 million one year ago, an increase of 17% year over year."
+    },
+    "next_quarter_guidance": {
+      "quarter": "third",
+      "ending": "October 31, 2022",
+      "revenue_range_million": [
+        545.0,
+        547.0
+      ],
+      "source_text": "Veeva is providing guidance for its fiscal third quarter ending October 31, 2022 as follows: Total revenues between $545 and $547 million ."
+    },
+    "previous_source": "https://www.prnewswire.com/news-releases/veeva-announces-fiscal-2023-first-quarter-results-301559503.html",
+    "previous_publication": "2022-06-01T16:05:00-04:00",
+    "revenue_midpoint_revision": -0.012672811059907807,
+    "eps_midpoint_revision": 0.0024038461538460343,
+    "remaining_year_revision_million": -31.700000000000045,
+    "realized_quarter_surprise_million": 4.2000000000000455
+  },
+  {
+    "symbol": "VEEV",
+    "source": "https://www.prnewswire.com/news-releases/veeva-announces-fiscal-2023-third-quarter-results-301691971.html",
+    "source_file": "VEEV_PRN_301691971.html",
+    "sha256": "59d3b7e270ba86f867e6d4566663f9c2cca18fa25641dc3427556ccc76c5ca91",
+    "title": "Veeva Announces Fiscal 2023 Third Quarter Results",
+    "published": "2022-12-01T16:05:00-05:00",
+    "modified": "2022-12-01T16:05:00-05:00",
+    "available_after": "2022-12-01T16:05:00-05:00",
+    "fiscal_year_end": "January 31, 2023",
+    "reported_fiscal_year": 2023,
+    "introduction": "Veeva is providing updated guidance for its fiscal year ending January 31, 2023 as follows:",
+    "bullets": [
+      "Total revenues between $2,143 and $2,145 million .",
+      "Non-GAAP operating income of about $820 million (2) .",
+      "Non-GAAP fully diluted net income per share of approximately $4.19 (2) ."
+    ],
+    "revenue_range_million": [
+      2143.0,
+      2145.0
+    ],
+    "eps_range": [
+      4.19,
+      4.19
+    ],
+    "actual_quarter": {
+      "quarter": "third",
+      "revenue_million": 552.4,
+      "source_text": "Revenues : Total revenues for the third quarter were $552.4 million , up from $476.1 million one year ago, an increase of 16% year over year. Subscription services revenues for the third quarter were $441.6 million , up from $380.7 million one year ago, an increase of 16% year over year."
+    },
+    "next_quarter_guidance": {
+      "quarter": "fourth",
+      "ending": "January 31, 2023",
+      "revenue_range_million": [
+        551.0,
+        553.0
+      ],
+      "source_text": "Veeva is providing guidance for its fiscal fourth quarter ending January 31, 2023 as follows: Total revenues between $551 and $553 million ."
+    },
+    "previous_source": "https://www.prnewswire.com/news-releases/veeva-announces-fiscal-2023-second-quarter-results-301615784.html",
+    "previous_publication": "2022-08-31T16:05:00-04:00",
+    "revenue_midpoint_revision": 0.0007001166861142494,
+    "eps_midpoint_revision": 0.004796163069544557,
+    "remaining_year_revision_million": -4.899999999999977,
+    "realized_quarter_surprise_million": 6.399999999999977
+  },
+  {
+    "symbol": "VEEV",
+    "source": "https://www.prnewswire.com/news-releases/veeva-announces-fourth-quarter-and-fiscal-year-2023-results-301760062.html",
+    "source_file": "VEEV_PRN_301760062.html",
+    "sha256": "010df07857277f24d35365f7c94f40f5fdcf44e1c3a84e536743706ceeb01c0e",
+    "title": "Veeva Announces Fourth Quarter and Fiscal Year 2023 Results",
+    "published": "2023-03-01T16:05:00-05:00",
+    "modified": "2023-03-01T16:05:00-05:00",
+    "available_after": "2023-03-01T16:05:00-05:00",
+    "fiscal_year_end": "January 31, 2024",
+    "reported_fiscal_year": 2023,
+    "introduction": "Veeva is providing guidance for its fiscal year ending January 31, 2024 as follows:",
+    "bullets": [
+      "Total revenues between $2,350 and $2,360 million .",
+      "Non-GAAP operating income of about $800 million (4) .",
+      "Non-GAAP fully diluted net income per share of approximately $4.33 (4) ."
+    ],
+    "revenue_range_million": [
+      2350.0,
+      2360.0
+    ],
+    "eps_range": [
+      4.33,
+      4.33
+    ],
+    "actual_quarter": {
+      "quarter": "fourth",
+      "revenue_million": 563.4,
+      "source_text": "Revenues : Total revenues for the fourth quarter were $563.4 million , up from $485.5 million one year ago, an increase of 16% year over year. Subscription services revenues for the fourth quarter were $460.2 million , up from $395.7 million one year ago, an increase of 16% year over year."
+    },
+    "next_quarter_guidance": {
+      "quarter": "first",
+      "ending": "April 30, 2023",
+      "revenue_range_million": [
+        514.0,
+        516.0
+      ],
+      "source_text": "Veeva is providing guidance for its fiscal first quarter ending April 30, 2023 as follows: Total revenues between $514 and $516 million ."
+    },
+    "previous_source": null,
+    "previous_publication": null,
+    "revenue_midpoint_revision": null,
+    "eps_midpoint_revision": null,
+    "remaining_year_revision_million": null,
+    "realized_quarter_surprise_million": null
+  },
+  {
+    "symbol": "VEEV",
+    "source": "https://www.prnewswire.com/news-releases/veeva-announces-fourth-quarter-and-fiscal-year-2023-results-301760062.html",
+    "source_file": "VEEV_PRN_301760062.html",
+    "sha256": "010df07857277f24d35365f7c94f40f5fdcf44e1c3a84e536743706ceeb01c0e",
+    "title": "Veeva Announces Fourth Quarter and Fiscal Year 2023 Results",
+    "published": "2023-03-01T16:05:00-05:00",
+    "modified": "2023-03-01T16:05:00-05:00",
+    "available_after": "2023-03-01T16:05:00-05:00",
+    "fiscal_year_end": "January 31, 2025",
+    "reported_fiscal_year": 2023,
+    "introduction": "Veeva is providing guidance for its fiscal year ending January 31, 2025 for the following metrics:",
+    "bullets": [
+      "Total revenues of at least $2,800 million .",
+      "Non-GAAP operating income of at least $1,000 million (4) ."
+    ],
+    "revenue_range_million": null,
+    "eps_range": null,
+    "actual_quarter": {
+      "quarter": "fourth",
+      "revenue_million": 563.4,
+      "source_text": "Revenues : Total revenues for the fourth quarter were $563.4 million , up from $485.5 million one year ago, an increase of 16% year over year. Subscription services revenues for the fourth quarter were $460.2 million , up from $395.7 million one year ago, an increase of 16% year over year."
+    },
+    "next_quarter_guidance": {
+      "quarter": "first",
+      "ending": "April 30, 2023",
+      "revenue_range_million": [
+        514.0,
+        516.0
+      ],
+      "source_text": "Veeva is providing guidance for its fiscal first quarter ending April 30, 2023 as follows: Total revenues between $514 and $516 million ."
+    },
+    "previous_source": null,
+    "previous_publication": null,
+    "revenue_midpoint_revision": null,
+    "eps_midpoint_revision": null,
+    "remaining_year_revision_million": null,
+    "realized_quarter_surprise_million": null
+  },
+  {
+    "symbol": "VEEV",
+    "source": "https://www.prnewswire.com/news-releases/veeva-announces-fiscal-2024-first-quarter-results-301839187.html",
+    "source_file": "VEEV_PRN_301839187.html",
+    "sha256": "f1493ddedb12262d7159a5d059e72310cf21b4ab3f12519a93bf54776187e14b",
+    "title": "Veeva Announces Fiscal 2024 First Quarter Results",
+    "published": "2023-05-31T16:05:00-04:00",
+    "modified": "2023-05-31T16:05:00-04:00",
+    "available_after": "2023-05-31T16:05:00-04:00",
+    "fiscal_year_end": "January 31, 2024",
+    "reported_fiscal_year": 2024,
+    "introduction": "Veeva is providing updated guidance for its fiscal year ending January 31, 2024 as follows:",
+    "bullets": [
+      "Total revenues between $2,360 and $2,370 million .",
+      "Non-GAAP operating income of about $810 million (2) .",
+      "Non-GAAP fully diluted net income per share of approximately $4.59 (2) ."
+    ],
+    "revenue_range_million": [
+      2360.0,
+      2370.0
+    ],
+    "eps_range": [
+      4.59,
+      4.59
+    ],
+    "actual_quarter": {
+      "quarter": "first",
+      "revenue_million": 526.3,
+      "source_text": "Revenues : Total revenues for the first quarter were $526.3 million , up from $505.1 million one year ago, an increase of 4% year over year. Subscription services revenues for the first quarter were $414.5 million , up from $402.6 million one year ago, an increase of 3% year over year."
+    },
+    "next_quarter_guidance": {
+      "quarter": "second",
+      "ending": "July 31, 2023",
+      "revenue_range_million": [
+        580.0,
+        582.0
+      ],
+      "source_text": "Veeva is providing guidance for its fiscal second quarter ending July 31, 2023 as follows: Total revenues between $580 and $582 million ."
+    },
+    "previous_source": "https://www.prnewswire.com/news-releases/veeva-announces-fourth-quarter-and-fiscal-year-2023-results-301760062.html",
+    "previous_publication": "2023-03-01T16:05:00-05:00",
+    "revenue_midpoint_revision": 0.00424628450106157,
+    "eps_midpoint_revision": 0.06004618937644346,
+    "remaining_year_revision_million": -1.2999999999999545,
+    "realized_quarter_surprise_million": 11.299999999999955
+  },
+  {
+    "symbol": "VEEV",
+    "source": "https://www.prnewswire.com/news-releases/veeva-announces-fiscal-2024-second-quarter-results-301914147.html",
+    "source_file": "VEEV_PRN_301914147.html",
+    "sha256": "7505c223a246cd60db78b4666a2dbdf5f7a528a91e34a994dd08f983478d2573",
+    "title": "Veeva Announces Fiscal 2024 Second Quarter Results",
+    "published": "2023-08-30T16:05:00-04:00",
+    "modified": "2023-08-30T16:05:00-04:00",
+    "available_after": "2023-08-30T16:05:00-04:00",
+    "fiscal_year_end": "January 31, 2024",
+    "reported_fiscal_year": 2024,
+    "introduction": "Veeva is providing updated guidance for its fiscal year ending January 31, 2024 as follows:",
+    "bullets": [
+      "Total revenues between $2,365 and $2,370 million .",
+      "Non-GAAP operating income of about $820 million (2) .",
+      "Non-GAAP fully diluted net income per share of approximately $4.68 (2) ."
+    ],
+    "revenue_range_million": [
+      2365.0,
+      2370.0
+    ],
+    "eps_range": [
+      4.68,
+      4.68
+    ],
+    "actual_quarter": {
+      "quarter": "second",
+      "revenue_million": 590.2,
+      "source_text": "Revenues : Total revenues for the second quarter were $590.2 million , up from $534.2 million one year ago, an increase of 10% year over year. Subscription services revenues for the second quarter were $470.6 million , up from $428.6 million one year ago, an increase of 10% year over year."
+    },
+    "next_quarter_guidance": {
+      "quarter": "third",
+      "ending": "October 31, 2023",
+      "revenue_range_million": [
+        614.0,
+        616.0
+      ],
+      "source_text": "Veeva is providing guidance for its fiscal third quarter ending October 31, 2023 as follows: Total revenues between $614 and $616 million ."
+    },
+    "previous_source": "https://www.prnewswire.com/news-releases/veeva-announces-fiscal-2024-first-quarter-results-301839187.html",
+    "previous_publication": "2023-05-31T16:05:00-04:00",
+    "revenue_midpoint_revision": 0.0010570824524311906,
+    "eps_midpoint_revision": 0.019607843137254832,
+    "remaining_year_revision_million": -6.7000000000000455,
+    "realized_quarter_surprise_million": 9.200000000000045
+  },
+  {
+    "symbol": "VEEV",
+    "source": "https://www.prnewswire.com/news-releases/veeva-announces-fiscal-2024-third-quarter-results-302008083.html",
+    "source_file": "VEEV_PRN_302008083.html",
+    "sha256": "124d91214444631c1d7e4dea74516bb89f57d12398e4016208da234d7559a7ad",
+    "title": "Veeva Announces Fiscal 2024 Third Quarter Results",
+    "published": "2023-12-06T16:05:00-05:00",
+    "modified": "2023-12-06T16:05:00-05:00",
+    "available_after": "2023-12-06T16:05:00-05:00",
+    "fiscal_year_end": "January 31, 2024",
+    "reported_fiscal_year": 2024,
+    "introduction": "Veeva is providing updated guidance for its fiscal year ending January 31, 2024 as follows:",
+    "bullets": [
+      "Total revenues between $2,353 and $2,355 million .",
+      "Non-GAAP operating income of about $830 million (2) .",
+      "Non-GAAP fully diluted net income per share of approximately $4.76 ( 2) ."
+    ],
+    "revenue_range_million": [
+      2353.0,
+      2355.0
+    ],
+    "eps_range": [
+      4.76,
+      4.76
+    ],
+    "actual_quarter": {
+      "quarter": "third",
+      "revenue_million": 616.5,
+      "source_text": "Revenues : Total revenues for the third quarter were $616.5 million , up from $552.4 million one year ago, an increase of 12% year over year. Subscription services revenues for the third quarter were $494.9 million , up from $441.6 million one year ago, an increase of 12% year over year."
+    },
+    "next_quarter_guidance": {
+      "quarter": "fourth",
+      "ending": "January 31, 2024",
+      "revenue_range_million": [
+        620.0,
+        622.0
+      ],
+      "source_text": "Veeva is providing guidance for its fiscal fourth quarter ending January 31, 2024 as follows: Total revenues between $620 and $622 million ."
+    },
+    "previous_source": "https://www.prnewswire.com/news-releases/veeva-announces-fiscal-2024-second-quarter-results-301914147.html",
+    "previous_publication": "2023-08-30T16:05:00-04:00",
+    "revenue_midpoint_revision": -0.0057022175290391,
+    "eps_midpoint_revision": 0.017094017094017033,
+    "remaining_year_revision_million": -15.0,
+    "realized_quarter_surprise_million": 1.5
+  },
+  {
+    "symbol": "VEEV",
+    "source": "https://www.prnewswire.com/news-releases/veeva-announces-fourth-quarter-and-fiscal-year-2024-results-302076388.html",
+    "source_file": "VEEV_PRN_302076388.html",
+    "sha256": "4e00a4d09d2099c4400d0b6e37d6ef263590933a552e82af5c3bffb4797775bb",
+    "title": "Veeva Announces Fourth Quarter and Fiscal Year 2024 Results",
+    "published": "2024-02-29T16:05:00-05:00",
+    "modified": "2024-02-29T16:05:00-05:00",
+    "available_after": "2024-02-29T16:05:00-05:00",
+    "fiscal_year_end": "January 31, 2025",
+    "reported_fiscal_year": 2024,
+    "introduction": "Veeva is providing guidance for its fiscal year ending January 31, 2025 as follows:",
+    "bullets": [
+      "Total revenues between $2,725 and $2,740 million .",
+      "Non-GAAP operating income of about $1,070 million (4) .",
+      "Non-GAAP fully diluted net income per share of approximately $6.16 (4) ."
+    ],
+    "revenue_range_million": [
+      2725.0,
+      2740.0
+    ],
+    "eps_range": [
+      6.16,
+      6.16
+    ],
+    "actual_quarter": {
+      "quarter": "fourth",
+      "revenue_million": 630.6,
+      "source_text": "Revenues : Total revenues for the fourth quarter were $630.6 million , up from $563.4 million one year ago, an increase of 12% year over year. Subscription services revenues for the fourth quarter were $521.5 million , up from $460.2 million one year ago, an increase of 13% year over year."
+    },
+    "next_quarter_guidance": {
+      "quarter": "first",
+      "ending": "April 30, 2024",
+      "revenue_range_million": [
+        640.0,
+        643.0
+      ],
+      "source_text": "Veeva is providing guidance for its fiscal first quarter ending April 30, 2024 as follows: Total revenues between $640 and $643 million ."
+    },
+    "previous_source": "https://www.prnewswire.com/news-releases/veeva-announces-fourth-quarter-and-fiscal-year-2023-results-301760062.html",
+    "previous_publication": "2023-03-01T16:05:00-05:00",
+    "revenue_midpoint_revision": null,
+    "eps_midpoint_revision": null,
+    "remaining_year_revision_million": null,
+    "realized_quarter_surprise_million": null
+  },
+  {
+    "symbol": "VEEV",
+    "source": "https://www.prnewswire.com/news-releases/veeva-announces-fiscal-2025-first-quarter-results-302159990.html",
+    "source_file": "VEEV_PRN_302159990.html",
+    "sha256": "f918e1188b08102641cf51cbe848dda50e9af3e833b3aed82bc9bd0f8168fa15",
+    "title": "Veeva Announces Fiscal 2025 First Quarter Results",
+    "published": "2024-05-30T16:40:00-04:00",
+    "modified": "2024-05-30T16:40:00-04:00",
+    "available_after": "2024-05-30T16:40:00-04:00",
+    "fiscal_year_end": "January 31, 2025",
+    "reported_fiscal_year": 2025,
+    "introduction": "Veeva is providing updated guidance for its fiscal year ending January 31, 2025 as follows:",
+    "bullets": [
+      "Total revenues between $2,700 and $2,710 million .",
+      "Non-GAAP operating income of about $1,070 million (3) .",
+      "Non-GAAP fully diluted net income per share of approximately $6.16 (3) ."
+    ],
+    "revenue_range_million": [
+      2700.0,
+      2710.0
+    ],
+    "eps_range": [
+      6.16,
+      6.16
+    ],
+    "actual_quarter": {
+      "quarter": "first",
+      "revenue_million": 650.3,
+      "source_text": "Revenues (1) : Total revenues for the first quarter were $650.3 million , up from $526.3 million one year ago, an increase of 24% year over year. Subscription services revenues for the first quarter were $534.0 million , up from $414.5 million one year ago, an increase of 29% year over year."
+    },
+    "next_quarter_guidance": {
+      "quarter": "second",
+      "ending": "July 31, 2024",
+      "revenue_range_million": [
+        666.0,
+        669.0
+      ],
+      "source_text": "Veeva is providing guidance for its fiscal second quarter ending July 31, 2024 as follows: Total revenues between $666 and $669 million ."
+    },
+    "previous_source": "https://www.prnewswire.com/news-releases/veeva-announces-fourth-quarter-and-fiscal-year-2024-results-302076388.html",
+    "previous_publication": "2024-02-29T16:05:00-05:00",
+    "revenue_midpoint_revision": -0.010064043915828047,
+    "eps_midpoint_revision": 0.0,
+    "remaining_year_revision_million": -36.299999999999955,
+    "realized_quarter_surprise_million": 8.799999999999955
+  },
+  {
+    "symbol": "VEEV",
+    "source": "https://www.prnewswire.com/news-releases/veeva-announces-fiscal-2025-second-quarter-results-302233348.html",
+    "source_file": "VEEV_PRN_302233348.html",
+    "sha256": "9cc7e0e8664606c94a66c93a788dd96e9f92496ae597a97d9ae9a9320ac88219",
+    "title": "Veeva Announces Fiscal 2025 Second Quarter Results",
+    "published": "2024-08-28T16:05:00-04:00",
+    "modified": "2024-08-28T16:05:00-04:00",
+    "available_after": "2024-08-28T16:05:00-04:00",
+    "fiscal_year_end": "January 31, 2025",
+    "reported_fiscal_year": 2025,
+    "introduction": "Veeva is providing updated guidance for its fiscal year ending January 31, 2025 as follows:",
+    "bullets": [
+      "Total revenues between $2,704 and $2,710 million .",
+      "Non-GAAP operating income of about $1,080 million (3) .",
+      "Non-GAAP fully diluted net income per share of approximately $6.22 (3) ."
+    ],
+    "revenue_range_million": [
+      2704.0,
+      2710.0
+    ],
+    "eps_range": [
+      6.22,
+      6.22
+    ],
+    "actual_quarter": {
+      "quarter": "second",
+      "revenue_million": 676.2,
+      "source_text": "Revenues (1) : Total revenues for the second quarter were $676.2 million , up from $590.2 million one year ago, an increase of 15% year over year. Subscription services revenues for the second quarter were $561.3 million , up from $470.6 million one year ago, an increase of 19% year over year."
+    },
+    "next_quarter_guidance": {
+      "quarter": "third",
+      "ending": "October 31, 2024",
+      "revenue_range_million": [
+        682.0,
+        685.0
+      ],
+      "source_text": "Veeva is providing guidance for its fiscal third quarter ending October 31, 2024 as follows: Total revenues between $682 and $685 million ."
+    },
+    "previous_source": "https://www.prnewswire.com/news-releases/veeva-announces-fiscal-2025-first-quarter-results-302159990.html",
+    "previous_publication": "2024-05-30T16:40:00-04:00",
+    "revenue_midpoint_revision": 0.0007393715341958984,
+    "eps_midpoint_revision": 0.009740259740259605,
+    "remaining_year_revision_million": -6.7000000000000455,
+    "realized_quarter_surprise_million": 8.700000000000045
+  },
+  {
+    "symbol": "VEEV",
+    "source": "https://www.prnewswire.com/news-releases/veeva-announces-fiscal-2025-third-quarter-results-302324307.html",
+    "source_file": "VEEV_PRN_302324307.html",
+    "sha256": "5e00ecb005210689eeb7a8c288e2bad1d745843e9a7d5390659ebb7049d45519",
+    "title": "Veeva Announces Fiscal 2025 Third Quarter Results",
+    "published": "2024-12-05T16:05:00-05:00",
+    "modified": "2024-12-05T16:05:55-05:00",
+    "available_after": "2024-12-05T16:05:55-05:00",
+    "fiscal_year_end": "January 31, 2025",
+    "reported_fiscal_year": 2025,
+    "introduction": "Veeva is providing updated guidance for its fiscal year ending January 31, 2025 as follows:",
+    "bullets": [
+      "Total revenues between $2,722 and $2,725 million .",
+      "Non-GAAP operating income of about $1,120 million (3) .",
+      "Non-GAAP fully diluted net income per share of approximately $6.44 (3) ."
+    ],
+    "revenue_range_million": [
+      2722.0,
+      2725.0
+    ],
+    "eps_range": [
+      6.44,
+      6.44
+    ],
+    "actual_quarter": {
+      "quarter": "third",
+      "revenue_million": 699.2,
+      "source_text": "Revenues (1) : Total revenues for the third quarter were $699.2 million , up from $616.5 million one year ago, an increase of 13% year over year. Subscription services revenues for the third quarter were $580.9 million , up from $494.9 million one year ago, an increase of 17% year over year."
+    },
+    "next_quarter_guidance": {
+      "quarter": "fourth",
+      "ending": "January 31, 2025",
+      "revenue_range_million": [
+        696.0,
+        699.0
+      ],
+      "source_text": "Veeva is providing guidance for its fiscal fourth quarter ending January 31, 2025 as follows: Total revenues between $696 and $699 million ."
+    },
+    "previous_source": "https://www.prnewswire.com/news-releases/veeva-announces-fiscal-2025-second-quarter-results-302233348.html",
+    "previous_publication": "2024-08-28T16:05:00-04:00",
+    "revenue_midpoint_revision": 0.00609530845954942,
+    "eps_midpoint_revision": 0.03536977491961424,
+    "remaining_year_revision_million": 0.7999999999999545,
+    "realized_quarter_surprise_million": 15.700000000000045
+  },
+  {
+    "symbol": "VEEV",
+    "source": "https://www.prnewswire.com/news-releases/veeva-announces-fourth-quarter-and-fiscal-year-2025-results-302393667.html",
+    "source_file": "VEEV_PRN_302393667.html",
+    "sha256": "72398d76c20cc1140d80b59b0de0b396e12b5434ac26e02018c4fd4df0f70646",
+    "title": "Veeva Announces Fourth Quarter and Fiscal Year 2025 Results",
+    "published": "2025-03-05T16:05:00-05:00",
+    "modified": "2025-03-05T16:05:42-05:00",
+    "available_after": "2025-03-05T16:05:42-05:00",
+    "fiscal_year_end": "January 31, 2026",
+    "reported_fiscal_year": 2025,
+    "introduction": "Veeva is providing guidance for its fiscal year ending January 31, 2026 as follows:",
+    "bullets": [
+      "Total revenues between $3,040 and $3,055 million .",
+      "Non-GAAP operating income of about $1,300 million . (5)",
+      "Non-GAAP fully diluted net income per share of approximately $7.32 . (5)"
+    ],
+    "revenue_range_million": [
+      3040.0,
+      3055.0
+    ],
+    "eps_range": [
+      7.32,
+      7.32
+    ],
+    "actual_quarter": {
+      "quarter": "fourth",
+      "revenue_million": 720.9,
+      "source_text": "Revenues (1) : Total revenues for the fourth quarter were $720.9 million , up from $630.6 million one year ago, an increase of 14% year over year. Subscription services revenues for the fourth quarter were $608.6 million , up from $521.5 million one year ago, an increase of 17% year over year."
+    },
+    "next_quarter_guidance": {
+      "quarter": "first",
+      "ending": "April 30, 2025",
+      "revenue_range_million": [
+        726.0,
+        729.0
+      ],
+      "source_text": "Veeva is providing guidance for its fiscal first quarter ending April 30, 2025 as follows: Total revenues between $726 and $729 million ."
+    },
+    "previous_source": null,
+    "previous_publication": null,
+    "revenue_midpoint_revision": null,
+    "eps_midpoint_revision": null,
+    "remaining_year_revision_million": null,
+    "realized_quarter_surprise_million": null
+  },
+  {
+    "symbol": "VEEV",
+    "source": "https://www.prnewswire.com/news-releases/veeva-announces-fiscal-2026-first-quarter-results-302467581.html",
+    "source_file": "VEEV_PRN_302467581.html",
+    "sha256": "c965f6583442e32345b77166ce6daf446bf007cdabff210df3031f8305c51f1a",
+    "title": "Veeva Announces Fiscal 2026 First Quarter Results",
+    "published": "2025-05-28T16:05:00-04:00",
+    "modified": "2025-05-28T16:05:36-04:00",
+    "available_after": "2025-05-28T16:05:36-04:00",
+    "fiscal_year_end": "January 31, 2026",
+    "reported_fiscal_year": 2026,
+    "introduction": "Veeva is providing updated guidance for its fiscal year ending January 31, 2026 as follows:",
+    "bullets": [
+      "Total revenues between $3,090 and $3,100 million .",
+      "Non-GAAP operating income of about $1,360 million . (2)",
+      "Non-GAAP fully diluted net income per share of approximately $7.63 . (2)"
+    ],
+    "revenue_range_million": [
+      3090.0,
+      3100.0
+    ],
+    "eps_range": [
+      7.63,
+      7.63
+    ],
+    "actual_quarter": {
+      "quarter": "first",
+      "revenue_million": 759.0,
+      "source_text": "Revenues : Total revenues for the first quarter were $759.0 million , up from $650.3 million one year ago, an increase of 17% year over year. Subscription services revenues for the first quarter were $634.8 million , up from $534.0 million one year ago, an increase of 19% year over year."
+    },
+    "next_quarter_guidance": {
+      "quarter": "second",
+      "ending": "July 31, 2025",
+      "revenue_range_million": [
+        766.0,
+        769.0
+      ],
+      "source_text": "Veeva is providing guidance for its fiscal second quarter ending July 31, 2025 as follows: Total revenues between $766 and $769 million ."
+    },
+    "previous_source": "https://www.prnewswire.com/news-releases/veeva-announces-fourth-quarter-and-fiscal-year-2025-results-302393667.html",
+    "previous_publication": "2025-03-05T16:05:00-05:00",
+    "revenue_midpoint_revision": 0.015586546349466879,
+    "eps_midpoint_revision": 0.042349726775956276,
+    "remaining_year_revision_million": 16.0,
+    "realized_quarter_surprise_million": 31.5
+  },
+  {
+    "symbol": "VEEV",
+    "source": "https://www.prnewswire.com/news-releases/veeva-announces-fiscal-2026-second-quarter-results-302540372.html",
+    "source_file": "VEEV_PRN_302540372.html",
+    "sha256": "34eacf32586fbaf754999451c3df87c0e9b3c7c82cc0b900088684786850c935",
+    "title": "Veeva Announces Fiscal 2026 Second Quarter Results",
+    "published": "2025-08-27T16:05:00-04:00",
+    "modified": "2025-08-27T16:06:07-04:00",
+    "available_after": "2025-08-27T16:06:07-04:00",
+    "fiscal_year_end": "January 31, 2026",
+    "reported_fiscal_year": 2026,
+    "introduction": "Veeva is providing updated guidance for its fiscal year ending January 31, 2026 as follows:",
+    "bullets": [
+      "Total revenues between $3,134 and $3,140 million .",
+      "Non-GAAP operating income of about $1,388 million . (2)",
+      "Non-GAAP fully diluted net income per share of approximately $7.78 . (2)"
+    ],
+    "revenue_range_million": [
+      3134.0,
+      3140.0
+    ],
+    "eps_range": [
+      7.78,
+      7.78
+    ],
+    "actual_quarter": {
+      "quarter": "second",
+      "revenue_million": 789.1,
+      "source_text": "Revenues : Total revenues for the second quarter were $789.1 million , up from $676.2 million one year ago, an increase of 17% year over year. Subscription services revenues for the second quarter were $659.2 million , up from $561.3 million one year ago, an increase of 17% year over year."
+    },
+    "next_quarter_guidance": {
+      "quarter": "third",
+      "ending": "October 31, 2025",
+      "revenue_range_million": [
+        790.0,
+        793.0
+      ],
+      "source_text": "Veeva is providing guidance for its fiscal third quarter ending October 31, 2025 as follows: Total revenues between $790 and $793 million ."
+    },
+    "previous_source": "https://www.prnewswire.com/news-releases/veeva-announces-fiscal-2026-first-quarter-results-302467581.html",
+    "previous_publication": "2025-05-28T16:05:00-04:00",
+    "revenue_midpoint_revision": 0.013570274636510504,
+    "eps_midpoint_revision": 0.019659239842726217,
+    "remaining_year_revision_million": 20.399999999999977,
+    "realized_quarter_surprise_million": 21.600000000000023
+  },
+  {
+    "symbol": "VEEV",
+    "source": "https://www.prnewswire.com/news-releases/veeva-announces-fiscal-2026-third-quarter-results-302622267.html",
+    "source_file": "VEEV_PRN_302622267.html",
+    "sha256": "df8100519e718f0e8e82ee5a9d1dff5b21b31d090469475678e6e4f2f4cde3a7",
+    "title": "Veeva Announces Fiscal 2026 Third Quarter Results",
+    "published": "2025-11-20T16:05:00-05:00",
+    "modified": "2025-11-20T16:05:59-05:00",
+    "available_after": "2025-11-20T16:05:59-05:00",
+    "fiscal_year_end": "January 31, 2026",
+    "reported_fiscal_year": 2026,
+    "introduction": "Veeva is providing updated guidance for its fiscal year ending January 31, 2026 as follows:",
+    "bullets": [
+      "Total revenues between $3,166 and $3,169 million.",
+      "Non-GAAP operating income of about $1,417 million. (2)",
+      "Non-GAAP fully diluted net income per share of approximately $7.93. (2)"
+    ],
+    "revenue_range_million": [
+      3166.0,
+      3169.0
+    ],
+    "eps_range": [
+      7.93,
+      7.93
+    ],
+    "actual_quarter": {
+      "quarter": "third",
+      "revenue_million": 811.2,
+      "source_text": "Revenues : Total revenues for the third quarter were $811.2 million, up from $699.2 million one year ago, an increase of 16% year over year. Subscription services revenues for the third quarter were $682.5 million, up from $580.9 million one year ago, an increase of 17% year over year."
+    },
+    "next_quarter_guidance": {
+      "quarter": "fourth",
+      "ending": "January 31, 2026",
+      "revenue_range_million": [
+        807.0,
+        810.0
+      ],
+      "source_text": "Veeva is providing guidance for its fiscal fourth quarter ending January 31, 2026 as follows: Total revenues between $807 and $810 million."
+    },
+    "previous_source": "https://www.prnewswire.com/news-releases/veeva-announces-fiscal-2026-second-quarter-results-302540372.html",
+    "previous_publication": "2025-08-27T16:05:00-04:00",
+    "revenue_midpoint_revision": 0.009722664966528516,
+    "eps_midpoint_revision": 0.019280205655527016,
+    "remaining_year_revision_million": 10.799999999999955,
+    "realized_quarter_surprise_million": 19.700000000000045
+  },
+  {
+    "symbol": "VEEV",
+    "source": "https://www.prnewswire.com/news-releases/veeva-announces-fourth-quarter-and-fiscal-year-2026-results-302704492.html",
+    "source_file": "VEEV_PRN_302704492.html",
+    "sha256": "3f1e9642fb73fea45c52440336a07ef662d521d90aed2cd782506835a17b7089",
+    "title": "Veeva Announces Fourth Quarter and Fiscal Year 2026 Results",
+    "published": "2026-03-04T16:05:00-05:00",
+    "modified": "2026-03-04T16:05:33-05:00",
+    "available_after": "2026-03-04T16:05:33-05:00",
+    "fiscal_year_end": "January 31, 2027",
+    "reported_fiscal_year": 2026,
+    "introduction": "Veeva is providing updated guidance for its fiscal year ending January 31, 2027 as follows:",
+    "bullets": [
+      "Total revenues between $3,585 and $3,600 million.",
+      "Non-GAAP operating income of about $1,590 million. (4)",
+      "Non-GAAP fully diluted net income per share of approximately $8.85. (4)"
+    ],
+    "revenue_range_million": [
+      3585.0,
+      3600.0
+    ],
+    "eps_range": [
+      8.85,
+      8.85
+    ],
+    "actual_quarter": {
+      "quarter": "fourth",
+      "revenue_million": 836.0,
+      "source_text": "Revenues : Total revenues for the fourth quarter were $836.0 million, up from $720.9 million one year ago, an increase of 16% year over year. Subscription revenues for the fourth quarter were $707.7 million, up from $608.6 million one year ago, an increase of 16% year over year."
+    },
+    "next_quarter_guidance": {
+      "quarter": "first",
+      "ending": "April 30, 2026",
+      "revenue_range_million": [
+        855.0,
+        858.0
+      ],
+      "source_text": "Veeva is providing guidance for its fiscal first quarter ending April 30, 2026 as follows: Total revenues between $855 and $858 million."
+    },
+    "previous_source": null,
+    "previous_publication": null,
+    "revenue_midpoint_revision": null,
+    "eps_midpoint_revision": null,
+    "remaining_year_revision_million": null,
+    "realized_quarter_surprise_million": null
+  },
+  {
+    "symbol": "VEEV",
+    "source": "https://www.prnewswire.com/news-releases/veeva-announces-fiscal-2027-first-quarter-results-302790659.html",
+    "source_file": "VEEV_PRN_302790659.html",
+    "sha256": "c42878972dcddff4ee62346b5b4c7524531b4fab4efd331b406d33f5746a0078",
+    "title": "Veeva Announces Fiscal 2027 First Quarter Results",
+    "published": "2026-06-03T16:05:00-04:00",
+    "modified": "2026-06-03T16:05:58-04:00",
+    "available_after": "2026-06-03T16:05:58-04:00",
+    "fiscal_year_end": "January 31, 2027",
+    "reported_fiscal_year": 2027,
+    "introduction": "Veeva is providing updated guidance for its fiscal year ending January 31, 2027 as follows:",
+    "bullets": [
+      "Total revenues between $3,635 and $3,645 million.",
+      "Non-GAAP operating income of about $1,610 million. (2)",
+      "Non-GAAP fully diluted net income per share of approximately $9.05. (2)"
+    ],
+    "revenue_range_million": [
+      3635.0,
+      3645.0
+    ],
+    "eps_range": [
+      9.05,
+      9.05
+    ],
+    "actual_quarter": {
+      "quarter": "first",
+      "revenue_million": 882.9,
+      "source_text": "Revenues: Total revenues for the first quarter were $882.9 million, up from $759.0 million one year ago, an increase of 16% year over year. Subscription revenues for the first quarter were $730.2 million, up from $634.8 million one year ago, an increase of 15% year over year."
+    },
+    "next_quarter_guidance": {
+      "quarter": "second",
+      "ending": "July 31, 2026",
+      "revenue_range_million": [
+        902.0,
+        905.0
+      ],
+      "source_text": "Veeva is providing guidance for its fiscal second quarter ending July 31, 2026 as follows: Total revenues between $902 and $905 million."
+    },
+    "previous_source": "https://www.prnewswire.com/news-releases/veeva-announces-fourth-quarter-and-fiscal-year-2026-results-302704492.html",
+    "previous_publication": "2026-03-04T16:05:00-05:00",
+    "revenue_midpoint_revision": 0.013221990257480831,
+    "eps_midpoint_revision": 0.02259887005649719,
+    "remaining_year_revision_million": 21.100000000000023,
+    "realized_quarter_surprise_million": 26.399999999999977
+  },
+  {
+    "symbol": "VEEV",
+    "source": "https://www.prnewswire.com/news-releases/veeva-announces-fiscal-2027-second-quarter-results-302860933.html",
+    "source_file": "VEEV_PRN_302860933.html",
+    "sha256": "9f518a943bd30901c1f383c8407a60fbe2a8395da3df62ed128af89c4d8f3aa3",
+    "title": "Veeva Announces Fiscal 2027 Second Quarter Results",
+    "published": "2026-08-26T16:05:00-04:00",
+    "modified": "2026-08-26T16:05:00-04:00",
+    "available_after": "2026-08-26T16:05:00-04:00",
+    "fiscal_year_end": "January 31, 2027",
+    "reported_fiscal_year": 2027,
+    "introduction": "Veeva is providing updated guidance for its fiscal year ending January 31, 2027 as follows:",
+    "bullets": [
+      "Total revenues between $3,682 and $3,687 million.",
+      "Non-GAAP operating income of about $1,640 million. (2)",
+      "Non-GAAP fully diluted net income per share of approximately $9.21. (2)"
+    ],
+    "revenue_range_million": [
+      3682.0,
+      3687.0
+    ],
+    "eps_range": [
+      9.21,
+      9.21
+    ],
+    "actual_quarter": {
+      "quarter": "second",
+      "revenue_million": 928.0,
+      "source_text": "Revenues : Total revenues for the second quarter were $928.0 million, up from $789.1 million one year ago, an increase of 18% year over year. Subscription revenues for the second quarter were $766.8 million, up from $659.2 million one year ago, an increase of 16% year over year."
+    },
+    "next_quarter_guidance": {
+      "quarter": "third",
+      "ending": "October 31, 2026",
+      "revenue_range_million": [
+        932.0,
+        935.0
+      ],
+      "source_text": "Veeva is providing guidance for its fiscal third quarter ending October 31, 2026 as follows: Total revenues between $932 and $935 million."
+    },
+    "previous_source": "https://www.prnewswire.com/news-releases/veeva-announces-fiscal-2027-first-quarter-results-302790659.html",
+    "previous_publication": "2026-06-03T16:05:00-04:00",
+    "revenue_midpoint_revision": 0.012225274725274682,
+    "eps_midpoint_revision": 0.017679558011049812,
+    "remaining_year_revision_million": 20.0,
+    "realized_quarter_surprise_million": 24.5
+  }
+]

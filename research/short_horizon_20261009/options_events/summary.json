@@ -1,0 +1,119 @@
+[
+  {
+    "coin": "BTC",
+    "hold": 1,
+    "full_fee5": {
+      "sharpe": -0.07478037660520927,
+      "annual": -0.0019630964294165567,
+      "phase_min": -1.3407730634049968,
+      "phase_max": 0.6138529899150839
+    },
+    "2023-24_fee5": {
+      "sharpe": -0.4195451282188702,
+      "annual": -0.0033443510636136345,
+      "phase_min": -1.5875031215262227,
+      "phase_max": 1.1228433263022177
+    },
+    "2025-26_fee5": {
+      "sharpe": -0.3593115946201249,
+      "annual": -0.0007250988548033857,
+      "phase_min": -1.077934783860375,
+      "phase_max": 0.7516751159085694
+    },
+    "full_fee15": {
+      "sharpe": -0.30629388662880097,
+      "annual": -0.0015514342053695503,
+      "phase_min": -0.9188816598864027,
+      "phase_max": 0.5458563764155084
+    },
+    "2023-24_fee15": null,
+    "2025-26_fee15": {
+      "sharpe": -0.27228271723213043,
+      "annual": -0.0003103617359708582,
+      "phase_min": -0.8168481516963914,
+      "phase_max": 0.7516751159085694
+    },
+    "mean_events_filled": 6.0,
+    "mean_imbalanced": 6.0,
+    "mean_account_spend": 0.0008020458776764047,
+    "phase_cash_pnl": [
+      -2934.525207605881,
+      411.3459123842003,
+      583.0584591621014
+    ],
+    "phase_status": [
+      "complete_proxy",
+      "complete_proxy",
+      "complete_proxy"
+    ]
+  },
+  {
+    "coin": "BTC",
+    "hold": 2,
+    "full_fee5": null,
+    "2023-24_fee5": null,
+    "2025-26_fee5": null,
+    "full_fee15": null,
+    "2023-24_fee15": null,
+    "2025-26_fee15": null,
+    "mean_events_filled": 5.333333333333333,
+    "mean_imbalanced": 5.333333333333333,
+    "mean_account_spend": 0.0006870502961762308,
+    "phase_cash_pnl": [
+      -801.4587915165237,
+      1089.1957852054043,
+      -716.6326668231002
+    ],
+    "phase_status": [
+      "incomplete_proxy",
+      "incomplete_proxy",
+      "complete_proxy"
+    ]
+  },
+  {
+    "coin": "ETH",
+    "hold": 1,
+    "full_fee5": null,
+    "2023-24_fee5": null,
+    "2025-26_fee5": null,
+    "full_fee15": null,
+    "2023-24_fee15": null,
+    "2025-26_fee15": null,
+    "mean_events_filled": 3.6666666666666665,
+    "mean_imbalanced": 3.6666666666666665,
+    "mean_account_spend": 0.00020313350405539647,
+    "phase_cash_pnl": [
+      -1104.0744553752495,
+      711.7346480614991,
+      0.0
+    ],
+    "phase_status": [
+      "complete_proxy",
+      "complete_proxy",
+      "complete_proxy"
+    ]
+  },
+  {
+    "coin": "ETH",
+    "hold": 2,
+    "full_fee5": null,
+    "2023-24_fee5": null,
+    "2025-26_fee5": null,
+    "full_fee15": null,
+    "2023-24_fee15": null,
+    "2025-26_fee15": null,
+    "mean_events_filled": 1.3333333333333333,
+    "mean_imbalanced": 1.3333333333333333,
+    "mean_account_spend": 8.889407648668242e-05,
+    "phase_cash_pnl": [
+      -605.139042312,
+      -114.18216255,
+      0.0
+    ],
+    "phase_status": [
+      "complete_proxy",
+      "complete_proxy",
+      "complete_proxy"
+    ]
+  }
+]

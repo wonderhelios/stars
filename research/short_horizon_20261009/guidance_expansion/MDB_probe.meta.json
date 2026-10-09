@@ -1,0 +1,26 @@
+{
+  "url": "https://www.prnewswire.com/news/mongodb%2C-inc./?page=1&pagesize=100",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "a325a3f8a7c4b4f4ad607a74ee7606e246c9f8592d0d529a53de2cded3859737",
+  "retrieved_utc": "2026-10-09T03:19:31Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news/mongodb%2C-inc./?page=1&pagesize=100",
+      "status": 0,
+      "exit_code": 35,
+      "error": "curl: (35) LibreSSL SSL_connect: SSL_ERROR_SYSCALL in connection to www.prnewswire.com:443 \n",
+      "sha256": null,
+      "retrieved_utc": "2026-10-09T03:19:23Z"
+    },
+    {
+      "url": "https://www.prnewswire.com/news/mongodb%2C-inc./?page=1&pagesize=100",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "a325a3f8a7c4b4f4ad607a74ee7606e246c9f8592d0d529a53de2cded3859737",
+      "retrieved_utc": "2026-10-09T03:19:31Z"
+    }
+  ]
+}

@@ -1,0 +1,330 @@
+[
+  {
+    "symbol": "GOOGL",
+    "first": "2013-01-02 00:00:00",
+    "last": "2026-10-07 00:00:00",
+    "rows": 3462,
+    "interior_holes": []
+  },
+  {
+    "symbol": "MSFT",
+    "first": "2013-01-02 00:00:00",
+    "last": "2026-10-07 00:00:00",
+    "rows": 3462,
+    "interior_holes": []
+  },
+  {
+    "symbol": "AAPL",
+    "first": "2013-01-02 00:00:00",
+    "last": "2026-10-07 00:00:00",
+    "rows": 3462,
+    "interior_holes": []
+  },
+  {
+    "symbol": "AMZN",
+    "first": "2013-01-02 00:00:00",
+    "last": "2026-10-07 00:00:00",
+    "rows": 3462,
+    "interior_holes": []
+  },
+  {
+    "symbol": "META",
+    "first": "2013-01-02 00:00:00",
+    "last": "2026-10-07 00:00:00",
+    "rows": 3462,
+    "interior_holes": []
+  },
+  {
+    "symbol": "NVDA",
+    "first": "2013-01-02 00:00:00",
+    "last": "2026-10-07 00:00:00",
+    "rows": 3462,
+    "interior_holes": []
+  },
+  {
+    "symbol": "AMD",
+    "first": "2013-01-02 00:00:00",
+    "last": "2026-10-07 00:00:00",
+    "rows": 3461,
+    "interior_holes": [
+      "2015-01-02 00:00:00"
+    ]
+  },
+  {
+    "symbol": "INTC",
+    "first": "2013-01-02 00:00:00",
+    "last": "2026-10-07 00:00:00",
+    "rows": 3462,
+    "interior_holes": []
+  },
+  {
+    "symbol": "ORCL",
+    "first": "2013-01-02 00:00:00",
+    "last": "2026-10-07 00:00:00",
+    "rows": 3462,
+    "interior_holes": []
+  },
+  {
+    "symbol": "CRM",
+    "first": "2013-01-02 00:00:00",
+    "last": "2026-10-07 00:00:00",
+    "rows": 3462,
+    "interior_holes": []
+  },
+  {
+    "symbol": "ADBE",
+    "first": "2013-01-02 00:00:00",
+    "last": "2026-10-07 00:00:00",
+    "rows": 3462,
+    "interior_holes": []
+  },
+  {
+    "symbol": "INTU",
+    "first": "2013-01-02 00:00:00",
+    "last": "2026-10-07 00:00:00",
+    "rows": 3462,
+    "interior_holes": []
+  },
+  {
+    "symbol": "NOW",
+    "first": "2013-01-02 00:00:00",
+    "last": "2026-10-07 00:00:00",
+    "rows": 3462,
+    "interior_holes": []
+  },
+  {
+    "symbol": "VEEV",
+    "first": "2013-10-16 00:00:00",
+    "last": "2026-10-07 00:00:00",
+    "rows": 3263,
+    "interior_holes": []
+  },
+  {
+    "symbol": "GWRE",
+    "first": "2013-01-02 00:00:00",
+    "last": "2026-10-07 00:00:00",
+    "rows": 3462,
+    "interior_holes": []
+  },
+  {
+    "symbol": "TYL",
+    "first": "2013-01-02 00:00:00",
+    "last": "2026-10-07 00:00:00",
+    "rows": 3462,
+    "interior_holes": []
+  },
+  {
+    "symbol": "ADSK",
+    "first": "2013-01-02 00:00:00",
+    "last": "2026-10-07 00:00:00",
+    "rows": 3462,
+    "interior_holes": []
+  },
+  {
+    "symbol": "ANSS",
+    "issue": "missing entire history"
+  },
+  {
+    "symbol": "CDNS",
+    "first": "2013-01-02 00:00:00",
+    "last": "2026-10-07 00:00:00",
+    "rows": 3462,
+    "interior_holes": []
+  },
+  {
+    "symbol": "SNPS",
+    "first": "2013-01-02 00:00:00",
+    "last": "2026-10-07 00:00:00",
+    "rows": 3462,
+    "interior_holes": []
+  },
+  {
+    "symbol": "PAYC",
+    "first": "2014-04-15 00:00:00",
+    "last": "2026-10-07 00:00:00",
+    "rows": 3139,
+    "interior_holes": []
+  },
+  {
+    "symbol": "PCTY",
+    "first": "2014-03-19 00:00:00",
+    "last": "2026-10-07 00:00:00",
+    "rows": 3158,
+    "interior_holes": []
+  },
+  {
+    "symbol": "WDAY",
+    "first": "2013-01-02 00:00:00",
+    "last": "2026-10-07 00:00:00",
+    "rows": 3462,
+    "interior_holes": []
+  },
+  {
+    "symbol": "TEAM",
+    "first": "2015-12-10 00:00:00",
+    "last": "2026-10-07 00:00:00",
+    "rows": 2721,
+    "interior_holes": []
+  },
+  {
+    "symbol": "DDOG",
+    "first": "2019-09-19 00:00:00",
+    "last": "2026-10-07 00:00:00",
+    "rows": 1772,
+    "interior_holes": []
+  },
+  {
+    "symbol": "ZS",
+    "first": "2018-03-16 00:00:00",
+    "last": "2026-10-07 00:00:00",
+    "rows": 2152,
+    "interior_holes": []
+  },
+  {
+    "symbol": "CRWD",
+    "first": "2019-06-12 00:00:00",
+    "last": "2026-10-07 00:00:00",
+    "rows": 1841,
+    "interior_holes": []
+  },
+  {
+    "symbol": "NET",
+    "first": "2019-09-13 00:00:00",
+    "last": "2026-10-07 00:00:00",
+    "rows": 1776,
+    "interior_holes": []
+  },
+  {
+    "symbol": "MDB",
+    "first": "2017-10-19 00:00:00",
+    "last": "2026-10-07 00:00:00",
+    "rows": 2253,
+    "interior_holes": []
+  },
+  {
+    "symbol": "HUBS",
+    "first": "2014-10-09 00:00:00",
+    "last": "2026-10-07 00:00:00",
+    "rows": 3016,
+    "interior_holes": []
+  },
+  {
+    "symbol": "SPY",
+    "first": "2013-01-02 00:00:00",
+    "last": "2026-10-07 00:00:00",
+    "rows": 3462,
+    "interior_holes": []
+  },
+  {
+    "symbol": "QQQ",
+    "first": "2013-01-02 00:00:00",
+    "last": "2026-10-07 00:00:00",
+    "rows": 3462,
+    "interior_holes": []
+  },
+  {
+    "symbol": "IWM",
+    "first": "2013-01-02 00:00:00",
+    "last": "2026-10-07 00:00:00",
+    "rows": 3462,
+    "interior_holes": []
+  },
+  {
+    "symbol": "EFA",
+    "first": "2013-01-02 00:00:00",
+    "last": "2026-10-07 00:00:00",
+    "rows": 3462,
+    "interior_holes": []
+  },
+  {
+    "symbol": "EEM",
+    "first": "2013-01-02 00:00:00",
+    "last": "2026-10-07 00:00:00",
+    "rows": 3462,
+    "interior_holes": []
+  },
+  {
+    "symbol": "TLT",
+    "first": "2013-01-02 00:00:00",
+    "last": "2026-10-07 00:00:00",
+    "rows": 3462,
+    "interior_holes": []
+  },
+  {
+    "symbol": "IEF",
+    "first": "2013-01-02 00:00:00",
+    "last": "2026-10-07 00:00:00",
+    "rows": 3462,
+    "interior_holes": []
+  },
+  {
+    "symbol": "GLD",
+    "first": "2013-01-02 00:00:00",
+    "last": "2026-10-07 00:00:00",
+    "rows": 3462,
+    "interior_holes": []
+  },
+  {
+    "symbol": "SLV",
+    "first": "2013-01-02 00:00:00",
+    "last": "2026-10-07 00:00:00",
+    "rows": 3462,
+    "interior_holes": []
+  },
+  {
+    "symbol": "USO",
+    "first": "2013-01-02 00:00:00",
+    "last": "2026-10-07 00:00:00",
+    "rows": 3462,
+    "interior_holes": []
+  },
+  {
+    "symbol": "XLE",
+    "first": "2013-01-02 00:00:00",
+    "last": "2026-10-07 00:00:00",
+    "rows": 3462,
+    "interior_holes": []
+  },
+  {
+    "symbol": "XLF",
+    "first": "2013-01-02 00:00:00",
+    "last": "2026-10-07 00:00:00",
+    "rows": 3462,
+    "interior_holes": []
+  },
+  {
+    "symbol": "XLK",
+    "first": "2013-01-02 00:00:00",
+    "last": "2026-10-07 00:00:00",
+    "rows": 3462,
+    "interior_holes": []
+  },
+  {
+    "symbol": "XLV",
+    "first": "2013-01-02 00:00:00",
+    "last": "2026-10-07 00:00:00",
+    "rows": 3462,
+    "interior_holes": []
+  },
+  {
+    "symbol": "XLU",
+    "first": "2013-01-02 00:00:00",
+    "last": "2026-10-07 00:00:00",
+    "rows": 3462,
+    "interior_holes": []
+  },
+  {
+    "symbol": "XLP",
+    "first": "2013-01-02 00:00:00",
+    "last": "2026-10-07 00:00:00",
+    "rows": 3462,
+    "interior_holes": []
+  },
+  {
+    "symbol": "XLI",
+    "first": "2013-01-02 00:00:00",
+    "last": "2026-10-07 00:00:00",
+    "rows": 3462,
+    "interior_holes": []
+  }
+]

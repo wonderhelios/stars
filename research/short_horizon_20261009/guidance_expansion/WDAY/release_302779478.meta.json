@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/workday-announces-fiscal-2027-first-quarter-financial-results-302779478.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "4f3dd557c1311e8b4788c8f042744bcfa4a3c96c8033cd1335bbf6c6d0a76135",
+  "retrieved_utc": "2026-10-09T03:29:27Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/workday-announces-fiscal-2027-first-quarter-financial-results-302779478.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "4f3dd557c1311e8b4788c8f042744bcfa4a3c96c8033cd1335bbf6c6d0a76135",
+      "retrieved_utc": "2026-10-09T03:29:27Z"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/veeva-to-release-fiscal-2025-third-quarter-results-on-december-5-2024-302306370.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "f479c49178a0cd7d47f2724ea4059dbbcb6d569da2097f0c7eddf8c6af524c90",
+  "retrieved_utc": "2026-10-09T04:10:25Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/veeva-to-release-fiscal-2025-third-quarter-results-on-december-5-2024-302306370.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "f479c49178a0cd7d47f2724ea4059dbbcb6d569da2097f0c7eddf8c6af524c90",
+      "retrieved_utc": "2026-10-09T04:10:25Z"
+    }
+  ]
+}

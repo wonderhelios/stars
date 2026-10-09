@@ -1,0 +1,18 @@
+{
+  "url": "https://cdn.yahoofinance.com/prod/sec-filings/0001108524/000110852425000027/crm-q1fy26xexhibit991.htm",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "1b4688af9719657d9d34665be485f184a1bc707bcade2de12667b1669244ab5d",
+  "retrieved_utc": "2026-10-09T03:55:16Z",
+  "attempts": [
+    {
+      "url": "https://cdn.yahoofinance.com/prod/sec-filings/0001108524/000110852425000027/crm-q1fy26xexhibit991.htm",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "1b4688af9719657d9d34665be485f184a1bc707bcade2de12667b1669244ab5d",
+      "retrieved_utc": "2026-10-09T03:55:16Z"
+    }
+  ]
+}

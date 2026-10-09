@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/synopsys-announces-earnings-release-date-for-first-quarter-fiscal-year-2022-301474244.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "350a7816bcf4faebfcd657b0bf6616148ccab7e38b2e219203ea3b70ac9b5318",
+  "retrieved_utc": "2026-10-09T04:09:07Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/synopsys-announces-earnings-release-date-for-first-quarter-fiscal-year-2022-301474244.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "350a7816bcf4faebfcd657b0bf6616148ccab7e38b2e219203ea3b70ac9b5318",
+      "retrieved_utc": "2026-10-09T04:09:07Z"
+    }
+  ]
+}

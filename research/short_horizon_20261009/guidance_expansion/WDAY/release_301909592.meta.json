@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/workday-announces-fiscal-2024-second-quarter-financial-results-301909592.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "16fd1f748c129515f6cb7f1560478a555f81cc82d73a4f16cd64599d383482e7",
+  "retrieved_utc": "2026-10-09T03:28:50Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/workday-announces-fiscal-2024-second-quarter-financial-results-301909592.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "16fd1f748c129515f6cb7f1560478a555f81cc82d73a4f16cd64599d383482e7",
+      "retrieved_utc": "2026-10-09T03:28:50Z"
+    }
+  ]
+}

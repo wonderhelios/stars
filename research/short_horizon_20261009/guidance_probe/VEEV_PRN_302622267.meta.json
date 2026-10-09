@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/veeva-announces-fiscal-2026-third-quarter-results-302622267.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "df8100519e718f0e8e82ee5a9d1dff5b21b31d090469475678e6e4f2f4cde3a7",
+  "retrieved_utc": "2026-10-09T03:08:12Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/veeva-announces-fiscal-2026-third-quarter-results-302622267.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "df8100519e718f0e8e82ee5a9d1dff5b21b31d090469475678e6e4f2f4cde3a7",
+      "retrieved_utc": "2026-10-09T03:08:12Z"
+    }
+  ]
+}

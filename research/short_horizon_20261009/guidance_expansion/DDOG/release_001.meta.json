@@ -1,0 +1,18 @@
+{
+  "url": "https://www.globenewswire.com/news-release/2020/05/11/2031453/0/en/datadog-announces-first-quarter-results.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "63e971b896aa0df9e415ac1762062ed22d130ddfb5a5496202572f1041e5eba6",
+  "retrieved_utc": "2026-10-09T03:23:06Z",
+  "attempts": [
+    {
+      "url": "https://www.globenewswire.com/news-release/2020/05/11/2031453/0/en/datadog-announces-first-quarter-results.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "63e971b896aa0df9e415ac1762062ed22d130ddfb5a5496202572f1041e5eba6",
+      "retrieved_utc": "2026-10-09T03:23:06Z"
+    }
+  ]
+}

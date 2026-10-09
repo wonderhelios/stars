@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news/veeva-systems/?page=5&pagesize=100",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "0f54fca42174b74af5c7c3440f3f0dc0958f6aa3cb752c1f892964c7767e5e47",
+  "retrieved_utc": "2026-10-09T03:06:44Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news/veeva-systems/?page=5&pagesize=100",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "0f54fca42174b74af5c7c3440f3f0dc0958f6aa3cb752c1f892964c7767e5e47",
+      "retrieved_utc": "2026-10-09T03:06:44Z"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/workday-to-announce-fiscal-2027-first-quarter-financial-results-on-may-21-2026-302759586.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "f96477b1fb53ea1757c6aa391655ebc0cb6acf45d895385e622ec728445f48fa",
+  "retrieved_utc": "2026-10-09T04:11:31Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/workday-to-announce-fiscal-2027-first-quarter-financial-results-on-may-21-2026-302759586.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "f96477b1fb53ea1757c6aa391655ebc0cb6acf45d895385e622ec728445f48fa",
+      "retrieved_utc": "2026-10-09T04:11:31Z"
+    }
+  ]
+}

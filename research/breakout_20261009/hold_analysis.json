@@ -1,0 +1,2840 @@
+[
+  {
+    "factor": "channel20",
+    "mode": "mix",
+    "period": 3,
+    "phases": [
+      {
+        "full": {
+          "days": 1192,
+          "sharpe": 1.1780806098863794,
+          "annual_arithmetic": 0.9807142207823213,
+          "annual_cost": 0.19954393260161168,
+          "daily_turnover": 0.7809938653683431
+        },
+        "2023-24": {
+          "days": 547,
+          "sharpe": -0.28274125064497446,
+          "annual_arithmetic": -0.24582022357375324,
+          "annual_cost": 0.17341884161340207,
+          "daily_turnover": 0.6787430200133153
+        },
+        "2025-26": {
+          "days": 645,
+          "sharpe": 2.5374508679524914,
+          "annual_arithmetic": 2.0208914937478606,
+          "annual_cost": 0.22169962992029485,
+          "daily_turnover": 0.8677089233671031
+        },
+        "missing_held_quotes": [],
+        "ending_equity": 7599822.863785464,
+        "factor": "channel20",
+        "mode": "mix",
+        "period": 3,
+        "phase": 0,
+        "key": "channel20_mix_k3_p0",
+        "vs_daily": {
+          "control": "baseline_mix_k1_p0",
+          "delta": 0.048780715375509764,
+          "p": 0.4696,
+          "p_fwer": 1.0,
+          "correlation": 0.7359162377785576,
+          "delta_ci95": [
+            -0.8451112668246222,
+            0.9264497909138449
+          ],
+          "turnover_reduction": 0.8166584819640176,
+          "turnover_reduction_ci95": [
+            0.7063368006455302,
+            0.9157700201040456
+          ],
+          "turnover_p": 2e-05,
+          "turnover_p_fwer": 0.009680000000000001,
+          "subdelta": [
+            -0.29281091142949,
+            0.4808197973908257
+          ]
+        },
+        "vs_matched": {
+          "control": "baseline_mix_k3_p0",
+          "delta": -0.13956876715366473,
+          "p": 1.0,
+          "p_fwer": 1.0,
+          "correlation": 0.8478020103536982,
+          "delta_ci95": [
+            -0.8163010434222592,
+            0.4904730899983788
+          ],
+          "turnover_reduction": -0.043017681735785684,
+          "turnover_reduction_ci95": [
+            -0.05955156316884353,
+            -0.027452723236520194
+          ],
+          "turnover_p": 1.0,
+          "turnover_p_fwer": 1.0,
+          "subdelta": [
+            -0.15849105419428205,
+            -0.045201779560197775
+          ]
+        }
+      },
+      {
+        "full": {
+          "days": 1192,
+          "sharpe": 1.2154680677347731,
+          "annual_arithmetic": 0.9876487061358746,
+          "annual_cost": 0.1969036390329752,
+          "daily_turnover": 0.7706600353541104
+        },
+        "2023-24": {
+          "days": 547,
+          "sharpe": 0.33781177473217555,
+          "annual_arithmetic": 0.29190611422540963,
+          "annual_cost": 0.16846310012803012,
+          "daily_turnover": 0.6593467715382784
+        },
+        "2025-26": {
+          "days": 645,
+          "sharpe": 2.0610715646918374,
+          "annual_arithmetic": 1.577681570903354,
+          "annual_cost": 0.22102297977871932,
+          "daily_turnover": 0.8650605862180795
+        },
+        "missing_held_quotes": [],
+        "ending_equity": 8396668.51782078,
+        "factor": "channel20",
+        "mode": "mix",
+        "period": 3,
+        "phase": 1,
+        "key": "channel20_mix_k3_p1",
+        "vs_daily": {
+          "control": "baseline_mix_k1_p0",
+          "delta": 0.08616817322390347,
+          "p": 0.40596,
+          "p_fwer": 1.0,
+          "correlation": 0.7211896962778723,
+          "delta_ci95": [
+            -0.5766761764079321,
+            0.7501944263886003
+          ],
+          "turnover_reduction": 0.8269923119782503,
+          "turnover_reduction_ci95": [
+            0.7165038760152969,
+            0.9261399675394942
+          ],
+          "turnover_p": 2e-05,
+          "turnover_p_fwer": 0.009680000000000001,
+          "subdelta": [
+            0.32774211394766,
+            0.004440494130171668
+          ]
+        },
+        "vs_matched": {
+          "control": "baseline_mix_k3_p1",
+          "delta": 0.21341562921102852,
+          "p": 0.21406,
+          "p_fwer": 1.0,
+          "correlation": 0.8593912501017781,
+          "delta_ci95": [
+            -0.3471083461595721,
+            0.7563718388039501
+          ],
+          "turnover_reduction": -0.03084368023006212,
+          "turnover_reduction_ci95": [
+            -0.04810491724316887,
+            -0.01477659605273292
+          ],
+          "turnover_p": 1.0,
+          "turnover_p_fwer": 1.0,
+          "subdelta": [
+            0.7669047903580168,
+            -0.20910987500203726
+          ]
+        }
+      },
+      {
+        "full": {
+          "days": 1192,
+          "sharpe": 0.6946653140417545,
+          "annual_arithmetic": 0.5859981196944993,
+          "annual_cost": 0.20251675303191022,
+          "daily_turnover": 0.7926291703792963
+        },
+        "2023-24": {
+          "days": 547,
+          "sharpe": -0.3418059266612376,
+          "annual_arithmetic": -0.28025886584960064,
+          "annual_cost": 0.17553598901267173,
+          "daily_turnover": 0.6870293112041946
+        },
+        "2025-26": {
+          "days": 645,
+          "sharpe": 1.5322953527360947,
+          "annual_arithmetic": 1.3206377647993406,
+          "annual_cost": 0.22539811414590008,
+          "daily_turnover": 0.8821843997882586
+        },
+        "missing_held_quotes": [],
+        "ending_equity": 2076199.8384984154,
+        "factor": "channel20",
+        "mode": "mix",
+        "period": 3,
+        "phase": 2,
+        "key": "channel20_mix_k3_p2",
+        "vs_daily": {
+          "control": "baseline_mix_k1_p0",
+          "delta": -0.4346345804691152,
+          "p": 1.0,
+          "p_fwer": 1.0,
+          "correlation": 0.7340445193655616,
+          "delta_ci95": [
+            -1.2571125445252609,
+            0.3618513007555125
+          ],
+          "turnover_reduction": 0.8050231769530645,
+          "turnover_reduction_ci95": [
+            0.6994885911732484,
+            0.899519211319192
+          ],
+          "turnover_p": 2e-05,
+          "turnover_p_fwer": 0.009680000000000001,
+          "subdelta": [
+            -0.35187558744575315,
+            -0.524335717825571
+          ]
+        },
+        "vs_matched": {
+          "control": "baseline_mix_k3_p2",
+          "delta": -0.3513963777577478,
+          "p": 1.0,
+          "p_fwer": 1.0,
+          "correlation": 0.8749368285042961,
+          "delta_ci95": [
+            -0.8363635522791074,
+            0.14786995892508215
+          ],
+          "turnover_reduction": -0.04831139449455213,
+          "turnover_reduction_ci95": [
+            -0.06782005149200825,
+            -0.029207093418311555
+          ],
+          "turnover_p": 1.0,
+          "turnover_p_fwer": 1.0,
+          "subdelta": [
+            -0.19751072221190188,
+            -0.41410907362117255
+          ]
+        }
+      }
+    ],
+    "summary": {
+      "sharpe": 1.0294046638876357,
+      "sharpe_sd": 0.29049488765299086,
+      "sharpe_range": [
+        0.6946653140417545,
+        1.2154680677347731
+      ],
+      "delta": -0.09989523062323398,
+      "delta_sd": 0.29049488765299086,
+      "delta_min": -0.4346345804691152,
+      "matched_delta": -0.09251650523346133,
+      "matched_delta_sd": 0.28533066312241984,
+      "matched_delta_min": -0.3513963777577478,
+      "turnover": 0.7814276903672499,
+      "annual_cost": 0.19965477488883235,
+      "subsharpe": [
+        -0.09557846752467884,
+        2.043605928460141
+      ],
+      "sub_min": [
+        -0.3418059266612376,
+        1.5322953527360947
+      ],
+      "subdelta": [
+        -0.10564812830919439,
+        -0.013025142101524537
+      ],
+      "matched_subdelta_min": [
+        -0.19751072221190188,
+        -0.41410907362117255
+      ],
+      "p": 1.0,
+      "p_fwer": 1,
+      "matched_p": 1.0,
+      "matched_p_fwer": 1,
+      "matched_available": true,
+      "correlation": 0.7303834844739971,
+      "delta_ci95": [
+        -0.7763540331550008,
+        0.5375770586422318
+      ],
+      "turnover_reduction_ci95": [
+        0.7085464689180361,
+        0.9121837794540663
+      ],
+      "turnover_p_fwer": 0.009680000000000001
+    },
+    "gates": {
+      "fwer": false,
+      "subperiods": false,
+      "phase": false,
+      "turnover": true
+    },
+    "usable": false,
+    "descriptive_cost_value": true,
+    "noninferiority_unadjusted": false
+  },
+  {
+    "factor": "channel20",
+    "mode": "mix",
+    "period": 5,
+    "phases": [
+      {
+        "full": {
+          "days": 1192,
+          "sharpe": 1.458339603682858,
+          "annual_arithmetic": 1.154654865017527,
+          "annual_cost": 0.1366687021656079,
+          "daily_turnover": 0.5349068577910289
+        },
+        "2023-24": {
+          "days": 547,
+          "sharpe": 0.4002794662882568,
+          "annual_arithmetic": 0.33101156125785364,
+          "annual_cost": 0.12293465079145231,
+          "daily_turnover": 0.4811532320604787
+        },
+        "2025-26": {
+          "days": 645,
+          "sharpe": 2.440383162124706,
+          "annual_arithmetic": 1.853155465260227,
+          "annual_cost": 0.148316029455008,
+          "daily_turnover": 0.5804932659687202
+        },
+        "missing_held_quotes": [],
+        "ending_equity": 15431354.091429628,
+        "factor": "channel20",
+        "mode": "mix",
+        "period": 5,
+        "phase": 0,
+        "key": "channel20_mix_k5_p0",
+        "vs_daily": {
+          "control": "baseline_mix_k1_p0",
+          "delta": 0.3290397091719883,
+          "p": 0.29182,
+          "p_fwer": 1.0,
+          "correlation": 0.6746221274318559,
+          "delta_ci95": [
+            -0.8101941749614255,
+            1.404748098166188
+          ],
+          "turnover_reduction": 1.062745489541332,
+          "turnover_reduction_ci95": [
+            0.924276908018312,
+            1.1852914751041315
+          ],
+          "turnover_p": 2e-05,
+          "turnover_p_fwer": 0.009680000000000001,
+          "subdelta": [
+            0.39020980550374124,
+            0.38375209156304013
+          ]
+        },
+        "vs_matched": {
+          "control": "baseline_mix_k5_p0",
+          "delta": -0.2628082692907183,
+          "p": 1.0,
+          "p_fwer": 1.0,
+          "correlation": 0.8437262607594711,
+          "delta_ci95": [
+            -0.8735961882625475,
+            0.32225552615840475
+          ],
+          "turnover_reduction": -0.02336249653282585,
+          "turnover_reduction_ci95": [
+            -0.036454131967518975,
+            -0.010539014463114622
+          ],
+          "turnover_p": 1.0,
+          "turnover_p_fwer": 1.0,
+          "subdelta": [
+            -0.23792029418059507,
+            -0.1822666822294301
+          ]
+        }
+      },
+      {
+        "full": {
+          "days": 1192,
+          "sharpe": 0.9105755907951468,
+          "annual_arithmetic": 0.7919751095681712,
+          "annual_cost": 0.13765338417497766,
+          "daily_turnover": 0.5387607991192863
+        },
+        "2023-24": {
+          "days": 547,
+          "sharpe": -0.39896416487519054,
+          "annual_arithmetic": -0.37573816817874517,
+          "annual_cost": 0.12247771082474622,
+          "daily_turnover": 0.47936481731798913
+        },
+        "2025-26": {
+          "days": 645,
+          "sharpe": 2.225840567035487,
+          "annual_arithmetic": 1.7822683854248582,
+          "annual_cost": 0.15052329630300335,
+          "daily_turnover": 0.5891322751585258
+        },
+        "missing_held_quotes": [],
+        "ending_equity": 3372893.880308976,
+        "factor": "channel20",
+        "mode": "mix",
+        "period": 5,
+        "phase": 1,
+        "key": "channel20_mix_k5_p1",
+        "vs_daily": {
+          "control": "baseline_mix_k1_p0",
+          "delta": -0.21872430371572282,
+          "p": 1.0,
+          "p_fwer": 1.0,
+          "correlation": 0.6145124542871382,
+          "delta_ci95": [
+            -1.2286754375300175,
+            0.8778382673363896
+          ],
+          "turnover_reduction": 1.0588915482130745,
+          "turnover_reduction_ci95": [
+            0.9223844839250445,
+            1.1792061031441896
+          ],
+          "turnover_p": 2e-05,
+          "turnover_p_fwer": 0.009680000000000001,
+          "subdelta": [
+            -0.4090338256597061,
+            0.1692094964738211
+          ]
+        },
+        "vs_matched": {
+          "control": "baseline_mix_k5_p1",
+          "delta": 0.11387379608290848,
+          "p": 0.28262,
+          "p_fwer": 1.0,
+          "correlation": 0.8996450388872205,
+          "delta_ci95": [
+            -0.38148140059655367,
+            0.5441262065265989
+          ],
+          "turnover_reduction": -0.01108748530860515,
+          "turnover_reduction_ci95": [
+            -0.026078640432567836,
+            0.007459264222197075
+          ],
+          "turnover_p": 1.0,
+          "turnover_p_fwer": 1.0,
+          "subdelta": [
+            0.5686443861770063,
+            -0.3755233014601407
+          ]
+        }
+      },
+      {
+        "full": {
+          "days": 1192,
+          "sharpe": 1.2713536977006983,
+          "annual_arithmetic": 1.072071127021024,
+          "annual_cost": 0.13729049874284877,
+          "daily_turnover": 0.5373405038859052
+        },
+        "2023-24": {
+          "days": 547,
+          "sharpe": 0.30621368068952975,
+          "annual_arithmetic": 0.25605742370286916,
+          "annual_cost": 0.12025666460454335,
+          "daily_turnover": 0.4706718771215004
+        },
+        "2025-26": {
+          "days": 645,
+          "sharpe": 2.0799561065761414,
+          "annual_arithmetic": 1.7641013529357998,
+          "annual_cost": 0.1517362464539388,
+          "daily_turnover": 0.5938796338706019
+        },
+        "missing_held_quotes": [],
+        "ending_equity": 10012376.617650868,
+        "factor": "channel20",
+        "mode": "mix",
+        "period": 5,
+        "phase": 2,
+        "key": "channel20_mix_k5_p2",
+        "vs_daily": {
+          "control": "baseline_mix_k1_p0",
+          "delta": 0.14205380318982863,
+          "p": 0.38946,
+          "p_fwer": 1.0,
+          "correlation": 0.641005257996888,
+          "delta_ci95": [
+            -0.75750516443647,
+            1.0379679635526164
+          ],
+          "turnover_reduction": 1.0603118434464556,
+          "turnover_reduction_ci95": [
+            0.9216835031929044,
+            1.18307398391974
+          ],
+          "turnover_p": 2e-05,
+          "turnover_p_fwer": 0.009680000000000001,
+          "subdelta": [
+            0.2961440199050142,
+            0.023325036014475664
+          ]
+        },
+        "vs_matched": {
+          "control": "baseline_mix_k5_p2",
+          "delta": -0.4881480988557807,
+          "p": 1.0,
+          "p_fwer": 1.0,
+          "correlation": 0.8766670091618891,
+          "delta_ci95": [
+            -0.999160353465351,
+            0.04710042100667042
+          ],
+          "turnover_reduction": -0.027472254630738657,
+          "turnover_reduction_ci95": [
+            -0.041173992877559275,
+            -0.013752401265446582
+          ],
+          "turnover_p": 1.0,
+          "turnover_p_fwer": 1.0,
+          "subdelta": [
+            -0.30861220751193646,
+            -0.6454771308569298
+          ]
+        }
+      },
+      {
+        "full": {
+          "days": 1192,
+          "sharpe": 1.0761870512344065,
+          "annual_arithmetic": 0.89450156796919,
+          "annual_cost": 0.13329270883738306,
+          "daily_turnover": 0.5216935766629474
+        },
+        "2023-24": {
+          "days": 547,
+          "sharpe": -0.0665521128770215,
+          "annual_arithmetic": -0.05087473864695624,
+          "annual_cost": 0.1136081850519853,
+          "daily_turnover": 0.44465043073184074
+        },
+        "2025-26": {
+          "days": 645,
+          "sharpe": 1.9226196003185534,
+          "annual_arithmetic": 1.6962393039676893,
+          "annual_cost": 0.14998640575306144,
+          "daily_turnover": 0.5870309422820408
+        },
+        "missing_held_quotes": [],
+        "ending_equity": 5794844.174602121,
+        "factor": "channel20",
+        "mode": "mix",
+        "period": 5,
+        "phase": 3,
+        "key": "channel20_mix_k5_p3",
+        "vs_daily": {
+          "control": "baseline_mix_k1_p0",
+          "delta": -0.05311284327646315,
+          "p": 1.0,
+          "p_fwer": 1.0,
+          "correlation": 0.6562048467329596,
+          "delta_ci95": [
+            -0.9230940349847057,
+            0.8352025186841536
+          ],
+          "turnover_reduction": 1.0759587706694134,
+          "turnover_reduction_ci95": [
+            0.9372697903558793,
+            1.198365755867499
+          ],
+          "turnover_p": 2e-05,
+          "turnover_p_fwer": 0.009680000000000001,
+          "subdelta": [
+            -0.07662177366153702,
+            -0.13401147024311233
+          ]
+        },
+        "vs_matched": {
+          "control": "baseline_mix_k5_p3",
+          "delta": 0.19874452793397457,
+          "p": 0.2045,
+          "p_fwer": 1.0,
+          "correlation": 0.8943784683803625,
+          "delta_ci95": [
+            -0.2542990435935232,
+            0.6755858276341757
+          ],
+          "turnover_reduction": -0.013100389471035978,
+          "turnover_reduction_ci95": [
+            -0.024523151054549764,
+            -0.0020104184354289845
+          ],
+          "turnover_p": 1.0,
+          "turnover_p_fwer": 1.0,
+          "subdelta": [
+            0.5650958424124686,
+            -0.06746016830345392
+          ]
+        }
+      },
+      {
+        "full": {
+          "days": 1192,
+          "sharpe": 0.8880689572465242,
+          "annual_arithmetic": 0.7685769365586734,
+          "annual_cost": 0.13496277190071015,
+          "daily_turnover": 0.5282300270086503
+        },
+        "2023-24": {
+          "days": 547,
+          "sharpe": 0.5982211015979505,
+          "annual_arithmetic": 0.5356975599043395,
+          "annual_cost": 0.11305836818229134,
+          "daily_turnover": 0.442498505605837
+        },
+        "2025-26": {
+          "days": 645,
+          "sharpe": 1.1505069521607916,
+          "annual_arithmetic": 0.966073090093434,
+          "annual_cost": 0.15353906466656295,
+          "daily_turnover": 0.6009356738417336
+        },
+        "missing_held_quotes": [],
+        "ending_equity": 3457695.567554066,
+        "factor": "channel20",
+        "mode": "mix",
+        "period": 5,
+        "phase": 4,
+        "key": "channel20_mix_k5_p4",
+        "vs_daily": {
+          "control": "baseline_mix_k1_p0",
+          "delta": -0.2412309372643454,
+          "p": 1.0,
+          "p_fwer": 1.0,
+          "correlation": 0.6675760465489562,
+          "delta_ci95": [
+            -1.497741966746274,
+            0.9416320445713035
+          ],
+          "turnover_reduction": 1.0694223203237105,
+          "turnover_reduction_ci95": [
+            0.9283871951673685,
+            1.1947547708927981
+          ],
+          "turnover_p": 2e-05,
+          "turnover_p_fwer": 0.009680000000000001,
+          "subdelta": [
+            0.588151440813435,
+            -0.9061241184008741
+          ]
+        },
+        "vs_matched": {
+          "control": "baseline_mix_k5_p4",
+          "delta": -0.43447915693831984,
+          "p": 1.0,
+          "p_fwer": 1.0,
+          "correlation": 0.8535498510405994,
+          "delta_ci95": [
+            -1.112505768955225,
+            0.2064158146276961
+          ],
+          "turnover_reduction": -0.028501149857632635,
+          "turnover_reduction_ci95": [
+            -0.0417653278661241,
+            -0.01573335780447881
+          ],
+          "turnover_p": 1.0,
+          "turnover_p_fwer": 1.0,
+          "subdelta": [
+            -0.21902313686307762,
+            -0.5646388218164795
+          ]
+        }
+      }
+    ],
+    "summary": {
+      "sharpe": 1.1209049801319266,
+      "sharpe_sd": 0.24338637006096128,
+      "sharpe_range": [
+        0.8880689572465242,
+        1.458339603682858
+      ],
+      "delta": -0.008394914378942886,
+      "delta_sd": 0.24338637006096128,
+      "delta_min": -0.2412309372643454,
+      "matched_delta": -0.17456344021358716,
+      "matched_delta_sd": 0.3147354230778393,
+      "matched_delta_min": -0.4881480988557807,
+      "turnover": 0.5321863528935635,
+      "annual_cost": 0.1359736131643055,
+      "subsharpe": [
+        0.167839594164705,
+        1.9638612776431355
+      ],
+      "sub_min": [
+        -0.39896416487519054,
+        1.1505069521607916
+      ],
+      "subdelta": [
+        0.15776993338018946,
+        -0.09276979291852991
+      ],
+      "matched_subdelta_min": [
+        -0.30861220751193646,
+        -0.6454771308569298
+      ],
+      "p": 1.0,
+      "p_fwer": 1,
+      "matched_p": 1.0,
+      "matched_p_fwer": 1,
+      "matched_available": true,
+      "correlation": 0.6507841465995596,
+      "delta_ci95": [
+        -0.7839253174648505,
+        0.7434871458386104
+      ],
+      "turnover_reduction_ci95": [
+        0.9273366188479516,
+        1.1872064403488125
+      ],
+      "turnover_p_fwer": 0.009680000000000001
+    },
+    "gates": {
+      "fwer": false,
+      "subperiods": false,
+      "phase": false,
+      "turnover": true
+    },
+    "usable": false,
+    "descriptive_cost_value": true,
+    "noninferiority_unadjusted": false
+  },
+  {
+    "factor": "channel20",
+    "mode": "mix",
+    "period": 10,
+    "phases": [
+      {
+        "full": {
+          "days": 1192,
+          "sharpe": 1.8304808949863947,
+          "annual_arithmetic": 1.3836176824564885,
+          "annual_cost": 0.07980022058671186,
+          "daily_turnover": 0.31232963047636736
+        },
+        "2023-24": {
+          "days": 547,
+          "sharpe": 0.7083367047385026,
+          "annual_arithmetic": 0.5440652649801079,
+          "annual_cost": 0.07177496213762255,
+          "daily_turnover": 0.28091961697699624
+        },
+        "2025-26": {
+          "days": 645,
+          "sharpe": 2.816957897380803,
+          "annual_arithmetic": 2.0956101977426598,
+          "annual_cost": 0.08660613744198606,
+          "daily_turnover": 0.338967269831648
+        },
+        "missing_held_quotes": [],
+        "ending_equity": 35707061.753411114,
+        "factor": "channel20",
+        "mode": "mix",
+        "period": 10,
+        "phase": 0,
+        "key": "channel20_mix_k10_p0",
+        "vs_daily": {
+          "control": "baseline_mix_k1_p0",
+          "delta": 0.701181000475525,
+          "p": 0.13484,
+          "p_fwer": 1.0,
+          "correlation": 0.5235937366660527,
+          "delta_ci95": [
+            -0.5541913734229494,
+            1.9005962287533453
+          ],
+          "turnover_reduction": 1.2853227168559933,
+          "turnover_reduction_ci95": [
+            1.1182999934180702,
+            1.431079363821529
+          ],
+          "turnover_p": 2e-05,
+          "turnover_p_fwer": 0.009680000000000001,
+          "subdelta": [
+            0.6982670439539871,
+            0.7603268268191372
+          ]
+        },
+        "vs_matched": {
+          "control": "baseline_mix_k10_p0",
+          "delta": 0.2853491808033819,
+          "p": 0.14436,
+          "p_fwer": 1.0,
+          "correlation": 0.854982968630052,
+          "delta_ci95": [
+            -0.23236919309751977,
+            0.8042619699344187
+          ],
+          "turnover_reduction": -5.975345446912472e-05,
+          "turnover_reduction_ci95": [
+            -0.009314897213483539,
+            0.008848766720317746
+          ],
+          "turnover_p": 1.0,
+          "turnover_p_fwer": 1.0,
+          "subdelta": [
+            0.49083213084787036,
+            0.18506473825173275
+          ]
+        }
+      },
+      {
+        "invalid": true,
+        "reason": "frozen baseline raised insolvent",
+        "failure_t": 1709769600000,
+        "failure_equity": -68043.91065575508,
+        "factor": "channel20",
+        "mode": "mix",
+        "period": 10,
+        "phase": 1,
+        "key": "channel20_mix_k10_p1"
+      },
+      {
+        "full": {
+          "days": 1192,
+          "sharpe": 0.524131596043677,
+          "annual_arithmetic": 2.7623811767719864,
+          "annual_cost": 0.09341767183806789,
+          "daily_turnover": 0.3656268956480152
+        },
+        "2023-24": {
+          "days": 547,
+          "sharpe": 0.5725772219281361,
+          "annual_arithmetic": 4.408617843218228,
+          "annual_cost": 0.0947220592984308,
+          "daily_turnover": 0.37073213032653934
+        },
+        "2025-26": {
+          "days": 645,
+          "sharpe": 1.3049166737708273,
+          "annual_arithmetic": 1.3662703914292036,
+          "annual_cost": 0.09231147037943452,
+          "daily_turnover": 0.36129734003692576
+        },
+        "missing_held_quotes": [],
+        "ending_equity": 204777.2621231752,
+        "factor": "channel20",
+        "mode": "mix",
+        "period": 10,
+        "phase": 2,
+        "key": "channel20_mix_k10_p2",
+        "vs_daily": {
+          "control": "baseline_mix_k1_p0",
+          "delta": -0.6051682984671927,
+          "p": 1.0,
+          "p_fwer": 1.0,
+          "correlation": 0.27506708790595324,
+          "delta_ci95": [
+            -1.4802793470820612,
+            0.8256837159482587
+          ],
+          "turnover_reduction": 1.2320254516843456,
+          "turnover_reduction_ci95": [
+            1.0446362454907774,
+            1.39781263271303
+          ],
+          "turnover_p": 2e-05,
+          "turnover_p_fwer": 0.009680000000000001,
+          "subdelta": [
+            0.5625075611436205,
+            -0.7517143967908384
+          ]
+        },
+        "vs_matched": {
+          "control": "baseline_mix_k10_p2",
+          "delta": -0.1780176059227696,
+          "p": 1.0,
+          "p_fwer": 1.0,
+          "correlation": 0.8654266399811675,
+          "delta_ci95": [
+            -0.774850252414001,
+            0.5206687031026742
+          ],
+          "turnover_reduction": -0.04039781426321393,
+          "turnover_reduction_ci95": [
+            -0.10747723134426801,
+            -0.00026608554822436575
+          ],
+          "turnover_p": 1.0,
+          "turnover_p_fwer": 1.0,
+          "subdelta": [
+            0.37159118473150304,
+            -0.5107474422352047
+          ]
+        }
+      },
+      {
+        "invalid": true,
+        "reason": "frozen baseline raised insolvent",
+        "failure_t": 1709424000000,
+        "failure_equity": -145711.32625004917,
+        "factor": "channel20",
+        "mode": "mix",
+        "period": 10,
+        "phase": 3,
+        "key": "channel20_mix_k10_p3"
+      },
+      {
+        "full": {
+          "days": 1192,
+          "sharpe": 0.6272285618841376,
+          "annual_arithmetic": 0.5780098705624188,
+          "annual_cost": 0.07995030782352279,
+          "daily_turnover": 0.31291705606075454
+        },
+        "2023-24": {
+          "days": 547,
+          "sharpe": 0.031124236351404214,
+          "annual_arithmetic": 0.027413629302578204,
+          "annual_cost": 0.06705034876522781,
+          "daily_turnover": 0.26242797951165486
+        },
+        "2025-26": {
+          "days": 645,
+          "sharpe": 1.0945038911401346,
+          "annual_arithmetic": 1.0449496286540978,
+          "annual_cost": 0.0908902731024179,
+          "daily_turnover": 0.3557349240799135
+        },
+        "missing_held_quotes": [],
+        "ending_equity": 1519633.7410441388,
+        "factor": "channel20",
+        "mode": "mix",
+        "period": 10,
+        "phase": 4,
+        "key": "channel20_mix_k10_p4",
+        "vs_daily": {
+          "control": "baseline_mix_k1_p0",
+          "delta": -0.5020713326267321,
+          "p": 1.0,
+          "p_fwer": 1.0,
+          "correlation": 0.5071534004944014,
+          "delta_ci95": [
+            -1.7828830349964764,
+            0.7926010759873259
+          ],
+          "turnover_reduction": 1.2847352912716061,
+          "turnover_reduction_ci95": [
+            1.1186888950295506,
+            1.431025236355018
+          ],
+          "turnover_p": 2e-05,
+          "turnover_p_fwer": 0.009680000000000001,
+          "subdelta": [
+            0.021054575566888688,
+            -0.9621271794215311
+          ]
+        },
+        "vs_matched": {
+          "control": "baseline_mix_k10_p4",
+          "delta": -0.7708900467125599,
+          "p": 1.0,
+          "p_fwer": 1.0,
+          "correlation": 0.845441873553074,
+          "delta_ci95": [
+            -1.5822826912305883,
+            -0.019255684786125837
+          ],
+          "turnover_reduction": -0.010251459622902248,
+          "turnover_reduction_ci95": [
+            -0.025148324933419945,
+            0.0030891703453210253
+          ],
+          "turnover_p": 1.0,
+          "turnover_p_fwer": 1.0,
+          "subdelta": [
+            -0.967961946093694,
+            -0.5975717990884155
+          ]
+        }
+      },
+      {
+        "full": {
+          "days": 1192,
+          "sharpe": 1.0880013274161024,
+          "annual_arithmetic": 0.8829414197236423,
+          "annual_cost": 0.07814324390990125,
+          "daily_turnover": 0.30584439886458414
+        },
+        "2023-24": {
+          "days": 547,
+          "sharpe": -0.2928577268037056,
+          "annual_arithmetic": -0.2522476710981027,
+          "annual_cost": 0.06919024345771578,
+          "daily_turnover": 0.2708033012043671
+        },
+        "2025-26": {
+          "days": 645,
+          "sharpe": 2.4163544932336785,
+          "annual_arithmetic": 1.8456521680639437,
+          "annual_cost": 0.08573594351818878,
+          "daily_turnover": 0.33556142277177603
+        },
+        "missing_held_quotes": [],
+        "ending_equity": 6000523.445315863,
+        "factor": "channel20",
+        "mode": "mix",
+        "period": 10,
+        "phase": 5,
+        "key": "channel20_mix_k10_p5",
+        "vs_daily": {
+          "control": "baseline_mix_k1_p0",
+          "delta": -0.0412985670947672,
+          "p": 1.0,
+          "p_fwer": 1.0,
+          "correlation": 0.547739098659755,
+          "delta_ci95": [
+            -1.3612582577902828,
+            1.202656084814192
+          ],
+          "turnover_reduction": 1.2918079484677767,
+          "turnover_reduction_ci95": [
+            1.1258874851661589,
+            1.4375794788483696
+          ],
+          "turnover_p": 2e-05,
+          "turnover_p_fwer": 0.009680000000000001,
+          "subdelta": [
+            -0.30292738758822113,
+            0.35972342267201274
+          ]
+        },
+        "vs_matched": {
+          "control": "baseline_mix_k10_p5",
+          "delta": -0.4037779589959669,
+          "p": 1.0,
+          "p_fwer": 1.0,
+          "correlation": 0.8606595827016958,
+          "delta_ci95": [
+            -1.3383415104909053,
+            0.34789771132238484
+          ],
+          "turnover_reduction": -0.008808454648373487,
+          "turnover_reduction_ci95": [
+            -0.018968999615630314,
+            0.0004251974179887491
+          ],
+          "turnover_p": 1.0,
+          "turnover_p_fwer": 1.0,
+          "subdelta": [
+            -0.5647622181706882,
+            -0.11326266997746481
+          ]
+        }
+      },
+      {
+        "full": {
+          "days": 1192,
+          "sharpe": 1.242647398479643,
+          "annual_arithmetic": 1.00812978151959,
+          "annual_cost": 0.07899208484844897,
+          "daily_turnover": 0.30916667259666913
+        },
+        "2023-24": {
+          "days": 547,
+          "sharpe": -0.25710904278781244,
+          "annual_arithmetic": -0.22215581873680826,
+          "annual_cost": 0.07039235836446357,
+          "daily_turnover": 0.2755082519157087
+        },
+        "2025-26": {
+          "days": 645,
+          "sharpe": 2.6990529060151296,
+          "annual_arithmetic": 2.0514882673184274,
+          "annual_cost": 0.08628518622323968,
+          "daily_turnover": 0.3377111006780418
+        },
+        "missing_held_quotes": [],
+        "ending_equity": 8331052.419181306,
+        "factor": "channel20",
+        "mode": "mix",
+        "period": 10,
+        "phase": 6,
+        "key": "channel20_mix_k10_p6",
+        "vs_daily": {
+          "control": "baseline_mix_k1_p0",
+          "delta": 0.11334750396877324,
+          "p": 0.45476,
+          "p_fwer": 1.0,
+          "correlation": 0.5246461344217067,
+          "delta_ci95": [
+            -1.032825233464978,
+            1.3395987795166229
+          ],
+          "turnover_reduction": 1.2884856747356916,
+          "turnover_reduction_ci95": [
+            1.1235472991688138,
+            1.4334706372517276
+          ],
+          "turnover_p": 2e-05,
+          "turnover_p_fwer": 0.009680000000000001,
+          "subdelta": [
+            -0.267178703572328,
+            0.6424218354534639
+          ]
+        },
+        "vs_matched": {
+          "control": "baseline_mix_k10_p6",
+          "delta": -0.29678117714000507,
+          "p": 1.0,
+          "p_fwer": 1.0,
+          "correlation": 0.8759635521161694,
+          "delta_ci95": [
+            -0.9871105880180622,
+            0.4355213960777298
+          ],
+          "turnover_reduction": -0.002353577872368229,
+          "turnover_reduction_ci95": [
+            -0.01709212051591395,
+            0.009451328468846536
+          ],
+          "turnover_p": 1.0,
+          "turnover_p_fwer": 1.0,
+          "subdelta": [
+            -0.20301859980303216,
+            -0.16822816130700247
+          ]
+        }
+      },
+      {
+        "full": {
+          "days": 1192,
+          "sharpe": 1.2715269108931146,
+          "annual_arithmetic": 0.9786958566146905,
+          "annual_cost": 0.0789481039928447,
+          "daily_turnover": 0.3089945361755174
+        },
+        "2023-24": {
+          "days": 547,
+          "sharpe": -0.018314061682664935,
+          "annual_arithmetic": -0.015256438951802877,
+          "annual_cost": 0.06885995842326112,
+          "daily_turnover": 0.269510600482431
+        },
+        "2025-26": {
+          "days": 645,
+          "sharpe": 2.5683854306997036,
+          "annual_arithmetic": 1.821629043707515,
+          "annual_cost": 0.08750347705728224,
+          "daily_turnover": 0.3424793622594217
+        },
+        "missing_held_quotes": [],
+        "ending_equity": 9159923.635765294,
+        "factor": "channel20",
+        "mode": "mix",
+        "period": 10,
+        "phase": 7,
+        "key": "channel20_mix_k10_p7",
+        "vs_daily": {
+          "control": "baseline_mix_k1_p0",
+          "delta": 0.142227016382245,
+          "p": 0.4362,
+          "p_fwer": 1.0,
+          "correlation": 0.5619530760308474,
+          "delta_ci95": [
+            -1.119198630727424,
+            1.2363576307306476
+          ],
+          "turnover_reduction": 1.2886578111568432,
+          "turnover_reduction_ci95": [
+            1.1217447960922002,
+            1.4357255192910177
+          ],
+          "turnover_p": 2e-05,
+          "turnover_p_fwer": 0.009680000000000001,
+          "subdelta": [
+            -0.02838372246718046,
+            0.5117543601380379
+          ]
+        },
+        "vs_matched": {
+          "control": "baseline_mix_k10_p7",
+          "delta": -0.6269955947467487,
+          "p": 1.0,
+          "p_fwer": 1.0,
+          "correlation": 0.8769301797916282,
+          "delta_ci95": [
+            -1.1352830320656044,
+            -0.09743373433812937
+          ],
+          "turnover_reduction": -0.007755531011535477,
+          "turnover_reduction_ci95": [
+            -0.01623675207664592,
+            -0.00039691623251914476
+          ],
+          "turnover_p": 1.0,
+          "turnover_p_fwer": 1.0,
+          "subdelta": [
+            -0.8869184083089702,
+            -0.19284332012446415
+          ]
+        }
+      },
+      {
+        "full": {
+          "days": 1192,
+          "sharpe": 1.3162425768779853,
+          "annual_arithmetic": 1.0006343944500322,
+          "annual_cost": 0.07864737869200515,
+          "daily_turnover": 0.3078175291272217
+        },
+        "2023-24": {
+          "days": 547,
+          "sharpe": 0.6388658755122794,
+          "annual_arithmetic": 0.49278096159130896,
+          "annual_cost": 0.06672390377398778,
+          "daily_turnover": 0.2611503083130637
+        },
+        "2025-26": {
+          "days": 645,
+          "sharpe": 1.907098509913083,
+          "annual_arithmetic": 1.431325600300764,
+          "annual_cost": 0.08875922486278888,
+          "daily_turnover": 0.34739422646884105
+        },
+        "missing_held_quotes": [],
+        "ending_equity": 10186109.191960456,
+        "factor": "channel20",
+        "mode": "mix",
+        "period": 10,
+        "phase": 8,
+        "key": "channel20_mix_k10_p8",
+        "vs_daily": {
+          "control": "baseline_mix_k1_p0",
+          "delta": 0.18694268236711564,
+          "p": 0.36514,
+          "p_fwer": 1.0,
+          "correlation": 0.5702251663160177,
+          "delta_ci95": [
+            -0.8572392826608273,
+            1.1878179781195704
+          ],
+          "turnover_reduction": 1.2898348182051391,
+          "turnover_reduction_ci95": [
+            1.1235993601201,
+            1.4356528516852196
+          ],
+          "turnover_p": 2e-05,
+          "turnover_p_fwer": 0.009680000000000001,
+          "subdelta": [
+            0.6287962147277638,
+            -0.14953256064858267
+          ]
+        },
+        "vs_matched": {
+          "control": "baseline_mix_k10_p8",
+          "delta": 0.557275685729539,
+          "p": 0.04576,
+          "p_fwer": 1.0,
+          "correlation": 0.8106332775717501,
+          "delta_ci95": [
+            -0.11102371391746617,
+            1.2144731357831606
+          ],
+          "turnover_reduction": 0.007983953948413336,
+          "turnover_reduction_ci95": [
+            -0.002156189478941381,
+            0.019796640327932387
+          ],
+          "turnover_p": 0.0845,
+          "turnover_p_fwer": 1.0,
+          "subdelta": [
+            0.45162866339878727,
+            0.7416020208050904
+          ]
+        }
+      },
+      {
+        "full": {
+          "days": 1192,
+          "sharpe": 1.390629412171214,
+          "annual_arithmetic": 1.1545541434996913,
+          "annual_cost": 0.078703095264211,
+          "daily_turnover": 0.30803559790297846
+        },
+        "2023-24": {
+          "days": 547,
+          "sharpe": 0.9996470373982272,
+          "annual_arithmetic": 0.8063371123169129,
+          "annual_cost": 0.06843826541140025,
+          "daily_turnover": 0.26786013859647845
+        },
+        "2025-26": {
+          "days": 645,
+          "sharpe": 1.7055809660029335,
+          "annual_arithmetic": 1.4498637807973345,
+          "annual_cost": 0.08740830755799005,
+          "daily_turnover": 0.34210687889624286
+        },
+        "missing_held_quotes": [],
+        "ending_equity": 13815547.360411054,
+        "factor": "channel20",
+        "mode": "mix",
+        "period": 10,
+        "phase": 9,
+        "key": "channel20_mix_k10_p9",
+        "vs_daily": {
+          "control": "baseline_mix_k1_p0",
+          "delta": 0.2613295176603443,
+          "p": 0.33444,
+          "p_fwer": 1.0,
+          "correlation": 0.5169165184078505,
+          "delta_ci95": [
+            -0.8900244910829541,
+            1.377506984469041
+          ],
+          "turnover_reduction": 1.2896167494293822,
+          "turnover_reduction_ci95": [
+            1.1215048906668745,
+            1.437022122217719
+          ],
+          "turnover_p": 2e-05,
+          "turnover_p_fwer": 0.009680000000000001,
+          "subdelta": [
+            0.9895773766137117,
+            -0.3510501045587322
+          ]
+        },
+        "vs_matched": {
+          "control": "baseline_mix_k10_p9",
+          "delta": 0.25951901489307083,
+          "p": 0.21002,
+          "p_fwer": 1.0,
+          "correlation": 0.8607656296276709,
+          "delta_ci95": [
+            -0.35597366422120574,
+            0.9510480979533097
+          ],
+          "turnover_reduction": 0.0028993785808102968,
+          "turnover_reduction_ci95": [
+            -0.006655326718206192,
+            0.012823276475408743
+          ],
+          "turnover_p": 0.27898,
+          "turnover_p_fwer": 1.0,
+          "subdelta": [
+            0.5422569748516197,
+            0.1111773520815087
+          ]
+        }
+      }
+    ],
+    "summary": {
+      "invalid": true,
+      "failed_phases": [
+        1,
+        3
+      ],
+      "phase_count": 10,
+      "reason": "insolvent phases retained; no survivor-only average"
+    },
+    "gates": {
+      "insolvency": false
+    },
+    "usable": false,
+    "descriptive_cost_value": false,
+    "noninferiority_unadjusted": false
+  },
+  {
+    "factor": "channel20",
+    "mode": "single",
+    "period": 3,
+    "phases": [
+      {
+        "full": {
+          "days": 1192,
+          "sharpe": 1.2387636880019455,
+          "annual_arithmetic": 1.2589626273991883,
+          "annual_cost": 0.2167470597039035,
+          "daily_turnover": 0.8483250869037319
+        },
+        "2023-24": {
+          "days": 547,
+          "sharpe": 0.502021756706631,
+          "annual_arithmetic": 0.5267223655540572,
+          "annual_cost": 0.1799671131798054,
+          "daily_turnover": 0.704372262934659
+        },
+        "2025-26": {
+          "days": 645,
+          "sharpe": 1.9043198652434965,
+          "annual_arithmetic": 1.8799477796926567,
+          "annual_cost": 0.2479387352832549,
+          "daily_turnover": 0.9704060089364184
+        },
+        "missing_held_quotes": [],
+        "ending_equity": 11220891.50954161,
+        "factor": "channel20",
+        "mode": "single",
+        "period": 3,
+        "phase": 0,
+        "key": "channel20_single_k3_p0",
+        "vs_daily": {
+          "control": "baseline_mix_k1_p0",
+          "delta": 0.10946379349107582,
+          "p": 0.43154,
+          "p_fwer": 1.0,
+          "correlation": 0.49100641721511634,
+          "delta_ci95": [
+            -1.0329557193680134,
+            1.2104497265424914
+          ],
+          "turnover_reduction": 0.7493272604286288,
+          "turnover_reduction_ci95": [
+            0.6418742968331591,
+            0.8483342277276313
+          ],
+          "turnover_p": 2e-05,
+          "turnover_p_fwer": 0.009680000000000001,
+          "subdelta": [
+            0.4919520959221154,
+            -0.15231120531816922
+          ]
+        },
+        "vs_matched": {
+          "control": "baseline_mix_k3_p0",
+          "delta": -0.07888568903809867,
+          "p": 1.0,
+          "p_fwer": 1.0,
+          "correlation": 0.4831733782094899,
+          "delta_ci95": [
+            -1.3035373901817024,
+            1.1216203169227443
+          ],
+          "turnover_reduction": -0.11034890327117441,
+          "turnover_reduction_ci95": [
+            -0.14629942423346093,
+            -0.07438586595948554
+          ],
+          "turnover_p": 1.0,
+          "turnover_p_fwer": 1.0,
+          "subdelta": [
+            0.6262719531573233,
+            -0.6783327822691927
+          ]
+        }
+      },
+      {
+        "full": {
+          "days": 1192,
+          "sharpe": 1.1975726431608527,
+          "annual_arithmetic": 1.191672466043674,
+          "annual_cost": 0.22055332490635032,
+          "daily_turnover": 0.8632224066784748
+        },
+        "2023-24": {
+          "days": 547,
+          "sharpe": 0.701309625319544,
+          "annual_arithmetic": 0.7501946651858161,
+          "annual_cost": 0.18375332633718292,
+          "daily_turnover": 0.7191911011240035
+        },
+        "2025-26": {
+          "days": 645,
+          "sharpe": 1.688522992294832,
+          "annual_arithmetic": 1.5660730196394075,
+          "annual_cost": 0.2517620058634582,
+          "daily_turnover": 0.9853698859626544
+        },
+        "missing_held_quotes": [],
+        "ending_equity": 9678087.984367369,
+        "factor": "channel20",
+        "mode": "single",
+        "period": 3,
+        "phase": 1,
+        "key": "channel20_single_k3_p1",
+        "vs_daily": {
+          "control": "baseline_mix_k1_p0",
+          "delta": 0.068272748649983,
+          "p": 0.44542,
+          "p_fwer": 1.0,
+          "correlation": 0.493589103797502,
+          "delta_ci95": [
+            -0.8442067442761335,
+            0.9904860161751698
+          ],
+          "turnover_reduction": 0.7344299406538859,
+          "turnover_reduction_ci95": [
+            0.6261047117134596,
+            0.8362800804496965
+          ],
+          "turnover_p": 2e-05,
+          "turnover_p_fwer": 0.009680000000000001,
+          "subdelta": [
+            0.6912399645350285,
+            -0.3681080782668338
+          ]
+        },
+        "vs_matched": {
+          "control": "baseline_mix_k3_p1",
+          "delta": 0.19552020463710806,
+          "p": 0.33882,
+          "p_fwer": 1.0,
+          "correlation": 0.5478192868140839,
+          "delta_ci95": [
+            -0.77377598719403,
+            1.1326826508946262
+          ],
+          "turnover_reduction": -0.12340605155442652,
+          "turnover_reduction_ci95": [
+            -0.1632414940191007,
+            -0.08439885101784693
+          ],
+          "turnover_p": 1.0,
+          "turnover_p_fwer": 1.0,
+          "subdelta": [
+            1.1304026409453853,
+            -0.5816584473990427
+          ]
+        }
+      },
+      {
+        "full": {
+          "days": 1192,
+          "sharpe": 1.0888371805812167,
+          "annual_arithmetic": 1.135566825055035,
+          "annual_cost": 0.2203842763249845,
+          "daily_turnover": 0.8625607683952426
+        },
+        "2023-24": {
+          "days": 547,
+          "sharpe": 0.12639303302924493,
+          "annual_arithmetic": 0.13747410404028093,
+          "annual_cost": 0.18928886881984838,
+          "daily_turnover": 0.7408566294318919
+        },
+        "2025-26": {
+          "days": 645,
+          "sharpe": 1.977825241291866,
+          "annual_arithmetic": 1.9820113496985547,
+          "annual_cost": 0.24675511028670466,
+          "daily_turnover": 0.965773425779666
+        },
+        "missing_held_quotes": [],
+        "ending_equity": 6869054.697688455,
+        "factor": "channel20",
+        "mode": "single",
+        "period": 3,
+        "phase": 2,
+        "key": "channel20_single_k3_p2",
+        "vs_daily": {
+          "control": "baseline_mix_k1_p0",
+          "delta": -0.04046271392965295,
+          "p": 1.0,
+          "p_fwer": 1.0,
+          "correlation": 0.5047446132269924,
+          "delta_ci95": [
+            -1.0716663098147503,
+            0.9930946011955297
+          ],
+          "turnover_reduction": 0.7350915789371181,
+          "turnover_reduction_ci95": [
+            0.6323941487141485,
+            0.830562290511141
+          ],
+          "turnover_p": 2e-05,
+          "turnover_p_fwer": 0.009680000000000001,
+          "subdelta": [
+            0.1163233722447294,
+            -0.07880582926979973
+          ]
+        },
+        "vs_matched": {
+          "control": "baseline_mix_k3_p2",
+          "delta": 0.042775488781714444,
+          "p": 0.47554,
+          "p_fwer": 1.0,
+          "correlation": 0.5611599065826595,
+          "delta_ci95": [
+            -1.0185487753662406,
+            1.074048088717723
+          ],
+          "turnover_reduction": -0.11824299251049852,
+          "turnover_reduction_ci95": [
+            -0.16210316978602557,
+            -0.07507504805055436
+          ],
+          "turnover_p": 1.0,
+          "turnover_p_fwer": 1.0,
+          "subdelta": [
+            0.2706882374785806,
+            0.031420814934598695
+          ]
+        }
+      }
+    ],
+    "summary": {
+      "sharpe": 1.175057837248005,
+      "sharpe_sd": 0.07745758046062608,
+      "sharpe_range": [
+        1.0888371805812167,
+        1.2387636880019455
+      ],
+      "delta": 0.04575794273713529,
+      "delta_sd": 0.07745758046062608,
+      "delta_min": -0.04046271392965295,
+      "matched_delta": 0.05313666812690795,
+      "matched_delta_sd": 0.13749605139417517,
+      "matched_delta_min": -0.07888568903809867,
+      "turnover": 0.8580360873258165,
+      "annual_cost": 0.21922822031174613,
+      "subsharpe": [
+        0.44324147168514,
+        1.8568893662767314
+      ],
+      "sub_min": [
+        0.12639303302924493,
+        1.688522992294832
+      ],
+      "subdelta": [
+        0.4331718109006244,
+        -0.19974170428493424
+      ],
+      "matched_subdelta_min": [
+        0.2706882374785806,
+        -0.6783327822691927
+      ],
+      "p": 1.0,
+      "p_fwer": 1,
+      "matched_p": 1.0,
+      "matched_p_fwer": 1,
+      "matched_available": true,
+      "correlation": 0.49644671141320357,
+      "delta_ci95": [
+        -0.8718234044661642,
+        0.9431625512898116
+      ],
+      "turnover_reduction_ci95": [
+        0.6354641674471307,
+        0.836345879873427
+      ],
+      "turnover_p_fwer": 0.009680000000000001
+    },
+    "gates": {
+      "fwer": false,
+      "subperiods": false,
+      "phase": false,
+      "turnover": true
+    },
+    "usable": false,
+    "descriptive_cost_value": true,
+    "noninferiority_unadjusted": false
+  },
+  {
+    "factor": "channel20",
+    "mode": "single",
+    "period": 5,
+    "phases": [
+      {
+        "full": {
+          "days": 1192,
+          "sharpe": 1.4496651216271552,
+          "annual_arithmetic": 1.4553664141827107,
+          "annual_cost": 0.1522154628043635,
+          "daily_turnover": 0.595755236024906
+        },
+        "2023-24": {
+          "days": 547,
+          "sharpe": 0.8685999725858731,
+          "annual_arithmetic": 0.9546534852494346,
+          "annual_cost": 0.1306313221764311,
+          "daily_turnover": 0.5112771905144073
+        },
+        "2025-26": {
+          "days": 645,
+          "sharpe": 2.0527937171732202,
+          "annual_arithmetic": 1.8800020298827138,
+          "annual_cost": 0.1705201526082069,
+          "daily_turnover": 0.6673978575663675
+        },
+        "missing_held_quotes": [],
+        "ending_equity": 22825636.187529355,
+        "factor": "channel20",
+        "mode": "single",
+        "period": 5,
+        "phase": 0,
+        "key": "channel20_single_k5_p0",
+        "vs_daily": {
+          "control": "baseline_mix_k1_p0",
+          "delta": 0.32036522711628557,
+          "p": 0.30732,
+          "p_fwer": 1.0,
+          "correlation": 0.4154851118288817,
+          "delta_ci95": [
+            -0.9332441456564692,
+            1.5297679560981177
+          ],
+          "turnover_reduction": 1.0018971113074548,
+          "turnover_reduction_ci95": [
+            0.868877367945721,
+            1.1204391016168769
+          ],
+          "turnover_p": 2e-05,
+          "turnover_p_fwer": 0.009680000000000001,
+          "subdelta": [
+            0.8585303118013575,
+            -0.003837353388445486
+          ]
+        },
+        "vs_matched": {
+          "control": "baseline_mix_k5_p0",
+          "delta": -0.2714827513464211,
+          "p": 1.0,
+          "p_fwer": 1.0,
+          "correlation": 0.48072926825153606,
+          "delta_ci95": [
+            -1.3060570468331818,
+            0.779692504562562
+          ],
+          "turnover_reduction": -0.08421087476670297,
+          "turnover_reduction_ci95": [
+            -0.11030195725617659,
+            -0.058469779690843576
+          ],
+          "turnover_p": 1.0,
+          "turnover_p_fwer": 1.0,
+          "subdelta": [
+            0.23040021211702122,
+            -0.5698561271809157
+          ]
+        }
+      },
+      {
+        "full": {
+          "days": 1192,
+          "sharpe": 1.2062775490241766,
+          "annual_arithmetic": 1.204129301873704,
+          "annual_cost": 0.15274066467267544,
+          "daily_turnover": 0.5978108206366944
+        },
+        "2023-24": {
+          "days": 547,
+          "sharpe": 0.5905370901847743,
+          "annual_arithmetic": 0.6142741249297216,
+          "annual_cost": 0.12807060846264348,
+          "daily_turnover": 0.5012548276424402
+        },
+        "2025-26": {
+          "days": 645,
+          "sharpe": 1.77312130449321,
+          "annual_arithmetic": 1.7043630720882137,
+          "annual_cost": 0.17366240226474905,
+          "daily_turnover": 0.6796962906643799
+        },
+        "missing_held_quotes": [],
+        "ending_equity": 10016688.220122935,
+        "factor": "channel20",
+        "mode": "single",
+        "period": 5,
+        "phase": 1,
+        "key": "channel20_single_k5_p1",
+        "vs_daily": {
+          "control": "baseline_mix_k1_p0",
+          "delta": 0.07697765451330696,
+          "p": 0.45198,
+          "p_fwer": 1.0,
+          "correlation": 0.4402515543239145,
+          "delta_ci95": [
+            -0.9718443343086924,
+            1.1344791862655899
+          ],
+          "turnover_reduction": 0.9998415266956663,
+          "turnover_reduction_ci95": [
+            0.8672371165930483,
+            1.1177733329877775
+          ],
+          "turnover_p": 2e-05,
+          "turnover_p_fwer": 0.009680000000000001,
+          "subdelta": [
+            0.5804674294002587,
+            -0.2835097660684558
+          ]
+        },
+        "vs_matched": {
+          "control": "baseline_mix_k5_p1",
+          "delta": 0.40957575431193827,
+          "p": 0.25438,
+          "p_fwer": 1.0,
+          "correlation": 0.5009459773635176,
+          "delta_ci95": [
+            -0.9359553023701013,
+            1.7211468795529323
+          ],
+          "turnover_reduction": -0.07013750682601327,
+          "turnover_reduction_ci95": [
+            -0.10796603884065205,
+            -0.02292064456088066
+          ],
+          "turnover_p": 1.0,
+          "turnover_p_fwer": 1.0,
+          "subdelta": [
+            1.5581456412369712,
+            -0.8282425640024176
+          ]
+        }
+      },
+      {
+        "full": {
+          "days": 1192,
+          "sharpe": 1.2284790573792381,
+          "annual_arithmetic": 1.239948897056598,
+          "annual_cost": 0.1532711375769748,
+          "daily_turnover": 0.5998870355263202
+        },
+        "2023-24": {
+          "days": 547,
+          "sharpe": 0.643869975265231,
+          "annual_arithmetic": 0.6705565231146662,
+          "annual_cost": 0.13223979366258265,
+          "daily_turnover": 0.5175725779357442
+        },
+        "2025-26": {
+          "days": 645,
+          "sharpe": 1.7555070076201293,
+          "annual_arithmetic": 1.7228289413143294,
+          "annual_cost": 0.17110702148576937,
+          "daily_turnover": 0.6696948003356923
+        },
+        "missing_held_quotes": [],
+        "ending_equity": 10582979.818370415,
+        "factor": "channel20",
+        "mode": "single",
+        "period": 5,
+        "phase": 2,
+        "key": "channel20_single_k5_p2",
+        "vs_daily": {
+          "control": "baseline_mix_k1_p0",
+          "delta": 0.09917916286836848,
+          "p": 0.41898,
+          "p_fwer": 1.0,
+          "correlation": 0.45764501473121505,
+          "delta_ci95": [
+            -0.8523790900695004,
+            1.0865713980050045
+          ],
+          "turnover_reduction": 0.9977653118060406,
+          "turnover_reduction_ci95": [
+            0.8644435223104705,
+            1.1174356276812971
+          ],
+          "turnover_p": 2e-05,
+          "turnover_p_fwer": 0.009680000000000001,
+          "subdelta": [
+            0.6338003144807155,
+            -0.3011240629415364
+          ]
+        },
+        "vs_matched": {
+          "control": "baseline_mix_k5_p2",
+          "delta": -0.5310227391772409,
+          "p": 1.0,
+          "p_fwer": 1.0,
+          "correlation": 0.5803693698940879,
+          "delta_ci95": [
+            -1.6320234163668075,
+            0.5426647461722601
+          ],
+          "turnover_reduction": -0.09001878627115367,
+          "turnover_reduction_ci95": [
+            -0.12023359614215902,
+            -0.06071766999552201
+          ],
+          "turnover_p": 1.0,
+          "turnover_p_fwer": 1.0,
+          "subdelta": [
+            0.029044087063764823,
+            -0.9699262298129419
+          ]
+        }
+      },
+      {
+        "full": {
+          "days": 1192,
+          "sharpe": 1.6306842911429507,
+          "annual_arithmetic": 1.640885847929117,
+          "annual_cost": 0.15351989034956,
+          "daily_turnover": 0.6008606275912329
+        },
+        "2023-24": {
+          "days": 547,
+          "sharpe": 0.8571635768954229,
+          "annual_arithmetic": 0.9008340429924707,
+          "annual_cost": 0.1316240341918128,
+          "daily_turnover": 0.5151625604376234
+        },
+        "2025-26": {
+          "days": 645,
+          "sharpe": 2.347505260350493,
+          "annual_arithmetic": 2.2684956732009702,
+          "annual_cost": 0.17208893425388205,
+          "daily_turnover": 0.6735379031463095
+        },
+        "missing_held_quotes": [],
+        "ending_equity": 40299522.297826655,
+        "factor": "channel20",
+        "mode": "single",
+        "period": 5,
+        "phase": 3,
+        "key": "channel20_single_k5_p3",
+        "vs_daily": {
+          "control": "baseline_mix_k1_p0",
+          "delta": 0.501384396632081,
+          "p": 0.17094,
+          "p_fwer": 1.0,
+          "correlation": 0.4524950823723059,
+          "delta_ci95": [
+            -0.5266160149116522,
+            1.5279306981178928
+          ],
+          "turnover_reduction": 0.9967917197411278,
+          "turnover_reduction_ci95": [
+            0.8672217387136846,
+            1.1129398512552704
+          ],
+          "turnover_p": 2e-05,
+          "turnover_p_fwer": 0.009680000000000001,
+          "subdelta": [
+            0.8470939161109073,
+            0.2908741897888274
+          ]
+        },
+        "vs_matched": {
+          "control": "baseline_mix_k5_p3",
+          "delta": 0.7532417678425187,
+          "p": 0.07826,
+          "p_fwer": 1.0,
+          "correlation": 0.5152308358071229,
+          "delta_ci95": [
+            -0.2867892006643881,
+            1.794404198674922
+          ],
+          "turnover_reduction": -0.09226744039932155,
+          "turnover_reduction_ci95": [
+            -0.11945626169653277,
+            -0.06547250364629592
+          ],
+          "turnover_p": 1.0,
+          "turnover_p_fwer": 1.0,
+          "subdelta": [
+            1.488811532184913,
+            0.3574254917284858
+          ]
+        }
+      },
+      {
+        "full": {
+          "days": 1192,
+          "sharpe": 1.1867872936222323,
+          "annual_arithmetic": 1.2069745484294374,
+          "annual_cost": 0.15176630598277965,
+          "daily_turnover": 0.59399728368994
+        },
+        "2023-24": {
+          "days": 547,
+          "sharpe": 0.8449356277080755,
+          "annual_arithmetic": 0.8931566803993889,
+          "annual_cost": 0.12638238219642114,
+          "daily_turnover": 0.4946472884400045
+        },
+        "2025-26": {
+          "days": 645,
+          "sharpe": 1.4995517264731555,
+          "annual_arithmetic": 1.47311156209213,
+          "annual_cost": 0.17329344755043566,
+          "daily_turnover": 0.6782522409019008
+        },
+        "missing_held_quotes": [],
+        "ending_equity": 9649611.927026974,
+        "factor": "channel20",
+        "mode": "single",
+        "period": 5,
+        "phase": 4,
+        "key": "channel20_single_k5_p4",
+        "vs_daily": {
+          "control": "baseline_mix_k1_p0",
+          "delta": 0.05748739911136269,
+          "p": 0.47232,
+          "p_fwer": 1.0,
+          "correlation": 0.46330776123103107,
+          "delta_ci95": [
+            -1.3253959788767133,
+            1.3783584655497119
+          ],
+          "turnover_reduction": 1.0036550636424209,
+          "turnover_reduction_ci95": [
+            0.8675794186556081,
+            1.1261834489084857
+          ],
+          "turnover_p": 2e-05,
+          "turnover_p_fwer": 0.009680000000000001,
+          "subdelta": [
+            0.83486596692356,
+            -0.5570793440885102
+          ]
+        },
+        "vs_matched": {
+          "control": "baseline_mix_k5_p4",
+          "delta": -0.13576082056261174,
+          "p": 1.0,
+          "p_fwer": 1.0,
+          "correlation": 0.5166587451162763,
+          "delta_ci95": [
+            -1.213165381708207,
+            0.935457954096525
+          ],
+          "turnover_reduction": -0.09426840653892232,
+          "turnover_reduction_ci95": [
+            -0.12642153368410652,
+            -0.06271651140583687
+          ],
+          "turnover_p": 1.0,
+          "turnover_p_fwer": 1.0,
+          "subdelta": [
+            0.027691389247047393,
+            -0.2155940475041156
+          ]
+        }
+      }
+    ],
+    "summary": {
+      "sharpe": 1.3403786625591505,
+      "sharpe_sd": 0.19385292558129907,
+      "sharpe_range": [
+        1.1867872936222323,
+        1.6306842911429507
+      ],
+      "delta": 0.21107876804828093,
+      "delta_sd": 0.19385292558129907,
+      "delta_min": 0.05748739911136269,
+      "matched_delta": 0.04491024221363667,
+      "matched_delta_sd": 0.5242041215657396,
+      "matched_delta_min": -0.5310227391772409,
+      "turnover": 0.5976622006938187,
+      "annual_cost": 0.15270269227727068,
+      "subsharpe": [
+        0.7610212485278753,
+        1.8856958032220414
+      ],
+      "sub_min": [
+        0.5905370901847743,
+        1.4995517264731555
+      ],
+      "subdelta": [
+        0.7509515877433598,
+        -0.1709352673396241
+      ],
+      "matched_subdelta_min": [
+        0.027691389247047393,
+        -0.9699262298129419
+      ],
+      "p": 0.47232,
+      "p_fwer": 1,
+      "matched_p": 1.0,
+      "matched_p_fwer": 1,
+      "matched_available": true,
+      "correlation": 0.44583690489746963,
+      "delta_ci95": [
+        -0.7287144038372628,
+        1.1260766182497017
+      ],
+      "turnover_reduction_ci95": [
+        0.8681603335343324,
+        1.1174909699086122
+      ],
+      "turnover_p_fwer": 0.009680000000000001
+    },
+    "gates": {
+      "fwer": false,
+      "subperiods": false,
+      "phase": false,
+      "turnover": true
+    },
+    "usable": false,
+    "descriptive_cost_value": true,
+    "noninferiority_unadjusted": false
+  },
+  {
+    "factor": "channel20",
+    "mode": "single",
+    "period": 10,
+    "phases": [
+      {
+        "full": {
+          "days": 1192,
+          "sharpe": 1.8399289988084382,
+          "annual_arithmetic": 1.862021050253698,
+          "annual_cost": 0.08952409061756084,
+          "daily_turnover": 0.3503878302057175
+        },
+        "2023-24": {
+          "days": 547,
+          "sharpe": 1.5722343941977421,
+          "annual_arithmetic": 1.6825301871592353,
+          "annual_cost": 0.07655404575095759,
+          "daily_turnover": 0.2996244452092274
+        },
+        "2025-26": {
+          "days": 645,
+          "sharpe": 2.0966143082749773,
+          "annual_arithmetic": 2.0142404333741184,
+          "annual_cost": 0.10052349300830805,
+          "daily_turnover": 0.39343832879964014
+        },
+        "missing_held_quotes": [],
+        "ending_equity": 83248425.76063293,
+        "factor": "channel20",
+        "mode": "single",
+        "period": 10,
+        "phase": 0,
+        "key": "channel20_single_k10_p0",
+        "vs_daily": {
+          "control": "baseline_mix_k1_p0",
+          "delta": 0.7106291042975685,
+          "p": 0.1461,
+          "p_fwer": 1.0,
+          "correlation": 0.3169225956446678,
+          "delta_ci95": [
+            -0.6762325758870029,
+            1.9814493472519867
+          ],
+          "turnover_reduction": 1.2472645171266432,
+          "turnover_reduction_ci95": [
+            1.0834503478594795,
+            1.391948785630001
+          ],
+          "turnover_p": 2e-05,
+          "turnover_p_fwer": 0.009680000000000001,
+          "subdelta": [
+            1.5621647334132267,
+            0.03998323771331158
+          ]
+        },
+        "vs_matched": {
+          "control": "baseline_mix_k10_p0",
+          "delta": 0.2947972846254254,
+          "p": 0.26168,
+          "p_fwer": 1.0,
+          "correlation": 0.5035940460263062,
+          "delta_ci95": [
+            -0.6649568983520249,
+            1.2496984774663604
+          ],
+          "turnover_reduction": -0.038117953183819275,
+          "turnover_reduction_ci95": [
+            -0.054450658458423264,
+            -0.0218814681650628
+          ],
+          "turnover_p": 1.0,
+          "turnover_p_fwer": 1.0,
+          "subdelta": [
+            1.3547298203071099,
+            -0.5352788508540929
+          ]
+        }
+      },
+      {
+        "full": {
+          "days": 1192,
+          "sharpe": 1.4575295067369343,
+          "annual_arithmetic": 1.4620234468088698,
+          "annual_cost": 0.09030956084815811,
+          "daily_turnover": 0.3534620776835934
+        },
+        "2023-24": {
+          "days": 547,
+          "sharpe": 1.314063423319736,
+          "annual_arithmetic": 1.364461977635065,
+          "annual_cost": 0.07372712398361578,
+          "daily_turnover": 0.2885601721472242
+        },
+        "2025-26": {
+          "days": 645,
+          "sharpe": 1.5876914353221496,
+          "annual_arithmetic": 1.5447616229919259,
+          "annual_cost": 0.10437249567746767,
+          "daily_turnover": 0.4085029185028089
+        },
+        "missing_held_quotes": [],
+        "ending_equity": 22677611.135758217,
+        "factor": "channel20",
+        "mode": "single",
+        "period": 10,
+        "phase": 1,
+        "key": "channel20_single_k10_p1",
+        "vs_daily": {
+          "control": "baseline_mix_k1_p0",
+          "delta": 0.3282296122260646,
+          "p": 0.28246,
+          "p_fwer": 1.0,
+          "correlation": 0.32697895496769497,
+          "delta_ci95": [
+            -0.7896378124872792,
+            1.4135263560389095
+          ],
+          "turnover_reduction": 1.2441902696487674,
+          "turnover_reduction_ci95": [
+            1.080910504113296,
+            1.3888065278723678
+          ],
+          "turnover_p": 2e-05,
+          "turnover_p_fwer": 0.009680000000000001,
+          "subdelta": [
+            1.3039937625352205,
+            -0.4689396352395161
+          ]
+        },
+        "vs_matched": {
+          "invalid": true,
+          "control": "baseline_mix_k10_p1",
+          "reason": "frozen baseline raised insolvent"
+        }
+      },
+      {
+        "full": {
+          "days": 1192,
+          "sharpe": 0.7202616043364832,
+          "annual_arithmetic": 0.7514712572249516,
+          "annual_cost": 0.09396909334936107,
+          "daily_turnover": 0.3677851011716676
+        },
+        "2023-24": {
+          "days": 547,
+          "sharpe": 0.34092977334343955,
+          "annual_arithmetic": 0.3493281953105109,
+          "annual_cost": 0.07895606047903249,
+          "daily_turnover": 0.30902567702165357
+        },
+        "2025-26": {
+          "days": 645,
+          "sharpe": 1.0312627416953544,
+          "annual_arithmetic": 1.0925135128330123,
+          "annual_cost": 0.10670107626419785,
+          "daily_turnover": 0.41761673684617556
+        },
+        "missing_held_quotes": [],
+        "ending_equity": 1849169.1989360023,
+        "factor": "channel20",
+        "mode": "single",
+        "period": 10,
+        "phase": 2,
+        "key": "channel20_single_k10_p2",
+        "vs_daily": {
+          "control": "baseline_mix_k1_p0",
+          "delta": -0.4090382901743864,
+          "p": 1.0,
+          "p_fwer": 1.0,
+          "correlation": 0.2812253979242909,
+          "delta_ci95": [
+            -1.4762319799916634,
+            0.6926735513276705
+          ],
+          "turnover_reduction": 1.2298672461606932,
+          "turnover_reduction_ci95": [
+            1.0694821079931742,
+            1.3708170791925138
+          ],
+          "turnover_p": 2e-05,
+          "turnover_p_fwer": 0.009680000000000001,
+          "subdelta": [
+            0.330860112558924,
+            -1.0253683288663114
+          ]
+        },
+        "vs_matched": {
+          "control": "baseline_mix_k10_p2",
+          "delta": 0.01811240237003664,
+          "p": 0.36994,
+          "p_fwer": 1.0,
+          "correlation": 0.3294084142018656,
+          "delta_ci95": [
+            -1.2724772393315427,
+            0.7229935761272851
+          ],
+          "turnover_reduction": -0.04255601978686635,
+          "turnover_reduction_ci95": [
+            -0.07673145398653022,
+            0.0065975699531908485
+          ],
+          "turnover_p": 1.0,
+          "turnover_p_fwer": 1.0,
+          "subdelta": [
+            0.1399437361468065,
+            -0.7844013743106777
+          ]
+        }
+      },
+      {
+        "full": {
+          "days": 1192,
+          "sharpe": 1.5325955611615212,
+          "annual_arithmetic": 1.4939684973300233,
+          "annual_cost": 0.08786564640018915,
+          "daily_turnover": 0.34389685479526083
+        },
+        "2023-24": {
+          "days": 547,
+          "sharpe": 0.7333750664576497,
+          "annual_arithmetic": 0.7353597615281208,
+          "annual_cost": 0.07404181844383288,
+          "daily_turnover": 0.2897918530091307
+        },
+        "2025-26": {
+          "days": 645,
+          "sharpe": 2.2498867762196846,
+          "annual_arithmetic": 2.137315750793032,
+          "annual_cost": 0.09958910979883545,
+          "daily_turnover": 0.38978125165884714
+        },
+        "missing_held_quotes": [],
+        "ending_equity": 27609853.62160185,
+        "factor": "channel20",
+        "mode": "single",
+        "period": 10,
+        "phase": 3,
+        "key": "channel20_single_k10_p3",
+        "vs_daily": {
+          "control": "baseline_mix_k1_p0",
+          "delta": 0.40329566665065153,
+          "p": 0.23632,
+          "p_fwer": 1.0,
+          "correlation": 0.35573957236342585,
+          "delta_ci95": [
+            -0.6742036194542713,
+            1.4967257434927135
+          ],
+          "turnover_reduction": 1.2537554925371,
+          "turnover_reduction_ci95": [
+            1.092076689095505,
+            1.3956462135650292
+          ],
+          "turnover_p": 2e-05,
+          "turnover_p_fwer": 0.009680000000000001,
+          "subdelta": [
+            0.7233054056731342,
+            0.19325570565801886
+          ]
+        },
+        "vs_matched": {
+          "invalid": true,
+          "control": "baseline_mix_k10_p3",
+          "reason": "frozen baseline raised insolvent"
+        }
+      },
+      {
+        "full": {
+          "days": 1192,
+          "sharpe": 0.7117926946458043,
+          "annual_arithmetic": 0.7078863263480969,
+          "annual_cost": 0.09182820443279305,
+          "daily_turnover": 0.3594058881909708
+        },
+        "2023-24": {
+          "days": 547,
+          "sharpe": -0.05156317942661613,
+          "annual_arithmetic": -0.05297532637164698,
+          "annual_cost": 0.07830630430088237,
+          "daily_turnover": 0.3064826000034535
+        },
+        "2025-26": {
+          "days": 645,
+          "sharpe": 1.4018302116371375,
+          "annual_arithmetic": 1.3531441930732129,
+          "annual_cost": 0.10329561431210331,
+          "daily_turnover": 0.40428811863836916
+        },
+        "missing_held_quotes": [],
+        "ending_equity": 1974653.7874298468,
+        "factor": "channel20",
+        "mode": "single",
+        "period": 10,
+        "phase": 4,
+        "key": "channel20_single_k10_p4",
+        "vs_daily": {
+          "control": "baseline_mix_k1_p0",
+          "delta": -0.41750719986506535,
+          "p": 1.0,
+          "p_fwer": 1.0,
+          "correlation": 0.35738589348652317,
+          "delta_ci95": [
+            -1.8511519903452844,
+            0.9367921351327895
+          ],
+          "turnover_reduction": 1.23824645914139,
+          "turnover_reduction_ci95": [
+            1.0767025049346788,
+            1.3803114857168128
+          ],
+          "turnover_p": 2e-05,
+          "turnover_p_fwer": 0.009680000000000001,
+          "subdelta": [
+            -0.06163284021113166,
+            -0.6548008589245282
+          ]
+        },
+        "vs_matched": {
+          "control": "baseline_mix_k10_p4",
+          "delta": -0.6863259139508932,
+          "p": 1.0,
+          "p_fwer": 1.0,
+          "correlation": 0.5498216731252222,
+          "delta_ci95": [
+            -1.9610330770284479,
+            0.5951612153381315
+          ],
+          "turnover_reduction": -0.05674029175311851,
+          "turnover_reduction_ci95": [
+            -0.07841694526066423,
+            -0.03509051251585524
+          ],
+          "turnover_p": 1.0,
+          "turnover_p_fwer": 1.0,
+          "subdelta": [
+            -1.0506493618717143,
+            -0.2902454785914126
+          ]
+        }
+      },
+      {
+        "full": {
+          "days": 1192,
+          "sharpe": 0.6950831369522346,
+          "annual_arithmetic": 0.6895685175272153,
+          "annual_cost": 0.09233889533140083,
+          "daily_turnover": 0.361404678400786
+        },
+        "2023-24": {
+          "days": 547,
+          "sharpe": -0.4503742149469182,
+          "annual_arithmetic": -0.4954136740618712,
+          "annual_cost": 0.08493442195896315,
+          "daily_turnover": 0.33242435208987536
+        },
+        "2025-26": {
+          "days": 645,
+          "sharpe": 1.9086043331979359,
+          "annual_arithmetic": 1.6945069032624562,
+          "annual_cost": 0.09861834794337505,
+          "daily_turnover": 0.38598179234197677
+        },
+        "missing_held_quotes": [],
+        "ending_equity": 1803793.6723574551,
+        "factor": "channel20",
+        "mode": "single",
+        "period": 10,
+        "phase": 5,
+        "key": "channel20_single_k10_p5",
+        "vs_daily": {
+          "control": "baseline_mix_k1_p0",
+          "delta": -0.4342167575586351,
+          "p": 1.0,
+          "p_fwer": 1.0,
+          "correlation": 0.33319964156573,
+          "delta_ci95": [
+            -1.9776524485381055,
+            1.0853416941037415
+          ],
+          "turnover_reduction": 1.2362476689315747,
+          "turnover_reduction_ci95": [
+            1.0736065918294369,
+            1.3809524650515195
+          ],
+          "turnover_p": 2e-05,
+          "turnover_p_fwer": 0.009680000000000001,
+          "subdelta": [
+            -0.46044387573143375,
+            -0.14802673736372984
+          ]
+        },
+        "vs_matched": {
+          "control": "baseline_mix_k10_p5",
+          "delta": -0.7966961494598348,
+          "p": 1.0,
+          "p_fwer": 1.0,
+          "correlation": 0.5168744075333741,
+          "delta_ci95": [
+            -2.1412869096174134,
+            0.5353192447580086
+          ],
+          "turnover_reduction": -0.06436873418457534,
+          "turnover_reduction_ci95": [
+            -0.09631027368384591,
+            -0.039090330023049215
+          ],
+          "turnover_p": 1.0,
+          "turnover_p_fwer": 1.0,
+          "subdelta": [
+            -0.7222787063139007,
+            -0.6210128300132074
+          ]
+        }
+      },
+      {
+        "full": {
+          "days": 1192,
+          "sharpe": 1.2938327894096175,
+          "annual_arithmetic": 1.1920054992732674,
+          "annual_cost": 0.08836693143813999,
+          "daily_turnover": 0.3458588314604305
+        },
+        "2023-24": {
+          "days": 547,
+          "sharpe": 0.337459369468328,
+          "annual_arithmetic": 0.3014028760100253,
+          "annual_cost": 0.07526655174753553,
+          "daily_turnover": 0.2945853297359512
+        },
+        "2025-26": {
+          "days": 645,
+          "sharpe": 2.0641330491027037,
+          "annual_arithmetic": 1.9472917549709317,
+          "annual_cost": 0.09947686584242006,
+          "daily_turnover": 0.3893419406748339
+        },
+        "missing_held_quotes": [],
+        "ending_equity": 12389748.934661426,
+        "factor": "channel20",
+        "mode": "single",
+        "period": 10,
+        "phase": 6,
+        "key": "channel20_single_k10_p6",
+        "vs_daily": {
+          "control": "baseline_mix_k1_p0",
+          "delta": 0.1645328948987479,
+          "p": 0.41166,
+          "p_fwer": 1.0,
+          "correlation": 0.38809754522338774,
+          "delta_ci95": [
+            -1.1690339471179134,
+            1.3723106106038228
+          ],
+          "turnover_reduction": 1.2517935158719302,
+          "turnover_reduction_ci95": [
+            1.0899623620265309,
+            1.3944396877774445
+          ],
+          "turnover_p": 2e-05,
+          "turnover_p_fwer": 0.009680000000000001,
+          "subdelta": [
+            0.32738970868381245,
+            0.007501978541037957
+          ]
+        },
+        "vs_matched": {
+          "control": "baseline_mix_k10_p6",
+          "delta": -0.24559578621003042,
+          "p": 1.0,
+          "p_fwer": 1.0,
+          "correlation": 0.5589679157592544,
+          "delta_ci95": [
+            -1.5066585957988894,
+            0.9270611544821993
+          ],
+          "turnover_reduction": -0.0390457367361296,
+          "turnover_reduction_ci95": [
+            -0.05533738127621734,
+            -0.022915864130545516
+          ],
+          "turnover_p": 1.0,
+          "turnover_p_fwer": 1.0,
+          "subdelta": [
+            0.39154981245310827,
+            -0.8031480182194284
+          ]
+        }
+      },
+      {
+        "full": {
+          "days": 1192,
+          "sharpe": 1.4715215697572912,
+          "annual_arithmetic": 1.3734760840664357,
+          "annual_cost": 0.08861698934287557,
+          "daily_turnover": 0.34683753167465975
+        },
+        "2023-24": {
+          "days": 547,
+          "sharpe": 0.5962983013557834,
+          "annual_arithmetic": 0.5895470570125678,
+          "annual_cost": 0.07604526216540486,
+          "daily_turnover": 0.29763312002115405
+        },
+        "2025-26": {
+          "days": 645,
+          "sharpe": 2.308262373973625,
+          "annual_arithmetic": 2.0382965147617313,
+          "annual_cost": 0.09927859363136622,
+          "daily_turnover": 0.3885659241932142
+        },
+        "missing_held_quotes": [],
+        "ending_equity": 21334806.030524638,
+        "factor": "channel20",
+        "mode": "single",
+        "period": 10,
+        "phase": 7,
+        "key": "channel20_single_k10_p7",
+        "vs_daily": {
+          "control": "baseline_mix_k1_p0",
+          "delta": 0.34222167524642155,
+          "p": 0.31096,
+          "p_fwer": 1.0,
+          "correlation": 0.3930242119887869,
+          "delta_ci95": [
+            -1.0177923667075641,
+            1.6275820842021183
+          ],
+          "turnover_reduction": 1.250814815657701,
+          "turnover_reduction_ci95": [
+            1.0871054998590635,
+            1.3962385080589672
+          ],
+          "turnover_p": 2e-05,
+          "turnover_p_fwer": 0.009680000000000001,
+          "subdelta": [
+            0.5862286405712679,
+            0.2516313034119593
+          ]
+        },
+        "vs_matched": {
+          "control": "baseline_mix_k10_p7",
+          "delta": -0.42700093588257215,
+          "p": 1.0,
+          "p_fwer": 1.0,
+          "correlation": 0.5686493732511291,
+          "delta_ci95": [
+            -1.4722895058718095,
+            0.6090098082134255
+          ],
+          "turnover_reduction": -0.045598526510677806,
+          "turnover_reduction_ci95": [
+            -0.062297034015100936,
+            -0.028997386993822243
+          ],
+          "turnover_p": 1.0,
+          "turnover_p_fwer": 1.0,
+          "subdelta": [
+            -0.2723060452705218,
+            -0.45296637685054275
+          ]
+        }
+      },
+      {
+        "full": {
+          "days": 1192,
+          "sharpe": 1.7373486211650506,
+          "annual_arithmetic": 1.6489116685172576,
+          "annual_cost": 0.09008063202024308,
+          "daily_turnover": 0.35256607444322147
+        },
+        "2023-24": {
+          "days": 547,
+          "sharpe": 1.2420995160365282,
+          "annual_arithmetic": 1.2249981470576095,
+          "annual_cost": 0.0765607173710274,
+          "daily_turnover": 0.2996505572251562
+        },
+        "2025-26": {
+          "days": 645,
+          "sharpe": 2.190739127643298,
+          "annual_arithmetic": 2.008416623925672,
+          "annual_cost": 0.1015463580870973,
+          "daily_turnover": 0.39744171462660394
+        },
+        "missing_held_quotes": [],
+        "ending_equity": 50130714.34445782,
+        "factor": "channel20",
+        "mode": "single",
+        "period": 10,
+        "phase": 8,
+        "key": "channel20_single_k10_p8",
+        "vs_daily": {
+          "control": "baseline_mix_k1_p0",
+          "delta": 0.608048726654181,
+          "p": 0.14582,
+          "p_fwer": 1.0,
+          "correlation": 0.36368623994926363,
+          "delta_ci95": [
+            -0.5213439915868965,
+            1.7387077435613025
+          ],
+          "turnover_reduction": 1.2450862728891392,
+          "turnover_reduction_ci95": [
+            1.0829086155430216,
+            1.3882027475713485
+          ],
+          "turnover_p": 2e-05,
+          "turnover_p_fwer": 0.009680000000000001,
+          "subdelta": [
+            1.2320298552520128,
+            0.1341080570816322
+          ]
+        },
+        "vs_matched": {
+          "control": "baseline_mix_k10_p8",
+          "delta": 0.9783817300166043,
+          "p": 0.03942,
+          "p_fwer": 1.0,
+          "correlation": 0.4758852156048195,
+          "delta_ci95": [
+            -0.18651519075398743,
+            2.0746743111101678
+          ],
+          "turnover_reduction": -0.03676459136758642,
+          "turnover_reduction_ci95": [
+            -0.056316477589654794,
+            -0.017050812560975865
+          ],
+          "turnover_p": 1.0,
+          "turnover_p_fwer": 1.0,
+          "subdelta": [
+            1.054862303923036,
+            1.0252426385353053
+          ]
+        }
+      },
+      {
+        "full": {
+          "days": 1192,
+          "sharpe": 1.5814786145054773,
+          "annual_arithmetic": 1.604971964109663,
+          "annual_cost": 0.09139382663463082,
+          "daily_turnover": 0.35770577939190146
+        },
+        "2023-24": {
+          "days": 547,
+          "sharpe": 1.2419466364169194,
+          "annual_arithmetic": 1.2561021775037802,
+          "annual_cost": 0.07882013141406652,
+          "daily_turnover": 0.3084936650257007
+        },
+        "2025-26": {
+          "days": 645,
+          "sharpe": 1.8666643805674148,
+          "annual_arithmetic": 1.900835178487055,
+          "annual_cost": 0.10205709994571403,
+          "daily_turnover": 0.3994407042885089
+        },
+        "missing_held_quotes": [],
+        "ending_equity": 35728520.42088405,
+        "factor": "channel20",
+        "mode": "single",
+        "period": 10,
+        "phase": 9,
+        "key": "channel20_single_k10_p9",
+        "vs_daily": {
+          "control": "baseline_mix_k1_p0",
+          "delta": 0.4521787199946077,
+          "p": 0.26008,
+          "p_fwer": 1.0,
+          "correlation": 0.29777255123608243,
+          "delta_ci95": [
+            -0.9615062301284466,
+            1.8152474950649473
+          ],
+          "turnover_reduction": 1.2399465679404593,
+          "turnover_reduction_ci95": [
+            1.0763359703392268,
+            1.384470777706633
+          ],
+          "turnover_p": 2e-05,
+          "turnover_p_fwer": 0.009680000000000001,
+          "subdelta": [
+            1.231876975632404,
+            -0.18996668999425093
+          ]
+        },
+        "vs_matched": {
+          "control": "baseline_mix_k10_p9",
+          "delta": 0.4503682172273342,
+          "p": 0.20774,
+          "p_fwer": 1.0,
+          "correlation": 0.513882673363215,
+          "delta_ci95": [
+            -0.6650412920874377,
+            1.5568367013016173
+          ],
+          "turnover_reduction": -0.046770802908112696,
+          "turnover_reduction_ci95": [
+            -0.06725346800860946,
+            -0.02667491901665778
+          ],
+          "turnover_p": 1.0,
+          "turnover_p_fwer": 1.0,
+          "subdelta": [
+            0.7845565738703117,
+            0.27226076664598997
+          ]
+        }
+      }
+    ],
+    "summary": {
+      "sharpe": 1.3041373097478854,
+      "sharpe_sd": 0.4369387134643681,
+      "sharpe_range": [
+        0.6950831369522346,
+        1.8399289988084382
+      ],
+      "delta": 0.1748374152370156,
+      "delta_sd": 0.4369387134643681,
+      "delta_min": -0.4342167575586351,
+      "matched_delta": null,
+      "matched_delta_sd": null,
+      "matched_delta_min": null,
+      "turnover": 0.3539310647418209,
+      "annual_cost": 0.09042938704153525,
+      "subsharpe": [
+        0.6876469086222592,
+        1.8705688737634278
+      ],
+      "sub_min": [
+        -0.4503742149469182,
+        1.0312627416953544
+      ],
+      "subdelta": [
+        0.6775772478377438,
+        -0.18606219679823768
+      ],
+      "matched_subdelta_min": null,
+      "p": 1.0,
+      "p_fwer": 1,
+      "matched_p": null,
+      "matched_p_fwer": null,
+      "matched_available": false,
+      "correlation": 0.3414032604349853,
+      "delta_ci95": [
+        -0.8827030568404308,
+        1.1743367220857754
+      ],
+      "turnover_reduction_ci95": [
+        1.0821117107811382,
+        1.3865521081527985
+      ],
+      "turnover_p_fwer": 0.009680000000000001
+    },
+    "gates": {
+      "fwer": false,
+      "subperiods": false,
+      "phase": false,
+      "turnover": true
+    },
+    "usable": false,
+    "descriptive_cost_value": true,
+    "noninferiority_unadjusted": false
+  }
+]

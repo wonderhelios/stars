@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2023-fourth-quarter-and-full-year-results-301754839.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "e917794c7fc2c42a1cda0eb43e9355964c961fe8a1793ac1af94354d1c5008d0",
+  "retrieved_utc": "2026-10-09T03:25:47Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2023-fourth-quarter-and-full-year-results-301754839.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "e917794c7fc2c42a1cda0eb43e9355964c961fe8a1793ac1af94354d1c5008d0",
+      "retrieved_utc": "2026-10-09T03:25:47Z"
+    }
+  ]
+}

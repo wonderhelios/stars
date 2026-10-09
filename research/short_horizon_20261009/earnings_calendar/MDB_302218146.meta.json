@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-date-of-second-quarter-fiscal-2025-earnings-call-302218146.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "a38d41ac1a90939820980a0d1a2c69471aab74e1e50a386572e8dc05ea90b0c3",
+  "retrieved_utc": "2026-10-09T04:07:47Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-date-of-second-quarter-fiscal-2025-earnings-call-302218146.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "a38d41ac1a90939820980a0d1a2c69471aab74e1e50a386572e8dc05ea90b0c3",
+      "retrieved_utc": "2026-10-09T04:07:47Z"
+    }
+  ]
+}

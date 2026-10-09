@@ -1,0 +1,1437 @@
+[
+  {
+    "symbol": "SNPS",
+    "source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-first-quarter-fiscal-year-2020-301007745.html",
+    "source_file": "release_301007745.html",
+    "sha256": "ba461804bcdc48b7678fb7e364162e5586b4a60402a5a6fe622806c810997a11",
+    "title": "Synopsys Posts Financial Results for First Quarter Fiscal Year 2020",
+    "published": "2020-02-19 16:05:00-05:00",
+    "modified": "2020-02-19 16:05:00-05:00",
+    "available_after": "2020-02-19 16:05:00-05:00",
+    "reported_fiscal_year": 2020,
+    "reported_quarter": 1,
+    "reported_quarter_end": "2020-02-01",
+    "presented_calendar_end": "2020-01-31",
+    "period_basis": "Synopsys' first quarter of fiscal year 2020 and 2019 ended on February 1, 2020 and February 2, 2019, respectively.",
+    "calendar_presentation_basis": "For presentation purposes, we refer to the closest calendar month end.",
+    "scope_review_excerpts": [
+      "Synopsys utilizes a normalized annual non-GAAP tax rate in the calculation of its non-GAAP measures to provide better consistency across interim reporting periods by eliminating the effects of non-recurring and period-specific items such as tax audit settlements, which can vary in size and frequency and not necessarily reflect our normal operations, and to more clearly align our tax rate with our expected geographic earnings mix.  In projecting this rate, we evaluate our historical and projected mix of U.S. and international profit before tax, excluding the impact of stock-based compensation, the amortization of purchased intangibles and other non-GAAP adjustments described above. We also consider other factors including our current tax structure, our existing tax positions, and expected recurring tax incentives, such as the U.S. federal research and development tax credit. On an annual basis we re-evaluate this rate for significant events that may materially affect our projections.  Based upon our review, our projected normalized annual non-GAAP tax rate remains 16% through fiscal year 2021. We will re-evaluate this rate on an annual basis, but further regulatory guidance regarding specific parts of recent U.S. Tax reform legislation could materially change our projections."
+    ],
+    "fiscal_year": 2020,
+    "next_quarter": 2,
+    "quarter_range_million": [
+      820.0,
+      850.0
+    ],
+    "annual_range_million": [
+      3600.0,
+      3650.0
+    ],
+    "guidance_source_row": [
+      "Revenue",
+      "$  820",
+      "$  850",
+      "",
+      "$ 3,600",
+      "$ 3,650"
+    ],
+    "guidance_context": "Second Quarter and Fiscal Year 2020 Financial Targets (in millions except per share amounts) Q2 FY2020 FY 2020 Low High Low High Revenue $  820 $  850 $ 3,600 $ 3,650 GAAP Expenses $  724 $  758 $ 2,951 $ 3,000 Non-GAAP Expenses $  645 $  665 $ 2,630 $ 2,660 Other Income (Expense) $    (3) $    (1) $    (16) $    (12) Normalized Annual Tax Rate (1) 16% 16% 16% 16% Outstanding Shares (fully diluted) 153 156 153 156 GAAP EPS $ 0.49 $ 0.62 $   3.68 $   3.87 Non-GAAP EPS $ 0.96 $ 1.01 $   5.18 $   5.25 Operating Cash Flow $    800 $    825 (1) Applied in non-GAAP net income calculations",
+    "actual_revenue_million": 834.381,
+    "actual_source_row": [
+      "Total revenue",
+      "834,381",
+      "",
+      "820,401"
+    ],
+    "remaining_year_revision_million": null,
+    "previous_source": null
+  },
+  {
+    "symbol": "SNPS",
+    "source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-second-quarter-fiscal-year-2020-301062899.html",
+    "source_file": "release_301062899.html",
+    "sha256": "d927a80401c4aaf21a135a40d11d04eea6d2ed40788a87f6a462b5eaba0e4e33",
+    "title": "Synopsys Posts Financial Results for Second Quarter Fiscal Year 2020",
+    "published": "2020-05-20 16:05:00-04:00",
+    "modified": "2020-05-20 16:05:00-04:00",
+    "available_after": "2020-05-20 16:05:00-04:00",
+    "reported_fiscal_year": 2020,
+    "reported_quarter": 2,
+    "reported_quarter_end": "2020-05-02",
+    "presented_calendar_end": "2020-04-30",
+    "period_basis": "Synopsys' second quarter of fiscal year 2020 and 2019 ended on May 2, 2020 and May 4, 2019, respectively.",
+    "calendar_presentation_basis": "For presentation purposes, we refer to the closest calendar month end.",
+    "scope_review_excerpts": [
+      "Synopsys utilizes a normalized annual non-GAAP tax rate in the calculation of its non-GAAP measures to provide better consistency across interim reporting periods by eliminating the effects of non-recurring and period-specific items such as tax audit settlements, which can vary in size and frequency and not necessarily reflect our normal operations, and to more clearly align our tax rate with our expected geographic earnings mix.  In projecting this rate, we evaluate our historical and projected mix of U.S. and international profit before tax, excluding the non-GAAP adjustments described above. We also consider other factors including our current tax structure, our existing tax positions, and expected recurring tax incentives, such as the U.S. federal research and development tax credit. On an annual basis, we re-evaluate this rate for significant events that may materially affect our projections.  Based upon our review, our projected normalized annual non-GAAP tax rate remains 16% through fiscal year 2021. We will re-evaluate this rate on an annual basis, but further regulatory guidance regarding specific parts of recent U.S. Tax reform legislation could materially change our projections."
+    ],
+    "fiscal_year": 2020,
+    "next_quarter": 3,
+    "quarter_range_million": [
+      875.0,
+      905.0
+    ],
+    "annual_range_million": [
+      3600.0,
+      3650.0
+    ],
+    "guidance_source_row": [
+      "Revenue",
+      "$   875",
+      "$   905",
+      "",
+      "$   3,600",
+      "$   3,650"
+    ],
+    "guidance_context": "Third Quarter and Fiscal Year 2020 Financial Targets (in millions except per share amounts) Q3 FY2020 FY 2020 Low High Low High Revenue $   875 $   905 $   3,600 $   3,650 GAAP Expenses $   721 $   737 $   2,991 $   3,031 Non-GAAP Expenses $   640 $   650 $   2,630 $   2,660 Other Income (Expense) $      (5) $      (3) $      (11) $        (7) Normalized Annual Tax Rate (1) 16% 16% 16% 16% Outstanding Shares (fully diluted) 153 156 153 156 GAAP EPS $  1.12 $   1.22 $    3.74 $    3.90 Non-GAAP EPS $  1.33 $   1.38 $    5.21 $    5.28 Operating Cash Flow $     815 $     840",
+    "actual_revenue_million": 861.327,
+    "actual_source_row": [
+      "Total revenue",
+      "861,327",
+      "",
+      "836,242",
+      "",
+      "1,695,708",
+      "",
+      "1,656,643"
+    ],
+    "remaining_year_revision_million": -26.326999999999998,
+    "previous_source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-first-quarter-fiscal-year-2020-301007745.html",
+    "realized_surprise_million": 26.326999999999998
+  },
+  {
+    "symbol": "SNPS",
+    "source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-third-quarter-fiscal-year-2020-301115089.html",
+    "source_file": "release_301115089.html",
+    "sha256": "b22ff90978e1847a029d983fc73f84d738f217eb553d02949de4dc910b5eeefd",
+    "title": "Synopsys Posts Financial Results for Third Quarter Fiscal Year 2020",
+    "published": "2020-08-19 16:03:00-04:00",
+    "modified": "2020-08-19 16:03:00-04:00",
+    "available_after": "2020-08-19 16:03:00-04:00",
+    "reported_fiscal_year": 2020,
+    "reported_quarter": 3,
+    "reported_quarter_end": "2020-08-01",
+    "presented_calendar_end": "2020-07-31",
+    "period_basis": "Synopsys' third quarter of fiscal year 2020 and 2019 ended on August 1, 2020 and August 3, 2019, respectively.",
+    "calendar_presentation_basis": "For presentation purposes, we refer to the closest calendar month end.",
+    "scope_review_excerpts": [
+      "Synopsys utilizes a normalized annual non-GAAP tax rate in the calculation of its non-GAAP measures to provide better consistency across interim reporting periods by eliminating the effects of non-recurring and period-specific items such as tax audit settlements, which can vary in size and frequency and not necessarily reflect our normal operations, and to more clearly align our tax rate with our expected geographic earnings mix.  In projecting this rate, we evaluate our historical and projected mix of U.S. and international profit before tax, excluding the non-GAAP adjustments described above. We also consider other factors including our current tax structure, our existing tax positions, and expected recurring tax incentives, such as the U.S. federal research and development tax credit. On an annual basis, we re-evaluate this rate for significant events that may materially affect our projections.  Based upon our review, our projected normalized annual non-GAAP tax rate remains 16% through fiscal year 2021. We will re-evaluate this rate on an annual basis, but further regulatory guidance regarding specific parts of recent U.S. Tax reform legislation could materially change our projections."
+    ],
+    "fiscal_year": 2020,
+    "next_quarter": 4,
+    "quarter_range_million": [
+      1000.0,
+      1030.0
+    ],
+    "annual_range_million": [
+      3660.0,
+      3690.0
+    ],
+    "guidance_source_row": [
+      "Revenue",
+      "$               1,000",
+      "$               1,030",
+      "",
+      "$               3,660",
+      "$               3,690"
+    ],
+    "guidance_context": "Fourth Quarter and Fiscal Year 2020 Financial Targets (in millions except per share amounts) Q4 FY2020 FY 2020 Low High Low High Revenue $               1,000 $               1,030 $               3,660 $               3,690 GAAP Expenses $                  802 $                  822 $               3,037 $               3,057 Non-GAAP Expenses $                  717 $                  727 $               2,645 $               2,655 Other Income (Expense) $                     (6) $                     (4) $                     (4) $                     (2) Normalized Annual Tax Rate (1) 16% 16% 16% 16% Outstanding Shares (fully diluted) 154 157 154 157 GAAP EPS $                 1.10 $                 1.21 $                 4.10 $                 4.21 Non-GAAP EPS $                 1.51 $                 1.56 $                 5.48 $                 5.53 Operating Cash Flow approximately $                  900 (1) Applied in non-GAAP net income calculations",
+    "actual_revenue_million": 964.134,
+    "actual_source_row": [
+      "Total revenue",
+      "964,134",
+      "",
+      "852,970",
+      "",
+      "2,659,842",
+      "",
+      "2,509,613"
+    ],
+    "remaining_year_revision_million": -24.134000000000015,
+    "previous_source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-second-quarter-fiscal-year-2020-301062899.html",
+    "realized_surprise_million": 74.13400000000001
+  },
+  {
+    "symbol": "SNPS",
+    "source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-fourth-quarter-and-fiscal-year-2020-301185085.html",
+    "source_file": "release_301185085.html",
+    "sha256": "081857f485ebdf9316eff326e2614527da6cc281483b2e7bd1c6c02158de7102",
+    "title": "Synopsys Posts Financial Results for Fourth Quarter and Fiscal Year 2020",
+    "published": "2020-12-02 16:05:00-05:00",
+    "modified": "2020-12-02 16:05:00-05:00",
+    "available_after": "2020-12-02 16:05:00-05:00",
+    "reported_fiscal_year": 2020,
+    "reported_quarter": 4,
+    "reported_quarter_end": "2020-10-31",
+    "presented_calendar_end": "2020-10-31",
+    "period_basis": "Synopsys' fourth quarter of fiscal year 2020 and 2019 ended on October 31, 2020 and November 2, 2019, respectively.",
+    "calendar_presentation_basis": "For presentation purposes, we refer to the closest calendar month end.",
+    "scope_review_excerpts": [
+      "Synopsys also provided its consolidated financial targets for the first quarter and full fiscal year 2021. These financial targets assume that there are no changes to the current U.S. government \"Entity List\" restrictions for the full fiscal year. These targets constitute forward-looking statements and are based on current expectations. For a discussion of factors that could cause actual results to differ materially from these targets, see \"Forward-Looking Statements\" below."
+    ],
+    "fiscal_year": 2021,
+    "next_quarter": 1,
+    "quarter_range_million": [
+      935.0,
+      965.0
+    ],
+    "annual_range_million": [
+      4000.0,
+      4050.0
+    ],
+    "guidance_source_row": [
+      "Revenue",
+      "$  935",
+      "$  965",
+      "",
+      "$ 4,000",
+      "$ 4,050"
+    ],
+    "guidance_context": "First Quarter and Fiscal Year 2021 Financial Targets (in millions except per share amounts) Q1 FY 2021 FY 2021 Low High Low High Revenue $  935 $  965 $ 4,000 $ 4,050 GAAP Expenses $  767 $  785 $ 3,226 $ 3,271 Non-GAAP Expenses $  674 $  684 $ 2,825 $ 2,855 Other Income (Expense) $     (2) $     - $    (11) $      (7) Normalized Annual Tax Rate (1) 16% 16% 16% 16% Outstanding Shares (fully diluted) 155 158 156 159 GAAP EPS $ 1.05 $ 1.16 $   4.39 $   4.54 Non-GAAP EPS $ 1.44 $ 1.49 $   6.23 $   6.30 Operating Cash Flow $ 1,200 $ 1,300",
+    "actual_revenue_million": 1025.439,
+    "actual_source_row": [
+      "Total revenue",
+      "1,025,439",
+      "",
+      "851,081",
+      "",
+      "3,685,281",
+      "",
+      "3,360,694"
+    ],
+    "remaining_year_revision_million": null,
+    "previous_source": null
+  },
+  {
+    "symbol": "SNPS",
+    "source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-first-quarter-fiscal-year-2021-301230285.html",
+    "source_file": "release_301230285.html",
+    "sha256": "3ce66508d2afd3155b9def92305dd453aa92d8de3844d9378ecc0510ea40c327",
+    "title": "Synopsys Posts Financial Results for First Quarter Fiscal Year 2021",
+    "published": "2021-02-17 16:05:00-05:00",
+    "modified": "2021-02-17 16:05:41-05:00",
+    "available_after": "2021-02-17 16:05:41-05:00",
+    "reported_fiscal_year": 2021,
+    "reported_quarter": 1,
+    "reported_quarter_end": "2021-01-30",
+    "presented_calendar_end": "2021-01-31",
+    "period_basis": "Synopsys' first quarter of fiscal year 2021 and 2020 ended on January 30, 2021 and February 1, 2020, respectively.",
+    "calendar_presentation_basis": "For presentation purposes, we refer to the closest calendar month end.",
+    "scope_review_excerpts": [
+      "Synopsys also provided its consolidated financial targets for the second quarter and full fiscal year 2021. These financial targets assume that there are no further changes to the current U.S. government \"Entity List\" restrictions for the rest of the fiscal year. These targets constitute forward-looking statements and are based on current expectations. For a discussion of factors that could cause actual results to differ materially from these targets, see \"Forward-Looking Statements\" below."
+    ],
+    "fiscal_year": 2021,
+    "next_quarter": 2,
+    "quarter_range_million": [
+      970.0,
+      1000.0
+    ],
+    "annual_range_million": [
+      4000.0,
+      4050.0
+    ],
+    "guidance_source_row": [
+      "Revenue",
+      "$                  970",
+      "$               1,000",
+      "",
+      "$               4,000",
+      "$               4,050"
+    ],
+    "guidance_context": "Second Quarter and Fiscal Year 2021 Financial Targets (in millions except per share amounts) Q2 FY 2021 FY 2021 Low High Low High Revenue $                  970 $               1,000 $               4,000 $               4,050 GAAP Expenses $                  801 $                  819 $               3,234 $               3,279 Non-GAAP Expenses $                  697 $                  707 $               2,825 $               2,855 Other Income (Expense) $                    (4) $                    (2) $                  (11) $                    (7) Normalized Annual Tax Rate (1) 16% 16% 16% 16% Outstanding Shares (fully diluted) 156 159 156 159 GAAP EPS $                 0.93 $                 1.02 $                 4.29 $                 4.45 Non-GAAP EPS $                 1.50 $                 1.55 $                 6.23 $                 6.30 Operating Cash Flow $               1,200 $               1,300 (1) Applied in non-GAAP net income calculations",
+    "actual_revenue_million": 970.321,
+    "actual_source_row": [
+      "Total revenue",
+      "970,321",
+      "",
+      "834,381"
+    ],
+    "remaining_year_revision_million": -20.321000000000026,
+    "previous_source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-fourth-quarter-and-fiscal-year-2020-301185085.html",
+    "realized_surprise_million": 20.321000000000026
+  },
+  {
+    "symbol": "SNPS",
+    "source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-second-quarter-fiscal-year-2021-301295232.html",
+    "source_file": "release_301295232.html",
+    "sha256": "5e0c4bcc5cd38cb760eea67cd68ef52a62fb5330283df6e3fc17750b74bc35ad",
+    "title": "Synopsys Posts Financial Results for Second Quarter Fiscal Year 2021",
+    "published": "2021-05-19 16:05:00-04:00",
+    "modified": "2021-05-19 16:05:00-04:00",
+    "available_after": "2021-05-19 16:05:00-04:00",
+    "reported_fiscal_year": 2021,
+    "reported_quarter": 2,
+    "reported_quarter_end": "2021-05-01",
+    "presented_calendar_end": "2021-04-30",
+    "period_basis": "Synopsys' second quarter of fiscal year 2021 and 2020 ended on May 1, 2021 and May 2, 2020, respectively.",
+    "calendar_presentation_basis": "For presentation purposes, we refer to the closest calendar month end.",
+    "scope_review_excerpts": [
+      "Synopsys also provided its consolidated financial targets for the third quarter and full fiscal year 2021. These financial targets assume that there are no further changes to the current U.S. government \"Entity List\" restrictions for the rest of the fiscal year. These targets constitute forward-looking statements and are based on current expectations. For a discussion of factors that could cause actual results to differ materially from these targets, see \"Forward-Looking Statements\" below."
+    ],
+    "fiscal_year": 2021,
+    "next_quarter": 3,
+    "quarter_range_million": [
+      1030.0,
+      1060.0
+    ],
+    "annual_range_million": [
+      4035.0,
+      4085.0
+    ],
+    "guidance_source_row": [
+      "Revenue",
+      "$               1,030",
+      "$               1,060",
+      "",
+      "$               4,035",
+      "$               4,085"
+    ],
+    "guidance_context": "Third Quarter and Fiscal Year 2021 Financial Targets (in millions except per share amounts) Q3 FY 2021 FY 2021 Low High Low High Revenue $               1,030 $               1,060 $               4,035 $               4,085 GAAP Expenses $                  807 $                  825 $               3,241 $               3,286 Non-GAAP Expenses $                  707 $                  717 $               2,835 $               2,865 Other Income (Expense) $                    (3) $                    (1) $                    (9) $                    (5) Normalized Annual Tax Rate (1) 16% 16% 16% 16% Outstanding Shares (fully diluted) 156 159 156 159 GAAP EPS $                 1.30 $                 1.41 $                 4.55 $                 4.72 Non-GAAP EPS $                 1.75 $                 1.80 $                 6.38 $                 6.45 Operating Cash Flow $               1,250 $               1,300 (1) Applied in non-GAAP net income calculations",
+    "actual_revenue_million": 1024.323,
+    "actual_source_row": [
+      "Total revenue",
+      "1,024,323",
+      "",
+      "861,327",
+      "",
+      "1,994,644",
+      "",
+      "1,695,708"
+    ],
+    "remaining_year_revision_million": -4.323000000000093,
+    "previous_source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-first-quarter-fiscal-year-2021-301230285.html",
+    "realized_surprise_million": 39.32300000000009
+  },
+  {
+    "symbol": "SNPS",
+    "source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-third-quarter-fiscal-year-2021-301358246.html",
+    "source_file": "release_301358246.html",
+    "sha256": "0afd647c02a55579817f9326f87e8b2b6ef3b526efb76b536c4719d7a26f6d5e",
+    "title": "Synopsys Posts Financial Results for Third Quarter Fiscal Year 2021",
+    "published": "2021-08-18 16:05:00-04:00",
+    "modified": "2021-08-18 16:05:00-04:00",
+    "available_after": "2021-08-18 16:05:00-04:00",
+    "reported_fiscal_year": 2021,
+    "reported_quarter": 3,
+    "reported_quarter_end": "2021-07-31",
+    "presented_calendar_end": "2021-07-31",
+    "period_basis": "Synopsys' third quarter of fiscal year 2021 and 2020 ended on July 31, 2021 and August 1, 2020, respectively.",
+    "calendar_presentation_basis": "For presentation purposes, we refer to the closest calendar month end.",
+    "scope_review_excerpts": [
+      "Synopsys also provided its consolidated financial targets for the fourth quarter and full fiscal year 2021. These financial targets assume that there are no further changes to the current U.S. government \"Entity List\" restrictions for the rest of the fiscal year. These targets constitute forward-looking statements and are based on current expectations. For a discussion of factors that could cause actual results to differ materially from these targets, see \"Forward-Looking Statements\" below."
+    ],
+    "fiscal_year": 2021,
+    "next_quarter": 4,
+    "quarter_range_million": [
+      1138.0,
+      1168.0
+    ],
+    "annual_range_million": [
+      4190.0,
+      4220.0
+    ],
+    "guidance_source_row": [
+      "Revenue",
+      "$ 1,138",
+      "$ 1,168",
+      "",
+      "$ 4,190",
+      "$ 4,220"
+    ],
+    "guidance_context": "Fourth Quarter and Fiscal Year 2021 Financial Targets (in millions except per share amounts) Q4 FY 2021 FY 2021 Low High Low High Revenue $ 1,138 $ 1,168 $ 4,190 $ 4,220 GAAP Expenses $    924 $    952 $ 3,431 $ 3,459 Non-GAAP Expenses $    805 $    815 $ 2,915 $ 2,925 Other Income (Expense) $      (5) $      (3) $      (6) $      (4) Normalized Annual Tax Rate (1) 16% 16% 16% 16% Outstanding Shares (fully diluted) 156 159 156 159 GAAP EPS $   1.09 $   1.25 $   4.63 $   4.79 Non-GAAP EPS $   1.75 $   1.80 $   6.78 $   6.83 Operating Cash Flow ~ $1,350",
+    "actual_revenue_million": 1057.13,
+    "actual_source_row": [
+      "Total revenue",
+      "1,057,130",
+      "",
+      "964,134",
+      "",
+      "3,051,774",
+      "",
+      "2,659,842"
+    ],
+    "remaining_year_revision_million": 132.8699999999999,
+    "previous_source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-second-quarter-fiscal-year-2021-301295232.html",
+    "realized_surprise_million": 12.13000000000011
+  },
+  {
+    "symbol": "SNPS",
+    "source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-fourth-quarter-and-fiscal-year-2021-301435472.html",
+    "source_file": "release_301435472.html",
+    "sha256": "eab3d4af16b16e736ef53d0ac727838ee59612aa1b24bcdf2f39364f01d165ac",
+    "title": "Synopsys Posts Financial Results for Fourth Quarter and Fiscal Year 2021",
+    "published": "2021-12-01 16:05:00-05:00",
+    "modified": "2021-12-01 16:05:00-05:00",
+    "available_after": "2021-12-01 16:05:00-05:00",
+    "reported_fiscal_year": 2021,
+    "reported_quarter": 4,
+    "reported_quarter_end": "2021-10-30",
+    "presented_calendar_end": "2021-10-31",
+    "period_basis": "Synopsys' fourth quarter of fiscal year 2021 and 2020 ended on October 30, 2021 and October 31, 2020, respectively.",
+    "calendar_presentation_basis": "For presentation purposes, we refer to the closest calendar month end.",
+    "scope_review_excerpts": [
+      "Synopsys also provided its consolidated financial targets for the first quarter and full fiscal year 2022. These financial targets assume that there are no further changes to the current U.S. government \"Entity List\" restrictions. These targets constitute forward-looking statements and are based on current expectations. For a discussion of factors that could cause actual results to differ materially from these targets, see \"Forward-Looking Statements\" below.",
+      "Synopsys adopted a three-year normalized non-GAAP tax rate of 16% for fiscal year 2019 through 2021 in the calculation of its non-GAAP financial measures to provide better consistency across interim reporting periods by eliminating the effects of non-recurring and period-specific items, which can vary in size and frequency and not necessarily reflect our normal operations, and to align our tax rate more clearly with our expected geographic earnings mix. Synopsys re-evaluated this rate on an annual basis for any significant events that could have materially affected its projections, such as significant changes in its geographic earnings mix or significant tax law changes in major jurisdictions where it operates."
+    ],
+    "fiscal_year": 2022,
+    "next_quarter": 1,
+    "quarter_range_million": [
+      1250.0,
+      1280.0
+    ],
+    "annual_range_million": [
+      4725.0,
+      4775.0
+    ],
+    "guidance_source_row": [
+      "Revenue",
+      "$            1,250",
+      "$            1,280",
+      "",
+      "$            4,725",
+      "$            4,775"
+    ],
+    "guidance_context": "First Quarter and Fiscal Year 2022 Financial Targets (in millions except per share amounts) Range for Three Months Range for Fiscal Year January 31, 2022 October 31, 2022 Low High Low High Revenue $            1,250 $            1,280 $            4,725 $            4,775 GAAP Expenses $               934 $               964 $            3,778 $            3,835 Non-GAAP Expenses $               802 $               812 $            3,225 $            3,255 Other Income (Expense) $                  (5) $                  (3) $                (11) $                  (7) Annual non-GAAP Tax Rate 18% 18% 18% 18% Outstanding Shares (fully diluted) 156 159 157 160 GAAP EPS $              1.75 $              1.92 $              5.39 $              5.65 Non-GAAP EPS $              2.35 $              2.40 $              7.73 $              7.80 Operating Cash Flow $            1,400 $            1,500",
+    "actual_revenue_million": 1152.419,
+    "actual_source_row": [
+      "Total revenue",
+      "1,152,419",
+      "",
+      "1,025,439",
+      "",
+      "4,204,193",
+      "",
+      "3,685,281"
+    ],
+    "remaining_year_revision_million": null,
+    "previous_source": null
+  },
+  {
+    "symbol": "SNPS",
+    "source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-first-quarter-fiscal-year-2022-301483982.html",
+    "source_file": "release_301483982.html",
+    "sha256": "4b04b67dd52d2ea2588f1c6ca738280b3fd621b11fcf21622b4e65b1ac804a8d",
+    "title": "Synopsys Posts Financial Results for First Quarter Fiscal Year 2022",
+    "published": "2022-02-16 16:05:00-05:00",
+    "modified": "2022-02-16 16:05:00-05:00",
+    "available_after": "2022-02-16 16:05:00-05:00",
+    "reported_fiscal_year": 2022,
+    "reported_quarter": 1,
+    "reported_quarter_end": "2022-01-29",
+    "presented_calendar_end": "2022-01-31",
+    "period_basis": "Synopsys' first quarter of fiscal year 2022 and 2021 ended on January 29, 2022 and January 30, 2021, respectively.",
+    "calendar_presentation_basis": "For presentation purposes, we refer to the closest calendar month end.",
+    "scope_review_excerpts": [
+      "\"Synopsys began fiscal year 2022 with excellent momentum, supported by strength across all product groups and geographies. We delivered financial results at or above guidance targets, returned $250 million to shareholders through stock repurchases, and are raising our outlook for the year,\" said Aart de Geus , chairman and co-CEO of Synopsys. \"Our markets are strong, as companies across vertical segments intensify their investments to benefit from increased complexity in critical chips, system design, and immense amounts of software. Synopsys is at the heart of this wave of advanced technology. Our unique, game-changing innovations are driving excellent technical benefits for our customers and outstanding business results.\"",
+      "Synopsys also provided its consolidated financial targets for the second quarter and full fiscal year 2022. These financial targets assume that there are no further changes to the current U.S. government \"Entity List\" restrictions. These targets constitute forward-looking statements and are based on current expectations. For a discussion of factors that could cause actual results to differ materially from these targets, see \"Forward-Looking Statements\" below.",
+      "Synopsys adopted a three-year normalized non-GAAP tax rate of 16% for fiscal year 2019 through 2021 in calculating non-GAAP financial measures to provide better consistency across interim reporting periods by eliminating the effects of non-recurring and period-specific items, which can vary in size and frequency and not necessarily reflect our normal operations, and to more clearly align our tax rate with our expected geographic earnings mix. Given the uncertainty surrounding corporate tax reform, Synopsys adopted an annual non-GAAP tax rate of 18% for fiscal year 2022 rather than a three-year normalized non-GAAP tax rate in calculating its non-GAAP financial measures. This annual non-GAAP tax rate is based on an evaluation of its historical and projected mix of U.S. and international profit before tax, taking into account the impact of non-GAAP adjustments, as well as other factors such as its current tax structure, existing tax positions and expected recurring tax incentives. Synopsys re-evaluates this rate on an annual basis for any significant events that could materially affect its projections, such as significant changes in its geographic earnings mix or significant tax law changes in major jurisdictions where Synopsys operates, and further consider the appropriateness of adopting a multi-year normalized non-GAAP tax rate."
+    ],
+    "fiscal_year": 2022,
+    "next_quarter": 2,
+    "quarter_range_million": [
+      1240.0,
+      1270.0
+    ],
+    "annual_range_million": [
+      4775.0,
+      4825.0
+    ],
+    "guidance_source_row": [
+      "Revenue",
+      "$             1,240",
+      "$             1,270",
+      "",
+      "$             4,775",
+      "$             4,825"
+    ],
+    "guidance_context": "Second Quarter and Fiscal Year 2022 Financial Targets (in millions except per share amounts) Range for Three Months Range for Fiscal Year April 30, 2022 October 31, 2022 Low High Low High Revenue $             1,240 $             1,270 $             4,775 $             4,825 GAAP Expenses $                931 $                951 $             3,809 $             3,856 Non-GAAP Expenses $                800 $                810 $             3,255 $             3,285 Other Income (Expense) $                     - $                    2 $                   (8) $                   (4) Annual non-GAAP Tax Rate 18% 18% 18% 18% Outstanding Shares (fully diluted) 156 159 157 160 GAAP EPS $               1.67 $               1.78 $               5.53 $               5.72 Non-GAAP EPS $               2.35 $               2.40 $               7.85 $               7.92 Operating Cash Flow $             1,450 $             1,500",
+    "actual_revenue_million": 1270.255,
+    "actual_source_row": [
+      "Total revenue",
+      "1,270,255",
+      "",
+      "970,321"
+    ],
+    "remaining_year_revision_million": 44.74499999999989,
+    "previous_source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-fourth-quarter-and-fiscal-year-2021-301435472.html",
+    "realized_surprise_million": 5.255000000000109
+  },
+  {
+    "symbol": "SNPS",
+    "source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-second-quarter-fiscal-year-2022-301550428.html",
+    "source_file": "release_301550428.html",
+    "sha256": "adce2bb4a31f95641924a618e69b55c08a547858f9fc75f338940f958e47be60",
+    "title": "Synopsys Posts Financial Results for Second Quarter Fiscal Year 2022",
+    "published": "2022-05-18 16:05:00-04:00",
+    "modified": "2022-05-18 16:05:00-04:00",
+    "available_after": "2022-05-18 16:05:00-04:00",
+    "reported_fiscal_year": 2022,
+    "reported_quarter": 2,
+    "reported_quarter_end": "2022-04-30",
+    "presented_calendar_end": "2022-04-30",
+    "period_basis": "Synopsys' second quarter of fiscal year 2022 and 2021 ended on April 30, 2022 and May 1, 2021, respectively.",
+    "calendar_presentation_basis": "For presentation purposes, we refer to the closest calendar month end.",
+    "scope_review_excerpts": [
+      "Synopsys also provided its consolidated financial targets for the third quarter and full fiscal year 2022. These financial targets assume that there are no further changes to the current U.S. government \"Entity List\" restrictions. These targets constitute forward-looking statements and are based on current expectations. For a discussion of factors that could cause actual results to differ materially from these targets, see \"Forward-Looking Statements\" below.",
+      "Given the uncertainty surrounding corporate tax reform, Synopsys adopted an annual non-GAAP tax rate of 18% for fiscal year 2022 rather than a three-year normalized non-GAAP tax rate in calculating its non-GAAP financial measures. This annual non-GAAP tax rate is based on an evaluation of its historical and projected mix of U.S. and international profit before tax, taking into account the impact of non-GAAP adjustments, as well as other factors such as its current tax structure, existing tax positions and expected recurring tax incentives. Synopsys re-evaluates this rate on an annual basis for any significant events that could materially affect its projections, such as significant changes in its geographic earnings mix or significant tax law changes in major jurisdictions where Synopsys operates, and further consider the appropriateness of adopting a multi-year normalized non-GAAP tax rate."
+    ],
+    "fiscal_year": 2022,
+    "next_quarter": 3,
+    "quarter_range_million": [
+      1210.0,
+      1240.0
+    ],
+    "annual_range_million": [
+      5000.0,
+      5050.0
+    ],
+    "guidance_source_row": [
+      "Revenue",
+      "$             1,210",
+      "$             1,240",
+      "",
+      "$             5,000",
+      "$             5,050"
+    ],
+    "guidance_context": "Third Quarter and Fiscal Year 2022 Financial Targets (in millions except per share amounts) Range for Three Months Range for Fiscal Year July 31, 2022 October 31, 2022 Low High Low High Revenue $             1,210 $             1,240 $             5,000 $             5,050 GAAP Expenses $                981 $             1,001 $             3,928 $             3,975 Non-GAAP Expenses $                830 $                840 $             3,350 $             3,380 Other Income (Expense) $                  (2) $                     - $                     - $                    4 Non-GAAP Tax Rate 18% 18% 18% 18% Outstanding Shares (fully diluted) 156 159 156 159 GAAP EPS $               1.32 $               1.44 $               6.22 $               6.40 Non-GAAP EPS $               2.01 $               2.06 $               8.63 $               8.70 Operating Cash Flow $             1,550 $             1,600",
+    "actual_revenue_million": 1279.229,
+    "actual_source_row": [
+      "Total revenue",
+      "1,279,229",
+      "",
+      "1,024,323",
+      "",
+      "2,549,484",
+      "",
+      "1,994,644"
+    ],
+    "remaining_year_revision_million": 200.77099999999996,
+    "previous_source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-first-quarter-fiscal-year-2022-301483982.html",
+    "realized_surprise_million": 24.229000000000042
+  },
+  {
+    "symbol": "SNPS",
+    "source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-third-quarter-fiscal-year-2022-301607799.html",
+    "source_file": "release_301607799.html",
+    "sha256": "9b71009a88b8a0ba0096c6a14afe83779962686206f1c36d78fe9fc41e7c3e1a",
+    "title": "Synopsys Posts Financial Results for Third Quarter Fiscal Year 2022",
+    "published": "2022-08-17 16:05:00-04:00",
+    "modified": "2022-08-17 16:05:00-04:00",
+    "available_after": "2022-08-17 16:05:00-04:00",
+    "reported_fiscal_year": 2022,
+    "reported_quarter": 3,
+    "reported_quarter_end": "2022-07-30",
+    "presented_calendar_end": "2022-07-31",
+    "period_basis": "Synopsys' third quarter of fiscal year 2022 and 2021 ended on July 30, 2022 and July 31, 2021, respectively.",
+    "calendar_presentation_basis": "For presentation purposes, we refer to the closest calendar month end.",
+    "scope_review_excerpts": [
+      "Financial Targets Synopsys also provided its consolidated financial targets for the fourth quarter and full fiscal year 2022. These financial targets assume that there are no further changes to the current U.S. government \"Entity List\" restrictions. These targets constitute forward-looking statements and are based on current expectations. For a discussion of factors that could cause actual results to differ materially from these targets, see \"Forward-Looking Statements\" below.",
+      "Given the uncertainty surrounding corporate tax reform, Synopsys adopted an annual non-GAAP tax rate of 18% for fiscal year 2022 rather than a three-year normalized non-GAAP tax rate in calculating its non-GAAP financial measures. This annual non-GAAP tax rate is based on an evaluation of its historical and projected mix of U.S. and international profit before tax, taking into account the impact of non-GAAP adjustments, as well as other factors such as its current tax structure, existing tax positions and expected recurring tax incentives. Synopsys will re-evaluate this rate on an annual basis for any significant events that could materially affect its projections, such as significant changes in its geographic earnings mix or significant tax law changes in major jurisdictions where Synopsys operates, and will further consider the appropriateness of adopting a multi-year normalized non-GAAP tax rate."
+    ],
+    "fiscal_year": 2022,
+    "next_quarter": 4,
+    "quarter_range_million": [
+      1263.0,
+      1293.0
+    ],
+    "annual_range_million": [
+      5060.0,
+      5090.0
+    ],
+    "guidance_source_row": [
+      "Revenue",
+      "$             1,263",
+      "$             1,293",
+      "",
+      "$             5,060",
+      "$             5,090"
+    ],
+    "guidance_context": "Fourth Quarter and Fiscal Year 2022 Financial Targets (in millions except per share amounts) Range for Three Months Range for Fiscal Year October 31, 2022 October 31, 2022 Low High Low High Revenue $             1,263 $             1,293 $             5,060 $             5,090 GAAP Expenses $             1,076 $             1,096 $             3,978 $             3,998 Non-GAAP Expenses $                919 $                929 $             3,395 $             3,405 Other Income (Expense) $                    3 $                    5 $                  12 $                  14 Non-GAAP Tax Rate 18 % 18 % 18 % 18 % Outstanding Shares (fully diluted) 156 159 156 159 GAAP EPS $               1.06 $               1.18 $               6.37 $               6.49 Non-GAAP EPS $               1.80 $               1.85 $               8.80 $               8.85 Operating Cash Flow $             1,600 $             1,650",
+    "actual_revenue_million": 1247.766,
+    "actual_source_row": [
+      "Total revenue",
+      "1,247,766",
+      "",
+      "1,057,130",
+      "",
+      "3,797,250",
+      "",
+      "3,051,774"
+    ],
+    "remaining_year_revision_million": 27.233999999999924,
+    "previous_source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-second-quarter-fiscal-year-2022-301550428.html",
+    "realized_surprise_million": 22.766000000000076
+  },
+  {
+    "symbol": "SNPS",
+    "source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-fourth-quarter-and-fiscal-year-2022-301690554.html",
+    "source_file": "release_301690554.html",
+    "sha256": "07bbe59e305a02ade33d9db4dccfeed59964d0950abbaecb44acd1ce8cb22608",
+    "title": "Synopsys Posts Financial Results for Fourth Quarter and Fiscal Year 2022",
+    "published": "2022-11-30 16:05:00-05:00",
+    "modified": "2022-11-30 16:05:00-05:00",
+    "available_after": "2022-11-30 16:05:00-05:00",
+    "reported_fiscal_year": 2022,
+    "reported_quarter": 4,
+    "reported_quarter_end": "2022-10-29",
+    "presented_calendar_end": "2022-10-31",
+    "period_basis": "Synopsys' fourth quarter of fiscal year 2022 and 2021 ended on October 29, 2022 and October 30, 2021, respectively.",
+    "calendar_presentation_basis": "For presentation purposes, we refer to the closest calendar month end.",
+    "scope_review_excerpts": [
+      "\"Synopsys achieved record results in fiscal year 2022, substantially exceeding our original targets, with strength in all product groups and geographies. We enter fiscal year 2023 with excellent momentum and a resilient business model that provides stability during market cycles,\" said Aart de Geus , chairman and CEO of Synopsys. \"We've delivered many game-changing innovations over the past several years, which continue to enable customers to meet the unrelenting quest for \"smart everything\" devices. Simultaneously, our execution and operational management continue to drive growth and margin expansion. For fiscal year 2023, we are targeting 14-15% revenue growth, continued non-GAAP operating margin expansion, and approximately 16% non-GAAP earnings per share growth.\"",
+      "Financial Targets Synopsys also provided its consolidated financial targets for the first quarter and full fiscal year 2023. These financial targets assume no further changes to export control restrictions or the current U.S. government \"Entity List\" restrictions. These targets constitute forward-looking statements and are based on current expectations. For a discussion of factors that could cause actual results to differ materially from these targets, see \"Forward-Looking Statements\" below.",
+      "Synopsys adopted an annual non-GAAP tax rate of 18% for fiscal year 2022 and given uncertainty surrounding further U.S. corporate tax law changes, has elected to maintain a non-GAAP tax rate of 18% for fiscal year 2023 rather than adopt a three-year normalized non-GAAP tax rate in calculating its non-GAAP financial measures. This annual non-GAAP tax rate is based on an evaluation of its historical and projected mix of U.S. and international profit before tax, taking into account the impact of non-GAAP adjustments, U.S. tax law changes, as well as other factors such as its current tax structure, existing tax positions and expected recurring tax incentives. Synopsys re-evaluates this rate on a periodic basis for any significant events that could materially affect its projections, such as significant changes in its geographic earnings mix or significant tax law changes in major jurisdictions where Synopsys operates, and will further consider the appropriateness of adopting a multi-year normalized non-GAAP tax rate. When possible, Synopsys provides a reconciliation of the non-GAAP financial measure to the most closely applicable GAAP financial measure. Investors are encouraged to review the related GAAP financial measures and the reconciliation of these non-GAAP financial measures to their most directly comparable GAAP financial measure as detailed below, as well as Item 2.02 of Synopsys' Current Report on Form 8-K filed on November 30, 2022 , for additional information about the measures Synopsys uses to evaluate its core business operations.  Synopsys is unable to provide a reconciliation of certain non-GAAP guidance measures to the corresponding GAAP measures on a forward-looking basis because doing so would not be possible without unreasonable effort due to, among other things, the potential variability and limited visibility of the excluded items."
+    ],
+    "fiscal_year": 2023,
+    "next_quarter": 1,
+    "quarter_range_million": [
+      1340.0,
+      1370.0
+    ],
+    "annual_range_million": [
+      5775.0,
+      5825.0
+    ],
+    "guidance_source_row": [
+      "Revenue",
+      "$            1,340",
+      "$                 1,370",
+      "",
+      "$            5,775",
+      "$            5,825"
+    ],
+    "guidance_context": "First Quarter and Fiscal Year 2023 Financial Targets (1) (in millions except per share amounts) Range for Three Months Ending Range for Fiscal Year Ending January 31, 2023 October 31, 2023 Low High Low High Revenue $            1,340 $                 1,370 $            5,775 $            5,825 GAAP Expenses $            1,033 $                 1,053 $            4,490 $            4,537 Non-GAAP Expenses $               875 $                    885 $            3,810 $            3,840 Other Income (Expense) $                  (2) $                         - $                (12) $                  (8) Non-GAAP Tax Rate 18 % 18 % 18 % 18 % Outstanding Shares (fully diluted) 155 158 155 158 GAAP EPS $              1.89 $                   2.00 $              7.68 $              7.86 Non-GAAP EPS $              2.48 $                   2.53 $            10.28 $            10.35 Operating Cash Flow ~ $1,700 (1) Synopsys' first quarter of fiscal year 2023 and fiscal year 2023 will end on January 28, 2023 and October 28, 2023, respectively. For presentation purposes, we refer to the closest calendar month end.",
+    "actual_revenue_million": 1284.292,
+    "actual_source_row": [
+      "Total revenue",
+      "1,284,292",
+      "",
+      "1,152,419",
+      "",
+      "5,081,542",
+      "",
+      "4,204,193"
+    ],
+    "remaining_year_revision_million": null,
+    "previous_source": null
+  },
+  {
+    "symbol": "SNPS",
+    "source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-first-quarter-fiscal-year-2023-301747982.html",
+    "source_file": "release_301747982.html",
+    "sha256": "9f06a1f86d201783cdee5d62318b00b3e02b4154fe60badac81d9f7cd8f838f4",
+    "title": "Synopsys Posts Financial Results for First Quarter Fiscal Year 2023",
+    "published": "2023-02-15 16:05:00-05:00",
+    "modified": "2023-02-15 16:05:00-05:00",
+    "available_after": "2023-02-15 16:05:00-05:00",
+    "reported_fiscal_year": 2023,
+    "reported_quarter": 1,
+    "reported_quarter_end": "2023-01-28",
+    "presented_calendar_end": "2023-01-31",
+    "period_basis": "Synopsys' first quarter of fiscal year 2023 and 2022 ended on January 28, 2023 and January 29, 2022, respectively.",
+    "calendar_presentation_basis": "For presentation purposes, we refer to the closest calendar month end.",
+    "scope_review_excerpts": [
+      "Business Segments Beginning in fiscal year 2023, Synopsys began reporting revenue and operating income in three segments: (1) Design Automation, which includes digital and custom integrated circuit (IC) design software, verification hardware and software products, manufacturing-related design products, field-programmable gate array (FPGA) design software, optical products, professional services, and other; (2) Design IP, which includes our Synopsys IP portfolio; and (3) Software Integrity, which includes solutions that test software code for security vulnerabilities and quality defects, as well as professional and managed services. Further information regarding these segments is provided at the end of this press release.",
+      "Financial Targets Synopsys also provided its consolidated financial targets for the second quarter and full fiscal year 2023. These financial targets assume no further changes to export control restrictions or the current U.S. government \"Entity List\" restrictions. These targets constitute forward-looking statements and are based on current expectations. For a discussion of factors that could cause actual results to differ materially from these targets, see \"Forward-Looking Statements\" below.",
+      "Synopsys' annual non-GAAP tax rate was 18% for fiscal year 2022, and it previously elected to maintain an annual non-GAAP tax rate of 18% for fiscal year 2023 given uncertainty surrounding further U.S. corporate tax law changes. This annual non-GAAP tax rate was based on an evaluation of Synopsys' historical and projected mix of U.S. and international profit before tax, taking into account the impact of non-GAAP adjustments, U.S. tax law changes, as well as other factors such as its current tax structure, existing tax positions and expected recurring tax incentives.",
+      "Based on a re-evaluation of federal tax laws that require research and development expense to be capitalized commencing in Synopsys' first quarter of fiscal year 2023, Synopsys has elected to update its annual non-GAAP tax rate for fiscal year 2023 to 16%. Synopsys does not currently anticipate any additional significant changes to U.S. corporate tax law, its geographic earnings mix, or significant tax law changes in major jurisdictions where it operates that would result in further adjustment to its fiscal year 2023 annual non-GAAP tax rate."
+    ],
+    "fiscal_year": 2023,
+    "next_quarter": 2,
+    "quarter_range_million": [
+      1360.0,
+      1390.0
+    ],
+    "annual_range_million": [
+      5775.0,
+      5825.0
+    ],
+    "guidance_source_row": [
+      "Revenue",
+      "$             1,360",
+      "$             1,390",
+      "",
+      "$             5,775",
+      "$             5,825"
+    ],
+    "guidance_context": "Second Quarter and Fiscal Year 2023 Financial Targets (1) (in millions except per share amounts) Range for Three Months Ending Range for Fiscal Year Ending April 30, 2023 October 31, 2023 Low High Low High Revenue $             1,360 $             1,390 $             5,775 $             5,825 GAAP Expenses $             1,085 $             1,105 $             4,544 $             4,591 Non-GAAP Expenses $                917 $                927 $             3,810 $             3,840 Non-GAAP Other Income (Expense) $                   (1) $                    1 $                 (12) $                   (8) Non-GAAP Tax Rate 16 % 16 % 16 % 16 % Outstanding Shares (fully diluted) 155 158 155 158 GAAP EPS $               1.62 $               1.72 $               7.12 $               7.30 Non-GAAP EPS $               2.45 $               2.50 $             10.53 $             10.60 Operating Cash Flow ~ $1,650 (1) Synopsys' second quarter of fiscal year 2023 and fiscal year 2023 will end on April 29, 2023 and October 28, 2023, respectively. For presentation purposes, we refer to the closest calendar month end.",
+    "actual_revenue_million": 1361.34,
+    "actual_source_row": [
+      "Total revenue",
+      "1,361,340",
+      "",
+      "1,270,255"
+    ],
+    "remaining_year_revision_million": -6.339999999999918,
+    "previous_source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-fourth-quarter-and-fiscal-year-2022-301690554.html",
+    "realized_surprise_million": 6.339999999999918
+  },
+  {
+    "symbol": "SNPS",
+    "source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-second-quarter-fiscal-year-2023-301827509.html",
+    "source_file": "release_301827509.html",
+    "sha256": "4120c008debc5276384e62d8ca1d57f2f63abc920bda49196c683248718870dc",
+    "title": "Synopsys Posts Financial Results for Second Quarter Fiscal Year 2023",
+    "published": "2023-05-17 16:05:00-04:00",
+    "modified": "2023-05-17 16:05:00-04:00",
+    "available_after": "2023-05-17 16:05:00-04:00",
+    "reported_fiscal_year": 2023,
+    "reported_quarter": 2,
+    "reported_quarter_end": "2023-04-29",
+    "presented_calendar_end": "2023-04-30",
+    "period_basis": "Synopsys' second quarter of fiscal year 2023 and 2022 ended on April 29, 2023 and April 30, 2022, respectively.",
+    "calendar_presentation_basis": "For presentation purposes, we refer to the closest calendar month end.",
+    "scope_review_excerpts": [
+      "Financial Targets Synopsys also provided its consolidated financial targets for the third quarter and full fiscal year 2023. These financial targets assume no further changes to export control restrictions or the current U.S. government \"Entity List\" restrictions. These targets constitute forward-looking statements and are based on current expectations. For a discussion of factors that could cause actual results to differ materially from these targets, see \"Forward-Looking Statements\" below.",
+      "Synopsys previously elected to maintain an annual non-GAAP tax rate of 18% for fiscal year 2023 given uncertainty surrounding further U.S. corporate tax law changes. Based on a re-evaluation of federal tax laws that require research and development expense to be capitalized commencing in Synopsys' first quarter of fiscal year 2023, Synopsys elected to update its annual non-GAAP tax rate for fiscal year 2023 to 16% on February 17, 2023 . Synopsys does not currently anticipate any additional significant changes to U.S. corporate tax law, its geographic earnings mix, or significant tax law changes in major jurisdictions where it operates that would result in further adjustment to its fiscal year 2023 annual non-GAAP tax rate."
+    ],
+    "fiscal_year": 2023,
+    "next_quarter": 3,
+    "quarter_range_million": [
+      1465.0,
+      1495.0
+    ],
+    "annual_range_million": [
+      5790.0,
+      5830.0
+    ],
+    "guidance_source_row": [
+      "Revenue",
+      "$             1,465",
+      "$             1,495",
+      "",
+      "$             5,790",
+      "$             5,830"
+    ],
+    "guidance_context": "Third Quarter and Fiscal Year 2023 Financial Targets (1) (in millions except per share amounts) Range for Three Months Ending Range for Fiscal Year Ending July 31, 2023 October 31, 2023 Low High Low High Revenue $             1,465 $             1,495 $             5,790 $             5,830 GAAP Expenses $             1,143 $             1,163 $             4,520 $             4,565 Non-GAAP Expenses $                970 $                980 $             3,790 $             3,820 Non-GAAP Other Income (Expense) $                     - $                    2 $                    4 $                    8 Non-GAAP Tax Rate 16 % 16 % 16 % 16 % Outstanding Shares (fully diluted) 155 158 155 158 GAAP EPS $               1.88 $               1.99 $               7.44 $               7.60 Non-GAAP EPS $               2.70 $               2.75 $             10.77 $             10.84 Operating Cash Flow ~ $1,650 (1) Synopsys' third quarter of fiscal year 2023 and fiscal year 2023 will end on July 29, 2023 and October 28, 2023, respectively. For presentation purposes, we refer to the closest calendar month end.",
+    "actual_revenue_million": 1394.863,
+    "actual_source_row": [
+      "Total revenue",
+      "1,394,863",
+      "",
+      "1,279,229",
+      "",
+      "2,756,203",
+      "",
+      "2,549,484",
+      ""
+    ],
+    "remaining_year_revision_million": -9.863000000000056,
+    "previous_source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-first-quarter-fiscal-year-2023-301747982.html",
+    "realized_surprise_million": 19.863000000000056
+  },
+  {
+    "symbol": "SNPS",
+    "source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-third-quarter-fiscal-year-2023-301902862.html",
+    "source_file": "release_301902862.html",
+    "sha256": "0ea0eec1a283fc52d90d46a7beec733ba94bfa4b72dedb142227dba104302a38",
+    "title": "Synopsys Posts Financial Results for Third Quarter Fiscal Year 2023",
+    "published": "2023-08-16 16:05:00-04:00",
+    "modified": "2023-08-16 16:05:00-04:00",
+    "available_after": "2023-08-16 16:05:00-04:00",
+    "reported_fiscal_year": 2023,
+    "reported_quarter": 3,
+    "reported_quarter_end": "2023-07-29",
+    "presented_calendar_end": "2023-07-31",
+    "period_basis": "Synopsys' third quarter of fiscal year 2023 and 2022 ended on July 29, 2023 and July 30, 2022, respectively.",
+    "calendar_presentation_basis": "For presentation purposes, we refer to the closest calendar month end.",
+    "scope_review_excerpts": [
+      "Financial Targets Synopsys also provided its consolidated financial targets for the fourth quarter and full fiscal year 2023. These financial targets assume no further changes to export control restrictions or the current U.S. government \"Entity List\" restrictions. These targets constitute forward-looking statements and are based on current expectations. For a discussion of factors that could cause actual results to differ materially from these targets, see \"Forward-Looking Statements\" below.",
+      "On February 17, 2023 , following a re-evaluation of federal tax laws that require research and development expense to be capitalized commencing in Synopsys' first quarter of fiscal year 2023, Synopsys updated its annual non-GAAP tax rate for fiscal year 2023 to 16%. Synopsys does not currently anticipate any additional significant changes to U.S. corporate tax law, its geographic earnings mix, or significant tax law changes in major jurisdictions where it operates that would result in further adjustment to its fiscal year 2023 annual non-GAAP tax rate."
+    ],
+    "fiscal_year": 2023,
+    "next_quarter": 4,
+    "quarter_range_million": [
+      1567.0,
+      1597.0
+    ],
+    "annual_range_million": [
+      5810.0,
+      5840.0
+    ],
+    "guidance_source_row": [
+      "Revenue",
+      "$             1,567",
+      "$             1,597",
+      "",
+      "$             5,810",
+      "$             5,840"
+    ],
+    "guidance_context": "Fourth Quarter and Fiscal Year 2023 Financial Targets (1) (in millions except per share amounts) Range for Three Months Ending Range for Fiscal Year Ending October 31, 2023 October 31, 2023 Low High Low High Revenue $             1,567 $             1,597 $             5,810 $             5,840 GAAP Expenses $             1,184 $             1,204 $             4,544 $             4,564 Non-GAAP Expenses $             1,005 $             1,015 $             3,780 $             3,790 Non-GAAP Other Income (Expense) $                    1 $                    3 $                  10 $                  12 Non-GAAP Tax Rate 16 % 16 % 16 % 16 % Outstanding Shares (fully diluted) 155 157 155 157 GAAP EPS $               2.17 $               2.28 $               7.85 $               7.96 Non-GAAP EPS $               3.01 $               3.06 $             11.04 $             11.09 Operating Cash Flow ~ $1,650 (1) Synopsys' fourth quarter of fiscal year 2023 and fiscal year 2023 will end on October 28, 2023. For presentation purposes, we refer to the closest calendar month end.",
+    "actual_revenue_million": 1487.288,
+    "actual_source_row": [
+      "Total revenue",
+      "1,487,288",
+      "1,247,766",
+      "",
+      "4,243,491",
+      "3,797,250"
+    ],
+    "remaining_year_revision_million": 7.711999999999989,
+    "previous_source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-second-quarter-fiscal-year-2023-301827509.html",
+    "realized_surprise_million": 7.288000000000011
+  },
+  {
+    "symbol": "SNPS",
+    "source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-fourth-quarter-and-fiscal-year-2023-302001040.html",
+    "source_file": "release_302001040.html",
+    "sha256": "fc6a08d547bd82bc9d7d860b1e68d1b2fa9e96049a341b3b4625f7c81bcb4398",
+    "title": "Synopsys Posts Financial Results for Fourth Quarter and Fiscal Year 2023",
+    "published": "2023-11-29 16:05:00-05:00",
+    "modified": "2023-11-29 16:05:00-05:00",
+    "available_after": "2023-11-29 16:05:00-05:00",
+    "reported_fiscal_year": 2023,
+    "reported_quarter": 4,
+    "reported_quarter_end": "2023-10-28",
+    "presented_calendar_end": "2023-10-31",
+    "period_basis": "Synopsys' fourth quarter of fiscal year 2023 and 2022 ended on October 28, 2023 and October 29, 2022, respectively.",
+    "calendar_presentation_basis": "For presentation purposes, we refer to the closest calendar month end.",
+    "scope_review_excerpts": [
+      "Financial Targets Synopsys also provided its consolidated financial targets for the first quarter and full fiscal year 2024. The fiscal year targets include the impact of an extra week in fiscal year 2024, which will be included in the first quarter of fiscal year 2024. These financial targets assume no further changes to export control restrictions or the current U.S. government \"Entity List\" restrictions. These targets constitute forward-looking statements and are based on current expectations. For a discussion of factors that could cause actual results to differ materially from these targets, see \"Forward-Looking Statements\" below."
+    ],
+    "fiscal_year": 2024,
+    "next_quarter": 1,
+    "quarter_range_million": [
+      1630.0,
+      1660.0
+    ],
+    "annual_range_million": [
+      6570.0,
+      6630.0
+    ],
+    "guidance_source_row": [
+      "Revenue",
+      "$             1,630",
+      "$             1,660",
+      "",
+      "$             6,570",
+      "$             6,630"
+    ],
+    "guidance_context": "First Quarter and Full Fiscal Year 2024 Financial Targets (1) (in millions except per share amounts) Range for Three Months Ending Range for Fiscal Year Ending January 31, 2024 October 31, 2024 Low High Low High Revenue $             1,630 $             1,660 $             6,570 $             6,630 GAAP Expenses $             1,217 $             1,237 $             4,995 $             5,052 Non-GAAP Expenses $             1,017 $             1,027 $             4,140 $             4,180 Non-GAAP Other Income (Expense) $                     - $                    2 $                    4 $                    8 Non-GAAP Tax Rate 15 % 15 % 15 % 15 % Outstanding Shares (fully diluted) 155 157 155 157 GAAP EPS $               2.40 $               2.50 $               9.07 $               9.25 Non-GAAP EPS $               3.40 $               3.45 $             13.33 $             13.41 Operating Cash Flow ~ $1,400 (1) Synopsys' first quarter of fiscal year 2024 has one extra week and will end on February 3, 2024. Fiscal year 2024 will end on November 2, 2024. For presentation purposes, we refer to the closest calendar month end.",
+    "actual_revenue_million": 1599.128,
+    "actual_source_row": [
+      "Total revenue",
+      "1,599,128",
+      "1,284,292",
+      "",
+      "5,842,619",
+      "5,081,542"
+    ],
+    "remaining_year_revision_million": null,
+    "previous_source": null
+  },
+  {
+    "symbol": "SNPS",
+    "source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-first-quarter-fiscal-year-2024-302067821.html",
+    "source_file": "release_302067821.html",
+    "sha256": "2769c98356decd5687f9cebd0fe4d6eab6399cc325058d550696b446f2e03f22",
+    "title": "Synopsys Posts Financial Results for First Quarter Fiscal Year 2024",
+    "published": "2024-02-21 16:05:00-05:00",
+    "modified": "2024-02-21 16:05:00-05:00",
+    "available_after": "2024-02-21 16:05:00-05:00",
+    "reported_fiscal_year": 2024,
+    "reported_quarter": 1,
+    "reported_quarter_end": "2024-02-03",
+    "presented_calendar_end": "2024-01-31",
+    "period_basis": "Synopsys' first quarter of fiscal year 2024 and 2023 ended on February 3, 2024 and January 28, 2023, respectively.",
+    "calendar_presentation_basis": "For presentation purposes, we refer to the closest calendar month end.",
+    "scope_review_excerpts": [
+      "Financial Targets Synopsys also provided its consolidated financial targets for the second quarter and full fiscal year 2024. The fiscal year targets include the impact of an extra week in fiscal year 2024, which was included in the first quarter of fiscal year 2024. These financial targets assume no further changes to export control restrictions or the current U.S. government \"Entity List\" restrictions. These targets constitute forward-looking statements and are based on current expectations. For a discussion of factors that could cause actual results to differ materially from these targets, see \"Forward-Looking Statements\" below.",
+      "When possible, Synopsys provides a reconciliation of non-GAAP financial measures to their most closely applicable GAAP financial measures. Synopsys is unable to provide a reconciliation of certain second quarter and full fiscal year 2024 non-GAAP financial targets to the corresponding GAAP financial measures on a forward-looking basis because Synopsys believes that it would not be possible for it to have the required information necessary to quantitatively reconcile such measures with sufficient precision without unreasonable efforts due to, among other things, the potential variability and limited predictability of the excluded items necessary for reconciliation such as acquisition/divestiture related items, restructuring charges, tax deduction variability, changes in the fair value of non-qualified deferred compensation plan, and gains (losses) on the sale of strategic investments. For the same reasons, Synopsys is unable to address the probable significance of the unavailable information."
+    ],
+    "fiscal_year": 2024,
+    "next_quarter": 2,
+    "quarter_range_million": [
+      1560.0,
+      1590.0
+    ],
+    "annual_range_million": [
+      6570.0,
+      6630.0
+    ],
+    "guidance_source_row": [
+      "Revenue",
+      "$              1,560",
+      "$              1,590",
+      "",
+      "$              6,570",
+      "$              6,630"
+    ],
+    "guidance_context": "Second Quarter and Full Fiscal Year 2024 Financial Targets (1) (in millions except per share amounts) Range for Three Months Ending Range for Fiscal Year Ending April 30, 2024 October 31, 2024 Low High Low High Revenue $              1,560 $              1,590 $              6,570 $              6,630 GAAP Expenses $              1,206 $              1,226 $              5,022 $              5,079 Non-GAAP Expenses $              1,005 $              1,015 $              4,140 $              4,180 Non-GAAP Interest and Other Income (Expense), net $                     2 $                     4 $                   24 $                   28 Non-GAAP Tax Rate 15 % 15 % 15 % 15 % Outstanding Shares (fully diluted) 155 157 155 157 GAAP EPS $                2.05 $                2.16 $                9.56 $                9.74 Non-GAAP EPS $                3.09 $                3.14 $              13.47 $              13.55 Operating Cash Flow ~ $1,400 (1) Synopsys' second quarter of fiscal year 2024 and its fiscal year 2024 will end on May 4, 2024 and November 2, 2024, respectively. For presentation purposes, we refer to the closest calendar month end.",
+    "actual_revenue_million": 1649.23,
+    "actual_source_row": [
+      "Total revenue",
+      "1,649,230",
+      "1,361,340"
+    ],
+    "remaining_year_revision_million": -4.230000000000018,
+    "previous_source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-fourth-quarter-and-fiscal-year-2023-302001040.html",
+    "realized_surprise_million": 4.230000000000018
+  },
+  {
+    "symbol": "SNPS",
+    "source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-second-quarter-fiscal-year-2024-302153264.html",
+    "source_file": "release_302153264.html",
+    "sha256": "ec8204660bff0e689f0bc53bbc767acdfb7026b8b89643864239fa1ece02187d",
+    "title": "Synopsys Posts Financial Results for Second Quarter Fiscal Year 2024",
+    "published": "2024-05-22 16:05:00-04:00",
+    "modified": "2024-05-22 16:05:00-04:00",
+    "available_after": "2024-05-22 16:05:00-04:00",
+    "reported_fiscal_year": 2024,
+    "reported_quarter": 2,
+    "reported_quarter_end": "2024-05-04",
+    "presented_calendar_end": "2024-04-30",
+    "period_basis": "Synopsys' second quarter of fiscal year 2024 and 2023 ended on May 4, 2024 and April 29, 2023, respectively.",
+    "calendar_presentation_basis": "For presentation purposes, we refer to the closest calendar month end.",
+    "scope_review_excerpts": [
+      "1 Synopsys' Software Integrity business has been presented as a discontinued operation in the consolidated financial statements for all periods presented herein and all financial results and targets are presented herein on a continuing operations basis unless otherwise noted.",
+      "Continuing Operations On May 5, 2024 , Synopsys entered into an agreement to sell its Software Integrity business. Unless otherwise noted, Synopsys' Software Integrity business has been presented as a discontinued operation in the consolidated financial statements for all periods presented herein and all financial results and targets are presented herein on a continuing operations basis.",
+      "Financial Targets Synopsys also provided its consolidated financial targets for continuing operations for the third quarter and full fiscal year 2024. The fiscal year targets include the impact of an extra week in fiscal year 2024, which was included in the first quarter of fiscal year 2024. These financial targets assume no further changes to export control restrictions or the current U.S. government \"Entity List\" restrictions. These targets constitute forward-looking statements and are based on current expectations. For a discussion of factors that could cause actual results to differ materially from these targets, see \"Forward-Looking Statements\" below.",
+      "When possible, Synopsys provides a reconciliation of non-GAAP financial measures to their most closely applicable GAAP financial measures. Synopsys is unable to provide a full reconciliation of certain third quarter and full fiscal year 2024 non-GAAP financial targets to the corresponding GAAP financial measures on a forward-looking basis because Synopsys believes that it would not be possible for it to have the required information necessary to quantitatively reconcile such measures with sufficient precision without unreasonable efforts due to, among other things, the potential variability and limited predictability of the excluded adjustment items necessary for a full reconciliation such as certain acquisition/divestiture related items, restructuring charges, tax deduction variability, changes in the fair value of non-qualified deferred compensation plan, and gains (losses) on the sale of strategic investments. For the same reasons, Synopsys is unable to address the probable significance of the unavailable information."
+    ],
+    "fiscal_year": 2024,
+    "next_quarter": 3,
+    "quarter_range_million": [
+      1505.0,
+      1535.0
+    ],
+    "annual_range_million": [
+      6090.0,
+      6150.0
+    ],
+    "guidance_source_row": [
+      "Revenue",
+      "$              1,505",
+      "$              1,535",
+      "",
+      "$              6,090",
+      "$              6,150"
+    ],
+    "guidance_context": "Third Quarter and Full Fiscal Year 2024 Financial Targets (1)(2) (in millions except per share amounts) Range for Three Months Ending Range for Fiscal Year Ending July 31, 2024 October 31, 2024 Low High Low High Revenue $              1,505 $              1,535 $              6,090 $              6,150 GAAP Expenses $              1,099 $              1,119 $              4,559 $              4,614 Non-GAAP Expenses $                 920 $                 930 $              3,770 $              3,810 Non-GAAP Interest and Other Income (Expense), net $                     4 $                     6 $                   32 $                   36 Non-GAAP Tax Rate 15 % 15 % Outstanding Shares (fully diluted) 155 157 155 157 GAAP EPS $                2.22 $                2.35 $                9.14 $                9.36 Non-GAAP EPS $                3.25 $                3.30 $              12.90 $              12.98 Operating Cash Flow ~ $1,300 Free Cash Flow (3) ~ $1,100 Capital Expenditures ~ $200 (1) Synopsys' third quarter of fiscal year 2024 and its fiscal year 2024 will end on August 3, 2024 and November 2, 2024, respectively. For presentation purposes, we refer to the closest calendar month end. The first quarter of fiscal year 2024 included one extra week. (2) Presented on a continuing operations basis. (3) Free cash flow is calculated as cash provided from operating activities less capital expenditures and capitalization of software development costs.",
+    "actual_revenue_million": 1454.712,
+    "actual_source_row": [
+      "Total revenue",
+      "1,454,712",
+      "1,262,744",
+      "",
+      "2,965,701",
+      "2,496,241"
+    ],
+    "remaining_year_revision_million": -359.712,
+    "previous_source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-first-quarter-fiscal-year-2024-302067821.html",
+    "realized_surprise_million": -120.28800000000001
+  },
+  {
+    "symbol": "SNPS",
+    "source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-third-quarter-fiscal-year-2024-302227772.html",
+    "source_file": "release_302227772.html",
+    "sha256": "bd2e5f2e754a803f879f00581749c861380c8b0c28bce2109de693f2ea717c6e",
+    "title": "Synopsys Posts Financial Results for Third Quarter Fiscal Year 2024",
+    "published": "2024-08-21 16:05:00-04:00",
+    "modified": "2024-08-21 16:05:00-04:00",
+    "available_after": "2024-08-21 16:05:00-04:00",
+    "reported_fiscal_year": 2024,
+    "reported_quarter": 3,
+    "reported_quarter_end": "2024-08-03",
+    "presented_calendar_end": "2024-07-31",
+    "period_basis": "Synopsys' third quarter of fiscal year 2024 and 2023 ended on August 3, 2024 and July 29, 2023, respectively.",
+    "calendar_presentation_basis": "For presentation purposes, we refer to the closest calendar month end.",
+    "scope_review_excerpts": [
+      "1 Synopsys' Software Integrity business has been presented as a discontinued operation in the consolidated financial statements for all periods presented herein and all financial results and targets are presented herein on a continuing operations basis unless otherwise noted.",
+      "Continuing Operations On May 5, 2024 , Synopsys entered into an agreement to sell its Software Integrity business. Unless otherwise noted, Synopsys' Software Integrity business has been presented as a discontinued operation in the consolidated financial statements for all periods presented herein and all financial results and targets are presented herein on a continuing operations basis.",
+      "Financial Targets Synopsys also provided its consolidated financial targets for continuing operations for the fourth quarter and full fiscal year 2024. The fiscal year targets include the impact of an extra week in fiscal year 2024, which was included in the first quarter of fiscal year 2024. These financial targets assume no further changes to export control restrictions or the current U.S. government \"Entity List\" restrictions. These targets constitute forward-looking statements and are based on current expectations. For a discussion of factors that could cause actual results to differ materially from these targets, see \"Forward-Looking Statements\" below.",
+      "When possible, Synopsys provides a reconciliation of non-GAAP financial measures to their most closely applicable GAAP financial measures. Synopsys is unable to provide a full reconciliation of certain fourth quarter and full fiscal year 2024 non-GAAP financial targets to the corresponding GAAP financial measures on a forward-looking basis because Synopsys believes that it would not be possible for it to have the required information necessary to quantitatively reconcile such measures with sufficient precision without unreasonable efforts due to, among other things, the potential variability and limited predictability of the excluded adjustment items necessary for a full reconciliation such as certain acquisition/divestiture related items, restructuring charges, tax deduction variability, changes in the fair value of non-qualified deferred compensation plan, and gains (losses) on the sale of strategic investments. For the same reasons, Synopsys is unable to address the probable significance of the unavailable information."
+    ],
+    "fiscal_year": 2024,
+    "next_quarter": 4,
+    "quarter_range_million": [
+      1614.0,
+      1644.0
+    ],
+    "annual_range_million": [
+      6105.0,
+      6135.0
+    ],
+    "guidance_source_row": [
+      "Revenue",
+      "$              1,614",
+      "$              1,644",
+      "",
+      "$              6,105",
+      "$              6,135"
+    ],
+    "guidance_context": "Fourth Quarter and Full Fiscal Year 2024 Financial Targets (1)(2) (in millions except per share amounts) Range for Three Months Ending Range for Fiscal Year Ending October 31, 2024 October 31, 2024 Low High Low High Revenue $              1,614 $              1,644 $              6,105 $              6,135 GAAP Expenses $              1,210 $              1,230 $              4,577 $              4,597 Non-GAAP Expenses $              1,027 $              1,037 $              3,760 $              3,770 Non-GAAP Interest and Other Income (Expense), net $                     8 $                   10 $                   41 $                   43 Non-GAAP Tax Rate 15 % 15 % 15 % 15 % Outstanding Shares (fully diluted) 155 157 155 157 GAAP EPS $                2.25 $                2.39 $                9.71 $                9.85 Non-GAAP EPS $                3.27 $                3.32 $              13.07 $              13.12 Operating Cash Flow ~ $1,300 Free Cash Flow (3) ~ $1,100 Capital Expenditures ~ $200 (1) Synopsys' fourth quarter of fiscal year 2024 and its fiscal year 2024 will end on November 2, 2024. For presentation purposes, we refer to the closest calendar month end. The first quarter of fiscal year 2024 included one extra week. (2) Presented on a continuing operations basis. (3) Free cash flow is calculated as cash provided from operating activities less capital expenditures and capitalization of software development costs.",
+    "actual_revenue_million": 1525.749,
+    "actual_source_row": [
+      "Total revenue",
+      "1,525,749",
+      "1,354,390",
+      "",
+      "4,491,450",
+      "3,850,631"
+    ],
+    "remaining_year_revision_million": -5.749000000000024,
+    "previous_source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-second-quarter-fiscal-year-2024-302153264.html",
+    "realized_surprise_million": 5.749000000000024
+  },
+  {
+    "symbol": "SNPS",
+    "source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-fourth-quarter-and-fiscal-year-2024-302322901.html",
+    "source_file": "release_302322901.html",
+    "sha256": "21adf97b687559d6ab2d4ff9b6eff20f04c1d1b2b7d54d5a436ffa7598344668",
+    "title": "Synopsys Posts Financial Results for Fourth Quarter and Fiscal Year 2024",
+    "published": "2024-12-04 16:05:00-05:00",
+    "modified": "2024-12-04 16:05:39-05:00",
+    "available_after": "2024-12-04 16:05:39-05:00",
+    "reported_fiscal_year": 2024,
+    "reported_quarter": 4,
+    "reported_quarter_end": "2024-11-02",
+    "presented_calendar_end": "2024-10-31",
+    "period_basis": "Synopsys' fourth quarter of fiscal year 2024 and 2023 ended on November 2, 2024 and October 28, 2023, respectively.",
+    "calendar_presentation_basis": "For presentation purposes, we refer to the closest calendar month end.",
+    "scope_review_excerpts": [
+      "\"Continued strong execution drove excellent Q4 results, which exceeded the midpoint of our guidance targets and capped a year of 15% revenue growth for the company,\" said Shelagh Glaser , CFO of Synopsys. \"The combination of our execution focus, operating discipline, and the critical nature of our industry-leading technology positions us well for the future. In 2025, we expect to deliver double-digit revenue growth grounded in pragmatism given continued macro uncertainties and the impact of our fiscal year calendar change.\"",
+      "1 On September 30, 2024, Synopsys completed the sale of its Software Integrity business. Synopsys' Software Integrity business has been presented as a discontinued operation in the consolidated financial statements for all periods presented herein and all financial results and targets are presented herein on a continuing operations basis unless otherwise noted.",
+      "Continuing Operations On September 30, 2024 , Synopsys completed the sale of its Software Integrity business. Unless otherwise noted, Synopsys' Software Integrity business has been presented as a discontinued operation in the Synopsys' consolidated financial statements for all periods presented herein and all financial results and targets are presented herein on a continuing operations basis.",
+      "Financial Targets Synopsys also provided its consolidated financial targets for the first quarter and full fiscal year 2025. These targets reflect a change in Synopsys' fiscal year from a 52/53-week period ending on the Saturday nearest to October 31 of each year to October 31 of each year. As a result of this change, there will be ten fewer days in the first half of fiscal year 2025 and two extra days in the second half of fiscal year 2025, which results in eight fewer days in the aggregate in Synopsys' fiscal year 2025 as compared to its fiscal year 2024. These targets also assume no further changes to export control restrictions or the current U.S. government \"Entity List\" restrictions. These targets constitute forward-looking statements and are based on current expectations. For a discussion of factors that could cause actual results to differ materially from these targets, see \"Forward-Looking Statements\" below.",
+      "(1) Synopsys' fourth quarter of fiscal year 2024 and 2023 ended on November 2, 2024 and October 28, 2023, respectively. For presentation purposes, we refer to the closest calendar month end. Fiscal year 2024 was a 53-week year, which included an extra week in the first quarter.",
+      "(1) Synopsys' fiscal year 2024 ended on November 2, 2024. For presentation purposes, we refer to the closest calendar month end. Fiscal year 2024 was a 53-week year, which included an extra week in the first quarter.",
+      "(1) Synopsys' fiscal year 2024 and 2023 ended on November 2, 2024 and October 28, 2023, respectively. For presentation purposes, we refer to the closest calendar month end. Fiscal year 2024 was a 53-week year, which included an extra week in the first quarter.",
+      "refer to the closest calendar month end. Fiscal year 2024 was a 53-week year, which included an extra week in the first quarter.",
+      "(2) Synopsys' fourth quarter of fiscal year 2024 and 2023 ended on November 2, 2024 and October 28, 2023, respectively. For presentation purposes, we refer to the closest calendar month end. Fiscal year 2024 was a 53-week year, which included an extra week in the first quarter.",
+      "the closest calendar month end. Fiscal year 2024 was a 53-week year, which included an extra week in the first quarter.",
+      "When possible, Synopsys provides a reconciliation of non-GAAP financial measures to their most closely applicable GAAP financial measures. Synopsys is unable to provide a full reconciliation of certain first quarter and full fiscal year 2025 non-GAAP financial targets to the corresponding GAAP financial measures on a forward-looking basis because Synopsys believes that it would not be possible for it to have the required information necessary to quantitatively reconcile such measures with sufficient precision without unreasonable efforts due to, among other things, the potential variability and limited predictability of the excluded adjustment items necessary for a full reconciliation such as certain acquisition/divestiture related items, restructuring charges, tax deduction variability, changes in the fair value of non-qualified deferred compensation plan, and gains (losses) on the sale of strategic investments. For the same reasons, Synopsys is unable to address the probable significance of the unavailable information."
+    ],
+    "fiscal_year": 2025,
+    "next_quarter": 1,
+    "quarter_range_million": [
+      1435.0,
+      1465.0
+    ],
+    "annual_range_million": [
+      6745.0,
+      6805.0
+    ],
+    "guidance_source_row": [
+      "Revenue",
+      "$              1,435",
+      "$              1,465",
+      "",
+      "$              6,745",
+      "$              6,805"
+    ],
+    "guidance_context": "First Quarter and Full Fiscal Year 2025 Financial Targets (1) (in millions except per share amounts) Range for Three Months Ending Range for Fiscal Year Ending January 31, 2025 October 31, 2025 Low High Low High Revenue $              1,435 $              1,465 $              6,745 $              6,805 GAAP Expenses $              1,142 $              1,162 $              4,926 $              4,983 Non-GAAP Expenses $                 945 $                 955 $              4,045 $              4,085 Non-GAAP Interest and Other Income (Expense), net $                   20 $                   22 $                   94 $                   98 Non-GAAP Tax Rate 16 % 16 % 16 % 16 % Outstanding Shares (fully diluted) 156 158 157 159 GAAP EPS $                1.81 $                1.95 $              10.42 $              10.63 Non-GAAP EPS $                2.77 $                2.82 $              14.88 $              14.96 Operating Cash Flow ~ $1,800 Free Cash Flow (2) ~ $1,600 Capital Expenditures ~ $170 (1) Synopsys' first quarter of fiscal year 2025 will end on January 31, 2025 and its fiscal year 2025 will end on October 31, 2025. (2) Free cash flow is calculated as cash provided from operating activities less capital expenditures.",
+    "actual_revenue_million": 1635.986,
+    "actual_source_row": [
+      "Total revenue",
+      "1,635,986",
+      "1,467,383",
+      "",
+      "6,127,436",
+      "5,318,014"
+    ],
+    "remaining_year_revision_million": null,
+    "previous_source": null
+  },
+  {
+    "symbol": "SNPS",
+    "source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-first-quarter-fiscal-year-2025-302386200.html",
+    "source_file": "release_302386200.html",
+    "sha256": "adcb1ff1e063cc1683dcf954340ff28087fe5433a7cc9bd84b299abc85d005f7",
+    "title": "Synopsys Posts Financial Results for First Quarter Fiscal Year 2025",
+    "published": "2025-02-26 16:05:00-05:00",
+    "modified": "2025-02-26 16:05:45-05:00",
+    "available_after": "2025-02-26 16:05:45-05:00",
+    "reported_fiscal_year": 2025,
+    "reported_quarter": 1,
+    "reported_quarter_end": "2025-01-31",
+    "presented_calendar_end": "2025-01-31",
+    "period_basis": "Synopsys' first quarter of fiscal year 2025 and 2024 ended on January 31, 2025 and February 3, 2024, respectively.",
+    "calendar_presentation_basis": "For presentation purposes, we refer to the closest calendar month end.",
+    "scope_review_excerpts": [
+      "Continuing Operations On September 30, 2024 , Synopsys completed the sale of its Software Integrity business. Unless otherwise noted, Synopsys' Software Integrity business has been presented as a discontinued operation in the Synopsys' consolidated financial statements for all periods presented herein and all financial results and targets are presented herein on a continuing operations basis.",
+      "Financial Targets Synopsys also provided its consolidated financial targets for the second quarter and full fiscal year 2025. These targets reflect a change in Synopsys' fiscal year from a 52/53-week period ending on the Saturday nearest to October 31 of each year to October 31 of each year. As a result of this change, there will be ten fewer days in the first half of fiscal year 2025 and two extra days in the second half of fiscal year 2025, which results in eight fewer days in the aggregate in Synopsys' fiscal year 2025 as compared to its fiscal year 2024. These targets also assume no further changes to export control restrictions or the current U.S. government \"Entity List\" restrictions. These targets constitute forward-looking statements and are based on current expectations. For a discussion of factors that could cause actual results to differ materially from these targets, see \"Forward-Looking Statements\" below.",
+      "(1) Targets do not reflect the impact of any future financing transactions related to the Ansys Merger (as defined below) or targets for the combined company.",
+      "(1) Synopsys' first quarter of fiscal year 2025 and 2024 ended on January 31, 2025 and February 3, 2024, respectively. For presentation purposes, we refer to the closest calendar month end. Fiscal year 2024 was a 53-week year, which included an extra week in the first quarter.",
+      "(1) Synopsys' first quarter of fiscal year 2025 ended on January 31, 2025 and its fiscal year 2024 ended on November 2, 2024, respectively. For presentation purposes, we refer to the closest calendar month end. Fiscal year 2024 was a 53-week year, which included an extra week in the first quarter.",
+      "(2) Synopsys' first quarter of fiscal year 2025 and 2024 ended on January 31, 2025 and February 3, 2024, respectively. For presentation purposes, we refer to the closest calendar month end. Fiscal year 2024 was a 53-week year, which included an extra week in the first quarter.",
+      "When possible, Synopsys provides a reconciliation of non-GAAP financial measures to their most closely applicable GAAP financial measures. Synopsys is unable to provide a full reconciliation of certain second quarter and full fiscal year 2025 non-GAAP financial targets to the corresponding GAAP financial measures on a forward-looking basis because Synopsys believes that it would not be possible for it to have the required information necessary to quantitatively reconcile such measures with sufficient precision without unreasonable efforts due to, among other things, the potential variability and limited predictability of the excluded adjustment items necessary for a full reconciliation such as certain acquisition/divestiture related items, restructuring charges, tax deduction variability, changes in the fair value of non-qualified deferred compensation plan, and gains (losses) on the sale of strategic investments. For the same reasons, Synopsys is unable to address the probable significance of the unavailable information."
+    ],
+    "fiscal_year": 2025,
+    "next_quarter": 2,
+    "quarter_range_million": [
+      1585.0,
+      1615.0
+    ],
+    "annual_range_million": [
+      6745.0,
+      6805.0
+    ],
+    "guidance_source_row": [
+      "Revenue",
+      "$              1,585",
+      "$              1,615",
+      "",
+      "$              6,745",
+      "$              6,805"
+    ],
+    "guidance_context": "Second Quarter and Full Fiscal Year 2025 Financial Targets (1) (in millions except per share amounts) Range for Three Months Ending Range for Fiscal Year Ending April 30, 2025 October 31, 2025 Low High Low High Revenue $              1,585 $              1,615 $              6,745 $              6,805 GAAP Expenses $              1,191 $              1,211 $              4,972 $              5,029 Non-GAAP Expenses $                 985 $                 995 $              4,045 $              4,085 Non-GAAP Interest and Other Income (Expense), net $                   24 $                   26 $                   94 $                   98 Non-GAAP Tax Rate 16 % 16 % 16 % 16 % Outstanding Shares (fully diluted) 156 158 157 159 GAAP EPS $                2.21 $                2.33 $              10.09 $              10.31 Non-GAAP EPS $                3.37 $                3.42 $              14.88 $              14.96 Operating Cash Flow ~$1,800 Free Cash Flow (2) ~$1,600 Capital Expenditures ~$170 (1) Targets do not reflect the impact of any future financing transactions related to the Ansys Merger (as defined below) or targets for the combined company. (2) Free cash flow is calculated as cash provided from operating activities less capital expenditures.",
+    "actual_revenue_million": 1455.315,
+    "actual_source_row": [
+      "Total revenue",
+      "1,455,315",
+      "",
+      "1,510,989"
+    ],
+    "remaining_year_revision_million": -5.315000000000055,
+    "previous_source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-fourth-quarter-and-fiscal-year-2024-302322901.html",
+    "realized_surprise_million": 5.315000000000055
+  },
+  {
+    "symbol": "SNPS",
+    "source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-second-quarter-fiscal-year-2025-302467545.html",
+    "source_file": "release_302467545.html",
+    "sha256": "fa0563ef50fce417f02196de1f66d65849f29dc4f39ee0e3e4a23fd4036ae4ea",
+    "title": "Synopsys Posts Financial Results for Second Quarter Fiscal Year 2025",
+    "published": "2025-05-28 16:05:00-04:00",
+    "modified": "2025-05-28 16:05:38-04:00",
+    "available_after": "2025-05-28 16:05:38-04:00",
+    "reported_fiscal_year": 2025,
+    "reported_quarter": 2,
+    "reported_quarter_end": "2025-04-30",
+    "presented_calendar_end": "2025-04-30",
+    "period_basis": "Synopsys' second quarter of fiscal year 2025 and 2024 ended on April 30, 2025 and May 4, 2024, respectively.",
+    "calendar_presentation_basis": "For presentation purposes, we refer to the closest calendar month end.",
+    "scope_review_excerpts": [
+      "Continuing Operations On September 30, 2024 , Synopsys completed the sale of its Software Integrity business. Unless otherwise noted, Synopsys' Software Integrity business has been presented as a discontinued operation in the Synopsys' consolidated financial statements for all periods presented herein and all financial results and targets are presented herein on a continuing operations basis.",
+      "Financial Targets Synopsys also provided its consolidated financial targets for the third quarter and full fiscal year 2025. These targets reflect a change in Synopsys' fiscal year from a 52/53-week period ending on the Saturday nearest to October 31 of each year to October 31 of each year. As a result of this change, there will be ten fewer days in the first half of fiscal year 2025 and two extra days in the second half of fiscal year 2025, which results in eight fewer days in the aggregate in Synopsys' fiscal year 2025 as compared to its fiscal year 2024. These targets also assume no further changes to export control restrictions or the current U.S. government \"Entity List\" restrictions. These targets constitute forward-looking statements and are based on current expectations. For a discussion of factors that could cause actual results to differ materially from these targets, see \"Forward-Looking Statements\" below.",
+      "(1) Targets do not reflect the impact of any future financing transactions related to the Ansys Merger (as defined below) or targets for the combined company.",
+      "(1) Targets do not reflect the impact of any future financing transactions related to the Ansys Merger (as defined",
+      "(1) Synopsys' second quarter of fiscal year 2025 and 2024 ended on April 30, 2025 and May 4, 2024, respectively. For presentation purposes, we refer to the closest calendar month end. Fiscal year 2024 was a 53-week year, which included an extra week in the first quarter.",
+      "purposes, we refer to the closest calendar month end. Fiscal year 2024 was a 53-week year, which included an extra week in the first quarter.",
+      "we refer to the closest calendar month end. Fiscal year 2024 was a 53-week year, which included an extra week in the first quarter.",
+      "(1) Synopsys' second quarter of fiscal year 2025 ended on April 30, 2025 and its fiscal year 2024 ended on November 2, 2024, respectively. For presentation purposes, we refer to the closest calendar month end. Fiscal year 2024 was a 53-week year, which included an extra week in the first quarter.",
+      "respectively. For presentation purposes, we refer to the closest calendar month end. Fiscal year 2024 was a 53-week year,",
+      "presentation purposes, we refer to the closest calendar month end. Fiscal year 2024 was a 53-week year, which included",
+      "(2) Synopsys' second quarter of fiscal year 2025 and 2024 ended on April 30, 2025 and May 4, 2024, respectively. For presentation purposes, we refer to the closest calendar month end. Fiscal year 2024 was a 53-week year, which included an extra week in the first quarter.",
+      "the closest calendar month end. Fiscal year 2024 was a 53-week year, which included an extra week in the first quarter.",
+      "When possible, Synopsys provides a reconciliation of non-GAAP financial measures to their most closely applicable GAAP financial measures. Synopsys is unable to provide a full reconciliation of certain third quarter and full fiscal year 2025 non-GAAP financial targets to the corresponding GAAP financial measures on a forward-looking basis because Synopsys believes that it would not be possible for it to have the required information necessary to quantitatively reconcile such measures with sufficient precision without unreasonable efforts due to, among other things, the potential variability and limited predictability of the excluded adjustment items necessary for a full reconciliation such as certain acquisition/divestiture related items, restructuring charges, tax deduction variability, changes in the fair value of non-qualified deferred compensation plan, and gains (losses) on the sale of strategic investments. For the same reasons, Synopsys is unable to address the probable significance of the unavailable information."
+    ],
+    "fiscal_year": 2025,
+    "next_quarter": 3,
+    "quarter_range_million": [
+      1755.0,
+      1785.0
+    ],
+    "annual_range_million": [
+      6745.0,
+      6805.0
+    ],
+    "guidance_source_row": [
+      "Revenue",
+      "$              1,755",
+      "$              1,785",
+      "",
+      "$              6,745",
+      "$              6,805"
+    ],
+    "guidance_context": "Third Quarter and Full Fiscal Year 2025 Financial Targets (1) (in millions except per share amounts) Range for Three Months Ending Range for Fiscal Year Ending July 31, 2025 October 31, 2025 Low High Low High Revenue $              1,755 $              1,785 $              6,745 $              6,805 GAAP Expenses $              1,273 $              1,293 $              5,011 $              5,068 Non-GAAP Expenses $              1,055 $              1,065 $              4,045 $              4,085 Non-GAAP Interest and Other Income (Expense), net $                     9 $                   11 $                 118 $                 122 Non-GAAP Tax Rate 16 % 16 % 16 % 16 % Outstanding Shares (fully diluted) 156 158 156 158 GAAP EPS $                2.63 $                2.74 $              10.14 $              10.34 Non-GAAP EPS $                3.82 $                3.87 $              15.11 $              15.19 Operating Cash Flow ~$1,500 Free Cash Flow (2) ~$1,300 Capital Expenditures ~$170 (1) Targets do not reflect the impact of any future financing transactions related to the Ansys Merger (as defined below) or targets for the combined company. (2) Free cash flow is calculated as cash provided from operating activities less capital expenditures.",
+    "actual_revenue_million": 1604.266,
+    "actual_source_row": [
+      "Total revenue",
+      "1,604,266",
+      "",
+      "1,454,712",
+      "",
+      "3,059,581",
+      "",
+      "2,965,701"
+    ],
+    "remaining_year_revision_million": -4.266000000000076,
+    "previous_source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-first-quarter-fiscal-year-2025-302386200.html",
+    "realized_surprise_million": 4.266000000000076
+  },
+  {
+    "symbol": "SNPS",
+    "source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-third-quarter-fiscal-year-2025-302551316.html",
+    "source_file": "release_302551316.html",
+    "sha256": "7273cbb974d17170acb1d2b7f2b338e90471ab97dfa67f9535cd9436fc116e65",
+    "title": "Synopsys Posts Financial Results for Third Quarter Fiscal Year 2025",
+    "published": "2025-09-09 16:05:00-04:00",
+    "modified": "2025-09-12 04:35:00-04:00",
+    "available_after": "2025-09-12 04:35:00-04:00",
+    "reported_fiscal_year": 2025,
+    "reported_quarter": 3,
+    "reported_quarter_end": "2025-07-31",
+    "presented_calendar_end": "2025-07-31",
+    "period_basis": "Synopsys' third quarter of fiscal year 2025 and 2024 ended on July 31, 2025 and August 3, 2024, respectively.",
+    "calendar_presentation_basis": "For presentation purposes, we refer to the closest calendar month end.",
+    "scope_review_excerpts": [
+      "Continuing Operations On September 30, 2024 , Synopsys completed the sale of its Software Integrity business. Unless otherwise noted, Synopsys' Software Integrity business has been presented as a discontinued operation in the Synopsys' consolidated financial statements for all periods presented herein and all financial results and targets are presented herein on a continuing operations basis.",
+      "Financial Targets Synopsys also provided its consolidated financial targets for the fourth quarter and full fiscal year 2025. These targets reflect a change in Synopsys' fiscal year from a 52/53-week period ending on the Saturday nearest to October 31 of each year to October 31 of each year. As a result of this change, there will be ten fewer days in the first half of fiscal year 2025 and two extra days in the second half of fiscal year 2025, which results in eight fewer days in the aggregate in Synopsys' fiscal year 2025 as compared to its fiscal year 2024. These targets also assume no further changes to export control restrictions or the current U.S. government \"Entity List\" restrictions. These targets constitute forward-looking statements and are based on current expectations. For a discussion of factors that could cause actual results to differ materially from these targets, see \"Forward-Looking Statements\" below.",
+      "(1) Synopsys' third quarter of fiscal year 2025 and 2024 ended on July 31, 2025 and August 3, 2024, respectively. For presentation purposes, we refer to the closest calendar month end. Fiscal year 2024 was a 53-week year, which included an extra week in the first quarter.",
+      "(1) Synopsys' third quarter of fiscal year 2025 ended on July 31, 2025 and its fiscal year 2024 ended on November 2, 2024, respectively. For presentation purposes, we refer to the closest calendar month end. Fiscal year 2024 was a 53-week year, which included an extra week in the first quarter.",
+      "(1) Synopsys' third quarter of fiscal year 2025 ended on July 31, 2025 and its fiscal year 2024 ended on November 2, 2024, respectively. For presentation purposes, we refer to the closest calendar month end. Fiscal year 2024 was a 53-week year,",
+      "(2) Synopsys' third quarter of fiscal year 2025 and 2024 ended on July 31, 2025 and August 3, 2024, respectively. For presentation purposes, we refer to the closest calendar month end. Fiscal year 2024 was a 53-week year, which included an extra week in the first quarter.",
+      "the closest calendar month end. Fiscal year 2024 was a 53-week year, which included an extra week in the first quarter.",
+      "When possible, Synopsys provides a reconciliation of non-GAAP financial measures to their most closely applicable GAAP financial measures. Synopsys is unable to provide a full reconciliation of certain fourth quarter and full fiscal year 2025 non-GAAP financial targets to the corresponding GAAP financial measures on a forward-looking basis because Synopsys believes that it would not be possible for it to have the required information necessary to quantitatively reconcile such measures with sufficient precision without unreasonable efforts due to, among other things, the potential variability and limited predictability of the excluded adjustment items necessary for a full reconciliation such as certain acquisition/divestiture related items, restructuring charges, tax deduction variability, changes in the fair value of non-qualified deferred compensation plan, and gains (losses) on the sale of strategic investments. For the same reasons, Synopsys is unable to address the probable significance of the unavailable information."
+    ],
+    "fiscal_year": 2025,
+    "next_quarter": 4,
+    "quarter_range_million": [
+      2230.0,
+      2260.0
+    ],
+    "annual_range_million": [
+      7030.0,
+      7060.0
+    ],
+    "guidance_source_row": [
+      "Revenue",
+      "$              2,230",
+      "$              2,260",
+      "",
+      "$              7,030",
+      "$              7,060"
+    ],
+    "guidance_context": "Fourth Quarter and Full Fiscal Year 2025 Financial Targets (in millions except per share amounts) Range for Three Months Ending Range for Fiscal Year Ending October 31, 2025 October 31, 2025 Low High Low High Revenue $              2,230 $              2,260 $              7,030 $              7,060 GAAP Expenses $              2,115 $              2,139 $              6,079 $              6,103 Non-GAAP Expenses $              1,440 $              1,450 $              4,430 $              4,440 Non-GAAP Interest and Other Income (Expense), net $                (179) $                (181) $                  (92) $                  (94) Non-GAAP Tax Rate 16 % 16 % 16 % 16 % Outstanding Shares (fully diluted) 187 188 165 166 GAAP EPS $               (0.27) $               (0.16) $                5.03 $                5.16 Non-GAAP EPS $                2.76 $                2.80 $              12.76 $              12.80 Operating Cash Flow ~$1,130 Free Cash Flow (1) ~$950 Capital Expenditures ~$180 (1) Free cash flow is calculated as cash provided from operating activities less capital expenditures.",
+    "actual_revenue_million": 1739.737,
+    "actual_source_row": [
+      "Total revenue",
+      "1,739,737",
+      "",
+      "1,525,749",
+      "",
+      "4,799,318",
+      "",
+      "4,491,450"
+    ],
+    "remaining_year_revision_million": 300.2629999999999,
+    "previous_source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-second-quarter-fiscal-year-2025-302467545.html",
+    "realized_surprise_million": -30.26299999999992
+  },
+  {
+    "symbol": "SNPS",
+    "source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-fourth-quarter-and-fiscal-year-2025-302638321.html",
+    "source_file": "release_302638321.html",
+    "sha256": "f76d55d8dc6d6b1ea3e14204f83bd8ae773de8e18c6d83e68085403742416ca2",
+    "title": "Synopsys Posts Financial Results for Fourth Quarter and Fiscal Year 2025",
+    "published": "2025-12-10 16:05:00-05:00",
+    "modified": "2025-12-10 16:06:07-05:00",
+    "available_after": "2025-12-10 16:06:07-05:00",
+    "reported_fiscal_year": 2025,
+    "reported_quarter": 4,
+    "reported_quarter_end": "2025-10-31",
+    "presented_calendar_end": "2025-10-31",
+    "period_basis": "Synopsys' fourth quarter of fiscal year 2025 and 2024 ended on October 31, 2025 and November 2, 2024, respectively.",
+    "calendar_presentation_basis": "For presentation purposes, we refer to the closest calendar month end.",
+    "scope_review_excerpts": [
+      "Expecting fiscal year 2026 revenue of $9.610 billion at mid-point, including $2.9 billion of expected Ansys revenue and reflecting the impact of approximately $110 million of divested Optical Solutions Group and PowerArtist RTL businesses.",
+      "SUNNYVALE, Calif. , Dec. 10, 2025 /PRNewswire/ -- Synopsys, Inc. (Nasdaq: SNPS ) today reported results for its fourth quarter and fiscal year 2025. Revenue for the fourth quarter of fiscal year 2025 was $2.255 billion, compared to $1.636 billion for the fourth quarter of fiscal year 2024. Ansys contributed $667.7 million in revenue for the fourth quarter of fiscal year 2025. Revenue for fiscal year 2025 was $7.054 billion, an increase of approximately 15% from $6.127 billion in fiscal year 2024. Ansys contributed $756.6 million in revenue for fiscal year 2025.",
+      "Continuing Operations On September 30, 2024, Synopsys completed the sale of its Software Integrity business. Unless otherwise noted, Synopsys' Software Integrity business has been presented as a discontinued operation in the Synopsys' consolidated financial statements for all periods presented herein and all financial results and targets are presented herein on a continuing operations basis.",
+      "Financial Targets Synopsys also provided its consolidated financial targets for the first quarter and full fiscal year 2026. These targets also assume no further changes to export control restrictions or the current U.S. government \"Entity List\" restrictions. These targets constitute forward-looking statements and are based on current expectations. For a discussion of factors that could cause actual results to differ materially from these targets, see \"Forward-Looking Statements\" below.",
+      "(1) Synopsys' fourth quarter of fiscal year 2025 and 2024 ended on October 31, 2025 and November 2, 2024, respectively. For presentation purposes, we refer to the closest calendar month end. Fiscal year 2024 was a 53-week year, which included an extra week in the first quarter.",
+      "(1) Synopsys' fiscal year 2025 and 2024 ended on October 31, 2025 and November 2, 2024, respectively. For presentation purposes, we refer to the closest calendar month end. Fiscal year 2024 was a 53-week year, which included an extra week in the first quarter.",
+      "(2) Synopsys' fourth quarter of fiscal year 2025 and 2024 ended on October 31, 2025 and November 2, 2024, respectively. For presentation purposes, we refer to the closest calendar month end. Fiscal year 2024 was a 53-week year, which included an extra week in the first quarter.",
+      "When possible, Synopsys provides a reconciliation of non-GAAP financial measures to their most closely applicable GAAP financial measures. Synopsys is unable to provide a full reconciliation of certain first quarter and full fiscal year 2026 non-GAAP financial targets to the corresponding GAAP financial measures on a forward-looking basis because Synopsys believes that it would not be possible for it to have the required information necessary to quantitatively reconcile such measures with sufficient precision without unreasonable efforts due to, among other things, the potential variability and limited predictability of the excluded adjustment items necessary for a full reconciliation such as certain acquisition/divestiture related items, tax deduction variability, changes in the fair value of non-qualified deferred compensation plan, and gains (losses) on the sale of strategic investments. For the same reasons, Synopsys is unable to address the probable significance of the unavailable information.",
+      "(vii) Income tax effect of non-GAAP pre-tax adjustments . Excluding the income tax effect of non-GAAP pre-tax adjustments from the provision for income taxes assists investors in understanding the tax provision associated with those adjustments and the effect on net income.  Beginning in fiscal year 2026, we will transition from an annual non-GAAP tax rate to a three-year normalized non-GAAP tax rate. We believe this will provide better consistency across reporting periods by eliminating the effects of non-recurring and period-specific items, which can vary in size and frequency and do not necessarily reflect our normal operations. This rate is based on our projected annual rate through fiscal year 2028, primarily due to the completion of the acquisition of Ansys in the third quarter of fiscal year 2025 and the enactment of One Big Beautiful Bill Act (the \" OBBB \"), which affects taxable income starting in fiscal year 2026 over the next several years.  In projecting this rate, we evaluated our historical and projected mix of U.S. and international profit before tax, excluding the impact of stock-based compensation, the amortization of purchased intangibles and other GAAP only adjustments described above. We also considered other factors including our current tax structure, U.S. tax law changes, such as OBBB which impacts Synopsys' expensing of the U.S. research expenditures commencing in fiscal year 2026, and changes to foreign derived intangible income commencing in fiscal year 2027."
+    ],
+    "fiscal_year": 2026,
+    "next_quarter": 1,
+    "quarter_range_million": [
+      2365.0,
+      2415.0
+    ],
+    "annual_range_million": [
+      9560.0,
+      9660.0
+    ],
+    "guidance_source_row": [
+      "Revenue",
+      "$              2,365",
+      "$              2,415",
+      "",
+      "$              9,560",
+      "$              9,660"
+    ],
+    "guidance_context": "First Quarter and Full Fiscal Year 2026 Financial Targets (in millions except per share amounts) Range for Three Months Ending Range for Fiscal Year Ending January 31, 2026 October 31, 2026 Low High Low High Revenue $              2,365 $              2,415 $              9,560 $              9,660 GAAP Expenses $              2,165 $              2,230 $              8,468 $              8,608 Non-GAAP Expenses $              1,395 $              1,425 $              5,690 $              5,750 Non-GAAP Interest and Other Income (Expense), net $                (154) $                (150) $                (515) $                (505) Non-GAAP Tax Rate 18 % 18 % 18 % 18 % Outstanding Shares (fully diluted) 190 192 192 194 GAAP EPS $                0.22 $                0.41 $                2.49 $                2.90 Non-GAAP EPS $                3.52 $                3.58 $              14.32 $              14.40 Operating Cash Flow ~$2,200 Free Cash Flow (1) ~$1,900 Capital Expenditures ~$300 (1) Free cash flow is calculated as cash provided from operating activities less capital expenditures.",
+    "actual_revenue_million": 2254.86,
+    "actual_source_row": [
+      "Total revenue",
+      "2,254,860",
+      "",
+      "1,635,986",
+      "",
+      "7,054,178",
+      "",
+      "6,127,436"
+    ],
+    "remaining_year_revision_million": null,
+    "previous_source": null
+  },
+  {
+    "symbol": "SNPS",
+    "source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-first-quarter-fiscal-year-2026-302697317.html",
+    "source_file": "release_302697317.html",
+    "sha256": "299696bce1659253e5511fb16cfe5288ac634e36a1429a8e991351afddd38f8c",
+    "title": "Synopsys Posts Financial Results for First Quarter Fiscal Year 2026",
+    "published": "2026-02-25 16:05:00-05:00",
+    "modified": "2026-02-25 16:06:08-05:00",
+    "available_after": "2026-02-25 16:06:08-05:00",
+    "reported_fiscal_year": 2026,
+    "reported_quarter": 1,
+    "reported_quarter_end": "2026-01-31",
+    "presented_calendar_end": "2026-01-31",
+    "period_basis": "Calendar fiscal quarters after FY2025 change; independently verify against original SEC period.",
+    "calendar_presentation_basis": null,
+    "scope_review_excerpts": [
+      "Financial Targets Synopsys also provided its consolidated financial targets for the second quarter and full fiscal year 2026. These targets also assume no further changes to export control restrictions or the current U.S. government \"Entity List\" restrictions. These targets constitute forward-looking statements and are based on current expectations. For a discussion of factors that could cause actual results to differ materially from these targets, see \"Forward-Looking Statements\" below.",
+      "When possible, Synopsys provides a reconciliation of non-GAAP financial measures to their most closely applicable GAAP financial measures. Synopsys is unable to provide a full reconciliation of certain second quarter and full fiscal year 2026 non-GAAP financial targets to the corresponding GAAP financial measures on a forward-looking basis because Synopsys believes that it would not be possible for it to have the required information necessary to quantitatively reconcile such measures with sufficient precision without unreasonable efforts due to, among other things, the potential variability and limited predictability of the excluded adjustment items necessary for a full reconciliation such as certain acquisition/divestiture related items, tax deduction variability, changes in the fair value of non-qualified deferred compensation plan, and gains (losses) on the sale of strategic investments. For the same reasons, Synopsys is unable to address the probable significance of the unavailable information.",
+      "(vii) Income tax effect of non-GAAP pre-tax adjustments . Excluding the income tax effect of non-GAAP pre-tax adjustments from the provision for income taxes assists investors in understanding the tax provision associated with those adjustments and the effect on net income.  Beginning in fiscal year 2026, we will transition from an annual non-GAAP tax rate to a three-year normalized non-GAAP tax rate. We believe this will provide better consistency across reporting periods by eliminating the effects of non-recurring and period-specific items, which can vary in size and frequency and do not necessarily reflect our normal operations. This rate is based on our projected annual rate through fiscal year 2028, primarily due to the completion of the acquisition of Ansys in the third quarter of fiscal year 2025 and the enactment of One Big Beautiful Bill Act (the \" OBBB \"), which affects taxable income starting in fiscal year 2026 over the next several years. In projecting this rate, we evaluated our historical and projected mix of U.S. and international profit before tax, excluding the impact of stock-based compensation, the amortization of purchased intangibles and other GAAP only adjustments described above. We also considered other factors, including our current tax structure, U.S. tax law changes, such as the OBBB which impacts Synopsys' expensing of U.S. research expenditures commencing in fiscal year 2026, and changes to foreign derived intangible income commencing in fiscal year 2027."
+    ],
+    "fiscal_year": 2026,
+    "next_quarter": 2,
+    "quarter_range_million": [
+      2225.0,
+      2275.0
+    ],
+    "annual_range_million": [
+      9560.0,
+      9660.0
+    ],
+    "guidance_source_row": [
+      "Revenue",
+      "$              2,225",
+      "$              2,275",
+      "",
+      "$              9,560",
+      "$              9,660"
+    ],
+    "guidance_context": "Second Quarter and Full Fiscal Year 2026 Financial Targets (in millions except per share amounts) Range for Three Months Ending Range for Fiscal Year Ending April 30, 2026 October 31, 2026 Low High Low High Revenue $              2,225 $              2,275 $              9,560 $              9,660 GAAP Expenses $              2,020 $              2,085 $              8,461 $              8,601 Non-GAAP Expenses $              1,380 $              1,410 $              5,690 $              5,750 Non-GAAP Interest and Other Income (Expense), net $                (117) $                (113) $                (500) $                (490) Non-GAAP Tax Rate 18 % 18 % 18 % 18 % Outstanding Shares (fully diluted) 192 194 192 194 GAAP EPS $                0.23 $                0.43 $                2.21 $                2.62 Non-GAAP EPS $                3.11 $                3.17 $              14.38 $              14.46 Operating Cash Flow ~$2,200 Free Cash Flow (1) ~$1,900 Capital Expenditures ~$300 (1) Free cash flow is calculated as cash provided from operating activities less capital expenditures.",
+    "actual_revenue_million": 2408.798,
+    "actual_source_row": [
+      "Total revenue",
+      "2,408,798",
+      "",
+      "1,455,315"
+    ],
+    "remaining_year_revision_million": -18.797999999999774,
+    "previous_source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-fourth-quarter-and-fiscal-year-2025-302638321.html",
+    "realized_surprise_million": 18.797999999999774
+  },
+  {
+    "symbol": "SNPS",
+    "source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-second-quarter-fiscal-year-2026-302783403.html",
+    "source_file": "release_302783403.html",
+    "sha256": "ccb85deaec7ce72be27ccfb8e72f9d1602337a90d0e0786c1176a5e12aae4d89",
+    "title": "Synopsys Posts Financial Results for Second Quarter Fiscal Year 2026",
+    "published": "2026-05-27 16:05:00-04:00",
+    "modified": "2026-05-27 16:05:45-04:00",
+    "available_after": "2026-05-27 16:05:45-04:00",
+    "reported_fiscal_year": 2026,
+    "reported_quarter": 2,
+    "reported_quarter_end": "2026-04-30",
+    "presented_calendar_end": "2026-04-30",
+    "period_basis": "Calendar fiscal quarters after FY2025 change; independently verify against original SEC period.",
+    "calendar_presentation_basis": null,
+    "scope_review_excerpts": [
+      "Financial Targets Synopsys also provided its consolidated financial targets for the third quarter and full fiscal year 2026. These targets assume no further changes to export control restrictions or the current U.S. government \"Entity List\" restrictions. These targets constitute forward-looking statements and are based on current expectations. For a discussion of factors that could cause actual results to differ materially from these targets, see \"Forward-Looking Statements\" below.",
+      "(1) Fiscal year 2026 revenue includes $2.96 billion of expected Ansys revenue (including $60 million related to an accounting impact for Ansys channel partners), and reflects the impact of approximately $110 million of the divested Optical Solutions Group and PowerArtist RTL businesses, and $40 million related to the expected divestiture of the Processor IP Solutions business.",
+      "(1) Fiscal year 2026 revenue includes $2.96 billion of expected Ansys revenue (including $60 million related to an accounting impact for Ansys channel partners), and reflects the impact of approximately $110 million of the divested Optical Solutions Group and PowerArtist RTL businesses, and $40 million related to the expected",
+      "Availability of Final Financial Statements Synopsys will include final financial statements for the second quarter of fiscal year 2026 in its quarterly report on Form 10-Q to be filed with the Securities and Exchange Commission (SEC) and available at www.sec.gov on or before June 9, 2026.",
+      "Continuing Operations On Sept. 30, 2024, Synopsys completed the sale of its Software Integrity business. Unless otherwise noted, Synopsys' Software Integrity business has been presented as a discontinued operation in the Synopsys' consolidated financial statements for all periods presented herein and all financial results and targets are presented herein on a continuing operations basis.",
+      "When possible, Synopsys provides a reconciliation of non-GAAP financial measures to their most closely applicable GAAP financial measures. Synopsys is unable to provide a full reconciliation of certain third quarter and full fiscal year 2026 non-GAAP financial targets to the corresponding GAAP financial measures on a forward-looking basis because Synopsys believes that it would not be possible for it to have the required information necessary to quantitatively reconcile such measures with sufficient precision without unreasonable efforts due to, among other things, the potential variability and limited predictability of the excluded adjustment items necessary for a full reconciliation such as certain acquisition/divestiture related items, tax deduction variability, changes in the fair value of non-qualified deferred compensation plan, and gains (losses) on the sale of strategic investments. For the same reasons, Synopsys is unable to address the probable significance of the unavailable information.",
+      "(vii) Income tax effect of non-GAAP pre-tax adjustments . Excluding the income tax effect of non-GAAP pre-tax adjustments from the provision for income taxes assists investors in understanding the tax provision associated with those adjustments and the effect on net income.  Beginning in fiscal year 2026, we transitioned from an annual non-GAAP tax rate to a three-year normalized non-GAAP tax rate of 18.0%. We believe this will provide better consistency across reporting periods by eliminating the effects of non-recurring and period-specific items, which can vary in size and frequency and do not necessarily reflect our normal operations. This rate is based on our projected annual rate through fiscal year 2028, primarily due to the completion of the acquisition of Ansys in the third quarter of fiscal year 2025 and the enactment of the One Big Beautiful Bill Act (the OBBB), which affects taxable income starting in fiscal year 2026 over the next several years. In projecting this rate, we evaluated our historical and projected mix of U.S. and international profit before tax, excluding the impact of stock-based compensation, the amortization of purchased intangibles and other GAAP only adjustments described above. We also considered other factors, including our current tax structure, U.S. tax law changes, such as the OBBB which impacts Synopsys' expensing of U.S. research expenditures commencing in fiscal year 2026, and changes to foreign derived intangible income commencing in fiscal year 2027."
+    ],
+    "fiscal_year": 2026,
+    "next_quarter": 3,
+    "quarter_range_million": [
+      2410.0,
+      2460.0
+    ],
+    "annual_range_million": [
+      9625.0,
+      9705.0
+    ],
+    "guidance_source_row": [
+      "Revenue (1)",
+      "$         2,410",
+      "$         2,460",
+      "",
+      "$         9,625",
+      "$         9,705"
+    ],
+    "guidance_context": "Third Quarter and Full Fiscal Year 2026 Financial Targets (in millions, except per share amounts) Range for Three Months Ending Range for Fiscal Year Ending July 31, 2026 October 31, 2026 Low High Low High Revenue (1) $         2,410 $         2,460 $         9,625 $         9,705 GAAP Expenses $         2,075 $         2,125 $         8,469 $         8,599 Non-GAAP Expenses $         1,440 $         1,470 $         5,675 $         5,725 Non-GAAP Interest and Other Income (Expense), net $           (121) $           (117) $           (495) $           (485) Non-GAAP Tax Rate 18 % 18 % 18 % 18 % Outstanding Shares (fully diluted) 192 194 192 194 GAAP EPS $           0.84 $           0.98 $           2.49 $           2.91 Non-GAAP EPS $           3.63 $           3.69 $         14.72 $         14.80 Operating Cash Flow ~$2,300 Free Cash Flow (2) ~$2,000 Capital Expenditures ~$300 (1) Fiscal year 2026 revenue includes $2.96 billion of expected Ansys revenue (including $60 million related to an accounting impact for Ansys channel partners), and reflects the impact of approximately $110 million of the divested Optical Solutions Group and PowerArtist RTL businesses, and $40 million related to the expected divestiture of the Processor IP Solutions business. (2) Free cash flow is calculated as cash provided from operating activities less capital expenditures.",
+    "actual_revenue_million": 2275.985,
+    "actual_source_row": [
+      "Total revenue",
+      "2,275,985",
+      "",
+      "1,604,266",
+      "",
+      "4,684,783",
+      "",
+      "3,059,581"
+    ],
+    "remaining_year_revision_million": 29.014999999999873,
+    "previous_source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-first-quarter-fiscal-year-2026-302697317.html",
+    "realized_surprise_million": 25.985000000000127
+  },
+  {
+    "symbol": "SNPS",
+    "source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-third-quarter-fiscal-year-2026-302860810.html",
+    "source_file": "release_302860810.html",
+    "sha256": "e3cf665d638dec409d88c8afb00bbd37ff20e9eef9634837bd5870ee55f0650e",
+    "title": "Synopsys Posts Financial Results for Third Quarter Fiscal Year 2026",
+    "published": "2026-08-26 16:05:00-04:00",
+    "modified": "2026-08-26 16:05:00-04:00",
+    "available_after": "2026-08-26 16:05:00-04:00",
+    "reported_fiscal_year": 2026,
+    "reported_quarter": 3,
+    "reported_quarter_end": "2026-07-31",
+    "presented_calendar_end": "2026-07-31",
+    "period_basis": "Calendar fiscal quarters after FY2025 change; independently verify against original SEC period.",
+    "calendar_presentation_basis": null,
+    "scope_review_excerpts": [
+      "\"Synopsys delivered an outstanding third quarter, with revenue and earnings per share exceeding the high end of our guidance range. Results were driven by broad-based strength across the business, led by EDA, a strong quarter from Ansys, and our design IP business returned to year-over-year growth,\" said Shelagh Glaser, CFO of Synopsys. \"Given our strong performance and expectations for double-digit growth in EDA, we are raising our full year revenue, non-GAAP operating margin, EPS and cash flow guidance.\"",
+      "Financial Targets Synopsys also provided its consolidated financial targets for the fourth quarter and full fiscal year 2026. These targets assume no further changes to export control restrictions or the current U.S. government \"Entity List\" restrictions. These targets constitute forward-looking statements and are based on current expectations. For a discussion of factors that could cause actual results to differ materially from these targets, see \"Forward-Looking Statements\" below.",
+      "(1) Fiscal year 2026 revenue includes $2.98 billion of expected Ansys revenue, and reflects the impact of approximately $110 million of the divested Optical Solutions Group and PowerArtist RTL businesses, and $40 million related to the recently completed divestiture of the Processor IP Solutions business.",
+      "Availability of Final Financial Statements Synopsys will include final financial statements for the third quarter of fiscal year 2026 in its quarterly report on Form 10-Q to be filed with the Securities and Exchange Commission (SEC) and available at www.sec.gov on or before September 9, 2026.",
+      "Continuing Operations On Sept. 30, 2024, Synopsys completed the sale of its Software Integrity business. Unless otherwise noted, Synopsys' Software Integrity business has been presented as a discontinued operation in Synopsys' consolidated financial statements for all periods presented herein and all financial results and targets are presented herein on a continuing operations basis.",
+      "When possible, Synopsys provides a reconciliation of non-GAAP financial measures to their most closely applicable GAAP financial measures. Synopsys is unable to provide a full reconciliation of certain fourth quarter and full fiscal year 2026 non-GAAP financial targets to the corresponding GAAP financial measures on a forward-looking basis because Synopsys believes that it would not be possible for it to have the information necessary to quantitatively reconcile such measures with sufficient precision without unreasonable efforts due to, among other things, the potential variability and limited predictability of the excluded adjustment items necessary for a full reconciliation such as certain acquisition/divestiture related items, tax deduction variability, changes in the fair value of non-qualified deferred compensation plan, and gains (losses) on the sale of strategic investments. For the same reasons, Synopsys is unable to address the probable significance of the unavailable information.",
+      "(vii) Income tax effect of non-GAAP pre-tax adjustments . Excluding the income tax effect of non-GAAP pre-tax adjustments from the provision for income taxes assists investors in understanding the tax provision associated with those adjustments and the effect on net income.  Beginning in fiscal year 2026, we transitioned from an annual non-GAAP tax rate to a three-year normalized non-GAAP tax rate of 18.0%. We believe this will provide better consistency across reporting periods by eliminating the effects of non-recurring and period-specific items, which can vary in size and frequency and do not necessarily reflect our normal operations. This rate is based on our projected annual rate through fiscal year 2028, primarily due to the completion of the acquisition of Ansys in the third quarter of fiscal year 2025 and the enactment of the One Big Beautiful Bill Act (the OBBB), which affects taxable income starting in fiscal year 2026 over the next several years. In projecting this rate, we evaluated our historical and projected mix of U.S. and international profit before tax, excluding the impact of stock-based compensation, the amortization of purchased intangibles and other GAAP only adjustments described above. We also considered other factors, including our current tax structure, U.S. tax law changes, such as the OBBB which impacts Synopsys' expensing of U.S. research expenditures commencing in fiscal year 2026, and changes to foreign derived intangible income commencing in fiscal year 2027."
+    ],
+    "fiscal_year": 2026,
+    "next_quarter": 4,
+    "quarter_range_million": [
+      2530.0,
+      2580.0
+    ],
+    "annual_range_million": [
+      9690.0,
+      9740.0
+    ],
+    "guidance_source_row": [
+      "Revenue (1)",
+      "$         2,530",
+      "$         2,580",
+      "",
+      "$         9,690",
+      "$         9,740"
+    ],
+    "guidance_context": "Fourth Quarter and Full Fiscal Year 2026 Financial Targets (in millions, except per share amounts) Range for Three Months Ending Range for Fiscal Year Ending October 31, 2026 October 31, 2026 Low High Low High Revenue (1) $         2,530 $         2,580 $         9,690 $         9,740 GAAP Expenses $         2,225 $         2,300 $         8,667 $         8,742 Non-GAAP Expenses $         1,450 $         1,480 $         5,670 $         5,700 Non-GAAP Interest and Other Income (Expense), net $           (119) $           (115) $           (485) $           (481) Non-GAAP Tax Rate 18 % 18 % 18 % 18 % Outstanding Shares (fully diluted) 192 194 192 194 GAAP Operating Margin Midpt: ~10.4% Non-GAAP Operating Margin Midpt: ~41.5% GAAP EPS $           0.60 $           0.85 $           3.84 $           4.08 Non-GAAP EPS $           4.10 $           4.16 $         15.04 $         15.10 Operating Cash Flow ~$2,800 Free Cash Flow (2) ~$2,600 Capital Expenditures ~$225 (1) Fiscal year 2026 revenue includes $2.98 billion of expected Ansys revenue, and reflects the impact of approximately $110 million of the divested Optical Solutions Group and PowerArtist RTL businesses, and $40 million related to the recently completed divestiture of the Processor IP Solutions business. (2) Free cash flow is calculated as cash provided from operating activities less capital expenditures.",
+    "actual_revenue_million": 2476.822,
+    "actual_source_row": [
+      "Total revenue",
+      "2,476,822",
+      "",
+      "1,739,737",
+      "",
+      "7,161,605",
+      "",
+      "4,799,318"
+    ],
+    "remaining_year_revision_million": 8.177999999999884,
+    "previous_source": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-second-quarter-fiscal-year-2026-302783403.html",
+    "realized_surprise_million": 41.822000000000116
+  }
+]

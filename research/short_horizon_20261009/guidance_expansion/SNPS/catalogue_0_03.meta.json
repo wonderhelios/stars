@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news/synopsys%2C-inc./?page=3&pagesize=100",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "4bb943b808a4f15fe5cdf972fe556e86ba81cca0e04221111b178c951e08e912",
+  "retrieved_utc": "2026-10-09T03:30:49Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news/synopsys%2C-inc./?page=3&pagesize=100",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "4bb943b808a4f15fe5cdf972fe556e86ba81cca0e04221111b178c951e08e912",
+      "retrieved_utc": "2026-10-09T03:30:49Z"
+    }
+  ]
+}

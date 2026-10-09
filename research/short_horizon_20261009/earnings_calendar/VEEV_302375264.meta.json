@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/veeva-to-release-fiscal-2025-fourth-quarter-and-full-year-results-on-march-5-2025-302375264.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "d4507268c1a9894834c573db15cd008f4e25496186837bbb12073aa0bd64abc3",
+  "retrieved_utc": "2026-10-09T04:10:13Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/veeva-to-release-fiscal-2025-fourth-quarter-and-full-year-results-on-march-5-2025-302375264.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "d4507268c1a9894834c573db15cd008f4e25496186837bbb12073aa0bd64abc3",
+      "retrieved_utc": "2026-10-09T04:10:13Z"
+    }
+  ]
+}

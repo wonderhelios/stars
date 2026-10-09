@@ -1,0 +1,690 @@
+[
+  {
+    "event": "2023-06-14",
+    "coin": "BTC",
+    "rows": 1637,
+    "categories": {
+      "ordinary": 1626,
+      "block": 11
+    },
+    "file": "2023-06-14_BTC_entry.json",
+    "sha256": "c92b49e5d75b23d3b2800e4c121cce60ad7bcf0f194eff50998376d681337e17",
+    "status": "complete"
+  },
+  {
+    "event": "2023-06-14",
+    "coin": "ETH",
+    "rows": 1004,
+    "categories": {
+      "ordinary": 988,
+      "combo": 12,
+      "block": 4
+    },
+    "file": "2023-06-14_ETH_entry.json",
+    "sha256": "e0e1adbb17749e9bb1c6eea465013cc74e8667f4d263d5524863e7d061df8cd2",
+    "status": "complete"
+  },
+  {
+    "event": "2023-07-26",
+    "coin": "BTC",
+    "rows": 1164,
+    "categories": {
+      "ordinary": 1144,
+      "block": 20
+    },
+    "file": "2023-07-26_BTC_entry.json",
+    "sha256": "99d5e2b2fe0fe485db2b86cc9755332602eefecba1bfbe96e8ebc82206e9228e",
+    "status": "complete"
+  },
+  {
+    "event": "2023-07-26",
+    "coin": "ETH",
+    "rows": 1087,
+    "categories": {
+      "ordinary": 1078,
+      "block": 9
+    },
+    "file": "2023-07-26_ETH_entry.json",
+    "sha256": "78ac23d497b3ccd032fbf0c92026c8c27207b4b3df97d54234ffa8a5e2b9b5e9",
+    "status": "complete"
+  },
+  {
+    "event": "2023-09-20",
+    "coin": "BTC",
+    "rows": 1682,
+    "categories": {
+      "ordinary": 1650,
+      "block": 30,
+      "combo": 2
+    },
+    "file": "2023-09-20_BTC_entry.json",
+    "sha256": "6a164cb9642a872b9d280ebc535d71dcb3a2479698ab3c64a914ad4440a21470",
+    "status": "complete"
+  },
+  {
+    "event": "2023-09-20",
+    "coin": "ETH",
+    "rows": 1271,
+    "categories": {
+      "ordinary": 1263,
+      "block": 8
+    },
+    "file": "2023-09-20_ETH_entry.json",
+    "sha256": "012076725c3417958d5636a95646bda872f809d303314882b1efd88663363b23",
+    "status": "complete"
+  },
+  {
+    "event": "2023-11-01",
+    "coin": "BTC",
+    "rows": 1830,
+    "categories": {
+      "ordinary": 1785,
+      "block": 35,
+      "combo": 10
+    },
+    "file": "2023-11-01_BTC_entry.json",
+    "sha256": "48a2a760b5ae8e8c2fe1e80df21a274923918bf15b882291031795df16135360",
+    "status": "complete"
+  },
+  {
+    "event": "2023-11-01",
+    "coin": "ETH",
+    "rows": 1306,
+    "categories": {
+      "ordinary": 1287,
+      "block": 19
+    },
+    "file": "2023-11-01_ETH_entry.json",
+    "sha256": "73aba0e57f042272776bc25113f4486364e5195b6767642914e70329c762f3f7",
+    "status": "complete"
+  },
+  {
+    "event": "2023-12-13",
+    "coin": "BTC",
+    "rows": 2634,
+    "categories": {
+      "ordinary": 2556,
+      "block": 76,
+      "combo": 2
+    },
+    "file": "2023-12-13_BTC_entry.json",
+    "sha256": "7b24f6ea5bc6fc89aace88d7b48ce2434791d7469fde39d3111292d3453add76",
+    "status": "complete"
+  },
+  {
+    "event": "2023-12-13",
+    "coin": "ETH",
+    "rows": 1802,
+    "categories": {
+      "ordinary": 1780,
+      "block": 22
+    },
+    "file": "2023-12-13_ETH_entry.json",
+    "sha256": "561267a629eee3d44bc75dd6dd57524e663231a6410661ea91dac78645c68d0d",
+    "status": "complete"
+  },
+  {
+    "event": "2024-01-31",
+    "coin": "BTC",
+    "rows": 1693,
+    "categories": {
+      "ordinary": 1671,
+      "combo": 4,
+      "block": 18
+    },
+    "file": "2024-01-31_BTC_entry.json",
+    "sha256": "5074393b14517d131cba22f0f2a9a4d7254b1cb8774f0cbf32f03e1e108e1012",
+    "status": "complete"
+  },
+  {
+    "event": "2024-01-31",
+    "coin": "ETH",
+    "rows": 1065,
+    "categories": {
+      "ordinary": 1059,
+      "block": 6
+    },
+    "file": "2024-01-31_ETH_entry.json",
+    "sha256": "190b79882e6199ae368199739e8045efd338c9927ddd6e2deb8710e87735064b",
+    "status": "complete"
+  },
+  {
+    "event": "2024-03-20",
+    "coin": "BTC",
+    "rows": 2694,
+    "categories": {
+      "combo": 6,
+      "ordinary": 2654,
+      "block": 34
+    },
+    "file": "2024-03-20_BTC_entry.json",
+    "sha256": "08f14e84cff9124f5ab39ed40c3dbbe419fe4bf02b77244b564979487971d282",
+    "status": "complete"
+  },
+  {
+    "event": "2024-03-20",
+    "coin": "ETH",
+    "rows": 2509,
+    "categories": {
+      "ordinary": 2474,
+      "block": 35
+    },
+    "file": "2024-03-20_ETH_entry.json",
+    "sha256": "a045e447bbce514fd3431b605908b4889c6af9dc1bc640330dbccb4ad250944c",
+    "status": "complete"
+  },
+  {
+    "event": "2024-05-01",
+    "coin": "BTC",
+    "rows": 8773,
+    "categories": {
+      "ordinary": 8681,
+      "combo": 15,
+      "block": 77
+    },
+    "file": "2024-05-01_BTC_entry.json",
+    "sha256": "730f1745365932c9ac99afbd01ca0275918981d3b3891572c680ed1433b8f4f2",
+    "status": "complete"
+  },
+  {
+    "event": "2024-05-01",
+    "coin": "ETH",
+    "rows": 6006,
+    "categories": {
+      "ordinary": 5942,
+      "combo": 37,
+      "block": 27
+    },
+    "file": "2024-05-01_ETH_entry.json",
+    "sha256": "bad6854675e9288af4372930c658194f2e09e42ae785dabda5a9ebd65c23c169",
+    "status": "complete"
+  },
+  {
+    "event": "2024-06-12",
+    "coin": "BTC",
+    "rows": 2336,
+    "categories": {
+      "ordinary": 2309,
+      "block": 17,
+      "combo": 10
+    },
+    "file": "2024-06-12_BTC_entry.json",
+    "sha256": "d6b3fc5da1eb17f5b59694125c42d1cea294f0554b67c8142c09e34515bc618d",
+    "status": "complete"
+  },
+  {
+    "event": "2024-06-12",
+    "coin": "ETH",
+    "rows": 1419,
+    "categories": {
+      "ordinary": 1408,
+      "combo": 8,
+      "block": 3
+    },
+    "file": "2024-06-12_ETH_entry.json",
+    "sha256": "d5ad4c03a45914b786636ac6cecea248c111d93759ade94cee9e41adf3535e17",
+    "status": "complete"
+  },
+  {
+    "event": "2024-07-31",
+    "coin": "BTC",
+    "rows": 1565,
+    "categories": {
+      "ordinary": 1515,
+      "block": 44,
+      "combo": 6
+    },
+    "file": "2024-07-31_BTC_entry.json",
+    "sha256": "d7e7bd4719c1734f17b76600382e947e9959d705d52d7eed6cc60ab789f76bf1",
+    "status": "complete"
+  },
+  {
+    "event": "2024-07-31",
+    "coin": "ETH",
+    "rows": 822,
+    "categories": {
+      "ordinary": 820,
+      "block": 2
+    },
+    "file": "2024-07-31_ETH_entry.json",
+    "sha256": "e31d7c80adaccac385d28faddc23f88dd8729ed0be303c09638502ce1ce63006",
+    "status": "complete"
+  },
+  {
+    "event": "2024-09-18",
+    "coin": "BTC",
+    "rows": 1870,
+    "categories": {
+      "block": 14,
+      "ordinary": 1852,
+      "combo": 4
+    },
+    "file": "2024-09-18_BTC_entry.json",
+    "sha256": "6853fb9a500257927f681fcbcd161ac31dfdb154dcea87887fbf17c232146ba4",
+    "status": "complete"
+  },
+  {
+    "event": "2024-09-18",
+    "coin": "ETH",
+    "rows": 778,
+    "categories": {
+      "ordinary": 774,
+      "combo": 4
+    },
+    "file": "2024-09-18_ETH_entry.json",
+    "sha256": "002313d807b33961f3d573b77a8d7a84ccf173ac7dc894ba73b884ae181754d6",
+    "status": "complete"
+  },
+  {
+    "event": "2024-11-07",
+    "coin": "BTC",
+    "rows": 2296,
+    "categories": {
+      "ordinary": 2240,
+      "block": 37,
+      "combo": 19
+    },
+    "file": "2024-11-07_BTC_entry.json",
+    "sha256": "8ded533aebfb16e10bd49b45936eae44b0e67da6c6911ad16f1ccd1f7f69a73b",
+    "status": "complete"
+  },
+  {
+    "event": "2024-11-07",
+    "coin": "ETH",
+    "rows": 1706,
+    "categories": {
+      "ordinary": 1675,
+      "block": 31
+    },
+    "file": "2024-11-07_ETH_entry.json",
+    "sha256": "28d05947b074ecf2ff8e1f9400c156d1dca6898fd5059b16223fb6cbe4e67c55",
+    "status": "complete"
+  },
+  {
+    "event": "2024-12-18",
+    "coin": "BTC",
+    "rows": 2259,
+    "categories": {
+      "ordinary": 2218,
+      "combo": 18,
+      "block": 23
+    },
+    "file": "2024-12-18_BTC_entry.json",
+    "sha256": "dc4ab7f0bad2845fed9d0b5426de1820e87798843338e0995fd161f9da8e313c",
+    "status": "complete"
+  },
+  {
+    "event": "2024-12-18",
+    "coin": "ETH",
+    "rows": 1721,
+    "categories": {
+      "ordinary": 1708,
+      "block": 9,
+      "combo": 4
+    },
+    "file": "2024-12-18_ETH_entry.json",
+    "sha256": "fe6db64fb966f6b16b2bc1659352286f9f06c9e03fe05d5a647426d56651c769",
+    "status": "complete"
+  },
+  {
+    "event": "2025-01-29",
+    "coin": "BTC",
+    "rows": 2297,
+    "categories": {
+      "ordinary": 2276,
+      "combo": 9,
+      "block": 12
+    },
+    "file": "2025-01-29_BTC_entry.json",
+    "sha256": "f6e61a7cda4a5bba2cca703abbdf5969c24f34d04aa15dd611e6b47c175fed28",
+    "status": "complete"
+  },
+  {
+    "event": "2025-01-29",
+    "coin": "ETH",
+    "rows": 1324,
+    "categories": {
+      "ordinary": 1307,
+      "combo": 8,
+      "block": 9
+    },
+    "file": "2025-01-29_ETH_entry.json",
+    "sha256": "2da8c68e84a07c0d3533831ff8356000b1014c005ccc9d25a60fccdb355c19d3",
+    "status": "complete"
+  },
+  {
+    "event": "2025-03-19",
+    "coin": "BTC",
+    "rows": 1634,
+    "categories": {
+      "ordinary": 1584,
+      "block": 44,
+      "combo": 6
+    },
+    "file": "2025-03-19_BTC_entry.json",
+    "sha256": "ba8311b4d58eb32d5e4e2c2c7337811ff1e7ab1e57dbbbc5f9f873b2e71c78ca",
+    "status": "complete"
+  },
+  {
+    "event": "2025-03-19",
+    "coin": "ETH",
+    "rows": 1076,
+    "categories": {
+      "ordinary": 1039,
+      "block": 35,
+      "combo": 2
+    },
+    "file": "2025-03-19_ETH_entry.json",
+    "sha256": "4de6f977f27a033606218e4da49f3ec4d455b133332a0a4418788f54ab2c73fb",
+    "status": "complete"
+  },
+  {
+    "event": "2025-05-07",
+    "coin": "BTC",
+    "rows": 2042,
+    "categories": {
+      "ordinary": 1923,
+      "block": 64,
+      "combo": 55
+    },
+    "file": "2025-05-07_BTC_entry.json",
+    "sha256": "4e1c72c17e24287f0246469f61bf510385b70a1d29a3b721f98ec0b57fe0c0e3",
+    "status": "complete"
+  },
+  {
+    "event": "2025-05-07",
+    "coin": "ETH",
+    "rows": 1271,
+    "categories": {
+      "ordinary": 1235,
+      "combo": 27,
+      "block": 9
+    },
+    "file": "2025-05-07_ETH_entry.json",
+    "sha256": "9ca5912306c68d33b743fadf165e63a96cdf718db9e4d73208a02cd9725cd509",
+    "status": "complete"
+  },
+  {
+    "event": "2025-06-18",
+    "coin": "BTC",
+    "rows": 2089,
+    "categories": {
+      "ordinary": 2056,
+      "combo": 10,
+      "block": 23
+    },
+    "file": "2025-06-18_BTC_entry.json",
+    "sha256": "f9c6f1dcafb90d370933bd6c8b31d97a0618144c86db7e49983819f34b4d4cb9",
+    "status": "complete"
+  },
+  {
+    "event": "2025-06-18",
+    "coin": "ETH",
+    "rows": 1235,
+    "categories": {
+      "ordinary": 1210,
+      "block": 19,
+      "combo": 6
+    },
+    "file": "2025-06-18_ETH_entry.json",
+    "sha256": "e210233140abcae54bfdb70b7afd47f9e692e30c161b9ce15dd08cff8f6af524",
+    "status": "complete"
+  },
+  {
+    "event": "2025-07-30",
+    "coin": "BTC",
+    "rows": 1737,
+    "categories": {
+      "ordinary": 1690,
+      "block": 44,
+      "combo": 3
+    },
+    "file": "2025-07-30_BTC_entry.json",
+    "sha256": "fad99000adfcb2ddb1c98b34ad6f9f15bb9b8eed922126e1371149cb0c3e2268",
+    "status": "complete"
+  },
+  {
+    "event": "2025-07-30",
+    "coin": "ETH",
+    "rows": 1531,
+    "categories": {
+      "ordinary": 1513,
+      "combo": 9,
+      "block": 9
+    },
+    "file": "2025-07-30_ETH_entry.json",
+    "sha256": "0a40cd48cea61d5008604f936786c18c5b22bc52cb7678ef2c2646358aaeb452",
+    "status": "complete"
+  },
+  {
+    "event": "2025-09-17",
+    "coin": "BTC",
+    "rows": 1655,
+    "categories": {
+      "ordinary": 1586,
+      "combo": 18,
+      "block": 51
+    },
+    "file": "2025-09-17_BTC_entry.json",
+    "sha256": "4f483168e1ac19e26b40cea197ad2435c80ca8b4caeb7707ad4f5c25d8c9483e",
+    "status": "complete"
+  },
+  {
+    "event": "2025-09-17",
+    "coin": "ETH",
+    "rows": 1131,
+    "categories": {
+      "ordinary": 1110,
+      "block": 16,
+      "combo": 5
+    },
+    "file": "2025-09-17_ETH_entry.json",
+    "sha256": "107ce2db0d4fba4bec214d996414d10eef4dd621715be9988f67b4bf201351d7",
+    "status": "complete"
+  },
+  {
+    "event": "2025-10-29",
+    "coin": "BTC",
+    "rows": 2190,
+    "categories": {
+      "ordinary": 2122,
+      "block": 60,
+      "combo": 8
+    },
+    "file": "2025-10-29_BTC_entry.json",
+    "sha256": "1bc203968ee496d7df315c8ebb8378512af4191536fb8fc3f10d3169c00ff34f",
+    "status": "complete"
+  },
+  {
+    "event": "2025-10-29",
+    "coin": "ETH",
+    "rows": 1061,
+    "categories": {
+      "ordinary": 1047,
+      "combo": 6,
+      "block": 8
+    },
+    "file": "2025-10-29_ETH_entry.json",
+    "sha256": "09415d6b27232493229ef14ddbf96bb5e5cf43f71965841ba4acc5bea4f67963",
+    "status": "complete"
+  },
+  {
+    "event": "2025-12-10",
+    "coin": "BTC",
+    "rows": 2077,
+    "categories": {
+      "ordinary": 2023,
+      "block": 38,
+      "combo": 16
+    },
+    "file": "2025-12-10_BTC_entry.json",
+    "sha256": "0bc4b0e0d5bafbfdabaddb25b89af2490be0402205efb866127870f6bcde983e",
+    "status": "complete"
+  },
+  {
+    "event": "2025-12-10",
+    "coin": "ETH",
+    "rows": 1265,
+    "categories": {
+      "ordinary": 1245,
+      "block": 20
+    },
+    "file": "2025-12-10_ETH_entry.json",
+    "sha256": "d4467afa30da5d3471c72b716ee7962becd80150caabf22027670bdc5f3f6b91",
+    "status": "complete"
+  },
+  {
+    "event": "2026-01-28",
+    "coin": "BTC",
+    "rows": 2135,
+    "categories": {
+      "ordinary": 2087,
+      "block": 43,
+      "combo": 5
+    },
+    "file": "2026-01-28_BTC_entry.json",
+    "sha256": "e1772840eae6212208fa2b1ed7ed4b8a8db3b9c104c404881622f8e6e64cd32e",
+    "status": "complete"
+  },
+  {
+    "event": "2026-01-28",
+    "coin": "ETH",
+    "rows": 846,
+    "categories": {
+      "ordinary": 834,
+      "combo": 10,
+      "block": 2
+    },
+    "file": "2026-01-28_ETH_entry.json",
+    "sha256": "6360dc9df9b923e4b64a783980c0e14ec5efb670dc320687823df79adf70ec0b",
+    "status": "complete"
+  },
+  {
+    "event": "2026-03-18",
+    "coin": "BTC",
+    "rows": 1753,
+    "categories": {
+      "ordinary": 1679,
+      "block": 45,
+      "combo": 29
+    },
+    "file": "2026-03-18_BTC_entry.json",
+    "sha256": "815642d4f337727eee1085bf6a8a2bfdca5f614de6fa8206a9f48edfd5a1b3f4",
+    "status": "complete"
+  },
+  {
+    "event": "2026-03-18",
+    "coin": "ETH",
+    "rows": 897,
+    "categories": {
+      "ordinary": 877,
+      "block": 18,
+      "combo": 2
+    },
+    "file": "2026-03-18_ETH_entry.json",
+    "sha256": "05a13d699446b7fc581fbebb8c465628d748031e7613a488e26efd3135958ddd",
+    "status": "complete"
+  },
+  {
+    "event": "2026-04-29",
+    "coin": "BTC",
+    "rows": 2002,
+    "categories": {
+      "ordinary": 1963,
+      "block": 33,
+      "combo": 6
+    },
+    "file": "2026-04-29_BTC_entry.json",
+    "sha256": "a8b105f95af905bf5d753d5bf91ac97630cbef5e269ae84ffa570b16800e1813",
+    "status": "complete"
+  },
+  {
+    "event": "2026-04-29",
+    "coin": "ETH",
+    "rows": 801,
+    "categories": {
+      "ordinary": 786,
+      "combo": 6,
+      "block": 9
+    },
+    "file": "2026-04-29_ETH_entry.json",
+    "sha256": "16a366e267283c858726ec7186c773e0ef4bb6b2efeb9fe6194eedd9ef017dec",
+    "status": "complete"
+  },
+  {
+    "event": "2026-06-17",
+    "coin": "BTC",
+    "rows": 1876,
+    "categories": {
+      "ordinary": 1824,
+      "block": 24,
+      "combo": 28
+    },
+    "file": "2026-06-17_BTC_entry.json",
+    "sha256": "b8fa5e7c836613a01f3437da3b75cb9343c93da44dcf6fdb92a6f68aaf7efa0a",
+    "status": "complete"
+  },
+  {
+    "event": "2026-06-17",
+    "coin": "ETH",
+    "rows": 730,
+    "categories": {
+      "ordinary": 722,
+      "combo": 6,
+      "block": 2
+    },
+    "file": "2026-06-17_ETH_entry.json",
+    "sha256": "d0bd9079223b962ad0d3fd0eec74df744cf1c78e58898a2a3bc75bbdd173fae8",
+    "status": "complete"
+  },
+  {
+    "event": "2026-07-29",
+    "coin": "BTC",
+    "rows": 1859,
+    "categories": {
+      "ordinary": 1831,
+      "block": 24,
+      "combo": 4
+    },
+    "file": "2026-07-29_BTC_entry.json",
+    "sha256": "5f6c19ecfc91a86914b147efcf87e4017652ce6246a9beb53f0bd8f2ba471e80",
+    "status": "complete"
+  },
+  {
+    "event": "2026-07-29",
+    "coin": "ETH",
+    "rows": 427,
+    "categories": {
+      "ordinary": 427
+    },
+    "file": "2026-07-29_ETH_entry.json",
+    "sha256": "b8860aa31cd0d43341f75739a8cddb7497849a5db1fb28ebfb71a59dccd55d14",
+    "status": "complete"
+  },
+  {
+    "event": "2026-09-16",
+    "coin": "BTC",
+    "rows": 1120,
+    "categories": {
+      "ordinary": 1074,
+      "block": 40,
+      "combo": 6
+    },
+    "file": "2026-09-16_BTC_entry.json",
+    "sha256": "d80db7689770596f478001b5b7f2ef188233086e9188f56a73ba38b4557b1bac",
+    "status": "complete"
+  },
+  {
+    "event": "2026-09-16",
+    "coin": "ETH",
+    "rows": 592,
+    "categories": {
+      "ordinary": 568,
+      "combo": 2,
+      "block": 22
+    },
+    "file": "2026-09-16_ETH_entry.json",
+    "sha256": "0c161923a6b212aedf6177888cd843dd26e4ed05f9fd5e138069a000308479cb",
+    "status": "complete"
+  }
+]

@@ -27,6 +27,8 @@ def inputs():
         d['spot_' + suffix] = np.array(x[:3]).T
         d['fx_' + suffix] = np.array(x[3])
     d['rates'] = np.zeros((len(times), 3))
+    d['positive_rates'] = np.zeros((len(times), 3))
+    d['negative_rates'] = np.zeros((len(times), 3))
     d['counts'] = np.zeros((len(times), 3), int)
     di = {t: i for i, t in enumerate(times)}
     gaps = []
@@ -42,6 +44,8 @@ def inputs():
             if day in di:
                 i = di[day]
                 d['rates'][i, j] += float(row['fundingRate'])
+                d['positive_rates'][i,j] += max(0., float(row['fundingRate']))
+                d['negative_rates'][i,j] += min(0., float(row['fundingRate']))
                 d['counts'][i, j] += 1
     d['gaps'] = gaps
     assert all(np.isfinite(d[z]).all() for z in d if z not in ['gaps'])
@@ -59,13 +63,13 @@ def stats(r):
                 max_drawdown=float(np.min(eq/np.maximum.accumulate(eq)-1)))
 
 
-def run(d, gated=False, stress=False, transfer_delay=1, transfer_fee=5., slippage=.0003):
+def run(d, gated=False, stress=False, transfer_delay=1, transfer_fee=5., slippage=.0003, initial_equity=100000.):
     """USDC equity. Spot BTC paid in USDT; perpetual variation margin in USDC.
 
     Transfers leave one venue immediately and are unavailable until next daily mark.
     All trades share the SAME coin quantity on the long spot and short perp legs.
     """
-    E0 = 100000.
+    E0 = initial_equity
     spot_fee, perp_fee, fx_fee = .001+slippage, .00045+slippage, .001+slippage
     spot_cash = .5*E0*d['fx_o'][0]*(1-fx_fee)
     perp_cash = .5*E0
@@ -86,18 +90,19 @@ def run(d, gated=False, stress=False, transfer_delay=1, transfer_fee=5., slippag
         if i:
             daily_rates = d['rates'][i].copy()
             oracle = (previous_spot_usdc+s)/2
+            payments = oracle*daily_rates
             if stress:
                 # Deliberately adverse oracle within the day's spot range for every signed payment.
                 low = d['spot_l'][i-1]/d['fx_h'][i-1]
                 high = d['spot_h'][i-1]/d['fx_l'][i-1]
-                oracle = np.where(daily_rates >= 0, low, high)
+                payments = low*d['positive_rates'][i]+high*d['negative_rates'][i]
                 # Unavailable hours are explicitly charged the trailing week's largest daily rate / 24.
                 for gap in d['gaps']:
                     day = ((gap['after']+DAY-1)//DAY)*DAY
                     if day == t:
                         j = COINS.index(gap['coin'])
-                        daily_rates[j] -= np.max(np.abs(d['rates'][max(0, i-7):i, j]))/24*gap['missing_hours']
-            fund = float(np.sum(qty*oracle*daily_rates))
+                        payments[j] -= high[j]*np.max(np.abs(d['rates'][max(0, i-7):i, j]))/24*gap['missing_hours']
+            fund = float(np.sum(qty*payments))
             perp_pnl = float(-qty@(p-d['perp_o'][i-1]))
             basis = float(qty@(s-previous_spot_usdc))+perp_pnl
             cash_fx = spot_cash/fx-spot_cash/d['fx_o'][i-1]

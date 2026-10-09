@@ -1,0 +1,33 @@
+{
+  "window_ms": [
+    1727308800000,
+    1727330400000
+  ],
+  "by_instrument": [
+    {
+      "file": "BTC-27SEP24-63000-C_six_hours.json",
+      "count": 22,
+      "has_more": false,
+      "normal_count": 21,
+      "combo_count": 1,
+      "block_count": 0,
+      "normal_buy_volume": 11.0,
+      "normal_sell_volume": 13.6,
+      "sha256": "d3187ae59720464f90270b7359ed0648369afedc4bd5a39a3aaa42b5770ac90c"
+    },
+    {
+      "file": "BTC-27SEP24-63000-P_six_hours.json",
+      "count": 36,
+      "has_more": false,
+      "normal_count": 35,
+      "combo_count": 0,
+      "block_count": 1,
+      "normal_buy_volume": 16.7,
+      "normal_sell_volume": 3.0,
+      "sha256": "dfeea4275bd5d715b9f1044d7bd550ad7437664b7a8a2edbc3e5d482dead59ad"
+    }
+  ],
+  "paired_same_direction_same_size_same_time_combos": 0,
+  "history_bid_ask_available": false,
+  "performance_tested": false
+}

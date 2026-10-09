@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news/mongodb%2C-inc./?page=2&pagesize=100",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "1ee9bde596e2a7e3f158fcd6d66e395be10248e0d667d94830f6afb493886fc9",
+  "retrieved_utc": "2026-10-09T03:21:43Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news/mongodb%2C-inc./?page=2&pagesize=100",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "1ee9bde596e2a7e3f158fcd6d66e395be10248e0d667d94830f6afb493886fc9",
+      "retrieved_utc": "2026-10-09T03:21:43Z"
+    }
+  ]
+}

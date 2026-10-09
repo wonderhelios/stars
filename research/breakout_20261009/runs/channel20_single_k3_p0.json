@@ -1,0 +1,30 @@
+{
+  "full": {
+    "days": 1192,
+    "sharpe": 1.2387636880019455,
+    "annual_arithmetic": 1.2589626273991883,
+    "annual_cost": 0.2167470597039035,
+    "daily_turnover": 0.8483250869037319
+  },
+  "2023-24": {
+    "days": 547,
+    "sharpe": 0.502021756706631,
+    "annual_arithmetic": 0.5267223655540572,
+    "annual_cost": 0.1799671131798054,
+    "daily_turnover": 0.704372262934659
+  },
+  "2025-26": {
+    "days": 645,
+    "sharpe": 1.9043198652434965,
+    "annual_arithmetic": 1.8799477796926567,
+    "annual_cost": 0.2479387352832549,
+    "daily_turnover": 0.9704060089364184
+  },
+  "missing_held_quotes": [],
+  "ending_equity": 11220891.50954161,
+  "factor": "channel20",
+  "mode": "single",
+  "period": 3,
+  "phase": 0,
+  "key": "channel20_single_k3_p0"
+}

@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/veeva-announces-fiscal-2025-second-quarter-results-302233348.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "9cc7e0e8664606c94a66c93a788dd96e9f92496ae597a97d9ae9a9320ac88219",
+  "retrieved_utc": "2026-10-09T03:08:36Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/veeva-announces-fiscal-2025-second-quarter-results-302233348.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "9cc7e0e8664606c94a66c93a788dd96e9f92496ae597a97d9ae9a9320ac88219",
+      "retrieved_utc": "2026-10-09T03:08:36Z"
+    }
+  ]
+}

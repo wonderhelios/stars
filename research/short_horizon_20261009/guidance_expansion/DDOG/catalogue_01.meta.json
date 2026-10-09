@@ -1,0 +1,26 @@
+{
+  "url": "https://www.globenewswire.com/en/search/organization/Datadog\u03b4%2520Inc\u00a7",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "9bff66ad5a631bb862b2b80180fb0c0702a9ea5aa4fb29eee8659f28421eec62",
+  "retrieved_utc": "2026-10-09T03:22:50Z",
+  "attempts": [
+    {
+      "url": "https://www.globenewswire.com/en/search/organization/Datadog\u03b4%2520Inc\u00a7",
+      "status": 0,
+      "exit_code": 35,
+      "error": "curl: (35) LibreSSL SSL_connect: SSL_ERROR_SYSCALL in connection to www.globenewswire.com:443 \n",
+      "sha256": null,
+      "retrieved_utc": "2026-10-09T03:22:41Z"
+    },
+    {
+      "url": "https://www.globenewswire.com/en/search/organization/Datadog\u03b4%2520Inc\u00a7",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "9bff66ad5a631bb862b2b80180fb0c0702a9ea5aa4fb29eee8659f28421eec62",
+      "retrieved_utc": "2026-10-09T03:22:50Z"
+    }
+  ]
+}

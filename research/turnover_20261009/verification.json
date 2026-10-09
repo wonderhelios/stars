@@ -1,0 +1,18 @@
+{
+  "python": "/Users/wonder/.dsh/dsh-runtimes/dsh-primary-runtime/dependencies/python/bin/python3",
+  "cwd": "/Users/wonder/Code/stars",
+  "baseline_sharpe": 1.1292998945108697,
+  "candidate_count": 12,
+  "grid_paths": 156,
+  "all_grid_paths_present": true,
+  "decomposition_error": 1.3322676295501878e-15,
+  "four_player_error": 1.1102230246251565e-15,
+  "all_missing_quotes": 0,
+  "original_full_low_cost": [
+    "smooth_0.3",
+    "smooth_0.5",
+    "hyst_0.3",
+    "hyst_0.4"
+  ],
+  "no_min_exact_equal": true
+}

@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/veeva-announces-fiscal-2025-third-quarter-results-302324307.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "5e00ecb005210689eeb7a8c288e2bad1d745843e9a7d5390659ebb7049d45519",
+  "retrieved_utc": "2026-10-09T03:08:32Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/veeva-announces-fiscal-2025-third-quarter-results-302324307.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "5e00ecb005210689eeb7a8c288e2bad1d745843e9a7d5390659ebb7049d45519",
+      "retrieved_utc": "2026-10-09T03:08:32Z"
+    }
+  ]
+}

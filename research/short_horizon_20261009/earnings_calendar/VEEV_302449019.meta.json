@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/veeva-to-release-fiscal-2026-first-quarter-results-on-may-28-2025-302449019.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "270b4fae542ebcdea13120cda42f1f00369b1c90ba4f43036d3367841b306845",
+  "retrieved_utc": "2026-10-09T04:10:21Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/veeva-to-release-fiscal-2026-first-quarter-results-on-may-28-2025-302449019.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "270b4fae542ebcdea13120cda42f1f00369b1c90ba4f43036d3367841b306845",
+      "retrieved_utc": "2026-10-09T04:10:21Z"
+    }
+  ]
+}

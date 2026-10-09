@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-first-quarter-fiscal-2021-financial-results-301071036.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "130c7ae110fefc50b768a849cd658c3f2d9d8186a5bed6066222d9676bb81a85",
+  "retrieved_utc": "2026-10-09T03:24:04Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-first-quarter-fiscal-2021-financial-results-301071036.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "130c7ae110fefc50b768a849cd658c3f2d9d8186a5bed6066222d9676bb81a85",
+      "retrieved_utc": "2026-10-09T03:24:04Z"
+    }
+  ]
+}

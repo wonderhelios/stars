@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-third-quarter-fiscal-2026-financial-results-302629494.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "4b40af2138da1108837eeb2034cc7ebdb82c4585a11244b82a849651ffbd8b4b",
+  "retrieved_utc": "2026-10-09T03:22:07Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-third-quarter-fiscal-2026-financial-results-302629494.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "4b40af2138da1108837eeb2034cc7ebdb82c4585a11244b82a849651ffbd8b4b",
+      "retrieved_utc": "2026-10-09T03:22:07Z"
+    }
+  ]
+}

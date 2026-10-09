@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-third-quarter-fiscal-year-2025-302551316.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "39a186d17ef88ad015773d548c56b1786dbef176d986a748612ab6cfa48758e3",
+  "retrieved_utc": "2026-10-09T03:19:54Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/synopsys-posts-financial-results-for-third-quarter-fiscal-year-2025-302551316.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "39a186d17ef88ad015773d548c56b1786dbef176d986a748612ab6cfa48758e3",
+      "retrieved_utc": "2026-10-09T03:19:54Z"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2022-second-quarter-results-301362938.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "73527a0049ff8b9314e881ecc4ef8d94a02983cbd96ae63d54c8173967500784",
+  "retrieved_utc": "2026-10-09T03:26:31Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2022-second-quarter-results-301362938.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "73527a0049ff8b9314e881ecc4ef8d94a02983cbd96ae63d54c8173967500784",
+      "retrieved_utc": "2026-10-09T03:26:31Z"
+    }
+  ]
+}

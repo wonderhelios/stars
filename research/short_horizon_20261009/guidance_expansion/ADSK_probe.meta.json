@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2026-third-quarter-results-302625697.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "d58b7e96eaf35d65ea81784d6731e111c5875d0125c930ad91882e0bb22a96eb",
+  "retrieved_utc": "2026-10-09T03:19:13Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/autodesk-inc-announces-fiscal-2026-third-quarter-results-302625697.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "d58b7e96eaf35d65ea81784d6731e111c5875d0125c930ad91882e0bb22a96eb",
+      "retrieved_utc": "2026-10-09T03:19:13Z"
+    }
+  ]
+}

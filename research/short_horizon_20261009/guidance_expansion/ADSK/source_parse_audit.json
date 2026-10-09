@@ -1,0 +1,11 @@
+{
+  "releases": 28,
+  "parsed": 28,
+  "errors": [],
+  "preliminary_releases": 1,
+  "final_quarters_consecutive": true,
+  "computed_comparisons": 19,
+  "source_scope_review": "pending",
+  "sec_value_crosscheck": "pending",
+  "market_performance_read": false
+}

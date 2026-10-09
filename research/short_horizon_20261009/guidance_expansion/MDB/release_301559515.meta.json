@@ -1,0 +1,18 @@
+{
+  "url": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-first-quarter-fiscal-2023-financial-results-301559515.html",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "e5bdc133b6373ccd97d978becb33b573d83da660e4d29f81613d3f2bd1cad400",
+  "retrieved_utc": "2026-10-09T03:23:24Z",
+  "attempts": [
+    {
+      "url": "https://www.prnewswire.com/news-releases/mongodb-inc-announces-first-quarter-fiscal-2023-financial-results-301559515.html",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "e5bdc133b6373ccd97d978becb33b573d83da660e4d29f81613d3f2bd1cad400",
+      "retrieved_utc": "2026-10-09T03:23:24Z"
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "url": "https://www.salesforce.com/news/topics/earnings/",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "f7096e7296dc7300bb1f7a50bb54f8d4af373f6f77e6657c26f1f1d664ae017d",
+  "retrieved_utc": "2026-10-09T03:22:51Z",
+  "attempts": [
+    {
+      "url": "https://www.salesforce.com/news/topics/earnings/",
+      "status": 0,
+      "exit_code": 35,
+      "error": "curl: (35) LibreSSL SSL_connect: SSL_ERROR_SYSCALL in connection to www.salesforce.com:443 \n",
+      "sha256": null,
+      "retrieved_utc": "2026-10-09T03:22:41Z"
+    },
+    {
+      "url": "https://www.salesforce.com/news/topics/earnings/",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "f7096e7296dc7300bb1f7a50bb54f8d4af373f6f77e6657c26f1f1d664ae017d",
+      "retrieved_utc": "2026-10-09T03:22:51Z"
+    }
+  ]
+}

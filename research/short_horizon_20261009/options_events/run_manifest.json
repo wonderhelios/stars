@@ -1,0 +1,8 @@
+{
+  "spec_sha256": "d5871eb55dd3f9454f901de0d982e881f24d272da295d3c79a6993de3ef6c86f",
+  "selection_sha256": "8ae7b7b16f131b719b74556ff99fade4933343b0625086b8c92cfdadf38d158b",
+  "code_sha256": "a57cb7a604690c8b29edc3c27de557cc0b1980c1070b2772a23a642c30daeb1d",
+  "historical_quotes": false,
+  "execution": "historical buy-print participation proxy",
+  "performance_tested": true
+}

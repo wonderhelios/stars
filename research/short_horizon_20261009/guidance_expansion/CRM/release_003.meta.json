@@ -1,0 +1,18 @@
+{
+  "url": "https://www.salesforce.com/news/press-releases/2023/11/29/fy24-q3-earnings/",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "520c9cd6c1fc2be4189d070ec4093a1ca7dbb55ea17f8f7781e19336b2b9f41d",
+  "retrieved_utc": "2026-10-09T03:24:39Z",
+  "attempts": [
+    {
+      "url": "https://www.salesforce.com/news/press-releases/2023/11/29/fy24-q3-earnings/",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "520c9cd6c1fc2be4189d070ec4093a1ca7dbb55ea17f8f7781e19336b2b9f41d",
+      "retrieved_utc": "2026-10-09T03:24:39Z"
+    }
+  ]
+}
