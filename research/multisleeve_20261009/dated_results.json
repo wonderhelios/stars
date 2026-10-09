@@ -1,0 +1,530 @@
+{
+  "dated_BTC": {
+    "periods": {
+      "full": {
+        "sharpe": 2.2960833430697893,
+        "annual_return": 0.06351186564889727,
+        "vol": 0.027660958318692367,
+        "cagr": 0.06515944567069787,
+        "max_drawdown": -0.016792305092380833,
+        "annual_fees": 0.006394417410008511
+      },
+      "2023-24": {
+        "sharpe": 2.456308378575146,
+        "annual_return": 0.08600280506311325,
+        "vol": 0.03501303248943103,
+        "cagr": 0.08913264670796095,
+        "max_drawdown": -0.016792305092380833,
+        "annual_fees": 0.006758496760410112
+      },
+      "2025-26": {
+        "sharpe": 2.3149031877518955,
+        "annual_return": 0.04328745501285809,
+        "vol": 0.018699466673980626,
+        "cagr": 0.04405307837048622,
+        "max_drawdown": -0.007205058540941112,
+        "annual_fees": 0.006067028226701642
+      }
+    },
+    "audit": {
+      "zero_volume_marks": 0,
+      "zero_volume_entries": 0,
+      "rolls": [
+        {
+          "expiry": 1688112000000,
+          "delivery": 30753.15,
+          "next": "BTC-29SEP23",
+          "next_entry": 31135.0
+        },
+        {
+          "expiry": 1695974400000,
+          "delivery": 27149.83,
+          "next": "BTC-29DEC23",
+          "next_entry": 27477.5
+        },
+        {
+          "expiry": 1703836800000,
+          "delivery": 42365.7,
+          "next": "BTC-29MAR24",
+          "next_entry": 43845.0
+        },
+        {
+          "expiry": 1711699200000,
+          "delivery": 69984.45,
+          "next": "BTC-28JUN24",
+          "next_entry": 73465.0
+        },
+        {
+          "expiry": 1719561600000,
+          "delivery": 61332.47,
+          "next": "BTC-27SEP24",
+          "next_entry": 62735.0
+        },
+        {
+          "expiry": 1727424000000,
+          "delivery": 65460.66,
+          "next": "BTC-27DEC24",
+          "next_entry": 66500.0
+        },
+        {
+          "expiry": 1735286400000,
+          "delivery": 95058.56,
+          "next": "BTC-28MAR25",
+          "next_entry": 97702.5
+        },
+        {
+          "expiry": 1743148800000,
+          "delivery": 85272.05,
+          "next": "BTC-27JUN25",
+          "next_entry": 86130.0
+        },
+        {
+          "expiry": 1751011200000,
+          "delivery": 107106.02,
+          "next": "BTC-26SEP25",
+          "next_entry": 108160.0
+        },
+        {
+          "expiry": 1758873600000,
+          "delivery": 109124.7,
+          "next": "BTC-26DEC25",
+          "next_entry": 111107.5
+        },
+        {
+          "expiry": 1766736000000,
+          "delivery": 88770.89,
+          "next": "BTC-27MAR26",
+          "next_entry": 89577.5
+        },
+        {
+          "expiry": 1774598400000,
+          "delivery": 68610.02,
+          "next": "BTC-26JUN26",
+          "next_entry": 68887.5
+        },
+        {
+          "expiry": 1782460800000,
+          "delivery": 60520.66,
+          "next": "BTC-25SEP26",
+          "next_entry": 60930.0
+        },
+        {
+          "expiry": 1790323200000,
+          "delivery": 83930.84,
+          "next": "BTC-25DEC26",
+          "next_entry": 85017.5
+        }
+      ],
+      "minimum_collateral_fraction": 1.0
+    }
+  },
+  "dated_ETH": {
+    "periods": {
+      "full": {
+        "sharpe": 1.857758786582242,
+        "annual_return": 0.056434211154751966,
+        "vol": 0.030377577305703486,
+        "cagr": 0.05756525013762559,
+        "max_drawdown": -0.016742022377838506,
+        "annual_fees": 0.006413812870374019
+      },
+      "2023-24": {
+        "sharpe": 2.1800253602752586,
+        "annual_return": 0.07978566435727613,
+        "vol": 0.03659850284824304,
+        "cagr": 0.08232268575984336,
+        "max_drawdown": -0.016742022377838506,
+        "annual_fees": 0.006780053559243656
+      },
+      "2025-26": {
+        "sharpe": 1.5150302434981597,
+        "annual_return": 0.03543600517418761,
+        "vol": 0.023389635504811393,
+        "cagr": 0.03578670481024071,
+        "max_drawdown": -0.007489262727162327,
+        "annual_fees": 0.006084480157902098
+      }
+    },
+    "audit": {
+      "zero_volume_marks": 1,
+      "zero_volume_entries": 0,
+      "rolls": [
+        {
+          "expiry": 1688112000000,
+          "delivery": 1883.9,
+          "next": "ETH-29SEP23",
+          "next_entry": 1902.25
+        },
+        {
+          "expiry": 1695974400000,
+          "delivery": 1679.56,
+          "next": "ETH-29DEC23",
+          "next_entry": 1704.25
+        },
+        {
+          "expiry": 1703836800000,
+          "delivery": 2344.9,
+          "next": "ETH-29MAR24",
+          "next_entry": 2429.75
+        },
+        {
+          "expiry": 1711699200000,
+          "delivery": 3535.72,
+          "next": "ETH-28JUN24",
+          "next_entry": 3698.5
+        },
+        {
+          "expiry": 1719561600000,
+          "delivery": 3433.01,
+          "next": "ETH-27SEP24",
+          "next_entry": 3510.75
+        },
+        {
+          "expiry": 1727424000000,
+          "delivery": 2660.19,
+          "next": "ETH-27DEC24",
+          "next_entry": 2691.5
+        },
+        {
+          "expiry": 1735286400000,
+          "delivery": 3334.32,
+          "next": "ETH-28MAR25",
+          "next_entry": 3405.0
+        },
+        {
+          "expiry": 1743148800000,
+          "delivery": 1910.31,
+          "next": "ETH-27JUN25",
+          "next_entry": 1924.25
+        },
+        {
+          "expiry": 1751011200000,
+          "delivery": 2441.98,
+          "next": "ETH-26SEP25",
+          "next_entry": 2466.0
+        },
+        {
+          "expiry": 1758873600000,
+          "delivery": 3920.87,
+          "next": "ETH-26DEC25",
+          "next_entry": 3995.5
+        },
+        {
+          "expiry": 1766736000000,
+          "delivery": 2965.16,
+          "next": "ETH-27MAR26",
+          "next_entry": 2983.0
+        },
+        {
+          "expiry": 1774598400000,
+          "delivery": 2066.89,
+          "next": "ETH-26JUN26",
+          "next_entry": 2074.5
+        },
+        {
+          "expiry": 1782460800000,
+          "delivery": 1579.7,
+          "next": "ETH-25SEP26",
+          "next_entry": 1581.75
+        },
+        {
+          "expiry": 1790323200000,
+          "delivery": 2671.41,
+          "next": "ETH-25DEC26",
+          "next_entry": 2699.0
+        }
+      ],
+      "minimum_collateral_fraction": 1.0
+    }
+  },
+  "dated_equal": {
+    "periods": {
+      "full": {
+        "sharpe": 2.299247475538532,
+        "annual_return": 0.05991212192472609,
+        "vol": 0.026057274200417865,
+        "cagr": 0.06137835114651713,
+        "max_drawdown": -0.016767161480473636
+      },
+      "2023-24": {
+        "sharpe": 2.5361374808941854,
+        "annual_return": 0.08279381751836752,
+        "vol": 0.032645634608568716,
+        "cagr": 0.08573081125658888,
+        "max_drawdown": -0.016767161480473636
+      },
+      "2025-26": {
+        "sharpe": 2.165845915962966,
+        "annual_return": 0.03933633363897101,
+        "vol": 0.018162110863496724,
+        "cagr": 0.03994678962343445,
+        "max_drawdown": -0.006730177649936775
+      }
+    },
+    "note": "Initial capital 50/50 BTC/ETH, no free daily rebalancing"
+  },
+  "dated_BTC_slip6bp": {
+    "periods": {
+      "full": {
+        "sharpe": 2.2175766545112943,
+        "annual_return": 0.061737593234155334,
+        "vol": 0.0278401168719739,
+        "cagr": 0.06326626041155503,
+        "max_drawdown": -0.017086705221650123,
+        "annual_fees": 0.008168338650721316
+      },
+      "2023-24": {
+        "sharpe": 2.3910411168377186,
+        "annual_return": 0.08413218422455916,
+        "vol": 0.03518642303225154,
+        "cagr": 0.0870910422372031,
+        "max_drawdown": -0.017086705221650123,
+        "annual_fees": 0.008632143147195244
+      },
+      "2025-26": {
+        "sharpe": 2.199707508538006,
+        "annual_return": 0.04159982149084646,
+        "vol": 0.018911524068258963,
+        "cagr": 0.04228862414640622,
+        "max_drawdown": -0.007502752728396511,
+        "annual_fees": 0.007751274142264139
+      }
+    },
+    "audit": {
+      "zero_volume_marks": 0,
+      "zero_volume_entries": 0,
+      "rolls": [
+        {
+          "expiry": 1688112000000,
+          "delivery": 30753.15,
+          "next": "BTC-29SEP23",
+          "next_entry": 31135.0
+        },
+        {
+          "expiry": 1695974400000,
+          "delivery": 27149.83,
+          "next": "BTC-29DEC23",
+          "next_entry": 27477.5
+        },
+        {
+          "expiry": 1703836800000,
+          "delivery": 42365.7,
+          "next": "BTC-29MAR24",
+          "next_entry": 43845.0
+        },
+        {
+          "expiry": 1711699200000,
+          "delivery": 69984.45,
+          "next": "BTC-28JUN24",
+          "next_entry": 73465.0
+        },
+        {
+          "expiry": 1719561600000,
+          "delivery": 61332.47,
+          "next": "BTC-27SEP24",
+          "next_entry": 62735.0
+        },
+        {
+          "expiry": 1727424000000,
+          "delivery": 65460.66,
+          "next": "BTC-27DEC24",
+          "next_entry": 66500.0
+        },
+        {
+          "expiry": 1735286400000,
+          "delivery": 95058.56,
+          "next": "BTC-28MAR25",
+          "next_entry": 97702.5
+        },
+        {
+          "expiry": 1743148800000,
+          "delivery": 85272.05,
+          "next": "BTC-27JUN25",
+          "next_entry": 86130.0
+        },
+        {
+          "expiry": 1751011200000,
+          "delivery": 107106.02,
+          "next": "BTC-26SEP25",
+          "next_entry": 108160.0
+        },
+        {
+          "expiry": 1758873600000,
+          "delivery": 109124.7,
+          "next": "BTC-26DEC25",
+          "next_entry": 111107.5
+        },
+        {
+          "expiry": 1766736000000,
+          "delivery": 88770.89,
+          "next": "BTC-27MAR26",
+          "next_entry": 89577.5
+        },
+        {
+          "expiry": 1774598400000,
+          "delivery": 68610.02,
+          "next": "BTC-26JUN26",
+          "next_entry": 68887.5
+        },
+        {
+          "expiry": 1782460800000,
+          "delivery": 60520.66,
+          "next": "BTC-25SEP26",
+          "next_entry": 60930.0
+        },
+        {
+          "expiry": 1790323200000,
+          "delivery": 83930.84,
+          "next": "BTC-25DEC26",
+          "next_entry": 85017.5
+        }
+      ],
+      "minimum_collateral_fraction": 1.0
+    }
+  },
+  "dated_ETH_slip6bp": {
+    "periods": {
+      "full": {
+        "sharpe": 1.7882511695630117,
+        "annual_return": 0.05465327064851813,
+        "vol": 0.03056241291981011,
+        "cagr": 0.05567778179560534,
+        "max_drawdown": -0.017036640144598048,
+        "annual_fees": 0.008193308412834386
+      },
+      "2023-24": {
+        "sharpe": 2.1170566613503614,
+        "annual_return": 0.07790940116323458,
+        "vol": 0.03680081057138082,
+        "cagr": 0.08028625639301823,
+        "max_drawdown": -0.017036640144598048,
+        "annual_fees": 0.00865999691926713
+      },
+      "2025-26": {
+        "sharpe": 1.432018058719456,
+        "annual_return": 0.03374078119342429,
+        "vol": 0.023561700907316824,
+        "cagr": 0.03402827950486076,
+        "max_drawdown": -0.007786675246581276,
+        "annual_fees": 0.007773650531080911
+      }
+    },
+    "audit": {
+      "zero_volume_marks": 1,
+      "zero_volume_entries": 0,
+      "rolls": [
+        {
+          "expiry": 1688112000000,
+          "delivery": 1883.9,
+          "next": "ETH-29SEP23",
+          "next_entry": 1902.25
+        },
+        {
+          "expiry": 1695974400000,
+          "delivery": 1679.56,
+          "next": "ETH-29DEC23",
+          "next_entry": 1704.25
+        },
+        {
+          "expiry": 1703836800000,
+          "delivery": 2344.9,
+          "next": "ETH-29MAR24",
+          "next_entry": 2429.75
+        },
+        {
+          "expiry": 1711699200000,
+          "delivery": 3535.72,
+          "next": "ETH-28JUN24",
+          "next_entry": 3698.5
+        },
+        {
+          "expiry": 1719561600000,
+          "delivery": 3433.01,
+          "next": "ETH-27SEP24",
+          "next_entry": 3510.75
+        },
+        {
+          "expiry": 1727424000000,
+          "delivery": 2660.19,
+          "next": "ETH-27DEC24",
+          "next_entry": 2691.5
+        },
+        {
+          "expiry": 1735286400000,
+          "delivery": 3334.32,
+          "next": "ETH-28MAR25",
+          "next_entry": 3405.0
+        },
+        {
+          "expiry": 1743148800000,
+          "delivery": 1910.31,
+          "next": "ETH-27JUN25",
+          "next_entry": 1924.25
+        },
+        {
+          "expiry": 1751011200000,
+          "delivery": 2441.98,
+          "next": "ETH-26SEP25",
+          "next_entry": 2466.0
+        },
+        {
+          "expiry": 1758873600000,
+          "delivery": 3920.87,
+          "next": "ETH-26DEC25",
+          "next_entry": 3995.5
+        },
+        {
+          "expiry": 1766736000000,
+          "delivery": 2965.16,
+          "next": "ETH-27MAR26",
+          "next_entry": 2983.0
+        },
+        {
+          "expiry": 1774598400000,
+          "delivery": 2066.89,
+          "next": "ETH-26JUN26",
+          "next_entry": 2074.5
+        },
+        {
+          "expiry": 1782460800000,
+          "delivery": 1579.7,
+          "next": "ETH-25SEP26",
+          "next_entry": 1581.75
+        },
+        {
+          "expiry": 1790323200000,
+          "delivery": 2671.41,
+          "next": "ETH-25DEC26",
+          "next_entry": 2699.0
+        }
+      ],
+      "minimum_collateral_fraction": 1.0
+    }
+  },
+  "dated_equal_slip6bp": {
+    "periods": {
+      "full": {
+        "sharpe": 2.213783768443433,
+        "annual_return": 0.05813456721469946,
+        "vol": 0.026260273493456554,
+        "cagr": 0.05948802877019066,
+        "max_drawdown": -0.017061670849897514
+      },
+      "2023-24": {
+        "sharpe": 2.4631388946630715,
+        "annual_return": 0.08092041274716356,
+        "vol": 0.03285255773537388,
+        "cagr": 0.08369179546814132,
+        "max_drawdown": -0.017061670849897514
+      },
+      "2025-26": {
+        "sharpe": 2.0479707958385407,
+        "annual_return": 0.03764496968163096,
+        "vol": 0.018381594971044125,
+        "cagr": 0.038185359379290684,
+        "max_drawdown": -0.007027847537357079
+      }
+    },
+    "note": "Initial capital 50/50 BTC/ETH, no free daily rebalancing"
+  }
+}

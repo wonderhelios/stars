@@ -680,16 +680,33 @@ pub async fn execute(
     let mut outcome = execute_inner(exec, plan, cfg, markets, live).await?;
     if !live || !exec.is_txflow() { return Ok(outcome); }
     // A receipt is not a position. Always reconcile, including unknown write results.
-    match exec.account().await {
-        Ok(account) => {
+    //
+    // **要重试，不能只读一次。** 交易所的仓位更新相对成交回执有延迟，紧跟着最后一笔
+    // 下单去读，经常拿到的是还没反映完的旧快照 —— 真实症状：账面明明是 15 多 / 15 空、
+    // 净敞口 −0.5%、30 条腿一条不差，却被判成"未达到逐币目标…必须受控恢复"，
+    // 于是系统进入恢复状态、下次调仓又去重做一遍。已观测到两次。
+    //
+    // 读 4 次、每次间隔 3 秒，**任意一次满足就算达标**；只有全都不满足才判失败。
+    // 这样既不放过真的不完整，也不会因为结算延迟而误报。
+    let mut outcome_account = None;
+    for attempt in 0..4u32 {
+        if attempt > 0 {
+            tokio::time::sleep(std::time::Duration::from_secs(3)).await;
+        }
+        match exec.account().await {
+            Ok(a) => {
+                if account_meets_targets(&a, plan, cfg) { outcome_account = Some(a); break; }
+                outcome_account = Some(a);
+            }
+            Err(_) if attempt == 3 => { outcome_account = None; }
+            Err(_) => {}
+        }
+    }
+    match outcome_account {
+        Some(account) => {
             let mut targets = plan.txflow_targets.clone();
             for o in &plan.orders { targets.insert(o.coin.clone(), (o.target, o.mid, o.sz_decimals)); }
-            let reached = targets.iter().all(|(coin,(target,mid,decimals))| {
-                let actual=account.positions.get(coin).map(|p|p.size).unwrap_or(0.);
-                let tolerance=(10f64.powi(-decimals)).max(1e-10);
-                (actual-target).abs() <= tolerance && (actual*target >= 0. || actual.abs() <= tolerance)
-                    && (actual-target).abs()*mid <= cfg.min_order_usd
-            });
+            let reached = account_meets_targets(&account, plan, cfg);
             // Relative upper bounds: 1% allows small fill/rounding/valuation drift,
             // without granting an absolute allowance to zero/unplanned targets.
             const EXPOSURE_TOLERANCE: f64 = 0.01;
@@ -711,12 +728,25 @@ pub async fn execute(
                 "TxFlow 最终账户未达到逐币目标、逐币敞口、总敞口或净敞口门槛，必须受控恢复".into()
             } else { "TxFlow 最终账户已核验逐币目标、逐币敞口、总敞口及净敞口".into() });
         }
-        Err(e) => {
+        None => {
             outcome.aborted=true;
-            outcome.prelim.push(format!("TxFlow 最终账户结果未知，必须受控恢复: {e}"));
+            outcome.prelim.push("TxFlow 最终账户读取失败（重试 4 次仍不可用），必须受控恢复".into());
         }
     }
     Ok(outcome)
+}
+
+/// 账户是否满足计划的所有逐币目标。抽出来是为了让最终核验可以**重试** ——
+/// 单次读取会因为交易所结算延迟而误判（见 execute 里的说明）。
+fn account_meets_targets(account: &Acct, plan: &Plan, cfg: &TradeConfig) -> bool {
+    let mut targets = plan.txflow_targets.clone();
+    for o in &plan.orders { targets.insert(o.coin.clone(), (o.target, o.mid, o.sz_decimals)); }
+    targets.iter().all(|(coin,(target,mid,decimals))| {
+        let actual=account.positions.get(coin).map(|p|p.size).unwrap_or(0.);
+        let tolerance=(10f64.powi(-*decimals)).max(1e-10);
+        (actual-target).abs() <= tolerance && (actual*target >= 0. || actual.abs() <= tolerance)
+            && (actual-target).abs()*mid <= cfg.min_order_usd
+    })
 }
 
 async fn execute_inner(

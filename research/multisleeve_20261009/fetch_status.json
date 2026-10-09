@@ -1,0 +1,44 @@
+[
+  {
+    "coin": "BTC",
+    "funding_rows": 29250,
+    "start": 1685577600139,
+    "end": 1791414000006
+  },
+  {
+    "coin": "ETH",
+    "funding_rows": 29250,
+    "start": 1685577600139,
+    "end": 1791414000006
+  },
+  {
+    "symbol": "BTCUSDT",
+    "spot_rows": 1226,
+    "start": 1685577600000,
+    "end": 1791417600000
+  },
+  {
+    "symbol": "ETHUSDT",
+    "spot_rows": 1226,
+    "start": 1685577600000,
+    "end": 1791417600000
+  },
+  {
+    "symbol": "SOLUSDT",
+    "spot_rows": 1226,
+    "start": 1685577600000,
+    "end": 1791417600000
+  },
+  {
+    "symbol": "USDCUSDT",
+    "spot_rows": 1226,
+    "start": 1685577600000,
+    "end": 1791417600000
+  },
+  {
+    "coin": "SOL",
+    "funding_rows": 29250,
+    "start": 1685577600139,
+    "end": 1791414000006
+  }
+]
