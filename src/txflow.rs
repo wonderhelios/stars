@@ -1112,7 +1112,7 @@ mod tests {
 ///   STARS_BINANCE_MAPPING  默认 research/bn_panel_20261008/mapping.json
 ///   STARS_BINANCE_DAILY    默认 research/bn_panel_20261008/data/daily
 /// 抓取失败不影响主循环（只是这一轮面板没更新），下一轮会重试。
-async fn refresh_binance_panel(state: &crate::web::AppState) {
+async fn refresh_binance_panel(state: &crate::web::AppState) -> bool {
     // **默认路径必须和 CWD 无关。**
     //
     // 真实事故：systemd 服务的工作目录不是 /opt/stars，于是相对的
@@ -1134,7 +1134,7 @@ async fn refresh_binance_panel(state: &crate::web::AppState) {
         .unwrap_or_else(|_| root.join("research/bn_panel_20261008/data/daily"));
     if !mapping.exists() {
         tracing::warn!("币安面板未刷新：映射表不存在 {}", mapping.display());
-        return;
+        return false;
     }
     match crate::binance::fetch(&mapping, &daily, 1000).await {
         Ok(rep) => {
@@ -1146,20 +1146,35 @@ async fn refresh_binance_panel(state: &crate::web::AppState) {
             for (c, why) in rep.skipped.iter().take(5) {
                 tracing::warn!("币安面板跳过 {c}: {why}");
             }
+            if state.binance_store.is_none() {
+                tracing::warn!("币安信号库不可用，TxFlow 会拒绝计划（HL 不受影响）");
+                return false;
+            }
             // 重新导入，让信号库拿到新数据
             if let Some(store) = &state.binance_store {
                 match crate::binance::import(store, &mapping, &daily) {
-                    Ok(imp) => tracing::info!("币安面板已导入 {} 个币", imp.imported.len()),
-                    Err(e) => tracing::warn!("币安面板导入失败: {e}"),
+                    Ok(imp) => {
+                        tracing::info!("币安面板已导入 {} 个币", imp.imported.len());
+                        return true;
+                    }
+                    Err(e) => {
+                        tracing::warn!("币安面板导入失败: {e}");
+                        return false;
+                    }
                 }
             }
         }
-        Err(e) => tracing::warn!("币安面板抓取失败（下轮重试）: {e}"),
+        Err(e) => {
+            tracing::warn!("币安面板抓取失败（稍后重试）: {e}");
+            return false;
+        }
     }
+    false
 }
 
 pub async fn background(state: crate::web::AppState) {
     let mut last_binance: i64 = 0;
+    let mut binance_interval: i64 = 0; // 0 → 启动后立刻刷一次
     loop {
         let now = crate::live::now_ms_pub();
         let due = auto_due(&*state.live.lock().await, now);
@@ -1167,9 +1182,15 @@ pub async fn background(state: crate::web::AppState) {
         let recovering = state.live.lock().await.pending_recovery.is_some();
         // 币安面板每天刷新一次（抓取约 1 分钟，82 个币）。放在这里而不是调仓路径上：
         // 调仓不能被一次网络抓取拖住 —— 那个教训今晚已经吃过一次了。
-        if now - last_binance > 6 * 60 * 60 * 1000 {
+        // 成功则 6 小时后再刷；**失败则 15 分钟就重试** ——
+        // 否则启动时一次网络抖动会让人干等 6 小时，面板一直是空的。
+        if now - last_binance > binance_interval {
             last_binance = now;
-            refresh_binance_panel(&state).await;
+            binance_interval = if refresh_binance_panel(&state).await {
+                6 * 60 * 60 * 1000
+            } else {
+                15 * 60 * 1000
+            };
         }
         if due && recovering {
             if let Err(e)=run_auto(&state).await { tracing::warn!("TxFlow 优先恢复失败: {e}"); }

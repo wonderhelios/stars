@@ -18,6 +18,8 @@ START = int(pd.Timestamp('2023-08-14', tz='UTC').timestamp() * 1000)
 def freeze():
     dest = OUT / 'input.npz'
     if dest.exists():
+        meta = json.loads((OUT / 'input_manifest.json').read_text())
+        assert hashlib.sha256(dest.read_bytes()).hexdigest() == meta['snapshot_sha256'], 'Frozen input changed'
         return dict(np.load(dest, allow_pickle=False))
     files = sorted(Path('/tmp/hl-daily-full').glob('*.json'))
     assert files, 'No source data'
@@ -242,7 +244,6 @@ def verify(d, t, rr):
     results[-1] = (1 + results[-1]) * (1 - terminal * .00075) - 1
     checks['independent_accounting_max_error'] = float(np.max(np.abs(np.array(results) - rr['baseline'][0]['r'])))
     assert checks['independent_accounting_max_error'] < 1e-10
-    checks['no_production_files_modified_by_script'] = True
     return checks
 
 

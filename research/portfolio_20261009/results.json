@@ -19,7 +19,7 @@
     "funding_included": false,
     "independent_holdout": false,
     "source_hash": {
-      "research/portfolio_20261009/run.py": "8f00063ce063a655589dbc40b438d8774ae1e07f93ce51896e9aabfa11443ba3",
+      "research/portfolio_20261009/run.py": "13d90a853256411aec1fd12c73887aad9a15f94e431f59a1071d2eb4ace18cd2",
       "research/portfolio_20261009/SPEC.md": "6d9d9f0008681984930a8f1ad412081d2cfebe000d8b9d0449c312dbf1539488",
       "src/trader.rs": "c5654a05198573cb6ffd4e2290fa2d5a53758f5944066c9238b56d53bc38da7f"
     },
@@ -5175,7 +5175,6 @@
   "checks": {
     "prefix_target_max_error": 0.0,
     "independent_accounting_max_error": 4.440892098500626e-16,
-    "no_production_files_modified_by_script": true,
     "historical_open_comparison": {
       "common_cells": 176435,
       "changed_cells": 0,
