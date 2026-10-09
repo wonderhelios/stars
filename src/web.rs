@@ -417,6 +417,7 @@ struct LiveConfigBody {
     lookback: Option<usize>,
     top_frac: Option<f64>,
     min_vol_usd: Option<f64>,
+    min_order_pct: Option<f64>,
     take_profit_pct: Option<f64>,
     rebalance_slices: Option<u32>,
 
@@ -463,6 +464,10 @@ async fn live_config(
     }
     if let Some(v) = body.min_vol_usd {
         c.min_vol_usd = v.max(0.0);
+    }
+    if let Some(v) = body.min_order_pct {
+        // 上限 5%：再高就等于"一个仓位动 5% 才调"，那已经不是这个策略了。
+        c.min_order_pct = v.clamp(0.0, 0.05);
     }
     if let Some(v) = body.rebalance_slices {
         c.rebalance_slices = v.clamp(1, 10);

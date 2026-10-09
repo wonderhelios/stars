@@ -176,6 +176,7 @@ function lvConfigInto(d) {
   $("lv-lookback").value = c.lookback ?? 14;
   $("lv-top").value = c.top_frac ?? 0.2;
   $("lv-minvol").value = String(c.min_vol_usd ?? 5000000);
+  $("lv-minpct").value = String((c.min_order_pct ?? 0) * 100);
   $("lv-armed").value = String(!!c.armed);
   $("lv-auto").value = String(!!c.auto_run);
 }
@@ -199,6 +200,7 @@ $("lv-save").addEventListener("click", async () => {
     lookback: Number($("lv-lookback").value),
     top_frac: Number($("lv-top").value),
     min_vol_usd: Number($("lv-minvol").value),
+    min_order_pct: Number($("lv-minpct").value) / 100,
     armed: $("lv-armed").value === "true",
     auto_run: $("lv-auto").value === "true",
   };
