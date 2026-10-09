@@ -1113,14 +1113,25 @@ mod tests {
 ///   STARS_BINANCE_DAILY    默认 research/bn_panel_20261008/data/daily
 /// 抓取失败不影响主循环（只是这一轮面板没更新），下一轮会重试。
 async fn refresh_binance_panel(state: &crate::web::AppState) {
-    let mapping = std::env::var("STARS_BINANCE_MAPPING").unwrap_or_else(|_| {
-        "research/bn_panel_20261008/mapping.json".to_string()
-    });
-    let daily = std::env::var("STARS_BINANCE_DAILY").unwrap_or_else(|_| {
-        "research/bn_panel_20261008/data/daily".to_string()
-    });
-    let mapping = std::path::PathBuf::from(mapping);
-    let daily = std::path::PathBuf::from(daily);
+    // **默认路径必须和 CWD 无关。**
+    //
+    // 真实事故：systemd 服务的工作目录不是 /opt/stars，于是相对的
+    // "research/bn_panel_20261008/mapping.json" 解析失败，日志报"映射表不存在"，
+    // 面板永远不刷新。之前的路径（candles.sqlite / live.json）都是绝对路径，
+    // 所以从没暴露过这个依赖。这里以**可执行文件**为锚点：
+    //   /opt/stars/target/release/stars → /opt/stars/research/bn_panel_20261008/...
+    let root = std::env::current_exe()
+        .ok()
+        .and_then(|e| e.parent().map(|p| p.to_path_buf()))   // target/release
+        .and_then(|p| p.parent().map(|p| p.to_path_buf()))   // target
+        .and_then(|p| p.parent().map(|p| p.to_path_buf()))   // /opt/stars
+        .unwrap_or_else(|| std::path::PathBuf::from("."));
+    let mapping = std::env::var("STARS_BINANCE_MAPPING")
+        .map(std::path::PathBuf::from)
+        .unwrap_or_else(|_| root.join("research/bn_panel_20261008/mapping.json"));
+    let daily = std::env::var("STARS_BINANCE_DAILY")
+        .map(std::path::PathBuf::from)
+        .unwrap_or_else(|_| root.join("research/bn_panel_20261008/data/daily"));
     if !mapping.exists() {
         tracing::warn!("币安面板未刷新：映射表不存在 {}", mapping.display());
         return;

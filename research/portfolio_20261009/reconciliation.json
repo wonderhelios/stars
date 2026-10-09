@@ -1,0 +1,418 @@
+{
+  "cases": {
+    "old_frozen_targets_old_opens": {
+      "full": {
+        "sharpe": 1.5444004362481545,
+        "annual_arithmetic": 1.2376474675184073,
+        "cagr": 1.559183368109916,
+        "max_drawdown": -0.633614527738566,
+        "phase_sharpes": [
+          1.775955835038076,
+          1.1196563118905254,
+          1.7375891618158619
+        ],
+        "phase_sd": 0.3007476004734222,
+        "phase_drawdowns": [
+          -0.5758338708309989,
+          -0.8320710830823828,
+          -0.49293862930231613
+        ],
+        "daily_turnover": 0.7399186904814982,
+        "mean_gross": 2.369275705600493,
+        "annual_cost": 0.20255274151931013,
+        "mean_abs_net": 0.23522122526271752,
+        "correlation_baseline": 1.0,
+        "delta_phases": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "delta_phase_sd": 0.0
+      },
+      "2023-24": {
+        "sharpe": 0.4255000615131239,
+        "annual_arithmetic": 0.2940683098180011,
+        "cagr": 0.1559366553889836,
+        "max_drawdown": -0.6306144048427229,
+        "phase_sharpes": [
+          0.9124179761844422,
+          -0.5587273539618486,
+          0.9228095623167782
+        ],
+        "phase_sd": 0.6959668096947318,
+        "phase_drawdowns": [
+          -0.5758338708309989,
+          -0.8320710830823828,
+          -0.4839382606147872
+        ],
+        "daily_turnover": 0.6282320852514193,
+        "mean_gross": 1.9622266978858958,
+        "annual_cost": 0.17197853333757598,
+        "mean_abs_net": 0.21898137078621085,
+        "correlation_baseline": 1.0,
+        "delta_phases": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "delta_phase_sd": 0.0
+      },
+      "2025-26": {
+        "sharpe": 2.3270314402323904,
+        "annual_arithmetic": 1.9825009055783218,
+        "cagr": 4.027417748712613,
+        "max_drawdown": -0.4815308318931069,
+        "phase_sharpes": [
+          2.386497167198128,
+          2.3325706137348,
+          2.262026539764243
+        ],
+        "phase_sd": 0.05096564925361391,
+        "phase_drawdowns": [
+          -0.5656253292522629,
+          -0.38602853712474183,
+          -0.49293862930231613
+        ],
+        "daily_turnover": 0.8280831557645247,
+        "mean_gross": 2.690596763172391,
+        "annual_cost": 0.22668776389053868,
+        "mean_abs_net": 0.24804082957646534,
+        "correlation_baseline": 1.0,
+        "delta_phases": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "delta_phase_sd": 0.0
+      }
+    },
+    "old_coverage_rebuilt_targets": {
+      "full": {
+        "sharpe": 1.5444004362481545,
+        "annual_arithmetic": 1.2376474675184073,
+        "cagr": 1.559183368109916,
+        "max_drawdown": -0.633614527738566,
+        "phase_sharpes": [
+          1.775955835038076,
+          1.1196563118905254,
+          1.7375891618158619
+        ],
+        "phase_sd": 0.3007476004734222,
+        "phase_drawdowns": [
+          -0.5758338708309989,
+          -0.8320710830823828,
+          -0.49293862930231613
+        ],
+        "daily_turnover": 0.7399186904814982,
+        "mean_gross": 2.369275705600493,
+        "annual_cost": 0.20255274151931013,
+        "mean_abs_net": 0.23522122526271752,
+        "correlation_baseline": 1.0,
+        "delta_phases": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "delta_phase_sd": 0.0
+      },
+      "2023-24": {
+        "sharpe": 0.4255000615131239,
+        "annual_arithmetic": 0.2940683098180011,
+        "cagr": 0.1559366553889836,
+        "max_drawdown": -0.6306144048427229,
+        "phase_sharpes": [
+          0.9124179761844422,
+          -0.5587273539618486,
+          0.9228095623167782
+        ],
+        "phase_sd": 0.6959668096947318,
+        "phase_drawdowns": [
+          -0.5758338708309989,
+          -0.8320710830823828,
+          -0.4839382606147872
+        ],
+        "daily_turnover": 0.6282320852514193,
+        "mean_gross": 1.9622266978858958,
+        "annual_cost": 0.17197853333757598,
+        "mean_abs_net": 0.21898137078621085,
+        "correlation_baseline": 1.0,
+        "delta_phases": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "delta_phase_sd": 0.0
+      },
+      "2025-26": {
+        "sharpe": 2.3270314402323904,
+        "annual_arithmetic": 1.9825009055783218,
+        "cagr": 4.027417748712613,
+        "max_drawdown": -0.4815308318931069,
+        "phase_sharpes": [
+          2.386497167198128,
+          2.3325706137348,
+          2.262026539764243
+        ],
+        "phase_sd": 0.05096564925361391,
+        "phase_drawdowns": [
+          -0.5656253292522629,
+          -0.38602853712474183,
+          -0.49293862930231613
+        ],
+        "daily_turnover": 0.8280831557645247,
+        "mean_gross": 2.690596763172391,
+        "annual_cost": 0.22668776389053868,
+        "mean_abs_net": 0.24804082957646534,
+        "correlation_baseline": 1.0,
+        "delta_phases": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "delta_phase_sd": 0.0
+      }
+    },
+    "new_coverage_same_calendar_warmup": {
+      "full": {
+        "sharpe": 1.1844797195085002,
+        "annual_arithmetic": 0.9924910689083196,
+        "cagr": 0.9471571323046705,
+        "max_drawdown": -0.8324243681726421,
+        "phase_sharpes": [
+          1.3509619798916044,
+          0.7743835960807121,
+          1.428093582553184
+        ],
+        "phase_sd": 0.29168641137376816,
+        "phase_drawdowns": [
+          -0.7704533578222177,
+          -0.9263047492779546,
+          -0.8005149974177538
+        ],
+        "daily_turnover": 0.7593612765357213,
+        "mean_gross": 2.4053182269059334,
+        "annual_cost": 0.20787514945165372,
+        "mean_abs_net": 0.2308286111448151,
+        "correlation_baseline": 1.0,
+        "delta_phases": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "delta_phase_sd": 0.0
+      },
+      "2023-24": {
+        "sharpe": -0.30297052575175154,
+        "annual_arithmetic": -0.26165182695229655,
+        "cagr": -0.3744920540653083,
+        "max_drawdown": -0.8324243681726421,
+        "phase_sharpes": [
+          0.05441339679666504,
+          -1.1868791723814511,
+          0.2235541983295314
+        ],
+        "phase_sd": 0.6288206020669994,
+        "phase_drawdowns": [
+          -0.7704533578222177,
+          -0.9263047492779546,
+          -0.8005149974177538
+        ],
+        "daily_turnover": 0.6723045085798655,
+        "mean_gross": 2.043927828196845,
+        "annual_cost": 0.18404335922373816,
+        "mean_abs_net": 0.209024200048594,
+        "correlation_baseline": 1.0,
+        "delta_phases": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "delta_phase_sd": 0.0
+      },
+      "2025-26": {
+        "sharpe": 2.3270314402323904,
+        "annual_arithmetic": 1.9825009055783218,
+        "cagr": 4.027417748712613,
+        "max_drawdown": -0.4815308318931069,
+        "phase_sharpes": [
+          2.386497167198128,
+          2.3325706137348,
+          2.262026539764243
+        ],
+        "phase_sd": 0.05096564925361391,
+        "phase_drawdowns": [
+          -0.5656253292522629,
+          -0.38602853712474183,
+          -0.49293862930231613
+        ],
+        "daily_turnover": 0.8280831557645247,
+        "mean_gross": 2.690596763172391,
+        "annual_cost": 0.22668776389053868,
+        "mean_abs_net": 0.24804082957646534,
+        "correlation_baseline": 1.0,
+        "delta_phases": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "delta_phase_sd": 0.0
+      }
+    },
+    "new_coverage_full_warmup": {
+      "full": {
+        "sharpe": 1.1844797195085002,
+        "annual_arithmetic": 0.9924910689083196,
+        "cagr": 0.9471571323046705,
+        "max_drawdown": -0.8324243681726421,
+        "phase_sharpes": [
+          1.3509619798916044,
+          0.7743835960807121,
+          1.428093582553184
+        ],
+        "phase_sd": 0.29168641137376816,
+        "phase_drawdowns": [
+          -0.7704533578222177,
+          -0.9263047492779546,
+          -0.8005149974177538
+        ],
+        "daily_turnover": 0.7593612765357213,
+        "mean_gross": 2.4053182269059334,
+        "annual_cost": 0.20787514945165372,
+        "mean_abs_net": 0.2308286111448151,
+        "correlation_baseline": 1.0,
+        "delta_phases": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "delta_phase_sd": 0.0
+      },
+      "2023-24": {
+        "sharpe": -0.30297052575175154,
+        "annual_arithmetic": -0.26165182695229655,
+        "cagr": -0.3744920540653083,
+        "max_drawdown": -0.8324243681726421,
+        "phase_sharpes": [
+          0.05441339679666504,
+          -1.1868791723814511,
+          0.2235541983295314
+        ],
+        "phase_sd": 0.6288206020669994,
+        "phase_drawdowns": [
+          -0.7704533578222177,
+          -0.9263047492779546,
+          -0.8005149974177538
+        ],
+        "daily_turnover": 0.6723045085798655,
+        "mean_gross": 2.043927828196845,
+        "annual_cost": 0.18404335922373816,
+        "mean_abs_net": 0.209024200048594,
+        "correlation_baseline": 1.0,
+        "delta_phases": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "delta_phase_sd": 0.0
+      },
+      "2025-26": {
+        "sharpe": 2.3270314402323904,
+        "annual_arithmetic": 1.9825009055783218,
+        "cagr": 4.027417748712613,
+        "max_drawdown": -0.4815308318931069,
+        "phase_sharpes": [
+          2.386497167198128,
+          2.3325706137348,
+          2.262026539764243
+        ],
+        "phase_sd": 0.05096564925361391,
+        "phase_drawdowns": [
+          -0.5656253292522629,
+          -0.38602853712474183,
+          -0.49293862930231613
+        ],
+        "daily_turnover": 0.8280831557645247,
+        "mean_gross": 2.690596763172391,
+        "annual_cost": 0.22668776389053868,
+        "mean_abs_net": 0.24804082957646534,
+        "correlation_baseline": 1.0,
+        "delta_phases": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "delta_phase_sd": 0.0
+      }
+    }
+  },
+  "frozen_baseline_sharpe_error": 0.0,
+  "old_coverage_target_max_error": 0.0,
+  "added_positive_volume_rows": 5740,
+  "added_zero_volume_rows": 3684,
+  "extra_rows_by_coin": {
+    "2Z": 1,
+    "AAVE": 339,
+    "ADA": 339,
+    "AERO": 1,
+    "ALGO": 339,
+    "APT": 339,
+    "AR": 339,
+    "ASTER": 1,
+    "CASHCAT": 1,
+    "CC": 1,
+    "DOT": 339,
+    "ENA": 61,
+    "ETHFI": 76,
+    "FARTCOIN": 1,
+    "FET": 339,
+    "FIL": 339,
+    "GALA": 339,
+    "GRAM": 1,
+    "GRASS": 1,
+    "HBAR": 339,
+    "HYPE": 1,
+    "ICP": 339,
+    "IMX": 339,
+    "JTO": 178,
+    "JUP": 182,
+    "LIT": 1,
+    "MEGA": 1,
+    "MET": 1,
+    "MON": 1,
+    "MORPHO": 1,
+    "NEAR": 339,
+    "NIL": 1,
+    "ONDO": 134,
+    "PAXG": 1,
+    "PENDLE": 310,
+    "PENGU": 1,
+    "PONS": 1,
+    "PUMP": 1,
+    "PURR": 1,
+    "RENDER": 1,
+    "RESOLV": 1,
+    "RUNE": 339,
+    "SAND": 339,
+    "SEI": 292,
+    "SKY": 1,
+    "STRK": 109,
+    "SYRUP": 1,
+    "TAO": 104,
+    "TIA": 227,
+    "TRUMP": 1,
+    "TRX": 339,
+    "UNI": 339,
+    "USELESS": 1,
+    "VIRTUAL": 1,
+    "VVV": 1,
+    "WIF": 163,
+    "WLD": 314,
+    "XLM": 339,
+    "XMR": 339,
+    "XPL": 1,
+    "ZEC": 339,
+    "ZRO": 269,
+    "kBONK": 196
+  },
+  "note": "Mask uses old open availability. Closes/volumes from new cache may still differ, so only frozen-target case exactly reproduces original input."
+}

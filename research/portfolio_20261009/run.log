@@ -1,0 +1,10 @@
+baseline [1.2094, -0.303, 2.3648]
+residual_momentum [1.0562, -0.2654, 2.1534]
+near_high [0.8253, 0.8835, 0.7967]
+btc_eth_trend [0.613, 0.6286, 0.6002]
+blend_residual_momentum [1.3135, -0.3091, 2.5783]
+blend_near_high [1.2557, 0.0026, 2.199]
+blend_btc_eth_trend [1.351, -0.0502, 2.4003]
+blend_all [1.3409, -0.1184, 2.4517]
+CHECKS {'prefix_target_max_error': 0.0, 'independent_accounting_max_error': 4.440892098500626e-16, 'no_production_files_modified_by_script': True, 'historical_open_comparison': {'common_cells': 176435, 'changed_cells': 0, 'old_missing_now_present': 9424}}
+MAXT {'residual_momentum': {'delta_sharpe': -0.15325240690029718, 'ci95': [-1.099685026616252, 0.8330170910304603], 'p_fwer': 0.9574}, 'near_high': {'delta_sharpe': -0.3841420912780287, 'ci95': [-1.4567584209910605, 0.707548585584808], 'p_fwer': 0.9896}, 'btc_eth_trend': {'delta_sharpe': -0.5964361187541948, 'ci95': [-1.9729621513299391, 0.8384179703318883], 'p_fwer': 0.9942}, 'blend_residual_momentum': {'delta_sharpe': 0.10406255100595141, 'ci95': [-0.08848853984503083, 0.30087487343329067], 'p_fwer': 0.4293}, 'blend_near_high': {'delta_sharpe': 0.046257843911251095, 'ci95': [-0.18854535125611088, 0.28933316219744476], 'p_fwer': 0.7613}, 'blend_btc_eth_trend': {'delta_sharpe': 0.1416155782310431, 'ci95': [-0.20558094229786267, 0.5130737113582466], 'p_fwer': 0.5682}, 'blend_all': {'delta_sharpe': 0.13147859985636412, 'ci95': [-0.022770639687201805, 0.3044040936729273], 'p_fwer': 0.2141}}
