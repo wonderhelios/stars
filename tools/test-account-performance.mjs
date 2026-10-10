@@ -5,7 +5,7 @@ import vm from "node:vm";
 const source = readFileSync(new URL("../static/app.js", import.meta.url), "utf8");
 const start = source.indexOf("let txPnl = null;");
 const end = source.indexOf("function renderMonitor(d)", start);
-const snippet = source.slice(start, end).replace("setupCapitalFlow();", "");
+const snippet = source.slice(start, end).replace("setupCapitalFlow();", "").replace("setupCapitalTime();", "");
 const base = { account: "A", equity: 569.09, capital_baseline: { account: "a", equity: 500, ts: 1 } };
 const context = vm.createContext({ LIVE_EXCHANGE: "Hyperliquid", fetch: () => { throw Error("HL must not request TxFlow PnL"); } });
 vm.runInContext(snippet, context);
@@ -50,7 +50,7 @@ const renderContext = vm.createContext({ ...context, $:get, LIVE_EXCHANGE:"Hyper
   renderLiveChart:() => {},
 });
 vm.runInContext(source.slice(source.indexOf("function metric("), source.indexOf("// 轮询后台")), renderContext);
-vm.runInContext(source.slice(start, source.indexOf("function renderLiveChart(")).replace("setupCapitalFlow();", ""), renderContext);
+vm.runInContext(source.slice(start, source.indexOf("function renderLiveChart(")).replace("setupCapitalFlow();", "").replace("setupCapitalTime();", ""), renderContext);
 renderContext.renderMonitor({ ...base, positions:[], records:[], config:{}, history:[] });
 const html = get("mo-metrics").innerHTML;
 assert.match(html, /\+\$69\.09/);

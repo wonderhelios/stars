@@ -217,7 +217,10 @@ pub struct CapitalBaseline {
 /// 否则充钱会让净值跳升、被误当成策略赚的。
 #[derive(Clone, Serialize, Deserialize)]
 pub struct CapitalFlow {
+    /// Registration timestamp; retained for audit and legacy records.
     pub ts: i64,
+    #[serde(default)]
+    pub effective_ts: Option<i64>,
     pub amount: f64,
     pub note: String,
 }
@@ -1854,7 +1857,7 @@ mod capital_flow_tests {
         let mut st = LiveState::default();
         st.config.account = "a".into();
         st.net_deposit = 100.0;
-        st.capital_flows.push(CapitalFlow { ts: 1, amount: 100.0, note: String::new() });
+        st.capital_flows.push(CapitalFlow { ts: 1, effective_ts: None, amount: 100.0, note: String::new() });
         st.reset_capital_for_account_change("A");
         assert_eq!(st.net_deposit, 100.0);
         st.config.account = "b".into();

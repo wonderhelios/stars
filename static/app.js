@@ -457,8 +457,12 @@ function capitalPerformance(d) {
 function renderCapitalFlows(d) {
   const el = $("lv-flow-history");
   if (!el) return;
-  const flows = [...(d.capital_flows || [])].sort((a,b) => b.ts-a.ts);
-  el.innerHTML = flows.length ? flows.map(f => `<div class="flow-row"><time>${ts2m(f.ts)} UTC</time><b>${f.amount >= 0 ? "+" : "−"}$${fmt(Math.abs(f.amount), 2)}</b></div>`).join("") : '<p>暂无登记流水</p>';
+  const key = JSON.stringify([d.account, d.capital_flows]);
+  if (el.flowKey === key) return; // Polling must not overwrite an in-progress time correction.
+  el.flowKey = key;
+  const flows = (d.capital_flows || []).map((f,index) => ({...f,index})).reverse();
+  el.innerHTML = flows.length ? flows.map(f => `<div class="flow-entry"><div class="flow-row"><time>${ts2m(f.effective_ts ?? f.ts)} UTC${f.effective_ts == null ? " · 登记时间" : " · 到账时间"}</time><b>${f.amount >= 0 ? "+" : "−"}$${fmt(Math.abs(f.amount), 2)}</b></div><details><summary>校正到账时间</summary><input aria-label="到账时间 UTC" type="datetime-local" step="1" value="${new Date(f.effective_ts ?? f.ts).toISOString().slice(0,19)}"><button type="button" class="btn ghost" data-flow-index="${f.index}" data-flow-ts="${f.ts}" data-flow-account="${escapeHTML(d.account)}">保存时间</button></details></div>`).join("") : '<p>暂无登记流水</p>';
+
 }
 
 function setupCapitalFlow() {
@@ -472,7 +476,7 @@ function setupCapitalFlow() {
     try {
       const res = await fetch("/api/live/capital", {
         method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ amount })
+        body: JSON.stringify({ amount, effective_ts: $("lv-flow-time")?.value ? Date.parse($("lv-flow-time").value + "Z") : null })
       });
       const j = await res.json();
       if (res.ok && j.ok) {
@@ -487,6 +491,26 @@ function setupCapitalFlow() {
   });
 }
 setupCapitalFlow();
+function setupCapitalTime() {
+  $("lv-flow-history")?.addEventListener("click", async e => {
+    const btn = e.target.closest("[data-flow-index]");
+    if (!btn) return;
+    const input = btn.parentElement.querySelector("input");
+    const effective_ts = Date.parse(input.value + "Z");
+    if (!Number.isFinite(effective_ts)) { alert("请填写有效的 UTC 到账时间"); return; }
+    btn.disabled = true;
+    try {
+      const res = await fetch("/api/live/capital/time", {method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({account:btn.dataset.flowAccount,index:Number(btn.dataset.flowIndex),recorded_ts:Number(btn.dataset.flowTs),effective_ts})});
+      const result = await res.json();
+      if (!res.ok || !result.ok) throw Error(result.error || "保存失败");
+      $("lv-flow-status").textContent = "到账时间已保存。";
+      try { const data = await fetchLive(); liveFetchedAt=Date.now(); renderMonitor(data); }
+      catch (_) { $("lv-flow-status").textContent = "时间已保存；请刷新监控页以更新曲线。"; }
+    } catch (err) { alert(err.message); }
+    finally { btn.disabled=false; }
+  });
+}
+setupCapitalTime();
 
 function escapeHTML(value) {
   return String(value ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;"}[c]));
@@ -803,13 +827,32 @@ function renderMonitor(d) {
     : '<div class="empty">还没有下单记录</div>';
 }
 
+// Convert every observation before windowing: earlier cash flows also affect a short window.
+function strategyHistory(history, data) {
+  const baseline = data?.capital_baseline;
+  if (!baseline || !Number.isFinite(baseline.equity) || baseline.equity <= 0 ||
+      (baseline.account || "").toLowerCase() !== (data.account || "").toLowerCase()) return { error: "缺少有效的账户记录起点，暂时无法计算策略盈亏。", history: [] };
+  const flows = [...(data.capital_flows || [])];
+  const net = data.net_deposit ?? 0;
+  if (!Number.isFinite(net) || flows.some(f => !Number.isFinite(f.amount) || !Number.isFinite(f.effective_ts ?? f.ts)) ||
+      Math.abs(flows.reduce((sum,f) => sum + f.amount, 0) - net) > 0.005) return { error: "出入金明细与累计金额不一致，请先核对资金流水。", history: [] };
+  flows.sort((a,b) => (a.effective_ts ?? a.ts) - (b.effective_ts ?? b.ts));
+  const observations = [...history].filter(p => Number.isFinite(p.ts) && Number.isFinite(p.equity) && p.equity >= 0 && (!baseline.ts || p.ts >= baseline.ts)).sort((a,b) => a.ts-b.ts);
+  let i = 0, cash = 0;
+  const adjusted = observations.map(p => {
+    while (i < flows.length && (flows[i].effective_ts ?? flows[i].ts) <= p.ts) cash += flows[i++].amount;
+    return { ts:p.ts, equity:p.equity - baseline.equity - cash };
+  });
+  return { history:adjusted, estimated:flows.some(f => f.effective_ts == null) };
+}
+
 // Window selection and time aggregation are independent of the drawing code.
 function equityWindow(history, range, now) {
   const hours = { day: 24, week: 168, month: 720 };
   const cutoff = hours[range] ? now - hours[range] * 3600000 : -Infinity;
   const unique = new Map();
   for (const p of history || []) {
-    if (Number.isFinite(p.ts) && Number.isFinite(p.equity) && p.equity >= 0 && p.ts <= now && p.ts >= cutoff) unique.set(p.ts, p);
+    if (Number.isFinite(p.ts) && Number.isFinite(p.equity) && p.ts <= now && p.ts >= cutoff) unique.set(p.ts, p);
   }
   const raw = [...unique.values()].sort((a, b) => a.ts - b.ts);
   if (raw.length < 2) return { raw, points: raw };
@@ -828,10 +871,12 @@ function renderLiveChart(history, shadow) {
   if (lastLiveData && !lastLiveData.error && Number.isFinite(lastLiveData.equity) && liveFetchedAt > 0) {
     observations.push({ ts: liveFetchedAt, equity: lastLiveData.equity });
   }
-  const { raw, points } = equityWindow(observations, chartRange, now);
+  const adjusted = strategyHistory(observations, lastLiveData || {});
+  if (adjusted.error) { el.innerHTML = `<div class="empty">${escapeHTML(adjusted.error)}</div>`; return; }
+  const { raw, points } = equityWindow(adjusted.history, chartRange, now);
   const names = { day: "最近 24 小时", week: "最近 7 天", month: "最近 30 天", all: "全部留存记录" };
   if (!raw.length) {
-    el.innerHTML = `<div class="empty">${names[chartRange]}暂无净值记录。可以切换更长区间查看。</div>`;
+    el.innerHTML = `<div class="empty">${names[chartRange]}暂无策略盈亏记录。可以切换更长区间查看。</div>`;
     return;
   }
   const first = raw[0], last = raw.at(-1), change = last.equity - first.equity;
@@ -842,15 +887,15 @@ function renderLiveChart(history, shadow) {
   const span = ax.hi - ax.lo || 1;
   const X = ts => padL + (last.ts === first.ts ? 0.5 : (ts - first.ts) / (last.ts - first.ts)) * (W - padL - padR);
   const Y = v => padT + (1 - (v - ax.lo) / span) * (H - padT - padB);
-  const money = v => "$" + v.toFixed(2);
+  const money = v => (v < 0 ? "−" : "+") + "$" + Math.abs(v).toFixed(2);
   const grid = ax.lines.map(v => `<line x1="${padL}" y1="${Y(v)}" x2="${W-padR}" y2="${Y(v)}" stroke="#eaf0f0"/><text x="${padL-10}" y="${Y(v)+4}" text-anchor="end" font-size="11" fill="#86949d">$${v.toFixed(span < 10 ? 2 : 0)}</text>`).join("");
   const label = ts => chartRange === "day" ? new Date(ts).toISOString().slice(11,16) : ts2m(ts).slice(0,5);
   const ticks = last.ts === first.ts ? [first.ts] : [first.ts, first.ts + (last.ts-first.ts)/2, last.ts];
   const xlabels = ticks.map((ts,i) => `<text x="${X(ts)}" y="${H-10}" text-anchor="${i === 0 ? "start" : i === ticks.length-1 ? "end" : "middle"}" font-size="11" fill="#86949d">${label(ts)}</text>`).join("");
   const line = points.map(p => `${X(p.ts)},${Y(p.equity)}`).join(" ");
   const circles = points.map(p => `<circle cx="${X(p.ts)}" cy="${Y(p.equity)}" r="6" fill="transparent" class="equity-point"><title>${ts2m(p.ts)} UTC · ${money(p.equity)}</title></circle>`).join("");
-  el.innerHTML = `<div class="chart-summary"><div><span class="chart-eyebrow">${names[chartRange]} · 末值</span><strong>${money(last.equity)}</strong></div><div><span class="chart-eyebrow">区间记录变化</span><strong class="${change >= 0 ? "pos" : "neg"}">${change >= 0 ? "+" : "−"}$${Math.abs(change).toFixed(2)}</strong></div><div class="chart-coverage"><span class="chart-eyebrow">实际记录区间 · UTC</span>${ts2m(first.ts)} — ${ts2m(last.ts)}</div></div>
-    <svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${names[chartRange]}账户净值曲线">
+  el.innerHTML = `<div class="chart-summary"><div><span class="chart-eyebrow">累计策略盈亏 · 区间末值</span><strong>${money(last.equity)}</strong></div><div><span class="chart-eyebrow">区间策略盈亏</span><strong class="${change >= 0 ? "pos" : "neg"}">${change >= 0 ? "+" : "−"}$${Math.abs(change).toFixed(2)}</strong></div><div class="chart-coverage"><span class="chart-eyebrow">实际记录区间 · UTC</span>${ts2m(first.ts)} — ${ts2m(last.ts)}</div></div>
+    <svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${names[chartRange]}策略盈亏曲线">
       <defs><linearGradient id="equity-area" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#168473" stop-opacity="0.14"/><stop offset="100%" stop-color="#168473" stop-opacity="0"/></linearGradient></defs>
       ${grid}
       ${points.length > 1 ? `<polygon points="${X(first.ts)},${H-padB} ${line} ${X(last.ts)},${H-padB}" fill="url(#equity-area)"/>` : ""}
@@ -858,7 +903,7 @@ function renderLiveChart(history, shadow) {
       <polyline points="${line}" fill="none" stroke="#168473" stroke-width="2.5" stroke-linejoin="round"/>
       <circle cx="${X(last.ts)}" cy="${Y(last.equity)}" r="4" fill="#168473" stroke="white" stroke-width="2"/>
       ${circles}${xlabels}
-    </svg><div class="chart-caption"><span><i></i>账户净值 <span class="muted">· 虚线为区间记录起点</span></span><span>${raw.length === 1 ? "仅一条记录，等待下一次采样" : "悬停查看采样值"} · 含出入金，非纯策略收益</span></div>`;
+    </svg><div class="chart-caption"><span><i></i>策略盈亏 <span class="muted">· 虚线为区间起点</span></span><span>${raw.length === 1 ? "仅一条记录，等待下一次采样" : "悬停查看采样值"} · 已扣登记出入金，含手续费与资金费</span></div>${adjusted.estimated ? '<p class="note">旧流水按登记时间估算；如为事后补记，请在资金流水中校正到账时间，避免历史曲线出现错位跳变。</p>' : ""}`;
 }
 
 

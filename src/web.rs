@@ -85,6 +85,7 @@ pub fn router(state: AppState) -> Router {
         .route("/api/live/tp", post(live_tp))
         .route("/api/live/records/clear", post(live_records_clear))
         .route("/api/live/capital", post(live_capital))
+        .route("/api/live/capital/time", post(live_capital_time))
         .layer(CompressionLayer::new())
         .layer(CorsLayer::permissive())
         .with_state(state)
@@ -150,6 +151,7 @@ pub fn txflow_router(state: AppState) -> Router {
         .route("/api/txflow/live/tp", post(txflow_tp))
         .route("/api/txflow/live/records/clear", post(live_records_clear))
         .route("/api/txflow/live/capital", post(live_capital))
+        .route("/api/txflow/live/capital/time", post(live_capital_time))
         .layer(CompressionLayer::new())
         .with_state(state)
 }
@@ -415,6 +417,7 @@ async fn live_status(State(state): State<AppState>) -> Response {
 #[derive(serde::Deserialize)]
 struct CapitalBody {
     amount: f64,
+    effective_ts: Option<i64>,
     note: Option<String>,
 }
 
@@ -628,9 +631,15 @@ async fn live_capital(State(state): State<AppState>, Json(body): Json<CapitalBod
     if !(st.net_deposit + amount).is_finite() {
         return (StatusCode::BAD_REQUEST, Json(json!({"ok":false,"error":"累计金额超出范围"}))).into_response();
     }
+    if let Some(ts) = body.effective_ts {
+        if !valid_flow_time(&st, ts) {
+            return (StatusCode::BAD_REQUEST, Json(json!({"ok":false,"error":"到账时间必须在记录起点之后且不晚于现在"}))).into_response();
+        }
+    }
     st.net_deposit += amount;
     st.capital_flows.push(crate::live::CapitalFlow {
         ts: crate::live::now_ms_pub(),
+        effective_ts: body.effective_ts,
         amount,
         note: body.note.unwrap_or_default(),
     });
@@ -639,6 +648,36 @@ async fn live_capital(State(state): State<AppState>, Json(body): Json<CapitalBod
         return (StatusCode::INTERNAL_SERVER_ERROR, Json(json!({"ok": false, "error": format!("保存失败: {e:#}")}))).into_response();
     }
     Json(json!({"ok": true, "net_deposit": st.net_deposit})).into_response()
+}
+
+fn valid_flow_time(st: &crate::live::LiveState, ts: i64) -> bool {
+    ts > 0 && ts <= crate::live::now_ms_pub() && st.baseline().and_then(|b| b.ts).map_or(false, |start| ts > start)
+}
+
+#[derive(serde::Deserialize)]
+struct CapitalTimeBody {
+    account: String,
+    index: usize,
+    recorded_ts: i64,
+    effective_ts: i64,
+}
+
+async fn live_capital_time(State(state): State<AppState>, Json(body): Json<CapitalTimeBody>) -> Response {
+    let mut st = state.live.lock().await;
+    if !st.config.account.eq_ignore_ascii_case(&body.account) ||
+        st.capital_flows.get(body.index).map(|f| f.ts) != Some(body.recorded_ts) {
+        return (StatusCode::CONFLICT, Json(json!({"ok":false,"error":"账户或流水已变化，请刷新后重试"}))).into_response();
+    }
+    if !valid_flow_time(&st, body.effective_ts) {
+        return (StatusCode::BAD_REQUEST, Json(json!({"ok":false,"error":"到账时间必须在记录起点之后且不晚于现在"}))).into_response();
+    }
+    let previous = st.clone();
+    st.capital_flows[body.index].effective_ts = Some(body.effective_ts);
+    if let Err(e) = st.save(&state.live_path) {
+        *st = previous;
+        return (StatusCode::INTERNAL_SERVER_ERROR, Json(json!({"ok":false,"error":format!("保存失败: {e}")}))).into_response();
+    }
+    Json(json!({"ok":true})).into_response()
 }
 
 async fn live_reset(State(state): State<AppState>) -> Response {
@@ -917,5 +956,29 @@ mod repair_integration_tests {
         assert!(st.last_plan[0].contains("币安信号库不可用"));
         assert!(st.records.is_empty());
         drop(st); drop(app); std::fs::remove_dir_all(root).unwrap();
+    }
+}
+
+#[cfg(test)]
+mod capital_time_tests {
+    use super::*;
+    #[test]
+    fn capital_time_requires_a_known_baseline_and_past_time() {
+        let mut st = crate::live::LiveState::default();
+        assert!(!valid_flow_time(&st, 1000));
+        st.config.account = "a".into();
+        st.capital_baseline = Some(crate::live::CapitalBaseline { account:"a".into(), equity:500.0, ts:Some(1000), source:"test".into() });
+        assert!(!valid_flow_time(&st, 1000));
+        assert!(valid_flow_time(&st, 1001));
+        assert!(!valid_flow_time(&st, crate::live::now_ms_pub()+60_000));
+    }
+    #[test]
+    fn legacy_capital_flow_does_not_invent_an_effective_time() {
+        let f: crate::live::CapitalFlow = serde_json::from_value(json!({"ts":2000,"amount":500,"note":"legacy"})).unwrap();
+        assert!(f.effective_ts.is_none());
+        let mut updated = f; updated.effective_ts=Some(1500);
+        let restored: crate::live::CapitalFlow = serde_json::from_value(serde_json::to_value(updated).unwrap()).unwrap();
+        assert_eq!(restored.ts,2000);
+        assert_eq!(restored.effective_ts,Some(1500));
     }
 }

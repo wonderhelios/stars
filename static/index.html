@@ -200,6 +200,7 @@
       #lv-flow-history { margin-top:16px; max-height:220px; overflow:auto; }
       @media(max-width:1100px) { .setup-layout { grid-template-columns:1fr; } .setup-aside { grid-template-columns:repeat(2,minmax(0,1fr)); } .setup-aside>.setup-card:last-child { grid-column:1/-1; } }
       @media(max-width:760px) { .setup-heading { align-items:flex-start; } .setup-chip { display:none; } .setup-layout { gap:16px; } .setup-card { padding:19px 16px; } .setup-aside { grid-template-columns:1fr; } .setup-fields { gap:17px 12px; } .setup-card header { margin-bottom:20px; } .setup-save>span { flex-basis:100%; } }
+      .flow-entry details { font-size:11px; color:var(--muted); } .flow-entry input { max-width:100%; margin:8px 0; } .flow-entry summary { cursor:pointer; }
     </style>
   </head>
   <body>
@@ -243,6 +244,7 @@
         <section class="setup-card"><header><div><h3>手动执行</h3><p>使用已保存的配置。执行调仓会发送真实订单。</p></div></header><div class="setup-actions"><button class="btn ghost" id="lv-plan">生成计划（不下单）</button><button class="btn danger" id="lv-run">执行调仓</button></div><details class="setup-details"><summary>仓位维护</summary><div class="setup-actions"><button class="btn ghost" id="lv-tp-btn">刷新止盈单</button><button class="btn ghost" id="lv-rebuild">转为全仓</button></div><p>转为全仓可能平仓并重开；刷新止盈按已保存的止盈参数处理。</p></details></section>
         <section class="setup-card"><header><div><h3>资金流水</h3><p>仅登记已完成的转账，不会实际转入或转出资金。只记录起点之后的出入金。</p></div></header><div class="field"><label for="lv-flow">记录入金/出金（+入 −出）</label>
               <input id="lv-flow" type="number" step="0.01" placeholder="如 2415 或 -500" />
+              <label for="lv-flow-time">实际到账时间 · UTC（可补记）</label><input id="lv-flow-time" type="datetime-local" step="1" /><span class="note">留空按登记时间估算，可在流水中校正。</span>
               <button class="btn ghost" id="lv-flow-btn" type="button">记录</button>
             </div><p id="lv-flow-status" class="note" role="status" aria-live="polite"></p><div id="lv-flow-history"></div></section>
         </aside></div>
@@ -302,7 +304,7 @@
           <div id="mo-status"></div>
           <div id="mo-warn"></div>
           <div class="metrics" id="mo-metrics"></div>
-          <div class="content-card equity-card"><div class="panel-head monitor-section-head"><div><span class="section-eyebrow">ACCOUNT EQUITY</span><h2>账户净值</h2></div><div class="segmented" id="mo-chart-tabs" role="group" aria-label="净值时间区间"><button type="button" data-range="day" aria-pressed="false">日</button><button type="button" data-range="week" aria-pressed="true">周</button><button type="button" data-range="month" aria-pressed="false">月</button><button type="button" data-range="all" aria-pressed="false">全部</button></div></div>
+          <div class="content-card equity-card"><div class="panel-head monitor-section-head"><div><span class="section-eyebrow">STRATEGY PNL</span><h2>策略盈亏曲线</h2></div><div class="segmented" id="mo-chart-tabs" role="group" aria-label="策略盈亏时间区间"><button type="button" data-range="day" aria-pressed="false">日</button><button type="button" data-range="week" aria-pressed="true">周</button><button type="button" data-range="month" aria-pressed="false">月</button><button type="button" data-range="all" aria-pressed="false">全部</button></div></div>
           <div class="chart" id="mo-chart"></div></div>
           <div class="content-card"><div class="panel-head" style="margin-top:14px"><h2>当前持仓</h2></div>
           <div id="mo-positions"></div></div>
