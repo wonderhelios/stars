@@ -443,14 +443,22 @@ async function fetchTxPnl(account) {
 function capitalPerformance(d) {
   const baseline = d.capital_baseline;
   const base = baseline && baseline.equity;
-  const netDep = Number(d.net_deposit) || 0;
-  const valid = !d.error && Number.isFinite(d.equity) && d.equity >= 0 &&
+  const netDep = d.net_deposit == null ? 0 : Number(d.net_deposit);
+  const principal = base + netDep;
+  const valid = !d.error && Number.isFinite(netDep) && Number.isFinite(principal) && Number.isFinite(d.equity) && d.equity >= 0 &&
     Number.isFinite(base) && base > 0 &&
     (baseline.account || "").toLowerCase() === (d.account || "").toLowerCase();
   // 净值扣除净入金，剩下的才是策略真实赚出来的 —— 充钱/取钱不算盈亏。
   const change = valid ? d.equity - netDep - base : null;
-  return { valid, base, netDep, change,
-    percent: valid && base > 0 ? (change / base) * 100 : null };
+  return { valid, base, netDep, principal, change,
+    percent: valid && principal > 0 ? (change / principal) * 100 : null };
+}
+
+function renderCapitalFlows(d) {
+  const el = $("lv-flow-history");
+  if (!el) return;
+  const flows = [...(d.capital_flows || [])].sort((a,b) => b.ts-a.ts);
+  el.innerHTML = flows.length ? flows.map(f => `<div class="flow-row"><time>${ts2m(f.ts)} UTC</time><b>${f.amount >= 0 ? "+" : "−"}$${fmt(Math.abs(f.amount), 2)}</b></div>`).join("") : '<p>暂无登记流水</p>';
 }
 
 function setupCapitalFlow() {
@@ -467,7 +475,12 @@ function setupCapitalFlow() {
         body: JSON.stringify({ amount })
       });
       const j = await res.json();
-      if (res.ok && j.ok) { if (input) input.value = ""; fetchLive(); }
+      if (res.ok && j.ok) {
+        if (input) input.value = "";
+        $("lv-flow-status").textContent = "流水已保存，正在刷新资金指标…";
+        try { const latest = await fetchLive(); liveFetchedAt = Date.now(); renderMonitor(latest); $("lv-flow-status").textContent = "流水已保存，资金指标已更新。"; }
+        catch (_) { $("lv-flow-status").textContent = "流水已保存；账户刷新失败，请点击监控页刷新，无需重复记录。"; }
+      }
       else { alert(j.error || ("HTTP " + res.status)); }
     } catch (e) { alert("请求失败: " + e); }
     finally { btn.textContent = "记录"; btn.disabled = false; }
@@ -501,6 +514,7 @@ function renderMonitor(d) {
     d.tx_net_deposit = txPnl.net_deposit;
   }
   lastLiveData = d;
+  renderCapitalFlows(d);
   const c = d.config || {};
   const pos = d.positions || [];
   const hist = d.history || [];
@@ -593,13 +607,12 @@ function renderMonitor(d) {
     ) +
     metricGroup(
       "资金表现 · 相对记录起点",
-      metric("记录起点资金", capital.base > 0 ? "$" + fmt(capital.base, 2) : "—") +
-        metric("累计入金（净）", capital.netDep ? (capital.netDep >= 0 ? "+" : "") + "$" + fmt(capital.netDep, 2) : "—") +
-        metric("起点以来资金增减", valid ? (pnl >= 0 ? "+" : "") + "$" + fmt(pnl, 2) : "—", valid && pnl >= 0 ? "pos" : "neg") +
-        metric("资金变化率", valid ? pct(pnlPct) : "—", valid ? (pnlPct >= 0 ? "pos" : "neg") : "") +
-        metric("记录起点 · UTC", d.capital_baseline?.ts ? `<span class="sm">${ts2m(d.capital_baseline.ts)}</span>` : "时间未知"),
+      metric("净投入本金", valid ? "$" + fmt(capital.principal, 2) : "—") +
+        metric("起点后净入金", valid ? moneySigned(capital.netDep) : "—") +
+        metric("扣除出入金后净收益", valid ? moneySigned(pnl) : "—", valid && pnl >= 0 ? "pos" : "neg") +
+        metric("净投入收益率", pnlPct != null ? pct(pnlPct) : "—", pnlPct != null ? (pnlPct >= 0 ? "pos" : "neg") : ""),
       "capital-account",
-      '<details class="metric-definition"><summary>资金口径说明 · 包含出入金</summary><p>资金增减 = 当前净值 − 记录起点资金，已体现手续费与资金费，也包含出入金。无后续出入金时才等于净收益。旧账户的最早留存记录可能晚于系统首次启动。</p></details>'
+      `<details class="metric-definition"><summary>原始起点 ${valid ? "$" + fmt(capital.base, 2) : "—"} · ${d.capital_baseline?.ts ? ts2m(d.capital_baseline.ts) + " UTC" : "时间未知"} · 查看口径</summary><p>净投入本金 = 记录起点资金 + 起点后净入金；净收益 = 当前净值 − 净投入本金；净投入收益率 = 净收益 ÷ 净投入本金。本金不大于零时不显示收益率。这是简单本金收益率，不是时间加权或年化收益率。已体现账户手续费与资金费，准确性依赖出入金记录完整。记录入金不修改历史起点；旧账户的记录起点可能晚于首次启动。</p></details>`
     ) +
     metricGroup(
       "风险与仓位",

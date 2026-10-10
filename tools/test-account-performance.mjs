@@ -5,7 +5,7 @@ import vm from "node:vm";
 const source = readFileSync(new URL("../static/app.js", import.meta.url), "utf8");
 const start = source.indexOf("let txPnl = null;");
 const end = source.indexOf("function renderMonitor(d)", start);
-const snippet = source.slice(start, end);
+const snippet = source.slice(start, end).replace("setupCapitalFlow();", "");
 const base = { account: "A", equity: 569.09, capital_baseline: { account: "a", equity: 500, ts: 1 } };
 const context = vm.createContext({ LIVE_EXCHANGE: "Hyperliquid", fetch: () => { throw Error("HL must not request TxFlow PnL"); } });
 vm.runInContext(snippet, context);
@@ -50,13 +50,13 @@ const renderContext = vm.createContext({ ...context, $:get, LIVE_EXCHANGE:"Hyper
   renderLiveChart:() => {},
 });
 vm.runInContext(source.slice(source.indexOf("function metric("), source.indexOf("// 轮询后台")), renderContext);
-vm.runInContext(source.slice(start, source.indexOf("function renderLiveChart(")), renderContext);
+vm.runInContext(source.slice(start, source.indexOf("function renderLiveChart(")).replace("setupCapitalFlow();", ""), renderContext);
 renderContext.renderMonitor({ ...base, positions:[], records:[], config:{}, history:[] });
 const html = get("mo-metrics").innerHTML;
 assert.match(html, /\+\$69\.09/);
 assert.match(html, /\+13\.82%/);
 assert.match(html, /记录起点资金/);
-assert.match(html, /包含出入金/);
+assert.match(html, /净投入收益率/);
 assert.doesNotMatch(html, /真实总盈亏|>收益率</);
 console.log("✓ Account changes use persisted equity; unavailable baselines stay unknown; TxFlow route and account cache are isolated");
 
@@ -88,3 +88,16 @@ vm.runInContext(source.slice(source.indexOf('function parseFill('),source.indexO
 const partial={side:'卖', action:'平仓', reduce_only:true, size:10, price:12, entry_px:10, result:'成交 2@12'};
 assert.equal(renderContext.parseFill(partial).pnl,4);
 assert.equal(renderContext.parseFill({...partial,reduce_only:false,action:'开仓'}).pnl,null);
+
+const deposited = context.capitalPerformance({account:'A',equity:3084.63,net_deposit:2498.4,capital_baseline:{account:'a',equity:541.02}});
+assert.ok(Math.abs(deposited.principal-3039.42)<1e-8);
+assert.ok(Math.abs(deposited.change-45.21)<1e-8);
+assert.ok(Math.abs(deposited.percent-1.48745484)<1e-7);
+for (const amount of [-500,-600]) {
+  const result=context.capitalPerformance({...base,net_deposit:amount});
+  assert.equal(result.valid,true); assert.equal(result.percent,null);
+}
+assert.equal(context.capitalPerformance({...base,net_deposit:NaN}).valid,false);
+assert.equal(context.capitalPerformance({...base,net_deposit:Infinity}).valid,false);
+assert.ok(Math.abs(context.capitalPerformance({...base,net_deposit:-100}).percent-42.2725)<1e-8);
+console.log('✓ Deposits/withdrawals adjust principal and simple return, nonpositive principal stays undefined');

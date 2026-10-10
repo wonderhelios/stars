@@ -617,7 +617,7 @@ async fn live_run(State(state): State<AppState>, body: Option<Json<LiveRunBody>>
 /// 记录一笔入金（正数）或出金（负数）。
 ///
 /// 入金/出金会直接改变账户净值，但不是策略赚的 —— 必须记进 net_deposit，
-/// 让收益率 = (净值 − 净入金 − 起始资金) / 起始资金 而不是把充钱当成盈利。
+/// 净收益扣除净入金；前端简单收益率以起点资金加净入金为分母。
 async fn live_capital(State(state): State<AppState>, Json(body): Json<CapitalBody>) -> Response {
     let amount = body.amount;
     if !amount.is_finite() || amount == 0.0 {
@@ -625,6 +625,9 @@ async fn live_capital(State(state): State<AppState>, Json(body): Json<CapitalBod
     }
     let mut st = state.live.lock().await;
     let previous = st.clone();
+    if !(st.net_deposit + amount).is_finite() {
+        return (StatusCode::BAD_REQUEST, Json(json!({"ok":false,"error":"累计金额超出范围"}))).into_response();
+    }
     st.net_deposit += amount;
     st.capital_flows.push(crate::live::CapitalFlow {
         ts: crate::live::now_ms_pub(),

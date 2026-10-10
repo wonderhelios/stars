@@ -1,0 +1,17 @@
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+import vm from 'node:vm';
+const source=readFileSync(new URL('../static/app.js',import.meta.url),'utf8');
+const code=source.slice(source.indexOf('function setupCapitalFlow()'),source.indexOf('function escapeHTML('));
+const elements=new Map();
+const $=id=>{if(!elements.has(id))elements.set(id,{value:'',textContent:'',disabled:false,addEventListener(_,fn){this.click=fn;}});return elements.get(id);};
+let failRead=false,failSave=false,posts=0,renders=0,alerts=[];
+vm.runInNewContext(code,{$,Date,liveFetchedAt:0,alert:m=>alerts.push(m),fetch:async(_,options)=>{posts++;assert.equal(JSON.parse(options.body).amount,100);return {ok:!failSave,json:async()=>({ok:!failSave,error:'保存失败'})};},fetchLive:async()=>{if(failRead)throw Error('offline');return {equity:700};},renderMonitor:d=>{renders++;assert.equal(d.equity,700);}});
+$('lv-flow').value='100';await $('lv-flow-btn').click();
+assert.equal(renders,1);assert.equal($('lv-flow').value,'');assert.match($('lv-flow-status').textContent,/已更新/);
+failRead=true;$('lv-flow').value='100';await $('lv-flow-btn').click();
+assert.match($('lv-flow-status').textContent,/无需重复记录/);assert.equal(renders,1);
+failSave=true;$('lv-flow').value='100';await $('lv-flow-btn').click();
+assert.equal($('lv-flow').value,'100');assert.equal(alerts.at(-1),'保存失败');assert.equal($('lv-flow-btn').disabled,false);
+$('lv-flow').value='0';await $('lv-flow-btn').click();assert.equal(posts,3);
+console.log('✓ Capital flow save refreshes metrics; read failure does not invite duplicate entries; invalid/save failures retain correct state');

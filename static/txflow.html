@@ -169,6 +169,37 @@
         .chart-coverage { margin-left:0; width:100%; }
         .segmented button { padding:8px 13px; }
       }
+
+      /* Settings workspace */
+      .setup-heading { margin-bottom:28px; align-items:center; }
+      .setup-heading h2 { font-size:30px; margin:4px 0 8px; letter-spacing:-1px; }
+      .setup-chip { padding:7px 12px; background:#e8f2ee; color:#426b5f; border-radius:20px; font-size:11px; }
+      .setup-layout { display:grid; grid-template-columns:minmax(0,1.6fr) minmax(290px,1fr); gap:22px; align-items:start; }
+      .setup-main,.setup-aside { display:grid; gap:20px; min-width:0; }
+      .setup-card { background:white; border:1px solid var(--line); border-radius:16px; padding:25px; min-width:0; }
+      .setup-card header { display:flex; gap:13px; align-items:flex-start; margin-bottom:23px; }
+      .setup-card h3 { margin:0; font-size:17px; font-weight:650; }
+      .setup-card p { margin:6px 0 0; font-size:12px; color:var(--muted); line-height:1.8; }
+      .setup-number { color:#168473; font-size:10px; letter-spacing:1px; border:1px solid #dcebe5; padding:4px 7px; border-radius:6px; margin-top:2px; }
+      .setup-fields { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:21px 18px; }
+      .setup-fields .field:has(#tx-wallet),.setup-fields .field:has(#lv-account),.setup-fields .field:has(#lv-key) { grid-column:1/-1; }
+      .setup-card .field label { font-size:12px; color:#506671; }
+      .setup-card input,.setup-card select { height:44px; background:#f8faf9; border-color:#dfe7e3; }
+      .setup-aside .setup-fields { grid-template-columns:1fr; }
+      .setup-actions { display:grid; grid-template-columns:1fr; gap:10px; }
+      .setup-actions .btn { width:100%; padding:11px 14px; }
+      .setup-save { display:flex; align-items:center; flex-wrap:wrap; gap:12px; padding:17px 20px; border-radius:12px; background:#eaf2ee; }
+      .setup-save>span { flex:1; color:#5c746b; font-size:12px; }
+      .setup-save #lv-save { background:#167969; color:white; border-color:#167969; }
+      #lv-save-status { flex-basis:100%; margin:0; font-size:12px; } #lv-save-status:empty { display:none; }
+      .setup-details { border-top:1px solid var(--line); margin-top:19px; padding-top:15px; font-size:12px; color:#6a7e77; }
+      .setup-details summary,.setup-reference>summary { cursor:pointer; } .setup-details .setup-actions { margin-top:14px; }
+      .setup-result { margin-top:24px; } #lv-plan-out:empty::after { content:'尚无执行结果。生成计划后，可在这里检查目标仓位与订单。'; display:block; color:#8a9893; padding:12px 0; font-size:13px; }
+      .setup-reference { margin-top:22px; color:#74847d; font-size:12px; } .setup-reference>summary { padding:14px 0; }
+      .flow-row { display:flex; justify-content:space-between; gap:12px; padding:10px 0; border-top:1px solid var(--line); font-size:12px; } .flow-row time { color:#8b9993; }
+      #lv-flow-history { margin-top:16px; max-height:220px; overflow:auto; }
+      @media(max-width:1100px) { .setup-layout { grid-template-columns:1fr; } .setup-aside { grid-template-columns:repeat(2,minmax(0,1fr)); } .setup-aside>.setup-card:last-child { grid-column:1/-1; } }
+      @media(max-width:760px) { .setup-heading { align-items:flex-start; } .setup-chip { display:none; } .setup-layout { gap:16px; } .setup-card { padding:19px 16px; } .setup-aside { grid-template-columns:1fr; } .setup-fields { gap:17px 12px; } .setup-card header { margin-bottom:20px; } .setup-save>span { flex-basis:100%; } }
     </style>
   </head>
   <body>
@@ -190,39 +221,11 @@
 
       <!-- ============ 实盘设置 ============ -->
       <section id="view-live" class="view">
-        <div class="panel">
-          <div class="panel-head">
-            <div>
-              <div class="panel-kicker">LIVE SETUP · TXFLOW</div>
-              <h2>实盘设置</h2>
-              <p class="sub">配置 + 启停。<b>只读观测请看「实盘监控」tab。</b>实盘与纸交易共用同一套排名代码，不会漂移。</p>
-            </div>
-            <div class="actions">
-              <button class="btn ghost" id="lv-plan">生成计划（不下单）</button>
-              <button class="btn ghost" id="lv-tp-btn">刷新止盈单</button>
-              <button class="btn ghost" id="lv-rebuild">转为全仓</button>
-              <button class="btn danger" id="lv-run">执行调仓</button>
-            </div>
-          </div>
-
-          <div class="controls" style="margin-bottom:16px">
-            <div class="field"><label>主钱包（仅用于签名授权）</label><select id="tx-wallet"><option value="">检测浏览器钱包…</option></select></div>
-            <div class="field"><label>&nbsp;</label><button class="btn ghost" id="tx-agent-prepare">连接钱包并生成 Agent</button></div>
-            <div class="field"><label>&nbsp;</label><button class="btn" id="tx-agent-approve" disabled>签名授权 Agent</button></div>
-            <p class="note" id="tx-agent-status" role="status" aria-live="polite" style="flex-basis:100%;overflow-wrap:anywhere">先连接你在 TxFlow 使用的主钱包。Agent 密钥会自动保存在服务器，主钱包只需签名一次；不会自动开启实盘。</p>
-          </div>
-          <div class="controls">
-            <div class="field"><label>账户地址（主账户，不是 API 钱包）</label><input id="lv-account" placeholder="0x..." /></div>
-            <div class="field"><label>API 钱包密钥文件路径</label><input id="lv-key" placeholder="必填，例如 /etc/stars/txflow-agent.key" /></div>
-            <div class="field"><label>每腿仓位数</label><input id="lv-positions" type="number" value="8" min="1" max="30" /></div>
-            <div class="field"><label>杠杆</label><input id="lv-leverage" type="number" value="3" min="1" max="20" step="0.5" /></div>
-            <div class="field"><label>保证金缓冲 %</label><input id="lv-buffer" type="number" value="90" min="30" max="100" /></div>
-            <div class="field"><label>滑点上限 %</label><input id="lv-slippage" type="number" value="0.5" min="0.05" max="5" step="0.05" /></div>
-            <div class="field"><label>错峰调仓（档）</label><input id="lv-slices" type="number" value="3" min="1" max="10" step="1" /></div>
-            <div class="field"><label>止盈 % （0 = 关闭）</label><input id="lv-tp" type="number" value="0" min="0" max="50" step="1" /></div>
-            <div class="field"><label>回看天数</label><input id="lv-lookback" type="number" value="14" min="2" max="120" /></div>
-            <div class="field"><label>多头比例</label><input id="lv-top" type="number" value="0.2" min="0.02" max="0.5" step="0.05" /></div>
-            <div class="field"><label>近 30 日日均成交额门槛</label>
+        <div class="panel-head setup-heading"><div><div class="panel-kicker">LIVE SETUP · TXFLOW</div><h2>实盘设置</h2><p class="sub">账户连接、策略参数与执行控制，集中管理。</p></div><span class="setup-chip">设置变更后请保存</span></div>
+        <div class="setup-layout"><div class="setup-main">
+        <section class="setup-card"><header><span class="setup-number">01</span><div><h3>连接与授权</h3><p>连接主钱包，授权专用 Agent 后再配置策略。</p></div></header><div class="setup-fields"><div class="field"><label for="tx-wallet">主钱包（仅用于签名授权）</label><select id="tx-wallet"><option value="">检测浏览器钱包…</option></select></div><div class="field"><button class="btn ghost" id="tx-agent-prepare">连接钱包并生成 Agent</button></div><div class="field"><button class="btn" id="tx-agent-approve" disabled>签名授权 Agent</button></div></div><p class="note" id="tx-agent-status" role="status" aria-live="polite">主钱包仅签名授权，Agent 密钥保存在服务器；授权不会自动启用实盘。</p></section>
+        <section class="setup-card"><header><span class="setup-number">02</span><div><h3>账户连接</h3><p>使用交易主账户与服务器上的 API 密钥文件。</p></div></header><div class="setup-fields"><div class="field"><label for="lv-account">账户地址（主账户，不是 API 钱包）</label><input id="lv-account" placeholder="0x..." /></div><div class="field"><label for="lv-key">API 钱包密钥文件路径</label><input id="lv-key" placeholder="必填，例如 /etc/stars/txflow-agent.key" /></div></div></section>
+        <section class="setup-card"><header><span class="setup-number">03</span><div><h3>组合与信号</h3><p>定义持仓规模、筛选条件和调仓节奏。</p></div></header><div class="setup-fields"><div class="field"><label for="lv-positions">每腿仓位数</label><input id="lv-positions" type="number" value="8" min="1" max="30" /></div><div class="field"><label for="lv-lookback">回看天数</label><input id="lv-lookback" type="number" value="14" min="2" max="120" /></div><div class="field"><label for="lv-top">多头比例</label><input id="lv-top" type="number" value="0.2" min="0.02" max="0.5" step="0.05" /></div><div class="field"><label for="lv-minvol">近 30 日日均成交额门槛</label>
               <select id="lv-minvol">
                 <option value="100000">$100K</option>
                 <option value="200000">$200K</option>
@@ -232,32 +235,28 @@
                 <option value="5000000">$5M</option>
                 <option value="10000000">$10M</option>
               </select>
-            </div>
-            <div class="field"><label>最小下单额占净值 %</label><input id="lv-minpct" type="number" value="0" min="0" max="5" step="0.1" /></div>
-            <div class="field"><label>记录入金/出金（+入 −出）</label>
-              <input id="lv-flow" type="number" step="0.01" placeholder="如 2415 或 -500" style="width:9em" />
-              <button class="btn ghost" id="lv-flow-btn" type="button">记录</button>
-            </div>
-            <div class="field"><label>启用实盘（允许发单）</label>
+            </div><div class="field"><label for="lv-slices">错峰调仓（档）</label><input id="lv-slices" type="number" value="3" min="1" max="10" step="1" /></div><div class="field"><label for="lv-tp">止盈 % （0 = 关闭）</label><input id="lv-tp" type="number" value="0" min="0" max="50" step="1" /></div></div></section>
+        <section class="setup-card"><header><span class="setup-number">04</span><div><h3>资金与成交约束</h3><p>控制名义敞口及订单执行容差。</p></div></header><div class="setup-fields"><div class="field"><label for="lv-leverage">杠杆</label><input id="lv-leverage" type="number" value="3" min="1" max="20" step="0.5" /></div><div class="field"><label for="lv-buffer">保证金缓冲 %</label><input id="lv-buffer" type="number" value="90" min="30" max="100" /></div><div class="field"><label for="lv-slippage">滑点上限 %</label><input id="lv-slippage" type="number" value="0.5" min="0.05" max="5" step="0.05" /></div><div class="field"><label for="lv-minpct">最小下单额占净值 %</label><input id="lv-minpct" type="number" value="0" min="0" max="5" step="0.1" /></div></div></section>
+        <div class="setup-save"><span>保存参数后，下一次计划使用新配置。</span><button class="btn ghost" id="lv-save">保存配置</button><p id="lv-save-status" role="status" aria-live="polite"></p></div>
+        </div><aside class="setup-aside">
+        <section class="setup-card"><header><span class="setup-number">CONTROL</span><div><h3>运行控制</h3><p>开关修改后需保存配置。</p></div></header><div class="setup-fields"><div class="field"><label for="lv-armed">启用实盘（允许发单）</label>
               <select id="lv-armed"><option value="false" selected>关闭（只生成计划）</option><option value="true">开启（可发真单）</option></select>
-            </div>
-            <div class="field"><label>每日自动调仓（UTC 00:05）</label>
+            </div><div class="field"><label for="lv-auto">每日自动调仓（UTC 00:05）</label>
               <select id="lv-auto"><option value="false" selected>关闭</option><option value="true">开启</option></select>
-            </div>
-            <div class="field"><label>&nbsp;</label><button class="btn ghost" id="lv-save">保存配置</button></div>
-            <p class="note" id="lv-save-status" role="status" aria-live="polite" style="flex-basis:100%"></p>
-          </div>
-
-          <div class="note"><b>复用同一策略：</b>波动调整动量、低波动与成交量冲击的组合，多空对冲，按设置错峰调仓。信号只使用 TxFlow 已收盘日线与滚动成交额。<b>所有交易请求串行执行，间隔至少 300ms。</b></div>
+            </div></div></section>
+        <section class="setup-card"><header><div><h3>手动执行</h3><p>使用已保存的配置。执行调仓会发送真实订单。</p></div></header><div class="setup-actions"><button class="btn ghost" id="lv-plan">生成计划（不下单）</button><button class="btn danger" id="lv-run">执行调仓</button></div><details class="setup-details"><summary>仓位维护</summary><div class="setup-actions"><button class="btn ghost" id="lv-tp-btn">刷新止盈单</button><button class="btn ghost" id="lv-rebuild">转为全仓</button></div><p>转为全仓可能平仓并重开；刷新止盈按已保存的止盈参数处理。</p></details></section>
+        <section class="setup-card"><header><div><h3>资金流水</h3><p>仅登记已完成的转账，不会实际转入或转出资金。只记录起点之后的出入金。</p></div></header><div class="field"><label for="lv-flow">记录入金/出金（+入 −出）</label>
+              <input id="lv-flow" type="number" step="0.01" placeholder="如 2415 或 -500" />
+              <button class="btn ghost" id="lv-flow-btn" type="button">记录</button>
+            </div><p id="lv-flow-status" class="note" role="status" aria-live="polite"></p><div id="lv-flow-history"></div></section>
+        </aside></div>
+        <section class="setup-card setup-result"><header><div><span class="section-eyebrow">EXECUTION RESULT</span><h3>计划 / 执行结果</h3></div></header><div id="lv-plan-out"></div></section>
+<details class="setup-reference"><summary>策略说明与检查记录</summary>          <div class="note"><b>复用同一策略：</b>波动调整动量、低波动与成交量冲击的组合，多空对冲，按设置错峰调仓。信号只使用 TxFlow 已收盘日线与滚动成交额。<b>所有交易请求串行执行，间隔至少 300ms。</b></div>
           <p class="note"><b>止盈：</b>按调仓参考价挂只减仓限价单，默认关闭。仅撤销本程序记录的止盈订单。</p>
           <p class="note"><b>流动性：</b>按近 30 个已收盘日的平均成交额筛选，策略至少需要 8 个候选市场。TxFlow 新配置默认 $500K；已有配置保持原值，候选不足时可调整门槛并保存后再生成计划。</p>
           <p class="note">可在上方生成并授权策略专用 Agent，成功后自动填写主账户和密钥路径。也可手动使用已有的已授权 Agent 文件。主钱包私钥不参与策略。账户需为单向持仓；资金、仓位和挂单均从 TxFlow 读取。维持保证金取自 TxFlow 账户接口；强平价以交易所返回值为准。</p>
-          <div class="panel-head" style="margin-top:14px"><h2>计划 / 执行结果</h2></div>
-          <div id="lv-plan-out"></div>
-        </div>
-
         <div class="panel" style="margin-top:16px"><h2>TxFlow 接入状态</h2><p class="note">行情接口已验证。策略逻辑复用 Hyperliquid；在 TxFlow 的历史表现和真实成交链路尚待验证。实盘默认关闭，可先生成调仓计划。</p></div>
-      </section>
+</details></section>
 
       <!-- ============ 实盘监控 ============ -->
       <section id="view-monitor" class="view active">

@@ -197,7 +197,7 @@ pub struct LiveState {
     /// 旧 state 仅能从留存净值迁移，不能从不完整的交易盈亏反推。
     #[serde(default)]
     pub start_equity: Option<f64>,
-    /// 累计净入金（入金为正、出金为负）。收益率 = (净值 − 净入金 − 起始资金) / 起始资金。
+    /// 累计净入金（入金为正、出金为负）。净投入收益率 = (净值 − 净入金 − 起始资金) / (起始资金 + 净入金)，分母须为正。
     #[serde(default)]
     pub net_deposit: f64,
     /// 每一笔入金/出金流水。
@@ -238,6 +238,8 @@ impl LiveState {
     pub fn reset_capital_for_account_change(&mut self, previous_account: &str) {
         if !self.config.account.eq_ignore_ascii_case(previous_account) {
             self.capital_baseline = None;
+            self.net_deposit = 0.0;
+            self.capital_flows.clear();
             self.start_equity = None;
             self.history.clear();
         }
@@ -1847,9 +1849,22 @@ mod monitor_receipt_tests {
 mod capital_flow_tests {
     use super::*;
 
+    #[test]
+    fn cash_flows_follow_the_account_baseline() {
+        let mut st = LiveState::default();
+        st.config.account = "a".into();
+        st.net_deposit = 100.0;
+        st.capital_flows.push(CapitalFlow { ts: 1, amount: 100.0, note: String::new() });
+        st.reset_capital_for_account_change("A");
+        assert_eq!(st.net_deposit, 100.0);
+        st.config.account = "b".into();
+        st.reset_capital_for_account_change("a");
+        assert_eq!(st.net_deposit, 0.0);
+        assert!(st.capital_flows.is_empty());
+    }
+
     /// 充钱只会增加 net_deposit，绝不改变"策略赚出来的部分"。
-    /// 前端公式是 收益率 = (净值 − 净入金 − 起始资金) / 起始资金，
-    /// 所以入金之后这个值不变 —— 这是充钱不伪装成盈利的关键。
+    /// 入金不改变净收益金额；简单收益率会因投入本金增加而变化。
     #[test]
     fn deposit_does_not_change_trading_pnl() {
         let mut st = LiveState::default();
