@@ -176,6 +176,8 @@ pub struct RecoveryState {
 #[derive(Clone, Serialize, Deserialize, Default)]
 pub struct LiveState {
     #[serde(default)]
+    pub capital_baseline: Option<CapitalBaseline>,
+    #[serde(default)]
     pub pending_recovery: Option<RecoveryState>,
     pub config: LiveConfig,
     pub history: Vec<EquityPoint>,
@@ -196,9 +198,17 @@ pub struct LiveState {
     /// （资金费、未记录成交都会造成偏差），于是反推出来的基数会自己漂：
     /// 实测几秒内从 $560.02 变成 $563.17，收益率跟着上下跳。
     /// 这里在**第一次记录净值时**写死一个值，之后再也不改。
-    /// 旧 state 文件没有这个字段（`None`）→ 由快照按老办法兜底一次并写回。
+    /// 旧 state 仅能从留存净值迁移，不能从不完整的交易盈亏反推。
     #[serde(default)]
     pub start_equity: Option<f64>,
+}
+
+#[derive(Clone, Serialize, Deserialize)]
+pub struct CapitalBaseline {
+    pub account: String,
+    pub equity: f64,
+    pub ts: Option<i64>,
+    pub source: String,
 }
 
 pub fn merge_txflow_reconciliation(current: &mut LiveState, snapshot: &LiveState) {
@@ -214,6 +224,29 @@ pub fn merge_txflow_reconciliation(current: &mut LiveState, snapshot: &LiveState
 }
 
 impl LiveState {
+    pub fn reset_capital_for_account_change(&mut self, previous_account: &str) {
+        if !self.config.account.eq_ignore_ascii_case(previous_account) {
+            self.capital_baseline = None;
+            self.start_equity = None;
+            self.history.clear();
+        }
+    }
+    /// Only observed equity is a valid baseline; never infer it from trade PnL.
+    pub fn baseline(&self) -> Option<CapitalBaseline> {
+        if let Some(b) = &self.capital_baseline {
+            return (b.account.eq_ignore_ascii_case(&self.config.account)
+                && b.equity.is_finite() && b.equity > 0.).then(|| b.clone());
+        }
+        let first = self.history.iter().filter(|p| p.equity.is_finite() && p.equity > 0.)
+            .min_by_key(|p| p.ts);
+        let saved = self.start_equity.filter(|v| v.is_finite() && *v > 0.);
+        let equity = saved.or_else(|| first.map(|p| p.equity))?;
+        Some(CapitalBaseline {
+            account: self.config.account.clone(), equity,
+            ts: if saved.is_some() { None } else { first.map(|p| p.ts) },
+            source: if saved.is_some() { "已保存的起始资金" } else { "最早留存净值（启动前数据未知）" }.into(),
+        })
+    }
     pub fn begin_txflow_execution(&mut self, path: &std::path::Path) -> Result<()> {
         if let Some(pending) = &self.pending_recovery {
             anyhow::ensure!(pending.account.eq_ignore_ascii_case(&self.config.account),
@@ -310,6 +343,7 @@ pub struct LivePosition {
 
 #[derive(Serialize)]
 pub struct LiveSnapshot {
+    pub capital_baseline: Option<CapitalBaseline>,
     pub configured: bool,
     pub error: Option<String>,
     pub account: String,
@@ -334,10 +368,8 @@ pub struct LiveSnapshot {
     pub tx_fees: f64,
     pub tx_volume: f64,
     pub tx_fills: usize,
-    /// 净入金（入金 − 出金）。流水接口可能截断，所以是下界。
+    /// 返回流水的净入金；接口可能截断，不能据此推导账户总收益。
     pub tx_net_deposit: f64,
-    /// 真实总盈亏 = 净值 − 净入金。这是唯一能把入金和盈亏分开的口径。
-    pub tx_total_pnl: f64,
     /// 拿不到行情、只能用交易所市值反推估值的币。非空时要显眼提示 ——
     /// 这些仓位的清算价、距离强平都算不出来，可能有隐藏风险。
     pub unpriced: Vec<String>,
@@ -364,6 +396,7 @@ pub async fn snapshot(
 ) -> LiveSnapshot {
     let cfg = state.config.clone();
     let mut snap = LiveSnapshot {
+        capital_baseline: state.baseline(),
         configured: cfg.can_sign(),
         error: None,
         account: cfg.account.clone(),
@@ -386,7 +419,6 @@ pub async fn snapshot(
         tx_volume: 0.0,
         tx_fills: 0,
         tx_net_deposit: 0.0,
-        tx_total_pnl: 0.0,
         tp_ref: HashMap::new(),
         config: cfg.clone(),
         history: state.history.clone(),
@@ -500,16 +532,8 @@ pub async fn snapshot(
     snap.positions.sort_by(|a, b| a.coin.cmp(&b.coin));
     snap.isolated_count = snap.positions.iter().filter(|p| !p.is_cross).count();
     snap.cumulative_pnl = state.unrealized_pnl(&snap.positions);
-    // 收益率的分母：优先用【首次记录时写死】的 start_equity；
-    // 旧 state 文件没有它（None）→ 用老办法兜底算一次，并写回文件固定下来，
-    // 之后就稳定了。
-    snap.start_equity = match state.start_equity {
-        Some(v) if v.is_finite() && v > 0.0 => v,
-        _ => {
-            let fallback = (snap.equity - snap.cumulative_pnl).max(1e-9);
-            fallback
-        }
-    };
+    // Missing historical equity remains unknown until an observation is persisted.
+    snap.start_equity = state.baseline().map(|b| b.equity).unwrap_or(0.);
     // 不按 reduceOnly 过滤：该字段在 openOrders 里不一定存在，过滤会导致
     // 表格永远是空的。程序只挂只减仓单，所以全部展示即可。
     if let Ok(orders) = exec.open_order_details().await {
@@ -616,21 +640,32 @@ fn signal_panel(
 ) -> Result<Vec<crate::momentum::PanelEntry>> {
     if cfg.txflow {
         let hs=signal_store.context("TxFlow 缺少币安信号源，拒绝计划")?;
-        let day=86_400_000;
-        let yesterday=now_ms_pub()/day*day-day;
-        let need=cfg.lookback.max(30)+3;
-        let mapped:Vec<_>=trader::load_panel(hs)?.into_iter().filter_map(|entry| {
-            let closed:Vec<_>=entry.candles.iter().filter(|c|c.t<=yesterday).collect();
-            let recent=&closed[closed.len().saturating_sub(need)..];
-            if recent.len()<need || recent.last().map(|c|c.t)!=Some(yesterday)
-                || !recent.windows(2).all(|w|w[1].t-w[0].t==day)
-                || !recent.iter().all(|c|c.c.is_finite() && c.c>0. && c.v.is_finite() && c.v>=0.) {return None;}
-            Some(entry)
-        }).collect();
-        anyhow::ensure!(mapped.len()>=20,"TxFlow 新鲜且连续的币安信号宇宙不足 20，拒绝计划");
-        return Ok(mapped);
+        return fresh_binance_panel(hs, cfg.lookback, now_ms_pub());
     }
     trader::load_panel(store)
+}
+
+/// Public-data preflight shared by the scheduler, manual planner and executor.
+pub fn fresh_binance_panel(store: &crate::store::Store, lookback: usize, now: i64) -> Result<Vec<crate::momentum::PanelEntry>> {
+    let day = 86_400_000;
+    let yesterday = now / day * day - day;
+    let need = lookback.max(30) + 3;
+    let panel = trader::load_panel(store)?;
+    let total = panel.len();
+    let latest = panel.iter().flat_map(|e| e.candles.iter()).map(|c| c.t).max();
+    let mapped: Vec<_> = panel.into_iter().filter_map(|mut entry| {
+        entry.candles.retain(|c| c.t <= yesterday);
+        let recent = &entry.candles[entry.candles.len().saturating_sub(need)..];
+        if recent.len() < need || recent.last().map(|c| c.t) != Some(yesterday)
+            || !recent.windows(2).all(|w| w[1].t - w[0].t == day)
+            || !recent.iter().all(|c| c.c.is_finite() && c.c > 0. && c.v.is_finite() && c.v >= 0.) { return None; }
+        Some(entry)
+    }).collect();
+    let age = latest.map(|t| ((now / day * day - t) / day).to_string()).unwrap_or_else(|| "未知".into());
+    anyhow::ensure!(mapped.len() >= 20,
+        "TxFlow 新鲜且连续的币安信号宇宙不足 20：合格 {}/{total}，需要截至昨日 UTC 的连续 {need} 根日线，库内最新距今日 {age} 天；拒绝计划",
+        mapped.len());
+    Ok(mapped)
 }
 
 fn signal_description(txflow: bool, count: usize, markets: usize) -> String {
@@ -1496,29 +1531,37 @@ mod config_robustness {
 pub async fn record_equity(
     live: &std::sync::Arc<tokio::sync::Mutex<LiveState>>,
     path: &std::path::Path,
+    account: &str,
     equity: f64,
     pnl: f64,
-) {
-    if !(equity > 0.0) {
-        return;
+) -> Result<()> {
+    if !equity.is_finite() || equity < 0.0 || !pnl.is_finite() {
+        anyhow::bail!("账户净值或盈亏不是有效数值");
     }
     let now = now_ms_pub();
     let hour = now / 3_600_000;
     let mut g = live.lock().await;
+    anyhow::ensure!(g.config.account.eq_ignore_ascii_case(account), "账户已改变，丢弃旧账户净值");
+    let previous = g.clone();
+    let mut changed = false;
+    if g.capital_baseline.is_none() {
+        g.capital_baseline = g.baseline().or_else(|| (equity > 0.).then(|| CapitalBaseline {
+            account: account.into(), equity, ts: Some(now), source: "首次记录净值".into(),
+        }));
+        if let Some(b) = &g.capital_baseline { g.start_equity = Some(b.equity); changed = true; }
+    }
     // 锁内判重：同一小时内已有记录就不再写。
     if g.history.last().map(|p| p.ts / 3_600_000) == Some(hour) {
-        return;
-    }
-    // 第一次记录净值时把基数定下来，之后永不变动。
-    if g.start_equity.is_none() {
-        g.start_equity = Some(equity);
+        if changed { if let Err(e) = g.save(path) { *g = previous; return Err(e.context("起始资金保存失败")); } }
+        return Ok(());
     }
     g.history.push(EquityPoint { ts: now, equity, pnl });
     let len = g.history.len();
     if len > 6000 {
         g.history.drain(0..len - 6000);
     }
-    let _ = g.save(path);
+    if let Err(e) = g.save(path) { *g = previous; return Err(e.context("净值记录保存失败")); }
+    Ok(())
 }
 
 
@@ -1537,7 +1580,7 @@ pub async fn record_equity_now(
     let exec = Exec::reader_config(&st.config).await?;
     let acct = exec.account().await?;
     let unreal: f64 = acct.positions.values().map(|p| p.unrealized_pnl).sum();
-    record_equity(live, path, acct.equity, unreal).await;
+    record_equity(live, path, &st.config.account, acct.equity, unreal).await?;
     Ok(())
 }
 
@@ -1674,5 +1717,89 @@ mod min_order_pct_tests {
         assert_eq!(cfg.effective_min_order_usd(2900.0), 29.0);
         // 小账号 → 绝对下限仍然接管，不会低到无法下单
         assert_eq!(cfg.effective_min_order_usd(585.0), 10.0);
+    }
+}
+
+#[cfg(test)]
+mod capital_regressions {
+    use super::*;
+    use std::sync::Arc;
+    use tokio::sync::Mutex;
+
+    #[tokio::test]
+    async fn legacy_baseline_migrates_before_hour_dedup_and_survives_clear_restart() {
+        let dir = std::env::temp_dir().join(uuid::Uuid::new_v4().to_string());
+        let path = dir.join("live.json");
+        let now = now_ms_pub();
+        let mut old = LiveState::default();
+        old.config.account = "account-a".into();
+        old.history = vec![EquityPoint { ts: now - 3_600_000, equity: 500., pnl: 0. },
+            EquityPoint { ts: now, equity: 569.09, pnl: 9.03 }];
+        let state = Arc::new(Mutex::new(old));
+        record_equity(&state, &path, "account-a", 569.09, 9.03).await.unwrap();
+        let persisted = LiveState::load(&path);
+        assert_eq!(persisted.baseline().unwrap().equity, 500.);
+        assert_eq!(persisted.history.len(), 2);
+        { let mut s = state.lock().await; s.history.clear(); s.records.clear(); s.save(&path).unwrap(); }
+        let restarted = Arc::new(Mutex::new(LiveState::load(&path)));
+        record_equity(&restarted, &path, "account-a", 600., 100.).await.unwrap();
+        assert_eq!(restarted.lock().await.baseline().unwrap().equity, 500.);
+        std::fs::remove_dir_all(dir).unwrap();
+    }
+
+    #[tokio::test]
+    async fn baseline_is_observed_not_inferred_and_rejects_old_account_and_failed_save() {
+        let dir = std::env::temp_dir().join(uuid::Uuid::new_v4().to_string());
+        let path = dir.join("live.json");
+        let mut initial = LiveState::default(); initial.config.account = "a".into();
+        assert!(initial.baseline().is_none());
+        let state = Arc::new(Mutex::new(initial));
+        record_equity(&state, &path, "a", 569.09, 9.03).await.unwrap();
+        assert_eq!(state.lock().await.baseline().unwrap().equity, 569.09);
+        assert!(record_equity(&state, &path, "a", f64::INFINITY, 0.).await.is_err());
+        { let mut s = state.lock().await; s.config.account = "b".into(); s.reset_capital_for_account_change("a"); }
+        assert!(record_equity(&state, &path, "a", 1000., 0.).await.is_err());
+        assert!(state.lock().await.baseline().is_none());
+        record_equity(&state, &path, "b", 200., 0.).await.unwrap();
+        assert_eq!(state.lock().await.baseline().unwrap().equity, 200.);
+        { let mut s = state.lock().await; s.history.clear(); }
+        record_equity(&state, &path, "b", 0., 0.).await.unwrap();
+        assert_eq!(state.lock().await.history.last().unwrap().equity, 0.);
+        let fresh = Arc::new(Mutex::new(LiveState::default()));
+        assert!(record_equity(&fresh, &dir, "", 100., 0.).await.is_err());
+        assert!(fresh.lock().await.baseline().is_none());
+        std::fs::remove_dir_all(dir).unwrap();
+    }
+
+    #[test]
+    fn saved_baseline_wins_over_trimmed_history_and_cannot_cross_accounts() {
+        let mut s = LiveState::default();
+        s.start_equity = Some(500.);
+        s.history.push(EquityPoint { ts: 123, equity: 700., pnl: 0. });
+        let b = s.baseline().unwrap(); assert_eq!(b.equity, 500.); assert!(b.ts.is_none());
+        s.capital_baseline = Some(b); s.config.account = "other".into();
+        assert!(s.baseline().is_none());
+    }
+
+    #[test]
+    fn binance_rollover_and_gaps_are_rejected_and_open_bar_is_not_ranked() {
+        let dir = std::env::temp_dir().join(uuid::Uuid::new_v4().to_string());
+        let store = crate::store::Store::open(&dir.join("db")).unwrap();
+        let day = 86_400_000;
+        let now = 20000 * day;
+        let bars: Vec<_> = (0..41).map(|i| crate::hl::Candle {
+            t: now - (40-i)*day, o: 10., h: 10., l: 10., c: 10., v: 100.
+        }).collect();
+        for i in 0..19 { store.upsert_candles(&format!("C{i}-USDC"), &bars).unwrap(); }
+        let mut gapped = bars.clone(); gapped.remove(25);
+        store.upsert_candles("C19-USDC", &gapped).unwrap();
+        assert!(fresh_binance_panel(&store, 30, now).unwrap_err().to_string().contains("合格 19/20"));
+        store.upsert_candles("C19-USDC", &bars).unwrap();
+        let panel = fresh_binance_panel(&store, 30, now).unwrap();
+        assert_eq!(panel.len(), 20);
+        assert!(panel.iter().all(|e| e.candles.last().unwrap().t == now-day));
+        assert!(fresh_binance_panel(&store, 30, now+2*day).unwrap_err().to_string().contains("合格 0/20"));
+        assert!(fresh_binance_panel(&store, 120, now).is_err());
+        drop(store); std::fs::remove_dir_all(dir).unwrap();
     }
 }

@@ -1,0 +1,494 @@
+[
+  {
+    "txflow_name": "BTC-USDC",
+    "binance_symbol": "BTCUSDT",
+    "bn_price_to_tx_mult": 1,
+    "bn_volume_to_tx_mult": 1.0
+  },
+  {
+    "txflow_name": "ETH-USDC",
+    "binance_symbol": "ETHUSDT",
+    "bn_price_to_tx_mult": 1,
+    "bn_volume_to_tx_mult": 1.0
+  },
+  {
+    "txflow_name": "BNB-USDC",
+    "binance_symbol": "BNBUSDT",
+    "bn_price_to_tx_mult": 1,
+    "bn_volume_to_tx_mult": 1.0
+  },
+  {
+    "txflow_name": "BCH-USDC",
+    "binance_symbol": "BCHUSDT",
+    "bn_price_to_tx_mult": 1,
+    "bn_volume_to_tx_mult": 1.0
+  },
+  {
+    "txflow_name": "LTC-USDC",
+    "binance_symbol": "LTCUSDT",
+    "bn_price_to_tx_mult": 1,
+    "bn_volume_to_tx_mult": 1.0
+  },
+  {
+    "txflow_name": "ETC-USDC",
+    "binance_symbol": "ETCUSDT",
+    "bn_price_to_tx_mult": 1,
+    "bn_volume_to_tx_mult": 1.0
+  },
+  {
+    "txflow_name": "LINK-USDC",
+    "binance_symbol": "LINKUSDT",
+    "bn_price_to_tx_mult": 1,
+    "bn_volume_to_tx_mult": 1.0
+  },
+  {
+    "txflow_name": "ADA-USDC",
+    "binance_symbol": "ADAUSDT",
+    "bn_price_to_tx_mult": 1,
+    "bn_volume_to_tx_mult": 1.0
+  },
+  {
+    "txflow_name": "ATOM-USDC",
+    "binance_symbol": "ATOMUSDT",
+    "bn_price_to_tx_mult": 1,
+    "bn_volume_to_tx_mult": 1.0
+  },
+  {
+    "txflow_name": "DOGE-USDC",
+    "binance_symbol": "DOGEUSDT",
+    "bn_price_to_tx_mult": 1,
+    "bn_volume_to_tx_mult": 1.0
+  },
+  {
+    "txflow_name": "DOT-USDC",
+    "binance_symbol": "DOTUSDT",
+    "bn_price_to_tx_mult": 1,
+    "bn_volume_to_tx_mult": 1.0
+  },
+  {
+    "txflow_name": "CRV-USDC",
+    "binance_symbol": "CRVUSDT",
+    "bn_price_to_tx_mult": 1,
+    "bn_volume_to_tx_mult": 1.0
+  },
+  {
+    "txflow_name": "SOL-USDC",
+    "binance_symbol": "SOLUSDT",
+    "bn_price_to_tx_mult": 1,
+    "bn_volume_to_tx_mult": 1.0
+  },
+  {
+    "txflow_name": "UNI-USDC",
+    "binance_symbol": "UNIUSDT",
+    "bn_price_to_tx_mult": 1,
+    "bn_volume_to_tx_mult": 1.0
+  },
+  {
+    "txflow_name": "AVAX-USDC",
+    "binance_symbol": "AVAXUSDT",
+    "bn_price_to_tx_mult": 1,
+    "bn_volume_to_tx_mult": 1.0
+  },
+  {
+    "txflow_name": "FIL-USDC",
+    "binance_symbol": "FILUSDT",
+    "bn_price_to_tx_mult": 1,
+    "bn_volume_to_tx_mult": 1.0
+  },
+  {
+    "txflow_name": "AAVE-USDC",
+    "binance_symbol": "AAVEUSDT",
+    "bn_price_to_tx_mult": 1,
+    "bn_volume_to_tx_mult": 1.0
+  },
+  {
+    "txflow_name": "XRP-USDC",
+    "binance_symbol": "XRPUSDT",
+    "bn_price_to_tx_mult": 1,
+    "bn_volume_to_tx_mult": 1.0
+  },
+  {
+    "txflow_name": "APT-USDC",
+    "binance_symbol": "APTUSDT",
+    "bn_price_to_tx_mult": 1,
+    "bn_volume_to_tx_mult": 1.0
+  },
+  {
+    "txflow_name": "TRX-USDC",
+    "binance_symbol": "TRXUSDT",
+    "bn_price_to_tx_mult": 1,
+    "bn_volume_to_tx_mult": 1.0
+  },
+  {
+    "txflow_name": "ARB-USDC",
+    "binance_symbol": "ARBUSDT",
+    "bn_price_to_tx_mult": 1,
+    "bn_volume_to_tx_mult": 1.0
+  },
+  {
+    "txflow_name": "OP-USDC",
+    "binance_symbol": "OPUSDT",
+    "bn_price_to_tx_mult": 1,
+    "bn_volume_to_tx_mult": 1.0
+  },
+  {
+    "txflow_name": "LDO-USDC",
+    "binance_symbol": "LDOUSDT",
+    "bn_price_to_tx_mult": 1,
+    "bn_volume_to_tx_mult": 1.0
+  },
+  {
+    "txflow_name": "NEAR-USDC",
+    "binance_symbol": "NEARUSDT",
+    "bn_price_to_tx_mult": 1,
+    "bn_volume_to_tx_mult": 1.0
+  },
+  {
+    "txflow_name": "SUI-USDC",
+    "binance_symbol": "SUIUSDT",
+    "bn_price_to_tx_mult": 1,
+    "bn_volume_to_tx_mult": 1.0
+  },
+  {
+    "txflow_name": "WLD-USDC",
+    "binance_symbol": "WLDUSDT",
+    "bn_price_to_tx_mult": 1,
+    "bn_volume_to_tx_mult": 1.0
+  },
+  {
+    "txflow_name": "XLM-USDC",
+    "binance_symbol": "XLMUSDT",
+    "bn_price_to_tx_mult": 1,
+    "bn_volume_to_tx_mult": 1.0
+  },
+  {
+    "txflow_name": "ICP-USDC",
+    "binance_symbol": "ICPUSDT",
+    "bn_price_to_tx_mult": 1,
+    "bn_volume_to_tx_mult": 1.0
+  },
+  {
+    "txflow_name": "SEI-USDC",
+    "binance_symbol": "SEIUSDT",
+    "bn_price_to_tx_mult": 1,
+    "bn_volume_to_tx_mult": 1.0
+  },
+  {
+    "txflow_name": "HBAR-USDC",
+    "binance_symbol": "HBARUSDT",
+    "bn_price_to_tx_mult": 1,
+    "bn_volume_to_tx_mult": 1.0
+  },
+  {
+    "txflow_name": "CAKE-USDC",
+    "binance_symbol": "CAKEUSDT",
+    "bn_price_to_tx_mult": 1,
+    "bn_volume_to_tx_mult": 1.0
+  },
+  {
+    "txflow_name": "1000BONK-USDC",
+    "binance_symbol": "BONKUSDT",
+    "bn_price_to_tx_mult": 1000,
+    "bn_volume_to_tx_mult": 0.001
+  },
+  {
+    "txflow_name": "ONDO-USDC",
+    "binance_symbol": "ONDOUSDT",
+    "bn_price_to_tx_mult": 1,
+    "bn_volume_to_tx_mult": 1.0
+  },
+  {
+    "txflow_name": "TAO-USDC",
+    "binance_symbol": "TAOUSDT",
+    "bn_price_to_tx_mult": 1,
+    "bn_volume_to_tx_mult": 1.0
+  },
+  {
+    "txflow_name": "JUP-USDC",
+    "binance_symbol": "JUPUSDT",
+    "bn_price_to_tx_mult": 1,
+    "bn_volume_to_tx_mult": 1.0
+  },
+  {
+    "txflow_name": "STRK-USDC",
+    "binance_symbol": "STRKUSDT",
+    "bn_price_to_tx_mult": 1,
+    "bn_volume_to_tx_mult": 1.0
+  },
+  {
+    "txflow_name": "ENA-USDC",
+    "binance_symbol": "ENAUSDT",
+    "bn_price_to_tx_mult": 1,
+    "bn_volume_to_tx_mult": 1.0
+  },
+  {
+    "txflow_name": "POL-USDC",
+    "binance_symbol": "POLUSDT",
+    "bn_price_to_tx_mult": 1,
+    "bn_volume_to_tx_mult": 1.0
+  },
+  {
+    "txflow_name": "VIRTUAL-USDC",
+    "binance_symbol": "VIRTUALUSDT",
+    "bn_price_to_tx_mult": 1,
+    "bn_volume_to_tx_mult": 1.0
+  },
+  {
+    "txflow_name": "PENGU-USDC",
+    "binance_symbol": "PENGUUSDT",
+    "bn_price_to_tx_mult": 1,
+    "bn_volume_to_tx_mult": 1.0
+  },
+  {
+    "txflow_name": "HYPE-USDC",
+    "binance_symbol": "HYPEUSDT",
+    "bn_price_to_tx_mult": 1,
+    "bn_volume_to_tx_mult": 1.0
+  },
+  {
+    "txflow_name": "TRUMP-USDC",
+    "binance_symbol": "TRUMPUSDT",
+    "bn_price_to_tx_mult": 1,
+    "bn_volume_to_tx_mult": 1.0
+  },
+  {
+    "txflow_name": "PUMP-USDC",
+    "binance_symbol": "PUMPUSDT",
+    "bn_price_to_tx_mult": 1,
+    "bn_volume_to_tx_mult": 1.0
+  },
+  {
+    "txflow_name": "SKY-USDC",
+    "binance_symbol": "SKYUSDT",
+    "bn_price_to_tx_mult": 1,
+    "bn_volume_to_tx_mult": 1.0
+  },
+  {
+    "txflow_name": "WLFI-USDC",
+    "binance_symbol": "WLFIUSDT",
+    "bn_price_to_tx_mult": 1,
+    "bn_volume_to_tx_mult": 1.0
+  },
+  {
+    "txflow_name": "ASTER-USDC",
+    "binance_symbol": "ASTERUSDT",
+    "bn_price_to_tx_mult": 1,
+    "bn_volume_to_tx_mult": 1.0
+  },
+  {
+    "txflow_name": "AERO-USDC",
+    "binance_symbol": "AEROUSDT",
+    "bn_price_to_tx_mult": 1,
+    "bn_volume_to_tx_mult": 1.0
+  },
+  {
+    "txflow_name": "BLUR-USDC",
+    "binance_symbol": "BLURUSDT",
+    "bn_price_to_tx_mult": 1,
+    "bn_volume_to_tx_mult": 1.0
+  },
+  {
+    "txflow_name": "ETHFI-USDC",
+    "binance_symbol": "ETHFIUSDT",
+    "bn_price_to_tx_mult": 1,
+    "bn_volume_to_tx_mult": 1.0
+  },
+  {
+    "txflow_name": "GMX-USDC",
+    "binance_symbol": "GMXUSDT",
+    "bn_price_to_tx_mult": 1,
+    "bn_volume_to_tx_mult": 1.0
+  },
+  {
+    "txflow_name": "INJ-USDC",
+    "binance_symbol": "INJUSDT",
+    "bn_price_to_tx_mult": 1,
+    "bn_volume_to_tx_mult": 1.0
+  },
+  {
+    "txflow_name": "LINEA-USDC",
+    "binance_symbol": "LINEAUSDT",
+    "bn_price_to_tx_mult": 1,
+    "bn_volume_to_tx_mult": 1.0
+  },
+  {
+    "txflow_name": "AR-USDC",
+    "binance_symbol": "ARUSDT",
+    "bn_price_to_tx_mult": 1,
+    "bn_volume_to_tx_mult": 1.0
+  },
+  {
+    "txflow_name": "AXS-USDC",
+    "binance_symbol": "AXSUSDT",
+    "bn_price_to_tx_mult": 1,
+    "bn_volume_to_tx_mult": 1.0
+  },
+  {
+    "txflow_name": "CELO-USDC",
+    "binance_symbol": "CELOUSDT",
+    "bn_price_to_tx_mult": 1,
+    "bn_volume_to_tx_mult": 1.0
+  },
+  {
+    "txflow_name": "COMP-USDC",
+    "binance_symbol": "COMPUSDT",
+    "bn_price_to_tx_mult": 1,
+    "bn_volume_to_tx_mult": 1.0
+  },
+  {
+    "txflow_name": "DYDX-USDC",
+    "binance_symbol": "DYDXUSDT",
+    "bn_price_to_tx_mult": 1,
+    "bn_volume_to_tx_mult": 1.0
+  },
+  {
+    "txflow_name": "FET-USDC",
+    "binance_symbol": "FETUSDT",
+    "bn_price_to_tx_mult": 1,
+    "bn_volume_to_tx_mult": 1.0
+  },
+  {
+    "txflow_name": "GAS-USDC",
+    "binance_symbol": "GASUSDT",
+    "bn_price_to_tx_mult": 1,
+    "bn_volume_to_tx_mult": 1.0
+  },
+  {
+    "txflow_name": "IMX-USDC",
+    "binance_symbol": "IMXUSDT",
+    "bn_price_to_tx_mult": 1,
+    "bn_volume_to_tx_mult": 1.0
+  },
+  {
+    "txflow_name": "IOTA-USDC",
+    "binance_symbol": "IOTAUSDT",
+    "bn_price_to_tx_mult": 1,
+    "bn_volume_to_tx_mult": 1.0
+  },
+  {
+    "txflow_name": "JTO-USDC",
+    "binance_symbol": "JTOUSDT",
+    "bn_price_to_tx_mult": 1,
+    "bn_volume_to_tx_mult": 1.0
+  },
+  {
+    "txflow_name": "MANTA-USDC",
+    "binance_symbol": "MANTAUSDT",
+    "bn_price_to_tx_mult": 1,
+    "bn_volume_to_tx_mult": 1.0
+  },
+  {
+    "txflow_name": "MINA-USDC",
+    "binance_symbol": "MINAUSDT",
+    "bn_price_to_tx_mult": 1,
+    "bn_volume_to_tx_mult": 1.0
+  },
+  {
+    "txflow_name": "MORPHO-USDC",
+    "binance_symbol": "MORPHOUSDT",
+    "bn_price_to_tx_mult": 1,
+    "bn_volume_to_tx_mult": 1.0
+  },
+  {
+    "txflow_name": "NEO-USDC",
+    "binance_symbol": "NEOUSDT",
+    "bn_price_to_tx_mult": 1,
+    "bn_volume_to_tx_mult": 1.0
+  },
+  {
+    "txflow_name": "ZEC-USDC",
+    "binance_symbol": "ZECUSDT",
+    "bn_price_to_tx_mult": 1,
+    "bn_volume_to_tx_mult": 1.0
+  },
+  {
+    "txflow_name": "DASH-USDC",
+    "binance_symbol": "DASHUSDT",
+    "bn_price_to_tx_mult": 1,
+    "bn_volume_to_tx_mult": 1.0
+  },
+  {
+    "txflow_name": "TIA-USDC",
+    "binance_symbol": "TIAUSDT",
+    "bn_price_to_tx_mult": 1,
+    "bn_volume_to_tx_mult": 1.0
+  },
+  {
+    "txflow_name": "WIF-USDC",
+    "binance_symbol": "WIFUSDT",
+    "bn_price_to_tx_mult": 1,
+    "bn_volume_to_tx_mult": 1.0
+  },
+  {
+    "txflow_name": "RENDER-USDC",
+    "binance_symbol": "RENDERUSDT",
+    "bn_price_to_tx_mult": 1,
+    "bn_volume_to_tx_mult": 1.0
+  },
+  {
+    "txflow_name": "PEPE-USDC",
+    "binance_symbol": "PEPEUSDT",
+    "bn_price_to_tx_mult": 1,
+    "bn_volume_to_tx_mult": 1.0
+  },
+  {
+    "txflow_name": "SHIB-USDC",
+    "binance_symbol": "SHIBUSDT",
+    "bn_price_to_tx_mult": 1,
+    "bn_volume_to_tx_mult": 1.0
+  },
+  {
+    "txflow_name": "GRAM-USDC",
+    "binance_symbol": "GRAMUSDT",
+    "bn_price_to_tx_mult": 1,
+    "bn_volume_to_tx_mult": 1.0
+  },
+  {
+    "txflow_name": "TURBO-USDC",
+    "binance_symbol": "TURBOUSDT",
+    "bn_price_to_tx_mult": 1,
+    "bn_volume_to_tx_mult": 1.0
+  },
+  {
+    "txflow_name": "KAITO-USDC",
+    "binance_symbol": "KAITOUSDT",
+    "bn_price_to_tx_mult": 1,
+    "bn_volume_to_tx_mult": 1.0
+  },
+  {
+    "txflow_name": "XPL-USDC",
+    "binance_symbol": "XPLUSDT",
+    "bn_price_to_tx_mult": 1,
+    "bn_volume_to_tx_mult": 1.0
+  },
+  {
+    "txflow_name": "PENDLE-USDC",
+    "binance_symbol": "PENDLEUSDT",
+    "bn_price_to_tx_mult": 1,
+    "bn_volume_to_tx_mult": 1.0
+  },
+  {
+    "txflow_name": "EIGEN-USDC",
+    "binance_symbol": "EIGENUSDT",
+    "bn_price_to_tx_mult": 1,
+    "bn_volume_to_tx_mult": 1.0
+  },
+  {
+    "txflow_name": "MET-USDC",
+    "binance_symbol": "METUSDT",
+    "bn_price_to_tx_mult": 1,
+    "bn_volume_to_tx_mult": 1.0
+  },
+  {
+    "txflow_name": "NIL-USDC",
+    "binance_symbol": "NILUSDT",
+    "bn_price_to_tx_mult": 1,
+    "bn_volume_to_tx_mult": 1.0
+  },
+  {
+    "txflow_name": "ZRO-USDC",
+    "binance_symbol": "ZROUSDT",
+    "bn_price_to_tx_mult": 1,
+    "bn_volume_to_tx_mult": 1.0
+  }
+]

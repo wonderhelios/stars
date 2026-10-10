@@ -39,6 +39,10 @@ pub fn open_signal_store(hl: &str, tx: &str) -> Option<Arc<Store>> {
 pub struct ImportReport { pub imported: Vec<(String, usize)>, pub skipped: Vec<(String,String)> }
 pub fn import(store: &Store, mapping: &Path, daily: &Path) -> Result<ImportReport> {
     let entries: Vec<serde_json::Value> = serde_json::from_slice(&std::fs::read(mapping)?)?;
+    import_entries(store, &entries, daily, true)
+}
+
+pub fn import_entries(store: &Store, entries: &[serde_json::Value], daily: &Path, strict: bool) -> Result<ImportReport> {
     let mut report=ImportReport{imported:vec![],skipped:vec![]};
     let mut ready=Vec::new();
     let mut names=std::collections::HashSet::new();
@@ -64,7 +68,8 @@ pub fn import(store: &Store, mapping: &Path, daily: &Path) -> Result<ImportRepor
         })();
         match result { Ok(c)=>{report.imported.push((name.into(),c.len()));ready.push((name.to_owned(),c));},Err(e)=>report.skipped.push((name.into(),format!("{e:#}"))) }
     }
-    anyhow::ensure!(store.cached_coins()?.iter().all(|coin|ready.iter().any(|(name,_)|name==coin)),
+    anyhow::ensure!(store.cached_coins()?.iter().all(|coin|
+        names.contains(coin) && (!strict || ready.iter().any(|(name,_)|name==coin))),
         "destination contains unmapped/skipped coins; use a clean dedicated Binance DB");
     for (name,candles) in ready { store.upsert_candles(&name,&candles)?; }
     Ok(report)
@@ -141,20 +146,29 @@ fn closed_only(rows: Vec<(i64, f64, f64, f64, f64, f64)>) -> Vec<(i64, f64, f64,
 pub async fn fetch(mapping: &Path, daily: &Path, limit: usize) -> Result<FetchReport> {
     let raw = std::fs::read_to_string(mapping).with_context(|| format!("读不了映射表 {}", mapping.display()))?;
     let entries: Vec<serde_json::Value> = serde_json::from_str(&raw).context("映射表不是 JSON 数组")?;
+    fetch_entries(&entries, daily, limit).await
+}
+
+pub fn default_mapping() -> Result<Vec<serde_json::Value>> {
+    Ok(serde_json::from_str(include_str!("../config/binance-mapping.json"))?)
+}
+
+pub async fn fetch_entries(entries: &[serde_json::Value], daily: &Path, limit: usize) -> Result<FetchReport> {
     std::fs::create_dir_all(daily)?;
     let client = reqwest::Client::builder()
         .timeout(std::time::Duration::from_secs(40))
         .build()?;
     let mut report = FetchReport { updated: vec![], skipped: vec![], last_closed_day: String::new() };
 
-    for e in &entries {
+    for e in entries {
         let tx = e.get("txflow_name").and_then(|v| v.as_str()).unwrap_or("").to_string();
         let sym = e.get("binance_symbol").and_then(|v| v.as_str()).unwrap_or("").to_string();
         // 映射表给的是**价格和成交量各自的乘数**（不是互为倒数 —— 例如 1000BONK 那类
         // 合约单位不同，两个乘数并不总是一对倒数），照它给的用。
         let pmul = e.get("bn_price_to_tx_mult").and_then(|v| v.as_f64()).unwrap_or(1.0);
         let vmul = e.get("bn_volume_to_tx_mult").and_then(|v| v.as_f64()).unwrap_or(1.0);
-        if tx.is_empty() || sym.is_empty() {
+        if !tx.ends_with("-USDC") || !tx.bytes().all(|c| c.is_ascii_alphanumeric() || c == b'-')
+            || sym.is_empty() || !sym.bytes().all(|c| c.is_ascii_alphanumeric()) {
             report.skipped.push((tx, "映射缺 txflow 或 binance_symbol".into()));
             continue;
         }
@@ -177,8 +191,8 @@ pub async fn fetch(mapping: &Path, daily: &Path, limit: usize) -> Result<FetchRe
                         break;
                     }
                     last_err = format!("HTTP {code}");
-                    if matches!(code.as_u16(), 418 | 429 | 451) {
-                        break;
+                    if matches!(code.as_u16(), 403 | 418 | 429 | 451) {
+                        anyhow::bail!("币安公共行情暂不可用: {code}（未继续请求其余币种）");
                     }
                 }
                 Err(err) => last_err = err.to_string(),
@@ -240,4 +254,40 @@ pub async fn fetch_command(args: &[String]) -> Result<()> {
     let rep = fetch(Path::new(&args[2]), Path::new(&args[3]), limit).await?;
     println!("{}", serde_json::to_string_pretty(&rep)?);
     Ok(())
+}
+
+#[cfg(test)]
+mod refresh_regressions {
+    use super::*;
+    #[test]
+    fn embedded_mapping_preserves_verified_units_without_research_files() {
+        let mapping = default_mapping().unwrap();
+        assert_eq!(mapping.len(), 82);
+        let names: std::collections::HashSet<_> = mapping.iter().map(|e| e["txflow_name"].as_str().unwrap()).collect();
+        assert_eq!(names.len(), 82);
+        let bonk = mapping.iter().find(|e| e["txflow_name"] == "1000BONK-USDC").unwrap();
+        assert_eq!(bonk["bn_price_to_tx_mult"], 1000);
+        assert_eq!(bonk["bn_volume_to_tx_mult"], 0.001);
+    }
+    #[test]
+    fn refresh_import_keeps_missing_symbols_but_updates_healthy_ones_and_rejects_foreign_db() {
+        let dir = std::env::temp_dir().join(uuid::Uuid::new_v4().to_string());
+        let store = Store::open(&dir.join("db")).unwrap();
+        let entries = serde_json::from_str::<Vec<serde_json::Value>>(r#"[{"txflow_name":"A-USDC"},{"txflow_name":"B-USDC"}]"#).unwrap();
+        let bars: Vec<_> = (0..40).map(|i| Candle { t:1705017600000+i*86400000, o:2.,h:3.,l:1.,c:2.,v:10. }).collect();
+        store.upsert_candles("A-USDC", &bars).unwrap();
+        store.upsert_candles("B-USDC", &bars).unwrap();
+        let mut csv = "ts,open,high,low,close,volume\n".to_string();
+        for c in &bars { csv += &format!("{},2,3,1,2.5,17\n", c.t); }
+        std::fs::write(dir.join("A-USDC.csv"), csv).unwrap();
+        assert!(import_entries(&store, &entries, &dir, true).is_err());
+        let rep = import_entries(&store, &entries, &dir, false).unwrap();
+        assert_eq!(rep.imported.len(), 1); assert_eq!(rep.skipped.len(), 1);
+        let panel = crate::trader::load_panel(&store).unwrap();
+        assert_eq!(panel.iter().find(|e| e.coin == "A-USDC").unwrap().candles[0].c, 2.5);
+        assert_eq!(panel.iter().find(|e| e.coin == "B-USDC").unwrap().candles[0].c, 2.);
+        store.upsert_candles("FOREIGN", &bars).unwrap();
+        assert!(import_entries(&store, &entries, &dir, false).is_err());
+        drop(store); std::fs::remove_dir_all(dir).unwrap();
+    }
 }

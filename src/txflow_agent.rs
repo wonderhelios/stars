@@ -308,6 +308,7 @@ async fn finish_approval(state: AppState, body: ApproveBody, endpoint: &str) -> 
     let mut st = state.live.lock().await;
     let previous = st.clone();
     st.config.account = p.account.to_string();
+    st.reset_capital_for_account_change(&previous.config.account);
     st.config.key_path = key.to_string_lossy().into_owned();
     st.config.armed = false;
     st.config.auto_run = false;

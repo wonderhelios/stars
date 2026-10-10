@@ -67,7 +67,7 @@ pub struct PnlSummary {
     pub realized: f64,
     pub fees: f64,
     pub volume: f64,
-    /// 净入金（入金 − 出金）。流水接口可能截断，因此是下界。
+    /// 返回流水的净入金，可能截断，不代表完整入金或可用的收益基准。
     pub net_deposit: f64,
     pub ledger_rows: usize,
 }
@@ -386,10 +386,8 @@ impl Client {
         v.as_array().cloned().context("TxFlow ledger 格式错误")
     }
 
-    /// 真实业绩汇总：已实现盈亏、手续费、成交量、净入金。
-    ///
-    /// 页面之前只显示未实现盈亏，于是一个赚了 $1,945 的账户看起来像在亏钱。
-    /// `net_deposit` 单独记账，才能把「入金」和「策略赚的钱」分开。
+    /// Returned-record summary. Fills and ledger may be truncated; this is not
+    /// complete account profit and cannot establish a starting equity.
     pub async fn pnl_summary(&self, since_ms: i64) -> Result<PnlSummary> {
         // 只统计**策略上线之后**的成交。账户在策略之前就有自己的交易，
         // 把它们算进来会把用户自己赚的钱记成策略业绩（真实发生过：
@@ -426,7 +424,8 @@ impl Client {
             fees += number(&f["fee"]).unwrap_or(0.0);
             volume += number(&f["px"]).unwrap_or(0.0).abs() * number(&f["sz"]).unwrap_or(0.0).abs();
         }
-        // 流水接口可能只返回最近若干条；入金合计因此是**下界**，页面要标注。
+        // Both deposits and withdrawals can be omitted by truncation; net flow
+        // is neither a reliable lower bound nor a complete accounting baseline.
         let led = self.ledger().await?;
         let mut net_deposit = 0.0;
         for l in &led {
@@ -1105,71 +1104,52 @@ mod tests {
     }
 }
 
-/// 币安面板的每日保鲜。CSV 一旦过期，"没有昨日的连续 K 线"会让策略拒绝生成计划
-/// （fail-closed 是对的），所以这件事必须有人自动做，不能靠人记得跑命令。
-///
-/// 路径用环境变量配置，默认和导入器一致：
-///   STARS_BINANCE_MAPPING  默认 research/bn_panel_20261008/mapping.json
-///   STARS_BINANCE_DAILY    默认 research/bn_panel_20261008/data/daily
-/// 抓取失败不影响主循环（只是这一轮面板没更新），下一轮会重试。
-async fn refresh_binance_panel(state: &crate::web::AppState) -> bool {
-    // **默认路径必须和 CWD 无关。**
-    //
-    // 真实事故：systemd 服务的工作目录不是 /opt/stars，于是相对的
-    // "research/bn_panel_20261008/mapping.json" 解析失败，日志报"映射表不存在"，
-    // 面板永远不刷新。之前的路径（candles.sqlite / live.json）都是绝对路径，
-    // 所以从没暴露过这个依赖。这里以**可执行文件**为锚点：
-    //   /opt/stars/target/release/stars → /opt/stars/research/bn_panel_20261008/...
-    let root = std::env::current_exe()
-        .ok()
-        .and_then(|e| e.parent().map(|p| p.to_path_buf()))   // target/release
-        .and_then(|p| p.parent().map(|p| p.to_path_buf()))   // target
-        .and_then(|p| p.parent().map(|p| p.to_path_buf()))   // /opt/stars
-        .unwrap_or_else(|| std::path::PathBuf::from("."));
-    let mapping = std::env::var("STARS_BINANCE_MAPPING")
-        .map(std::path::PathBuf::from)
-        .unwrap_or_else(|_| root.join("research/bn_panel_20261008/mapping.json"));
-    let daily = std::env::var("STARS_BINANCE_DAILY")
-        .map(std::path::PathBuf::from)
-        .unwrap_or_else(|_| root.join("research/bn_panel_20261008/data/daily"));
-    if !mapping.exists() {
-        tracing::warn!("币安面板未刷新：映射表不存在 {}", mapping.display());
-        return false;
+/// Public-data refresh shared by manual and scheduled rebalances. The embedded
+/// mapping survives deployment of a standalone binary; mutable CSVs live beside
+/// account state instead of modifying frozen research data.
+pub async fn ensure_binance_panel(state: &crate::web::AppState) -> Result<()> {
+    static GATE: Mutex<()> = Mutex::const_new(());
+    let _guard = GATE.lock().await;
+    let store = state.binance_store.as_ref().context("币安信号库不可用，拒绝计划")?;
+    let lookback = state.live.lock().await.config.lookback;
+    if crate::live::fresh_binance_panel(store, lookback, crate::live::now_ms_pub()).is_ok() { return Ok(()); }
+    let entries = match std::env::var("STARS_BINANCE_MAPPING") {
+        Ok(path) => serde_json::from_slice(&std::fs::read(&path).with_context(|| format!("读取币安映射 {path}"))?)?,
+        Err(_) => crate::binance::default_mapping()?,
+    };
+    let daily = std::env::var("STARS_BINANCE_DAILY").map(PathBuf::from)
+        .unwrap_or_else(|_| state.live_path.with_file_name("binance-daily"));
+    crate::binance::import_entries(store, &entries, &daily, false).context("读取已完成的币安下载")?;
+    if crate::live::fresh_binance_panel(store, lookback, crate::live::now_ms_pub()).is_ok() { return Ok(()); }
+    let mut prioritized = Vec::with_capacity(entries.len());
+    for entry in &entries {
+        let coin = entry["txflow_name"].as_str().context("币安映射缺少 txflow_name")?;
+        prioritized.push((store.coin_latest_ts(coin)?.unwrap_or(0), entry.clone()));
     }
-    match crate::binance::fetch(&mapping, &daily, 1000).await {
-        Ok(rep) => {
-            tracing::info!(
-                "币安面板已刷新：更新 {} 个币，跳过 {} 个",
-                rep.updated.len(),
-                rep.skipped.len()
-            );
-            for (c, why) in rep.skipped.iter().take(5) {
-                tracing::warn!("币安面板跳过 {c}: {why}");
-            }
-            if state.binance_store.is_none() {
-                tracing::warn!("币安信号库不可用，TxFlow 会拒绝计划（HL 不受影响）");
-                return false;
-            }
-            // 重新导入，让信号库拿到新数据
-            if let Some(store) = &state.binance_store {
-                match crate::binance::import(store, &mapping, &daily) {
-                    Ok(imp) => {
-                        tracing::info!("币安面板已导入 {} 个币", imp.imported.len());
-                        return true;
-                    }
-                    Err(e) => {
-                        tracing::warn!("币安面板导入失败: {e}");
-                        return false;
-                    }
-                }
-            }
-        }
-        Err(e) => {
-            tracing::warn!("币安面板抓取失败（稍后重试）: {e}");
-            return false;
-        }
-    }
-    false
+    prioritized.sort_by_key(|(ts, _)| *ts);
+    let ordered: Vec<_> = prioritized.into_iter().map(|(_, entry)| entry).collect();
+    let fetched = tokio::time::timeout(Duration::from_secs(180),
+        crate::binance::fetch_entries(&ordered, &daily, 1000)).await;
+    // Import successful files even when another request fails. Stale/missing
+    // symbols remain excluded by the exact same freshness test as execution.
+    let imported = crate::binance::import_entries(store, &entries, &daily, false);
+    let fetch_error = match fetched {
+        Ok(Ok(rep)) => {
+            tracing::info!("币安面板更新 {} 币，跳过 {} 币", rep.updated.len(), rep.skipped.len());
+            rep.skipped.first().map(|(coin, why)| format!("{coin}: {why}"))
+        },
+        Ok(Err(e)) => Some(format!("{e:#}")),
+        Err(_) => Some("行情刷新超过 180 秒，已保留完成的下载".into()),
+    };
+    imported.context("币安日线导入失败")?;
+    let lookback = state.live.lock().await.config.lookback;
+    crate::live::fresh_binance_panel(store, lookback, crate::live::now_ms_pub())
+        .with_context(|| format!("币安刷新后仍不可调仓：{}", fetch_error.unwrap_or_else(|| "数据仍不满足连续性要求".into())))?;
+    Ok(())
+}
+
+fn binance_refresh_due(last: i64, now: i64, interval: i64) -> bool {
+    last == 0 || now / 86_400_000 != last / 86_400_000 || now - last >= interval
 }
 
 pub async fn background(state: crate::web::AppState) {
@@ -1180,24 +1160,28 @@ pub async fn background(state: crate::web::AppState) {
         let due = auto_due(&*state.live.lock().await, now);
         let stale = now - state.meta.lock().await.refreshed_at > 30 * 60 * 1000;
         let recovering = state.live.lock().await.pending_recovery.is_some();
-        // 币安面板每天刷新一次（抓取约 1 分钟，82 个币）。放在这里而不是调仓路径上：
-        // 调仓不能被一次网络抓取拖住 —— 那个教训今晚已经吃过一次了。
-        // 成功则 6 小时后再刷；**失败则 15 分钟就重试** ——
-        // 否则启动时一次网络抖动会让人干等 6 小时，面板一直是空的。
-        if now - last_binance > binance_interval {
+        // UTC rollover always invalidates yesterday's success; failures retry after 15 minutes.
+        if binance_refresh_due(last_binance, now, binance_interval) {
             last_binance = now;
-            binance_interval = if refresh_binance_panel(&state).await {
-                6 * 60 * 60 * 1000
-            } else {
-                15 * 60 * 1000
+            binance_interval = match ensure_binance_panel(&state).await {
+                Ok(()) => 6 * 60 * 60 * 1000,
+                Err(e) => {
+                    tracing::warn!("币安信号刷新失败: {e:#}");
+                    let mut st = state.live.lock().await;
+                    if due { st.last_plan = vec![format!("TxFlow 调仓等待币安数据：{e:#}")]; let _ = st.save(&state.live_path); }
+                    15 * 60 * 1000
+                }
             };
         }
-        if due && recovering {
+        let lookback = state.live.lock().await.config.lookback;
+        let signals_ready = state.binance_store.as_ref().map(|store| crate::live::fresh_binance_panel(
+            store, lookback, crate::live::now_ms_pub()).is_ok()).unwrap_or(false);
+        if due && recovering && signals_ready {
             if let Err(e)=run_auto(&state).await { tracing::warn!("TxFlow 优先恢复失败: {e}"); }
-        } else if due || stale {
+        } else if (due && signals_ready) || stale {
             // Read-only backfill must not block saving settings or creating an Agent.
             match refresh(&state).await {
-                Ok(()) if due => {
+                Ok(()) if due && signals_ready => {
                     if let Err(e) = run_auto(&state).await {
                         tracing::warn!("TxFlow 自动调仓未完成: {e}");
                     }
@@ -1224,12 +1208,19 @@ fn auto_due(st: &crate::live::LiveState, now: i64) -> bool {
 
 async fn run_auto(state: &crate::web::AppState) -> Result<()> {
     let _job = match state.run_gate.try_lock() { Ok(g) => g, Err(_) => return Ok(()) };
+    ensure_binance_panel(state).await?;
+    refresh_meta_only(state).await?;
     let _execution = match state.exec_gate.try_lock() { Ok(g) => g, Err(_) => return Ok(()) };
+    let needs_baseline = state.live.lock().await.capital_baseline.is_none();
+    if needs_baseline {
+        crate::live::record_equity_now(&state.live, &state.live_path).await?;
+    }
     let now = crate::live::now_ms_pub();
     let snapshot = {
         let mut st = state.live.lock().await;
         // Settings may have been disabled while public candles were refreshing.
         if !auto_due(&st, now) { return Ok(()); }
+        crate::live::fresh_binance_panel(state.binance_store.as_deref().context("缺少币安信号库")?, st.config.lookback, now)?;
         let previous = st.clone();
         st.begin_txflow_execution(&state.live_path)?;
         st.last_plan = vec!["TxFlow 自动调仓执行中…".into()];
@@ -1239,7 +1230,6 @@ async fn run_auto(state: &crate::web::AppState) -> Result<()> {
         }
         previous
     };
-    refresh_meta_only(state).await?;
     let markets = crate::live::markets_from_meta(&state.meta.lock().await.universe);
     let result = crate::live::run(&state.store, state.signal_store().as_deref(), &snapshot, &markets, true).await;
     let mut st = state.live.lock().await;
@@ -1600,4 +1590,18 @@ mod public_tests {
  assert!(result.is_err(), "five-market partial metadata must fail closed");
  assert!(state.meta.lock().await.universe.is_empty());
  }
+}
+
+#[cfg(test)]
+mod binance_schedule_regressions {
+    use super::*;
+    #[test]
+    fn utc_rollover_does_not_wait_six_hours_and_failures_back_off() {
+        let day = 86_400_000;
+        let last = 20000 * day - 10 * 60_000;
+        assert!(binance_refresh_due(last, 20000 * day + 5 * 60_000, 6 * 3_600_000));
+        assert!(!binance_refresh_due(last, last + 60_000, 15 * 60_000));
+        assert!(binance_refresh_due(last, last + 15 * 60_000, 15 * 60_000));
+        assert!(binance_refresh_due(0, last, 6 * 3_600_000));
+    }
 }

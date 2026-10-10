@@ -4,6 +4,7 @@ use crate::hl::{CoinMeta, MarketCtx};
 use crate::momentum::PanelEntry;
 use crate::paper::{self, PaperConfig, PaperState};
 use crate::store::Store;
+use anyhow::Context;
 use axum::{
     extract::State,
     http::{header, StatusCode},
@@ -96,7 +97,8 @@ async fn txflow_pnl(State(state): State<AppState>) -> Response {
     if !st.config.txflow {
         return Json(json!({"ok": false, "error": "非 TxFlow 账户"})).into_response();
     }
-    let since = st.records.iter().map(|r| r.ts).min().unwrap_or(0);
+    let since = st.baseline().and_then(|b| b.ts)
+        .or_else(|| st.records.iter().filter(|r| r.live).map(|r| r.ts).min()).unwrap_or(0);
     let exec = match crate::exchange::Exec::reader_config(&st.config).await {
         Ok(e) => e,
         Err(e) => return Json(json!({"ok": false, "error": format!("{e}")})).into_response(),
@@ -104,6 +106,8 @@ async fn txflow_pnl(State(state): State<AppState>) -> Response {
     match exec.txflow_pnl(since).await {
         Some(Ok(p)) => Json(json!({
             "ok": true,
+            "account": st.config.account,
+            "since": since,
             "realized": p.realized,
             "fees": p.fees,
             "volume": p.volume,
@@ -401,7 +405,17 @@ async fn live_status(State(state): State<AppState>) -> Response {
     // 页面访问时也补一个点（方便刚打开就能看到），但判重和写入都在锁内完成 ——
     // 原来的写法用进入 handler 时的克隆判断，并发请求会写出重复时间戳。
     // 后台任务才是主要的记录者，见 main.rs 的 record_equity 定时器。
-    crate::live::record_equity(&state.live, &state.live_path, snap.equity, snap.cumulative_pnl).await;
+    if snap.error.is_none() {
+        if let Err(e) = crate::live::record_equity(&state.live, &state.live_path, &snap.account, snap.equity, snap.cumulative_pnl).await {
+            tracing::warn!("账户净值保存失败: {e:#}");
+        }
+        let current = state.live.lock().await;
+        if current.config.account.eq_ignore_ascii_case(&snap.account) {
+            snap.capital_baseline = current.baseline();
+            snap.start_equity = snap.capital_baseline.as_ref().map(|b| b.equity).unwrap_or(0.);
+            snap.history = current.history.clone();
+        }
+    }
     snap.shadow = shadow;
     Json(json!(snap)).into_response()
 }
@@ -481,6 +495,7 @@ async fn live_config(
     if let Some(v) = body.auto_run {
         c.auto_run = v;
     }
+    st.reset_capital_for_account_change(&previous.config.account);
     let cfg = st.config.clone();
     if let Err(e) = st.save(&state.live_path) {
         *st = previous;
@@ -547,13 +562,21 @@ async fn live_run(State(state): State<AppState>, body: Option<Json<LiveRunBody>>
         let _held = execution;
         let outcome = async {
             let markets = if st.config.txflow {
+                crate::txflow::ensure_binance_panel(&state).await?;
                 crate::txflow::refresh_meta_only(&state).await?;
                 live_markets(&state).await
             } else { markets };
             let _tx_execution = if txflow && live {
                 Some(state.exec_gate.clone().try_lock_owned().map_err(|_| anyhow::anyhow!("有订单或授权操作正在执行，请稍后重试"))?)
             } else { None };
-            let st = if txflow { live_state.lock().await.clone() } else { st.clone() };
+            let needs_baseline = live && live_state.lock().await.capital_baseline.is_none();
+            if needs_baseline {
+                crate::live::record_equity_now(&live_state, &live_path).await?;
+            }
+            let st = live_state.lock().await.clone();
+            if txflow {
+                crate::live::fresh_binance_panel(signal_store.as_deref().context("缺少币安信号库")?, st.config.lookback, crate::live::now_ms_pub())?;
+            }
             if txflow && live {
                 anyhow::ensure!(st.config.armed && st.config.can_sign(), "实盘配置已关闭或变更，未开始下单");
                 let mut current = live_state.lock().await;
@@ -583,7 +606,7 @@ async fn live_run(State(state): State<AppState>, body: Option<Json<LiveRunBody>>
                 let _ = g.save(&live_path);
             }
             Err(e) => {
-                g.last_plan = vec![format!("调仓失败: {e}")];
+                g.last_plan = vec![format!("调仓失败: {e:#}")];
                 let _ = g.save(&live_path);
             }
         }
@@ -645,12 +668,17 @@ async fn live_rebuild(State(state): State<AppState>) -> Response {
 /// 只清空下单记录（保留净值曲线和配置）。用于清掉旧版本写下的错位记录。
 async fn live_records_clear(State(state): State<AppState>) -> Response {
     let mut st = state.live.lock().await;
+    let previous = st.clone();
+    st.capital_baseline = st.baseline();
     let n = st.records.len();
     st.records.clear();
     // 净值曲线也一起重置：否则它会从上一套策略（或入金前）延续下来，
     // 基线和当前策略对不上，图上会出现一段根本不是策略赚的"盈利"。
     st.history.clear();
-    let _ = st.save(&state.live_path);
+    if let Err(e) = st.save(&state.live_path) {
+        *st = previous;
+        return (StatusCode::INTERNAL_SERVER_ERROR, Json(json!({"ok":false,"error":format!("清除记录保存失败: {e}")}))).into_response();
+    }
     Json(json!({"ok": true, "cleared": n})).into_response()
 }
 
@@ -750,6 +778,8 @@ mod txflow_routes_tests {
             if path == "/txflow" { assert!(body.contains("300ms") && body.contains("/txflow/app.js")); assert!(!body.contains("Sharpe <b>2.14")); }
             if path == "/txflow/app.js" {
                 assert!(body.contains("/api/txflow/live/run"));
+                assert!(body.contains("fetch(\"/api/txflow/pnl\""));
+                assert!(!body.contains("/api/txflow/txflow/"));
                 assert!(!body.contains("fetch(\"/api/live"));
                 assert!(body.contains("const LIVE_EXCHANGE = \"TxFlow\";"));
             }
@@ -807,5 +837,62 @@ mod report5_unavailable_tests {
             let bytes=axum::body::to_bytes(response.into_body(),4096).await.unwrap();
             assert!(String::from_utf8(bytes.to_vec()).unwrap().contains("状态文件损坏"));
         }
+    }
+}
+
+#[cfg(test)]
+mod repair_integration_tests {
+    use super::*;
+    fn state(root: &std::path::Path, binance: bool) -> AppState {
+        let mut live = crate::live::LiveState::default();
+        live.config.txflow = true;
+        live.config.account = "mock-account".into();
+        live.config.key_path = "never-open-this-key".into();
+        live.config.armed = true;
+        AppState {
+            store:Arc::new(Store::open(&root.join("tx.sqlite")).unwrap()),
+            binance_store: binance.then(|| Arc::new(Store::open(&root.join("bn.sqlite")).unwrap())),
+            hl_store:None, paper:Arc::new(Mutex::new(Default::default())),
+            paper_path:Arc::new(root.join("paper.json")), live:Arc::new(Mutex::new(live)),
+            live_path:Arc::new(root.join("live.json")), meta:Arc::new(Mutex::new(Default::default())),
+            refresh:Arc::new(Mutex::new(Default::default())), http:reqwest::Client::new(),
+            exec_gate:Arc::new(Mutex::new(())), refresh_gate:Arc::new(Mutex::new(())), run_gate:Arc::new(Mutex::new(())),
+        }
+    }
+    #[tokio::test]
+    async fn completed_downloads_resume_without_network_or_recovery_marker() {
+        let root = std::env::temp_dir().join(uuid::Uuid::new_v4().to_string());
+        let app = state(&root, true);
+        let daily = root.join("binance-daily"); std::fs::create_dir_all(&daily).unwrap();
+        let day = 86_400_000;
+        let yesterday = crate::live::now_ms_pub()/day*day-day;
+        let mut csv = "ts,open,high,low,close,volume\n".to_string();
+        for i in 0..40 { csv += &format!("{},2,3,1,2,100\n", yesterday-(39-i)*day); }
+        for entry in crate::binance::default_mapping().unwrap().iter().take(20) {
+            std::fs::write(daily.join(format!("{}.csv",entry["txflow_name"].as_str().unwrap())), &csv).unwrap();
+        }
+        tokio::time::timeout(std::time::Duration::from_secs(2), crate::txflow::ensure_binance_panel(&app)).await.unwrap().unwrap();
+        assert_eq!(crate::live::fresh_binance_panel(app.binance_store.as_deref().unwrap(),14,crate::live::now_ms_pub()).unwrap().len(),20);
+        assert!(app.live.lock().await.pending_recovery.is_none());
+        assert!(!app.live_path.exists());
+        drop(app); std::fs::remove_dir_all(root).unwrap();
+    }
+    #[tokio::test]
+    async fn manual_signal_failure_does_not_mark_execution_started_or_read_a_signing_key() {
+        let root = std::env::temp_dir().join(uuid::Uuid::new_v4().to_string());
+        let app = state(&root, false);
+        let response = live_run(State(app.clone()), Some(Json(LiveRunBody {live:true}))).await;
+        assert_eq!(response.status(), StatusCode::OK);
+        tokio::time::timeout(std::time::Duration::from_secs(2), async {
+            loop {
+                if app.live.lock().await.last_plan.iter().any(|s| s.starts_with("调仓失败")) { break; }
+                tokio::task::yield_now().await;
+            }
+        }).await.unwrap();
+        let st = app.live.lock().await;
+        assert!(st.pending_recovery.is_none()); assert!(st.last_run_at.is_none());
+        assert!(st.last_plan[0].contains("币安信号库不可用"));
+        assert!(st.records.is_empty());
+        drop(st); drop(app); std::fs::remove_dir_all(root).unwrap();
     }
 }

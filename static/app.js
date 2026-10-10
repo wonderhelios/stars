@@ -78,8 +78,8 @@ function metric(k, v, cls) {
   return `<div class="metric"><div class="k">${k}</div><div class="v ${cls || ""}">${v}</div></div>`;
 }
 
-function metricGroup(title, html, cls) {
-  return `<div class="metric-group${cls ? " " + cls : ""}"><div class="g-title">${title}</div><div class="metrics">${html}</div></div>`;
+function metricGroup(title, html, cls, note) {
+  return `<div class="metric-group${cls ? " " + cls : ""}"><div class="g-title">${title}</div><div class="metrics">${html}</div>${note || ""}</div>`;
 }
 
 // 轮询后台调仓结果（每 3 秒一次，最多 tries 次）
@@ -425,46 +425,48 @@ function entryHints(records) {
 // 否则每次轮询都要打两次交易所接口，在限速下会把状态请求拖到 502。
 let txPnl = null;
 let txPnlAt = 0;
-async function fetchTxPnl() {
+async function fetchTxPnl(account) {
+  if (LIVE_EXCHANGE !== "TxFlow") return;
+  const key = (account || "").toLowerCase();
+  if (txPnl && (txPnl.account || "").toLowerCase() !== key) { txPnl = null; txPnlAt = 0; }
   if (Date.now() - txPnlAt < 60000) return;
   txPnlAt = Date.now();
   try {
-    const r = await fetch("/api/txflow/pnl", { cache: "no-store" });
+    // TxFlow's server rewrites the common /api/ prefix exactly once.
+    const r = await fetch("/api/pnl", { cache: "no-store" });
     const j = await r.json();
-    if (j.ok) txPnl = j;
-  } catch (e) {
-    /* 静默：业绩拉不到不该影响监控页 */
-  }
+    txPnl = r.ok && j.ok && (j.account || "").toLowerCase() === key ? j : null;
+  } catch (e) { txPnl = null; }
+}
+
+function capitalPerformance(d) {
+  const baseline = d.capital_baseline;
+  const base = baseline && baseline.equity;
+  const valid = !d.error && Number.isFinite(d.equity) && d.equity >= 0 &&
+    Number.isFinite(base) && base > 0 &&
+    (baseline.account || "").toLowerCase() === (d.account || "").toLowerCase();
+  return { valid, base, change: valid ? d.equity - base : null,
+    percent: valid ? (d.equity / base - 1) * 100 : null };
 }
 
 function renderMonitor(d) {
-  if (txPnl) {
+  if (!d) return;
+  if (txPnl && (txPnl.account || "").toLowerCase() === (d.account || "").toLowerCase()) {
     d.tx_realized = txPnl.realized;
     d.tx_fees = txPnl.fees;
     d.tx_volume = txPnl.volume;
     d.tx_fills = txPnl.fills;
     d.tx_net_deposit = txPnl.net_deposit;
-    d.tx_total_pnl = (d.equity || 0) - txPnl.net_deposit;
   }
-  lastLiveData = d;
-  if (!d) return;
   lastLiveData = d;
   const c = d.config || {};
   const pos = d.positions || [];
   const hist = d.history || [];
   const eq = d.equity || 0;
-  // 盈亏必须用「成交已实现 + 当前未实现」算，不能用「净值 − 历史首点」：
-  // 后者会把入金/出金算成盈利。之前就是这样显示成 +15.52% 的，其实账户只是
-  // 从别的银行转进来了钱。
-  const parsedAcct = chronRecords(d);
-  const unrealized = pos.reduce((a, p) => a + (p.unrealized || 0), 0);
-  const pnl = parsedAcct.realized + unrealized;
-  // 分母用后端给的 start_equity（策略开始时的净值，写死不变）。
-  // 旧的「净值 − 累计盈亏」会漂：累计盈亏不含资金费等，反推出来的基数几秒内就能变几块钱。
-  const startBase = Number(d.start_equity);
-  const base = startBase > 0 ? startBase : (eq - pnl);
-  const valid = eq > 0;
-  const pnlPct = valid && base > 0 ? (pnl / base) * 100 : 0;
+  const capital = capitalPerformance(d);
+  const valid = capital.valid;
+  const pnl = capital.change;
+  const pnlPct = capital.percent;
   const buffer = d.liq_buffer_pct || 0;
 
   const keyed = !!(c.key_path && c.key_path.trim());
@@ -532,11 +534,13 @@ function renderMonitor(d) {
 
   $("mo-metrics").innerHTML =
     metricGroup(
-      "账户",
-      metric("净值", "$" + fmt(eq, 2)) +
-        metric("累计盈亏", valid ? (pnl >= 0 ? "+" : "") + "$" + fmt(pnl, 2) : "—", valid && pnl >= 0 ? "pos" : "neg") +
-        metric("收益率", valid ? pct(pnlPct) : "—", valid && pnlPct >= 0 ? "pos" : "neg") +
-        metric("持仓数", nPos)
+      "账户 · 相对记录起点",
+      metric("当前资金", d.error ? "—" : "$" + fmt(eq, 2)) +
+        metric("记录起点资金", capital.base > 0 ? "$" + fmt(capital.base, 2) : "—") +
+        metric("起点以来资金增减", valid ? (pnl >= 0 ? "+" : "") + "$" + fmt(pnl, 2) : "—", valid && pnl >= 0 ? "pos" : "neg") +
+        metric("资金变化率", valid ? pct(pnlPct) : "—", valid ? (pnlPct >= 0 ? "pos" : "neg") : ""),
+      "capital-account",
+      `<p class="muted" style="margin:18px 0 0;line-height:1.7">资金增减已包含手续费与资金费的影响；也包含出入金，无后续出入金时等于净收益。<br>记录起点：${d.capital_baseline ? (d.capital_baseline.ts ? ts2m(d.capital_baseline.ts) + " UTC" : "历史已保存基准（时间未知）") : "等待首次净值记录"}。旧账户最早留存记录可能晚于系统首次启动。</p>`
     ) +
     metricGroup(
       "风险",
@@ -559,30 +563,24 @@ function renderMonitor(d) {
     metricGroup(
       "执行",
       metric("实测平均滑点", slip ? slip.avg.toFixed(3) + "%" : "—", slip && slip.avg > 0.15 ? "neg" : "pos") +
-        metric("已实现盈亏", parsed.n ? (realized >= 0 ? "+" : "") + "$" + fmt(realized, 2) : "—",
+        metric("记录内已实现（未扣费）", parsed.n ? (realized >= 0 ? "+" : "") + "$" + fmt(realized, 2) : "—",
           realized >= 0 ? "pos" : "neg") +
         metric("总名义敞口", "$" + fmt(d.gross_notional || 0, 0)) +
         metric("止盈挂单", (d.tp_orders || []).length + " / " + nPos, (d.tp_orders || []).length >= nPos ? "pos" : "") +
         metric("最后调仓", d.last_run_at ? `<span class="sm">${ts2m(d.last_run_at)}</span>` : "—")
     ) +
-    // TxFlow 的业绩快照。以前页面只显示未实现盈亏，一个赚了钱的账户看起来像在亏，
-    // 因为已实现和手续费根本没进页面。这几个数全部来自交易所流水。
+    // Returned exchange records may be truncated; never infer total account profit from them.
     (d.tx_fills
       ? metricGroup(
-          "业绩（交易所口径）",
-          metric(
-            "真实总盈亏",
-            (d.tx_total_pnl >= 0 ? "+" : "") + "$" + fmt(d.tx_total_pnl, 2),
-            d.tx_total_pnl >= 0 ? "pos" : "neg"
-          ) +
+          "交易所返回记录（可能截断，非完整净收益）",
             metric(
-              "已实现盈亏",
+              "已实现（未扣费）",
               (d.tx_realized >= 0 ? "+" : "") + "$" + fmt(d.tx_realized, 2),
               d.tx_realized >= 0 ? "pos" : "neg"
             ) +
             metric("手续费", "$" + fmt(d.tx_fees, 2), "neg") +
             metric("累计成交量", "$" + fmt(d.tx_volume, 0)) +
-            metric("净入金", "$" + fmt(d.tx_net_deposit, 2)) +
+            metric("返回流水净入金", "$" + fmt(d.tx_net_deposit, 2)) +
             metric("成交笔数", String(d.tx_fills)),
           "tx-perf"
         )
@@ -822,7 +820,7 @@ async function refreshMonitor(force) {
       liveLoaded = true;
     }
     // 先拿业绩（有 60 秒缓存，不会每次都请求），再渲染
-    await fetchTxPnl();
+    await fetchTxPnl(d.account);
     renderMonitor(d);
   } catch (e) {
     $("mo-metrics").innerHTML = `<div class="note neg">读取实盘状态失败：${e}</div>`;
