@@ -84,6 +84,7 @@ pub fn router(state: AppState) -> Router {
         .route("/api/live/rebuild", post(live_rebuild))
         .route("/api/live/tp", post(live_tp))
         .route("/api/live/records/clear", post(live_records_clear))
+        .route("/api/live/capital", post(live_capital))
         .layer(CompressionLayer::new())
         .layer(CorsLayer::permissive())
         .with_state(state)
@@ -148,6 +149,7 @@ pub fn txflow_router(state: AppState) -> Router {
         .route("/api/txflow/live/rebuild", post(live_rebuild))
         .route("/api/txflow/live/tp", post(txflow_tp))
         .route("/api/txflow/live/records/clear", post(live_records_clear))
+        .route("/api/txflow/live/capital", post(live_capital))
         .layer(CompressionLayer::new())
         .with_state(state)
 }
@@ -411,6 +413,12 @@ async fn live_status(State(state): State<AppState>) -> Response {
 }
 
 #[derive(serde::Deserialize)]
+struct CapitalBody {
+    amount: f64,
+    note: Option<String>,
+}
+
+#[derive(serde::Deserialize)]
 struct LiveConfigBody {
     account: Option<String>,
     key_path: Option<String>,
@@ -604,6 +612,30 @@ async fn live_run(State(state): State<AppState>, body: Option<Json<LiveRunBody>>
 
     Json(json!({"ok": true, "started": true,
         "message": "已开始执行，结果会在页面自动刷新"})).into_response()
+}
+
+/// 记录一笔入金（正数）或出金（负数）。
+///
+/// 入金/出金会直接改变账户净值，但不是策略赚的 —— 必须记进 net_deposit，
+/// 让收益率 = (净值 − 净入金 − 起始资金) / 起始资金 而不是把充钱当成盈利。
+async fn live_capital(State(state): State<AppState>, Json(body): Json<CapitalBody>) -> Response {
+    let amount = body.amount;
+    if !amount.is_finite() || amount == 0.0 {
+        return (StatusCode::BAD_REQUEST, Json(json!({"ok": false, "error": "金额必须是有限且非零的数"}))).into_response();
+    }
+    let mut st = state.live.lock().await;
+    let previous = st.clone();
+    st.net_deposit += amount;
+    st.capital_flows.push(crate::live::CapitalFlow {
+        ts: crate::live::now_ms_pub(),
+        amount,
+        note: body.note.unwrap_or_default(),
+    });
+    if let Err(e) = st.save(&state.live_path) {
+        *st = previous;
+        return (StatusCode::INTERNAL_SERVER_ERROR, Json(json!({"ok": false, "error": format!("保存失败: {e:#}")}))).into_response();
+    }
+    Json(json!({"ok": true, "net_deposit": st.net_deposit})).into_response()
 }
 
 async fn live_reset(State(state): State<AppState>) -> Response {

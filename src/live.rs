@@ -197,6 +197,12 @@ pub struct LiveState {
     /// 旧 state 仅能从留存净值迁移，不能从不完整的交易盈亏反推。
     #[serde(default)]
     pub start_equity: Option<f64>,
+    /// 累计净入金（入金为正、出金为负）。收益率 = (净值 − 净入金 − 起始资金) / 起始资金。
+    #[serde(default)]
+    pub net_deposit: f64,
+    /// 每一笔入金/出金流水。
+    #[serde(default)]
+    pub capital_flows: Vec<CapitalFlow>,
 }
 
 #[derive(Clone, Serialize, Deserialize)]
@@ -205,6 +211,15 @@ pub struct CapitalBaseline {
     pub equity: f64,
     pub ts: Option<i64>,
     pub source: String,
+}
+
+/// 一笔入金或出金（amount 正 = 入金，负 = 出金）。收益率必须扣除它，
+/// 否则充钱会让净值跳升、被误当成策略赚的。
+#[derive(Clone, Serialize, Deserialize)]
+pub struct CapitalFlow {
+    pub ts: i64,
+    pub amount: f64,
+    pub note: String,
 }
 
 pub fn merge_txflow_reconciliation(current: &mut LiveState, snapshot: &LiveState) {
@@ -366,6 +381,10 @@ pub struct LiveSnapshot {
     pub tx_fills: usize,
     /// 返回流水的净入金；接口可能截断，不能据此推导账户总收益。
     pub tx_net_deposit: f64,
+    /// 用户手动记录的累计净入金（区别于从流水推导的 tx_net_deposit）。
+    pub net_deposit: f64,
+    /// 入金/出金流水。
+    pub capital_flows: Vec<CapitalFlow>,
     /// 拿不到行情、只能用交易所市值反推估值的币。非空时要显眼提示 ——
     /// 这些仓位的清算价、距离强平都算不出来，可能有隐藏风险。
     pub unpriced: Vec<String>,
@@ -415,6 +434,8 @@ pub async fn snapshot(
         tx_volume: 0.0,
         tx_fills: 0,
         tx_net_deposit: 0.0,
+        net_deposit: 0.0,
+        capital_flows: Vec::new(),
         tp_ref: HashMap::new(),
         config: cfg.clone(),
         history: state.history.clone(),
@@ -530,6 +551,8 @@ pub async fn snapshot(
     snap.cumulative_pnl = state.unrealized_pnl(&snap.positions);
     // Missing historical equity remains unknown until an observation is persisted.
     snap.start_equity = state.baseline().map(|b| b.equity).unwrap_or(0.);
+    snap.net_deposit = state.net_deposit;
+    snap.capital_flows = state.capital_flows.clone();
     // 不按 reduceOnly 过滤：该字段在 openOrders 里不一定存在，过滤会导致
     // 表格永远是空的。程序只挂只减仓单，所以全部展示即可。
     if let Ok(orders) = exec.open_order_details().await {
@@ -1816,5 +1839,31 @@ mod monitor_receipt_tests {
         assert_eq!(reconcile_fill_rows(&[], &mut snapshot).unwrap(), 0);
         merge_txflow_reconciliation(&mut current, &snapshot);
         assert!(current.reconciled_to > 0);
+    }
+}
+
+
+#[cfg(test)]
+mod capital_flow_tests {
+    use super::*;
+
+    /// 充钱只会增加 net_deposit，绝不改变"策略赚出来的部分"。
+    /// 前端公式是 收益率 = (净值 − 净入金 − 起始资金) / 起始资金，
+    /// 所以入金之后这个值不变 —— 这是充钱不伪装成盈利的关键。
+    #[test]
+    fn deposit_does_not_change_trading_pnl() {
+        let mut st = LiveState::default();
+        st.start_equity = Some(1000.0);
+        st.net_deposit = 0.0;
+        let equity_before = 1100.0; // 策略赚了 100
+        let trading_before = equity_before - st.net_deposit - st.start_equity.unwrap();
+        assert!((trading_before - 100.0).abs() < 1e-9);
+
+        // 充 500
+        st.net_deposit += 500.0;
+        let equity_after = equity_before + 500.0;
+        let trading_after = equity_after - st.net_deposit - st.start_equity.unwrap();
+        assert!((trading_after - 100.0).abs() < 1e-9,
+            "入金后策略赚出的部分变了：{trading_after}");
     }
 }

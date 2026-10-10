@@ -443,12 +443,37 @@ async function fetchTxPnl(account) {
 function capitalPerformance(d) {
   const baseline = d.capital_baseline;
   const base = baseline && baseline.equity;
+  const netDep = Number(d.net_deposit) || 0;
   const valid = !d.error && Number.isFinite(d.equity) && d.equity >= 0 &&
     Number.isFinite(base) && base > 0 &&
     (baseline.account || "").toLowerCase() === (d.account || "").toLowerCase();
-  return { valid, base, change: valid ? d.equity - base : null,
-    percent: valid ? (d.equity / base - 1) * 100 : null };
+  // 净值扣除净入金，剩下的才是策略真实赚出来的 —— 充钱/取钱不算盈亏。
+  const change = valid ? d.equity - netDep - base : null;
+  return { valid, base, netDep, change,
+    percent: valid && base > 0 ? (change / base) * 100 : null };
 }
+
+function setupCapitalFlow() {
+  const btn = $("lv-flow-btn");
+  if (!btn) return;
+  btn.addEventListener("click", async () => {
+    const input = $("lv-flow");
+    const amount = Number(input && input.value);
+    if (!amount || !Number.isFinite(amount)) { alert("请填非零金额（正 = 入金，负 = 出金）"); return; }
+    btn.textContent = "记录中…"; btn.disabled = true;
+    try {
+      const res = await fetch("/api/live/capital", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ amount })
+      });
+      const j = await res.json();
+      if (res.ok && j.ok) { if (input) input.value = ""; fetchLive(); }
+      else { alert(j.error || ("HTTP " + res.status)); }
+    } catch (e) { alert("请求失败: " + e); }
+    finally { btn.textContent = "记录"; btn.disabled = false; }
+  });
+}
+setupCapitalFlow();
 
 function escapeHTML(value) {
   return String(value ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;"}[c]));
@@ -569,6 +594,7 @@ function renderMonitor(d) {
     metricGroup(
       "资金表现 · 相对记录起点",
       metric("记录起点资金", capital.base > 0 ? "$" + fmt(capital.base, 2) : "—") +
+        metric("累计入金（净）", capital.netDep ? (capital.netDep >= 0 ? "+" : "") + "$" + fmt(capital.netDep, 2) : "—") +
         metric("起点以来资金增减", valid ? (pnl >= 0 ? "+" : "") + "$" + fmt(pnl, 2) : "—", valid && pnl >= 0 ? "pos" : "neg") +
         metric("资金变化率", valid ? pct(pnlPct) : "—", valid ? (pnlPct >= 0 ? "pos" : "neg") : "") +
         metric("记录起点 · UTC", d.capital_baseline?.ts ? `<span class="sm">${ts2m(d.capital_baseline.ts)}</span>` : "时间未知"),

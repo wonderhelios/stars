@@ -234,6 +234,10 @@
               </select>
             </div>
             <div class="field"><label>最小下单额占净值 %</label><input id="lv-minpct" type="number" value="0" min="0" max="5" step="0.1" /></div>
+            <div class="field"><label>记录入金/出金（+入 −出）</label>
+              <input id="lv-flow" type="number" step="0.01" placeholder="如 2415 或 -500" style="width:9em" />
+              <button class="btn ghost" id="lv-flow-btn" type="button">记录</button>
+            </div>
             <div class="field"><label>启用实盘（允许发单）</label>
               <select id="lv-armed"><option value="false" selected>关闭（只生成计划）</option><option value="true">开启（可发真单）</option></select>
             </div>
