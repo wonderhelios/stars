@@ -1,0 +1,18 @@
+{
+  "url": "https://investors.intuit.com/_assets/_1dd06c04c67bf383f19eaab5661c4ac7/intuit/db/946/9949/fact_sheet/FQ4+2024+Fact+Sheet+External_.pdf",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "retrieved_utc": "2026-10-09T18:13:12Z",
+  "sha256": "297cf159d339916596583c434f20d64548a68533b6695e729416361abe6b070f",
+  "attempts": [
+    {
+      "url": "https://investors.intuit.com/_assets/_1dd06c04c67bf383f19eaab5661c4ac7/intuit/db/946/9949/fact_sheet/FQ4+2024+Fact+Sheet+External_.pdf",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "retrieved_utc": "2026-10-09T18:13:12Z",
+      "sha256": "297cf159d339916596583c434f20d64548a68533b6695e729416361abe6b070f"
+    }
+  ]
+}

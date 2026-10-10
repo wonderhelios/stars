@@ -75,9 +75,17 @@
   },
   {
     "symbol": "INTU",
-    "status": "not_yet_checked",
-    "source": null,
-    "notes": "No inference from absence of a downloaded release."
+    "status": "exact_numeric_sources_merged_interim_scope_version_pending",
+    "source": "Issuer financial-news archive and quarterly financial-results directory; original fact-sheet PDFs",
+    "notes": "27 quarterly actuals verified with original SEC filings. 25 exact HTML Table E guidance ranges match independently reviewed PDFs; earlier prose-only parser missed these appendices and its growth proxies remain ineligible. All 27 table/covers reviewed, footnotes 18 visual+9 full text. 17 numeric revisions, 5 existing exclusions, 5 positive before remaining audits. 27 source prefixes and 17 Decimal calculations passed. 62 all-category candidate originals (29 additional) hash/time checked; six investor-day reaffirmations exactly match prior guides. GoCo/SeedFi/Zendrive scope and historical publication versions pending; no expansion PnL read; all trading_ready=false.",
+    "download_count": 36,
+    "parsed_quarter_count": 27,
+    "sec_verified_count": 27,
+    "fact_sheet_count": 27,
+    "exact_fact_sheet_guidance_count": 25,
+    "unique_originals": 65,
+    "unfiltered_archive_titles": 390,
+    "exact_guidance_ranges": 25
   },
   {
     "symbol": "NOW",
@@ -130,9 +138,9 @@
   },
   {
     "symbol": "CDNS",
-    "status": "not_yet_checked",
-    "source": null,
-    "notes": "No inference from absence of a downloaded release."
+    "status": "issuer_IR_original_probe_access_denied",
+    "source": "https://investor.cadence.com/news/news-details/2025/Cadence-Reports-Second-Quarter-2025-Financial-Results/",
+    "notes": "Issuer web-search result shows full-year total revenue guidance, but normal raw source request403; stopped, no retries or identity changes. No original release ingested or full-history applicability inferred."
   },
   {
     "symbol": "SNPS",
@@ -151,9 +159,9 @@
   },
   {
     "symbol": "PCTY",
-    "status": "not_yet_checked",
-    "source": null,
-    "notes": "No inference from absence of a downloaded release."
+    "status": "publisher_original_probe_access_denied",
+    "source": "https://www.globenewswire.com/news-release/2025/08/05/3127809/0/en/Paylocity-Announces-Fourth-Quarter-and-Full-Fiscal-Year-2025-Financial-Results.html",
+    "notes": "Original publisher now returns403 on normal request; stopped source, no alternate identity or RSS host retry. Failed HTML is not data. Earlier cached DDOG publisher files remain valid; do not restart that source."
   },
   {
     "symbol": "WDAY",

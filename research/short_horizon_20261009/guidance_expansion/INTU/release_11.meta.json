@@ -1,0 +1,18 @@
+{
+  "url": "https://investors.intuit.com/news-events/press-releases/detail/11/intuit-reports-strong-second-quarter-results-and-reiterates-full-year-guidance",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "f4696f15fe28ff9aae11a51b09461b16635e697b83e6ab80c697d1dc53fbfa11",
+  "retrieved_utc": "2026-10-09T18:02:29Z",
+  "attempts": [
+    {
+      "url": "https://investors.intuit.com/news-events/press-releases/detail/11/intuit-reports-strong-second-quarter-results-and-reiterates-full-year-guidance",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "f4696f15fe28ff9aae11a51b09461b16635e697b83e6ab80c697d1dc53fbfa11",
+      "retrieved_utc": "2026-10-09T18:02:29Z"
+    }
+  ]
+}

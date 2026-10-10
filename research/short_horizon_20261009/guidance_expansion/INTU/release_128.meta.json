@@ -1,0 +1,18 @@
+{
+  "url": "https://investors.intuit.com/news-events/press-releases/detail/128/intuit-reports-second-quarter-results-and-reiterates-full-year-guidance-organic-online-ecosystem-revenue-grew-37-percent",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "393f2ffcd0915772f538f2fdabc601bd76c7adebc514932e0b64d1e7c512cb52",
+  "retrieved_utc": "2026-10-09T18:02:03Z",
+  "attempts": [
+    {
+      "url": "https://investors.intuit.com/news-events/press-releases/detail/128/intuit-reports-second-quarter-results-and-reiterates-full-year-guidance-organic-online-ecosystem-revenue-grew-37-percent",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "393f2ffcd0915772f538f2fdabc601bd76c7adebc514932e0b64d1e7c512cb52",
+      "retrieved_utc": "2026-10-09T18:02:03Z"
+    }
+  ]
+}

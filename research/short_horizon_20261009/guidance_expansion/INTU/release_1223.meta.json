@@ -1,0 +1,18 @@
+{
+  "url": "https://investors.intuit.com/news-events/press-releases/detail/1223/intuit-reports-strong-first-quarter-results-and-reiterates-full-year-guidance",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "ef2ed9400a76b81bb5090fba203c74b4e09edf61f05298efbf3ce4ebc1f7b801",
+  "retrieved_utc": "2026-10-09T18:02:38Z",
+  "attempts": [
+    {
+      "url": "https://investors.intuit.com/news-events/press-releases/detail/1223/intuit-reports-strong-first-quarter-results-and-reiterates-full-year-guidance",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "ef2ed9400a76b81bb5090fba203c74b4e09edf61f05298efbf3ce4ebc1f7b801",
+      "retrieved_utc": "2026-10-09T18:02:38Z"
+    }
+  ]
+}

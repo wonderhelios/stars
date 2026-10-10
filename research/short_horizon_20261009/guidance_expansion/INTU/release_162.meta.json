@@ -1,0 +1,18 @@
+{
+  "url": "https://investors.intuit.com/news-events/press-releases/detail/162/intuit-to-acquire-mailchimp",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "aff7bf23b5130656b2aaa8239f4184aa1e1eaac0b523cfa0d94f7c20bc7e7839",
+  "retrieved_utc": "2026-10-09T22:12:00Z",
+  "attempts": [
+    {
+      "url": "https://investors.intuit.com/news-events/press-releases/detail/162/intuit-to-acquire-mailchimp",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "aff7bf23b5130656b2aaa8239f4184aa1e1eaac0b523cfa0d94f7c20bc7e7839",
+      "retrieved_utc": "2026-10-09T22:12:00Z"
+    }
+  ]
+}

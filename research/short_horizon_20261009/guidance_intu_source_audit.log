@@ -1,0 +1,20 @@
+{
+  "quarterly_directory_matches": 27,
+  "quarter_actual_SEC_verified": 27,
+  "interim_notices": 9,
+  "growth_rate_forecast_quarters": 20,
+  "converted_growth_proxy_quarters": 19,
+  "missing_growth_base_quarters": 1,
+  "explicit_dollar_forecast_quarters": 5,
+  "no_quarter_guidance_in_original_release": 2,
+  "publication_crosschecks": 36,
+  "modified_metadata_unavailable": 36,
+  "source_gate_count": 5,
+  "ready_for_full_strategy_test": false,
+  "market_performance_read": false,
+  "limitations": [
+    "No mutation-time metadata or independently archived originals",
+    "Exact dollar forecasts missing for rounded-growth releases",
+    "Complete investor-day/call/all-news coverage still pending"
+  ]
+}

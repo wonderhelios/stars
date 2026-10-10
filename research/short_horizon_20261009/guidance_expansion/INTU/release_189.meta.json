@@ -1,0 +1,18 @@
+{
+  "url": "https://investors.intuit.com/news-events/press-releases/detail/189/intuit-adjusts-second-quarter-outlook-reflecting-the-impact-of-a-late-opening-to-the-tax-season-reiterates-full-year-guidance",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "ab39fc834a44946b90be6210de6cec8ec1f027fffcd1ec9d82249ff02868391d",
+  "retrieved_utc": "2026-10-09T18:01:47Z",
+  "attempts": [
+    {
+      "url": "https://investors.intuit.com/news-events/press-releases/detail/189/intuit-adjusts-second-quarter-outlook-reflecting-the-impact-of-a-late-opening-to-the-tax-season-reiterates-full-year-guidance",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "ab39fc834a44946b90be6210de6cec8ec1f027fffcd1ec9d82249ff02868391d",
+      "retrieved_utc": "2026-10-09T18:01:47Z"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "url": "https://investors.intuit.com/news-events/press-releases/detail/165/intuit-reports-strong-full-year-results-and-sets-fiscal-2022-guidance",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "cc6f7a2e136ba8ac6001dd69b8b6c04c5fadf6fd37997cd29c3da48bafb74d28",
+  "retrieved_utc": "2026-10-09T18:01:56Z",
+  "attempts": [
+    {
+      "url": "https://investors.intuit.com/news-events/press-releases/detail/165/intuit-reports-strong-full-year-results-and-sets-fiscal-2022-guidance",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "cc6f7a2e136ba8ac6001dd69b8b6c04c5fadf6fd37997cd29c3da48bafb74d28",
+      "retrieved_utc": "2026-10-09T18:01:56Z"
+    }
+  ]
+}

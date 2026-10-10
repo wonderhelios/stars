@@ -1,0 +1,18 @@
+{
+  "url": "https://investors.intuit.com/news-events/press-releases/detail/148/intuit-reports-strong-first-quarter-results-and-raises-full-year-revenue-guidance-reflecting-early-momentum-in-the-year-and-the-acquisition-of-mailchimp",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "a63df7e41c47e0ec01af9c7688abaef692b681499d0a1193d74ec50c9f503d4b",
+  "retrieved_utc": "2026-10-09T18:01:58Z",
+  "attempts": [
+    {
+      "url": "https://investors.intuit.com/news-events/press-releases/detail/148/intuit-reports-strong-first-quarter-results-and-raises-full-year-revenue-guidance-reflecting-early-momentum-in-the-year-and-the-acquisition-of-mailchimp",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "a63df7e41c47e0ec01af9c7688abaef692b681499d0a1193d74ec50c9f503d4b",
+      "retrieved_utc": "2026-10-09T18:01:58Z"
+    }
+  ]
+}

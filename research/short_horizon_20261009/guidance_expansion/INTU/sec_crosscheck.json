@@ -1,0 +1,652 @@
+{
+  "symbol": "INTU",
+  "verified": 27,
+  "expected": 27,
+  "issues": [],
+  "preliminary_no_exact_value": 0,
+  "audit_timing_note": "Quarter checks use filings within 15 days of the release; annual checks use the same FY/FP=FY first annual filing within 30 days. MDB FY2025 annual filing was 16 days later. This is later verification only, not signal availability.",
+  "source_sha256": "456f89ae1757bb5a6ee0990f8b759e3d694222b0107c33ee4b163ee85a478d8a",
+  "independent_filing_accessions": [
+    "0000896878-20-000027",
+    "0000896878-20-000065",
+    "0000896878-20-000148",
+    "0000896878-20-000223",
+    "0000896878-21-000059",
+    "0000896878-21-000115",
+    "0000896878-21-000233",
+    "0000896878-21-000260",
+    "0000896878-22-000010",
+    "0000896878-22-000021",
+    "0000896878-22-000028",
+    "0000896878-22-000036",
+    "0000896878-23-000010",
+    "0000896878-23-000020",
+    "0000896878-23-000034",
+    "0000896878-23-000041",
+    "0000896878-24-000011",
+    "0000896878-24-000026",
+    "0000896878-24-000039",
+    "0000896878-24-000053",
+    "0000896878-25-000015",
+    "0000896878-25-000022",
+    "0000896878-25-000035",
+    "0000896878-25-000048",
+    "0000896878-26-000014",
+    "0000896878-26-000025",
+    "0000896878-26-000037"
+  ],
+  "records": [
+    {
+      "source": "https://investors.intuit.com/news-events/press-releases/detail/236/intuit-second-quarter-revenue-increased-13-percent-small-business-online-ecosystem-revenue-grew-35-percent",
+      "quarter_end": "2020-01-31",
+      "reported_revenue_dollars": 1696000000,
+      "method": "reported_quarter",
+      "filings": [
+        {
+          "start": "2019-11-01",
+          "end": "2020-01-31",
+          "val": 1696000000,
+          "accn": "0000896878-20-000027",
+          "fy": 2020,
+          "fp": "Q2",
+          "form": "10-Q",
+          "filed": "2020-02-24",
+          "xbrl_tag": "RevenueFromContractWithCustomerExcludingAssessedTax"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://investors.intuit.com/news-events/press-releases/detail/226/intuit-third-quarter-revenue-declined-8-percent-small-business-online-ecosystem-revenue-grew-28-percent",
+      "quarter_end": "2020-04-30",
+      "reported_revenue_dollars": 3002000000,
+      "method": "reported_quarter",
+      "filings": [
+        {
+          "start": "2020-02-01",
+          "end": "2020-04-30",
+          "val": 3002000000,
+          "accn": "0000896878-20-000065",
+          "fy": 2020,
+          "fp": "Q3",
+          "form": "10-Q",
+          "filed": "2020-05-21",
+          "xbrl_tag": "RevenueFromContractWithCustomerExcludingAssessedTax"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://investors.intuit.com/news-events/press-releases/detail/221/intuit-full-year-revenue-up-13-percent",
+      "quarter_end": "2020-07-31",
+      "reported_revenue_dollars": 1816000000,
+      "method": "reported_quarter",
+      "filings": [
+        {
+          "start": "2020-05-01",
+          "end": "2020-07-31",
+          "val": 1816000000,
+          "accn": "0000896878-20-000148",
+          "fy": 2020,
+          "fp": "FY",
+          "form": "10-K",
+          "filed": "2020-08-31",
+          "frame": "CY2020Q2",
+          "xbrl_tag": "Revenues"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://investors.intuit.com/news-events/press-releases/detail/209/intuit-first-quarter-revenue-grew-14-percent-company-provides-guidance-for-fiscal-2021",
+      "quarter_end": "2020-10-31",
+      "reported_revenue_dollars": 1323000000,
+      "method": "reported_quarter",
+      "filings": [
+        {
+          "start": "2020-08-01",
+          "end": "2020-10-31",
+          "val": 1323000000,
+          "accn": "0000896878-20-000223",
+          "fy": 2021,
+          "fp": "Q1",
+          "form": "10-Q",
+          "filed": "2020-11-19",
+          "xbrl_tag": "RevenueFromContractWithCustomerExcludingAssessedTax"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://investors.intuit.com/news-events/press-releases/detail/186/intuit-reports-second-quarter-results-and-reiterates-full-year-guidance-small-business-online-ecosystem-revenue-grew-22-percent",
+      "quarter_end": "2021-01-31",
+      "reported_revenue_dollars": 1576000000,
+      "method": "reported_quarter",
+      "filings": [
+        {
+          "start": "2020-11-01",
+          "end": "2021-01-31",
+          "val": 1576000000,
+          "accn": "0000896878-21-000059",
+          "fy": 2021,
+          "fp": "Q2",
+          "form": "10-Q",
+          "filed": "2021-02-23",
+          "xbrl_tag": "RevenueFromContractWithCustomerExcludingAssessedTax"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://investors.intuit.com/news-events/press-releases/detail/173/intuit-reports-third-quarter-results-and-raises-full-year-guidance-grows-small-business-online-ecosystem-revenue-28-percent-in-third-quarter",
+      "quarter_end": "2021-04-30",
+      "reported_revenue_dollars": 4173000000,
+      "method": "reported_quarter",
+      "filings": [
+        {
+          "start": "2021-02-01",
+          "end": "2021-04-30",
+          "val": 4173000000,
+          "accn": "0000896878-21-000115",
+          "fy": 2021,
+          "fp": "Q3",
+          "form": "10-Q",
+          "filed": "2021-05-25",
+          "xbrl_tag": "RevenueFromContractWithCustomerExcludingAssessedTax"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://investors.intuit.com/news-events/press-releases/detail/165/intuit-reports-strong-full-year-results-and-sets-fiscal-2022-guidance",
+      "quarter_end": "2021-07-31",
+      "reported_revenue_dollars": 2561000000,
+      "method": "annual_minus_original_nine_month",
+      "filings": [
+        {
+          "start": "2020-08-01",
+          "end": "2021-07-31",
+          "val": 9633000000,
+          "accn": "0000896878-21-000233",
+          "fy": 2021,
+          "fp": "FY",
+          "form": "10-K",
+          "filed": "2021-09-08",
+          "xbrl_tag": "RevenueFromContractWithCustomerExcludingAssessedTax"
+        },
+        {
+          "start": "2020-08-01",
+          "end": "2021-04-30",
+          "val": 7072000000,
+          "accn": "0000896878-21-000115",
+          "fy": 2021,
+          "fp": "Q3",
+          "form": "10-Q",
+          "filed": "2021-05-25",
+          "xbrl_tag": "RevenueFromContractWithCustomerExcludingAssessedTax"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://investors.intuit.com/news-events/press-releases/detail/148/intuit-reports-strong-first-quarter-results-and-raises-full-year-revenue-guidance-reflecting-early-momentum-in-the-year-and-the-acquisition-of-mailchimp",
+      "quarter_end": "2021-10-31",
+      "reported_revenue_dollars": 2007000000,
+      "method": "reported_quarter",
+      "filings": [
+        {
+          "start": "2021-08-01",
+          "end": "2021-10-31",
+          "val": 2007000000,
+          "accn": "0000896878-21-000260",
+          "fy": 2022,
+          "fp": "Q1",
+          "form": "10-Q",
+          "filed": "2021-11-18",
+          "xbrl_tag": "RevenueFromContractWithCustomerExcludingAssessedTax"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://investors.intuit.com/news-events/press-releases/detail/128/intuit-reports-second-quarter-results-and-reiterates-full-year-guidance-organic-online-ecosystem-revenue-grew-37-percent",
+      "quarter_end": "2022-01-31",
+      "reported_revenue_dollars": 2673000000,
+      "method": "reported_quarter",
+      "filings": [
+        {
+          "start": "2021-11-01",
+          "end": "2022-01-31",
+          "val": 2673000000,
+          "accn": "0000896878-22-000010",
+          "fy": 2022,
+          "fp": "Q2",
+          "form": "10-Q",
+          "filed": "2022-03-02",
+          "xbrl_tag": "RevenueFromContractWithCustomerExcludingAssessedTax"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://investors.intuit.com/news-events/press-releases/detail/119/intuit-reports-third-quarter-results-and-raises-full-year-revenue-and-operating-income-guidance",
+      "quarter_end": "2022-04-30",
+      "reported_revenue_dollars": 5632000000,
+      "method": "reported_quarter",
+      "filings": [
+        {
+          "start": "2022-02-01",
+          "end": "2022-04-30",
+          "val": 5632000000,
+          "accn": "0000896878-22-000021",
+          "fy": 2022,
+          "fp": "Q3",
+          "form": "10-Q",
+          "filed": "2022-05-24",
+          "xbrl_tag": "RevenueFromContractWithCustomerExcludingAssessedTax"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://investors.intuit.com/news-events/press-releases/detail/113/intuit-reports-strong-full-year-results-and-sets-fiscal-2023-guidance",
+      "quarter_end": "2022-07-31",
+      "reported_revenue_dollars": 2414000000,
+      "method": "annual_minus_original_nine_month",
+      "filings": [
+        {
+          "start": "2021-08-01",
+          "end": "2022-07-31",
+          "val": 12726000000,
+          "accn": "0000896878-22-000028",
+          "fy": 2022,
+          "fp": "FY",
+          "form": "10-K",
+          "filed": "2022-09-02",
+          "xbrl_tag": "RevenueFromContractWithCustomerExcludingAssessedTax"
+        },
+        {
+          "start": "2021-08-01",
+          "end": "2022-04-30",
+          "val": 10312000000,
+          "accn": "0000896878-22-000021",
+          "fy": 2022,
+          "fp": "Q3",
+          "form": "10-Q",
+          "filed": "2022-05-24",
+          "xbrl_tag": "RevenueFromContractWithCustomerExcludingAssessedTax"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://investors.intuit.com/news-events/press-releases/detail/94/intuit-reports-strong-first-quarter-results-and-reiterates-full-year-operating-income-and-earnings-per-share-guidance",
+      "quarter_end": "2022-10-31",
+      "reported_revenue_dollars": 2597000000,
+      "method": "reported_quarter",
+      "filings": [
+        {
+          "start": "2022-08-01",
+          "end": "2022-10-31",
+          "val": 2597000000,
+          "accn": "0000896878-22-000036",
+          "fy": 2023,
+          "fp": "Q1",
+          "form": "10-Q",
+          "filed": "2022-11-29",
+          "xbrl_tag": "RevenueFromContractWithCustomerExcludingAssessedTax"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://investors.intuit.com/news-events/press-releases/detail/79/intuit-reports-strong-second-quarter-results-and-reiterates-full-year-guidance",
+      "quarter_end": "2023-01-31",
+      "reported_revenue_dollars": 3041000000,
+      "method": "reported_quarter",
+      "filings": [
+        {
+          "start": "2022-11-01",
+          "end": "2023-01-31",
+          "val": 3041000000,
+          "accn": "0000896878-23-000010",
+          "fy": 2023,
+          "fp": "Q2",
+          "form": "10-Q",
+          "filed": "2023-02-23",
+          "xbrl_tag": "RevenueFromContractWithCustomerExcludingAssessedTax"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://investors.intuit.com/news-events/press-releases/detail/64/intuit-reports-third-quarter-results-and-raises-total-company-full-year-guidance",
+      "quarter_end": "2023-04-30",
+      "reported_revenue_dollars": 6018000000,
+      "method": "reported_quarter",
+      "filings": [
+        {
+          "start": "2023-02-01",
+          "end": "2023-04-30",
+          "val": 6018000000,
+          "accn": "0000896878-23-000020",
+          "fy": 2023,
+          "fp": "Q3",
+          "form": "10-Q",
+          "filed": "2023-05-23",
+          "xbrl_tag": "RevenueFromContractWithCustomerExcludingAssessedTax"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://investors.intuit.com/news-events/press-releases/detail/47/intuit-reports-strong-fourth-quarter-and-full-year-results-sets-fiscal-2024-guidance",
+      "quarter_end": "2023-07-31",
+      "reported_revenue_dollars": 2712000000,
+      "method": "annual_minus_original_nine_month",
+      "filings": [
+        {
+          "start": "2022-08-01",
+          "end": "2023-07-31",
+          "val": 14368000000,
+          "accn": "0000896878-23-000034",
+          "fy": 2023,
+          "fp": "FY",
+          "form": "10-K",
+          "filed": "2023-09-01",
+          "xbrl_tag": "RevenueFromContractWithCustomerExcludingAssessedTax"
+        },
+        {
+          "start": "2022-08-01",
+          "end": "2023-04-30",
+          "val": 11656000000,
+          "accn": "0000896878-23-000020",
+          "fy": 2023,
+          "fp": "Q3",
+          "form": "10-Q",
+          "filed": "2023-05-23",
+          "xbrl_tag": "RevenueFromContractWithCustomerExcludingAssessedTax"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://investors.intuit.com/news-events/press-releases/detail/20/intuit-reports-strong-first-quarter-results-and-reiterates-full-year-guidance",
+      "quarter_end": "2023-10-31",
+      "reported_revenue_dollars": 2978000000,
+      "method": "reported_quarter",
+      "filings": [
+        {
+          "start": "2023-08-01",
+          "end": "2023-10-31",
+          "val": 2978000000,
+          "accn": "0000896878-23-000041",
+          "fy": 2024,
+          "fp": "Q1",
+          "form": "10-Q",
+          "filed": "2023-11-28",
+          "xbrl_tag": "RevenueFromContractWithCustomerExcludingAssessedTax"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://investors.intuit.com/news-events/press-releases/detail/11/intuit-reports-strong-second-quarter-results-and-reiterates-full-year-guidance",
+      "quarter_end": "2024-01-31",
+      "reported_revenue_dollars": 3386000000,
+      "method": "reported_quarter",
+      "filings": [
+        {
+          "start": "2023-11-01",
+          "end": "2024-01-31",
+          "val": 3386000000,
+          "accn": "0000896878-24-000011",
+          "fy": 2024,
+          "fp": "Q2",
+          "form": "10-Q",
+          "filed": "2024-02-22",
+          "xbrl_tag": "RevenueFromContractWithCustomerExcludingAssessedTax"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://investors.intuit.com/news-events/press-releases/detail/1188/intuit-reports-strong-third-quarter-results-and-raises-full-year-guidance",
+      "quarter_end": "2024-04-30",
+      "reported_revenue_dollars": 6737000000,
+      "method": "reported_quarter",
+      "filings": [
+        {
+          "start": "2024-02-01",
+          "end": "2024-04-30",
+          "val": 6737000000,
+          "accn": "0000896878-24-000026",
+          "fy": 2024,
+          "fp": "Q3",
+          "form": "10-Q",
+          "filed": "2024-05-23",
+          "xbrl_tag": "RevenueFromContractWithCustomerExcludingAssessedTax"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://investors.intuit.com/news-events/press-releases/detail/1202/intuit-reports-strong-fourth-quarter-and-full-year-results-sets-fiscal-2025-guidance-with-double-digit-revenue-and-earnings-growth",
+      "quarter_end": "2024-07-31",
+      "reported_revenue_dollars": 3184000000,
+      "method": "annual_minus_original_nine_month",
+      "filings": [
+        {
+          "start": "2023-08-01",
+          "end": "2024-07-31",
+          "val": 16285000000,
+          "accn": "0000896878-24-000039",
+          "fy": 2024,
+          "fp": "FY",
+          "form": "10-K",
+          "filed": "2024-09-04",
+          "xbrl_tag": "RevenueFromContractWithCustomerExcludingAssessedTax"
+        },
+        {
+          "start": "2023-08-01",
+          "end": "2024-04-30",
+          "val": 13101000000,
+          "accn": "0000896878-24-000026",
+          "fy": 2024,
+          "fp": "Q3",
+          "form": "10-Q",
+          "filed": "2024-05-23",
+          "xbrl_tag": "RevenueFromContractWithCustomerExcludingAssessedTax"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://investors.intuit.com/news-events/press-releases/detail/1223/intuit-reports-strong-first-quarter-results-and-reiterates-full-year-guidance",
+      "quarter_end": "2024-10-31",
+      "reported_revenue_dollars": 3283000000,
+      "method": "reported_quarter",
+      "filings": [
+        {
+          "start": "2024-08-01",
+          "end": "2024-10-31",
+          "val": 3283000000,
+          "accn": "0000896878-24-000053",
+          "fy": 2025,
+          "fp": "Q1",
+          "form": "10-Q",
+          "filed": "2024-11-21",
+          "xbrl_tag": "RevenueFromContractWithCustomerExcludingAssessedTax"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://investors.intuit.com/news-events/press-releases/detail/1239/intuit-reports-strong-second-quarter-results-and-reiterates-full-year-guidance",
+      "quarter_end": "2025-01-31",
+      "reported_revenue_dollars": 3963000000,
+      "method": "reported_quarter",
+      "filings": [
+        {
+          "start": "2024-11-01",
+          "end": "2025-01-31",
+          "val": 3963000000,
+          "accn": "0000896878-25-000015",
+          "fy": 2025,
+          "fp": "Q2",
+          "form": "10-Q",
+          "filed": "2025-02-25",
+          "xbrl_tag": "RevenueFromContractWithCustomerExcludingAssessedTax"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://investors.intuit.com/news-events/press-releases/detail/1251/intuit-reports-strong-third-quarter-results-and-raises-full-year-guidance",
+      "quarter_end": "2025-04-30",
+      "reported_revenue_dollars": 7754000000,
+      "method": "reported_quarter",
+      "filings": [
+        {
+          "start": "2025-02-01",
+          "end": "2025-04-30",
+          "val": 7754000000,
+          "accn": "0000896878-25-000022",
+          "fy": 2025,
+          "fp": "Q3",
+          "form": "10-Q",
+          "filed": "2025-05-22",
+          "xbrl_tag": "RevenueFromContractWithCustomerExcludingAssessedTax"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://investors.intuit.com/news-events/press-releases/detail/1266/intuit-reports-strong-fourth-quarter-and-full-year-fiscal-2025-results-sets-fiscal-2026-guidance-with-double-digit-revenue-growth-and-continued-operating-margin-expansion",
+      "quarter_end": "2025-07-31",
+      "reported_revenue_dollars": 3831000000,
+      "method": "annual_minus_original_nine_month",
+      "filings": [
+        {
+          "start": "2024-08-01",
+          "end": "2025-07-31",
+          "val": 18831000000,
+          "accn": "0000896878-25-000035",
+          "fy": 2025,
+          "fp": "FY",
+          "form": "10-K",
+          "filed": "2025-09-03",
+          "xbrl_tag": "RevenueFromContractWithCustomerExcludingAssessedTax"
+        },
+        {
+          "start": "2024-08-01",
+          "end": "2025-04-30",
+          "val": 15000000000,
+          "accn": "0000896878-25-000022",
+          "fy": 2025,
+          "fp": "Q3",
+          "form": "10-Q",
+          "filed": "2025-05-22",
+          "xbrl_tag": "RevenueFromContractWithCustomerExcludingAssessedTax"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://investors.intuit.com/news-events/press-releases/detail/1286/intuit-reports-strong-first-quarter-results-and-reiterates-full-year-guidance",
+      "quarter_end": "2025-10-31",
+      "reported_revenue_dollars": 3885000000,
+      "method": "reported_quarter",
+      "filings": [
+        {
+          "start": "2025-08-01",
+          "end": "2025-10-31",
+          "val": 3885000000,
+          "accn": "0000896878-25-000048",
+          "fy": 2026,
+          "fp": "Q1",
+          "form": "10-Q",
+          "filed": "2025-11-20",
+          "frame": "CY2025Q3",
+          "xbrl_tag": "RevenueFromContractWithCustomerExcludingAssessedTax"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://investors.intuit.com/news-events/press-releases/detail/1307/intuit-reports-strong-second-quarter-results-and-reiterates-full-year-guidance",
+      "quarter_end": "2026-01-31",
+      "reported_revenue_dollars": 4651000000,
+      "method": "reported_quarter",
+      "filings": [
+        {
+          "start": "2025-11-01",
+          "end": "2026-01-31",
+          "val": 4651000000,
+          "accn": "0000896878-26-000014",
+          "fy": 2026,
+          "fp": "Q2",
+          "form": "10-Q",
+          "filed": "2026-02-26",
+          "frame": "CY2025Q4",
+          "xbrl_tag": "RevenueFromContractWithCustomerExcludingAssessedTax"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://investors.intuit.com/news-events/press-releases/detail/1312/intuit-reports-strong-third-quarter-results-and-raises-full-year-revenue-guidance",
+      "quarter_end": "2026-04-30",
+      "reported_revenue_dollars": 8558000000,
+      "method": "reported_quarter",
+      "filings": [
+        {
+          "start": "2026-02-01",
+          "end": "2026-04-30",
+          "val": 8558000000,
+          "accn": "0000896878-26-000025",
+          "fy": 2026,
+          "fp": "Q3",
+          "form": "10-Q",
+          "filed": "2026-05-20",
+          "frame": "CY2026Q1",
+          "xbrl_tag": "RevenueFromContractWithCustomerExcludingAssessedTax"
+        }
+      ],
+      "error_dollars": 0
+    },
+    {
+      "source": "https://investors.intuit.com/news-events/press-releases/detail/1320/intuit-reports-fourth-quarter-and-full-year-fiscal-2026-results-sets-fiscal-2027-guidance",
+      "quarter_end": "2026-07-31",
+      "reported_revenue_dollars": 4354000000,
+      "method": "annual_minus_original_nine_month",
+      "filings": [
+        {
+          "start": "2025-08-01",
+          "end": "2026-07-31",
+          "val": 21448000000,
+          "accn": "0000896878-26-000037",
+          "fy": 2026,
+          "fp": "FY",
+          "form": "10-K",
+          "filed": "2026-09-09",
+          "frame": "CY2026",
+          "xbrl_tag": "RevenueFromContractWithCustomerExcludingAssessedTax"
+        },
+        {
+          "start": "2025-08-01",
+          "end": "2026-04-30",
+          "val": 17094000000,
+          "accn": "0000896878-26-000025",
+          "fy": 2026,
+          "fp": "Q3",
+          "form": "10-Q",
+          "filed": "2026-05-20",
+          "xbrl_tag": "RevenueFromContractWithCustomerExcludingAssessedTax"
+        }
+      ],
+      "error_dollars": 0
+    }
+  ],
+  "scope": "Independent reported financial values and completed-quarter filing references, not an exhaustive interim-guidance news catalogue."
+}

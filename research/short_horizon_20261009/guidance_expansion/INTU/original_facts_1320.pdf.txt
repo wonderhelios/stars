@@ -1,0 +1,134 @@
+August 25, 2026
+Fact Sheet
+
+2
+Financial Summary
+(millions, except per share data) Q1 Q2 Q3 Q4 FY Q1 Q2 Q3 Q4 FY Q1 Q2 Q3 Q4 FY Q1 Q2 Q3 Q4 FY Q1 Q2 Q3 Q4 FY
+        QuickBooks Online Accounting $798 $826 $860 $895 $3,379 $965 $1,008 $1,044 $1,103 $4,120 $1,206 $1,248 $1,278 $1,319 $5,051 21% 22% 21% 23% 22% 25% 24% 22% 20% 23%
+        Online Services $820 $862 $894 $937 $3,513 $978 $1,030 $1,059 $1,115 $4,182 $1,145 $1,219 $1,219 $1,284 $4,867 19% 19% 18% 19% 19% 17% 18% 15% 15% 16%
+   Total Online Ecosystem $1,618 $1,688 $1,754 $1,832 $6,892 $1,943 $2,038 $2,103 $2,218 $8,302 $2,351 $2,467 $2,497 $2,603 $9,918 20% 21% 20% 21% 20% 21% 21% 19% 17% 19%
+        QuickBooks Desktop Accounting $467 $291 $363 $454 $1,575 $329 $355 $476 $512 $1,672 $356 $408 $507 $530 $1,801 (30%) 22% 31% 13% 6% 8% 15% 7% 4% 8%
+        Desktop Services and Supplies $259 $266 $270 $271 $1,066 $272 $278 $270 $283 $1,103 $284 $289 $281 $291 $1,145 5% 5% 0% 4% 3% 4% 4% 4% 3% 4%
+    Total Desktop Ecosystem $726 $557 $633 $725 $2,641 $601 $633 $746 $795 $2,775 $640 $697 $788 $821 $2,946 (17%) 14% 18% 10% 5% 6% 10% 6% 3% 6%
+Global Business Solutions $2,344 $2,245 $2,387 $2,557 $9,533 $2,544 $2,671 $2,849 $3,013 $11,077 $2,991 $3,164 $3,285 $3,424 $12,864 9% 19% 19% 18% 16% 18% 18% 15% 14% 16%
+    TurboTax $196 $502 $3,684 $126 $4,508 $187 $520 $4,078 $148 $4,933 $198 $581 $4,364 $153 $5,296 (5%) 4% 11% 17% 9% 6% 12% 7% 3% 7%
+    Credit Karma $396 $365 $412 $472 $1,645 $513 $500 $549 $638 $2,200 $651 $616 $631 $743 $2,641 30% 37% 33% 35% 34% 27% 23% 15% 16% 20%
+    ProTax $42 $274 $254 $29 $599 $39 $272 $278 $32 $621 $45 $290 $278 $34 $647 (7%) (1%) 9% 10% 4% 15% 7% 0% 6% 4%
+Consumer $634 $1,141 $4,350 $627 $6,752 $739 $1,292 $4,905 $818 $7,754 $894 $1,487 $5,273 $930 $8,584 17% 13% 13% 30% 15% 21% 15% 8% 14% 11%
+Total Revenue $2,978 $3,386 $6,737 $3,184 $16,285 $3,283 $3,963 $7,754 $3,831 $18,831 $3,885 $4,651 $8,558 $4,354 $21,448 10% 17% 15% 20% 16% 18% 17% 10% 14% 14%
+GAAP Operating Income (Loss) $307 $369 $3,105 ($151) $3,630 $271 $593 $3,720 $339 $4,923 $534 $855 $4,020 $475 $5,884 36% 20%
+Non-GAAP Operating Income[A] $960 $1,000 $3,712 $730 $6,402 $953 $1,260 $4,343 $1,016 $7,572 $1,258 $1,549 $4,680 $1,448 $8,935 18% 18%
+Non-GAAP Operating Margin %[A] 32.2% 29.5% 55.1% 22.9% 39.3% 29.0% 31.8% 56.0% 26.5% 40.2% 32.4% 33.3% 54.7% 33.3% 41.7% +0.9 pts +1.5 pts
+GAAP Diluted EPS $0.85 $1.25 $8.42 ($0.07) $10.43 $0.70 $1.67 $10.02 $1.35 $13.67 $1.59 $2.48 $11.09 $1.34 $16.46 31% 20%
+Non-GAAP Diluted EPS[A], [B] $2.47 $2.63 $9.88 $1.99 $16.94 $2.50 $3.32 $11.65 $2.75 $20.15 $3.34 $4.15 $12.80 $4.03 $24.27 19% 20%
+Share-based Compensation (SBC) Expense $495 $475 $451 $519 $1,940 $511 $498 $469 $490 $1,968 $543 $521 $485 $507 $2,056 1% 4%
+Basic Share Count 280 280 280 280 280 280 280 280 279 280 279 278 276 272 276 0% (1%)
+Diluted Share Count 283 284 284 283 284 283 283 282 282 283 281 280 276 272 277 (0%) (2%)
+Capital Expenditures $250 $124 $221 (50%) 79%
+FY25[D], [E] FY26
+Year-over-Year Growth (%), unless stated otherwise
+FY24[D], [E] FY25[D], [E] FY26
+Financial Summary – FY26 View
+
+3
+Financial Summary
+(millions, except per share data) Q1 Q2 Q3 Q4 FY Q1 Q2 Q3 Q4 FY Q1 Q2 Q3 Q4 FY Q1 Q2 Q3 Q4 FY Q1 Q2 Q3 Q4 FY Q1 FY
+        QuickBooks Online Accounting $798 $826 $860 $895 $3,379 $965 $1,008 $1,044 $1,103 $4,120 $1,206 $1,248 $1,278 $1,319 $5,051 21% 22% 21% 23% 22% 25% 24% 22% 20% 23%
+        Online Services $516 $543 $573 $614 $2,246 $657 $705 $739 $794 $2,895 $828 $899 $904 $964 $3,595 27% 30% 29% 29% 29% 26% 28% 22% 21% 24%
+   Total Online Ecosystem $1,314 $1,369 $1,433 $1,509 $5,625 $1,622 $1,713 $1,783 $1,897 $7,015 $2,034 $2,147 $2,182 $2,283 $8,646 23% 25% 24% 26% 25% 25% 25% 22% 20% 23%
+        QuickBooks Desktop Accounting $467 $291 $363 $454 $1,575 $329 $355 $476 $512 $1,672 $356 $408 $507 $530 $1,801 (30%) 22% 31% 13% 6% 8% 15% 7% 4% 8%
+        Desktop Services and Supplies $259 $266 $270 $271 $1,066 $272 $278 $270 $283 $1,103 $284 $289 $281 $291 $1,145 5% 5% 0% 4% 3% 4% 4% 4% 3% 4%
+    Total Desktop Ecosystem $726 $557 $633 $725 $2,641 $601 $633 $746 $795 $2,775 $640 $697 $788 $821 $2,946 (17%) 14% 18% 10% 5% 6% 10% 6% 3% 6%
+Global Business Solutions $2,040 $1,926 $2,066 $2,234 $8,266 $2,223 $2,346 $2,529 $2,692 $9,790 $2,674 $2,844 $2,970 $3,104 $11,592 9% 22% 22% 21% 18% 20% 21% 17% 15% 18% $13,068 - $13,158 (13%-14%)
+    TurboTax $196 $502 $3,684 $126 $4,508 $187 $520 $4,078 $148 $4,933 $198 $581 $4,364 $153 $5,296 (5%) 4% 11% 17% 9% 6% 12% 7% 3% 7% $5,377 - $5,453 (2%-3%)
+    Credit Karma $396 $365 $412 $472 $1,645 $513 $500 $549 $638 $2,200 $651 $616 $631 $743 $2,641 30% 37% 33% 35% 34% 27% 23% 15% 16% 20% $2,919 - $2,973 (11%-13%)
+    ProTax $42 $274 $254 $29 $599 $39 $272 $278 $32 $621 $45 $290 $278 $34 $647 (7%) (1%) 9% 10% 4% 15% 7% 0% 6% 4% $659 - $662 (2%)
+Consumer $634 $1,141 $4,350 $627 $6,752 $739 $1,292 $4,905 $818 $7,754 $894 $1,487 $5,273 $930 $8,584 17% 13% 13% 30% 15% 21% 15% 8% 14% 11% $8,955 - $9,088 (4%-6%)
+Mailchimp $304 $319 $321 $323 $1,267 $321 $325 $320 $321 $1,287 $317 $320 $315 $320 $1,272 6% 2% (0%) (1%) 2% (1%) (2%) (2%) (0%) (1%) $1,256 - $1,266 ((1)%-0%)
+Total Revenue $2,978 $3,386 $6,737 $3,184 $16,285 $3,283 $3,963 $7,754 $3,831 $18,831 $3,885 $4,651 $8,558 $4,354 $21,448 10% 17% 15% 20% 16% 18% 17% 10% 14% 14% $4,294 - $4,313 (11%) $23,279 - $23,512 (9%-10%)
+GAAP Operating Income (Loss) $307 $369 $3,105 ($151) $3,630 $271 $593 $3,720 $339 $4,923 $534 $855 $4,020 $475 $5,884 36% 20% $716 - $729 $7,408 - $7,490
+Non-GAAP Operating Income (excl. SBC)[A] $960 $1,000 $3,712 $730 $6,402 $953 $1,260 $4,343 $1,016 $7,572 $1,258 $1,549 $4,680 $1,448 $8,935 18% 18%
+Non-GAAP Operating Margin % (excl. SBC)[A] 32.2% 29.5% 55.1% 22.9% 39.3% 29.0% 31.8% 56.0% 26.5% 40.2% 32.4% 33.3% 54.7% 33.3% 41.7% +0.9 pts +1.5 pts
+Non-GAAP Operating Income (incl. SBC)[A] $902 - $915 $8,063 - $8,145
+GAAP Diluted EPS $0.85 $1.25 $8.42 ($0.07) $10.43 $0.70 $1.67 $10.02 $1.35 $13.67 $1.59 $2.48 $11.09 $1.34 $16.46 31% 20% $1.71 - $1.75 $20.12 - $20.36
+Non-GAAP Diluted EPS (excl. SBC)[A], [B] $2.47 $2.63 $9.88 $1.99 $16.94 $2.50 $3.32 $11.65 $2.75 $20.15 $3.34 $4.15 $12.80 $4.03 $24.27 19% 20%
+Non-GAAP Diluted EPS (incl. SBC)[A] $2.44 - $2.48 $22.88 - $23.12
+Share-based Compensation (SBC) Expense $495 $475 $451 $519 $1,940 $511 $498 $469 $490 $1,968 $543 $521 $485 $507 $2,056 1% 4%
+Basic Share Count 280 280 280 280 280 280 280 280 279 280 279 278 276 272 276 0% (1%) ~263
+Diluted Share Count 283 284 284 283 284 283 283 282 282 283 281 280 276 272 277 (0%) (2%) ~264
+Capital Expenditures $250 $124 $221 (50%) 79% $255
+Year-over-Year Growth (%), unless stated otherwise Guidance[C]
+FY24[D], [E] FY25[D], [E] FY26 FY26FY25[D], [E] FY27
+Financial Summary – Revised View
+Segment financial information for FY’24, FY’25, and FY'26 has been recast to show segment reporting changes. Effective August 1, 2026, we will begin reporting Mailchimp as a separate reportable segment, rather than 
+within Online Services of Global Business Solutions.
+
+4
+Segment Operating Income
+($ millions) Q1 Q2 Q3 Q4 FY Q1 Q2 Q3 Q4 FY Q1 Q2 Q3 Q4 FY Q1 Q2 Q3 Q4 FY Q1 Q2 Q3 Q4 FY
+Global Business Solutions $1,829 $1,673 $1,807 $1,864 $7,173 $2,002 $2,052 $2,189 $2,233 $8,476 $2,334 $2,403 $2,520 $2,630 $9,887
+Operating Margin 78% 75% 76% 73% 75% 79% 77% 77% 74% 77% 78% 76% 77% 77% 77% +1.3 pts +0.3 pts
+Consumer $404 $725 $3,550 $333 $5,012 $428 $795 $4,040 $497 $5,760 $584 $898 $4,263 $563 $6,308
+Operating Margin 64% 64% 82% 53% 74% 58% 62% 82% 61% 74% 65% 60% 81% 61% 73% +0.1 pts (0.8) pts
+Total Segment Operating Income $2,233 $2,398 $5,357 $2,197 $12,185 $2,430 $2,847 $6,229 $2,730 $14,236 $2,918 $3,301 $6,783 $3,193 $16,195
+Operating Margin 75% 71% 80% 69% 75% 74% 72% 80% 71% 76% 75% 71% 79% 73% 76% +0.8 pts (0.1) pts
+Y/Y Margin (pts)
+FY25[F] FY26FY24[F] FY25[F] FY26
+Segment Margin Summary – FY26 View
+A full recast of segment margins for FY’24, FY’25, and FY’26 will be shared at Investor Day 2026 on September 17, 2026.
+
+5
+Footnotes
+Numbers may not agree with the sum of the components, nor with SEC filing(s), due to immaterial rounding adjustments. 
+[A] These are non-GAAP financial measures. See Section “About Non-GAAP Financial Measures” and the tables B1, B2, and E of our Press Release dated August 25, 2026 for reconciliations of 
+these non-GAAP financial measures to the most directly comparable GAAP measures and the reasons management uses each measure.
+[B] The effective tax rate used to calculate non-GAAP EPS was 24% for Q1 FY'24, Q2 FY'24, Q3 FY'24, Q4 FY'24, Q1 FY'25, Q2 FY'25, Q3 FY'25, Q4 FY’25, Q1 FY’26, Q2 FY’26, Q3 FY’26, and 
+Q4 FY’26.
+[C] All of the numbers provided in the table entitled "Guidance”, are forward-looking statements. Please see the accompanying section entitled "Cautions About Forward-Looking Statements" for 
+important information to assess when evaluating these statements. Actual future results may differ materially due to a numberof risks and uncertainties. 
+[D] Segment revenue has been revised for FY’24 and FY’25 to conform with segment reporting changes. Historical Consumer is now called TurboTax and TurboTax now includes Credit Karma 
+Money, which has been moved from Credit Karma. Consumer revenue now includes TurboTax, Credit Karma, and ProTax. 
+[E] Segment revenue has been revised for FY’24 and FY’25. Certain amounts related to ProAdvisor subscription revenues previously reported in our financial statements have been reclassified to 
+conform to the current presentation. 
+[F] Consistent with the company's vision to deliver one consumer platform, effective August 1, 2025, Intuit combined the Consumer, Credit Karma, and ProTax businesses into a single Consumer 
+business. Segment margin has been revised for FY’24 and FY’25 to conform with this segment reporting change. To conform to the new Consumer segment presentation, Credit Karma’s direct 
+expenses related to selling and marketing, product development, and general and administrative are now managed at the platform level and are included in other corporate expenses rather than in 
+segment expenses. Also on August 1, 2025, we reorganized certain marketing, communications, and customer success functions inour Global Business Solutions segment that support and benefit 
+our overall platform and are managed at that level rather than at the segment level. Additionally, certain data science and analytics teams that were managed at the platform level are now managed 
+at the segment level. For FY’25, we reclassified expenses totaling $9 million from Global Business Solutions and $606 millionfrom Consumer to other corporate expenses to conform to the current 
+presentation. For FY’24, we reclassified expenses totaling $16 million from Global Business Solutions and $585 million from Consumer to other corporate expenses.
+Global Business Solutions Includes: 
+QuickBooks Online Accounting: QuickBooks Online Accounting, Intuit Enterprise Suite, QuickBooks Online Advanced, QuickBooks Live, QuickBooks Solopreneur, QuickBooks Self-Employed, Intuit 
+Accountant Suite
+Online Services: QuickBooks Payments, QuickBooks Capital, QuickBooks Bill Pay, QuickBooks Checking, Mailchimp, QuickBooks Online Payroll, QuickBooks Time
+QuickBooks Desktop Accounting: QuickBooks Desktop packaged software products (Desktop Pro, Desktop for Mac, Desktop Premier, and QuickBooks Point of Sale), QuickBooks Desktop software 
+subscriptions (QuickBooks Desktop Plus, QuickBooks Enterprise, and ProAdvisor Program)
+Desktop Services and Supplies: QuickBooks Desktop Payroll (QuickBooks Basic Payroll, QuickBooks Assisted Payroll, and QuickBooks Enhanced Payroll), QuickBooks Desktop Payments, and 
+Financial Supplies
+TurboTax Includes: Do-it-yourself and assisted TurboTax products and services sold in the U.S. and Canada, OFX, and Credit Karma Money
+ProTax Includes: Lacerte, ProSeries, and ProConnect Tax Online in the U.S., and ProFile and ProTax Online in Canada
+
+6
+Cautions About Forward-Looking Statements
+This fact sheet contains forward-looking statements, including forecasts of Intuit’s expected growth andfuture financial results of Intuit and its reporting segments. 
+Because these forward-looking statements involve risks and uncertainties, there are important factors that could cause our actual results to differ materially from the expectations expressed in the 
+forward-looking statements. These risks and uncertainties may be amplified by the effects of global developments and conditions or events, including macroeconomic uncertainty and geopolitical 
+conditions, which have caused significant global economic instability and uncertainty. Given these risks and uncertainties, persons reading this communication are cautioned not to place any undue 
+reliance on such forward-looking statements. These factors include, without limitation, the following: our ability to realize the anticipated benefits of our restructuring plan (Plan); risks related to the 
+preliminary nature of the estimate of the charges to be incurred in connection with the Plan, which is subject to change; risks related to any delays in the timing for implementing the Plan or potential 
+disruptions to our business or operations as we execute on the Plan; our ability to compete successfully; potential governmental encroachment in our tax business; our ability to develop, deploy, and 
+use artificial intelligence in our platform and offerings; our ability to adapt to technological change and to successfully extend our platform; our ability to predict consumer behavior; our ability to 
+anticipate and solve new and existing customer problems; our reliance on intellectual property; our ability to protect our intellectual property rights; any harm to our reputation; risks associated with our 
+environmental, social, and governance efforts; risks associated with acquisition and divestiture activity; the issuance of equity or incurrence of debt to fund acquisitions or for general business 
+purposes; cybersecurity incidents (including those affecting the third parties we rely on); customer or regulator concerns about privacy and cybersecurity incidents; fraudulent activities by third parties, 
+including through the use of AI; our failure to process transactions effectively; interruption or failure of our information technology; our ability to develop and maintain critical third-party business 
+relationships; our ability to attract and retain talent and the success of our hybrid work model; our ability to effectively develop and deploy AI in our offerings; any deficiency in the quality or accuracy of 
+our offerings (including the advice given by experts on our platform); any delays in product launches; difficulties in processing or filing customer tax submissions; risks associated with international 
+operations; risks associated with climate change; changes to, and evolving interpretations of public policy, laws or regulations affecting our businesses; allegations of legal claims and legal 
+proceedings in which we are involved; fluctuations in the results of our tax business due to seasonality and other factors beyond our control; changes in tax rates and tax reform legislation; global 
+economic conditions (including, without limitation, inflation); exposure to credit, counterparty and other risks in providingcapital to businesses; amortization of acquired intangible assets and 
+impairment charges; our ability to repay or otherwise comply with the terms of our outstanding debt; our ability to repurchase shares or distribute dividends; volatility of our stock price; and our ability to 
+successfully market our offerings.
+More details about these and other risks that may impact our business are included in our Form 10-K for fiscal 2025 and in our other SEC filings. You can locate these reports through our website 
+at http://investors.intuit.com. First-quarter and full-year fiscal 2027 guidance speaks only as of the date it was publicly issued by Intuit. Other forward-looking statements represent the judgment of the 
+management of Intuit as of the date of this presentation. Except as required by law, we do not undertake any duty to update any forward-looking statement or other information in this presentation.

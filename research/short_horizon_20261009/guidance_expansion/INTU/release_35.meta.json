@@ -1,0 +1,18 @@
+{
+  "url": "https://investors.intuit.com/news-events/press-releases/detail/35/intuit-hosts-investor-day-reaffirms-first-quarter-and-fiscal-2024-guidance",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "79bd30d45ae86146f60714c63ce4efa132ffedfee5e7371b83990b0cd768dfd9",
+  "retrieved_utc": "2026-10-09T18:02:23Z",
+  "attempts": [
+    {
+      "url": "https://investors.intuit.com/news-events/press-releases/detail/35/intuit-hosts-investor-day-reaffirms-first-quarter-and-fiscal-2024-guidance",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "79bd30d45ae86146f60714c63ce4efa132ffedfee5e7371b83990b0cd768dfd9",
+      "retrieved_utc": "2026-10-09T18:02:23Z"
+    }
+  ]
+}

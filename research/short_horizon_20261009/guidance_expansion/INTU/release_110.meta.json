@@ -1,0 +1,18 @@
+{
+  "url": "https://investors.intuit.com/news-events/press-releases/detail/110/intuit-hosts-annual-investor-day-on-sept-29",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "65365803f1765687657337aca04e3afdc95dd63059465bbcb7c4e1e96022ce57",
+  "retrieved_utc": "2026-10-09T22:11:53Z",
+  "attempts": [
+    {
+      "url": "https://investors.intuit.com/news-events/press-releases/detail/110/intuit-hosts-annual-investor-day-on-sept-29",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "65365803f1765687657337aca04e3afdc95dd63059465bbcb7c4e1e96022ce57",
+      "retrieved_utc": "2026-10-09T22:11:53Z"
+    }
+  ]
+}

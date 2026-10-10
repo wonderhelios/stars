@@ -1,0 +1,26 @@
+{
+  "url": "/financial-information/financial-results",
+  "status": 0,
+  "exit_code": 3,
+  "error": "curl: (3) URL rejected: No host part in the URL\n",
+  "sha256": null,
+  "retrieved_utc": "2026-10-09T18:02:17Z",
+  "attempts": [
+    {
+      "url": "/financial-information/financial-results",
+      "status": 0,
+      "exit_code": 3,
+      "error": "curl: (3) URL rejected: No host part in the URL\n",
+      "sha256": null,
+      "retrieved_utc": "2026-10-09T18:02:14Z"
+    },
+    {
+      "url": "/financial-information/financial-results",
+      "status": 0,
+      "exit_code": 3,
+      "error": "curl: (3) URL rejected: No host part in the URL\n",
+      "sha256": null,
+      "retrieved_utc": "2026-10-09T18:02:17Z"
+    }
+  ]
+}

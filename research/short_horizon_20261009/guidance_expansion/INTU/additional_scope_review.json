@@ -1,0 +1,46 @@
+[
+  {
+    "source": "https://investors.intuit.com/news-events/press-releases/detail/1247/intuit-to-acquire-hr-platform-goco",
+    "file": "release_1247.html",
+    "sha256": "f02f4655d98eb9657f95fc5a42158b1647cf8dbec6a439b0ef427d2178995176",
+    "published": "2025-04-23T09:00:00-04:00",
+    "title": "Intuit to Acquire HR Platform GoCo",
+    "full_content_semantic_audit_complete": false,
+    "reviewed_scope_evidence": [
+      "The deal is expected to close in Q4 FY25.",
+      "Financial terms were not disclosed."
+    ],
+    "assessment": "GoCo announced before FY2025Q3 results. Do not assume completion or zero revenue contribution; verify whether the new full-year guide includes the expected Q4 transaction.",
+    "action": "pending_closing_and_scope_review",
+    "strategy_returns_read": false
+  },
+  {
+    "source": "https://investors.intuit.com/news-events/press-releases/detail/92/intuit-to-acquire-financial-health-startup-seedfi",
+    "file": "release_92.html",
+    "sha256": "99311ba9962af82e287659167a30854032d36631caaaead9b1cd88139d57b619",
+    "published": "2022-12-01T16:00:00-05:00",
+    "title": "Intuit to Acquire Financial Health Startup SeedFi",
+    "full_content_semantic_audit_complete": false,
+    "reviewed_scope_evidence": [
+      "The transaction is not expected to have a material impact on Intuit\u2019s operating results for the full fiscal year 2023."
+    ],
+    "assessment": "SeedFi issuer explicitly anticipates immaterial FY2023 operating impact; do not equate this with exactly zero total-revenue contribution. Closing and quantitative relevance remain to verify.",
+    "action": "pending_closing_and_scope_review",
+    "strategy_returns_read": false
+  },
+  {
+    "source": "https://investors.intuit.com/news-events/press-releases/detail/1196/intuit-to-acquire-technology-from-zendrive",
+    "file": "release_1196.html",
+    "sha256": "0c555fb874d8e6c92c71042745d9f62d2032f788f5c645aade05bffd44211cc2",
+    "published": "2024-06-13T12:00:00-04:00",
+    "title": "Intuit to Acquire Technology from Zendrive",
+    "full_content_semantic_audit_complete": false,
+    "reviewed_scope_evidence": [
+      "Intuit expects to close the transaction in Q4 FY24.",
+      "Terms of the deal weren't disclosed."
+    ],
+    "assessment": "Zendrive transaction described as technology and certain employees, not an assertion that all Zendrive revenue transfers. Do not mechanically treat it as full-company consolidation.",
+    "action": "pending_closing_and_scope_review",
+    "strategy_returns_read": false
+  }
+]

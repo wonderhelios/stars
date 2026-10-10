@@ -1,0 +1,18 @@
+{
+  "url": "https://investors.intuit.com/news-events/press-releases/detail/201/intuit-updates-full-fiscal-year-and-second-quarter-outlook-reflecting-the-close-of-the-credit-karma-acquisition",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "80140c1a0def0a24c6a7d455c2d59bfe6b29dfcfdf3cb40a2ca427175e51e39f",
+  "retrieved_utc": "2026-10-09T18:01:45Z",
+  "attempts": [
+    {
+      "url": "https://investors.intuit.com/news-events/press-releases/detail/201/intuit-updates-full-fiscal-year-and-second-quarter-outlook-reflecting-the-close-of-the-credit-karma-acquisition",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "80140c1a0def0a24c6a7d455c2d59bfe6b29dfcfdf3cb40a2ca427175e51e39f",
+      "retrieved_utc": "2026-10-09T18:01:45Z"
+    }
+  ]
+}

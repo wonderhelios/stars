@@ -1,0 +1,18 @@
+{
+  "url": "https://investors.intuit.com/news-events/press-releases/detail/226/intuit-third-quarter-revenue-declined-8-percent-small-business-online-ecosystem-revenue-grew-28-percent",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "d2591b7c9af1e040937921e1877b4bb17731d4860d2986f0aeb0d5c6b41dd3f9",
+  "retrieved_utc": "2026-10-09T18:03:30Z",
+  "attempts": [
+    {
+      "url": "https://investors.intuit.com/news-events/press-releases/detail/226/intuit-third-quarter-revenue-declined-8-percent-small-business-online-ecosystem-revenue-grew-28-percent",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "d2591b7c9af1e040937921e1877b4bb17731d4860d2986f0aeb0d5c6b41dd3f9",
+      "retrieved_utc": "2026-10-09T18:03:30Z"
+    }
+  ]
+}

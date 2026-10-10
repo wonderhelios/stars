@@ -1,0 +1,18 @@
+{
+  "url": "https://investors.intuit.com/news-events/press-releases/detail/106/intuit-hosts-investor-day-reaffirms-first-quarter-and-fiscal-2023-guidance",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "99c1c93d2e1c25ca1c165d6c2c94de21f35e810245d5211c95555914f8772e56",
+  "retrieved_utc": "2026-10-09T22:11:51Z",
+  "attempts": [
+    {
+      "url": "https://investors.intuit.com/news-events/press-releases/detail/106/intuit-hosts-investor-day-reaffirms-first-quarter-and-fiscal-2023-guidance",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "99c1c93d2e1c25ca1c165d6c2c94de21f35e810245d5211c95555914f8772e56",
+      "retrieved_utc": "2026-10-09T22:11:51Z"
+    }
+  ]
+}

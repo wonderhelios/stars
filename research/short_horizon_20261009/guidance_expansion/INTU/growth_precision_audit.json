@@ -1,0 +1,38 @@
+[
+  {
+    "prior_source": "https://investors.intuit.com/news-events/press-releases/detail/186/intuit-reports-second-quarter-results-and-reiterates-full-year-guidance-small-business-online-ecosystem-revenue-grew-22-percent",
+    "later_source": "https://investors.intuit.com/news-events/press-releases/detail/175/intuit-expects-to-exceed-full-fiscal-year-2021-guidance-adjusts-third-quarter-expectations-reflecting-significant-revenue-shift-due-to-the-irs-filing-deadline-extension",
+    "later_available": "2021-05-11 16:00:00-04:00",
+    "growth_proxy": [
+      4593.06,
+      4653.1
+    ],
+    "later_recalled_prior_dollar_range": [
+      4605.0,
+      4655.0
+    ],
+    "endpoint_difference_million": [
+      -11.9399999999996,
+      -1.8999999999996362
+    ],
+    "later_evidence_used_as_earlier_signal": false
+  },
+  {
+    "prior_source": "https://investors.intuit.com/news-events/press-releases/detail/148/intuit-reports-strong-first-quarter-results-and-raises-full-year-revenue-guidance-reflecting-early-momentum-in-the-year-and-the-acquisition-of-mailchimp",
+    "later_source": "https://investors.intuit.com/news-events/press-releases/detail/129/intuit-reiterates-full-fiscal-year-2022-revenue-guidance-based-on-strong-momentum-expects-second-quarter-revenue-to-reflect-slower-forming-tax-season",
+    "later_available": "2022-02-14 16:05:00-05:00",
+    "growth_proxy": [
+      2726.48,
+      2742.24
+    ],
+    "later_recalled_prior_dollar_range": [
+      2719.0,
+      2749.0
+    ],
+    "endpoint_difference_million": [
+      7.480000000000018,
+      -6.760000000000218
+    ],
+    "later_evidence_used_as_earlier_signal": false
+  }
+]

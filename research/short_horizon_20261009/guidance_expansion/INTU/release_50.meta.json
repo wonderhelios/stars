@@ -1,0 +1,18 @@
+{
+  "url": "https://investors.intuit.com/news-events/press-releases/detail/50/intuit-to-announce-fourth-quarter-and-full-year-fiscal-2023-results-on-aug-24-investor-day-set-for-sept-28",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "249a3f66c81aa26453e66eb6948e0230446c84139792daa8e889f5a938edf4da",
+  "retrieved_utc": "2026-10-09T22:11:47Z",
+  "attempts": [
+    {
+      "url": "https://investors.intuit.com/news-events/press-releases/detail/50/intuit-to-announce-fourth-quarter-and-full-year-fiscal-2023-results-on-aug-24-investor-day-set-for-sept-28",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "249a3f66c81aa26453e66eb6948e0230446c84139792daa8e889f5a938edf4da",
+      "retrieved_utc": "2026-10-09T22:11:47Z"
+    }
+  ]
+}

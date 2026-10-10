@@ -1,0 +1,18 @@
+{
+  "url": "https://investors.intuit.com/news-events/press-releases/detail/1264/intuit-to-announce-fourth-quarter-and-full-year-fiscal-2025-results-on-aug-21-investor-day-set-for-sep-18",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "6d042febfd6731892630c463fbea5211e5b88b1b0d641606ebbc7bcb15360e29",
+  "retrieved_utc": "2026-10-09T22:11:32Z",
+  "attempts": [
+    {
+      "url": "https://investors.intuit.com/news-events/press-releases/detail/1264/intuit-to-announce-fourth-quarter-and-full-year-fiscal-2025-results-on-aug-21-investor-day-set-for-sep-18",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "6d042febfd6731892630c463fbea5211e5b88b1b0d641606ebbc7bcb15360e29",
+      "retrieved_utc": "2026-10-09T22:11:32Z"
+    }
+  ]
+}

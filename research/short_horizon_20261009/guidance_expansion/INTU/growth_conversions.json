@@ -1,0 +1,230 @@
+[
+  {
+    "source": "https://investors.intuit.com/news-events/press-releases/detail/209/intuit-first-quarter-revenue-grew-14-percent-company-provides-guidance-for-fiscal-2021",
+    "base": {
+      "source": "https://investors.intuit.com/news-events/press-releases/detail/236/intuit-second-quarter-revenue-increased-13-percent-small-business-online-ecosystem-revenue-grew-35-percent",
+      "published": "2020-02-24 16:01:00-05:00",
+      "revenue_million": 1696.0
+    },
+    "range_million": [
+      1831.68,
+      1848.64
+    ]
+  },
+  {
+    "source": "https://investors.intuit.com/news-events/press-releases/detail/186/intuit-reports-second-quarter-results-and-reiterates-full-year-guidance-small-business-online-ecosystem-revenue-grew-22-percent",
+    "base": {
+      "source": "https://investors.intuit.com/news-events/press-releases/detail/226/intuit-third-quarter-revenue-declined-8-percent-small-business-online-ecosystem-revenue-grew-28-percent",
+      "published": "2020-05-21 16:00:00-04:00",
+      "revenue_million": 3002.0
+    },
+    "range_million": [
+      4593.06,
+      4653.1
+    ]
+  },
+  {
+    "source": "https://investors.intuit.com/news-events/press-releases/detail/173/intuit-reports-third-quarter-results-and-raises-full-year-guidance-grows-small-business-online-ecosystem-revenue-28-percent-in-third-quarter",
+    "base": {
+      "source": "https://investors.intuit.com/news-events/press-releases/detail/221/intuit-full-year-revenue-up-13-percent",
+      "published": "2020-08-25 16:00:00-04:00",
+      "revenue_million": 1816.0
+    },
+    "range_million": [
+      2288.16,
+      2324.48
+    ]
+  },
+  {
+    "source": "https://investors.intuit.com/news-events/press-releases/detail/165/intuit-reports-strong-full-year-results-and-sets-fiscal-2022-guidance",
+    "base": {
+      "source": "https://investors.intuit.com/news-events/press-releases/detail/209/intuit-first-quarter-revenue-grew-14-percent-company-provides-guidance-for-fiscal-2021",
+      "published": "2020-11-19 16:00:00-05:00",
+      "revenue_million": 1323.0
+    },
+    "range_million": [
+      1799.2799999999997,
+      1825.7399999999998
+    ]
+  },
+  {
+    "source": "https://investors.intuit.com/news-events/press-releases/detail/148/intuit-reports-strong-first-quarter-results-and-raises-full-year-revenue-guidance-reflecting-early-momentum-in-the-year-and-the-acquisition-of-mailchimp",
+    "base": {
+      "source": "https://investors.intuit.com/news-events/press-releases/detail/186/intuit-reports-second-quarter-results-and-reiterates-full-year-guidance-small-business-online-ecosystem-revenue-grew-22-percent",
+      "published": "2021-02-23 16:00:00-05:00",
+      "revenue_million": 1576.0
+    },
+    "range_million": [
+      2726.48,
+      2742.24
+    ]
+  },
+  {
+    "source": "https://investors.intuit.com/news-events/press-releases/detail/128/intuit-reports-second-quarter-results-and-reiterates-full-year-guidance-organic-online-ecosystem-revenue-grew-37-percent",
+    "base": {
+      "source": "https://investors.intuit.com/news-events/press-releases/detail/173/intuit-reports-third-quarter-results-and-raises-full-year-guidance-grows-small-business-online-ecosystem-revenue-28-percent-in-third-quarter",
+      "published": "2021-05-25 16:00:00-04:00",
+      "revenue_million": 4173.0
+    },
+    "range_million": [
+      5508.360000000001,
+      5550.09
+    ]
+  },
+  {
+    "source": "https://investors.intuit.com/news-events/press-releases/detail/119/intuit-reports-third-quarter-results-and-raises-full-year-revenue-and-operating-income-guidance",
+    "base": {
+      "source": "https://investors.intuit.com/news-events/press-releases/detail/165/intuit-reports-strong-full-year-results-and-sets-fiscal-2022-guidance",
+      "published": "2021-08-24 16:00:00-04:00",
+      "revenue_million": 2561.0
+    },
+    "range_million": [
+      2330.51,
+      2356.12
+    ]
+  },
+  {
+    "source": "https://investors.intuit.com/news-events/press-releases/detail/113/intuit-reports-strong-full-year-results-and-sets-fiscal-2023-guidance",
+    "base": {
+      "source": "https://investors.intuit.com/news-events/press-releases/detail/148/intuit-reports-strong-first-quarter-results-and-raises-full-year-revenue-guidance-reflecting-early-momentum-in-the-year-and-the-acquisition-of-mailchimp",
+      "published": "2021-11-18 16:00:00-05:00",
+      "revenue_million": 2007.0
+    },
+    "range_million": [
+      2468.61,
+      2508.75
+    ]
+  },
+  {
+    "source": "https://investors.intuit.com/news-events/press-releases/detail/94/intuit-reports-strong-first-quarter-results-and-reiterates-full-year-operating-income-and-earnings-per-share-guidance",
+    "base": {
+      "source": "https://investors.intuit.com/news-events/press-releases/detail/128/intuit-reports-second-quarter-results-and-reiterates-full-year-guidance-organic-online-ecosystem-revenue-grew-37-percent",
+      "published": "2022-02-24 16:00:00-05:00",
+      "revenue_million": 2673.0
+    },
+    "range_million": [
+      2886.84,
+      2913.57
+    ]
+  },
+  {
+    "source": "https://investors.intuit.com/news-events/press-releases/detail/79/intuit-reports-strong-second-quarter-results-and-reiterates-full-year-guidance",
+    "base": {
+      "source": "https://investors.intuit.com/news-events/press-releases/detail/119/intuit-reports-third-quarter-results-and-raises-full-year-revenue-and-operating-income-guidance",
+      "published": "2022-05-24 16:00:00-04:00",
+      "revenue_million": 5632.0
+    },
+    "range_million": [
+      6082.56,
+      6138.88
+    ]
+  },
+  {
+    "source": "https://investors.intuit.com/news-events/press-releases/detail/64/intuit-reports-third-quarter-results-and-raises-total-company-full-year-guidance",
+    "base": {
+      "source": "https://investors.intuit.com/news-events/press-releases/detail/113/intuit-reports-strong-full-year-results-and-sets-fiscal-2023-guidance",
+      "published": "2022-08-23 16:00:00-04:00",
+      "revenue_million": 2414.0
+    },
+    "range_million": [
+      2631.26,
+      2655.4
+    ]
+  },
+  {
+    "source": "https://investors.intuit.com/news-events/press-releases/detail/47/intuit-reports-strong-fourth-quarter-and-full-year-results-sets-fiscal-2024-guidance",
+    "base": {
+      "source": "https://investors.intuit.com/news-events/press-releases/detail/94/intuit-reports-strong-first-quarter-results-and-reiterates-full-year-operating-income-and-earnings-per-share-guidance",
+      "published": "2022-11-29 16:00:00-05:00",
+      "revenue_million": 2597.0
+    },
+    "range_million": [
+      2856.7000000000003,
+      2882.67
+    ]
+  },
+  {
+    "source": "https://investors.intuit.com/news-events/press-releases/detail/20/intuit-reports-strong-first-quarter-results-and-reiterates-full-year-guidance",
+    "base": {
+      "source": "https://investors.intuit.com/news-events/press-releases/detail/79/intuit-reports-strong-second-quarter-results-and-reiterates-full-year-guidance",
+      "published": "2023-02-23 16:00:00-05:00",
+      "revenue_million": 3041.0
+    },
+    "range_million": [
+      3375.51,
+      3405.9200000000005
+    ]
+  },
+  {
+    "source": "https://investors.intuit.com/news-events/press-releases/detail/11/intuit-reports-strong-second-quarter-results-and-reiterates-full-year-guidance",
+    "base": {
+      "source": "https://investors.intuit.com/news-events/press-releases/detail/64/intuit-reports-third-quarter-results-and-raises-total-company-full-year-guidance",
+      "published": "2023-05-23 16:00:00-04:00",
+      "revenue_million": 6018.0
+    },
+    "range_million": [
+      6619.8,
+      6679.9800000000005
+    ]
+  },
+  {
+    "source": "https://investors.intuit.com/news-events/press-releases/detail/1202/intuit-reports-strong-fourth-quarter-and-full-year-results-sets-fiscal-2025-guidance-with-double-digit-revenue-and-earnings-growth",
+    "base": {
+      "source": "https://investors.intuit.com/news-events/press-releases/detail/20/intuit-reports-strong-first-quarter-results-and-reiterates-full-year-guidance",
+      "published": "2023-11-28 16:00:00-05:00",
+      "revenue_million": 2978.0
+    },
+    "range_million": [
+      3126.9,
+      3156.6800000000003
+    ]
+  },
+  {
+    "source": "https://investors.intuit.com/news-events/press-releases/detail/1266/intuit-reports-strong-fourth-quarter-and-full-year-fiscal-2025-results-sets-fiscal-2026-guidance-with-double-digit-revenue-growth-and-continued-operating-margin-expansion",
+    "base": {
+      "source": "https://investors.intuit.com/news-events/press-releases/detail/1223/intuit-reports-strong-first-quarter-results-and-reiterates-full-year-guidance",
+      "published": "2024-11-21 16:00:00-05:00",
+      "revenue_million": 3283.0
+    },
+    "range_million": [
+      3742.6200000000003,
+      3775.45
+    ]
+  },
+  {
+    "source": "https://investors.intuit.com/news-events/press-releases/detail/1286/intuit-reports-strong-first-quarter-results-and-reiterates-full-year-guidance",
+    "base": {
+      "source": "https://investors.intuit.com/news-events/press-releases/detail/1239/intuit-reports-strong-second-quarter-results-and-reiterates-full-year-guidance",
+      "published": "2025-02-25 16:00:00-05:00",
+      "revenue_million": 3963.0
+    },
+    "range_million": [
+      4517.820000000001,
+      4557.45
+    ]
+  },
+  {
+    "source": "https://investors.intuit.com/news-events/press-releases/detail/1307/intuit-reports-strong-second-quarter-results-and-reiterates-full-year-guidance",
+    "base": {
+      "source": "https://investors.intuit.com/news-events/press-releases/detail/1251/intuit-reports-strong-third-quarter-results-and-raises-full-year-guidance",
+      "published": "2025-05-22 16:00:00-04:00",
+      "revenue_million": 7754.0
+    },
+    "range_million": [
+      8529.400000000001,
+      8529.400000000001
+    ]
+  },
+  {
+    "source": "https://investors.intuit.com/news-events/press-releases/detail/1312/intuit-reports-strong-third-quarter-results-and-raises-full-year-revenue-guidance",
+    "base": {
+      "source": "https://investors.intuit.com/news-events/press-releases/detail/1266/intuit-reports-strong-fourth-quarter-and-full-year-fiscal-2025-results-sets-fiscal-2026-guidance-with-double-digit-revenue-growth-and-continued-operating-margin-expansion",
+      "published": "2025-08-21 16:00:00-04:00",
+      "revenue_million": 3831.0
+    },
+    "range_million": [
+      4252.410000000001,
+      4290.72
+    ]
+  }
+]

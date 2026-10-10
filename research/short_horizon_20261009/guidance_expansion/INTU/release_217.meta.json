@@ -1,0 +1,18 @@
+{
+  "url": "https://investors.intuit.com/news-events/press-releases/detail/217/media-advisory-intuit-to-host-virtual-investor-day",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "815d5978f55dabef6ac061b5376f08ae70c875b3f3ccc9aaab4fad2a80863a63",
+  "retrieved_utc": "2026-10-09T22:28:12Z",
+  "attempts": [
+    {
+      "url": "https://investors.intuit.com/news-events/press-releases/detail/217/media-advisory-intuit-to-host-virtual-investor-day",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "815d5978f55dabef6ac061b5376f08ae70c875b3f3ccc9aaab4fad2a80863a63",
+      "retrieved_utc": "2026-10-09T22:28:12Z"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "url": "https://investors.intuit.com/news-events/press-releases/detail/173/intuit-reports-third-quarter-results-and-raises-full-year-guidance-grows-small-business-online-ecosystem-revenue-28-percent-in-third-quarter",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "c880777022a73a04b6a91e1961e747435dc97cca8e108a381d36c4ab6f6c1163",
+  "retrieved_utc": "2026-10-09T18:01:54Z",
+  "attempts": [
+    {
+      "url": "https://investors.intuit.com/news-events/press-releases/detail/173/intuit-reports-third-quarter-results-and-raises-full-year-guidance-grows-small-business-online-ecosystem-revenue-28-percent-in-third-quarter",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "c880777022a73a04b6a91e1961e747435dc97cca8e108a381d36c4ab6f6c1163",
+      "retrieved_utc": "2026-10-09T18:01:54Z"
+    }
+  ]
+}

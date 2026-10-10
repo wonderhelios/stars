@@ -1,0 +1,18 @@
+{
+  "url": "https://investors.intuit.com/news-events/press-releases/detail/1200/intuit-to-announce-fourth-quarter-and-full-year-fiscal-2024-results-on-aug-22-investor-day-set-for-sep-26",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "feba096c7e2cbf7b237254b6f5513fa661ff15578d65f467a3f71ae823a4d282",
+  "retrieved_utc": "2026-10-09T22:11:41Z",
+  "attempts": [
+    {
+      "url": "https://investors.intuit.com/news-events/press-releases/detail/1200/intuit-to-announce-fourth-quarter-and-full-year-fiscal-2024-results-on-aug-22-investor-day-set-for-sep-26",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "feba096c7e2cbf7b237254b6f5513fa661ff15578d65f467a3f71ae823a4d282",
+      "retrieved_utc": "2026-10-09T22:11:41Z"
+    }
+  ]
+}

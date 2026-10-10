@@ -1,0 +1,18 @@
+{
+  "url": "https://investors.intuit.com/news-events/press-releases/detail/1312/intuit-reports-strong-third-quarter-results-and-raises-full-year-revenue-guidance",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "6e12e28c0b291857a7a100de976954415afd2adae4e75a33be64e0fe5bb17238",
+  "retrieved_utc": "2026-10-09T18:02:54Z",
+  "attempts": [
+    {
+      "url": "https://investors.intuit.com/news-events/press-releases/detail/1312/intuit-reports-strong-third-quarter-results-and-raises-full-year-revenue-guidance",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "6e12e28c0b291857a7a100de976954415afd2adae4e75a33be64e0fe5bb17238",
+      "retrieved_utc": "2026-10-09T18:02:54Z"
+    }
+  ]
+}

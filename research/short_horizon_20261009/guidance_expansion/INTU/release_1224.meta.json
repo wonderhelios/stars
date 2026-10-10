@@ -1,0 +1,18 @@
+{
+  "url": "https://investors.intuit.com/news-events/press-releases/detail/1224/intuit-to-host-investor-day-on-september-18-2025",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "5a785bac896c61e7c3fdda3ff4ce228ad231175b0c2086756a0e04b49dbe9c64",
+  "retrieved_utc": "2026-10-09T22:11:36Z",
+  "attempts": [
+    {
+      "url": "https://investors.intuit.com/news-events/press-releases/detail/1224/intuit-to-host-investor-day-on-september-18-2025",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "5a785bac896c61e7c3fdda3ff4ce228ad231175b0c2086756a0e04b49dbe9c64",
+      "retrieved_utc": "2026-10-09T22:11:36Z"
+    }
+  ]
+}

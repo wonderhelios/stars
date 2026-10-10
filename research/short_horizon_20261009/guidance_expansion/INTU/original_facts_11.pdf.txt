@@ -1,0 +1,86 @@
+February 22, 2024
+
+
+FINANCIAL SUMMARY
+($ millions, except per share data) Q1 FY22 Q2 FY22 Q3 FY22 Q4 FY22 FY22 Q1 FY23 Q2 FY23 Q3 FY23 Q4 FY23 FY23 Q1 FY24 Q2 FY24 Q3 FY24 FY24
+Small Business & Self-Employed $1,443 $1,581 $1,667 $1,769 $6,460 $1,988 $1,897 $2,021 $2,132 $8,038 $2,344 $2,245 $9,305 - $9,385
+          % change YOY 22% 47% 42% 41% 38% 38% 20% 21% 21% 24% 18% 18% 16% - 17%
+Consumer $120 $411 $3,239 $145 $3,915 $150 $516 $3,341 $128 $4,135 $187 $492 $4,415 - $4,455
+          % change YOY 1% 180% 32% (83%) 10% 25% 26% 3% (12%) 6% 25% (5%) 7% - 8%
+ProTax $26 $237 $258 $25 $546 $34 $253 $246 $28 $561 $42 $274 $580 - $585
+          % change YOY 13% 14% 10% (52%) 6% 31% 7% (5%) 12% 3% 24% 8% 3% - 4%
+Credit Karma $418 $444 $468 $475 $1,805 $425 $375 $410 $424 $1,634 $405 $375 $1,590 - $1,680
+          % change YOY 48% 17% 2% (16%) (12%) (11%) (9%) (5%) 0% (3%) - 3%
+Total Revenue $2,007 $2,673 $5,632 $2,414 $12,726 $2,597 $3,041 $6,018 $2,712 $14,368 $2,978 $3,386 $6,605 - $6,655 $15,890 - $16,105
+          % change YOY 52% 70% 35% (6%) 32% 29% 14% 7% 12% 13% 15% 11% 10% - 11% 11% - 12%
+ GAAP Operating Income (Loss) $195 $56 $2,395 ($75) $2,571 $76 $270 $2,778 $17 $3,141 $307 $369 $2,875 - $2,900 $3,615 - $3,720
+ Non-GAAP Operating Income (Loss)[A] $555 $612 $2,904 $433 $4,504 $662 $856 $3,358 $627 $5,503 $960 $1,000 $3,483 - $3,508 $6,155 - $6,260
+ Non-GAAP Operating Margin %[A] 27.7% 22.9% 51.6% 17.9% 35.4% 25.5% 28.2% 55.8% 23.1% 38.3% 32.2% 29.5%
+ Interest Expense ($7) ($21) ($21) ($32) ($81) ($49) ($65) ($66) ($68) ($248) ($65) ($57)
+ Interest and Other Income $50 ($5) ($1) $8 $52 $5 $23 $22 $46 $96 $23 $42
+GAAP Share Based Compensation Expense $280 $336 $346 $346 $1,308 $422 $423 $419 $448 $1,712 $495 $475
+GAAP Share Based Compensation Expense per Share ($0.97) ($3.89) ($0.91) ($0.68) ($3.73) ($1.87) ($1.10) ($1.13) $27.41 ($4.82) ($1.60) ($1.67)
+ GAAP Diluted EPS $0.82 $0.35 $6.28 ($0.20) $7.28 $0.14 $0.60 $7.38 $0.32 $8.42 $0.85 $1.25 $7.77 - $7.84 $9.37 - $9.67
+ Non-GAAP Diluted EPS[A] [B] $1.53 $1.55 $7.65 $1.10 $11.85 $1.66 $2.20 $8.92 $1.65 $14.40 $2.47 $2.63 $9.31 - $9.38 $16.17 - $16.47
+ GAAP Diluted EPS (YTD) $0.82 $1.16 $7.48 $7.28 $7.28 $0.14 $0.73 $8.11 $8.42 $8.42 $0.85 $2.10
+ Non-GAAP Diluted EPS (YTD)[A] [B] $1.53 $3.07 $10.76 $11.85 $11.85 $1.66 $3.85 $12.76 $14.40 $14.40 $2.47 $5.10
+ Basic Share Count 273 283 282 282 280 281 281 281 280 281 280 280 280
+ Diluted Share Count 277 287 286 284 284 284 282 283 283 283 283 284 283
+ GAAP Tax Rate 4% -232% 24% 44% 19% -26% 26% 23% 1830% 20% 9% 0% 23%
+ Non-GAAP Tax Rate 24% 24% 24% 24% 24% 24% 24% 24% 24% 24% 24% 24% 24%
+Capital Expenditures $229 $260 $250
+GUIDANCE[C] 
+
+($ millions) Q1 Q2 Q3 Q4 FY Q1 Q2 Q3 Q4 FY Q1 Q2
+QuickBooks Online Accounting 519$        547$        578$        623$        2,267$     668$        696$        723$        762$        2,849$     798$        826$           
+Online Services 326$        574$        614$        657$        2,171$     681$        695$        745$        789$        2,910$     820$        862$           
+      Total Online Ecosystem 845$        1,121$     1,192$     1,280$     4,438$     1,349$     1,391$     1,468$     1,551$     5,759$     1,618$     1,688$        
+QuickBooks Desktop Accounting 267$        169$        201$        214$        851$        312$        215$        280$        303$        1,110$     376$        256$           
+Desktop Services and Supplies 331$        291$        274$        275$        1,171$     327$        291$        273$        278$        1,169$     350$        301$           
+      Total Desktop Ecosystem 598$        460$        475$        489$        2,022$     639$        506$        553$        581$        2,279$     726$        557$           
+Small Business & Self-Employed 1,443$     1,581$     1,667$     1,769$     6,460$     1,988$     1,897$     2,021$     2,132$     8,038$     2,344$     2,245$        
+Consumer 120$        411$        3,239$     145$        3,915$     150$        516$        3,341$     128$        4,135$     187$        492$           
+ProTax 26$          237$        258$        25$          546$        34$          253$        246$        28$          561$        42$          274$           
+Credit Karma 418$        444$        468$        475$        1,805$     425$        375$        410$        424$        1,634$     405$        375$           
+Total Segment Revenue 2,007$     2,673$     5,632$     2,414$     12,726$   2,597$     3,041$     6,018$     2,712$     14,368$   2,978$     3,386$        
+FY'22 FY'23
+($ millions)
+Small Business & Self-Employed Group Online Ecosystem 4,438$     5,759$     
+TurboTax Online 3,378$     3,622$     
+Credit Karma 1,805$     1,634$     
+Combined Platform Revenue 9,621$     11,015$   
+FY'22 FY'23 FY'24 
+Platform Revenue
+Segment Revenue
+
+($ millions) Q1 Q2
+% Op. % Op.
+Op. Inc. Margin Op. Inc. Margin
+Small Business & Self-Employed 1,492$     64% 1,323$     59%
+Consumer 67$          36% 134$        27%
+ProTax 14$          33% 247$        90%
+Credit Karma 106$        26% 64$          17%
+Total Segment Operating Income 1,679$     56% 1,768$     52%
+($ millions) Q1 Q2 Q3 Q4 FY
+% Op. % Op. % Op. % Op. % Op.
+Op. Inc. Margin Op. Inc. Margin Op. Inc. Margin Op. Inc. Margin Op. Inc. Margin
+Small Business & Self-Employed 1,188$     60% 1,031$     54% 1,140$         56% 1,222$     57% 4,581$       57%
+Consumer 51$          34% 220$        43% 2,574$         77% 30$          23% 2,875$       70%
+ProTax 9$           26% 227$        90% 217$            88% 2$           7% 455$          81%
+Credit Karma 94$          22% 96$          26% 111$            27% 127$        30% 428$          26%
+Total Segment Operating Income 1,342$     52% 1,574$     52% 4,042$         67% 1,381$     51% 8,339$       58%
+($ millions) FY
+% Op.
+Op. Inc. Margin
+Small Business & Self-Employed 3,520$       54%
+Consumer 2,633$       67%
+ProTax 447$          82%
+Credit Karma 531$          29%
+Total Segment Operating Income 7,131$       56%
+FY'24 
+Segment Operating Income 
+FY'22 (Restated) [D]
+FY'23 (Restated) [D]
+
+
+

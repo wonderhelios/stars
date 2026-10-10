@@ -1,0 +1,64 @@
+{
+  "rules": [
+    {
+      "symbol": "INTU",
+      "published": "2021-02-23",
+      "source": "https://investors.intuit.com/news-events/press-releases/detail/186/intuit-reports-second-quarter-results-and-reiterates-full-year-guidance-small-business-online-ecosystem-revenue-grew-22-percent",
+      "action": "exclude_incomparable_guidance_pair",
+      "reason": "Intervening Credit Karma scope update and lower preliminary quarter revenue supersede the previous quarterly forecast.",
+      "intervening_sources": [
+        "https://investors.intuit.com/news-events/press-releases/detail/201/intuit-updates-full-fiscal-year-and-second-quarter-outlook-reflecting-the-close-of-the-credit-karma-acquisition",
+        "https://investors.intuit.com/news-events/press-releases/detail/189/intuit-adjusts-second-quarter-outlook-reflecting-the-impact-of-a-late-opening-to-the-tax-season-reiterates-full-year-guidance"
+      ],
+      "registered_before_expansion_performance": true
+    },
+    {
+      "symbol": "INTU",
+      "published": "2021-05-25",
+      "source": "https://investors.intuit.com/news-events/press-releases/detail/173/intuit-reports-third-quarter-results-and-raises-full-year-guidance-grows-small-business-online-ecosystem-revenue-28-percent-in-third-quarter",
+      "action": "exclude_incomparable_guidance_pair",
+      "reason": "Full-year upside and lower current-quarter revenue were preannounced May 11; calendar shift in tax filing, not a first surprise on May 25.",
+      "intervening_sources": [
+        "https://investors.intuit.com/news-events/press-releases/detail/175/intuit-expects-to-exceed-full-fiscal-year-2021-guidance-adjusts-third-quarter-expectations-reflecting-significant-revenue-shift-due-to-the-irs-filing-deadline-extension"
+      ],
+      "registered_before_expansion_performance": true
+    },
+    {
+      "symbol": "INTU",
+      "published": "2021-11-18",
+      "source": "https://investors.intuit.com/news-events/press-releases/detail/148/intuit-reports-strong-first-quarter-results-and-raises-full-year-revenue-guidance-reflecting-early-momentum-in-the-year-and-the-acquisition-of-mailchimp",
+      "action": "exclude_incomparable_guidance_pair",
+      "reason": "New Mailchimp scope. Release explicitly quantifies $760\u2013770m FY contribution and ex-Mailchimp growth; the unadjusted total-revenue pair is incomparable. A bridge is possible but has not been implemented or audited; do not call it unquantified.",
+      "intervening_sources": [],
+      "registered_before_expansion_performance": true
+    },
+    {
+      "symbol": "INTU",
+      "published": "2022-02-24",
+      "source": "https://investors.intuit.com/news-events/press-releases/detail/128/intuit-reports-second-quarter-results-and-reiterates-full-year-guidance-organic-online-ecosystem-revenue-grew-37-percent",
+      "action": "exclude_incomparable_guidance_pair",
+      "reason": "Quarter revenue was preannounced lower on February 14 while annual guidance was reiterated; original quarterly benchmark is stale.",
+      "intervening_sources": [
+        "https://investors.intuit.com/news-events/press-releases/detail/129/intuit-reiterates-full-fiscal-year-2022-revenue-guidance-based-on-strong-momentum-expects-second-quarter-revenue-to-reflect-slower-forming-tax-season"
+      ],
+      "registered_before_expansion_performance": true
+    },
+    {
+      "symbol": "INTU",
+      "published": "2022-11-29",
+      "source": "https://investors.intuit.com/news-events/press-releases/detail/94/intuit-reports-strong-first-quarter-results-and-reiterates-full-year-operating-income-and-earnings-per-share-guidance",
+      "action": "exclude_incomparable_guidance_pair",
+      "reason": "Preliminary quarter outperformance and Credit Karma deterioration were disclosed November 1 before the formal quarterly release.",
+      "intervening_sources": [
+        "https://investors.intuit.com/news-events/press-releases/detail/101/intuit-reiterates-operating-income-and-earnings-per-share-guidance-for-fiscal-year-2023-expects-to-report-first-quarter-results-above-guidance"
+      ],
+      "registered_before_expansion_performance": true
+    }
+  ],
+  "quarter_forecast_precision_gate": "Prose growth-derived ranges remain ineligible proxies. Original HTML Table E and fact sheets now recover 25 exact ranges; use exact_guidance.json after its remaining publication/interim gates pass, never the old prose proxies.",
+  "remaining_review": "All interim financial news categories and conference-call versions are not complete; remaining scope audit pending.",
+  "notes": [
+    "FY2025 desktop timing changes already discussed in initial annual guidance: do not blanket-delete subsequent same-year total-revenue pairs.",
+    "FY2027 Mailchimp segment reporting/non-GAAP changes are not automatically changes to total GAAP revenue scope."
+  ]
+}

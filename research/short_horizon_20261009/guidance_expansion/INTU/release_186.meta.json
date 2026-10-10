@@ -1,0 +1,18 @@
+{
+  "url": "https://investors.intuit.com/news-events/press-releases/detail/186/intuit-reports-second-quarter-results-and-reiterates-full-year-guidance-small-business-online-ecosystem-revenue-grew-22-percent",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "bd8a0b8449b4316a9e2cec873acae688c7251f9bc012a6ddff100209994e7843",
+  "retrieved_utc": "2026-10-09T18:01:49Z",
+  "attempts": [
+    {
+      "url": "https://investors.intuit.com/news-events/press-releases/detail/186/intuit-reports-second-quarter-results-and-reiterates-full-year-guidance-small-business-online-ecosystem-revenue-grew-22-percent",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "bd8a0b8449b4316a9e2cec873acae688c7251f9bc012a6ddff100209994e7843",
+      "retrieved_utc": "2026-10-09T18:01:49Z"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "url": "https://investors.intuit.com/_assets/_1dd06c04c67bf383f19eaab5661c4ac7/intuit/db/946/9266/fact_sheet/FQ3-2023-Fact-Sheet-External.pdf",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "retrieved_utc": "2026-10-09T18:12:58Z",
+  "sha256": "d78a7f18a24bea347a5fb4ad7b1f0edc79bf1dadde0421f6fc13c5f7031f3488",
+  "attempts": [
+    {
+      "url": "https://investors.intuit.com/_assets/_1dd06c04c67bf383f19eaab5661c4ac7/intuit/db/946/9266/fact_sheet/FQ3-2023-Fact-Sheet-External.pdf",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "retrieved_utc": "2026-10-09T18:12:58Z",
+      "sha256": "d78a7f18a24bea347a5fb4ad7b1f0edc79bf1dadde0421f6fc13c5f7031f3488"
+    }
+  ]
+}

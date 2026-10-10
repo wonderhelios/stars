@@ -1,0 +1,121 @@
+
+
+FINANCIAL SUMMARY
+($ millions, except per share data) Q1 FY20 Q2 FY20 Q3 FY20 Q4 FY20 FY20 Q1 FY21 Q2 FY21 Q3 FY21 Q4 FY21 FY21 Q1 FY22 Q2 FY22 Q3 FY22 Q4 FY22 FY22 Q1 FY23 FY23
+Small Business & Self-Employed $1,046 $973 $982 $1,049 $4,050 $1,181 $1,078 $1,177 $1,252 $4,688 $1,443 $1,581 $1,667 $1,769 $6,460 $7,675 - $7,755
+          % change YOY 15% 17% 11% 16% 15% 13% 11% 20% 19% 16% 22% 47% 42% 41% 38% 19% - 20%
+Consumer $100 $499 $1,827 $710 $3,136 $119 $147 $2,445 $852 $3,563 $120 $411 $3,239 $145 $3,915 $4,265 - $4,305
+          % change YOY 11% 8% (15%) 859% 13% 19% (71%) 34% 20% 14% 1% 180% 32% (83%) 10% 9% - 10%
+ProConnect $19 $224 $193 $57 $493 $23 $207 $235 $52 $517 $26 $237 $258 $25 $546 $560 - $565
+          % change YOY 6% 8% (18%) 280% 4% 21% (8%) 22% (9%) 5% 13% 14% 10% (52%) 6% 3% - 3%
+Credit Karma $144 $316 $405 $865 $418 $444 $468 $475 $1,805 $1,985 - $2,075
+          % change YOY 48% 17% 10% - 15%
+Total Revenue $1,165 $1,696 $3,002 $1,816 $7,679 $1,323 $1,576 $4,173 $2,561 $9,633 $2,007 $2,673 $5,632 $2,414 $12,726 $2,478 - $2,513 $14,485 - $14,700
+          % change YOY 15% 13% (8%) 83% 13% 14% (7%) 39% 41% 25% 52% 70% 35% (6%) 32% 23% - 25% 14% - 16%
+ GAAP Operating Income (Loss) $10 $270 $1,413 $483 $2,176 $209 ($25) $1,914 $402 $2,500 $195 $56 $2,395 ($75) $2,571 ($125) - ($105) $2,794 - $2,899
+ Non-GAAP Operating Income (Loss)[A] $129 $384 $1,539 $616 $2,668 $334 $235 $2,201 $715 $3,485 $555 $612 $2,904 $433 $4,504 $469 - $489 $5,258 - $5,363
+ Non-GAAP Operating Margin %[A] 11.1% 22.6% 51.3% 33.9% 34.7% 25.2% 14.9% 52.7% 27.9% 36.2% 27.6% 22.9% 51.6% 17.9% 35.4%
+ Interest Expense ($2) ($3) ($2) ($7) ($14) ($8) ($7) ($7) ($7) ($29) ($7) ($21) ($21) ($32) ($81)
+ Interest and Other Income $14 $15 ($3) $10 $36 $9 $54 $14 $8 $85 $50 ($5) ($1) $8 $52
+GAAP Share Based Compensation Expense 111 107 103 114 436 111 180 218 244 753 280 336 346 346 1,308
+GAAP Share Based Compensation Expense per Share ($1.11) ($0.35) ($0.30) ($0.40) ($1.37) ($0.39) ($0.61) ($0.60) ($0.83) ($2.23) ($0.97) ($3.89) ($0.91) ($0.68) ($3.73)
+ GAAP Diluted EPS $0.22 $0.91 $4.11 $1.68 $6.92 $0.75 $0.07 $5.30 $1.37 $7.56 $0.82 $0.35 $6.28 ($0.20) $7.28 ($0.43) - ($0.37) $6.92 - $7.22
+ Non-GAAP Diluted EPS[A] [B] $0.41 $1.16 $4.49 $1.81 $7.86 $0.94 $0.68 $6.07 $1.97 $9.74 $1.53 $1.55 $7.65 $1.10 $11.85 $1.14 - $1.20 $13.59 - $13.89
+ GAAP Diluted EPS (YTD) $0.22 $1.13 $5.24 $6.92 $6.92 $0.75 $0.81 $6.20 $7.56 $7.56 $0.82 $1.16 $7.48 $7.28 $7.28
+ Non-GAAP Diluted EPS (YTD)[A] [B] $0.41 $1.57 $6.06 $7.86 $7.86 $0.94 $1.62 $7.79 $9.74 $9.74 $1.53 $3.07 $10.76 $11.85 $11.85
+ Basic Share Count 261 261 261 262 261 263 270 273 273 270 273 283 282 282 280 ~281
+ Diluted Share Count 264 264 264 264 264 265 273 276 277 273 277 287 286 284 284 ~286
+ GAAP Tax Rate -163% 15% 23% 8% 17% 6% 8% 24% 6% 19% 4% -232% 24% 44% 19% 25%
+ Non-GAAP Tax Rate 23% 23% 23% 23% 23% 24% 24% 24% 24% 24% 24% 24% 24% 24% 24% 24%
+Capital Expenditures $137 $125 $229 $330
+GUIDANCE[C] 
+
+($ millions) Q1 Q2 Q3 Q4 FY Q1 Q2 Q3 Q4 FY Q1 Q2 Q3 Q4 FY
+QuickBooks Online Accounting 306$     330$     353$     365$      1,354$  392$     404$     437$     466$      1,699$  519$     547$     578$     623$      2,267$    
+Online Services 195$     200$     207$     226$      828$     229$     240$     278$     304$      1,051$  326$     574$     614$     657$      2,171$    
+      Total Online Ecosystem 501$     530$     560$     591$      2,182$  621$     644$     715$     770$      2,750$  845$     1,121$  1,192$  1,280$   4,438$    
+QuickBooks Desktop Accounting 239$     165$     173$     178$      755$     241$     160$     193$     195$      789$     267$     169$     201$     214$      851$       
+Desktop Services and Supplies 306$     278$     249$     280$      1,113$  319$     274$     269$     287$      1,149$  331$     291$     274$     275$      1,171$    
+      Total Desktop Ecosystem 545$     443$     422$     458$      1,868$  560$     434$     462$     482$      1,938$  598$     460$     475$     489$      2,022$    
+Small Business & Self-Employed 1,046$  973$     982$     1,049$   4,050$  1,181$  1,078$  1,177$  1,252$   4,688$  1,443$  1,581$  1,667$  1,769$   6,460$    
+Consumer 100$     499$     1,827$  710$      3,136$  119$     147$     2,445$  852$      3,563$  120$     411$     3,239$  145$      3,915$    
+ProConnect 19$       224$     193$     57$        493$     23$       207$     235$     52$        517$     26$       237$     258$     25$        546$       
+Credit Karma 144$     316$     405$      865$     418$     444$     468$     475$      1,805$    
+Total Segment Revenue 1,165$  1,696$  3,002$  1,816$   7,679$  1,323$  1,576$  4,173$  2,561$   9,633$  2,007$  2,673$  5,632$  2,414$   12,726$  
+FY'20 FY'21 FY'22
+($ millions)
+Small Business and Self-Employed Group Online Ecosystem 2,182$  2,750$  4,438$    
+TurboTax Online 2,610$  3,030$  3,378$    
+Credit Karma 865$     1,805$    
+Combined Platform Revenue 4,792$  6,645$  9,621$    
+Platform Revenue
+Segment Revenue FY'20 FY'21 FY'22 
+
+($ millions) Q1 Q2 Q3 Q4 FY
+% Op. % Op. % Op. % Op. % Op.
+Op. Inc. Margin Op. Inc. Margin Op. Inc. Margin Op. Inc. Margin Op. Inc. Margin
+Small Business & Self-Employed 921$        64% 773$        49% 836$            50% 969$        55% 3,499$       54%
+Consumer (11)$        -9% 53$          13% 2,447$         76% (6)$          -4% 2,483$       63%
+ProConnect (11)$        -42% 195$        82% 213$            83% (14)$        -56% 383$          70%
+Credit Karma 169$        40% 141$        32% 104$            22% 117$        25% 531$          29%
+Total Segment Operating Income 1,068$     53% 1,162$     43% 3,600$         64% 1,066$     44% 6,896$       54%
+($ millions) Q1 Q2 Q3 Q4 FY
+% Op. % Op. % Op. % Op. % Op.
+Op. Inc. Margin Op. Inc. Margin Op. Inc. Margin Op. Inc. Margin Op. Inc. Margin
+Small Business & Self-Employed 767$        65% 592$        55% 620$            53% 612$        49% 2,590$       55%
+Consumer 4$           4% (155)$       -105% 1,773$         73% 614$        72% 2,237$       63%
+ProConnect (10)$        -42% 172$        83% 196$            83% 13$          25% 372$          72%
+Credit Karma 38$          26% 117$            37% 27$          7% 182$          21%
+Total Segment Operating Income 761$        58% 647$        41% 2,706$         65% 1,266$     49% 5,381$       56%
+($ millions) Q1 Q2 Q3 Q4  Year
+% Op. % Op. % Op. % Op. % Op.
+Op. Inc. Margin Op. Inc. Margin Op. Inc. Margin Op. Inc. Margin Op. Inc. Margin
+Small Business & Self-Employed 593$        57% 447$        46% 456$            46% 595$        57% 2,091$       52%
+Consumer (20)$        -20% 191$        38% 1,350$         74% 542$        76% 2,063$       66%
+ProConnect (18)$        -95% 186$        83% 155$            80% 23$          40% 347$          70%
+Total Segment Operating Income 555$        48% 824$        49% 1,962$         65% 1,160$     64% 4,500$       59%
+Segment Operating Income 
+FY'20 (Restated) [D]
+FY'21 
+FY'22
+
+Numbers may not agree with the sum of the components, nor with SEC filing(s), due to immaterial rounding adjustments. 
+[A] These are non-GAAP financial measures. See Section “About Non-GAAP Financial Measures” and the tables B1, B2 and E of our Press Release dated August 23, 2022 for 
+reconciliations of these non-GAAP financial measures to the most directly comparable GAAP measures and the reasons management uses each measure.
+[B] The effective tax rates used to calculate non-GAAP EPS were 23% for Q1 FY’20, Q2 FY’20, Q3 FY’20, Q4 FY’20 and 24% for Q1 FY’21, Q2 FY’21, Q3 FY’21, Q4 FY’21, Q1 FY’22, Q2 
+FY’22, Q3 FY’22 and Q4 FY’22.
+[C] All of the numbers provided in the table entitled "Guidance," are forward-looking statements.  Please see the accompanying section entitled "Cautions About Forward-Looking 
+Statements" for important information to assess when evaluating these statements.  Actual future results may differ materially due to a number of risks and uncertainties.
+[D] In August 2020, we reorganized certain technology and customer success functions that support and benefit our overall platform. Additionally, certain legal, facility and 
+employee service costs are now managed at the corporate level. As a result, these costs are no longer included in segment operating income and are now included in other 
+common expenses. For FY'20, we reclassified $180 million from Small Business & Self-Employed, $121 million from Consumer and $14 million from ProConnect to other common 
+expenses. For FY'19, we reclassified $172 million from Small Business & Self-Employed, $78 million from Consumer and $12 million from ProConnect to other common expenses.
+Small Business & Self-Employed Group Includes: 
+• QuickBooks Online Accounting: QuickBooks Online Accounting, QuickBooks Live, QuickBooks Online Advanced, QuickBooks Self-Employed
+• Online Services: QuickBooks Online Payroll, Intuit Online Payroll, Intuit Full Service Payroll, QuickBooks Time, QuickBooks Payments, QuickBooks Capital, QuickBooks Cash, 
+QuickBooks Commerce, Mailchimp
+• QuickBooks Desktop Accounting: QuickBooks Desktop packaged software products (Desktop Pro, Desktop for Mac, Desktop Premier, and QuickBooks Point of Sale); QuickBooks 
+Desktop software subscriptions (QuickBooks Desktop Pro Plus, QuickBooks Desktop Premier Plus, and QuickBooks Enterprise)
+• Desktop Services and Supplies: QuickBooks Desktop Payroll (QuickBooks Basic Payroll, QuickBooks Assisted Payroll and QuickBooks Enhanced Payroll), QuickBooks Desktop 
+Payments, Financial Supplies
+Consumer Group Includes: Do-it-yourself and assisted TurboTax products and services sold in the U.S. and Canada, Mint and OFX
+ProConnect Group Includes: Lacerte, ProSeries, and ProConnect Tax Online in the U.S., and ProFile and ProTax Online in Canada.
+
+This fact sheet contains forward-looking statements, including forecasts of Intuit’s expected growth and future financial results of Intuit and its reporting segments.
+Because these forward-looking statements involve risks and uncertainties, there are important factors that could cause our actual results to differ materially from the expectations 
+expressed in the forward-looking statements. These risks and uncertainties may be amplified by the effects of global developments, conditions or events like inflationary pressures, 
+the Russia-Ukraine war and the COVID-19 pandemic, which have caused significant global economic instability and uncertainty. These factors include, without limitation, the 
+following: our ability to compete successfully; potential governmental encroachment in our tax businesses; our ability to adapt to technological change; our ability to predict 
+consumer behavior; our reliance on third-party intellectual property; our ability to protect our intellectual property rights; any harm to our reputation; risks associated with 
+acquisition and divestiture activity, including the integration of Credit Karma and Mailchimp; the issuance of equity or incurrence of debt to fund an acquisition; cybersecurity 
+incidents (including those affecting the third parties we rely on); customer concerns about privacy and cybersecurity incidents; fraudulent activities by third parties using our 
+offerings; our failure to process transactions effectively; interruption or failure of our information technology; our ability to maintain critical third-party business relationships; our 
+ability to attract and retain talent; any deficiency in the quality or accuracy of our products (including the advice given by experts on our platform); any delays in product launches; 
+difficulties in processing or filing customer tax submissions; risks associated with international operations; changes to public policy, laws or regulations affecting our businesses; 
+litigation in which we are involved; the seasonal nature of our tax business; changes in tax rates and tax reform legislation; global economic conditions (including, without limitation, 
+inflation); exposure to credit, counterparty and other risks in providing capital to businesses; amortization of acquired intangible assets and impairment charges; our ability to repay 
+or otherwise comply with the terms of our outstanding debt; our ability to repurchase shares or distribute dividends; volatility of our stock price; and our ability to successfully 
+market our offerings. More details about these and other risks that may impact our business are included in our Form 10-K for fiscal 2021 and in our other SEC filings. You can locate 
+these reports through our website at http://investors.intuit.com. Fiscal 2023 full-year and Q1 guidance speaks only as of the date it was publicly issued by Intuit. Other forward-
+looking statements represent the judgment of the management of Intuit as of the date of this presentation.  We do not undertake any duty to update any forward-looking 
+statement or other information in this presentation.

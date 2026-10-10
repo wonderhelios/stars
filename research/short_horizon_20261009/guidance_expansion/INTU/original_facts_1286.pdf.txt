@@ -1,0 +1,131 @@
+November 20, 2025
+Fact Sheet
+
+2
+Financial summary
+Segment revenue has been revised for FY’24 and FY’25 to conform with segment reporting changes. Historical Consumer is now called TurboTax and TurboTax now includes Credit Karma Money, which has been moved from Credit Karma. Consumer revenue now includes 
+TurboTax, Credit Karma, and ProTax.
+Financial Summary
+($ millions, except per share data) Q1 Q2 Q3 Q4 FY Q1 Q2 Q3 Q4 FY Q1 Q2 FY'26 FY'26
+Global Business Solutions $2,344 $2,245 $2,387 $2,557 $9,533 $2,544 $2,671 $2,849 $3,013 $11,077 $2,991  $12,633 - $12,742
+          % change YoY 18% 18% 18% 20% 19% 9% 19% 19% 18% 16% 18% 14% - 15%
+TurboTax $196 $502 $3,684 $126 $4,508 $187 $520 $4,078 $148 $4,933 $198 $5,305 - $5,330
+          % change YOY 26% (4%) 10% (9%) 8% (5%) 4% 11% 17% 9% 6% 8%
+Credit Karma $396 $365 $412 $472 $1,645 $513 $500 $549 $638 $2,200 $651 $2,423 - $2,475
+          % change YOY (5%) (1%) 6% 14% 3% 30% 37% 33% 35% 34% 27% 10% - 13%
+ProTax $42 $274 $254 $29 $599 $39 $272 $278 $32 $621 $45 $636 - $639
+          % change YOY 24% 8% 3% 4% 7% (7%) (1%) 9% 10% 4% 15% 2% - 3%
+Consumer $634 $1,141 $4,350 $627 $6,752 $739 $1,292 $4,905 $818 $7,754 $894 $8,364 - $8,444
+          % change YoY 4% (0%) 9% 8% 7% 17% 13% 13% 30% 15% 21% 8% - 9%
+Total Revenue $2,978 $3,386 $6,737 $3,184 $16,285 $3,283 $3,963 $7,754 $3,831 $18,831 $3,885 $4,519 - $4,549 $20,997 - $21,186
+          % change YoY 15% 11% 12% 17% 13% 10% 17% 15% 20% 16% 18% 14% - 15% 12% - 13%
+ GAAP Operating Income (Loss) $307 $369 $3,105 ($151) $3,630 $271 $593 $3,720 $339 $4,923 $534 $676 - $691 $5,782 - $5,859
+ Non-GAAP Operating Income[A] $960 $1,000 $3,712 $730 $6,402 $953 $1,260 $4,343 $1,016 $7,572 $1,258 $1,371 - $1,386 $8,611 - $8,688
+ Non-GAAP Operating Margin %[A] 32.2% 29.5% 55.1% 22.9% 39.3% 29.0% 31.8% 56.0% 26.5% 40.2% 32.4%
+ Interest Expense ($65) ($57) ($60) ($60) ($242) ($60) ($60) ($68) ($59) ($247) ($58)
+ Interest and Other Income $22 $42 $27 $71 $162 $2 $38 $32 $86 $158 $85
+GAAP Share-Based Compensation Expense $495 $475 $451 $519 $1,940 $511 $498 $469 $490 $1,968 $543
+GAAP Share-Based Compensation Expense per Share ($1.60) ($1.67) ($1.23) ($0.26) ($5.70) ($1.67) ($1.45) ($1.27) ($1.81) ($5.57) ($1.54)
+ GAAP Diluted EPS $0.85 $1.25 $8.42 ($0.07) $10.43 $0.70 $1.67 $10.02 $1.35 $13.67 $1.59 $1.76 - $1.81 $15.49 - $15.69
+ Non-GAAP Diluted EPS[A] [B] $2.47 $2.63 $9.88 $1.99 $16.94 $2.50 $3.32 $11.65 $2.75 $20.15 $3.34 $3.63 - $3.68 $22.98 - $23.18
+ Basic Share Count 280 280 280 280 280 280 280 280 279 280 279 ~279
+ Diluted Share Count 283 284 284 283 284 283 283 282 282 283 281 ~282
+ GAAP Tax Rate 9% 0% 22% 86% 17% 8% 17% 23% -4% 20% 20% 23%
+ Non-GAAP Tax Rate 24% 24% 24% 24% 24% 24% 24% 24% 24% 24% 24% 24%
+Capital Expenditures $250 $124 $280
+FY'24 FY'25 Guidance[C] FY'26 
+
+3
+Segmentrevenue summary
+Segment revenue has been revised for FY’24 and FY’25 to conform with segment reporting changes. Historical Consumer is now called TurboTax and TurboTax now includes Credit Karma Money, which has been moved from Credit Karma. Consumer revenue now includes 
+TurboTax, Credit Karma, and ProTax. 
+Segment Revenue
+($ millions) Q1 Q2 Q3 Q4 FY Q1 Q2 Q3 Q4 FY Q1
+QuickBooks Online Accounting 798$            826$            860$            895$            3,379$         965$            1,008$         1,044$         1,103$         4,120$         1,206$         
+Online Services 820$            862$            894$            937$            3,513$         978$            1,030$         1,059$         1,115$         4,182$         1,145$         
+      Total Online Ecosystem 1,618$         1,688$         1,754$         1,832$         6,892$         1,943$         2,038$         2,103$         2,218$         8,302$         2,351$         
+QuickBooks Desktop Accounting 467$            291$            363$            454$            1,575$         329$            355$            476$            512$            1,672$         356$            
+Desktop Services and Supplies 259$            266$            270$            271$            1,066$         272$            278$            270$            283$            1,103$         284$            
+      Total Desktop Ecosystem 726$            557$            633$            725$            2,641$         601$            633$            746$            795$            2,775$         640$            
+Global Business Solutions 2,344$         2,245$         2,387$         2,557$         9,533$         2,544$         2,671$         2,849$         3,013$         11,077$       2,991$         
+TurboTax 196$            502$            3,684$         126$            4,508$         187$            520$            4,078$         148$            4,933$         198$            
+Credit Karma 396$            365$            412$            472$            1,645$         513$            500$            549$            638$            2,200$         651$            
+ProTax 42$              274$            254$            29$              599$            39$              272$            278$            32$              621$            45$              
+Consumer 634$            1,141$         4,350$         627$            6,752$         739$            1,292$         4,905$         818$            7,754$         894$            
+Total Segment Revenue 2,978$         3,386$         6,737$         3,184$         16,285$       3,283$         3,963$         7,754$         3,831$         18,831$       3,885$         
+Platform Revenue
+($ millions) Q1 Q2 Q3 Q4 FY Q1 Q2 Q3 Q4 FY Q1
+Global Business Solutions Online Ecosystem 6,892$         8,302$         
+TurboTax Online 3,983$         4,400$         
+Credit Karma 1,645$         2,200$         
+Combined Platform Revenue 12,520$       14,902$       
+FY'24
+FY'26 
+FY'26 
+FY'24 [D] FY'25 [D]
+FY'25
+
+4
+Segment margin summary
+Segment Operating Income
+($ millions) Q1 Q2 Q3 Q4 FY Q1 Q2 Q3 Q4 FY Q1
+Global Business Solutions 1,829$         1,673$         1,807$         1,864$         7,173$         2,002$         2,052$         2,189$         2,233$         8,476$         2,334$         
+Consumer 404$            725$            3,550$         333$            5,012$         428$            795$            4,040$         497$            5,760$         584$            
+Total Segment Operating Income 2,233$         2,398$         5,357$         2,197$         12,185$       2,430$         2,847$         6,229$         2,730$         14,236$       2,918$         
+Segment Operating Margin
+% of Segment Revenue Q1 Q2 Q3 Q4 FY Q1 Q2 Q3 Q4 FY Q1
+Global Business Solutions 78% 75% 76% 73% 75% 79% 77% 77% 74% 77% 78%
+Consumer 64% 64% 82% 53% 74% 58% 62% 82% 61% 74% 65%
+Total Segment Operating Margin 75% 71% 80% 69% 75% 74% 72% 80% 71% 76% 75%
+FY'24 [E] FY'25 [E] FY'26 
+FY'24 [E] FY'25 [E] FY'26 
+
+5
+Footnotes
+Numbers may not agree with the sum of the components, nor with SEC filing(s), due to immaterial rounding adjustments. 
+[A] These are non-GAAP financial measures. See Section “About Non-GAAP Financial Measures” and the tables B1, B2, and E of our Press Release dated November 20, 2025 for reconciliations of 
+these non-GAAP financial measures to the most directly comparable GAAP measures and the reasons management uses each measure.
+[B] The effective tax rate used to calculate non-GAAP EPS was 24% for Q1 FY'24, Q2 FY'24, Q3 FY'24, Q4 FY'24, Q1 FY'25, Q2 FY'25, Q3 FY'25, Q4 FY’25, and Q1 FY’26.
+[C] All of the numbers provided in the table entitled "Guidance”, are forward-looking statements. Please see the accompanying section entitled "Cautions About Forward-Looking Statements" for 
+important information to assess when evaluating these statements. Actual future results may differ materially due to a numberof risks and uncertainties. 
+[D] Segment revenue has been revised for FY’24 and FY’25. Certain amounts related to ProAdvisor subscription revenues previously reported in our financial statements have been reclassified to 
+conform to the current presentation. 
+[E] Consistent with the company's vision to deliver one consumer platform, effective August 1, 2025, Intuit combined the Consumer, Credit Karma, and ProTax businesses into a single Consumer 
+business. Segment margin has been revised for FY’24 and FY’25 to conform with this segment reporting change. To conform to the new Consumer segment presentation, Credit Karma’s direct 
+expenses related to selling and marketing, product development, and general and administrative are now managed at the platform level and are included in other corporate expenses rather than in 
+segment expenses. Also on August 1, 2025, we reorganized certain marketing, communications, and customer success functions inour Global Business Solutions segment that support and benefit 
+our overall platform and are managed at that level rather than at the segment level. Additionally, certain data science and analytics teams that were managed at the platform level are now managed 
+at the segment level. For FY’25, we reclassified expenses totaling $9 million from Global Business Solutions and $606 millionfrom Consumer to other corporate expenses to conform to the current 
+presentation. For FY’24, we reclassified expenses totaling $16 million from Global Business Solutions and $585 million from Consumer to other corporate expenses.
+Global Business Solutions Includes: 
+QuickBooks Online Accounting: QuickBooks Online Accounting, Intuit Enterprise Suite, QuickBooks Online Advanced, QuickBooks Live, QuickBooks Solopreneur, QuickBooks Self-Employed
+Online Services: QuickBooks Payments, QuickBooks Capital, QuickBooks Bill Pay, QuickBooks Checking, Mailchimp, QuickBooks Online Payroll, QuickBooks Time
+QuickBooks Desktop Accounting: QuickBooks Desktop packaged software products (Desktop Pro, Desktop for Mac, Desktop Premier, and QuickBooks Point of Sale), QuickBooks Desktop software 
+subscriptions (QuickBooks Desktop Plus, QuickBooks Enterprise, and ProAdvisor Program)
+Desktop Services and Supplies: QuickBooks Desktop Payroll (QuickBooks Basic Payroll, QuickBooks Assisted Payroll, and QuickBooks Enhanced Payroll), QuickBooks Desktop Payments, and 
+Financial Supplies
+TurboTax Includes: Do-it-yourself and assisted TurboTax products and services sold in the U.S. and Canada, OFX, and Credit Karma Money
+ProTax Includes: Lacerte, ProSeries, and ProConnect Tax Online in the U.S., and ProFile and ProTax Online in Canada
+
+6
+Cautions About Forward-Looking Statements
+This fact sheet contains forward-looking statements, including forecasts of Intuit’s expected growth andfuture financial results of Intuit and its reporting segments. 
+Because these forward-looking statements involve risks and uncertainties, there are important factors that could cause our actual results to differ materially from the expectations expressed in the 
+forward-looking statements. These risks and uncertainties may be amplified by the effects of global developments and conditions or events, including macroeconomic uncertainty and geopolitical 
+conditions, which have caused significant global economic instability and uncertainty. Given these risks and uncertainties, persons reading this communication are cautioned not to place any undue 
+reliance on such forward-looking statements. These factors include, without limitation, the following: our ability to compete successfully; potential governmental encroachment in our tax business; our 
+ability to develop, deploy, and use artificial intelligence in our platform and offerings; our ability to adapt to technological change and to successfully extend our platform; our ability to predict consumer 
+behavior; our ability to anticipate and solve new and existing customer problems; our reliance on intellectual property; our ability to protect our intellectual property rights; any harm to our reputation; 
+risks associated with our environmental, social, and governance efforts; risks associated with acquisition and divestiture activity; the issuance of equity or incurrence of debt to fund acquisitions or for 
+general business purposes; cybersecurity incidents (including those affecting the third parties we rely on); customer or regulator concerns about privacy and cybersecurity incidents; fraudulent activities 
+by third parties, including through the use of AI; our failure to process transactions effectively; interruption or failure of our information technology; our ability to develop and maintain critical third-party 
+business relationships; our ability to attract and retain talent and the success of our hybrid work model; our ability to effectively develop and deploy AI in our offerings; any deficiency in the quality or 
+accuracy of our offerings (including the advice given by experts on our platform); any delays in product launches; difficulties in processing or filing customer tax submissions; risks associated with 
+international operations; risks associated with climate change; changes to, and evolving interpretations of public policy, laws or regulations affecting our businesses; allegations of legal claims and legal 
+proceedings in which we are involved; fluctuations in the results of our tax business due to seasonality and other factors beyond our control; changes in tax rates and tax reform legislation; global 
+economic conditions (including, without limitation, inflation); exposure to credit, counterparty and other risks in providingcapital to businesses; amortization of acquired intangible assets and impairment 
+charges; our ability to repay or otherwise comply with the terms of our outstanding debt; our ability to repurchase shares ordistribute dividends; volatility of our stock price; and our ability to 
+successfully market our offerings.
+More details about these and other risks that may impact our business are included in our Form 10-K for fiscal 2025 and in our other SEC filings. You can locate these reports through our website at 
+http://investors.intuit.com. Second-quarter and full-year fiscal 2026 guidance speaks only as of the date it was publicly issuedby Intuit. Other forward-looking statements represent the judgment of the 
+management of Intuit as of the date of this presentation. Except as required by law, we do not undertake any duty to update any forward-looking statement or other information in this presentation.

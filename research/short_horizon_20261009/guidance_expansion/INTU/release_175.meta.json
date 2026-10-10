@@ -1,0 +1,18 @@
+{
+  "url": "https://investors.intuit.com/news-events/press-releases/detail/175/intuit-expects-to-exceed-full-fiscal-year-2021-guidance-adjusts-third-quarter-expectations-reflecting-significant-revenue-shift-due-to-the-irs-filing-deadline-extension",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "d57938613f00ab5686189bd9403d03101a24cac23e70eb683fe8e90aacb63b0f",
+  "retrieved_utc": "2026-10-09T18:01:51Z",
+  "attempts": [
+    {
+      "url": "https://investors.intuit.com/news-events/press-releases/detail/175/intuit-expects-to-exceed-full-fiscal-year-2021-guidance-adjusts-third-quarter-expectations-reflecting-significant-revenue-shift-due-to-the-irs-filing-deadline-extension",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "d57938613f00ab5686189bd9403d03101a24cac23e70eb683fe8e90aacb63b0f",
+      "retrieved_utc": "2026-10-09T18:01:51Z"
+    }
+  ]
+}

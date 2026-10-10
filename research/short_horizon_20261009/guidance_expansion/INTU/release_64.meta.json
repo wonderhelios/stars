@@ -1,0 +1,18 @@
+{
+  "url": "https://investors.intuit.com/news-events/press-releases/detail/64/intuit-reports-third-quarter-results-and-raises-total-company-full-year-guidance",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "624dc53f96055140ca685c9564ad6689bee7179953677f8f274aca6beec16914",
+  "retrieved_utc": "2026-10-09T18:02:17Z",
+  "attempts": [
+    {
+      "url": "https://investors.intuit.com/news-events/press-releases/detail/64/intuit-reports-third-quarter-results-and-raises-total-company-full-year-guidance",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "624dc53f96055140ca685c9564ad6689bee7179953677f8f274aca6beec16914",
+      "retrieved_utc": "2026-10-09T18:02:17Z"
+    }
+  ]
+}

@@ -121,3 +121,42 @@ macro_calendar_inference.py与macro_calendar_report.py均exit0，REPORT.md/summa
 暂停前的下一可执行步骤：继续已冻结第五批30股跨公司全年指引修订扩展，完成原版/范围/中间指引资格与覆盖，不挑成功下载子集、不重复已否决的VEEV六项；已有MDB/ADSK/DDOG/SNPS各27季源文与SEC实际数核验，CRM原始8K镜像精确数字及其他固定股票池尚待覆盖。必须加载source_review_gates。原核心完整资金费和跨市场同步估值仍未解决，不能称100%年化/S3目标达到。
 
 最新get_goal实际返回status=usageLimited，tokensUsed=1340269、timeUsedSeconds=9682，非active、非complete、非blocked。本轮停止新增研究，保留全部进度；不要自行调用update_goal伪报完成或绕过用量限制。已有automation心跳不重复创建，后续需遵守届时实际运行状态。未下单、未改src/实盘配置、未提交/推送、未发送外部消息。
+
+2026-10-10凌晨心跳接续（北京时间）：get_goal返回goal=null，不再返回旧usageLimited记录；按本次明确继续研究指令推进，没有另建goal或改限制。已读本STATE、SPEC、GUIDANCE_EXPANSION_SPEC及现有报告，从第五批固定30股来源覆盖继续。未重跑前七批绩效，累计探索假设仍43，未找到达标组合。
+
+本轮实质progress为Intuit来源核验：guidance_intu_collect.py取得官方financial目录8页80条，独立financial-results目录79条历史季度链接；补原标题未含Reports的2020三季度后，36份原文=27连续季度FY2020Q2–FY2026Q4+9季中更新。时间戳新闻正文与目录EST/EDT一致，modified元数据缺失明确null。guidance_parse_intu.py保留精确季度实际总收入、年度美元指引和下一季约数增长/金额。guidance_mdb_sec_audit.py仅增加INTU分支（FY起点8月1日，原FY2020年报使用Revenues标签，其余原季度ASC606标签），27项与原SEC申报精确核对全部通过；其他发行人行为不改。独立季度目录FY条目对应Q4且每个URL一致。
+
+发现并保留真实数据问题：20个季度公告只给约数增长率，19可用已知旧年实际值换算、1缺旧年基数；所有换算标记quarter_forecast_verified_for_trading=false，不能冒充精确美元预测。5份公告有明确美元季度区间，2份2020原文未给数值指引。后来季中原公告引用的旧美元区间与增长率换算不完全一致，例如FY2021Q3原金额4605–4655百万，对照换算4593.06–4653.10；差异已写growth_precision_audit.json，不把后来值回填到更早时点。
+
+Intuit/source_review_gates.json绩效前登记5处：2021-02-23此前Credit Karma并表更新与2月9日预告、2021-05-25此前5月11日年度上修/报税延期预告、2021-11-18新Mailchimp范围、2022-02-24此前2月14日预告、2022-11-29此前11月1日季度预告与Credit Karma恶化。Mailchimp在11月18日明确给出760–770百万美元年度贡献和剔除Mailchimp增长，不得误称无法量化；只是桥接尚未实现/核验，原未调总收入比较先不适用。FY2025桌面产品收入时点变化已在初始指引讨论，不笼统删除全部后续同年比较。FY2027分部及非GAAP变化不自动等于总GAAP营收范围变化。
+
+原始PDF恢复继续成功：已阅读并宣布使用pdf技能（/Users/wonder/.codex/plugins/cache/openai-primary-runtime/pdf/26.904.11930/skills/pdf/SKILL.md），只读未创建PDF。bundled Python=/Users/wonder/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3有pypdf；miniconda无PDF库。pdftoppm需FONTCONFIG_FILE=/Users/wonder/.cache/codex-runtimes/codex-primary-runtime/dependencies/native/poppler/poppler/etc/fonts/fonts.conf可避免首次字体缓存较慢。没有安装依赖。两个原电话会讲稿只重复增长约数，转同季度Fact Sheet找出精确美元指引，2份封面和脚注日期目视核对。27份Fact Sheet均正常200下载，hash/metadata完整，guidance_intu_facts_collect.py；2020Q1原目录另含后来的Credit Karma更新Fact Sheet，因此按精确链接标签Fact Sheet PDF选原件，不能挑后更新版本。
+
+guidance_intu_facts_parse.py在bundledPython运行，27/27解析，25有精确季度/全年美元指引、2份2020无指引，年度区间均匹配各自原新闻稿；5份明确美元季度也一致。2025/2026原表版式变换、FY2025Q4/FY2026Q4先历史页再修订分部指引页，按实际标签处理，不能取错页。源表数值放facts_parsed.json，尚未覆盖parsed_guidance.json中的旧约数字段；每条trading_ready=false。10份表格已目视（release ids186/148/1223/1239/1251/1266/1286/1307/1312/1320），186与148另核对封面页1和脚注页5，其他封面/脚注及剩余17份表仍待审核，详visual_review_progress.json。
+
+版本时间必须保留：original_facts_1202.pdf原新闻2024-08-22，但PDF创建/修改2024-08-25 20:44:36-07，晚79.743h；不能回填8月22日。original_facts_1312.pdf创建2026-05-20 10:55:38无时区、无ModDate，按UTC-12作最晚瞬时时间上界（不是实际时区推断），比新闻16:00ET晚2.927h。PDF元数据不能单独证明网页首次公开分钟；后续合并必须按较晚证据并保守滞后，不忽略版本风险。
+
+本轮两个来源访问失败：CDNS官方IR正常请求403、PCTY的GlobeNewswire原文正常请求403，已停止该来源，不切RSS域名/身份重试，失败HTML不作数据；先前成功缓存DDOG原文仍可读。不再启动ZS同发布源请求。Intuit季度目录最初相对URL误交curl报无host、未有效发出网络请求；修复为HTML中观察到的完整URL后正常200，原失败元数据financial_results.meta.json保留。网页搜索暴露非权威讨论INTU2026业绩后下跌说法，未经行情核实，不作证据/选股/参数依据，也不能声称干净样本外。
+
+所有本轮进程都完成，避免重复启动：初探24144、Intuit首采93516/补全80185、目录62485、原始PDF89202/99010、Fact Sheet初采41847/补全41709、最终解析84462均已确认exit0；相对URL错误22941已exit1。渲染63074/55630/81641后来均自然exit0，曾尝试按核对的PID终止时已结束（no such process）；无安装或持久环境设置。Intuit源文审核最终87024、SEC检查均成功，最终facts_parse_summary27parsed0issues。README与coverage_status已更新。
+
+下一步：先完成INTU剩余17份表格、全部未读封面/脚注、保留修改时间的精确美元指引合并，原约数代理只作对照；再审计已知季中消息与范围，其余固定30股覆盖不能省略。已有MDB/ADSK/DDOG/SNPS/INTU五家公司各27项实际财务值核验完成，但这不等于可交易信号全部通过。CRM原版财务表和其他股票资料仍待完成；后续回测要实际加载各company source_review_gates，不挑下载成功公司当最终总体。本轮没有读取扩展股票绩效、没有下单、没有改实盘/src、没有提交/推送或外部消息，完整100%净年化/S3组合目标仍未达到。
+
+
+2026-10-10清晨心跳（触发UTC 2026-10-09 21:46）接续：get_goal仍返回null，未创建新goal、未改变用量限制。读取STATE/SPEC/GUIDANCE_EXPANSION_SPEC/validation-protocol及既有报告，未启动重复回测。整体目标未达到，累计本系列43项不变，无新增市场绩效。沿用已告知的PDF技能只读核验。
+
+INTU剩余17份表格已全部目视，27份封面日期与公告匹配；所有27份相关脚注审核完毕，其中18份看渲染页、9份读完整提取文本。注意2021年5月id173的第5页是订阅人数重分类，脚注实际第6页；2025年8月id1266脚注第7页。visual_review_progress.json保存逐份哈希、页码、阅读方式，不宣称全部PDF每页均看过。2020/2023/2024费用重分类和FY2026分部变化本身不改变合并总收入；既有收购比较门槛不撤销。
+
+重要更正：之前guidance_parse_intu.py只取正文增长率，漏掉原HTML末尾的Table E。并非原公告没有精确美元指引，也不是只能靠PDF恢复！新guidance_intu_table_audit.py从25份原HTML附表恢复季度/全年精确美元范围，全部与独立PDF相同；2份2020文件确无数值指引。2025Q1 id1286附表标题在前面的p元素，3份表Range被HTML拆为R ange，均按实际结构适配。27项日期/单位/范围交叉检查通过。旧parsed_guidance.json保留作原正文代理误差对照，不直接作为精确交易输入；source_audit脚本/报告更正了旧缺失结论。
+
+新guidance_intu_merge.py输出exact_guidance.json/exact_pairs.json/exact_merge_audit.json，数值来源原HTML附表、PDF作独立佐证。PDF晚版本/缺时区时间仍在corroborating_fact_sheet保留，不能当该PDF在更早时点可用；HTML亦缺独立历史修改记录，publication_version_verified=false，全部trading_ready=false。available_after为HTML已知发布，signal_not_before额外+60min，后续避免叠加或漏加。最初严格float比较遇到16.164*1000=16164.000000000002，核实后金额交叉核对用1e-7绝对容差，实际运算使用原表整数百万，非放宽源文数值差异。
+
+27份原HTML/PDF哈希校验通过、27个来源截断前缀结果不变；17组相邻同财年数值比较已独立Decimal重算一致，decimal_pair_audit.json。5条旧source_review_gates实际加载排除后剩12次，5次正向仍待其他资格，绝不是已验证交易。发现一处会改变信号符号的真实代理错误：2024-02-22全年中点未变，实际3386，旧精确季度3362–3392中点3377，剩余修订-9百万；旧约数增长代理误算+4.715百万。没有查看该日行情、没有利用盈亏修改规则。SOURCE_REPORT.md记录此更正及限制。
+
+补充未筛类别INTU公司新闻：guidance_intu_allnews.py按HTML观察到的Next Page逐页39页，390条标题，至2019停止；关键词候选62份全部正常取得，复用旧缓存。其中29份新增，与原36份去重后65份。不是390篇全文审核，也不是62独立交易。guidance_intu_allnews_audit.py核对62份哈希及正文/目录时间一致、27季度allnews时间一致。2021–2026六次投资者日Reaffirms公告季度/全年精确金额均与最近原季度相同，interim_reaffirmation_audit.json，均非新修订信号；原财务分类遗漏2021/2022/2026三份现已补齐。原interim_notices.json9条保持不改，新增材料存独立文件，后续合并必须去重，不重复读取时误称仍仅三年投资者日。
+
+新additional_scope_review.json保留3项仍待审核：GoCo2025-04-23宣布预计FY25Q4交割，须查5月新年度指引是否纳入，不能假设已交割或收入零；SeedFi2022-12-01明确预计FY23经营影响不重大，不能把它说成重大并表，也不等于精确零收入；Zendrive2024-06-13为技术及部分员工交易，预计FY24Q4完成，不推断收购全部营收。尚未据这些待查事项改5条已登记排除门槛，不把未完成审核的5正向结果当可交易。标题以外潜在中间更新、电话会完整文本、历史HTML版本仍有限。
+
+本轮进程均结束：表格渲染63561 exit0，封面/脚注并行渲染46467 exit0（只是本地工具并行，没有子代理），173额外脚注渲染exit0；附表解析24013首次格式断言失败后修复，6090 exit0；source_audit30294 exit0；全新闻采集52531 exit0；allnews_audit34124 exit0。所有修复为真实源文布局/浮点精度，未变策略阈值。65原文、27PDF、2电话会原件保留，没有在HTTP拒绝来源重试。无遗留进程，不要重启旧任务。
+
+下一步：完成上述GoCo/SeedFi/Zendrive范围与可用版本核验（已明确哪些声明可用，别重新做27表视觉检查）；继续固定30股其他未完成公司的适用性/覆盖，避免在INTU重复兜圈。已有MDB/ADSK/DDOG/SNPS资格审核、CRM原始8K及许多固定股票仍未完整；可按缺口推进，最终同六规则受限探索必须明示全部覆盖、历史修改风险，不能挑子集称总体。core完整资金费与跨市场同步估值仍未解决。README、coverage_status、INTU/run_status已更新。没有下单、改实盘/src、提交推送或外部消息；尚无应通知用户的达标收益结果。

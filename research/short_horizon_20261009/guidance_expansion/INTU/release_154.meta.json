@@ -1,0 +1,18 @@
+{
+  "url": "https://investors.intuit.com/news-events/press-releases/detail/154/intuit-completes-acquisition-of-mailchimp",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "6853cae16649f0aa45590e2b093ad9838edb45b21976e504eb6fa8d1546162a2",
+  "retrieved_utc": "2026-10-09T22:11:56Z",
+  "attempts": [
+    {
+      "url": "https://investors.intuit.com/news-events/press-releases/detail/154/intuit-completes-acquisition-of-mailchimp",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "6853cae16649f0aa45590e2b093ad9838edb45b21976e504eb6fa8d1546162a2",
+      "retrieved_utc": "2026-10-09T22:11:56Z"
+    }
+  ]
+}

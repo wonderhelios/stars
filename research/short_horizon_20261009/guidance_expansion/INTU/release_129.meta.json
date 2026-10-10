@@ -1,0 +1,18 @@
+{
+  "url": "https://investors.intuit.com/news-events/press-releases/detail/129/intuit-reiterates-full-fiscal-year-2022-revenue-guidance-based-on-strong-momentum-expects-second-quarter-revenue-to-reflect-slower-forming-tax-season",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "ad237bcdea73958c0dcba9db1afb6cd93b5678107d9345fa2aab9e3cc0b990a0",
+  "retrieved_utc": "2026-10-09T18:02:00Z",
+  "attempts": [
+    {
+      "url": "https://investors.intuit.com/news-events/press-releases/detail/129/intuit-reiterates-full-fiscal-year-2022-revenue-guidance-based-on-strong-momentum-expects-second-quarter-revenue-to-reflect-slower-forming-tax-season",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "ad237bcdea73958c0dcba9db1afb6cd93b5678107d9345fa2aab9e3cc0b990a0",
+      "retrieved_utc": "2026-10-09T18:02:00Z"
+    }
+  ]
+}

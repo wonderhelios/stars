@@ -1,0 +1,719 @@
+[
+  {
+    "file": "original_facts_236.pdf",
+    "source": "https://investors.intuit.com/_assets/_1dd06c04c67bf383f19eaab5661c4ac7/intuit/db/946/9253/fact_sheet/Fact-Sheet-FY-20-Q2-External_v6.pdf",
+    "sha256": "d7a1f99ca70cc90f67f3b0fc088e5fdfd02704e31ee090b7e84d6c3d014c260e",
+    "release_source": "https://investors.intuit.com/news-events/press-releases/detail/236/intuit-second-quarter-revenue-increased-13-percent-small-business-online-ecosystem-revenue-grew-35-percent",
+    "release_published": "2020-02-24 16:01:00-05:00",
+    "pdf_created": "2020-02-21T16:43:31-08:00",
+    "pdf_modified": "2020-02-21T16:43:31-08:00",
+    "conservative_source_time": "2020-02-24T16:01:00-05:00",
+    "metadata_timezone_unknown": false,
+    "unknown_timezone_bound": null,
+    "modified_after_release": false,
+    "delay_hours": 0.0,
+    "publication_limitation": "PDF metadata is not a web publication log; preserve later version times and verify original dated cover.",
+    "trading_ready": false,
+    "page": 2,
+    "header": "FINANCIAL SUMMARY ($ millions, except per share data) Q1 FY18 Q2 FY18 Q3 FY18 Q4 FY18 FY18 Q1 FY19 Q2 FY19 Q3 FY19 Q4 FY19 FY19 Q1 FY20 Q2 FY20 Q3 FY20 FY20 Small Business & Self-Employed $819 $713 $747 $782 $3,061 $908 $833 $887 $905 $3,533 $1,046 $973 $3,945-$4,015 % change YOY 13% 20% 22% 22% 19% 11% 17% 19% 16% 15% 15% 17% 12%-14% Consumer $74 $416 $1,949 $69 $2,508 $90 $461 $2,150 $74 $2,775 $100 $499 $3,015-$3,040 % change YOY 10% 7% 17% 20% 15% 22% 11% 10% 7% 11% 11% 8% 9%-10% Strategic P",
+    "total_revenue_row": "Total Revenue $910 $1,339 $2,912 $864 $6,025 $1,016 $1,502 $3,272 $994 $6,784 $1,165 $1,696 $3,600-$3,625 $7,440-$7,540 % change YOY",
+    "quarter_range_million": [
+      3600.0,
+      3625.0
+    ],
+    "annual_range_million": [
+      7440.0,
+      7540.0
+    ]
+  },
+  {
+    "file": "original_facts_226.pdf",
+    "source": "https://investors.intuit.com/_assets/_1dd06c04c67bf383f19eaab5661c4ac7/intuit/db/946/9254/fact_sheet/Fact-Sheet-FY-20-Q3-External_v5.pdf",
+    "sha256": "d875ae33646cdd77beb07b39023e76f767f344b2aa76d7b3eb87579786e84f45",
+    "release_source": "https://investors.intuit.com/news-events/press-releases/detail/226/intuit-third-quarter-revenue-declined-8-percent-small-business-online-ecosystem-revenue-grew-28-percent",
+    "release_published": "2020-05-21 16:00:00-04:00",
+    "pdf_created": "2020-05-14T07:55:24-07:00",
+    "pdf_modified": "2020-05-14T07:55:24-07:00",
+    "conservative_source_time": "2020-05-21T16:00:00-04:00",
+    "metadata_timezone_unknown": false,
+    "unknown_timezone_bound": null,
+    "modified_after_release": false,
+    "delay_hours": 0.0,
+    "publication_limitation": "PDF metadata is not a web publication log; preserve later version times and verify original dated cover.",
+    "trading_ready": false,
+    "page": 2,
+    "header": "FINANCIAL SUMMARY ($ millions, except per share data) Q1 FY18 Q2 FY18 Q3 FY18 Q4 FY18 FY18 Q1 FY19 Q2 FY19 Q3 FY19 Q4 FY19 FY19 Q1 FY20 Q2 FY20 Q3 FY20 Small Business & Self-Employed $819 $713 $747 $782 $3,061 $908 $833 $887 $905 $3,533 $1,046 $973 $982 % change YOY 13% 20% 22% 22% 19% 11% 17% 19% 16% 15% 15% 17% 11% Consumer $74 $416 $1,949 $69 $2,508 $90 $461 $2,150 $74 $2,775 $100 $499 $1,827 % change YOY 10% 7% 17% 20% 15% 22% 11% 10% 7% 11% 11% 8% (15%) Strategic Partner $17 $210 $216 $13 $",
+    "total_revenue_row": "Total Revenue $910 $1,339 $2,912 $864 $6,025 $1,016 $1,502 $3,272 $994 $6,784 $1,165 $1,696 $3,002 % change YOY",
+    "quarter_range_million": null,
+    "annual_range_million": null
+  },
+  {
+    "file": "original_facts_221.pdf",
+    "source": "https://investors.intuit.com/_assets/_1dd06c04c67bf383f19eaab5661c4ac7/intuit/db/946/9255/fact_sheet/Q4-FY-20-Fact-Sheet.pdf",
+    "sha256": "1995ba15f14def53a9ac706bf8120f26d16f8b1a308ea07698abc4a913fee654",
+    "release_source": "https://investors.intuit.com/news-events/press-releases/detail/221/intuit-full-year-revenue-up-13-percent",
+    "release_published": "2020-08-25 16:00:00-04:00",
+    "pdf_created": "2020-08-25T08:03:59-07:00",
+    "pdf_modified": "2020-08-25T08:03:59-07:00",
+    "conservative_source_time": "2020-08-25T16:00:00-04:00",
+    "metadata_timezone_unknown": false,
+    "unknown_timezone_bound": null,
+    "modified_after_release": false,
+    "delay_hours": 0.0,
+    "publication_limitation": "PDF metadata is not a web publication log; preserve later version times and verify original dated cover.",
+    "trading_ready": false,
+    "page": 2,
+    "header": "2 Financial SummaryFINANCIAL SUMMARY($ millions, except per share data) Q1 FY18 Q2 FY18 Q3 FY18 Q4 FY18 FY18 Q1 FY19 Q2 FY19 Q3 FY19 Q4 FY19 FY19 Q1 FY20 Q2 FY20 Q3 FY20 Q4 FY20 FY20Small Business & Self-Employed$819 $713 $747 $782 $3,061 $908 $833 $887 $905 $3,533 $1,046 $973 $982 $1,049 4,050 % change YOY13% 20% 22% 22% 19% 11% 17% 19% 16% 15% 15% 17% 11% 16%15%Consumer$74 $416 $1,949 $69 $2,508 $90 $461 $2,150 $74 $2,775 $100 $499 $1,827 $710 3,136 % change YOY10% 7% 17% 20% 15% 22% 11% 10% 7",
+    "total_revenue_row": "Total Revenue $910 $1,339 $2,912 $864 $6,025 $1,016 $1,502 $3,272 $994 $6,784 $1,165 $1,696 $3,002 $1,816 7,679 % change YOY",
+    "quarter_range_million": null,
+    "annual_range_million": null
+  },
+  {
+    "file": "original_facts_209.pdf",
+    "source": "https://investors.intuit.com/_assets/_1dd06c04c67bf383f19eaab5661c4ac7/intuit/db/946/9256/fact_sheet/Fact-Sheet-FY-21-Q1-External-v7.pdf",
+    "sha256": "85b20d478f0f1a82aded470c6f5c5fb700cac983f39db0aee55665068350ea33",
+    "release_source": "https://investors.intuit.com/news-events/press-releases/detail/209/intuit-first-quarter-revenue-grew-14-percent-company-provides-guidance-for-fiscal-2021",
+    "release_published": "2020-11-19 16:00:00-05:00",
+    "pdf_created": "2020-11-19T11:09:24-08:00",
+    "pdf_modified": "2020-11-19T11:09:24-08:00",
+    "conservative_source_time": "2020-11-19T16:00:00-05:00",
+    "metadata_timezone_unknown": false,
+    "unknown_timezone_bound": null,
+    "modified_after_release": false,
+    "delay_hours": 0.0,
+    "publication_limitation": "PDF metadata is not a web publication log; preserve later version times and verify original dated cover.",
+    "trading_ready": false,
+    "page": 2,
+    "header": "FINANCIAL SUMMARY ($ millions, except per share data) Q1 FY19 Q2 FY19 Q3 FY19 Q4 FY19 FY19 Q1 FY20 Q2 FY20 Q3 FY20 Q4 FY20 FY20 Q1 FY21 Q2 FY21 FY21 Small Business & Self-Employed $908 $833 $887 $905 $3,533 $1,046 $973 $982 $1,049 $4,050 $1,181 $4,360 -$4,460 % change YOY 11% 17% 19% 16% 15% 15% 17% 11% 16% 15% 13% 8% -10% Consumer $90 $461 $2,150 $74 $2,775 $100 $499 $1,827 $710 $3,136 $119 $3,410 -$3,455 % change YOY 22% 11% 10% 7% 11% 11% 8% (15%) 859% 13% 19% 9% -10% ProConnect $18 $208 $235",
+    "total_revenue_row": "Total Revenue $1,016 $1,502 $3,272 $994 $6,784 $1,165 $1,696 $3,002 $1,816 $7,679 $1,323 $1,825 -$1,845 $8,265 -$8,415 % change YOY",
+    "quarter_range_million": [
+      1825.0,
+      1845.0
+    ],
+    "annual_range_million": [
+      8265.0,
+      8415.0
+    ]
+  },
+  {
+    "file": "original_facts_186.pdf",
+    "source": "https://investors.intuit.com/_assets/_1dd06c04c67bf383f19eaab5661c4ac7/intuit/db/946/9257/fact_sheet/Fact-Sheet-FY-21-Q2-External-v5.pdf",
+    "sha256": "87d05fb6b26e3c5dffbfe7df42a47c232fcbc072b2a4849a5215b250dd833118",
+    "release_source": "https://investors.intuit.com/news-events/press-releases/detail/186/intuit-reports-second-quarter-results-and-reiterates-full-year-guidance-small-business-online-ecosystem-revenue-grew-22-percent",
+    "release_published": "2021-02-23 16:00:00-05:00",
+    "pdf_created": "2021-02-22T16:21:32-08:00",
+    "pdf_modified": "2021-02-22T16:21:32-08:00",
+    "conservative_source_time": "2021-02-23T16:00:00-05:00",
+    "metadata_timezone_unknown": false,
+    "unknown_timezone_bound": null,
+    "modified_after_release": false,
+    "delay_hours": 0.0,
+    "publication_limitation": "PDF metadata is not a web publication log; preserve later version times and verify original dated cover.",
+    "trading_ready": false,
+    "page": 2,
+    "header": "FINANCIAL SUMMARY ($ millions, except per share data) Q1 FY19 Q2 FY19 Q3 FY19 Q4 FY19 FY19 Q1 FY20 Q2 FY20 Q3 FY20 Q4 FY20 FY20 Q1 FY21 Q2 FY21 Q3 FY21 FY21 Small Business & Self-Employed $908 $833 $887 $905 $3,533 $1,046 $973 $982 $1,049 $4,050 $1,181 $1,078 $4,360 -$4,460 % change YOY 11% 17% 19% 16% 15% 15% 17% 11% 16% 15% 13% 11% 8% -10% Consumer $90 $461 $2,150 $74 $2,775 $100 $499 $1,827 $710 $3,136 $119 $147 $3,410 -$3,455 % change YOY 22% 11% 10% 7% 11% 11% 8% (15%) 859% 13% 19% (71%) 9%",
+    "total_revenue_row": "Total Revenue $1,016 $1,502 $3,272 $994 $6,784 $1,165 $1,696 $3,002 $1,816 $7,679 $1,323 $1,576 $4,605 -$4,655 $8,810 -$8,995 % change YOY",
+    "quarter_range_million": [
+      4605.0,
+      4655.0
+    ],
+    "annual_range_million": [
+      8810.0,
+      8995.0
+    ]
+  },
+  {
+    "file": "original_facts_173.pdf",
+    "source": "https://investors.intuit.com/_assets/_1dd06c04c67bf383f19eaab5661c4ac7/intuit/db/946/9258/fact_sheet/FQ3-2021-Fact-sheet-External-05-21-2021.pdf",
+    "sha256": "cd66b03bc69b5b2ea79d79ac5fc0fb3872622d8ccefe0e283bbec43ce3e93854",
+    "release_source": "https://investors.intuit.com/news-events/press-releases/detail/173/intuit-reports-third-quarter-results-and-raises-full-year-guidance-grows-small-business-online-ecosystem-revenue-28-percent-in-third-quarter",
+    "release_published": "2021-05-25 16:00:00-04:00",
+    "pdf_created": "2021-05-25T10:44:05-07:00",
+    "pdf_modified": "2021-05-25T10:44:05-07:00",
+    "conservative_source_time": "2021-05-25T16:00:00-04:00",
+    "metadata_timezone_unknown": false,
+    "unknown_timezone_bound": null,
+    "modified_after_release": false,
+    "delay_hours": 0.0,
+    "publication_limitation": "PDF metadata is not a web publication log; preserve later version times and verify original dated cover.",
+    "trading_ready": false,
+    "page": 2,
+    "header": "FINANCIAL SUMMARY ($ millions, except per share data) Q1 FY19 Q2 FY19 Q3 FY19 Q4 FY19 FY19 Q1 FY20 Q2 FY20 Q3 FY20 Q4 FY20 FY20 Q1 FY21 Q2 FY21 Q3 FY21 Q4 FY21 FY21 Small Business & Self-Employed $908 $833 $887 $905 $3,533 $1,046 $973 $982 $1,049 $4,050 $1,181 $1,078 $1,177 $4,600 -$4,610 % change YOY 11% 17% 19% 16% 15% 15% 17% 11% 16% 15% 13% 11% 20% 14% Consumer $90 $461 $2,150 $74 $2,775 $100 $499 $1,827 $710 $3,136 $119 $147 $2,445 $3,485 -$3,500 % change YOY 22% 11% 10% 7% 11% 11% 8% (15%)",
+    "total_revenue_row": "Total Revenue $1,016 $1,502 $3,272 $994 $6,784 $1,165 $1,696 $3,002 $1,816 $7,679 $1,323 $1,576 $4,173 $2,290 -$2,328 $9,362 -$9,400 % change YOY",
+    "quarter_range_million": [
+      2290.0,
+      2328.0
+    ],
+    "annual_range_million": [
+      9362.0,
+      9400.0
+    ]
+  },
+  {
+    "file": "original_facts_165.pdf",
+    "source": "https://investors.intuit.com/_assets/_1dd06c04c67bf383f19eaab5661c4ac7/intuit/db/946/9259/fact_sheet/Fact-Sheet-FY21-Q4-External-v5.pdf",
+    "sha256": "485b9aa4698ed93b05e4702538823fbe152c851326793e0b31285494210a6921",
+    "release_source": "https://investors.intuit.com/news-events/press-releases/detail/165/intuit-reports-strong-full-year-results-and-sets-fiscal-2022-guidance",
+    "release_published": "2021-08-24 16:00:00-04:00",
+    "pdf_created": "2021-08-23T21:15:04-07:00",
+    "pdf_modified": "2021-08-23T21:15:04-07:00",
+    "conservative_source_time": "2021-08-24T16:00:00-04:00",
+    "metadata_timezone_unknown": false,
+    "unknown_timezone_bound": null,
+    "modified_after_release": false,
+    "delay_hours": 0.0,
+    "publication_limitation": "PDF metadata is not a web publication log; preserve later version times and verify original dated cover.",
+    "trading_ready": false,
+    "page": 2,
+    "header": "FINANCIAL SUMMARY ($ millions, except per share data) Q1 FY19 Q2 FY19 Q3 FY19 Q4 FY19 FY19 Q1 FY20 Q2 FY20 Q3 FY20 Q4 FY20 FY20 Q1 FY21 Q2 FY21 Q3 FY21 Q4 FY21 FY21 Q1 FY22 FY22 Small Business & Self-Employed $908 $833 $887 $905 $3,533 $1,046 $973 $982 $1,049 $4,050 $1,181 $1,078 $1,177 $1,252 $4,688 $5,270 - $5,340 % change YOY 11% 17% 19% 16% 15% 15% 17% 11% 16% 15% 13% 11% 20% 19% 16% 12% - 14% Consumer $90 $461 $2,150 $74 $2,775 $100 $499 $1,827 $710 $3,136 $119 $147 $2,445 $852 $3,563 $3,91",
+    "total_revenue_row": "Total Revenue $1,016 $1,502 $3,272 $994 $6,784 $1,165 $1,696 $3,002 $1,816 $7,679 $1,323 $1,576 $4,173 $2,561 $9,633 $1,795 - $1,825 $11,050 -$11,200 % change YOY",
+    "quarter_range_million": [
+      1795.0,
+      1825.0
+    ],
+    "annual_range_million": [
+      11050.0,
+      11200.0
+    ]
+  },
+  {
+    "file": "original_facts_148.pdf",
+    "source": "https://investors.intuit.com/_assets/_1dd06c04c67bf383f19eaab5661c4ac7/intuit/db/946/9260/fact_sheet/FQ1-2022-Fact-Sheet-External.pdf",
+    "sha256": "2ba6565c66b452d17d3d72aebdd851fe966224454be3136d4f1b81d920f538b2",
+    "release_source": "https://investors.intuit.com/news-events/press-releases/detail/148/intuit-reports-strong-first-quarter-results-and-raises-full-year-revenue-guidance-reflecting-early-momentum-in-the-year-and-the-acquisition-of-mailchimp",
+    "release_published": "2021-11-18 16:00:00-05:00",
+    "pdf_created": "2021-11-16T14:52:25-08:00",
+    "pdf_modified": "2021-11-16T14:52:25-08:00",
+    "conservative_source_time": "2021-11-18T16:00:00-05:00",
+    "metadata_timezone_unknown": false,
+    "unknown_timezone_bound": null,
+    "modified_after_release": false,
+    "delay_hours": 0.0,
+    "publication_limitation": "PDF metadata is not a web publication log; preserve later version times and verify original dated cover.",
+    "trading_ready": false,
+    "page": 2,
+    "header": "FINANCIAL SUMMARY ($ millions, except per share data) Q1 FY20 Q2 FY20 Q3 FY20 Q4 FY20 FY20 Q1 FY21 Q2 FY21 Q3 FY21 Q4 FY21 FY21 Q1 FY22 Q2 FY22 FY22 Small Business & Self-Employed $1,046 $973 $982 $1,049 $4,050 $1,181 $1,078 $1,177 $1,252 $4,688 $1,443 $6,190 - $6,255 % change YOY 15% 17% 11% 16% 15% 13% 11% 20% 19% 16% 22% 32% - 33% Consumer $100 $499 $1,827 $710 $3,136 $119 $147 $2,445 $852 $3,563 $120 $3,915 - $3,955 % change YOY 11% 8% (15%) 859% 13% 19% (71%) 34% 20% 14% 1% 10% - 11% ProCon",
+    "total_revenue_row": "Total Revenue $1,165 $1,696 $3,002 $1,816 $7,679 $1,323 $1,576 $4,173 $2,561 $9,633 $2,007 $2,719 - $2,749 $12,165 - $12,300 % change YOY",
+    "quarter_range_million": [
+      2719.0,
+      2749.0
+    ],
+    "annual_range_million": [
+      12165.0,
+      12300.0
+    ]
+  },
+  {
+    "file": "original_facts_128.pdf",
+    "source": "https://investors.intuit.com/_assets/_1dd06c04c67bf383f19eaab5661c4ac7/intuit/db/946/9261/fact_sheet/FQ2-2022-Fact-Sheet.pdf",
+    "sha256": "beda0f6202f4b8b4a7b4bb5afa3cfb1af06fa183ecfa210e003fb89007e8e67a",
+    "release_source": "https://investors.intuit.com/news-events/press-releases/detail/128/intuit-reports-second-quarter-results-and-reiterates-full-year-guidance-organic-online-ecosystem-revenue-grew-37-percent",
+    "release_published": "2022-02-24 16:00:00-05:00",
+    "pdf_created": "2022-02-23T22:37:00-08:00",
+    "pdf_modified": "2022-02-23T22:37:00-08:00",
+    "conservative_source_time": "2022-02-24T16:00:00-05:00",
+    "metadata_timezone_unknown": false,
+    "unknown_timezone_bound": null,
+    "modified_after_release": false,
+    "delay_hours": 0.0,
+    "publication_limitation": "PDF metadata is not a web publication log; preserve later version times and verify original dated cover.",
+    "trading_ready": false,
+    "page": 2,
+    "header": "FINANCIAL SUMMARY ($ millions, except per share data) Q1 FY20 Q2 FY20 Q3 FY20 Q4 FY20 FY20 Q1 FY21 Q2 FY21 Q3 FY21 Q4 FY21 FY21 Q1 FY22 Q2 FY22 Q3 FY22 FY22 Small Business & Self-Employed $1,046 $973 $982 $1,049 $4,050 $1,181 $1,078 $1,177 $1,252 $4,688 $1,443 $1,581 $6,190 - $6,255 % change YOY 15% 17% 11% 16% 15% 13% 11% 20% 19% 16% 22% 47% 32% - 33% Consumer $100 $499 $1,827 $710 $3,136 $119 $147 $2,445 $852 $3,563 $120 $411 $3,915 - $3,955 % change YOY 11% 8% (15%) 859% 13% 19% (71%) 34% 20%",
+    "total_revenue_row": "Total Revenue $1,165 $1,696 $3,002 $1,816 $7,679 $1,323 $1,576 $4,173 $2,561 $9,633 $2,007 $2,673 $5,490 - $5,540 $12,165 - $12,300 % change YOY",
+    "quarter_range_million": [
+      5490.0,
+      5540.0
+    ],
+    "annual_range_million": [
+      12165.0,
+      12300.0
+    ]
+  },
+  {
+    "file": "original_facts_119.pdf",
+    "source": "https://investors.intuit.com/_assets/_1dd06c04c67bf383f19eaab5661c4ac7/intuit/db/946/9262/fact_sheet/FQ3-2022-Fact-Sheet-External.pdf",
+    "sha256": "3196eb7bcc0b8e4d8fbae48998e6fc4e5bab2f00dce7e8e2bd88f5eb18949963",
+    "release_source": "https://investors.intuit.com/news-events/press-releases/detail/119/intuit-reports-third-quarter-results-and-raises-full-year-revenue-and-operating-income-guidance",
+    "release_published": "2022-05-24 16:00:00-04:00",
+    "pdf_created": "2022-05-23T18:15:25-04:00",
+    "pdf_modified": "2022-05-23T18:15:25-04:00",
+    "conservative_source_time": "2022-05-24T16:00:00-04:00",
+    "metadata_timezone_unknown": false,
+    "unknown_timezone_bound": null,
+    "modified_after_release": false,
+    "delay_hours": 0.0,
+    "publication_limitation": "PDF metadata is not a web publication log; preserve later version times and verify original dated cover.",
+    "trading_ready": false,
+    "page": 2,
+    "header": "2 Financial summary FINANCIAL SUMMARY ($ millions, except per share data) Q1 FY20 Q2 FY20 Q3 FY20 Q4 FY20 FY20 Q1 FY21 Q2 FY21 Q3 FY21 Q4 FY21 FY21 Q1 FY22 Q2 FY22 Q3 FY22 Q4 FY22 FY22 Small Business & Self-Employed $1,046 $973 $982 $1,049 $4,050 $1,181 $1,078 $1,177 $1,252 $4,688 $1,443 $1,581 $1,667 $6,396 - $6,411 % change YOY 15% 17% 11% 16% 15% 13% 11% 20% 19% 16% 22% 47% 42% 36% - 37% Consumer $100 $499 $1,827 $710 $3,136 $119 $147 $2,445 $852 $3,563 $120 $411 $3,239 $3,902 - $3,915 % chan",
+    "total_revenue_row": "Total Revenue $1,165 $1,696 $3,002 $1,816 $7,679 $1,323 $1,576 $4,173 $2,561 $9,633 $2,007 $2,673 $5,632 $2,321 - $2,362 $12,633 - $12,674 % change YOY",
+    "quarter_range_million": [
+      2321.0,
+      2362.0
+    ],
+    "annual_range_million": [
+      12633.0,
+      12674.0
+    ]
+  },
+  {
+    "file": "original_facts_113.pdf",
+    "source": "https://investors.intuit.com/_assets/_1dd06c04c67bf383f19eaab5661c4ac7/intuit/db/946/9263/fact_sheet/FQ4-2022-Fact-Sheet-External-08-23-2022.pdf",
+    "sha256": "a82806494d369b3f5081b53805de68554470a01bde92392db9d6f09c42ccdfe9",
+    "release_source": "https://investors.intuit.com/news-events/press-releases/detail/113/intuit-reports-strong-full-year-results-and-sets-fiscal-2023-guidance",
+    "release_published": "2022-08-23 16:00:00-04:00",
+    "pdf_created": "2022-08-23T11:28:32-04:00",
+    "pdf_modified": "2022-08-23T11:28:32-04:00",
+    "conservative_source_time": "2022-08-23T16:00:00-04:00",
+    "metadata_timezone_unknown": false,
+    "unknown_timezone_bound": null,
+    "modified_after_release": false,
+    "delay_hours": 0.0,
+    "publication_limitation": "PDF metadata is not a web publication log; preserve later version times and verify original dated cover.",
+    "trading_ready": false,
+    "page": 2,
+    "header": "FINANCIAL SUMMARY ($ millions, except per share data) Q1 FY20 Q2 FY20 Q3 FY20 Q4 FY20 FY20 Q1 FY21 Q2 FY21 Q3 FY21 Q4 FY21 FY21 Q1 FY22 Q2 FY22 Q3 FY22 Q4 FY22 FY22 Q1 FY23 FY23 Small Business & Self-Employed $1,046 $973 $982 $1,049 $4,050 $1,181 $1,078 $1,177 $1,252 $4,688 $1,443 $1,581 $1,667 $1,769 $6,460 $7,675 - $7,755 % change YOY 15% 17% 11% 16% 15% 13% 11% 20% 19% 16% 22% 47% 42% 41% 38% 19% - 20% Consumer $100 $499 $1,827 $710 $3,136 $119 $147 $2,445 $852 $3,563 $120 $411 $3,239 $145 $3",
+    "total_revenue_row": "Total Revenue $1,165 $1,696 $3,002 $1,816 $7,679 $1,323 $1,576 $4,173 $2,561 $9,633 $2,007 $2,673 $5,632 $2,414 $12,726 $2,478 - $2,513 $14,485 - $14,700 % change YOY",
+    "quarter_range_million": [
+      2478.0,
+      2513.0
+    ],
+    "annual_range_million": [
+      14485.0,
+      14700.0
+    ]
+  },
+  {
+    "file": "original_facts_94.pdf",
+    "source": "https://investors.intuit.com/_assets/_1dd06c04c67bf383f19eaab5661c4ac7/intuit/db/946/9264/fact_sheet/FQ1-2023-Fact-Sheet-External.pdf",
+    "sha256": "c8029421d762198b6b476822a5b5a5fce2fb8a2806eaba21d488cce5fb75e735",
+    "release_source": "https://investors.intuit.com/news-events/press-releases/detail/94/intuit-reports-strong-first-quarter-results-and-reiterates-full-year-operating-income-and-earnings-per-share-guidance",
+    "release_published": "2022-11-29 16:00:00-05:00",
+    "pdf_created": "2022-11-17T16:45:53-05:00",
+    "pdf_modified": "2022-11-17T16:45:53-05:00",
+    "conservative_source_time": "2022-11-29T16:00:00-05:00",
+    "metadata_timezone_unknown": false,
+    "unknown_timezone_bound": null,
+    "modified_after_release": false,
+    "delay_hours": 0.0,
+    "publication_limitation": "PDF metadata is not a web publication log; preserve later version times and verify original dated cover.",
+    "trading_ready": false,
+    "page": 2,
+    "header": "FINANCIAL SUMMARY ($ millions, except per share data) Q1 FY21 Q2 FY21 Q3 FY21 Q4 FY21 FY21 Q1 FY22 Q2 FY22 Q3 FY22 Q4 FY22 FY22 Q1 FY23 Q2 FY23 FY23 Small Business & Self-Employed $1,181 $1,078 $1,177 $1,252 $4,688 $1,443 $1,581 $1,667 $1,769 $6,460 $1,988 $7,675 - $7,755 % change YOY 13% 11% 20% 19% 16% 22% 47% 42% 41% 38% 38% 19% - 20% Consumer $119 $147 $2,445 $852 $3,563 $120 $411 $3,239 $145 $3,915 $150 $4,265 - $4,305 % change YOY 19% (71%) 34% 20% 14% 1% 180% 32% (83%) 10% 25% 9% - 10% Pr",
+    "total_revenue_row": "Total Revenue $1,323 $1,576 $4,173 $2,561 $9,633 $2,007 $2,673 $5,632 $2,414 $12,726 $2,597 $2,875 - $2,905 $14,035 - $14,250 % change YOY",
+    "quarter_range_million": [
+      2875.0,
+      2905.0
+    ],
+    "annual_range_million": [
+      14035.0,
+      14250.0
+    ]
+  },
+  {
+    "file": "original_facts_79.pdf",
+    "source": "https://investors.intuit.com/_assets/_1dd06c04c67bf383f19eaab5661c4ac7/intuit/db/946/9265/fact_sheet/FQ2-2023-Fact-Sheet-External.pdf",
+    "sha256": "c1ce35ccbb52646c786f5e8a47294690777829bbfc4abbdc8069c96b9138265c",
+    "release_source": "https://investors.intuit.com/news-events/press-releases/detail/79/intuit-reports-strong-second-quarter-results-and-reiterates-full-year-guidance",
+    "release_published": "2023-02-23 16:00:00-05:00",
+    "pdf_created": "2023-02-15T11:18:06-05:00",
+    "pdf_modified": "2023-02-23T08:45:27-08:00",
+    "conservative_source_time": "2023-02-23T16:00:00-05:00",
+    "metadata_timezone_unknown": false,
+    "unknown_timezone_bound": null,
+    "modified_after_release": false,
+    "delay_hours": 0.0,
+    "publication_limitation": "PDF metadata is not a web publication log; preserve later version times and verify original dated cover.",
+    "trading_ready": false,
+    "page": 2,
+    "header": "FINANCIAL SUMMARY ($ millions, except per share data) Q1 FY21 Q2 FY21 Q3 FY21 Q4 FY21 FY21 Q1 FY22 Q2 FY22 Q3 FY22 Q4 FY22 FY22 Q1 FY23 Q2 FY23 Q3 FY23 FY23 Small Business & Self-Employed $1,181 $1,078 $1,177 $1,252 $4,688 $1,443 $1,581 $1,667 $1,769 $6,460 $1,988 $1,897 $7,675 - $7,755 % change YOY 13% 11% 20% 19% 16% 22% 47% 42% 41% 38% 38% 20% 19% - 20% Consumer $119 $147 $2,445 $852 $3,563 $120 $411 $3,239 $145 $3,915 $150 $516 $4,265 - $4,305 % change YOY 19% (71%) 34% 20% 14% 1% 180% 32% (",
+    "total_revenue_row": "Total Revenue $1,323 $1,576 $4,173 $2,561 $9,633 $2,007 $2,673 $5,632 $2,414 $12,726 $2,597 $3,041 $6,063 - $6,113 $14,035 - $14,250 % change YOY",
+    "quarter_range_million": [
+      6063.0,
+      6113.0
+    ],
+    "annual_range_million": [
+      14035.0,
+      14250.0
+    ]
+  },
+  {
+    "file": "original_facts_64.pdf",
+    "source": "https://investors.intuit.com/_assets/_1dd06c04c67bf383f19eaab5661c4ac7/intuit/db/946/9266/fact_sheet/FQ3-2023-Fact-Sheet-External.pdf",
+    "sha256": "d78a7f18a24bea347a5fb4ad7b1f0edc79bf1dadde0421f6fc13c5f7031f3488",
+    "release_source": "https://investors.intuit.com/news-events/press-releases/detail/64/intuit-reports-third-quarter-results-and-raises-total-company-full-year-guidance",
+    "release_published": "2023-05-23 16:00:00-04:00",
+    "pdf_created": "2023-05-16T15:02:26-04:00",
+    "pdf_modified": "2023-05-16T15:02:26-04:00",
+    "conservative_source_time": "2023-05-23T16:00:00-04:00",
+    "metadata_timezone_unknown": false,
+    "unknown_timezone_bound": null,
+    "modified_after_release": false,
+    "delay_hours": 0.0,
+    "publication_limitation": "PDF metadata is not a web publication log; preserve later version times and verify original dated cover.",
+    "trading_ready": false,
+    "page": 2,
+    "header": "FINANCIAL SUMMARY ($ millions, except per share data) Q1 FY21 Q2 FY21 Q3 FY21 Q4 FY21 FY21 Q1 FY22 Q2 FY22 Q3 FY22 Q4 FY22 FY22 Q1 FY23 Q2 FY23 Q3 FY23 Q4 FY23 FY23 Small Business & Self-Employed $1,181 $1,078 $1,177 $1,252 $4,688 $1,443 $1,581 $1,667 $1,769 $6,460 $1,988 $1,897 $2,021 $7,995 - $8,005 % change YOY 13% 11% 20% 19% 16% 22% 47% 42% 41% 38% 38% 20% 21% 24% Consumer $119 $147 $2,445 $852 $3,563 $120 $411 $3,239 $145 $3,915 $150 $516 $3,341 $4,126 - $4,141 % change YOY 19% (71%) 34% 2",
+    "total_revenue_row": "Total Revenue $1,323 $1,576 $4,173 $2,561 $9,633 $2,007 $2,673 $5,632 $2,414 $12,726 $2,597 $3,041 $6,018 $2,623 - $2,661 $14,279 - $14,317 % change YOY",
+    "quarter_range_million": [
+      2623.0,
+      2661.0
+    ],
+    "annual_range_million": [
+      14279.0,
+      14317.0
+    ]
+  },
+  {
+    "file": "original_facts_47.pdf",
+    "source": "https://investors.intuit.com/_assets/_1dd06c04c67bf383f19eaab5661c4ac7/intuit/db/946/9267/fact_sheet/FQ4-2023-Fact-Sheet-External.pdf",
+    "sha256": "2b863771e18925ac12a98fa363a6cc8cb0496fece127e70aeafd9bbee484d8e6",
+    "release_source": "https://investors.intuit.com/news-events/press-releases/detail/47/intuit-reports-strong-fourth-quarter-and-full-year-results-sets-fiscal-2024-guidance",
+    "release_published": "2023-08-24 16:00:00-04:00",
+    "pdf_created": "2023-08-24T13:08:49-04:00",
+    "pdf_modified": "2023-08-24T13:08:49-04:00",
+    "conservative_source_time": "2023-08-24T16:00:00-04:00",
+    "metadata_timezone_unknown": false,
+    "unknown_timezone_bound": null,
+    "modified_after_release": false,
+    "delay_hours": 0.0,
+    "publication_limitation": "PDF metadata is not a web publication log; preserve later version times and verify original dated cover.",
+    "trading_ready": false,
+    "page": 2,
+    "header": "FINANCIAL SUMMARY ($ millions, except per share data) Q1 FY21 Q2 FY21 Q3 FY21 Q4 FY21 FY21 Q1 FY22 Q2 FY22 Q3 FY22 Q4 FY22 FY22 Q1 FY23 Q2 FY23 Q3 FY23 Q4 FY23 FY23 Q1 FY24 FY24 Small Business & Self-Employed $1,181 $1,078 $1,177 $1,252 $4,688 $1,443 $1,581 $1,667 $1,769 $6,460 $1,988 $1,897 $2,021 $2,132 $8,038 $9,305 - $9,385 % change YOY 13% 11% 20% 19% 16% 22% 47% 42% 41% 38% 38% 20% 21% 21% 24% 16% - 17% Consumer $119 $147 $2,445 $852 $3,563 $120 $411 $3,239 $145 $3,915 $150 $516 $3,341 $12",
+    "total_revenue_row": "Total Revenue $1,323 $1,576 $4,173 $2,561 $9,633 $2,007 $2,673 $5,632 $2,414 $12,726 $2,597 $3,041 $6,018 $2,712 $14,368 $2,860 - $2,895 $15,890 - $16,105 % change YOY",
+    "quarter_range_million": [
+      2860.0,
+      2895.0
+    ],
+    "annual_range_million": [
+      15890.0,
+      16105.0
+    ]
+  },
+  {
+    "file": "original_facts_20.pdf",
+    "source": "https://investors.intuit.com/_assets/_1dd06c04c67bf383f19eaab5661c4ac7/intuit/db/946/9268/fact_sheet/FQ1-2024-Fact-Sheet-External.pdf",
+    "sha256": "ac7fe81aa90fc0171f245f00ab173de4b7c56f83d40ced325ad16d982469fe5b",
+    "release_source": "https://investors.intuit.com/news-events/press-releases/detail/20/intuit-reports-strong-first-quarter-results-and-reiterates-full-year-guidance",
+    "release_published": "2023-11-28 16:00:00-05:00",
+    "pdf_created": "2023-11-17T15:05:37-05:00",
+    "pdf_modified": "2023-11-17T15:05:37-05:00",
+    "conservative_source_time": "2023-11-28T16:00:00-05:00",
+    "metadata_timezone_unknown": false,
+    "unknown_timezone_bound": null,
+    "modified_after_release": false,
+    "delay_hours": 0.0,
+    "publication_limitation": "PDF metadata is not a web publication log; preserve later version times and verify original dated cover.",
+    "trading_ready": false,
+    "page": 2,
+    "header": "FINANCIAL SUMMARY ($ millions, except per share data) Q1 FY22 Q2 FY22 Q3 FY22 Q4 FY22 FY22 Q1 FY23 Q2 FY23 Q3 FY23 Q4 FY23 FY23 Q1 FY24 Q2 FY24 FY24 Small Business & Self-Employed $1,443 $1,581 $1,667 $1,769 $6,460 $1,988 $1,897 $2,021 $2,132 $8,038 $2,344 $9,305 - $9,385 % change YOY 22% 47% 42% 41% 38% 38% 20% 21% 21% 24% 18% 16% - 17% Consumer $120 $411 $3,239 $145 $3,915 $150 $516 $3,341 $128 $4,135 $187 $4,415 - $4,455 % change YOY 1% 180% 32% (83%) 10% 25% 26% 3% (12%) 6% 25% 7% - 8% ProTa",
+    "total_revenue_row": "Total Revenue $2,007 $2,673 $5,632 $2,414 $12,726 $2,597 $3,041 $6,018 $2,712 $14,368 $2,978 $3,362 - $3,392 $15,890 - $16,105 % change YOY",
+    "quarter_range_million": [
+      3362.0,
+      3392.0
+    ],
+    "annual_range_million": [
+      15890.0,
+      16105.0
+    ]
+  },
+  {
+    "file": "original_facts_11.pdf",
+    "source": "https://investors.intuit.com/_assets/_1dd06c04c67bf383f19eaab5661c4ac7/intuit/db/946/9269/fact_sheet/FQ2-2024-Fact-Sheet-External.pdf",
+    "sha256": "943b4e3f13aeac1aad2af21ecad94675c707bfe33b06f984fc670919d211f23f",
+    "release_source": "https://investors.intuit.com/news-events/press-releases/detail/11/intuit-reports-strong-second-quarter-results-and-reiterates-full-year-guidance",
+    "release_published": "2024-02-22 16:00:00-05:00",
+    "pdf_created": "2024-02-14T21:29:37-05:00",
+    "pdf_modified": "2024-02-14T21:29:37-05:00",
+    "conservative_source_time": "2024-02-22T16:00:00-05:00",
+    "metadata_timezone_unknown": false,
+    "unknown_timezone_bound": null,
+    "modified_after_release": false,
+    "delay_hours": 0.0,
+    "publication_limitation": "PDF metadata is not a web publication log; preserve later version times and verify original dated cover.",
+    "trading_ready": false,
+    "page": 2,
+    "header": "FINANCIAL SUMMARY ($ millions, except per share data) Q1 FY22 Q2 FY22 Q3 FY22 Q4 FY22 FY22 Q1 FY23 Q2 FY23 Q3 FY23 Q4 FY23 FY23 Q1 FY24 Q2 FY24 Q3 FY24 FY24 Small Business & Self-Employed $1,443 $1,581 $1,667 $1,769 $6,460 $1,988 $1,897 $2,021 $2,132 $8,038 $2,344 $2,245 $9,305 - $9,385 % change YOY 22% 47% 42% 41% 38% 38% 20% 21% 21% 24% 18% 18% 16% - 17% Consumer $120 $411 $3,239 $145 $3,915 $150 $516 $3,341 $128 $4,135 $187 $492 $4,415 - $4,455 % change YOY 1% 180% 32% (83%) 10% 25% 26% 3% (1",
+    "total_revenue_row": "Total Revenue $2,007 $2,673 $5,632 $2,414 $12,726 $2,597 $3,041 $6,018 $2,712 $14,368 $2,978 $3,386 $6,605 - $6,655 $15,890 - $16,105 % change YOY",
+    "quarter_range_million": [
+      6605.0,
+      6655.0
+    ],
+    "annual_range_million": [
+      15890.0,
+      16105.0
+    ]
+  },
+  {
+    "file": "original_facts_1188.pdf",
+    "source": "https://investors.intuit.com/_assets/_1dd06c04c67bf383f19eaab5661c4ac7/intuit/db/946/9270/fact_sheet/FQ3-2024-Fact-Sheet-External_FINAL.pdf",
+    "sha256": "b2856fe37f537211a30650e15db56997a96ae6819960789bad2d41eb3847de5d",
+    "release_source": "https://investors.intuit.com/news-events/press-releases/detail/1188/intuit-reports-strong-third-quarter-results-and-raises-full-year-guidance",
+    "release_published": "2024-05-23 16:00:00-04:00",
+    "pdf_created": "2024-05-21T14:14:48-07:00",
+    "pdf_modified": "2024-05-21T14:14:48-07:00",
+    "conservative_source_time": "2024-05-23T16:00:00-04:00",
+    "metadata_timezone_unknown": false,
+    "unknown_timezone_bound": null,
+    "modified_after_release": false,
+    "delay_hours": 0.0,
+    "publication_limitation": "PDF metadata is not a web publication log; preserve later version times and verify original dated cover.",
+    "trading_ready": false,
+    "page": 2,
+    "header": "FINANCIAL SUMMARY ($ millions, except per share data) Q1 FY22 Q2 FY22 Q3 FY22 Q4 FY22 FY22 Q1 FY23 Q2 FY23 Q3 FY23 Q4 FY23 FY23 Q1 FY24 Q2 FY24 Q3 FY24 Q4 FY24 FY24 Small Business & Self-Employed $1,443 $1,581 $1,667 $1,769 $6,460 $1,988 $1,897 $2,021 $2,132 $8,038 $2,344 $2,245 $2,387 $9,467 - $9,481 % change YOY 22% 47% 42% 41% 38% 38% 20% 21% 21% 24% 18% 18% 18% 18% Consumer $120 $411 $3,239 $145 $3,915 $150 $516 $3,341 $128 $4,135 $187 $492 $3,653 $4,440 - $4,455 % change YOY 1% 180% 32% (83",
+    "total_revenue_row": "Total Revenue $2,007 $2,673 $5,632 $2,414 $12,726 $2,597 $3,041 $6,018 $2,712 $14,368 $2,978 $3,386 $6,737 $3,063 - $3,099 $16,164 - $16,200 % change YOY",
+    "quarter_range_million": [
+      3063.0,
+      3099.0
+    ],
+    "annual_range_million": [
+      16164.0,
+      16200.0
+    ]
+  },
+  {
+    "file": "original_facts_1202.pdf",
+    "source": "https://investors.intuit.com/_assets/_1dd06c04c67bf383f19eaab5661c4ac7/intuit/db/946/9949/fact_sheet/FQ4+2024+Fact+Sheet+External_.pdf",
+    "sha256": "297cf159d339916596583c434f20d64548a68533b6695e729416361abe6b070f",
+    "release_source": "https://investors.intuit.com/news-events/press-releases/detail/1202/intuit-reports-strong-fourth-quarter-and-full-year-results-sets-fiscal-2025-guidance-with-double-digit-revenue-and-earnings-growth",
+    "release_published": "2024-08-22 16:00:00-04:00",
+    "pdf_created": "2024-08-25T20:44:36-07:00",
+    "pdf_modified": "2024-08-25T20:44:36-07:00",
+    "conservative_source_time": "2024-08-25T20:44:36-07:00",
+    "metadata_timezone_unknown": false,
+    "unknown_timezone_bound": null,
+    "modified_after_release": true,
+    "delay_hours": 79.74333333333334,
+    "publication_limitation": "PDF metadata is not a web publication log; preserve later version times and verify original dated cover.",
+    "trading_ready": false,
+    "page": 2,
+    "header": "FINANCIAL SUMMARY ($ millions, except per share data) Q1 FY22 Q2 FY22 Q3 FY22 Q4 FY22 FY22 Q1 FY23 Q2 FY23 Q3 FY23 Q4 FY23 FY23 Q1 FY24 Q2 FY24 Q3 FY24 Q4 FY24 FY24 Q1 FY25 FY25 Small Business & Self-Employed $1,443 $1,581 $1,667 $1,769 $6,460 $1,988 $1,897 $2,021 $2,132 $8,038 $2,344 $2,245 $2,387 $2,557 $9,533 $2,485 - $2,497 $11,011 - $11,106 % change YOY 22% 47% 42% 41% 38% 38% 20% 21% 21% 24% 18% 18% 18% 20% 19% 6% - 7% 16% - 17% Consumer $120 $411 $3,239 $145 $3,915 $150 $516 $3,341 $128 $",
+    "total_revenue_row": "Total Revenue $2,007 $2,673 $5,632 $2,414 $12,726 $2,597 $3,041 $6,018 $2,712 $14,368 $2,978 $3,386 $6,737 $3,184 $16,285 $3,114 - $3,145 $18,160 - $18,347 % change YOY",
+    "quarter_range_million": [
+      3114.0,
+      3145.0
+    ],
+    "annual_range_million": [
+      18160.0,
+      18347.0
+    ]
+  },
+  {
+    "file": "original_facts_1223.pdf",
+    "source": "https://investors.intuit.com/_assets/_1dd06c04c67bf383f19eaab5661c4ac7/intuit/db/946/10233/fact_sheet/Q1+FY25+External+Factsheet+v2.pdf",
+    "sha256": "0b0a64c8bcb606965047e8a5da0fc4819fa82744f4ae827bab19ab760089d026",
+    "release_source": "https://investors.intuit.com/news-events/press-releases/detail/1223/intuit-reports-strong-first-quarter-results-and-reiterates-full-year-guidance",
+    "release_published": "2024-11-21 16:00:00-05:00",
+    "pdf_created": "2024-11-21T10:38:29-08:00",
+    "pdf_modified": "2024-11-21T10:38:29-08:00",
+    "conservative_source_time": "2024-11-21T16:00:00-05:00",
+    "metadata_timezone_unknown": false,
+    "unknown_timezone_bound": null,
+    "modified_after_release": false,
+    "delay_hours": 0.0,
+    "publication_limitation": "PDF metadata is not a web publication log; preserve later version times and verify original dated cover.",
+    "trading_ready": false,
+    "page": 2,
+    "header": "Financial summary Financial Summary ($ millions, except per share data) Q1 Q2 Q3 Q4 FY Q1 Q2 Q3 Q4 FY Q1 Q2 FY'25 FY'25 Global Business Solutions $1,988 $1,897 $2,021 $2,132 $8,038 $2,344 $2,245 $2,387 $2,557 $9,533 $2,544 $11,011 - $11,106 % change YOY 38% 20% 21% 21% 24% 18% 18% 18% 20% 19% 9% 16% - 17% Consumer $150 $516 $3,341 $128 $4,135 $187 $492 $3,653 $113 $4,445 $176 $4,739 - $4,784 % change YOY 25% 26% 3% (12%) 6% 25% (5%) 9% (12%) 7% (6%) 7% - 8% Credit Karma $425 $375 $410 $424 $1,63",
+    "total_revenue_row": "Total Revenue $2,597 $3,041 $6,018 $2,712 $14,368 $2,978 $3,386 $6,737 $3,184 $16,285 $3,283 $3,812 - $3,845 $18,160 - $18,347 % change YOY",
+    "quarter_range_million": [
+      3812.0,
+      3845.0
+    ],
+    "annual_range_million": [
+      18160.0,
+      18347.0
+    ]
+  },
+  {
+    "file": "original_facts_1239.pdf",
+    "source": "https://investors.intuit.com/_assets/_1dd06c04c67bf383f19eaab5661c4ac7/intuit/db/946/10258/fact_sheet/Q2+FY25+External+Fact+Sheet+%281%29.pdf",
+    "sha256": "e71512d4f8fe72a0ed20116ae578ba5409589ac41e8679e006d8f16f8a99900c",
+    "release_source": "https://investors.intuit.com/news-events/press-releases/detail/1239/intuit-reports-strong-second-quarter-results-and-reiterates-full-year-guidance",
+    "release_published": "2025-02-25 16:00:00-05:00",
+    "pdf_created": "2025-02-24T19:44:27-08:00",
+    "pdf_modified": "2025-02-24T19:44:27-08:00",
+    "conservative_source_time": "2025-02-25T16:00:00-05:00",
+    "metadata_timezone_unknown": false,
+    "unknown_timezone_bound": null,
+    "modified_after_release": false,
+    "delay_hours": 0.0,
+    "publication_limitation": "PDF metadata is not a web publication log; preserve later version times and verify original dated cover.",
+    "trading_ready": false,
+    "page": 2,
+    "header": "Financial summary Financial Summary ($ millions, except per share data) Q1 Q2 Q3 Q4 FY Q1 Q2 Q3 Q4 FY Q1 Q2 Q3 FY'25 FY'25 Global Business Solutions $1,988 $1,897 $2,021 $2,132 $8,038 $2,344 $2,245 $2,387 $2,557 $9,533 $2,544 $2,671 $11,011 - $11,106 % change YOY 38% 20% 21% 21% 24% 18% 18% 18% 20% 19% 9% 19% 16% - 17% Consumer $150 $516 $3,341 $128 $4,135 $187 $492 $3,653 $113 $4,445 $176 $509 $4,739 - $4,784 % change YOY 25% 26% 3% (12%) 6% 25% (5%) 9% (12%) 7% (6%) 3% 7% - 8% Credit Karma $42",
+    "total_revenue_row": "Total Revenue $2,597 $3,041 $6,018 $2,712 $14,368 $2,978 $3,386 $6,737 $3,184 $16,285 $3,283 $3,963 $7,550 - $7,600 $18,160 - $18,347 % change YOY",
+    "quarter_range_million": [
+      7550.0,
+      7600.0
+    ],
+    "annual_range_million": [
+      18160.0,
+      18347.0
+    ]
+  },
+  {
+    "file": "original_facts_1251.pdf",
+    "source": "https://investors.intuit.com/_assets/_1dd06c04c67bf383f19eaab5661c4ac7/intuit/db/946/10275/fact_sheet/Q3+FY25+External+Factsheet+%281%29.pdf",
+    "sha256": "d8ef8b72e82977b03ab4fa60e85b1413bd98dd0f0141397ea5604aac5f94de93",
+    "release_source": "https://investors.intuit.com/news-events/press-releases/detail/1251/intuit-reports-strong-third-quarter-results-and-raises-full-year-guidance",
+    "release_published": "2025-05-22 16:00:00-04:00",
+    "pdf_created": "2025-05-15T11:58:11-07:00",
+    "pdf_modified": "2025-05-15T11:58:11-07:00",
+    "conservative_source_time": "2025-05-22T16:00:00-04:00",
+    "metadata_timezone_unknown": false,
+    "unknown_timezone_bound": null,
+    "modified_after_release": false,
+    "delay_hours": 0.0,
+    "publication_limitation": "PDF metadata is not a web publication log; preserve later version times and verify original dated cover.",
+    "trading_ready": false,
+    "page": 2,
+    "header": "2 Financial summary Financial Summary ($ millions, except per share data) Q1 Q2 Q3 Q4 FY Q1 Q2 Q3 Q4 FY Q1 Q2 Q3 Q4 FY'25 FY'25 Global Business Solutions $1,988 $1,897 $2,021 $2,132 $8,038 $2,344 $2,245 $2,387 $2,557 $9,533 $2,544 $2,671 $2,849 $11,052 - $11,073 % change YOY 38% 20% 21% 21% 24% 18% 18% 18% 20% 19% 9% 19% 19% 16% Consumer $150 $516 $3,341 $128 $4,135 $187 $492 $3,653 $113 $4,445 $176 $509 $4,048 $4,868 - $4,876 % change YOY 25% 26% 3% (12%) 6% 25% (5%) 9% (12%) 7% (6%) 3% 11% 10%",
+    "total_revenue_row": "Total Revenue $2,597 $3,041 $6,018 $2,712 $14,368 $2,978 $3,386 $6,737 $3,184 $16,285 $3,283 $3,963 $7,754 $3,723 - $3,760 $18,723 - $18,760 % change YOY",
+    "quarter_range_million": [
+      3723.0,
+      3760.0
+    ],
+    "annual_range_million": [
+      18723.0,
+      18760.0
+    ]
+  },
+  {
+    "file": "original_facts_1266.pdf",
+    "source": "https://investors.intuit.com/_assets/_1dd06c04c67bf383f19eaab5661c4ac7/intuit/db/946/10311/fact_sheet/Q4+FY25+External+Factsheet.pdf",
+    "sha256": "20eb8695eeaeb234db453a7f10615cf567a7820a74d0f80968532902d6da5c1c",
+    "release_source": "https://investors.intuit.com/news-events/press-releases/detail/1266/intuit-reports-strong-fourth-quarter-and-full-year-fiscal-2025-results-sets-fiscal-2026-guidance-with-double-digit-revenue-growth-and-continued-operating-margin-expansion",
+    "release_published": "2025-08-21 16:00:00-04:00",
+    "pdf_created": "2025-08-21T10:32:04-07:00",
+    "pdf_modified": "2025-08-21T10:32:04-07:00",
+    "conservative_source_time": "2025-08-21T16:00:00-04:00",
+    "metadata_timezone_unknown": false,
+    "unknown_timezone_bound": null,
+    "modified_after_release": false,
+    "delay_hours": 0.0,
+    "publication_limitation": "PDF metadata is not a web publication log; preserve later version times and verify original dated cover.",
+    "trading_ready": false,
+    "page": 3,
+    "header": "3 Financial summary \u2013 revised view Segment revenue has been revised for FY\u201923, FY\u201924, and FY\u201925 to conform with segment reporting changes. Historical Consumer is now called TurboTax and TurboTax now includes Credit Karma Money, which has been moved from Credit Karma. Consumer revenue now includes TurboTax, Credit Karma, and ProTax. Financial Summary ($ millions, except per share data) Q1 Q2 Q3 Q4 FY Q1 Q2 Q3 Q4 FY Q1 Q2 Q3 Q4 FY Q1 FY'26 FY'26 Global Business Solutions $1,988 $1,897 $2,021 $2,13",
+    "total_revenue_row": "Total Revenue $2,597 $3,041 $6,018 $2,712 $14,368 $2,978 $3,386 $6,737 $3,184 $16,285 $3,283 $3,963 $7,754 $3,831 $18,831 $3,744 - $3,776 $20,997 - $21,186 % change YOY",
+    "quarter_range_million": [
+      3744.0,
+      3776.0
+    ],
+    "annual_range_million": [
+      20997.0,
+      21186.0
+    ]
+  },
+  {
+    "file": "original_facts_1286.pdf",
+    "source": "https://investors.intuit.com/_assets/_1dd06c04c67bf383f19eaab5661c4ac7/intuit/db/946/10339/fact_sheet/Q1+FY26+External+Fact+Sheet.pdf",
+    "sha256": "7696d271a332438fbc77568b21ce5414abaaddc4aaac90094869ff266bcf546d",
+    "release_source": "https://investors.intuit.com/news-events/press-releases/detail/1286/intuit-reports-strong-first-quarter-results-and-reiterates-full-year-guidance",
+    "release_published": "2025-11-20 16:00:00-05:00",
+    "pdf_created": "2025-11-14T12:08:30-08:00",
+    "pdf_modified": "2025-11-14T12:08:30-08:00",
+    "conservative_source_time": "2025-11-20T16:00:00-05:00",
+    "metadata_timezone_unknown": false,
+    "unknown_timezone_bound": null,
+    "modified_after_release": false,
+    "delay_hours": 0.0,
+    "publication_limitation": "PDF metadata is not a web publication log; preserve later version times and verify original dated cover.",
+    "trading_ready": false,
+    "page": 2,
+    "header": "2 Financial summary Segment revenue has been revised for FY\u201924 and FY\u201925 to conform with segment reporting changes. Historical Consumer is now called TurboTax and TurboTax now includes Credit Karma Money, which has been moved from Credit Karma. Consumer revenue now includes TurboTax, Credit Karma, and ProTax. Financial Summary ($ millions, except per share data) Q1 Q2 Q3 Q4 FY Q1 Q2 Q3 Q4 FY Q1 Q2 FY'26 FY'26 Global Business Solutions $2,344 $2,245 $2,387 $2,557 $9,533 $2,544 $2,671 $2,849 $3,01",
+    "total_revenue_row": "Total Revenue $2,978 $3,386 $6,737 $3,184 $16,285 $3,283 $3,963 $7,754 $3,831 $18,831 $3,885 $4,519 - $4,549 $20,997 - $21,186 % change YoY",
+    "quarter_range_million": [
+      4519.0,
+      4549.0
+    ],
+    "annual_range_million": [
+      20997.0,
+      21186.0
+    ]
+  },
+  {
+    "file": "original_facts_1307.pdf",
+    "source": "https://investors.intuit.com/_assets/_1dd06c04c67bf383f19eaab5661c4ac7/intuit/db/946/10358/fact_sheet/Q2+FY26+Fact+Sheet+External.pdf",
+    "sha256": "c1bafa6fb61f4ba50f5e05254665b3f2199902b0e647eb3ddc3bd23a74e7ce9c",
+    "release_source": "https://investors.intuit.com/news-events/press-releases/detail/1307/intuit-reports-strong-second-quarter-results-and-reiterates-full-year-guidance",
+    "release_published": "2026-02-26 16:00:00-05:00",
+    "pdf_created": "2026-02-17T15:56:18-08:00",
+    "pdf_modified": "2026-02-17T15:56:18-08:00",
+    "conservative_source_time": "2026-02-26T16:00:00-05:00",
+    "metadata_timezone_unknown": false,
+    "unknown_timezone_bound": null,
+    "modified_after_release": false,
+    "delay_hours": 0.0,
+    "publication_limitation": "PDF metadata is not a web publication log; preserve later version times and verify original dated cover.",
+    "trading_ready": false,
+    "page": 2,
+    "header": "2 Financial summary Financial Summary (millions, except per share data) Q1 Q2 Q3 Q4 FY Q1 Q2 Q3 Q4 FY Q1 Q2 Q3 FY26 FY26 Global Business Solutions $2,344 $2,245 $2,387 $2,557 $9,533 $2,544 $2,671 $2,849 $3,013 $11,077 $2,991 $3,164 $12,633 - $12,742 % change YoY 18% 18% 18% 20% 19% 9% 19% 19% 18% 16% 18% 18% 14% - 15% TurboTax $196 $502 $3,684 $126 $4,508 $187 $520 $4,078 $148 $4,933 $198 $581 $5,305 - $5,330 % change YOY 26% (4%) 10% (9%) 8% (5%) 4% 11% 17% 9% 6% 12% 8% Credit Karma $396 $365 $",
+    "total_revenue_row": "Total Revenue $2,978 $3,386 $6,737 $3,184 $16,285 $3,283 $3,963 $7,754 $3,831 $18,831 $3,885 $4,651 $8,520 - $8,553 $20,997 - $21,186 % change YoY",
+    "quarter_range_million": [
+      8520.0,
+      8553.0
+    ],
+    "annual_range_million": [
+      20997.0,
+      21186.0
+    ]
+  },
+  {
+    "file": "original_facts_1312.pdf",
+    "source": "https://investors.intuit.com/_assets/_1dd06c04c67bf383f19eaab5661c4ac7/intuit/db/946/10372/fact_sheet/Q3+FY26+Fact+Sheet+External.pdf",
+    "sha256": "19be87c8f7c1c44a30cd49f3c1a7e9c012cc1f88858c78fa26198643b579cea5",
+    "release_source": "https://investors.intuit.com/news-events/press-releases/detail/1312/intuit-reports-strong-third-quarter-results-and-raises-full-year-revenue-guidance",
+    "release_published": "2026-05-20 16:00:00-04:00",
+    "pdf_created": "2026-05-20T10:55:38",
+    "pdf_modified": null,
+    "conservative_source_time": "2026-05-20T10:55:38-12:00",
+    "metadata_timezone_unknown": true,
+    "unknown_timezone_bound": "UTC-12 latest-instant bound, not an assertion of actual timezone",
+    "modified_after_release": true,
+    "delay_hours": 2.9272222222222224,
+    "publication_limitation": "PDF metadata is not a web publication log; preserve later version times and verify original dated cover.",
+    "trading_ready": false,
+    "page": 2,
+    "header": "2 Financial Summary (millions, except per share data) Q1 Q2 Q3 Q4 FY Q1 Q2 Q3 Q4 FY Q1 Q2 Q3 Q4 FY26 FY26 Global Business Solutions $2,344 $2,245 $2,387 $2,557 $9,533 $2,544 $2,671 $2,849 $3,013 $11,077 $2,991 $3,164 $3,285 $12,811 - $12,830 % change YoY 18% 18% 18% 20% 19% 9% 19% 19% 18% 16% 18% 18% 15% 16% TurboTax $196 $502 $3,684 $126 $4,508 $187 $520 $4,078 $148 $4,933 $198 $581 $4,364 $5,277 - $5,282 % change YoY 26% (4%) 10% (9%) 8% (5%) 4% 11% 17% 9% 6% 12% 7% 7% Credit Karma $396 $365 $",
+    "total_revenue_row": "Total Revenue $2,978 $3,386 $6,737 $3,184 $16,285 $3,283 $3,963 $7,754 $3,831 $18,831 $3,885 $4,651 $8,558 $4,247 - $4,280 $21,341 - $21,374 % change YoY",
+    "quarter_range_million": [
+      4247.0,
+      4280.0
+    ],
+    "annual_range_million": [
+      21341.0,
+      21374.0
+    ]
+  },
+  {
+    "file": "original_facts_1320.pdf",
+    "source": "https://investors.intuit.com/_assets/_1dd06c04c67bf383f19eaab5661c4ac7/intuit/db/946/10378/fact_sheet/Q4+FY26+Fact+Sheet+External+vf.pdf",
+    "sha256": "28ac922fa850f273e083f46f0003a47fe00249b7050c7a82088b15d68f3d4f25",
+    "release_source": "https://investors.intuit.com/news-events/press-releases/detail/1320/intuit-reports-fourth-quarter-and-full-year-fiscal-2026-results-sets-fiscal-2027-guidance",
+    "release_published": "2026-08-25 16:00:00-04:00",
+    "pdf_created": "2026-08-24T18:33:11-07:00",
+    "pdf_modified": "2026-08-24T18:33:11-07:00",
+    "conservative_source_time": "2026-08-25T16:00:00-04:00",
+    "metadata_timezone_unknown": false,
+    "unknown_timezone_bound": null,
+    "modified_after_release": false,
+    "delay_hours": 0.0,
+    "publication_limitation": "PDF metadata is not a web publication log; preserve later version times and verify original dated cover.",
+    "trading_ready": false,
+    "page": 3,
+    "header": "3 Financial Summary (millions, except per share data) Q1 Q2 Q3 Q4 FY Q1 Q2 Q3 Q4 FY Q1 Q2 Q3 Q4 FY Q1 Q2 Q3 Q4 FY Q1 Q2 Q3 Q4 FY Q1 FY QuickBooks Online Accounting $798 $826 $860 $895 $3,379 $965 $1,008 $1,044 $1,103 $4,120 $1,206 $1,248 $1,278 $1,319 $5,051 21% 22% 21% 23% 22% 25% 24% 22% 20% 23% Online Services $516 $543 $573 $614 $2,246 $657 $705 $739 $794 $2,895 $828 $899 $904 $964 $3,595 27% 30% 29% 29% 29% 26% 28% 22% 21% 24% Total Online Ecosystem $1,314 $1,369 $1,433 $1,509 $5,625 $1,622",
+    "total_revenue_row": "Total Revenue $2,978 $3,386 $6,737 $3,184 $16,285 $3,283 $3,963 $7,754 $3,831 $18,831 $3,885 $4,651 $8,558 $4,354 $21,448 10% 17% 15% 20% 16% 18% 17% 10% 14% 14% $4,294 - $4,313 (11%) $23,279 - $23,512 (9%-10%) GAAP Operating Income",
+    "quarter_range_million": [
+      4294.0,
+      4313.0
+    ],
+    "annual_range_million": [
+      23279.0,
+      23512.0
+    ]
+  }
+]

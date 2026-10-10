@@ -1,0 +1,18 @@
+{
+  "url": "https://investor.cadence.com/news/news-details/2025/Cadence-Reports-Second-Quarter-2025-Financial-Results/",
+  "status": 403,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "af7fe878ddcc71cc826767e6c8baba2806dda27b539512ddb6cd088fada06002",
+  "retrieved_utc": "2026-10-09T18:00:40Z",
+  "attempts": [
+    {
+      "url": "https://investor.cadence.com/news/news-details/2025/Cadence-Reports-Second-Quarter-2025-Financial-Results/",
+      "status": 403,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "af7fe878ddcc71cc826767e6c8baba2806dda27b539512ddb6cd088fada06002",
+      "retrieved_utc": "2026-10-09T18:00:40Z"
+    }
+  ]
+}

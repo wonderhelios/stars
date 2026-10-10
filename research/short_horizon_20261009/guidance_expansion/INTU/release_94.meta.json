@@ -1,0 +1,18 @@
+{
+  "url": "https://investors.intuit.com/news-events/press-releases/detail/94/intuit-reports-strong-first-quarter-results-and-reiterates-full-year-operating-income-and-earnings-per-share-guidance",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "ed0d0158f27963bacdf6ef445d9169a99b4aeb9e93f0a0b45a285b98c4395c1d",
+  "retrieved_utc": "2026-10-09T18:02:13Z",
+  "attempts": [
+    {
+      "url": "https://investors.intuit.com/news-events/press-releases/detail/94/intuit-reports-strong-first-quarter-results-and-reiterates-full-year-operating-income-and-earnings-per-share-guidance",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "ed0d0158f27963bacdf6ef445d9169a99b4aeb9e93f0a0b45a285b98c4395c1d",
+      "retrieved_utc": "2026-10-09T18:02:13Z"
+    }
+  ]
+}

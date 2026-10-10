@@ -13,18 +13,23 @@ OUT=ROOT/'guidance_expansion/MDB'
 
 
 def main(symbol='MDB'):
-    assert symbol in ['MDB','ADSK','DDOG']
+    assert symbol in ['MDB','ADSK','DDOG','INTU']
     out=ROOT/'guidance_expansion'/symbol
     file=ROOT/'fundamentals'/f'{symbol}.json'
-    cik,entity={'MDB':(1441816,'MONGODB'),'ADSK':(769397,'AUTODESK'),'DDOG':(1561550,'DATADOG')}[symbol]
+    cik,entity={'MDB':(1441816,'MONGODB'),'ADSK':(769397,'AUTODESK'),'DDOG':(1561550,'DATADOG'),'INTU':(896878,'INTUIT')}[symbol]
     doc=json.loads(file.read_text());assert doc['cik']==cik and entity in doc['entityName'].upper()
     facts=doc['facts']['us-gaap']['RevenueFromContractWithCustomerExcludingAssessedTax']['units']['USD']
+    if symbol=='INTU':
+        # Original FY2020 10-K uses Revenues; its original Q3 uses the ASC606 tag.
+        # Both describe the total net revenue explicitly verified in the release.
+        facts=[dict(v,xbrl_tag=tag) for tag in ['RevenueFromContractWithCustomerExcludingAssessedTax','Revenues']
+            for v in doc['facts']['us-gaap'][tag]['units']['USD']]
     allrows=json.loads((out/'parsed_guidance.json').read_text())
     rows=[r for r in allrows if r.get('actual_revenue_million') is not None]
     verified=[];issues=[]
     for row in rows:
         fy=row['reported_fiscal_year'];q=row['reported_quarter'];pub=pd.Timestamp(row['published']).tz_localize(None).normalize()
-        fiscal_start=pd.Timestamp(f'{fy}-01-01') if symbol=='DDOG' else pd.Timestamp(f'{fy-1}-02-01')
+        fiscal_start=pd.Timestamp(f'{fy}-01-01') if symbol=='DDOG' else pd.Timestamp(f'{fy-1}-08-01' if symbol=='INTU' else f'{fy-1}-02-01')
         end=(fiscal_start+pd.DateOffset(months=3*q))-pd.Timedelta(days=1)
         start=fiscal_start+pd.DateOffset(months=3*(q-1))
         expected=round(row['actual_revenue_million']*1e6)

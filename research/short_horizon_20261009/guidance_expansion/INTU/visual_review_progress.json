@@ -1,0 +1,473 @@
+{
+  "fact_sheets": [
+    {
+      "file": "original_facts_236.pdf",
+      "sha256": "d7a1f99ca70cc90f67f3b0fc088e5fdfd02704e31ee090b7e84d6c3d014c260e",
+      "visually_reviewed_pages": [
+        1,
+        2,
+        5
+      ],
+      "table_verified": true,
+      "dated_cover_verified": true,
+      "cover_date": "2020-02-24",
+      "footnotes_reviewed": true,
+      "footnotes_page": 5,
+      "footnotes_review_method": "rendered_page",
+      "checked": "Total revenue units and quarter/year forecast column labels, dated cover agrees with release, guidance and scope footnotes",
+      "remaining": "Interim/all-news completeness and historical web publication-version evidence"
+    },
+    {
+      "file": "original_facts_226.pdf",
+      "sha256": "d875ae33646cdd77beb07b39023e76f767f344b2aa76d7b3eb87579786e84f45",
+      "visually_reviewed_pages": [
+        1,
+        2,
+        5
+      ],
+      "table_verified": true,
+      "dated_cover_verified": true,
+      "cover_date": "2020-05-21",
+      "footnotes_reviewed": true,
+      "footnotes_page": 5,
+      "footnotes_review_method": "rendered_page",
+      "checked": "Total revenue units and quarter/year forecast column labels, dated cover agrees with release, guidance and scope footnotes",
+      "remaining": "Interim/all-news completeness and historical web publication-version evidence"
+    },
+    {
+      "file": "original_facts_221.pdf",
+      "sha256": "1995ba15f14def53a9ac706bf8120f26d16f8b1a308ea07698abc4a913fee654",
+      "visually_reviewed_pages": [
+        1,
+        2
+      ],
+      "table_verified": true,
+      "dated_cover_verified": true,
+      "cover_date": "2020-08-25",
+      "footnotes_reviewed": true,
+      "footnotes_page": 5,
+      "footnotes_review_method": "extracted_full_text",
+      "checked": "Total revenue units and quarter/year forecast column labels, dated cover agrees with release, guidance and scope footnotes",
+      "remaining": "Interim/all-news completeness and historical web publication-version evidence"
+    },
+    {
+      "file": "original_facts_209.pdf",
+      "sha256": "85b20d478f0f1a82aded470c6f5c5fb700cac983f39db0aee55665068350ea33",
+      "visually_reviewed_pages": [
+        1,
+        2,
+        5
+      ],
+      "table_verified": true,
+      "dated_cover_verified": true,
+      "cover_date": "2020-11-19",
+      "footnotes_reviewed": true,
+      "footnotes_page": 5,
+      "footnotes_review_method": "rendered_page",
+      "checked": "Total revenue units and quarter/year forecast column labels, dated cover agrees with release, guidance and scope footnotes",
+      "remaining": "Interim/all-news completeness and historical web publication-version evidence"
+    },
+    {
+      "file": "original_facts_186.pdf",
+      "sha256": "87d05fb6b26e3c5dffbfe7df42a47c232fcbc072b2a4849a5215b250dd833118",
+      "visually_reviewed_pages": [
+        1,
+        2,
+        5
+      ],
+      "table_verified": true,
+      "dated_cover_verified": true,
+      "cover_date": "2021-02-23",
+      "footnotes_reviewed": true,
+      "footnotes_page": 5,
+      "footnotes_review_method": "rendered_page",
+      "checked": "Total revenue units and quarter/year forecast column labels, dated cover agrees with release, guidance and scope footnotes",
+      "remaining": "Interim/all-news completeness and historical web publication-version evidence"
+    },
+    {
+      "file": "original_facts_173.pdf",
+      "sha256": "cd66b03bc69b5b2ea79d79ac5fc0fb3872622d8ccefe0e283bbec43ce3e93854",
+      "visually_reviewed_pages": [
+        1,
+        2,
+        5,
+        6
+      ],
+      "table_verified": true,
+      "dated_cover_verified": true,
+      "cover_date": "2021-05-25",
+      "footnotes_reviewed": true,
+      "footnotes_page": 6,
+      "footnotes_review_method": "rendered_page",
+      "checked": "Total revenue units and quarter/year forecast column labels, dated cover agrees with release, guidance and scope footnotes",
+      "remaining": "Interim/all-news completeness and historical web publication-version evidence"
+    },
+    {
+      "file": "original_facts_165.pdf",
+      "sha256": "485b9aa4698ed93b05e4702538823fbe152c851326793e0b31285494210a6921",
+      "visually_reviewed_pages": [
+        1,
+        2,
+        5
+      ],
+      "table_verified": true,
+      "dated_cover_verified": true,
+      "cover_date": "2021-08-24",
+      "footnotes_reviewed": true,
+      "footnotes_page": 5,
+      "footnotes_review_method": "rendered_page",
+      "checked": "Total revenue units and quarter/year forecast column labels, dated cover agrees with release, guidance and scope footnotes",
+      "remaining": "Interim/all-news completeness and historical web publication-version evidence"
+    },
+    {
+      "file": "original_facts_148.pdf",
+      "sha256": "2ba6565c66b452d17d3d72aebdd851fe966224454be3136d4f1b81d920f538b2",
+      "visually_reviewed_pages": [
+        1,
+        2,
+        5
+      ],
+      "table_verified": true,
+      "dated_cover_verified": true,
+      "cover_date": "2021-11-18",
+      "footnotes_reviewed": true,
+      "footnotes_page": 5,
+      "footnotes_review_method": "rendered_page",
+      "checked": "Total revenue units and quarter/year forecast column labels, dated cover agrees with release, guidance and scope footnotes",
+      "remaining": "Interim/all-news completeness and historical web publication-version evidence"
+    },
+    {
+      "file": "original_facts_128.pdf",
+      "sha256": "beda0f6202f4b8b4a7b4bb5afa3cfb1af06fa183ecfa210e003fb89007e8e67a",
+      "visually_reviewed_pages": [
+        1,
+        2,
+        5
+      ],
+      "table_verified": true,
+      "dated_cover_verified": true,
+      "cover_date": "2022-02-24",
+      "footnotes_reviewed": true,
+      "footnotes_page": 5,
+      "footnotes_review_method": "rendered_page",
+      "checked": "Total revenue units and quarter/year forecast column labels, dated cover agrees with release, guidance and scope footnotes",
+      "remaining": "Interim/all-news completeness and historical web publication-version evidence"
+    },
+    {
+      "file": "original_facts_119.pdf",
+      "sha256": "3196eb7bcc0b8e4d8fbae48998e6fc4e5bab2f00dce7e8e2bd88f5eb18949963",
+      "visually_reviewed_pages": [
+        1,
+        2
+      ],
+      "table_verified": true,
+      "dated_cover_verified": true,
+      "cover_date": "2022-05-24",
+      "footnotes_reviewed": true,
+      "footnotes_page": 5,
+      "footnotes_review_method": "extracted_full_text",
+      "checked": "Total revenue units and quarter/year forecast column labels, dated cover agrees with release, guidance and scope footnotes",
+      "remaining": "Interim/all-news completeness and historical web publication-version evidence"
+    },
+    {
+      "file": "original_facts_113.pdf",
+      "sha256": "a82806494d369b3f5081b53805de68554470a01bde92392db9d6f09c42ccdfe9",
+      "visually_reviewed_pages": [
+        1,
+        2
+      ],
+      "table_verified": true,
+      "dated_cover_verified": true,
+      "cover_date": "2022-08-23",
+      "footnotes_reviewed": true,
+      "footnotes_page": 5,
+      "footnotes_review_method": "extracted_full_text",
+      "checked": "Total revenue units and quarter/year forecast column labels, dated cover agrees with release, guidance and scope footnotes",
+      "remaining": "Interim/all-news completeness and historical web publication-version evidence"
+    },
+    {
+      "file": "original_facts_94.pdf",
+      "sha256": "c8029421d762198b6b476822a5b5a5fce2fb8a2806eaba21d488cce5fb75e735",
+      "visually_reviewed_pages": [
+        1,
+        2,
+        5
+      ],
+      "table_verified": true,
+      "dated_cover_verified": true,
+      "cover_date": "2022-11-29",
+      "footnotes_reviewed": true,
+      "footnotes_page": 5,
+      "footnotes_review_method": "rendered_page",
+      "checked": "Total revenue units and quarter/year forecast column labels, dated cover agrees with release, guidance and scope footnotes",
+      "remaining": "Interim/all-news completeness and historical web publication-version evidence"
+    },
+    {
+      "file": "original_facts_79.pdf",
+      "sha256": "c1ce35ccbb52646c786f5e8a47294690777829bbfc4abbdc8069c96b9138265c",
+      "visually_reviewed_pages": [
+        1,
+        2,
+        5
+      ],
+      "table_verified": true,
+      "dated_cover_verified": true,
+      "cover_date": "2023-02-23",
+      "footnotes_reviewed": true,
+      "footnotes_page": 5,
+      "footnotes_review_method": "rendered_page",
+      "checked": "Total revenue units and quarter/year forecast column labels, dated cover agrees with release, guidance and scope footnotes",
+      "remaining": "Interim/all-news completeness and historical web publication-version evidence"
+    },
+    {
+      "file": "original_facts_64.pdf",
+      "sha256": "d78a7f18a24bea347a5fb4ad7b1f0edc79bf1dadde0421f6fc13c5f7031f3488",
+      "visually_reviewed_pages": [
+        1,
+        2,
+        5
+      ],
+      "table_verified": true,
+      "dated_cover_verified": true,
+      "cover_date": "2023-05-23",
+      "footnotes_reviewed": true,
+      "footnotes_page": 5,
+      "footnotes_review_method": "rendered_page",
+      "checked": "Total revenue units and quarter/year forecast column labels, dated cover agrees with release, guidance and scope footnotes",
+      "remaining": "Interim/all-news completeness and historical web publication-version evidence"
+    },
+    {
+      "file": "original_facts_47.pdf",
+      "sha256": "2b863771e18925ac12a98fa363a6cc8cb0496fece127e70aeafd9bbee484d8e6",
+      "visually_reviewed_pages": [
+        1,
+        2,
+        5
+      ],
+      "table_verified": true,
+      "dated_cover_verified": true,
+      "cover_date": "2023-08-24",
+      "footnotes_reviewed": true,
+      "footnotes_page": 5,
+      "footnotes_review_method": "rendered_page",
+      "checked": "Total revenue units and quarter/year forecast column labels, dated cover agrees with release, guidance and scope footnotes",
+      "remaining": "Interim/all-news completeness and historical web publication-version evidence"
+    },
+    {
+      "file": "original_facts_20.pdf",
+      "sha256": "ac7fe81aa90fc0171f245f00ab173de4b7c56f83d40ced325ad16d982469fe5b",
+      "visually_reviewed_pages": [
+        1,
+        2,
+        5
+      ],
+      "table_verified": true,
+      "dated_cover_verified": true,
+      "cover_date": "2023-11-28",
+      "footnotes_reviewed": true,
+      "footnotes_page": 5,
+      "footnotes_review_method": "rendered_page",
+      "checked": "Total revenue units and quarter/year forecast column labels, dated cover agrees with release, guidance and scope footnotes",
+      "remaining": "Interim/all-news completeness and historical web publication-version evidence"
+    },
+    {
+      "file": "original_facts_11.pdf",
+      "sha256": "943b4e3f13aeac1aad2af21ecad94675c707bfe33b06f984fc670919d211f23f",
+      "visually_reviewed_pages": [
+        1,
+        2,
+        5
+      ],
+      "table_verified": true,
+      "dated_cover_verified": true,
+      "cover_date": "2024-02-22",
+      "footnotes_reviewed": true,
+      "footnotes_page": 5,
+      "footnotes_review_method": "rendered_page",
+      "checked": "Total revenue units and quarter/year forecast column labels, dated cover agrees with release, guidance and scope footnotes",
+      "remaining": "Interim/all-news completeness and historical web publication-version evidence"
+    },
+    {
+      "file": "original_facts_1188.pdf",
+      "sha256": "b2856fe37f537211a30650e15db56997a96ae6819960789bad2d41eb3847de5d",
+      "visually_reviewed_pages": [
+        1,
+        2,
+        5
+      ],
+      "table_verified": true,
+      "dated_cover_verified": true,
+      "cover_date": "2024-05-23",
+      "footnotes_reviewed": true,
+      "footnotes_page": 5,
+      "footnotes_review_method": "rendered_page",
+      "checked": "Total revenue units and quarter/year forecast column labels, dated cover agrees with release, guidance and scope footnotes",
+      "remaining": "Interim/all-news completeness and historical web publication-version evidence"
+    },
+    {
+      "file": "original_facts_1202.pdf",
+      "sha256": "297cf159d339916596583c434f20d64548a68533b6695e729416361abe6b070f",
+      "visually_reviewed_pages": [
+        1,
+        2,
+        5
+      ],
+      "table_verified": true,
+      "dated_cover_verified": true,
+      "cover_date": "2024-08-22",
+      "footnotes_reviewed": true,
+      "footnotes_page": 5,
+      "footnotes_review_method": "rendered_page",
+      "checked": "Total revenue units and quarter/year forecast column labels, dated cover agrees with release, guidance and scope footnotes",
+      "remaining": "Interim/all-news completeness and historical web publication-version evidence"
+    },
+    {
+      "file": "original_facts_1223.pdf",
+      "sha256": "0b0a64c8bcb606965047e8a5da0fc4819fa82744f4ae827bab19ab760089d026",
+      "visually_reviewed_pages": [
+        1,
+        2,
+        5
+      ],
+      "table_verified": true,
+      "dated_cover_verified": true,
+      "cover_date": "2024-11-21",
+      "footnotes_reviewed": true,
+      "footnotes_page": 5,
+      "footnotes_review_method": "rendered_page",
+      "checked": "Total revenue units and quarter/year forecast column labels, dated cover agrees with release, guidance and scope footnotes",
+      "remaining": "Interim/all-news completeness and historical web publication-version evidence"
+    },
+    {
+      "file": "original_facts_1239.pdf",
+      "sha256": "e71512d4f8fe72a0ed20116ae578ba5409589ac41e8679e006d8f16f8a99900c",
+      "visually_reviewed_pages": [
+        1,
+        2,
+        5
+      ],
+      "table_verified": true,
+      "dated_cover_verified": true,
+      "cover_date": "2025-02-25",
+      "footnotes_reviewed": true,
+      "footnotes_page": 5,
+      "footnotes_review_method": "rendered_page",
+      "checked": "Total revenue units and quarter/year forecast column labels, dated cover agrees with release, guidance and scope footnotes",
+      "remaining": "Interim/all-news completeness and historical web publication-version evidence"
+    },
+    {
+      "file": "original_facts_1251.pdf",
+      "sha256": "d8ef8b72e82977b03ab4fa60e85b1413bd98dd0f0141397ea5604aac5f94de93",
+      "visually_reviewed_pages": [
+        1,
+        2
+      ],
+      "table_verified": true,
+      "dated_cover_verified": true,
+      "cover_date": "2025-05-22",
+      "footnotes_reviewed": true,
+      "footnotes_page": 5,
+      "footnotes_review_method": "extracted_full_text",
+      "checked": "Total revenue units and quarter/year forecast column labels, dated cover agrees with release, guidance and scope footnotes",
+      "remaining": "Interim/all-news completeness and historical web publication-version evidence"
+    },
+    {
+      "file": "original_facts_1266.pdf",
+      "sha256": "20eb8695eeaeb234db453a7f10615cf567a7820a74d0f80968532902d6da5c1c",
+      "visually_reviewed_pages": [
+        1,
+        2,
+        3
+      ],
+      "table_verified": true,
+      "dated_cover_verified": true,
+      "cover_date": "2025-08-21",
+      "footnotes_reviewed": true,
+      "footnotes_page": 7,
+      "footnotes_review_method": "extracted_full_text",
+      "checked": "Total revenue units and quarter/year forecast column labels, dated cover agrees with release, guidance and scope footnotes",
+      "remaining": "Interim/all-news completeness and historical web publication-version evidence"
+    },
+    {
+      "file": "original_facts_1286.pdf",
+      "sha256": "7696d271a332438fbc77568b21ce5414abaaddc4aaac90094869ff266bcf546d",
+      "visually_reviewed_pages": [
+        1,
+        2
+      ],
+      "table_verified": true,
+      "dated_cover_verified": true,
+      "cover_date": "2025-11-20",
+      "footnotes_reviewed": true,
+      "footnotes_page": 5,
+      "footnotes_review_method": "extracted_full_text",
+      "checked": "Total revenue units and quarter/year forecast column labels, dated cover agrees with release, guidance and scope footnotes",
+      "remaining": "Interim/all-news completeness and historical web publication-version evidence"
+    },
+    {
+      "file": "original_facts_1307.pdf",
+      "sha256": "c1bafa6fb61f4ba50f5e05254665b3f2199902b0e647eb3ddc3bd23a74e7ce9c",
+      "visually_reviewed_pages": [
+        1,
+        2
+      ],
+      "table_verified": true,
+      "dated_cover_verified": true,
+      "cover_date": "2026-02-26",
+      "footnotes_reviewed": true,
+      "footnotes_page": 5,
+      "footnotes_review_method": "extracted_full_text",
+      "checked": "Total revenue units and quarter/year forecast column labels, dated cover agrees with release, guidance and scope footnotes",
+      "remaining": "Interim/all-news completeness and historical web publication-version evidence"
+    },
+    {
+      "file": "original_facts_1312.pdf",
+      "sha256": "19be87c8f7c1c44a30cd49f3c1a7e9c012cc1f88858c78fa26198643b579cea5",
+      "visually_reviewed_pages": [
+        1,
+        2
+      ],
+      "table_verified": true,
+      "dated_cover_verified": true,
+      "cover_date": "2026-05-20",
+      "footnotes_reviewed": true,
+      "footnotes_page": 5,
+      "footnotes_review_method": "extracted_full_text",
+      "checked": "Total revenue units and quarter/year forecast column labels, dated cover agrees with release, guidance and scope footnotes",
+      "remaining": "Interim/all-news completeness and historical web publication-version evidence"
+    },
+    {
+      "file": "original_facts_1320.pdf",
+      "sha256": "28ac922fa850f273e083f46f0003a47fe00249b7050c7a82088b15d68f3d4f25",
+      "visually_reviewed_pages": [
+        1,
+        3
+      ],
+      "table_verified": true,
+      "dated_cover_verified": true,
+      "cover_date": "2026-08-25",
+      "footnotes_reviewed": true,
+      "footnotes_page": 5,
+      "footnotes_review_method": "extracted_full_text",
+      "checked": "Total revenue units and quarter/year forecast column labels, dated cover agrees with release, guidance and scope footnotes",
+      "remaining": "Interim/all-news completeness and historical web publication-version evidence"
+    }
+  ],
+  "prepared_call_pages": {
+    "original_call_186.pdf": [
+      17
+    ],
+    "original_call_148.pdf": [
+      19
+    ]
+  },
+  "ready_for_trading": false,
+  "table_and_cover_documents_reviewed": 27,
+  "footnotes_reviewed": 27,
+  "scope_findings": [
+    "2020, 2023 and 2024 corporate/segment expense reallocations do not by themselves change consolidated total revenue.",
+    "Credit Karma and Mailchimp inclusion dates confirm existing acquisition gates; unadjusted pairs remain excluded.",
+    "FY2026 consumer/proadvisor segment reclassification does not by itself change consolidated total revenue.",
+    "FY2021Q3 extra page 5 is subscriber reclassification, footnotes are page 6."
+  ]
+}

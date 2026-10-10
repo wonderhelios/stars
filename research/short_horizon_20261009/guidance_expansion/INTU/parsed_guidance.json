@@ -1,0 +1,1481 @@
+[
+  {
+    "symbol": "INTU",
+    "source": "https://investors.intuit.com/news-events/press-releases/detail/236/intuit-second-quarter-revenue-increased-13-percent-small-business-online-ecosystem-revenue-grew-35-percent",
+    "source_file": "INTU/release_236.html",
+    "sha256": "193e7000f000a9dcdec44c63fe0753df558c254da116ef106cf4ab00c27490ad",
+    "title": "Intuit Second Quarter Revenue Increased 13 Percent; Small Business Online Ecosystem Revenue Grew 35 Percent",
+    "published": "2020-02-24 16:01:00-05:00",
+    "modified": null,
+    "available_after": "2020-02-24 16:01:00-05:00",
+    "publication_basis": "Issuer article visible time and separately listed archive time agree; no modification metadata available",
+    "kind": "quarterly",
+    "reported_quarter": 2,
+    "reported_fiscal_year": 2020,
+    "actual_revenue_million": 1696.0,
+    "actual_source_row": [
+      "Total net revenue",
+      "",
+      "1,696",
+      "",
+      "",
+      "1,502",
+      "",
+      "",
+      "2,861",
+      "",
+      "",
+      "2,518",
+      ""
+    ],
+    "actual_table_header": "TABLE A INTUIT INC. GAAP CONSOLIDATED STATEMENTS OF OPERATIONS (In millions, except per share amounts) (Unaudited) Three Months Ended Six Months Ended January 31, 2020 January 31,  TABLE A INTUIT INC. GAAP CONSOLIDATED STATEMENTS OF OPERATIONS (In millions, except per share amounts) (Unaudited) Three Months Ended Six Months Ended January 31, 2020 January 31, 2019 January 31, 2020 January 31, 2019 Net revenue: Product $ 545 $ 533 $ 898 $ 880 Service and other 1,151 969 1,963 1,638 Total net revenue 1,696 1,502 2,861 2,518 Cost",
+    "fiscal_year": 2020,
+    "next_quarter": 3,
+    "annual_range_million": [
+      7440.0,
+      7540.0
+    ],
+    "quarter_range_million": null,
+    "quarter_growth_percent": [
+      10.0,
+      11.0
+    ],
+    "guidance_source": [
+      "Revenue growth of 10 to 11 percent,",
+      "Revenue of $7.440 billion to $7.540 billion, growth of 10 to 11 percent."
+    ],
+    "quarter_guidance_year": 2020,
+    "quarter_range_basis": "proxy_from_rounded_approximate_growth_not_exact_dollar_forecast",
+    "quarter_forecast_verified_for_trading": false,
+    "quarter_conversion_issue": "Prior-year target-quarter original revenue not yet in saved coverage"
+  },
+  {
+    "symbol": "INTU",
+    "source": "https://investors.intuit.com/news-events/press-releases/detail/226/intuit-third-quarter-revenue-declined-8-percent-small-business-online-ecosystem-revenue-grew-28-percent",
+    "source_file": "INTU/release_226.html",
+    "sha256": "d2591b7c9af1e040937921e1877b4bb17731d4860d2986f0aeb0d5c6b41dd3f9",
+    "title": "Intuit Third Quarter Revenue Declined 8 Percent; Small Business Online Ecosystem Revenue Grew 28 Percent",
+    "published": "2020-05-21 16:00:00-04:00",
+    "modified": null,
+    "available_after": "2020-05-21 16:00:00-04:00",
+    "publication_basis": "Issuer article visible time and separately listed archive time agree; no modification metadata available",
+    "kind": "quarterly",
+    "reported_quarter": 3,
+    "reported_fiscal_year": 2020,
+    "actual_revenue_million": 3002.0,
+    "actual_source_row": [
+      "Total net revenue",
+      "",
+      "",
+      "3,002",
+      "",
+      "",
+      "",
+      "3,272",
+      "",
+      "",
+      "",
+      "5,863",
+      "",
+      "",
+      "",
+      "5,790",
+      ""
+    ],
+    "actual_table_header": "TABLE A INTUIT INC. GAAP CONSOLIDATED STATEMENTS OF OPERATIONS (In millions, except per share amounts) (Unaudited) Three Months Ended Nine Months Ended April 30, 2020 April 30, 201 TABLE A INTUIT INC. GAAP CONSOLIDATED STATEMENTS OF OPERATIONS (In millions, except per share amounts) (Unaudited) Three Months Ended Nine Months Ended April 30, 2020 April 30, 2019 April 30, 2020 April 30, 2019 Net revenue: Product $ 443 $ 498 $ 1,341 $ 1,378 Service and other 2,559 2,774 4,522 4,412 Total net revenue 3,002 3,272 5,863 5,790 Costs",
+    "fiscal_year": null,
+    "next_quarter": null,
+    "annual_range_million": null,
+    "quarter_range_million": null,
+    "quarter_growth_percent": null,
+    "guidance_source": [],
+    "guidance_issue": "No standard forward-guidance section; retain actual only"
+  },
+  {
+    "symbol": "INTU",
+    "source": "https://investors.intuit.com/news-events/press-releases/detail/221/intuit-full-year-revenue-up-13-percent",
+    "source_file": "INTU/release_221.html",
+    "sha256": "7a015c83af0fb33c156a9dffea3f0f45f3c4cd5aa8d278eb6eb3e01a29926d50",
+    "title": "Intuit Full Year Revenue Up 13 Percent",
+    "published": "2020-08-25 16:00:00-04:00",
+    "modified": null,
+    "available_after": "2020-08-25 16:00:00-04:00",
+    "publication_basis": "Issuer article visible time and separately listed archive time agree; no modification metadata available",
+    "kind": "quarterly",
+    "reported_quarter": 4,
+    "reported_fiscal_year": 2020,
+    "actual_revenue_million": 1816.0,
+    "actual_source_row": [
+      "Total net revenue",
+      "",
+      "1,816",
+      "",
+      "",
+      "994",
+      "",
+      "",
+      "7,679",
+      "",
+      "",
+      "6,784",
+      ""
+    ],
+    "actual_table_header": "TABLE A INTUIT INC. GAAP CONSOLIDATED STATEMENTS OF OPERATIONS (In millions, except per share amounts) (Unaudited) Three Months Ended Twelve Months Ended July 31, 2020 July 31, 201 TABLE A INTUIT INC. GAAP CONSOLIDATED STATEMENTS OF OPERATIONS (In millions, except per share amounts) (Unaudited) Three Months Ended Twelve Months Ended July 31, 2020 July 31, 2019 July 31, 2020 July 31, 2019 Net revenue: Product $ 294 $ 245 $ 1,635 $ 1,623 Service and other 1,522 749 6,044 5,161 Total net revenue 1,816 994 7,679 6,784 Costs and e",
+    "fiscal_year": null,
+    "next_quarter": null,
+    "annual_range_million": null,
+    "quarter_range_million": null,
+    "quarter_growth_percent": null,
+    "guidance_source": [],
+    "guidance_issue": "No standard forward-guidance section; retain actual only"
+  },
+  {
+    "symbol": "INTU",
+    "source": "https://investors.intuit.com/news-events/press-releases/detail/209/intuit-first-quarter-revenue-grew-14-percent-company-provides-guidance-for-fiscal-2021",
+    "source_file": "INTU/release_209.html",
+    "sha256": "11ce7612fba7ce209ef98462ee95ba59d6168048fa480c72bf12c5ac1a436eaf",
+    "title": "Intuit First Quarter Revenue Grew 14 Percent; Company Provides Guidance for Fiscal 2021",
+    "published": "2020-11-19 16:00:00-05:00",
+    "modified": null,
+    "available_after": "2020-11-19 16:00:00-05:00",
+    "publication_basis": "Issuer article visible time and separately listed archive time agree; no modification metadata available",
+    "kind": "quarterly",
+    "reported_quarter": 1,
+    "reported_fiscal_year": 2021,
+    "actual_revenue_million": 1323.0,
+    "actual_source_row": [
+      "Total net revenue",
+      "",
+      "1,323",
+      "",
+      "",
+      "1,165",
+      ""
+    ],
+    "actual_table_header": "TABLE A INTUIT INC. GAAP CONSOLIDATED STATEMENTS OF OPERATIONS (In millions, except per share amounts) (Unaudited) Three Months Ended October 31, 2020 October 31, 2019 Net revenue: TABLE A INTUIT INC. GAAP CONSOLIDATED STATEMENTS OF OPERATIONS (In millions, except per share amounts) (Unaudited) Three Months Ended October 31, 2020 October 31, 2019 Net revenue: Product $ 367 $ 353 Service and other 956 812 Total net revenue 1,323 1,165 Costs and expenses: Cost of revenue: Cost of product revenue 15 17 Cost of service and other ",
+    "fiscal_year": 2021,
+    "next_quarter": 2,
+    "annual_range_million": [
+      8265.0,
+      8415.0
+    ],
+    "quarter_range_million": [
+      1831.68,
+      1848.64
+    ],
+    "quarter_growth_percent": [
+      8.0,
+      9.0
+    ],
+    "guidance_source": [
+      "Revenue growth of approximately 8 to 9 percent.",
+      "Revenue of $8.265 billion to $8.415 billion, growth of approximately 8 to 10 percent."
+    ],
+    "quarter_guidance_year": 2021,
+    "quarter_range_basis": "proxy_from_rounded_approximate_growth_not_exact_dollar_forecast",
+    "quarter_forecast_verified_for_trading": false,
+    "quarter_conversion_basis": {
+      "source": "https://investors.intuit.com/news-events/press-releases/detail/236/intuit-second-quarter-revenue-increased-13-percent-small-business-online-ecosystem-revenue-grew-35-percent",
+      "published": "2020-02-24 16:01:00-05:00",
+      "revenue_million": 1696.0
+    }
+  },
+  {
+    "symbol": "INTU",
+    "source": "https://investors.intuit.com/news-events/press-releases/detail/186/intuit-reports-second-quarter-results-and-reiterates-full-year-guidance-small-business-online-ecosystem-revenue-grew-22-percent",
+    "source_file": "INTU/release_186.html",
+    "sha256": "bd8a0b8449b4316a9e2cec873acae688c7251f9bc012a6ddff100209994e7843",
+    "title": "Intuit Reports Second Quarter Results and Reiterates Full Year Guidance; Small Business Online Ecosystem Revenue Grew 22 Percent",
+    "published": "2021-02-23 16:00:00-05:00",
+    "modified": null,
+    "available_after": "2021-02-23 16:00:00-05:00",
+    "publication_basis": "Issuer article visible time and separately listed archive time agree; no modification metadata available",
+    "kind": "quarterly",
+    "reported_quarter": 2,
+    "reported_fiscal_year": 2021,
+    "actual_revenue_million": 1576.0,
+    "actual_source_row": [
+      "Total net revenue",
+      "1,576",
+      "",
+      "",
+      "",
+      "1,696",
+      "",
+      "",
+      "",
+      "2,899",
+      "",
+      "",
+      "",
+      "2,861",
+      "",
+      ""
+    ],
+    "actual_table_header": "TABLE A INTUIT INC. GAAP CONSOLIDATED STATEMENTS OF OPERATIONS (In millions, except per share amounts) (Unaudited) Three Months Ended Six Months Ended January 31, 2021 January 31,  TABLE A INTUIT INC. GAAP CONSOLIDATED STATEMENTS OF OPERATIONS (In millions, except per share amounts) (Unaudited) Three Months Ended Six Months Ended January 31, 2021 January 31, 2020 January 31, 2021 January 31, 2020 Net revenue: Product $ 495 $ 545 $ 862 $ 898 Service and other 1,081 1,151 2,037 1,963 Total net revenue 1,576 1,696 2,899 2,861 Co",
+    "fiscal_year": 2021,
+    "next_quarter": 3,
+    "annual_range_million": [
+      8810.0,
+      8995.0
+    ],
+    "quarter_range_million": [
+      4593.06,
+      4653.1
+    ],
+    "quarter_growth_percent": [
+      53.0,
+      55.0
+    ],
+    "guidance_source": [
+      "Revenue growth of approximately 53 to 55 percent.",
+      "Revenue of $8.810 billion to $8.995 billion, growth of approximately 15 to 17 percent."
+    ],
+    "quarter_guidance_year": 2021,
+    "quarter_range_basis": "proxy_from_rounded_approximate_growth_not_exact_dollar_forecast",
+    "quarter_forecast_verified_for_trading": false,
+    "quarter_conversion_basis": {
+      "source": "https://investors.intuit.com/news-events/press-releases/detail/226/intuit-third-quarter-revenue-declined-8-percent-small-business-online-ecosystem-revenue-grew-28-percent",
+      "published": "2020-05-21 16:00:00-04:00",
+      "revenue_million": 3002.0
+    }
+  },
+  {
+    "symbol": "INTU",
+    "source": "https://investors.intuit.com/news-events/press-releases/detail/173/intuit-reports-third-quarter-results-and-raises-full-year-guidance-grows-small-business-online-ecosystem-revenue-28-percent-in-third-quarter",
+    "source_file": "INTU/release_173.html",
+    "sha256": "c880777022a73a04b6a91e1961e747435dc97cca8e108a381d36c4ab6f6c1163",
+    "title": "Intuit Reports Third Quarter Results and Raises Full Year Guidance; Grows Small Business Online Ecosystem Revenue 28 Percent in Third Quarter",
+    "published": "2021-05-25 16:00:00-04:00",
+    "modified": null,
+    "available_after": "2021-05-25 16:00:00-04:00",
+    "publication_basis": "Issuer article visible time and separately listed archive time agree; no modification metadata available",
+    "kind": "quarterly",
+    "reported_quarter": 3,
+    "reported_fiscal_year": 2021,
+    "actual_revenue_million": 4173.0,
+    "actual_source_row": [
+      "Total net revenue",
+      "",
+      "4,173",
+      "",
+      "",
+      "3,002",
+      "",
+      "",
+      "7,072",
+      "",
+      "",
+      "5,863",
+      ""
+    ],
+    "actual_table_header": "TABLE A INTUIT INC. GAAP CONSOLIDATED STATEMENTS OF OPERATIONS (In millions, except per share amounts) (Unaudited) Three Months Ended Nine Months Ended April 30, 2021 April 30, 202 TABLE A INTUIT INC. GAAP CONSOLIDATED STATEMENTS OF OPERATIONS (In millions, except per share amounts) (Unaudited) Three Months Ended Nine Months Ended April 30, 2021 April 30, 2020 April 30, 2021 April 30, 2020 Net revenue: Product $ 533 $ 443 $ 1,395 $ 1,341 Service and other 3,640 2,559 5,677 4,522 Total net revenue 4,173 3,002 7,072 5,863 Costs",
+    "fiscal_year": 2021,
+    "next_quarter": 4,
+    "annual_range_million": [
+      9362.0,
+      9400.0
+    ],
+    "quarter_range_million": [
+      2288.16,
+      2324.48
+    ],
+    "quarter_growth_percent": [
+      26.0,
+      28.0
+    ],
+    "guidance_source": [
+      "Revenue growth of approximately 26 to 28 percent.",
+      "Revenue of $9.362 billion to $9.400 billion, growth of approximately 22 percent, up from previous guidance for growth of 15 to 17 percent."
+    ],
+    "quarter_guidance_year": 2021,
+    "quarter_range_basis": "proxy_from_rounded_approximate_growth_not_exact_dollar_forecast",
+    "quarter_forecast_verified_for_trading": false,
+    "quarter_conversion_basis": {
+      "source": "https://investors.intuit.com/news-events/press-releases/detail/221/intuit-full-year-revenue-up-13-percent",
+      "published": "2020-08-25 16:00:00-04:00",
+      "revenue_million": 1816.0
+    }
+  },
+  {
+    "symbol": "INTU",
+    "source": "https://investors.intuit.com/news-events/press-releases/detail/165/intuit-reports-strong-full-year-results-and-sets-fiscal-2022-guidance",
+    "source_file": "INTU/release_165.html",
+    "sha256": "cc6f7a2e136ba8ac6001dd69b8b6c04c5fadf6fd37997cd29c3da48bafb74d28",
+    "title": "Intuit Reports Strong Full Year Results and Sets Fiscal 2022 Guidance",
+    "published": "2021-08-24 16:00:00-04:00",
+    "modified": null,
+    "available_after": "2021-08-24 16:00:00-04:00",
+    "publication_basis": "Issuer article visible time and separately listed archive time agree; no modification metadata available",
+    "kind": "quarterly",
+    "reported_quarter": 4,
+    "reported_fiscal_year": 2021,
+    "actual_revenue_million": 2561.0,
+    "actual_source_row": [
+      "Total net revenue",
+      "2,561",
+      "",
+      "",
+      "1,816",
+      "",
+      "",
+      "9,633",
+      "",
+      "",
+      "7,679",
+      ""
+    ],
+    "actual_table_header": "TABLE A INTUIT INC. GAAP CONSOLIDATED STATEMENTS OF OPERATIONS (In millions, except per share amounts) (Unaudited) Three Months Ended Twelve Months Ended July 31, 2021 July 31, 202 TABLE A INTUIT INC. GAAP CONSOLIDATED STATEMENTS OF OPERATIONS (In millions, except per share amounts) (Unaudited) Three Months Ended Twelve Months Ended July 31, 2021 July 31, 2020 July 31, 2021 July 31, 2020 Net revenue: Product $ 303 $ 294 $ 1,698 $ 1,635 Service and other 2,258 1,522 7,935 6,044 Total net revenue 2,561 1,816 9,633 7,679 Costs a",
+    "fiscal_year": 2022,
+    "next_quarter": 1,
+    "annual_range_million": [
+      11050.0,
+      11200.0
+    ],
+    "quarter_range_million": [
+      1799.2799999999997,
+      1825.7399999999998
+    ],
+    "quarter_growth_percent": [
+      36.0,
+      38.0
+    ],
+    "guidance_source": [
+      "Revenue growth of approximately 36 to 38 percent, including Credit Karma.",
+      "Revenue of $11.050 billion to $11.200 billion, growth of approximately 15 to 16 percent, including a full year of Credit Karma."
+    ],
+    "quarter_guidance_year": 2022,
+    "quarter_range_basis": "proxy_from_rounded_approximate_growth_not_exact_dollar_forecast",
+    "quarter_forecast_verified_for_trading": false,
+    "quarter_conversion_basis": {
+      "source": "https://investors.intuit.com/news-events/press-releases/detail/209/intuit-first-quarter-revenue-grew-14-percent-company-provides-guidance-for-fiscal-2021",
+      "published": "2020-11-19 16:00:00-05:00",
+      "revenue_million": 1323.0
+    }
+  },
+  {
+    "symbol": "INTU",
+    "source": "https://investors.intuit.com/news-events/press-releases/detail/148/intuit-reports-strong-first-quarter-results-and-raises-full-year-revenue-guidance-reflecting-early-momentum-in-the-year-and-the-acquisition-of-mailchimp",
+    "source_file": "INTU/release_148.html",
+    "sha256": "a63df7e41c47e0ec01af9c7688abaef692b681499d0a1193d74ec50c9f503d4b",
+    "title": "Intuit Reports Strong First Quarter Results and Raises Full Year Revenue Guidance Reflecting Early Momentum in the Year and the Acquisition of Mailchimp",
+    "published": "2021-11-18 16:00:00-05:00",
+    "modified": null,
+    "available_after": "2021-11-18 16:00:00-05:00",
+    "publication_basis": "Issuer article visible time and separately listed archive time agree; no modification metadata available",
+    "kind": "quarterly",
+    "reported_quarter": 1,
+    "reported_fiscal_year": 2022,
+    "actual_revenue_million": 2007.0,
+    "actual_source_row": [
+      "Total net revenue",
+      "2,007",
+      "",
+      "",
+      "1,323",
+      ""
+    ],
+    "actual_table_header": "TABLE A INTUIT INC. GAAP CONSOLIDATED STATEMENTS OF OPERATIONS (In millions, except per share amounts) (Unaudited) Three Months Ended October 31, 2021 October 31, 2020 Net revenue: TABLE A INTUIT INC. GAAP CONSOLIDATED STATEMENTS OF OPERATIONS (In millions, except per share amounts) (Unaudited) Three Months Ended October 31, 2021 October 31, 2020 Net revenue: Product $ 397 $ 367 Service and other 1,610 956 Total net revenue 2,007 1,323 Costs and expenses: Cost of revenue: Cost of product revenue 15 15 Cost of service and othe",
+    "fiscal_year": 2022,
+    "next_quarter": 2,
+    "annual_range_million": [
+      12165.0,
+      12300.0
+    ],
+    "quarter_range_million": [
+      2726.48,
+      2742.24
+    ],
+    "quarter_growth_percent": [
+      73.0,
+      74.0
+    ],
+    "guidance_source": [
+      "Revenue of $12.165 billion to $12.300 billion, growth of approximately 26 to 28 percent, including Mailchimp as of Nov. 1 and a full year of Credit Karma.",
+      "Revenue growth of approximately 73 to 74 percent."
+    ],
+    "quarter_guidance_year": 2022,
+    "quarter_range_basis": "proxy_from_rounded_approximate_growth_not_exact_dollar_forecast",
+    "quarter_forecast_verified_for_trading": false,
+    "quarter_conversion_basis": {
+      "source": "https://investors.intuit.com/news-events/press-releases/detail/186/intuit-reports-second-quarter-results-and-reiterates-full-year-guidance-small-business-online-ecosystem-revenue-grew-22-percent",
+      "published": "2021-02-23 16:00:00-05:00",
+      "revenue_million": 1576.0
+    }
+  },
+  {
+    "symbol": "INTU",
+    "source": "https://investors.intuit.com/news-events/press-releases/detail/128/intuit-reports-second-quarter-results-and-reiterates-full-year-guidance-organic-online-ecosystem-revenue-grew-37-percent",
+    "source_file": "INTU/release_128.html",
+    "sha256": "393f2ffcd0915772f538f2fdabc601bd76c7adebc514932e0b64d1e7c512cb52",
+    "title": "Intuit Reports Second Quarter Results and Reiterates Full Year Guidance; Organic Online Ecosystem Revenue Grew 37 Percent",
+    "published": "2022-02-24 16:00:00-05:00",
+    "modified": null,
+    "available_after": "2022-02-24 16:00:00-05:00",
+    "publication_basis": "Issuer article visible time and separately listed archive time agree; no modification metadata available",
+    "kind": "quarterly",
+    "reported_quarter": 2,
+    "reported_fiscal_year": 2022,
+    "actual_revenue_million": 2673.0,
+    "actual_source_row": [
+      "Total net revenue",
+      "",
+      "",
+      "2,673",
+      "",
+      "",
+      "",
+      "1,576",
+      "",
+      "",
+      "",
+      "4,680",
+      "",
+      "",
+      "",
+      "2,899",
+      ""
+    ],
+    "actual_table_header": "TABLE A INTUIT INC. GAAP CONSOLIDATED STATEMENTS OF OPERATIONS (In millions, except per share amounts) (Unaudited) Three Months Ended Six Months Ended January 31, 2022 January 31,  TABLE A INTUIT INC. GAAP CONSOLIDATED STATEMENTS OF OPERATIONS (In millions, except per share amounts) (Unaudited) Three Months Ended Six Months Ended January 31, 2022 January 31, 2021 January 31, 2022 January 31, 2021 Net revenue: Product $ 525 $ 495 $ 922 $ 862 Service and other 2,148 1,081 3,758 2,037 Total net revenue 2,673 1,576 4,680 2,899 Co",
+    "fiscal_year": 2022,
+    "next_quarter": 3,
+    "annual_range_million": [
+      12165.0,
+      12300.0
+    ],
+    "quarter_range_million": [
+      5508.360000000001,
+      5550.09
+    ],
+    "quarter_growth_percent": [
+      32.0,
+      33.0
+    ],
+    "guidance_source": [
+      "Revenue of $12.165 billion to $12.300 billion, growth of approximately 26 to 28 percent, including Mailchimp as of November 1 and a full year of Credit Karma.",
+      "Revenue growth of approximately 32 to 33 percent."
+    ],
+    "quarter_guidance_year": 2022,
+    "quarter_range_basis": "proxy_from_rounded_approximate_growth_not_exact_dollar_forecast",
+    "quarter_forecast_verified_for_trading": false,
+    "quarter_conversion_basis": {
+      "source": "https://investors.intuit.com/news-events/press-releases/detail/173/intuit-reports-third-quarter-results-and-raises-full-year-guidance-grows-small-business-online-ecosystem-revenue-28-percent-in-third-quarter",
+      "published": "2021-05-25 16:00:00-04:00",
+      "revenue_million": 4173.0
+    }
+  },
+  {
+    "symbol": "INTU",
+    "source": "https://investors.intuit.com/news-events/press-releases/detail/119/intuit-reports-third-quarter-results-and-raises-full-year-revenue-and-operating-income-guidance",
+    "source_file": "INTU/release_119.html",
+    "sha256": "e734f243ee0a4b50e8101e820f2b364781a538f4eb2b11aa429ec76af60e121c",
+    "title": "Intuit Reports Third Quarter Results and Raises Full Year Revenue and Operating Income Guidance",
+    "published": "2022-05-24 16:00:00-04:00",
+    "modified": null,
+    "available_after": "2022-05-24 16:00:00-04:00",
+    "publication_basis": "Issuer article visible time and separately listed archive time agree; no modification metadata available",
+    "kind": "quarterly",
+    "reported_quarter": 3,
+    "reported_fiscal_year": 2022,
+    "actual_revenue_million": 5632.0,
+    "actual_source_row": [
+      "Total net revenue",
+      "",
+      "5,632",
+      "",
+      "",
+      "",
+      "4,173",
+      "",
+      "",
+      "",
+      "10,312",
+      "",
+      "",
+      "",
+      "7,072",
+      ""
+    ],
+    "actual_table_header": "TABLE A INTUIT INC. GAAP CONSOLIDATED STATEMENTS OF OPERATIONS (In millions, except per share amounts) (Unaudited) Three Months Ended Nine Months Ended April 30, 2022 April 30, 202 TABLE A INTUIT INC. GAAP CONSOLIDATED STATEMENTS OF OPERATIONS (In millions, except per share amounts) (Unaudited) Three Months Ended Nine Months Ended April 30, 2022 April 30, 2021 April 30, 2022 April 30, 2021 Net revenue: Product $ 554 $ 533 $ 1,476 $ 1,395 Service and other 5,078 3,640 8,836 5,677 Total net revenue 5,632 4,173 10,312 7,072 Cost",
+    "fiscal_year": 2022,
+    "next_quarter": 4,
+    "annual_range_million": [
+      12633.0,
+      12674.0
+    ],
+    "quarter_range_million": [
+      2330.51,
+      2356.12
+    ],
+    "quarter_growth_percent": [
+      -9.0,
+      -8.0
+    ],
+    "guidance_source": [
+      "Revenue of $12.633 billion to $12.674 billion, growth of approximately 31 to 32 percent, including Mailchimp as of November 1 and a full year of Credit Karma, up from previous guidance for growth of 26 to 28 percent.",
+      "Revenue to decline approximately 8 to 9 percent, reflecting the earlier tax filing deadline this year versus last year."
+    ],
+    "quarter_guidance_year": 2022,
+    "quarter_range_basis": "proxy_from_rounded_approximate_growth_not_exact_dollar_forecast",
+    "quarter_forecast_verified_for_trading": false,
+    "quarter_conversion_basis": {
+      "source": "https://investors.intuit.com/news-events/press-releases/detail/165/intuit-reports-strong-full-year-results-and-sets-fiscal-2022-guidance",
+      "published": "2021-08-24 16:00:00-04:00",
+      "revenue_million": 2561.0
+    }
+  },
+  {
+    "symbol": "INTU",
+    "source": "https://investors.intuit.com/news-events/press-releases/detail/113/intuit-reports-strong-full-year-results-and-sets-fiscal-2023-guidance",
+    "source_file": "INTU/release_113.html",
+    "sha256": "55ca91d1df37739a3c3e4da64431b7d6026ede2fb7d008b0b97509161e437414",
+    "title": "Intuit Reports Strong Full Year Results and Sets Fiscal 2023 Guidance",
+    "published": "2022-08-23 16:00:00-04:00",
+    "modified": null,
+    "available_after": "2022-08-23 16:00:00-04:00",
+    "publication_basis": "Issuer article visible time and separately listed archive time agree; no modification metadata available",
+    "kind": "quarterly",
+    "reported_quarter": 4,
+    "reported_fiscal_year": 2022,
+    "actual_revenue_million": 2414.0,
+    "actual_source_row": [
+      "Total net revenue",
+      "",
+      "",
+      "2,414",
+      "",
+      "",
+      "",
+      "2,561",
+      "",
+      "",
+      "",
+      "12,726",
+      "",
+      "",
+      "",
+      "9,633",
+      ""
+    ],
+    "actual_table_header": "TABLE A INTUIT INC. GAAP CONSOLIDATED STATEMENTS OF OPERATIONS (In millions, except per share amounts) (Unaudited) Three Months Ended Twelve Months Ended July 31, 2022 July 31, 202 TABLE A INTUIT INC. GAAP CONSOLIDATED STATEMENTS OF OPERATIONS (In millions, except per share amounts) (Unaudited) Three Months Ended Twelve Months Ended July 31, 2022 July 31, 2021 July 31, 2022 July 31, 2021 Net revenue: Product $ 271 $ 303 $ 1,747 $ 1,698 Service and other 2,143 2,258 10,979 7,935 Total net revenue 2,414 2,561 12,726 9,633 Costs",
+    "fiscal_year": 2023,
+    "next_quarter": 1,
+    "annual_range_million": [
+      14485.0,
+      14700.0
+    ],
+    "quarter_range_million": [
+      2468.61,
+      2508.75
+    ],
+    "quarter_growth_percent": [
+      23.0,
+      25.0
+    ],
+    "guidance_source": [
+      "Revenue of $14.485 billion to $14.700 billion, growth of approximately 14 to 16 percent.",
+      "Revenue growth of approximately 23 to 25 percent, including Mailchimp."
+    ],
+    "quarter_guidance_year": 2023,
+    "quarter_range_basis": "proxy_from_rounded_approximate_growth_not_exact_dollar_forecast",
+    "quarter_forecast_verified_for_trading": false,
+    "quarter_conversion_basis": {
+      "source": "https://investors.intuit.com/news-events/press-releases/detail/148/intuit-reports-strong-first-quarter-results-and-raises-full-year-revenue-guidance-reflecting-early-momentum-in-the-year-and-the-acquisition-of-mailchimp",
+      "published": "2021-11-18 16:00:00-05:00",
+      "revenue_million": 2007.0
+    }
+  },
+  {
+    "symbol": "INTU",
+    "source": "https://investors.intuit.com/news-events/press-releases/detail/94/intuit-reports-strong-first-quarter-results-and-reiterates-full-year-operating-income-and-earnings-per-share-guidance",
+    "source_file": "INTU/release_94.html",
+    "sha256": "ed0d0158f27963bacdf6ef445d9169a99b4aeb9e93f0a0b45a285b98c4395c1d",
+    "title": "Intuit Reports Strong First Quarter Results and Reiterates Full Year Operating Income and Earnings Per Share Guidance",
+    "published": "2022-11-29 16:00:00-05:00",
+    "modified": null,
+    "available_after": "2022-11-29 16:00:00-05:00",
+    "publication_basis": "Issuer article visible time and separately listed archive time agree; no modification metadata available",
+    "kind": "quarterly",
+    "reported_quarter": 1,
+    "reported_fiscal_year": 2023,
+    "actual_revenue_million": 2597.0,
+    "actual_source_row": [
+      "Total net revenue",
+      "",
+      "2,597",
+      "",
+      "",
+      "",
+      "2,007",
+      ""
+    ],
+    "actual_table_header": "TABLE A INTUIT INC. GAAP CONSOLIDATED STATEMENTS OF OPERATIONS (In millions, except per share amounts) (Unaudited) Three Months Ended October 31, 2022 October 31, 2021 Net revenue: TABLE A INTUIT INC. GAAP CONSOLIDATED STATEMENTS OF OPERATIONS (In millions, except per share amounts) (Unaudited) Three Months Ended October 31, 2022 October 31, 2021 Net revenue: Product $ 427 $ 397 Service and other 2,170 1,610 Total net revenue 2,597 2,007 Costs and expenses: Cost of revenue: Cost of product revenue 15 15 Cost of service and ot",
+    "fiscal_year": 2023,
+    "next_quarter": 2,
+    "annual_range_million": [
+      14035.0,
+      14250.0
+    ],
+    "quarter_range_million": [
+      2886.84,
+      2913.57
+    ],
+    "quarter_growth_percent": [
+      8.0,
+      9.0
+    ],
+    "guidance_source": [
+      "Revenue of $14.035 billion to $14.250 billion, growth of approximately 10 to 12 percent, down from previous guidance of growth of approximately 14 to 16 percent.",
+      "Revenue to grow approximately 8 to 9 percent."
+    ],
+    "quarter_guidance_year": 2023,
+    "quarter_range_basis": "proxy_from_rounded_approximate_growth_not_exact_dollar_forecast",
+    "quarter_forecast_verified_for_trading": false,
+    "quarter_conversion_basis": {
+      "source": "https://investors.intuit.com/news-events/press-releases/detail/128/intuit-reports-second-quarter-results-and-reiterates-full-year-guidance-organic-online-ecosystem-revenue-grew-37-percent",
+      "published": "2022-02-24 16:00:00-05:00",
+      "revenue_million": 2673.0
+    }
+  },
+  {
+    "symbol": "INTU",
+    "source": "https://investors.intuit.com/news-events/press-releases/detail/79/intuit-reports-strong-second-quarter-results-and-reiterates-full-year-guidance",
+    "source_file": "INTU/release_79.html",
+    "sha256": "26d423d23efb6005c98da9ac92e02dde115b7ddb1305a4a61b53f0d8e48674a7",
+    "title": "Intuit Reports Strong Second Quarter Results and Reiterates Full Year Guidance",
+    "published": "2023-02-23 16:00:00-05:00",
+    "modified": null,
+    "available_after": "2023-02-23 16:00:00-05:00",
+    "publication_basis": "Issuer article visible time and separately listed archive time agree; no modification metadata available",
+    "kind": "quarterly",
+    "reported_quarter": 2,
+    "reported_fiscal_year": 2023,
+    "actual_revenue_million": 3041.0,
+    "actual_source_row": [
+      "Total net revenue",
+      "",
+      "3,041",
+      "",
+      "",
+      "",
+      "2,673",
+      "",
+      "",
+      "",
+      "5,638",
+      "",
+      "",
+      "",
+      "4,680",
+      ""
+    ],
+    "actual_table_header": "TABLE A INTUIT INC. GAAP CONSOLIDATED STATEMENTS OF OPERATIONS (In millions, except per share amounts) (Unaudited) Three Months Ended Six Months Ended January 31, 2023 January 31,  TABLE A INTUIT INC. GAAP CONSOLIDATED STATEMENTS OF OPERATIONS (In millions, except per share amounts) (Unaudited) Three Months Ended Six Months Ended January 31, 2023 January 31, 2022 January 31, 2023 January 31, 2022 Net revenue: Product $ 607 $ 525 $ 1,034 $ 922 Service and other 2,434 2,148 4,604 3,758 Total net revenue 3,041 2,673 5,638 4,680 ",
+    "fiscal_year": 2023,
+    "next_quarter": 3,
+    "annual_range_million": [
+      14035.0,
+      14250.0
+    ],
+    "quarter_range_million": [
+      6082.56,
+      6138.88
+    ],
+    "quarter_growth_percent": [
+      8.0,
+      9.0
+    ],
+    "guidance_source": [
+      "Revenue of $14.035 billion to $14.250 billion, growth of approximately 10 to 12 percent.",
+      "Revenue to grow approximately 8 to 9 percent."
+    ],
+    "quarter_guidance_year": 2023,
+    "quarter_range_basis": "proxy_from_rounded_approximate_growth_not_exact_dollar_forecast",
+    "quarter_forecast_verified_for_trading": false,
+    "quarter_conversion_basis": {
+      "source": "https://investors.intuit.com/news-events/press-releases/detail/119/intuit-reports-third-quarter-results-and-raises-full-year-revenue-and-operating-income-guidance",
+      "published": "2022-05-24 16:00:00-04:00",
+      "revenue_million": 5632.0
+    }
+  },
+  {
+    "symbol": "INTU",
+    "source": "https://investors.intuit.com/news-events/press-releases/detail/64/intuit-reports-third-quarter-results-and-raises-total-company-full-year-guidance",
+    "source_file": "INTU/release_64.html",
+    "sha256": "624dc53f96055140ca685c9564ad6689bee7179953677f8f274aca6beec16914",
+    "title": "Intuit Reports Third Quarter Results and Raises Total Company Full Year Guidance",
+    "published": "2023-05-23 16:00:00-04:00",
+    "modified": null,
+    "available_after": "2023-05-23 16:00:00-04:00",
+    "publication_basis": "Issuer article visible time and separately listed archive time agree; no modification metadata available",
+    "kind": "quarterly",
+    "reported_quarter": 3,
+    "reported_fiscal_year": 2023,
+    "actual_revenue_million": 6018.0,
+    "actual_source_row": [
+      "Total net revenue",
+      "",
+      "",
+      "6,018",
+      "",
+      "",
+      "",
+      "5,632",
+      "",
+      "",
+      "",
+      "11,656",
+      "",
+      "",
+      "",
+      "10,312",
+      ""
+    ],
+    "actual_table_header": "TABLE A INTUIT INC. GAAP CONSOLIDATED STATEMENTS OF OPERATIONS (In millions, except per share amounts) (Unaudited) Three Months Ended Nine Months Ended April 30, 2023 April 30, 202 TABLE A INTUIT INC. GAAP CONSOLIDATED STATEMENTS OF OPERATIONS (In millions, except per share amounts) (Unaudited) Three Months Ended Nine Months Ended April 30, 2023 April 30, 2022 April 30, 2023 April 30, 2022 Net revenue: Product $ 583 $ 554 $ 1,617 $ 1,476 Service and other 5,435 5,078 10,039 8,836 Total net revenue 6,018 5,632 11,656 10,312 Co",
+    "fiscal_year": 2023,
+    "next_quarter": 4,
+    "annual_range_million": [
+      14279.0,
+      14317.0
+    ],
+    "quarter_range_million": [
+      2631.26,
+      2655.4
+    ],
+    "quarter_growth_percent": [
+      9.0,
+      10.0
+    ],
+    "guidance_source": [
+      "Revenue of $14.279 billion to $14.317 billion, growth of approximately 12 to 13 percent, up from previous guidance for growth of 10 to 12 percent.",
+      "Revenue to grow approximately 9 to 10 percent."
+    ],
+    "quarter_guidance_year": 2023,
+    "quarter_range_basis": "proxy_from_rounded_approximate_growth_not_exact_dollar_forecast",
+    "quarter_forecast_verified_for_trading": false,
+    "quarter_conversion_basis": {
+      "source": "https://investors.intuit.com/news-events/press-releases/detail/113/intuit-reports-strong-full-year-results-and-sets-fiscal-2023-guidance",
+      "published": "2022-08-23 16:00:00-04:00",
+      "revenue_million": 2414.0
+    }
+  },
+  {
+    "symbol": "INTU",
+    "source": "https://investors.intuit.com/news-events/press-releases/detail/47/intuit-reports-strong-fourth-quarter-and-full-year-results-sets-fiscal-2024-guidance",
+    "source_file": "INTU/release_47.html",
+    "sha256": "f4d0f6a0c21139beb051d79934097a7dd58ceae8138f985ac87c4acbdb0dab0e",
+    "title": "Intuit Reports Strong Fourth Quarter and Full Year Results; Sets Fiscal 2024 Guidance",
+    "published": "2023-08-24 16:00:00-04:00",
+    "modified": null,
+    "available_after": "2023-08-24 16:00:00-04:00",
+    "publication_basis": "Issuer article visible time and separately listed archive time agree; no modification metadata available",
+    "kind": "quarterly",
+    "reported_quarter": 4,
+    "reported_fiscal_year": 2023,
+    "actual_revenue_million": 2712.0,
+    "actual_source_row": [
+      "Total net revenue",
+      "",
+      "2,712",
+      "",
+      "",
+      "",
+      "2,414",
+      "",
+      "",
+      "",
+      "14,368",
+      "",
+      "",
+      "",
+      "12,726",
+      ""
+    ],
+    "actual_table_header": "TABLE A INTUIT INC. GAAP CONSOLIDATED STATEMENTS OF OPERATIONS (In millions, except per share amounts) (Unaudited) Three Months Ended Twelve Months Ended July 31, 2 023 July 31, 2  TABLE A INTUIT INC. GAAP CONSOLIDATED STATEMENTS OF OPERATIONS (In millions, except per share amounts) (Unaudited) Three Months Ended Twelve Months Ended July 31, 2 023 July 31, 2 022 July 31, 2 023 July 31, 2 022 Net revenue: Product $ 353 $ 271 $ 1,970 $ 1,747 Service and other 2,359 2,143 12,398 10,979 Total net revenue 2,712 2,414 14,368 12,726",
+    "fiscal_year": 2024,
+    "next_quarter": 1,
+    "annual_range_million": [
+      15890.0,
+      16105.0
+    ],
+    "quarter_range_million": [
+      2856.7000000000003,
+      2882.67
+    ],
+    "quarter_growth_percent": [
+      10.0,
+      11.0
+    ],
+    "guidance_source": [
+      "Revenue of $15.890 billion to $16.105 billion, growth of approximately 11 to 12 percent.",
+      "Revenue growth of approximately 10 to 11 percent."
+    ],
+    "quarter_guidance_year": 2024,
+    "quarter_range_basis": "proxy_from_rounded_approximate_growth_not_exact_dollar_forecast",
+    "quarter_forecast_verified_for_trading": false,
+    "quarter_conversion_basis": {
+      "source": "https://investors.intuit.com/news-events/press-releases/detail/94/intuit-reports-strong-first-quarter-results-and-reiterates-full-year-operating-income-and-earnings-per-share-guidance",
+      "published": "2022-11-29 16:00:00-05:00",
+      "revenue_million": 2597.0
+    }
+  },
+  {
+    "symbol": "INTU",
+    "source": "https://investors.intuit.com/news-events/press-releases/detail/20/intuit-reports-strong-first-quarter-results-and-reiterates-full-year-guidance",
+    "source_file": "INTU/release_20.html",
+    "sha256": "4a0dc30895d244b8dd95be9aacb574ccec6c9a6eb994422662687d7a01899e78",
+    "title": "Intuit Reports Strong First Quarter Results and Reiterates Full Year Guidance",
+    "published": "2023-11-28 16:00:00-05:00",
+    "modified": null,
+    "available_after": "2023-11-28 16:00:00-05:00",
+    "publication_basis": "Issuer article visible time and separately listed archive time agree; no modification metadata available",
+    "kind": "quarterly",
+    "reported_quarter": 1,
+    "reported_fiscal_year": 2024,
+    "actual_revenue_million": 2978.0,
+    "actual_source_row": [
+      "Total net revenue",
+      "",
+      "2,978",
+      "",
+      "",
+      "",
+      "2,597",
+      ""
+    ],
+    "actual_table_header": "TABLE A INTUIT INC. GAAP CONSOLIDATED STATEMENTS OF OPERATIONS (In millions, except per share amounts) (Unaudited) Three Months Ended October 31, 2023 October 31, 2022 Net revenue: TABLE A INTUIT INC. GAAP CONSOLIDATED STATEMENTS OF OPERATIONS (In millions, except per share amounts) (Unaudited) Three Months Ended October 31, 2023 October 31, 2022 Net revenue: Service $ 2,450 $ 2,155 Product and other 528 442 Total net revenue 2,978 2,597 Costs and expenses: Cost of revenue: Cost of service revenue 707 620 Cost of product and ",
+    "fiscal_year": 2024,
+    "next_quarter": 2,
+    "annual_range_million": [
+      15890.0,
+      16105.0
+    ],
+    "quarter_range_million": [
+      3375.51,
+      3405.9200000000005
+    ],
+    "quarter_growth_percent": [
+      11.0,
+      12.0
+    ],
+    "guidance_source": [
+      "Revenue of $15.890 billion to $16.105 billion, growth of approximately 11 to 12 percent.",
+      "Revenue to grow approximately 11 to 12 percent."
+    ],
+    "quarter_guidance_year": 2024,
+    "quarter_range_basis": "proxy_from_rounded_approximate_growth_not_exact_dollar_forecast",
+    "quarter_forecast_verified_for_trading": false,
+    "quarter_conversion_basis": {
+      "source": "https://investors.intuit.com/news-events/press-releases/detail/79/intuit-reports-strong-second-quarter-results-and-reiterates-full-year-guidance",
+      "published": "2023-02-23 16:00:00-05:00",
+      "revenue_million": 3041.0
+    }
+  },
+  {
+    "symbol": "INTU",
+    "source": "https://investors.intuit.com/news-events/press-releases/detail/11/intuit-reports-strong-second-quarter-results-and-reiterates-full-year-guidance",
+    "source_file": "INTU/release_11.html",
+    "sha256": "f4696f15fe28ff9aae11a51b09461b16635e697b83e6ab80c697d1dc53fbfa11",
+    "title": "Intuit Reports Strong Second Quarter Results and Reiterates Full Year Guidance",
+    "published": "2024-02-22 16:00:00-05:00",
+    "modified": null,
+    "available_after": "2024-02-22 16:00:00-05:00",
+    "publication_basis": "Issuer article visible time and separately listed archive time agree; no modification metadata available",
+    "kind": "quarterly",
+    "reported_quarter": 2,
+    "reported_fiscal_year": 2024,
+    "actual_revenue_million": 3386.0,
+    "actual_source_row": [
+      "Total net revenue",
+      "",
+      "3,386",
+      "",
+      "",
+      "",
+      "3,041",
+      "",
+      "",
+      "",
+      "6,364",
+      "",
+      "",
+      "",
+      "5,638",
+      ""
+    ],
+    "actual_table_header": "TABLE A INTUIT INC. GAAP CONSOLIDATED STATEMENTS OF OPERATIONS (In millions, except per share amounts) (Unaudited) Three Months Ended Six Months Ended January 31, 2 024 January 31, TABLE A INTUIT INC. GAAP CONSOLIDATED STATEMENTS OF OPERATIONS (In millions, except per share amounts) (Unaudited) Three Months Ended Six Months Ended January 31, 2 024 January 31, 2 023 January 31, 2 024 January 31, 2 023 Net revenue: Service $ 2,693 $ 2,418 $ 5,143 $ 4,573 Product and other 693 623 1,221 1,065 Total net revenue 3,386 3,041 6,364 ",
+    "fiscal_year": 2024,
+    "next_quarter": 3,
+    "annual_range_million": [
+      15890.0,
+      16105.0
+    ],
+    "quarter_range_million": [
+      6619.8,
+      6679.9800000000005
+    ],
+    "quarter_growth_percent": [
+      10.0,
+      11.0
+    ],
+    "guidance_source": [
+      "Revenue of $15.890 billion to $16.105 billion, growth of approximately 11 to 12 percent.",
+      "Revenue to grow approximately 10 to 11 percent."
+    ],
+    "quarter_guidance_year": 2024,
+    "quarter_range_basis": "proxy_from_rounded_approximate_growth_not_exact_dollar_forecast",
+    "quarter_forecast_verified_for_trading": false,
+    "quarter_conversion_basis": {
+      "source": "https://investors.intuit.com/news-events/press-releases/detail/64/intuit-reports-third-quarter-results-and-raises-total-company-full-year-guidance",
+      "published": "2023-05-23 16:00:00-04:00",
+      "revenue_million": 6018.0
+    }
+  },
+  {
+    "symbol": "INTU",
+    "source": "https://investors.intuit.com/news-events/press-releases/detail/1188/intuit-reports-strong-third-quarter-results-and-raises-full-year-guidance",
+    "source_file": "INTU/release_1188.html",
+    "sha256": "0cfaec0593731062a92e78fdb82841c6e9234880cfd189a4cabe9fffeac9a2c8",
+    "title": "Intuit Reports Strong Third Quarter Results and Raises Full Year Guidance",
+    "published": "2024-05-23 16:00:00-04:00",
+    "modified": null,
+    "available_after": "2024-05-23 16:00:00-04:00",
+    "publication_basis": "Issuer article visible time and separately listed archive time agree; no modification metadata available",
+    "kind": "quarterly",
+    "reported_quarter": 3,
+    "reported_fiscal_year": 2024,
+    "actual_revenue_million": 6737.0,
+    "actual_source_row": [
+      "Total net revenue",
+      "",
+      "6,737",
+      "",
+      "",
+      "",
+      "6,018",
+      "",
+      "",
+      "",
+      "13,101",
+      "",
+      "",
+      "",
+      "11,656",
+      ""
+    ],
+    "actual_table_header": "TABLE A INTUIT INC. GAAP CONSOLIDATED STATEMENTS OF OPERATIONS (In millions, except per share amounts) (Unaudited) Three Months Ended Nine Months Ended April 30, 2024 April 30, 202 TABLE A INTUIT INC. GAAP CONSOLIDATED STATEMENTS OF OPERATIONS (In millions, except per share amounts) (Unaudited) Three Months Ended Nine Months Ended April 30, 2024 April 30, 2023 April 30, 2024 April 30, 2023 Net revenue: Service $ 6,048 $ 5,404 $ 11,191 $ 9,977 Product and other 689 614 1,910 1,679 Total net revenue 6,737 6,018 13,101 11,656 Co",
+    "fiscal_year": 2024,
+    "next_quarter": 4,
+    "annual_range_million": [
+      16164.000000000002,
+      16200.0
+    ],
+    "quarter_range_million": [
+      3063.0,
+      3099.0
+    ],
+    "quarter_growth_percent": null,
+    "guidance_source": [
+      "Revenue of $16.164 billion to $16.200 billion, growth of approximately 13 percent, up from previous guidance for growth of 11 to 12 percent.",
+      "Revenue of $3.063 billion to $3.099 billion, growth of approximately 13 to 14 percent."
+    ],
+    "quarter_guidance_year": 2024,
+    "quarter_range_basis": "explicit_original_dollar_range",
+    "quarter_forecast_verified_for_trading": true
+  },
+  {
+    "symbol": "INTU",
+    "source": "https://investors.intuit.com/news-events/press-releases/detail/1202/intuit-reports-strong-fourth-quarter-and-full-year-results-sets-fiscal-2025-guidance-with-double-digit-revenue-and-earnings-growth",
+    "source_file": "INTU/release_1202.html",
+    "sha256": "f719dbc0fb281a70721df35254edf7c4c80d4aa70493e36dd53c7f0b942808c1",
+    "title": "Intuit Reports Strong Fourth Quarter and Full Year Results; Sets Fiscal 2025 Guidance With Double Digit Revenue and Earnings Growth",
+    "published": "2024-08-22 16:00:00-04:00",
+    "modified": null,
+    "available_after": "2024-08-22 16:00:00-04:00",
+    "publication_basis": "Issuer article visible time and separately listed archive time agree; no modification metadata available",
+    "kind": "quarterly",
+    "reported_quarter": 4,
+    "reported_fiscal_year": 2024,
+    "actual_revenue_million": 3184.0,
+    "actual_source_row": [
+      "Total net revenue",
+      "",
+      "3,184",
+      "",
+      "",
+      "",
+      "2,712",
+      "",
+      "",
+      "",
+      "16,285",
+      "",
+      "",
+      "",
+      "14,368",
+      ""
+    ],
+    "actual_table_header": "TABLE A INTUIT INC. GAAP CONSOLIDATED STATEMENTS OF OPERATIONS (In millions, except per share amounts) (Unaudited) Three Months Ended Twelve Months Ended July 31, 2 024 July 31, 2  TABLE A INTUIT INC. GAAP CONSOLIDATED STATEMENTS OF OPERATIONS (In millions, except per share amounts) (Unaudited) Three Months Ended Twelve Months Ended July 31, 2 024 July 31, 2 023 July 31, 2 024 July 31, 2 023 Net revenue: Service $ 2,670 $ 2,340 $ 13,861 $ 12,317 Product and other 514 372 2,424 2,051 Total net revenue 3,184 2,712 16,285 14,368",
+    "fiscal_year": 2025,
+    "next_quarter": 1,
+    "annual_range_million": [
+      18160.0,
+      18347.0
+    ],
+    "quarter_range_million": [
+      3126.9,
+      3156.6800000000003
+    ],
+    "quarter_growth_percent": [
+      5.0,
+      6.0
+    ],
+    "guidance_source": [
+      "Revenue of $18.160 billion to $18.347 billion, growth of approximately 12 to 13 percent.",
+      "Revenue growth of approximately 5 to 6 percent, including: Small Business and Self-Employed Group revenue growth of 6 to 7 percent. The company expects online ecosystem revenue growth, the company's growth catalyst, to accelerate to approximately 19 percent in the first quarter of fiscal 2025. The company expects desktop ecosystem revenue to decline approximately 20 percent in the first quarter of fiscal 2025, but return to growth in the second quarter. The first quarter desktop growth outlook reflects changes the company made to its QuickBooks desktop offerings in early fiscal 2024 to complete the transition to a recurring subscription model, including more frequent product updates. The company expects these changes to lower revenue in the first quarter of fiscal 2025 by approximately $160 million. This includes approximately $50 million that was recognized in the first three quarters of fiscal 2024, approximately $60 million recognized in the fourth quarter of fiscal 2024, and approximately $50 million that the company expects to shift from the first quarter of fiscal 2025 to later quarters in fiscal 2025. Credit Karma revenue to grow in the first quarter. Consumer Group and ProTax revenue to decline in the first quarter, as the company laps the period a year ago that included the extended California tax filing deadline."
+    ],
+    "quarter_guidance_year": 2025,
+    "quarter_range_basis": "proxy_from_rounded_approximate_growth_not_exact_dollar_forecast",
+    "quarter_forecast_verified_for_trading": false,
+    "quarter_conversion_basis": {
+      "source": "https://investors.intuit.com/news-events/press-releases/detail/20/intuit-reports-strong-first-quarter-results-and-reiterates-full-year-guidance",
+      "published": "2023-11-28 16:00:00-05:00",
+      "revenue_million": 2978.0
+    }
+  },
+  {
+    "symbol": "INTU",
+    "source": "https://investors.intuit.com/news-events/press-releases/detail/1223/intuit-reports-strong-first-quarter-results-and-reiterates-full-year-guidance",
+    "source_file": "INTU/release_1223.html",
+    "sha256": "ef2ed9400a76b81bb5090fba203c74b4e09edf61f05298efbf3ce4ebc1f7b801",
+    "title": "Intuit Reports Strong First Quarter Results and Reiterates Full Year Guidance",
+    "published": "2024-11-21 16:00:00-05:00",
+    "modified": null,
+    "available_after": "2024-11-21 16:00:00-05:00",
+    "publication_basis": "Issuer article visible time and separately listed archive time agree; no modification metadata available",
+    "kind": "quarterly",
+    "reported_quarter": 1,
+    "reported_fiscal_year": 2025,
+    "actual_revenue_million": 3283.0,
+    "actual_source_row": [
+      "Total net revenue",
+      "",
+      "",
+      "3,283",
+      "",
+      "",
+      "",
+      "2,978",
+      ""
+    ],
+    "actual_table_header": "TABLE A INTUIT INC. GAAP CONSOLIDATED STATEMENTS OF OPERATIONS (In millions, except per share amounts) (Unaudited) Three Months Ended October 31, 2024 October 31, 2023 Net revenue: TABLE A INTUIT INC. GAAP CONSOLIDATED STATEMENTS OF OPERATIONS (In millions, except per share amounts) (Unaudited) Three Months Ended October 31, 2024 October 31, 2023 Net revenue: Service $ 2,889 $ 2,450 Product and other 394 528 Total net revenue 3,283 2,978 Costs and expenses: Cost of revenue: Cost of service revenue 772 707 Cost of product and ",
+    "fiscal_year": 2025,
+    "next_quarter": 2,
+    "annual_range_million": [
+      18160.0,
+      18347.0
+    ],
+    "quarter_range_million": [
+      3812.0,
+      3845.0
+    ],
+    "quarter_growth_percent": null,
+    "guidance_source": [
+      "Revenue of $18.160 billion to $18.347 billion, growth of approximately 12 to 13 percent.",
+      "Revenue of $3.812 billion to $3.845 billion, growth of approximately 13 to 14 percent. The company expects a single digit decline in Consumer Group revenue due to some promotional changes in retail channels largely related to its desktop offering. This only impacts revenue timing and does not impact overall unit or revenue expectations for fiscal year 2025. The company expects Global Business Solutions Group Desktop Ecosystem revenue to return to growth in the second quarter."
+    ],
+    "quarter_guidance_year": 2025,
+    "quarter_range_basis": "explicit_original_dollar_range",
+    "quarter_forecast_verified_for_trading": true
+  },
+  {
+    "symbol": "INTU",
+    "source": "https://investors.intuit.com/news-events/press-releases/detail/1239/intuit-reports-strong-second-quarter-results-and-reiterates-full-year-guidance",
+    "source_file": "INTU/release_1239.html",
+    "sha256": "21e1734911900b2c7b2e3ef8480f79332157dbdfead1fff910a465fba2f4a8f0",
+    "title": "Intuit Reports Strong Second Quarter Results and Reiterates Full Year Guidance",
+    "published": "2025-02-25 16:00:00-05:00",
+    "modified": null,
+    "available_after": "2025-02-25 16:00:00-05:00",
+    "publication_basis": "Issuer article visible time and separately listed archive time agree; no modification metadata available",
+    "kind": "quarterly",
+    "reported_quarter": 2,
+    "reported_fiscal_year": 2025,
+    "actual_revenue_million": 3963.0,
+    "actual_source_row": [
+      "Total net revenue",
+      "",
+      "3,963",
+      "",
+      "",
+      "",
+      "3,386",
+      "",
+      "",
+      "",
+      "7,246",
+      "",
+      "",
+      "",
+      "6,364",
+      ""
+    ],
+    "actual_table_header": "TABLE A INTUIT INC. GAAP CONSOLIDATED STATEMENTS OF OPERATIONS (In millions, except per share amounts) (Unaudited) Three Months Ended Six Months Ended January 31, 2 025 January 31, TABLE A INTUIT INC. GAAP CONSOLIDATED STATEMENTS OF OPERATIONS (In millions, except per share amounts) (Unaudited) Three Months Ended Six Months Ended January 31, 2 025 January 31, 2 024 January 31, 2 025 January 31, 2 024 Net revenue: Service $ 3,249 $ 2,693 $ 6,138 $ 5,143 Product and other 714 693 1,108 1,221 Total net revenue 3,963 3,386 7,246 ",
+    "fiscal_year": 2025,
+    "next_quarter": 3,
+    "annual_range_million": [
+      18160.0,
+      18347.0
+    ],
+    "quarter_range_million": [
+      7550.0,
+      7600.0
+    ],
+    "quarter_growth_percent": null,
+    "guidance_source": [
+      "Revenue of $18.160 billion to $18.347 billion, growth of approximately 12 to 13 percent.",
+      "Revenue of $7.550 billion to $7.600 billion, growth of approximately 12 to 13 percent."
+    ],
+    "quarter_guidance_year": 2025,
+    "quarter_range_basis": "explicit_original_dollar_range",
+    "quarter_forecast_verified_for_trading": true
+  },
+  {
+    "symbol": "INTU",
+    "source": "https://investors.intuit.com/news-events/press-releases/detail/1251/intuit-reports-strong-third-quarter-results-and-raises-full-year-guidance",
+    "source_file": "INTU/release_1251.html",
+    "sha256": "007583b140c93277cf873ea75fbca85e498e1bc946d7800941120f4f1c847233",
+    "title": "Intuit Reports Strong Third-Quarter Results and Raises Full-Year Guidance",
+    "published": "2025-05-22 16:00:00-04:00",
+    "modified": null,
+    "available_after": "2025-05-22 16:00:00-04:00",
+    "publication_basis": "Issuer article visible time and separately listed archive time agree; no modification metadata available",
+    "kind": "quarterly",
+    "reported_quarter": 3,
+    "reported_fiscal_year": 2025,
+    "actual_revenue_million": 7754.0,
+    "actual_source_row": [
+      "Total net revenue",
+      "",
+      "",
+      "7,754",
+      "",
+      "",
+      "",
+      "6,737",
+      "",
+      "",
+      "",
+      "15,000",
+      "",
+      "",
+      "",
+      "13,101",
+      ""
+    ],
+    "actual_table_header": "TABLE A INTUIT INC. GAAP CONSOLIDATED STATEMENTS OF OPERATIONS (In millions, except per share amounts) (Unaudited) Three Months Ended Nine Months Ended April 30, 2 025 April 30, 2  TABLE A INTUIT INC. GAAP CONSOLIDATED STATEMENTS OF OPERATIONS (In millions, except per share amounts) (Unaudited) Three Months Ended Nine Months Ended April 30, 2 025 April 30, 2 024 April 30, 2 025 April 30, 2 024 Net revenue: Service $ 6,971 $ 6,048 $ 13,109 $ 11,191 Product and other 783 689 1,891 1,910 Total net revenue 7,754 6,737 15,000 13,1",
+    "fiscal_year": 2025,
+    "next_quarter": 4,
+    "annual_range_million": [
+      18723.0,
+      18760.0
+    ],
+    "quarter_range_million": [
+      3723.0,
+      3760.0
+    ],
+    "quarter_growth_percent": null,
+    "guidance_source": [
+      "Revenue of $18.723 billion to $18.760 billion, growth of approximately 15 percent, up from previous guidance for growth of approximately 12 to 13 percent.",
+      "Revenue of $3.723 billion to $3.760 billion, growth of approximately 17 to 18 percent. This includes Global Business Solutions Group Online Ecosystem revenue growth of approximately 21 percent."
+    ],
+    "quarter_guidance_year": 2025,
+    "quarter_range_basis": "explicit_original_dollar_range",
+    "quarter_forecast_verified_for_trading": true
+  },
+  {
+    "symbol": "INTU",
+    "source": "https://investors.intuit.com/news-events/press-releases/detail/1266/intuit-reports-strong-fourth-quarter-and-full-year-fiscal-2025-results-sets-fiscal-2026-guidance-with-double-digit-revenue-growth-and-continued-operating-margin-expansion",
+    "source_file": "INTU/release_1266.html",
+    "sha256": "1cddd7b5e4eaabaa6c50010521068a7b4b48ddd0b003be09cc81fb4d08b5dbd6",
+    "title": "Intuit Reports Strong Fourth Quarter and Full Year Fiscal 2025 Results; Sets Fiscal 2026 Guidance With Double Digit Revenue Growth and Continued Operating Margin Expansion",
+    "published": "2025-08-21 16:00:00-04:00",
+    "modified": null,
+    "available_after": "2025-08-21 16:00:00-04:00",
+    "publication_basis": "Issuer article visible time and separately listed archive time agree; no modification metadata available",
+    "kind": "quarterly",
+    "reported_quarter": 4,
+    "reported_fiscal_year": 2025,
+    "actual_revenue_million": 3831.0,
+    "actual_source_row": [
+      "Total net revenue",
+      "",
+      "3,831",
+      "",
+      "",
+      "",
+      "3,184",
+      "",
+      "",
+      "",
+      "18,831",
+      "",
+      "",
+      "",
+      "16,285",
+      ""
+    ],
+    "actual_table_header": "TABLE A INTUIT INC. GAAP CONSOLIDATED STATEMENTS OF OPERATIONS (In millions, except per share amounts) (Unaudited) Three Months Ended Twelve Months Ended July 31, 2025 July 31, 202 TABLE A INTUIT INC. GAAP CONSOLIDATED STATEMENTS OF OPERATIONS (In millions, except per share amounts) (Unaudited) Three Months Ended Twelve Months Ended July 31, 2025 July 31, 2024 July 31, 2025 July 31, 2024 Net revenue: Service $ 3,291 $ 2,670 $ 16,400 $ 13,861 Product and other 540 514 2,431 2,424 Total net revenue 3,831 3,184 18,831 16,285 Cos",
+    "fiscal_year": 2026,
+    "next_quarter": 1,
+    "annual_range_million": [
+      20997.0,
+      21186.0
+    ],
+    "quarter_range_million": [
+      3742.6200000000003,
+      3775.45
+    ],
+    "quarter_growth_percent": [
+      14.0,
+      15.0
+    ],
+    "guidance_source": [
+      "Revenue of $20.997 billion to $21.186 billion, growth of approximately 12 to 13 percent.",
+      "Revenue growth of approximately 14 to 15 percent."
+    ],
+    "quarter_guidance_year": 2026,
+    "quarter_range_basis": "proxy_from_rounded_approximate_growth_not_exact_dollar_forecast",
+    "quarter_forecast_verified_for_trading": false,
+    "quarter_conversion_basis": {
+      "source": "https://investors.intuit.com/news-events/press-releases/detail/1223/intuit-reports-strong-first-quarter-results-and-reiterates-full-year-guidance",
+      "published": "2024-11-21 16:00:00-05:00",
+      "revenue_million": 3283.0
+    }
+  },
+  {
+    "symbol": "INTU",
+    "source": "https://investors.intuit.com/news-events/press-releases/detail/1286/intuit-reports-strong-first-quarter-results-and-reiterates-full-year-guidance",
+    "source_file": "INTU/release_1286.html",
+    "sha256": "e5cb41b871e096a9f42dc8f2cbcb6c6cbc6c78032262db4870d446a2eb7448fc",
+    "title": "Intuit Reports Strong First-Quarter Results and Reiterates Full-Year Guidance",
+    "published": "2025-11-20 16:00:00-05:00",
+    "modified": null,
+    "available_after": "2025-11-20 16:00:00-05:00",
+    "publication_basis": "Issuer article visible time and separately listed archive time agree; no modification metadata available",
+    "kind": "quarterly",
+    "reported_quarter": 1,
+    "reported_fiscal_year": 2026,
+    "actual_revenue_million": 3885.0,
+    "actual_source_row": [
+      "Total net revenue",
+      "",
+      "3,885",
+      "",
+      "",
+      "",
+      "3,283",
+      ""
+    ],
+    "actual_table_header": "TABLE A INTUIT INC. GAAP CONSOLIDATED STATEMENTS OF OPERATIONS (In millions, except per share amounts) (Unaudited) Three Months Ended October 31, 2025 October 31, 2024 Net revenue: Service $ 3,497 $ 2,889 Product and other 388 394 Total net revenue 3,885 3,283 Costs and expenses: Cost of revenue: Cost of service revenue 824 772 Cost of product and other revenue 15 14 Amortization of acquired technology 44 37 Selling and marketing 1,082 962 Research and developm",
+    "fiscal_year": 2026,
+    "next_quarter": 2,
+    "annual_range_million": [
+      20997.0,
+      21186.0
+    ],
+    "quarter_range_million": [
+      4517.820000000001,
+      4557.45
+    ],
+    "quarter_growth_percent": [
+      14.0,
+      15.0
+    ],
+    "guidance_source": [
+      "Revenue of $20.997 billion to $21.186 billion, growth of approximately 12 to 13 percent.",
+      "Revenue growth of approximately 14 to 15 percent."
+    ],
+    "quarter_guidance_year": 2026,
+    "quarter_range_basis": "proxy_from_rounded_approximate_growth_not_exact_dollar_forecast",
+    "quarter_forecast_verified_for_trading": false,
+    "quarter_conversion_basis": {
+      "source": "https://investors.intuit.com/news-events/press-releases/detail/1239/intuit-reports-strong-second-quarter-results-and-reiterates-full-year-guidance",
+      "published": "2025-02-25 16:00:00-05:00",
+      "revenue_million": 3963.0
+    }
+  },
+  {
+    "symbol": "INTU",
+    "source": "https://investors.intuit.com/news-events/press-releases/detail/1307/intuit-reports-strong-second-quarter-results-and-reiterates-full-year-guidance",
+    "source_file": "INTU/release_1307.html",
+    "sha256": "cd6a1197eea70413a6a215951fcfdc033dc330b0a482e571c034c869e56435cd",
+    "title": "Intuit Reports Strong Second-Quarter Results and Reiterates Full-Year Guidance",
+    "published": "2026-02-26 16:00:00-05:00",
+    "modified": null,
+    "available_after": "2026-02-26 16:00:00-05:00",
+    "publication_basis": "Issuer article visible time and separately listed archive time agree; no modification metadata available",
+    "kind": "quarterly",
+    "reported_quarter": 2,
+    "reported_fiscal_year": 2026,
+    "actual_revenue_million": 4651.0,
+    "actual_source_row": [
+      "Total net revenue",
+      "",
+      "",
+      "4,651",
+      "",
+      "",
+      "",
+      "3,963",
+      "",
+      "",
+      "",
+      "8,536",
+      "",
+      "",
+      "",
+      "7,246",
+      ""
+    ],
+    "actual_table_header": "TABLE A INTUIT INC. GAAP CONSOLIDATED STATEMENTS OF OPERATIONS (In millions, except per share amounts) (Unaudited) Three Months Ended Six Months Ended January 31, 2026 January 31,  TABLE A INTUIT INC. GAAP CONSOLIDATED STATEMENTS OF OPERATIONS (In millions, except per share amounts) (Unaudited) Three Months Ended Six Months Ended January 31, 2026 January 31, 2025 January 31, 2026 January 31, 2025 Net revenue: Service $ 3,872 $ 3,249 $ 7,369 $ 6,138 Product and other 779 714 1,167 1,108 Total net revenue 4,651 3,963 8,536 7,24",
+    "fiscal_year": 2026,
+    "next_quarter": 3,
+    "annual_range_million": [
+      20997.0,
+      21186.0
+    ],
+    "quarter_range_million": [
+      8529.400000000001,
+      8529.400000000001
+    ],
+    "quarter_growth_percent": [
+      10.0,
+      10.0
+    ],
+    "guidance_source": [
+      "Revenue of $20.997 billion to $21.186 billion, growth of approximately 12 to 13 percent.",
+      "Revenue growth of approximately 10 percent."
+    ],
+    "quarter_guidance_year": 2026,
+    "quarter_range_basis": "proxy_from_rounded_approximate_growth_not_exact_dollar_forecast",
+    "quarter_forecast_verified_for_trading": false,
+    "quarter_conversion_basis": {
+      "source": "https://investors.intuit.com/news-events/press-releases/detail/1251/intuit-reports-strong-third-quarter-results-and-raises-full-year-guidance",
+      "published": "2025-05-22 16:00:00-04:00",
+      "revenue_million": 7754.0
+    }
+  },
+  {
+    "symbol": "INTU",
+    "source": "https://investors.intuit.com/news-events/press-releases/detail/1312/intuit-reports-strong-third-quarter-results-and-raises-full-year-revenue-guidance",
+    "source_file": "INTU/release_1312.html",
+    "sha256": "6e12e28c0b291857a7a100de976954415afd2adae4e75a33be64e0fe5bb17238",
+    "title": "Intuit Reports Strong Third-Quarter Results and Raises Full-Year Revenue Guidance",
+    "published": "2026-05-20 16:00:00-04:00",
+    "modified": null,
+    "available_after": "2026-05-20 16:00:00-04:00",
+    "publication_basis": "Issuer article visible time and separately listed archive time agree; no modification metadata available",
+    "kind": "quarterly",
+    "reported_quarter": 3,
+    "reported_fiscal_year": 2026,
+    "actual_revenue_million": 8558.0,
+    "actual_source_row": [
+      "Total net revenue",
+      "",
+      "8,558",
+      "",
+      "",
+      "",
+      "7,754",
+      "",
+      "",
+      "",
+      "17,094",
+      "",
+      "",
+      "",
+      "15,000",
+      ""
+    ],
+    "actual_table_header": "TABLE A INTUIT INC. GAAP CONSOLIDATED STATEMENTS OF OPERATIONS (In millions, except per share amounts) (Unaudited) Three Months Ended Nine Months Ended April 30, 2026 April 30, 202 TABLE A INTUIT INC. GAAP CONSOLIDATED STATEMENTS OF OPERATIONS (In millions, except per share amounts) (Unaudited) Three Months Ended Nine Months Ended April 30, 2026 April 30, 2025 April 30, 2026 April 30, 2025 Net revenue: Service $ 7,759 $ 6,971 $ 15,128 $ 13,109 Product and other 799 783 1,966 1,891 Total net revenue 8,558 7,754 17,094 15,000 C",
+    "fiscal_year": 2026,
+    "next_quarter": 4,
+    "annual_range_million": [
+      21341.0,
+      21374.0
+    ],
+    "quarter_range_million": [
+      4252.410000000001,
+      4290.72
+    ],
+    "quarter_growth_percent": [
+      11.0,
+      12.0
+    ],
+    "guidance_source": [
+      "Revenue of $21.341 billion to $21.374 billion, growth of approximately 13 to 14 percent.",
+      "Revenue growth of approximately 11 to 12 percent."
+    ],
+    "quarter_guidance_year": 2026,
+    "quarter_range_basis": "proxy_from_rounded_approximate_growth_not_exact_dollar_forecast",
+    "quarter_forecast_verified_for_trading": false,
+    "quarter_conversion_basis": {
+      "source": "https://investors.intuit.com/news-events/press-releases/detail/1266/intuit-reports-strong-fourth-quarter-and-full-year-fiscal-2025-results-sets-fiscal-2026-guidance-with-double-digit-revenue-growth-and-continued-operating-margin-expansion",
+      "published": "2025-08-21 16:00:00-04:00",
+      "revenue_million": 3831.0
+    }
+  },
+  {
+    "symbol": "INTU",
+    "source": "https://investors.intuit.com/news-events/press-releases/detail/1320/intuit-reports-fourth-quarter-and-full-year-fiscal-2026-results-sets-fiscal-2027-guidance",
+    "source_file": "INTU/release_1320.html",
+    "sha256": "45f8dce3931eb3d8dbc4fccfe8d3bafaa2b071b66081d9e4e7929288e731a4ae",
+    "title": "Intuit Reports Fourth Quarter and Full Year Fiscal 2026 Results; Sets Fiscal 2027 Guidance",
+    "published": "2026-08-25 16:00:00-04:00",
+    "modified": null,
+    "available_after": "2026-08-25 16:00:00-04:00",
+    "publication_basis": "Issuer article visible time and separately listed archive time agree; no modification metadata available",
+    "kind": "quarterly",
+    "reported_quarter": 4,
+    "reported_fiscal_year": 2026,
+    "actual_revenue_million": 4354.0,
+    "actual_source_row": [
+      "Total net revenue",
+      "",
+      "4,354",
+      "",
+      "",
+      "",
+      "3,831",
+      "",
+      "",
+      "",
+      "21,448",
+      "",
+      "",
+      "",
+      "18,831",
+      ""
+    ],
+    "actual_table_header": "TABLE A INTUIT INC. GAAP CONSOLIDATED STATEMENTS OF OPERATIONS (In millions, except per share amounts) (Unaudited) Three Months Ended Twelve Months Ended July 31, 2026 July 31, 202 TABLE A INTUIT INC. GAAP CONSOLIDATED STATEMENTS OF OPERATIONS (In millions, except per share amounts) (Unaudited) Three Months Ended Twelve Months Ended July 31, 2026 July 31, 2025 July 31, 2026 July 31, 2025 Net revenue: Service $ 3,783 $ 3,291 $ 18,911 $ 16,400 Product and other 571 540 2,537 2,431 Total net revenue 4,354 3,831 21,448 18,831 Cos",
+    "fiscal_year": 2027,
+    "next_quarter": 1,
+    "annual_range_million": [
+      23279.0,
+      23512.0
+    ],
+    "quarter_range_million": [
+      4294.0,
+      4313.0
+    ],
+    "quarter_growth_percent": null,
+    "guidance_source": [
+      "Full Year Fiscal 2027 Guidance",
+      "Total Revenue $23,279 to $23,512",
+      "First Quarter Fiscal 2027 Guidance",
+      "Total Revenue $4,294 to $4,313"
+    ],
+    "quarter_range_basis": "explicit_original_dollar_range",
+    "quarter_forecast_verified_for_trading": true
+  }
+]

@@ -1,0 +1,18 @@
+{
+  "url": "https://investors.intuit.com/_assets/_1dd06c04c67bf383f19eaab5661c4ac7/intuit/db/946/9258/fact_sheet/FQ3-2021-Fact-sheet-External-05-21-2021.pdf",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "retrieved_utc": "2026-10-09T18:12:39Z",
+  "sha256": "cd66b03bc69b5b2ea79d79ac5fc0fb3872622d8ccefe0e283bbec43ce3e93854",
+  "attempts": [
+    {
+      "url": "https://investors.intuit.com/_assets/_1dd06c04c67bf383f19eaab5661c4ac7/intuit/db/946/9258/fact_sheet/FQ3-2021-Fact-sheet-External-05-21-2021.pdf",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "retrieved_utc": "2026-10-09T18:12:39Z",
+      "sha256": "cd66b03bc69b5b2ea79d79ac5fc0fb3872622d8ccefe0e283bbec43ce3e93854"
+    }
+  ]
+}

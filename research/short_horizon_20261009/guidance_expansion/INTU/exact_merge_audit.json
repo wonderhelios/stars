@@ -1,0 +1,18 @@
+{
+  "quarterly_rows": 27,
+  "exact_quarter_ranges": 25,
+  "numeric_comparisons": 17,
+  "known_gate_exclusions": 5,
+  "positive_before_pending_audits": 5,
+  "proxy_sign_changes": 1,
+  "source_prefix_checks": 27,
+  "all_hash_checks_passed": true,
+  "market_performance_read": false,
+  "trading_ready": false,
+  "exact_numeric_basis": "Original HTML Table E; PDFs crosschecked independently, later PDF timestamps retained separately.",
+  "limitations": [
+    "Original issuer HTML lacks an independently archived modification history; dated PDFs do not prove first web availability.",
+    "Interim investor-day/call and all-news coverage still incomplete.",
+    "Numeric source verification is not strategy validation or a clean out-of-sample result."
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "url": "https://investors.intuit.com/news-events/press-releases/detail/237/intuit-to-acquire-credit-karma",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "786b6ce0fc4d2c193b4fe89552686b8395468160af0995fae619777adb85ca20",
+  "retrieved_utc": "2026-10-09T22:28:18Z",
+  "attempts": [
+    {
+      "url": "https://investors.intuit.com/news-events/press-releases/detail/237/intuit-to-acquire-credit-karma",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "786b6ce0fc4d2c193b4fe89552686b8395468160af0995fae619777adb85ca20",
+      "retrieved_utc": "2026-10-09T22:28:18Z"
+    }
+  ]
+}

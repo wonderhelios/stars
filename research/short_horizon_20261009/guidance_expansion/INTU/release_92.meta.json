@@ -1,0 +1,18 @@
+{
+  "url": "https://investors.intuit.com/news-events/press-releases/detail/92/intuit-to-acquire-financial-health-startup-seedfi",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "99311ba9962af82e287659167a30854032d36631caaaead9b1cd88139d57b619",
+  "retrieved_utc": "2026-10-09T22:11:49Z",
+  "attempts": [
+    {
+      "url": "https://investors.intuit.com/news-events/press-releases/detail/92/intuit-to-acquire-financial-health-startup-seedfi",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "99311ba9962af82e287659167a30854032d36631caaaead9b1cd88139d57b619",
+      "retrieved_utc": "2026-10-09T22:11:49Z"
+    }
+  ]
+}

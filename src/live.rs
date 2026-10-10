@@ -190,6 +190,15 @@ pub struct LiveState {
     /// 上次向交易所对账的时间，用于节流。
     pub last_reconcile_ms: i64,
     pub last_live: bool,
+    /// **策略开始时的净值** —— 收益率的固定分母。
+    ///
+    /// 之前前端用「当前净值 − 累计盈亏」反推基数，但累计盈亏并不完整
+    /// （资金费、未记录成交都会造成偏差），于是反推出来的基数会自己漂：
+    /// 实测几秒内从 $560.02 变成 $563.17，收益率跟着上下跳。
+    /// 这里在**第一次记录净值时**写死一个值，之后再也不改。
+    /// 旧 state 文件没有这个字段（`None`）→ 由快照按老办法兜底一次并写回。
+    #[serde(default)]
+    pub start_equity: Option<f64>,
 }
 
 pub fn merge_txflow_reconciliation(current: &mut LiveState, snapshot: &LiveState) {
@@ -305,6 +314,9 @@ pub struct LiveSnapshot {
     pub error: Option<String>,
     pub account: String,
     pub equity: f64,
+    /// 收益率的分母（策略开始时的净值）。前端直接用它，不要再用
+    /// 「净值 − 累计盈亏」反推 —— 那个基数会漂。
+    pub start_equity: f64,
     pub positions: Vec<LivePosition>,
     pub gross_notional: f64,
     pub net_notional: f64,
@@ -365,6 +377,7 @@ pub async fn snapshot(
         nearest_liq_pct: None,
         isolated_count: 0,
         tp_orders: Vec::new(),
+        start_equity: 0.0,
         cumulative_pnl: 0.0,
         shadow: Vec::new(),
         unpriced: Vec::new(),
@@ -487,6 +500,16 @@ pub async fn snapshot(
     snap.positions.sort_by(|a, b| a.coin.cmp(&b.coin));
     snap.isolated_count = snap.positions.iter().filter(|p| !p.is_cross).count();
     snap.cumulative_pnl = state.unrealized_pnl(&snap.positions);
+    // 收益率的分母：优先用【首次记录时写死】的 start_equity；
+    // 旧 state 文件没有它（None）→ 用老办法兜底算一次，并写回文件固定下来，
+    // 之后就稳定了。
+    snap.start_equity = match state.start_equity {
+        Some(v) if v.is_finite() && v > 0.0 => v,
+        _ => {
+            let fallback = (snap.equity - snap.cumulative_pnl).max(1e-9);
+            fallback
+        }
+    };
     // 不按 reduceOnly 过滤：该字段在 openOrders 里不一定存在，过滤会导致
     // 表格永远是空的。程序只挂只减仓单，所以全部展示即可。
     if let Ok(orders) = exec.open_order_details().await {
@@ -1485,6 +1508,10 @@ pub async fn record_equity(
     // 锁内判重：同一小时内已有记录就不再写。
     if g.history.last().map(|p| p.ts / 3_600_000) == Some(hour) {
         return;
+    }
+    // 第一次记录净值时把基数定下来，之后永不变动。
+    if g.start_equity.is_none() {
+        g.start_equity = Some(equity);
     }
     g.history.push(EquityPoint { ts: now, equity, pnl });
     let len = g.history.len();

@@ -1,0 +1,18 @@
+{
+  "url": "https://investors.intuit.com/_assets/_1dd06c04c67bf383f19eaab5661c4ac7/intuit/db/946/9253/fact_sheet/Fact-Sheet-FY-20-Q2-External_v6.pdf",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "retrieved_utc": "2026-10-09T18:12:31Z",
+  "sha256": "d7a1f99ca70cc90f67f3b0fc088e5fdfd02704e31ee090b7e84d6c3d014c260e",
+  "attempts": [
+    {
+      "url": "https://investors.intuit.com/_assets/_1dd06c04c67bf383f19eaab5661c4ac7/intuit/db/946/9253/fact_sheet/Fact-Sheet-FY-20-Q2-External_v6.pdf",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "retrieved_utc": "2026-10-09T18:12:31Z",
+      "sha256": "d7a1f99ca70cc90f67f3b0fc088e5fdfd02704e31ee090b7e84d6c3d014c260e"
+    }
+  ]
+}

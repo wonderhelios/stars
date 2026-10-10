@@ -1,0 +1,18 @@
+{
+  "url": "https://investors.intuit.com/news-events/press-releases/detail/159/intuit-hosts-virtual-investor-day-reaffirms-first-quarter-and-fiscal-2022-guidance",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "f4cc338641c8821b2cbcc20b1ee6da7a60a2bdfe433b5b0ccec2c26a19d0299a",
+  "retrieved_utc": "2026-10-09T22:11:58Z",
+  "attempts": [
+    {
+      "url": "https://investors.intuit.com/news-events/press-releases/detail/159/intuit-hosts-virtual-investor-day-reaffirms-first-quarter-and-fiscal-2022-guidance",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "f4cc338641c8821b2cbcc20b1ee6da7a60a2bdfe433b5b0ccec2c26a19d0299a",
+      "retrieved_utc": "2026-10-09T22:11:58Z"
+    }
+  ]
+}

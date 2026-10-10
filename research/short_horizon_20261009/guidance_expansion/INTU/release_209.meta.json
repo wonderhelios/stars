@@ -1,0 +1,18 @@
+{
+  "url": "https://investors.intuit.com/news-events/press-releases/detail/209/intuit-first-quarter-revenue-grew-14-percent-company-provides-guidance-for-fiscal-2021",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "11ce7612fba7ce209ef98462ee95ba59d6168048fa480c72bf12c5ac1a436eaf",
+  "retrieved_utc": "2026-10-09T18:01:42Z",
+  "attempts": [
+    {
+      "url": "https://investors.intuit.com/news-events/press-releases/detail/209/intuit-first-quarter-revenue-grew-14-percent-company-provides-guidance-for-fiscal-2021",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "11ce7612fba7ce209ef98462ee95ba59d6168048fa480c72bf12c5ac1a436eaf",
+      "retrieved_utc": "2026-10-09T18:01:42Z"
+    }
+  ]
+}

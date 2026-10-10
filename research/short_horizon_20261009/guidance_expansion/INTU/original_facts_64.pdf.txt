@@ -1,0 +1,86 @@
+May 23, 2023
+
+
+FINANCIAL SUMMARY
+($ millions, except per share data) Q1 FY21 Q2 FY21 Q3 FY21 Q4 FY21 FY21 Q1 FY22 Q2 FY22 Q3 FY22 Q4 FY22 FY22 Q1 FY23 Q2 FY23 Q3 FY23 Q4 FY23 FY23
+Small Business & Self-Employed $1,181 $1,078 $1,177 $1,252 $4,688 $1,443 $1,581 $1,667 $1,769 $6,460 $1,988 $1,897 $2,021 $7,995 - $8,005
+          % change YOY 13% 11% 20% 19% 16% 22% 47% 42% 41% 38% 38% 20% 21% 24%
+Consumer $119 $147 $2,445 $852 $3,563 $120 $411 $3,239 $145 $3,915 $150 $516 $3,341 $4,126 - $4,141
+          % change YOY 19% (71%) 34% 20% 14% 1% 180% 32% (83%) 10% 25% 26% 3% 5% - 6%
+ProTax $23 $207 $235 $52 $517 $26 $237 $258 $25 $546 $34 $253 $246 $558 - $561
+          % change YOY 21% (8%) 22% (9%) 5% 13% 14% 10% (52%) 6% 31% 7% (5%) 2% - 3%
+Credit Karma $144 $316 $405 $865 $418 $444 $468 $475 $1,805 $425 $375 $410 $1,600 - $1,610
+          % change YOY 48% 17% 2% (16%) (12%) (11%)
+Total Revenue $1,323 $1,576 $4,173 $2,561 $9,633 $2,007 $2,673 $5,632 $2,414 $12,726 $2,597 $3,041 $6,018 $2,623 - $2,661 $14,279 - $14,317
+          % change YOY 14% (7%) 39% 41% 25% 52% 70% 35% (6%) 32% 29% 14% 7% 9% - 10% 12% - 13%
+ GAAP Operating Income (Loss) $209 ($25) $1,914 $402 $2,500 $195 $56 $2,395 ($75) $2,571 $76 $270 $2,778 ($53) - ($33) $3,071 - $3,091
+ Non-GAAP Operating Income (Loss)[A] $334 $235 $2,201 $715 $3,485 $555 $612 $2,904 $433 $4,504 $662 $856 $3,358 $565 - $585 $5,441 - $5,461
+ Non-GAAP Operating Margin %[A] 25.2% 14.9% 52.7% 27.9% 36.2% 27.6% 22.9% 51.6% 17.9% 35.4% 25.5% 28.2% 55.8%
+ Interest Expense ($8) ($7) ($7) ($7) ($29) ($7) ($21) ($21) ($32) ($81) ($49) ($65) ($66)
+ Interest and Other Income $9 $54 $14 $8 $85 $50 ($5) ($1) $8 $52 $5 $23 $22
+GAAP Share Based Compensation Expense 111 180 218 244 753 280 336 346 346 1,308 422 423 419
+GAAP Share Based Compensation Expense per Share ($0.39) ($0.61) ($0.60) ($0.83) ($2.23) ($0.97) ($3.89) ($0.91) ($0.68) ($3.73) ($1.87) ($1.10) ($1.13)
+ GAAP Diluted EPS $0.75 $0.07 $5.30 $1.37 $7.56 $0.82 $0.35 $6.28 ($0.20) $7.28 $0.14 $0.60 $7.38 ($0.34) - ($0.29) $7.78 - $7.83
+ Non-GAAP Diluted EPS[A] [B] $0.94 $0.68 $6.07 $1.97 $9.74 $1.53 $1.55 $7.65 $1.10 $11.85 $1.66 $2.20 $8.92 $1.43 - $1.48 $14.20 - $14.25
+ GAAP Diluted EPS (YTD) $0.75 $0.81 $6.20 $7.56 $7.56 $0.82 $1.16 $7.48 $7.28 $7.28 $0.14 $0.73 $8.11
+ Non-GAAP Diluted EPS (YTD)[A] [B] $0.94 $1.62 $7.79 $9.74 $9.74 $1.53 $3.07 $10.76 $11.85 $11.85 $1.66 $3.85 $12.76
+ Basic Share Count 263 270 273 273 270 273 283 282 282 280 281 281 281 ~281
+ Diluted Share Count 265 273 276 277 273 277 287 286 284 284 284 282 283 ~283
+ GAAP Tax Rate 6% 8% 24% 6% 19% 4% -232% 24% 44% 19% -26% 26% 24% 23.5%
+ Non-GAAP Tax Rate 24% 24% 24% 24% 24% 24% 24% 24% 24% 24% 24% 24% 24% 24%
+Capital Expenditures $125 $229 $330
+GUIDANCE[C] 
+
+($ millions) Q1 Q2 Q3 Q4 FY Q1 Q2 Q3 Q4 FY Q1 Q2 Q3
+QuickBooks Online Accounting 392$     404$     437$     466$      1,699$  519$     547$     578$     623$      2,267$    668$     696$     723$      
+Online Services 229$     240$     278$     304$      1,051$  326$     574$     614$     657$      2,171$    681$     695$     745$      
+      Total Online Ecosystem 621$     644$     715$     770$      2,750$  845$     1,121$  1,192$  1,280$   4,438$    1,349$  1,391$  1,468$   
+QuickBooks Desktop Accounting 241$     160$     193$     195$      789$     267$     169$     201$     214$      851$      312$     215$     280$      
+Desktop Services and Supplies 319$     274$     269$     287$      1,149$  331$     291$     274$     275$      1,171$    327$     291$     273$      
+      Total Desktop Ecosystem 560$     434$     462$     482$      1,938$  598$     460$     475$     489$      2,022$    639$     506$     553$      
+Small Business & Self-Employed 1,181$  1,078$  1,177$  1,252$   4,688$  1,443$  1,581$  1,667$  1,769$   6,460$    1,988$  1,897$  2,021$   
+Consumer 119$     147$     2,445$  852$      3,563$  120$     411$     3,239$  145$      3,915$    150$     516$     3,341$   
+ProTax 23$       207$     235$     52$        517$     26$       237$     258$     25$        546$      34$       253$     246$      
+Credit Karma 144$     316$     405$      865$     418$     444$     468$     475$      1,805$    425$     375$     410$      
+Total Segment Revenue 1,323$  1,576$  4,173$  2,561$   9,633$  2,007$  2,673$  5,632$  2,414$   12,726$  2,597$  3,041$  6,018$   
+FY'21 FY'22
+($ millions)
+Online Ecosystem (QBO) 2,750$  4,438$    
+TurboTax Online (TTO) 3,030$  3,378$    
+Credit Karma 865$     1,805$    
+Combined Platform Revenue 6,645$  9,621$    
+FY'22 FY'23 FY'21
+Platform Revenue
+Segment Revenue
+
+($ millions) Q1 Q2 Q3
+% Op. % Op. % Op.
+Op. Inc. Margin Op. Inc. Margin Op. Inc. Margin
+Small Business & Self-Employed 1,179$     59% 1,021$     54% 1,122$         56%
+Consumer 11$          7% 177$        34% 2,531$         76%
+ProTax (6)$          -18% 211$        83% 203$            83%
+Credit Karma 94$          22% 96$          26% 111$            27%
+Total Segment Operating Income 1,278$     49% 1,505$     49% 3,967$         66%
+($ millions) Q1 Q2 Q3 Q4 FY
+% Op. % Op. % Op. % Op. % Op.
+Op. Inc. Margin Op. Inc. Margin Op. Inc. Margin Op. Inc. Margin Op. Inc. Margin
+Small Business & Self-Employed 921$        64% 773$        49% 836$            50% 969$        55% 3,499$       54%
+Consumer (11)$        -9% 53$          13% 2,447$         76% (6)$          -4% 2,483$       63%
+ProTax (11)$        -42% 195$        82% 213$            83% (14)$        -56% 383$          70%
+Credit Karma 169$        40% 141$        32% 104$            22% 117$        25% 531$          29%
+Total Segment Operating Income 1,068$     53% 1,162$     43% 3,600$         64% 1,066$     44% 6,896$       54%
+($ millions) Q1 Q2 Q3 Q4 FY
+% Op. % Op. % Op. % Op. % Op.
+Op. Inc. Margin Op. Inc. Margin Op. Inc. Margin Op. Inc. Margin Op. Inc. Margin
+Small Business & Self-Employed 767$        65% 592$        55% 620$            53% 612$        49% 2,590$       55%
+Consumer 4$           4% (155)$       -105% 1,773$         73% 614$        72% 2,237$       63%
+ProTax (10)$        -42% 172$        83% 196$            83% 13$          25% 372$          72%
+Credit Karma 38$          26% 117$            37% 27$          7% 182$          21%
+Total Segment Operating Income 761$        58% 647$        41% 2,706$         65% 1,266$     49% 5,381$       56%
+Segment Operating Income 
+FY'21 
+FY'22
+FY'23
+
+
+

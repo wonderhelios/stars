@@ -1,0 +1,18 @@
+{
+  "url": "https://investors.intuit.com/news-events/press-releases/detail/218/intuit-hosts-virtual-annual-investor-day-on-september-23-2020",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "5c9005b8ca6ea74a69e5887d4cebfefedde42d53f6b272df88163ba8fcdb38f8",
+  "retrieved_utc": "2026-10-09T22:28:14Z",
+  "attempts": [
+    {
+      "url": "https://investors.intuit.com/news-events/press-releases/detail/218/intuit-hosts-virtual-annual-investor-day-on-september-23-2020",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "5c9005b8ca6ea74a69e5887d4cebfefedde42d53f6b272df88163ba8fcdb38f8",
+      "retrieved_utc": "2026-10-09T22:28:14Z"
+    }
+  ]
+}

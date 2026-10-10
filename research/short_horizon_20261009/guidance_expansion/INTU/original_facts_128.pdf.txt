@@ -1,0 +1,82 @@
+
+
+FINANCIAL SUMMARY
+($ millions, except per share data) Q1 FY20 Q2 FY20 Q3 FY20 Q4 FY20 FY20 Q1 FY21 Q2 FY21 Q3 FY21 Q4 FY21 FY21 Q1 FY22 Q2 FY22 Q3 FY22 FY22
+Small Business & Self-Employed $1,046 $973 $982 $1,049 $4,050 $1,181 $1,078 $1,177 $1,252 $4,688 $1,443 $1,581 $6,190 - $6,255
+          % change YOY 15% 17% 11% 16% 15% 13% 11% 20% 19% 16% 22% 47% 32% - 33%
+Consumer $100 $499 $1,827 $710 $3,136 $119 $147 $2,445 $852 $3,563 $120 $411 $3,915 - $3,955
+          % change YOY 11% 8% (15%) 859% 13% 19% (71%) 34% 20% 14% 1% 180% 10% - 11%
+ProConnect $19 $224 $193 $57 $493 $23 $207 $235 $52 $517 $26 $237 $520 - $525
+          % change YOY 6% 8% (18%) 280% 4% 21% (8%) 22% (9%) 5% 13% 14% 1% - 2%
+Credit Karma $144 $316 $405 $865 $418 $444 $1,540 - $1,565
+          % change YOY
+Total Revenue $1,165 $1,696 $3,002 $1,816 $7,679 $1,323 $1,576 $4,173 $2,561 $9,633 $2,007 $2,673 $5,490 - $5,540 $12,165 - $12,300
+          % change YOY 15% 13% (8%) 83% 13% 14% (7%) 39% 41% 25% 52% 70% 32% - 33% 26% - 28%
+ GAAP Operating Income (Loss) $10 $270 $1,413 $483 $2,176 $209 ($25) $1,914 $402 $2,500 $195 $56 $2,371 - $2,396 $2,441 - $2,501
+ Non-GAAP Operating Income (Loss)[A] $129 $384 $1,539 $616 $2,668 $334 $235 $2,201 $715 $3,485 $555 $612 $2,865 - $2,890 $4,370 - $4,430
+ Non-GAAP Operating Margin %[A] 11.1% 22.6% 51.3% 33.9% 34.7% 25.2% 14.9% 52.7% 27.9% 36.2% 27.6% 22.9%
+ Interest Expense ($2) ($3) ($2) ($7) ($14) ($8) ($7) ($7) ($7) ($29) ($7) ($21)
+ Interest and Other Income $14 $15 ($3) $10 $36 $9 $54 $14 $8 $85 $50 ($5)
+GAAP Share Based Compensation Expense 111 107 103 114 436 111 180 218 244 753 280 336
+GAAP Share Based Compensation Expense per Share ($1.11) ($0.35) ($0.30) ($0.40) ($1.37) ($0.39) ($0.61) ($0.60) ($0.83) ($2.23) ($0.97) ($3.88)
+ GAAP Diluted EPS $0.22 $0.91 $4.11 $1.68 $6.92 $0.75 $0.07 $5.30 $1.37 $7.56 $0.82 $0.35 $6.18 - $6.24 $7.00 - $7.16
+ Non-GAAP Diluted EPS[A] [B] $0.41 $1.16 $4.49 $1.81 $7.86 $0.94 $0.68 $6.07 $1.97 $9.74 $1.53 $1.55 $7.51 - $7.57 $11.48 - $11.64
+ GAAP Diluted EPS (YTD) $0.22 $1.13 $5.24 $6.92 $6.92 $0.75 $0.81 $6.20 $7.56 $7.56 $0.82 $1.16
+ Non-GAAP Diluted EPS (YTD)[A] [B] $0.41 $1.57 $6.06 $7.86 $7.86 $0.94 $1.62 $7.79 $9.74 $9.74 $1.53 $3.07
+ Basic Share Count 261 261 261 262 261 263 270 273 273 270 273 283 ~281
+ Diluted Share Count 264 264 264 264 264 265 273 276 277 273 277 287 ~286
+ GAAP Tax Rate -163% 15% 23% 8% 17% 6% 8% 24% 6% 19% 4% -232% 18%
+ Non-GAAP Tax Rate 23% 23% 23% 23% 23% 24% 24% 24% 24% 24% 24% 24% 24%
+Capital Expenditures $137 $125 $320
+GUIDANCE[C] 
+
+($ millions) Q1 Q2 Q3 Q4 FY Q1 Q2 Q3 Q4 FY Q1 Q2
+QuickBooks Online Accounting 306$     330$       353$     365$      1,354$  392$     404$     437$     466$      1,699$  519$     547$     
+Online Services 195$     200$       207$     226$      828$     229$     240$     278$     304$      1,051$  326$     574$     
+      Total Online Ecosystem 501$     530$       560$     591$      2,182$  621$     644$     715$     770$      2,750$  845$     1,121$  
+QuickBooks Desktop Accounting (Outright, Subs and ES) 239$     165$       173$     178$      755$     241$     160$     193$     195$      789$     267$     169$     
+Desktop Services and Supplies 306$     278$       249$     280$      1,113$  319$     274$     269$     287$      1,149$  331$     291$     
+      Total Desktop Ecosystem 545$     443$       422$     458$      1,868$  560$     434$     462$     482$      1,938$  598$     460$     
+Small Business & Self-Employed 1,046$  973$       982$     1,049$   4,050$  1,181$  1,078$  1,177$  1,252$   4,688$  1,443$  1,581$  
+Consumer 100$     499$       1,827$  710$      3,136$  119$     147$     2,445$  852$      3,563$  120$     411$     
+ProConnect 19$       224$       193$     57$        493$     23$       207$     235$     52$        517$     26$       237$     
+Credit Karma 144$     316$     405$      865$     418$     444$     
+Total Segment Revenue 1,165$  1,696$    3,002$  1,816$   7,679$  1,323$  1,576$  4,173$  2,561$   9,633$  2,007$  2,673$  
+Segment Revenue FY'20 FY'21 FY'22 
+FY'20 FY'21
+($ millions)
+Online Ecosystem (QBO) 2,182$  2,750$  
+TurboTax Online (TTO) 2,610$  3,030$  
+Credit Karma 865$     
+Combined Platform Revenue 4,792$  6,645$  
+Platform Revenue
+
+($ millions) Q1 Q2
+% Op. % Op.
+Op. Inc. Margin Op. Inc. Margin
+Small Business & Self-Employed 921$        64% 773$        49%
+Consumer (11)$        -9% 53$          13%
+ProConnect (11)$        -42% 195$        82%
+Credit Karma 169$        40% 141$        32%
+Total Segment Operating Income 1,068$     53% 1,162$     43%
+($ millions) Q1 Q2 Q3 Q4 FY
+% Op. % Op. % Op. % Op. % Op.
+Op. Inc. Margin Op. Inc. Margin Op. Inc. Margin Op. Inc. Margin Op. Inc. Margin
+Small Business & Self-Employed 767$        65% 592$        55% 620$            53% 612$        49% 2,590$       55%
+Consumer 4$           4% (155)$       -105% 1,773$         73% 614$        72% 2,237$       63%
+ProConnect (10)$        -42% 172$        83% 196$            83% 13$          25% 372$          72%
+Credit Karma 38$          26% 117$            37% 27$          7% 182$          21%
+Total Segment Operating Income 761$        58% 647$        41% 2,706$         65% 1,266$     49% 5,381$       56%
+($ millions) Q1 Q2 Q3 Q4  Year
+% Op. % Op. % Op. % Op. % Op.
+Op. Inc. Margin Op. Inc. Margin Op. Inc. Margin Op. Inc. Margin Op. Inc. Margin
+Small Business & Self-Employed 593$        57% 447$        46% 456$            46% 595$        57% 2,091$       52%
+Consumer (20)$        -20% 191$        38% 1,350$         74% 542$        76% 2,063$       66%
+ProConnect (18)$        -95% 186$        83% 155$            80% 23$          40% 347$          70%
+Total Segment Operating Income 555$        48% 824$        49% 1,962$         65% 1,160$     64% 4,500$       59%
+FY'20 (Restated) [D]
+FY'21 
+FY'22
+
+
+

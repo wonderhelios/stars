@@ -1,0 +1,18 @@
+{
+  "url": "https://investors.intuit.com/news-events/press-releases?page=20",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "74a82b9ffc130c07fc793a50a5d4cf3ae5ffc0f45a6e1c3395c03a479e9ea4d9",
+  "retrieved_utc": "2026-10-09T22:10:42Z",
+  "attempts": [
+    {
+      "url": "https://investors.intuit.com/news-events/press-releases?page=20",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "74a82b9ffc130c07fc793a50a5d4cf3ae5ffc0f45a6e1c3395c03a479e9ea4d9",
+      "retrieved_utc": "2026-10-09T22:10:42Z"
+    }
+  ]
+}

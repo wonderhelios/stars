@@ -1,0 +1,18 @@
+{
+  "url": "https://investors.intuit.com/news-events/press-releases/detail/1320/intuit-reports-fourth-quarter-and-full-year-fiscal-2026-results-sets-fiscal-2027-guidance",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "45f8dce3931eb3d8dbc4fccfe8d3bafaa2b071b66081d9e4e7929288e731a4ae",
+  "retrieved_utc": "2026-10-09T18:02:56Z",
+  "attempts": [
+    {
+      "url": "https://investors.intuit.com/news-events/press-releases/detail/1320/intuit-reports-fourth-quarter-and-full-year-fiscal-2026-results-sets-fiscal-2027-guidance",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "45f8dce3931eb3d8dbc4fccfe8d3bafaa2b071b66081d9e4e7929288e731a4ae",
+      "retrieved_utc": "2026-10-09T18:02:56Z"
+    }
+  ]
+}

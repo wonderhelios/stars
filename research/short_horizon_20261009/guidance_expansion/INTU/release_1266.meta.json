@@ -1,0 +1,18 @@
+{
+  "url": "https://investors.intuit.com/news-events/press-releases/detail/1266/intuit-reports-strong-fourth-quarter-and-full-year-fiscal-2025-results-sets-fiscal-2026-guidance-with-double-digit-revenue-growth-and-continued-operating-margin-expansion",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "1cddd7b5e4eaabaa6c50010521068a7b4b48ddd0b003be09cc81fb4d08b5dbd6",
+  "retrieved_utc": "2026-10-09T18:02:45Z",
+  "attempts": [
+    {
+      "url": "https://investors.intuit.com/news-events/press-releases/detail/1266/intuit-reports-strong-fourth-quarter-and-full-year-fiscal-2025-results-sets-fiscal-2026-guidance-with-double-digit-revenue-growth-and-continued-operating-margin-expansion",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "1cddd7b5e4eaabaa6c50010521068a7b4b48ddd0b003be09cc81fb4d08b5dbd6",
+      "retrieved_utc": "2026-10-09T18:02:45Z"
+    }
+  ]
+}

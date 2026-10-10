@@ -1,0 +1,18 @@
+{
+  "url": "https://investors.intuit.com/news-events/press-releases/detail/202/intuit-completes-acquisition-of-credit-karma",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "103d14ba6b58a394d3dbae6158a69fcb9de9da28d971877edfef7e3debcf1dc1",
+  "retrieved_utc": "2026-10-09T22:28:07Z",
+  "attempts": [
+    {
+      "url": "https://investors.intuit.com/news-events/press-releases/detail/202/intuit-completes-acquisition-of-credit-karma",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "103d14ba6b58a394d3dbae6158a69fcb9de9da28d971877edfef7e3debcf1dc1",
+      "retrieved_utc": "2026-10-09T22:28:07Z"
+    }
+  ]
+}

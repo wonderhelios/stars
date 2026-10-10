@@ -1,0 +1,18 @@
+{
+  "url": "https://investors.intuit.com/news-events/press-releases/detail/1196/intuit-to-acquire-technology-from-zendrive",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "0c555fb874d8e6c92c71042745d9f62d2032f788f5c645aade05bffd44211cc2",
+  "retrieved_utc": "2026-10-09T22:11:43Z",
+  "attempts": [
+    {
+      "url": "https://investors.intuit.com/news-events/press-releases/detail/1196/intuit-to-acquire-technology-from-zendrive",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "0c555fb874d8e6c92c71042745d9f62d2032f788f5c645aade05bffd44211cc2",
+      "retrieved_utc": "2026-10-09T22:11:43Z"
+    }
+  ]
+}

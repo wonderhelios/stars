@@ -1,0 +1,18 @@
+{
+  "url": "https://investors.intuit.com/news-events/press-releases/detail/1216/intuit-unveils-new-ai-driven-expert-platform-experiences-at-investor-day-2024",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "dae9f634a3e862c13c17112482e9d25c3142e741c946500847d209d92d47f8ce",
+  "retrieved_utc": "2026-10-09T22:11:38Z",
+  "attempts": [
+    {
+      "url": "https://investors.intuit.com/news-events/press-releases/detail/1216/intuit-unveils-new-ai-driven-expert-platform-experiences-at-investor-day-2024",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "dae9f634a3e862c13c17112482e9d25c3142e741c946500847d209d92d47f8ce",
+      "retrieved_utc": "2026-10-09T22:11:38Z"
+    }
+  ]
+}

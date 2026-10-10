@@ -1,0 +1,18 @@
+{
+  "url": "https://investors.intuit.com/news-events/press-releases/detail/1271/intuit-hosts-investor-day-reaffirms-first-quarter-and-fiscal-2026-guidance",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "c9b5337c0af235dff01eab18087eba5da8944b864bea11152d6ac37b82358a00",
+  "retrieved_utc": "2026-10-09T18:02:47Z",
+  "attempts": [
+    {
+      "url": "https://investors.intuit.com/news-events/press-releases/detail/1271/intuit-hosts-investor-day-reaffirms-first-quarter-and-fiscal-2026-guidance",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "c9b5337c0af235dff01eab18087eba5da8944b864bea11152d6ac37b82358a00",
+      "retrieved_utc": "2026-10-09T18:02:47Z"
+    }
+  ]
+}

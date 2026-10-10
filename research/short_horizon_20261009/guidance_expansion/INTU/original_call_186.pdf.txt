@@ -1,0 +1,381 @@
+1 
+Intuit Inc. 
+Second-quarter Fiscal 2021 
+Conference Call Remarks 
+February 23, 2021 
+ 
+Introduction 
+Good afternoon and welcome to Intuit’s second-quarter fiscal 2021 
+conference call. I’m here with Intuit's CEO Sasan Goodarzi and Michelle 
+Clatterbuck, our CFO. 
+Before we start, I’d like to remind everyone that our remarks will include 
+forward-looking statements. There are a number of factors that could cause 
+Intuit’s results to differ materially from our expectations. You can learn 
+more about these risks in the press release we issued earlier this 
+afternoon, our Form 10-K for fiscal 2020 and our other SEC filings. All of 
+those documents are available on the Investor Relations page of Intuit’s 
+website at intuit.com. We assume no obligation to update any forward-
+looking statement. 
+
+2 
+Some of the numbers in these remarks are presented on a non-GAAP 
+basis. We’ve reconciled the comparable GAAP and non-GAAP numbers in 
+today’s press release. 
+Unless otherwise noted, all growth rates refer to the current period versus 
+the comparable prior-year period, and the business metrics and associated 
+growth rates refer to worldwide business metrics. 
+A copy of our prepared remarks and supplemental financial information will 
+be available on our website after this call ends. 
+With that, I’ll turn the call over to Sasan. 
+Second-quarter Fiscal 2021 Overview 
+Thanks Kim, and thanks to all of you for joining us today. 
+Second quarter results reflect strong momentum across the company. 
+Small Business and Self-Employed Group revenue grew double digits and 
+Credit Karma performed very well. We are encouraged by our early results 
+this tax season, and are on track for Intuit to deliver double-digit full-year 
+revenue growth. 
+
+3 
+We are confident our game plan to win is durable, accelerated by digital 
+tailwinds given the pandemic. Our platform is well positioned to help 
+customers take advantage of a shift to virtual solutions, acceleration to 
+online and omni-channel capabilities, and new ways to reduce debt and 
+save money. The velocity of our innovation is helping our customers at a 
+time when they need us most, and positions us to accelerate growth in light 
+of these structural and behavioral changes.  
+We closed the acquisition of Credit Karma on December 3rd, and 
+welcomed 1,300 Credit Karma employees to the Intuit family. We bring 
+together a large customer base of 110 million Credit Karma members and 
+57 million Intuit customers to help them unlock smart money decisions. 
+Credit Karma’s data platform creates powerful network effects through 
+personalized financial offers - benefitting members and partners - while 
+adding a new monetization engine to Intuit. We are off and running 
+executing on our innovation roadmap which I will touch on shortly. Since 
+we’re in the middle of tax season, let’s start there.   
+
+4 
+We are very confident in our strategy and momentum extending our lead in 
+the DIY segment and transforming the assisted segment. We are making 
+great progress serving fast growing underpenetrated Latinx, self-employed 
+and investor segments. This season, we also expanded our free eligibility 
+to better serve customers receiving unemployment benefits. We continue to 
+aggressively transform the assisted segment by reshaping how 86 million 
+filers can get their maximum refund with confidence virtually. We feel great 
+about how the season is progressing.  
+We are seeing strong momentum and accelerating innovation across the 
+business with our AI-driven expert platform strategy and five Big Bets. 
+These Big Bets are focused on the largest problems our customers face, 
+and represent durable growth opportunities for Intuit. I will highlight our 
+progress, covering Big Bet number one last as it accelerates innovation 
+across our platform and is foundational to the other bets.  
+Our second Big Bet is to “connect people to experts.” We are solving one of 
+the largest problems our customers face - lack of confidence - by 
+connecting people to experts virtually with TurboTax Live and QuickBooks 
+
+5 
+Live. With TurboTax Live we are transforming the $20 billion assisted 
+category by providing the 86 million filers who’ve relied on assistance in the 
+past the opportunity to access tax experts on our platform, from wherever 
+they are. We continue to lead the way in shaping the category, helping 
+customers understand how they can get their taxes done in a new way with 
+our marketing campaigns and for a limited time, offering free Live expertise 
+to filers with very simple returns to attract them into the category. We have 
+significantly improved the TurboTax Live platform by making it easier for 
+customers to access an expert throughout the filing process, and now with 
+our innovative full service offering, our customers can hand-off their return 
+to an expert who will prepare it and file it for them.  
+We continue to make progress with QuickBooks Live, which is built on the 
+same expert platform. Entering our second peak season with QuickBooks 
+Live, our customer base has doubled from a year ago and retention rates 
+are improving. Although it’s early days for QuickBooks Live, we are 
+confident in the long-term opportunity to penetrate non-consumption. 
+
+6 
+Our third big bet is to “unlock smart money decisions.” We are making 
+progress towards our goal of creating a personal financial assistant that 
+helps consumers find the right financial products, put more money in their 
+pockets and access financial expertise and advice. Our strategic focus is to 
+grow the core, including credit cards and personal loans; expand growth 
+verticals, including home loans, auto loans and insurance; and develop 
+emerging verticals, focused on money innovation including savings and 
+checking accounts. As we make personalized financial offers to customers 
+across our platform, Credit Karma provides an additional monetization 
+engine, increasing our combined wallet share with both free and paying 
+customers. 
+We’ve made great initial progress combining our capabilities to fuel 
+success of the Credit Karma platform. First, to create a complete financial 
+profile for existing and prospective members, with customer consent, we 
+combined income data from 26 million TurboTax returns with Credit Karma. 
+The combination of verified income data with credit history will enable 
+Credit Karma to better personalize offers, driving engagement and creating 
+
+7 
+a win-win-win for our members, partners and us over time. This enables us 
+to grow in our core verticals for credit cards and personal loans and growth 
+verticals for insurance and mortgages. Second, we integrated Credit Karma 
+Money into the TurboTax filing experience, providing approximately 36 
+million TurboTax customers the ability to deposit up to $88 billion of tax 
+refunds into a no-fee checking account. And third, we are migrating Turbo 
+users to Credit Karma. We are excited about the journey ahead of us. 
+Our fourth big bet is to “become the center of small business growth” by 
+helping our customers get paid fast, manage capital, pay employees with 
+confidence and grow in an omnichannel world. Sixty percent of small 
+businesses struggle with cash flow, and we are innovating with velocity to 
+create solutions for customers to overcome this challenge.  
+● We are making it even easier for customers to get paid fast with tools 
+like payment-enabled invoices, by auto-enabling new customers to 
+accept payments immediately, increasing our charge volume.  
+● We continue to innovate with QuickBooks Cash, a small business 
+bank account that helps our customers manage working capital by 
+
+8 
+providing visibility into their full financial picture, along with the ability 
+to move money instantly and ensure their money is working for them, 
+while taking advantage of the built-in accounting of QuickBooks. We 
+integrated bill pay into the offering this quarter. We are seeing 
+growing adoption and active use of QuickBooks Cash, including a 
+meaningful increase in activation rates. 
+ 
+● We are making good progress with QuickBooks Commerce, launched 
+last September. QuickBooks Commerce is designed to better serve 
+the 1 million product-based businesses on our platform and 6.4 
+million product-based businesses in our core markets. The offering 
+provides inventory and order management tools small businesses 
+need to grow their businesses in an omnichannel world. We continue 
+to add new partner integrations, enabling a streamlined experience.
+ 
+We’re further bolstering the offering with the acquisition of OneSaas 
+in early February. OneSaas is an infrastructure platform that 
+integrates data streams from multiple sources of ecommerce 
+
+9 
+platforms. This will help our customers see a complete view in 
+QuickBooks.  
+It’s still early for both QuickBooks Cash and QuickBooks Commerce, but 
+we’re encouraged by what we’re seeing. 
+Our fifth big bet is to “disrupt the small business mid-market'' with 
+QuickBooks Online Advanced. The features we are introducing individually 
+tailor the offering to the needs of small businesses with 10 to 100 
+employees at a disruptive price point. We continue to build out the offering 
+and innovate to better serve these small business mid-market customers, 
+by adding more deeply integrated partners, important to acquisition and 
+retention.  
+And finally, our first big bet, “revolutionize speed to benefit,” enables us to 
+put more money in our customers’ pockets, eliminate friction and deliver 
+confidence at every touch point by using AI and customer insights. In 
+TurboTax, we’re leveraging advanced models to proactively offer 
+customers the right resources at the right time to keep them engaged and 
+
+10 
+give them confidence to file their taxes. And in QBO Advanced, we’re using 
+AI to detect anomalies in price and quantity on customer invoices, saving 
+our customers time and the frustration of having to resend an invoice. Our 
+Live offerings are benefiting from a common AI platform that is creating 
+efficiencies at scale, driving profitable growth.   
+Across all of our big bets, we are building momentum and accelerating 
+innovation which we believe positions us well for durable growth into the 
+future. I’m excited about the opportunity we have ahead of us, and I’m 
+proud of the progress we are making as a team. 
+Now let me hand it over to Michelle. 
+Financial Results and Segment Details 
+Thanks, Sasan. Good afternoon everyone. 
+For the second quarter of fiscal 2021, we delivered: 
+● Revenue of $1.6 billion. 
+● GAAP operating loss of $25 million, versus operating income of $270 
+million last year. 
+
+11 
+● Non-GAAP operating income of $235 million, versus $384 million last 
+year. 
+● GAAP diluted earnings per share of $0.07, versus $0.91 a year ago. 
+The GAAP earnings include a $30 million gain from the sale of a note 
+receivable that was previously written off. 
+● And non-GAAP diluted earnings per share of $0.68, versus $1.16 last 
+year. 
+Business Segment Results 
+Turning to the business segments: 
+Consumer and ProConnect Groups 
+Consumer Group revenue declined 71 percent in Q2, driven by the later 
+IRS opening this year. We continue to focus on our strategy to expand our 
+lead in DIY and transform the assisted segment with TurboTax Live. We 
+remain confident in our plans and guidance of 9 to 10 percent growth in 
+fiscal 2021. 
+
+12 
+Turning to the ProConnect Group, revenue declined 8 percent in Q2, 
+reflecting a delay in forms availability. 
+Small Business and Self-Employed Group 
+In the Small Business and Self-Employed Group, revenue grew 11 percent 
+during the quarter, while Online Ecosystem revenue was up 22 percent.  
+Our strategic focus within Small Business and Self-Employed is to grow the 
+core, connect the ecosystem and expand globally. Our longer-term 
+expectation remains 30 percent or greater online ecosystem revenue 
+growth, driven by 10 to 20 percent growth in both customers and ARPC. 
+● First, we continue to focus on growing the core. QuickBooks online 
+accounting revenue grew 22 percent in fiscal Q2, driven mainly by 
+customer growth and mix-shift. We lapped a full quarter of a price 
+increase last year, driving slower year-over-year growth versus last 
+quarter.   
+
+13 
+● Second, we continue to focus on connecting the ecosystem. Online 
+Services revenue - which includes payments, payroll, time tracking 
+and capital - grew 20 percent in fiscal Q2.  
+○ Within payments, revenue growth reflects continued customer 
+growth, along with an increase in charge volume per customer.  
+○ Within payroll, we continue to see revenue tailwinds during the 
+quarter from a mix-shift to our full service offering and growth in 
+payroll customers.  
+● Third, our progress expanding globally added to the growth of Online 
+Ecosystem revenue during fiscal Q2. Total international online 
+revenue grew 44 percent. The slower growth from last quarter was 
+driven by lapping price increases a year ago, and the lingering impact 
+from lower retention and customer acquisition at the beginning of the 
+pandemic. 
+Desktop Ecosystem revenue declined 2 percent in the second quarter, in-
+line with our expectations for the business to decline longer-term. Within 
+this, QuickBooks Desktop Enterprise revenue grew mid-single digits. 
+
+14 
+Small businesses are resilient, and we continue to help them put more 
+money in their pockets when they need it most. We are pleased to see 
+most QuickBooks indicators are back to or better than pre-pandemic levels. 
+This includes growth in customer acquisition, the number of companies 
+running payroll and payments charge volume. This reinforces the digital 
+tailwinds and positioning of our platform and Big Bets Sasan touched on 
+earlier. 
+Credit Karma 
+We closed the acquisition of Credit Karma on December 3rd, resulting in 
+revenue of $144 million for the partial quarter.  
+Our strategic focus with Credit Karma is to grow the core, including credit 
+cards and personal loans; expand growth verticals, including home loans, 
+auto loans and insurance; and develop emerging verticals, focused on 
+money innovation including savings and checking accounts. I’ll share more 
+detail on each of these strategic focus areas. 
+
+15 
+● First, our focus is growing the core. We are seeing new credit card 
+and personal loan partners onboarding while overall partner activity 
+continues to recover. Adoption of the industry-first Lightbox continues 
+to grow. Lightbox enables Credit Karma to more tightly integrate with 
+its financial partners which helps match members to the products that 
+are right for them. This now represents approximately 40 percent of 
+credit card transactions and approximately 30 percent of personal 
+loan transactions, up substantially year-over-year.  
+● Second, our focus is expanding growth verticals. Although it’s early 
+days, we are seeing strong growth in auto insurance followed by 
+home loans and then auto loans. January revenue in the growth 
+vertical is up over 1.5 times year-over-year, a high-water mark. 
+During the quarter we introduced Karma Drive, providing members an 
+easy opportunity to qualify for an auto insurance discount based on 
+actual driving habits. 
+
+16 
+● Third, our focus is developing emerging verticals, particularly on 
+money innovation. We’re just getting started with Credit Karma 
+Money.   
+Financial Principles and Capital Allocation 
+Turning to our financial principles. We remain committed to growing organic 
+revenue double-digits and growing operating income dollars faster than 
+revenue. As I’ve shared before, as we lean into our platform strategy we 
+are starting to see the opportunity for faster margin expansion over time.  
+I’m proud of the progress the team is making. We take a disciplined 
+approach to capital management, investing the cash we generate in 
+opportunities that yield an expected return on investment greater than 15 
+percent. We continue to focus on reallocating resources to top priorities, 
+with an emphasis on becoming an AI-driven expert platform. These 
+principles remain our long-term commitment. 
+Our first priority for the cash we generate is investing in the business to 
+drive customer and revenue growth. We consider acquisitions to accelerate 
+
+17 
+our growth and fill out our product roadmap. We return excess cash that we 
+can’t invest profitably in the business to shareholders via both share 
+repurchases and dividends. 
+● We finished the quarter with approximately $2.7 billion in cash and 
+investments on our balance sheet.  
+● We repurchased $175 million of stock during the second quarter. We 
+have approximately $2.2 billion remaining on our authorization, and 
+we expect to be in the market each quarter this year. 
+● The Board approved a quarterly dividend of $0.59 per share, payable 
+April 19, 2021. This represents an 11 percent increase versus last 
+year. 
+Fiscal 2021 Q3 Guidance 
+Moving on to guidance. While macro uncertainty continues, we remain 
+confident in how our business is performing in the current environment. Our 
+guidance for third quarter fiscal 2021 includes: 
+● Revenue growth of 53 to 55 percent 
+
+18 
+● GAAP earnings per share of $5.85 to $5.95 
+● Non-GAAP earnings per share of $6.75 to $6.85 
+You can find our full Q3 and reiterated fiscal 2021 guidance details in our 
+press release and on our fact sheet. 
+With that, I’ll turn it back over to Sasan.  
+Closing Comments (Sasan) 
+Thanks, Michelle. 
+I’m proud of the team and all we accomplished together, and I’m optimistic 
+about the future. Let's now open it up to your questions. 
+Closing Comments After Q&A 
+Thank you everyone for your time and questions today. I would like to close 
+by thanking our employees, customers and partners.  
+Cautions About Forward-looking Statements 
+These materials contain forward-looking statements, including the size of 
+the market for tax preparation software and the timing of when individuals 
+
+19 
+will file their tax returns; forecasts and timing of expected growth and future 
+financial results of Intuit and its reporting segments, including Credit 
+Karma; Intuit’s prospects for the business in fiscal 2021 and beyond; 
+expectations regarding Intuit’s growth outside the US; expectations 
+regarding timing and growth of revenue from current or future products and 
+services; expectations regarding customer growth; expectations regarding 
+Intuit's corporate tax rate; expectations regarding changes to our products 
+and their impact on Intuit’s business; expectations regarding the amount 
+and timing of any future dividends or share repurchases; expectations 
+regarding availability of our offerings; expectations regarding the impact of 
+our strategic decisions on Intuit’s business; and all of the statements under 
+the heading “Fiscal 2021 Q3 Guidance.” 
+Because these forward-looking statements involve risks and uncertainties, 
+there are important factors that could cause our actual results to differ 
+materially from the expectations expressed in the forward-looking 
+statements. These risks and uncertainties may be amplified by the COVID-
+19 pandemic, which has caused significant global economic instability and 
+
+20 
+uncertainty. These factors include, without limitation, the following: our 
+ability to compete successfully; our participation in the Free File Alliance; 
+potential governmental encroachment in our tax businesses; our ability to 
+adapt to technological change; our ability to predict consumer behavior; our 
+reliance on third-party intellectual property; our ability to protect our 
+intellectual property rights; any harm to our reputation; risks associated with 
+acquisition and divestiture activity, including the acquisition and integration 
+of Credit Karma; the issuance of equity or incurrence of debt to fund an 
+acquisition; our cybersecurity incidents (including those affecting the third 
+parties we rely on); customer concerns about privacy and cybersecurity 
+incidents; fraudulent activities by third parties using our offerings; our failure 
+to process transactions effectively; interruption or failure of our information 
+technology; our ability to maintain critical third-party business relationships; 
+our ability to attract and retain talent; any deficiency in the quality or 
+accuracy of our products (including the advice given by experts on our 
+platform); any delays in product launches; difficulties in processing or filing 
+customer tax submissions; risks associated with international operations; 
+
+21 
+changes to public policy, laws or regulations affecting our businesses; 
+litigation in which we are involved; the seasonal nature of our tax business; 
+changes in tax rates and tax reform legislation; global economic changes; 
+exposure to credit, counterparty and other risks in providing capital to 
+businesses; amortization of acquired intangible assets and impairment 
+charges; our ability to repay or otherwise comply with the terms of our 
+outstanding debt; our ability to repurchase shares or distribute dividends; 
+volatility of our stock price; and our ability to successfully market our 
+offerings. More details about these and other risks that may impact our 
+business are included in our Form 10-K for fiscal 2020 and in our other 
+SEC filings. You can locate these reports through our website at 
+http://investors.intuit.com. Fiscal 2021 full-year and Q3 guidance speaks 
+only as of the date it was publicly issued by Intuit. Other forward-looking 
+statements represent the judgment of the management of Intuit as of the 
+date of this presentation.  We do not undertake any duty to update any 
+forward-looking statement or other information in this presentation.
+ 

@@ -1,0 +1,18 @@
+{
+  "url": "https://investors.intuit.com/news-events/press-releases/detail/221/intuit-full-year-revenue-up-13-percent",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "7a015c83af0fb33c156a9dffea3f0f45f3c4cd5aa8d278eb6eb3e01a29926d50",
+  "retrieved_utc": "2026-10-09T18:03:32Z",
+  "attempts": [
+    {
+      "url": "https://investors.intuit.com/news-events/press-releases/detail/221/intuit-full-year-revenue-up-13-percent",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "7a015c83af0fb33c156a9dffea3f0f45f3c4cd5aa8d278eb6eb3e01a29926d50",
+      "retrieved_utc": "2026-10-09T18:03:32Z"
+    }
+  ]
+}

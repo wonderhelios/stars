@@ -1,0 +1,18 @@
+{
+  "url": "https://investors.intuit.com/_assets/_1dd06c04c67bf383f19eaab5661c4ac7/intuit/db/946/10275/fact_sheet/Q3+FY25+External+Factsheet+%281%29.pdf",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "retrieved_utc": "2026-10-09T18:13:19Z",
+  "sha256": "d8ef8b72e82977b03ab4fa60e85b1413bd98dd0f0141397ea5604aac5f94de93",
+  "attempts": [
+    {
+      "url": "https://investors.intuit.com/_assets/_1dd06c04c67bf383f19eaab5661c4ac7/intuit/db/946/10275/fact_sheet/Q3+FY25+External+Factsheet+%281%29.pdf",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "retrieved_utc": "2026-10-09T18:13:19Z",
+      "sha256": "d8ef8b72e82977b03ab4fa60e85b1413bd98dd0f0141397ea5604aac5f94de93"
+    }
+  ]
+}

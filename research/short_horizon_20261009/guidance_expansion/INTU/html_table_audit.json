@@ -1,0 +1,8 @@
+{
+  "releases": 27,
+  "exact_tables": 25,
+  "all_fact_sheet_matches": true,
+  "market_performance_read": false,
+  "correction": "Exact dollar guidance was present in original HTML appendices; prose-only extraction missed it. PDF is independent crosscheck, not the only numeric source.",
+  "limitation": "Current original issuer HTML still lacks a historical modification log; no claim of independently archived point-in-time versions."
+}

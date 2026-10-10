@@ -1,0 +1,18 @@
+{
+  "url": "https://www.globenewswire.com/news-release/2025/08/05/3127809/0/en/Paylocity-Announces-Fourth-Quarter-and-Full-Fiscal-Year-2025-Financial-Results.html",
+  "status": 403,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "bf7431fff6391f772c7c502e2e10ce2fd375b8f52d02173e0e5cbbb443d06988",
+  "retrieved_utc": "2026-10-09T18:00:39Z",
+  "attempts": [
+    {
+      "url": "https://www.globenewswire.com/news-release/2025/08/05/3127809/0/en/Paylocity-Announces-Fourth-Quarter-and-Full-Fiscal-Year-2025-Financial-Results.html",
+      "status": 403,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "bf7431fff6391f772c7c502e2e10ce2fd375b8f52d02173e0e5cbbb443d06988",
+      "retrieved_utc": "2026-10-09T18:00:39Z"
+    }
+  ]
+}

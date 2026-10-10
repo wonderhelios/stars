@@ -1,0 +1,18 @@
+{
+  "url": "https://investors.intuit.com/news-events/press-releases/detail/236/intuit-second-quarter-revenue-increased-13-percent-small-business-online-ecosystem-revenue-grew-35-percent",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "193e7000f000a9dcdec44c63fe0753df558c254da116ef106cf4ab00c27490ad",
+  "retrieved_utc": "2026-10-09T18:03:28Z",
+  "attempts": [
+    {
+      "url": "https://investors.intuit.com/news-events/press-releases/detail/236/intuit-second-quarter-revenue-increased-13-percent-small-business-online-ecosystem-revenue-grew-35-percent",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "193e7000f000a9dcdec44c63fe0753df558c254da116ef106cf4ab00c27490ad",
+      "retrieved_utc": "2026-10-09T18:03:28Z"
+    }
+  ]
+}

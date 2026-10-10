@@ -1,0 +1,18 @@
+{
+  "url": "https://investors.intuit.com/_assets/_1dd06c04c67bf383f19eaab5661c4ac7/intuit/db/946/9254/fact_sheet/Fact-Sheet-FY-20-Q3-External_v5.pdf",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "retrieved_utc": "2026-10-09T18:12:33Z",
+  "sha256": "d875ae33646cdd77beb07b39023e76f767f344b2aa76d7b3eb87579786e84f45",
+  "attempts": [
+    {
+      "url": "https://investors.intuit.com/_assets/_1dd06c04c67bf383f19eaab5661c4ac7/intuit/db/946/9254/fact_sheet/Fact-Sheet-FY-20-Q3-External_v5.pdf",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "retrieved_utc": "2026-10-09T18:12:33Z",
+      "sha256": "d875ae33646cdd77beb07b39023e76f767f344b2aa76d7b3eb87579786e84f45"
+    }
+  ]
+}

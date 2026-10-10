@@ -1,0 +1,18 @@
+{
+  "url": "https://investors.intuit.com/news-events/press-releases/detail/1247/intuit-to-acquire-hr-platform-goco",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "f02f4655d98eb9657f95fc5a42158b1647cf8dbec6a439b0ef427d2178995176",
+  "retrieved_utc": "2026-10-09T22:11:34Z",
+  "attempts": [
+    {
+      "url": "https://investors.intuit.com/news-events/press-releases/detail/1247/intuit-to-acquire-hr-platform-goco",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "f02f4655d98eb9657f95fc5a42158b1647cf8dbec6a439b0ef427d2178995176",
+      "retrieved_utc": "2026-10-09T22:11:34Z"
+    }
+  ]
+}

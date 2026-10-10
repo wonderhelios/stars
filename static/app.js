@@ -459,8 +459,10 @@ function renderMonitor(d) {
   const parsedAcct = chronRecords(d);
   const unrealized = pos.reduce((a, p) => a + (p.unrealized || 0), 0);
   const pnl = parsedAcct.realized + unrealized;
-  // 收益率的基数 = 当前净值 − 累计盈亏（即策略开始时的本金）
-  const base = eq - pnl;
+  // 分母用后端给的 start_equity（策略开始时的净值，写死不变）。
+  // 旧的「净值 − 累计盈亏」会漂：累计盈亏不含资金费等，反推出来的基数几秒内就能变几块钱。
+  const startBase = Number(d.start_equity);
+  const base = startBase > 0 ? startBase : (eq - pnl);
   const valid = eq > 0;
   const pnlPct = valid && base > 0 ? (pnl / base) * 100 : 0;
   const buffer = d.liq_buffer_pct || 0;

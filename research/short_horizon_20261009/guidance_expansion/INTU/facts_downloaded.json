@@ -1,0 +1,630 @@
+[
+  {
+    "release_id": "236",
+    "release_source": "https://investors.intuit.com/news-events/press-releases/detail/236/intuit-second-quarter-revenue-increased-13-percent-small-business-online-ecosystem-revenue-grew-35-percent",
+    "release_published": "2020-02-24 16:01:00-05:00",
+    "reported_fiscal_year": 2020,
+    "reported_quarter": 2,
+    "file": "original_facts_236.pdf",
+    "url": "https://investors.intuit.com/_assets/_1dd06c04c67bf383f19eaab5661c4ac7/intuit/db/946/9253/fact_sheet/Fact-Sheet-FY-20-Q2-External_v6.pdf",
+    "status": 200,
+    "exit_code": 0,
+    "error": "",
+    "retrieved_utc": "2026-10-09T18:12:31Z",
+    "sha256": "d7a1f99ca70cc90f67f3b0fc088e5fdfd02704e31ee090b7e84d6c3d014c260e",
+    "attempts": [
+      {
+        "url": "https://investors.intuit.com/_assets/_1dd06c04c67bf383f19eaab5661c4ac7/intuit/db/946/9253/fact_sheet/Fact-Sheet-FY-20-Q2-External_v6.pdf",
+        "status": 200,
+        "exit_code": 0,
+        "error": "",
+        "retrieved_utc": "2026-10-09T18:12:31Z",
+        "sha256": "d7a1f99ca70cc90f67f3b0fc088e5fdfd02704e31ee090b7e84d6c3d014c260e"
+      }
+    ]
+  },
+  {
+    "release_id": "226",
+    "release_source": "https://investors.intuit.com/news-events/press-releases/detail/226/intuit-third-quarter-revenue-declined-8-percent-small-business-online-ecosystem-revenue-grew-28-percent",
+    "release_published": "2020-05-21 16:00:00-04:00",
+    "reported_fiscal_year": 2020,
+    "reported_quarter": 3,
+    "file": "original_facts_226.pdf",
+    "url": "https://investors.intuit.com/_assets/_1dd06c04c67bf383f19eaab5661c4ac7/intuit/db/946/9254/fact_sheet/Fact-Sheet-FY-20-Q3-External_v5.pdf",
+    "status": 200,
+    "exit_code": 0,
+    "error": "",
+    "retrieved_utc": "2026-10-09T18:12:33Z",
+    "sha256": "d875ae33646cdd77beb07b39023e76f767f344b2aa76d7b3eb87579786e84f45",
+    "attempts": [
+      {
+        "url": "https://investors.intuit.com/_assets/_1dd06c04c67bf383f19eaab5661c4ac7/intuit/db/946/9254/fact_sheet/Fact-Sheet-FY-20-Q3-External_v5.pdf",
+        "status": 200,
+        "exit_code": 0,
+        "error": "",
+        "retrieved_utc": "2026-10-09T18:12:33Z",
+        "sha256": "d875ae33646cdd77beb07b39023e76f767f344b2aa76d7b3eb87579786e84f45"
+      }
+    ]
+  },
+  {
+    "release_id": "221",
+    "release_source": "https://investors.intuit.com/news-events/press-releases/detail/221/intuit-full-year-revenue-up-13-percent",
+    "release_published": "2020-08-25 16:00:00-04:00",
+    "reported_fiscal_year": 2020,
+    "reported_quarter": 4,
+    "file": "original_facts_221.pdf",
+    "url": "https://investors.intuit.com/_assets/_1dd06c04c67bf383f19eaab5661c4ac7/intuit/db/946/9255/fact_sheet/Q4-FY-20-Fact-Sheet.pdf",
+    "status": 200,
+    "exit_code": 0,
+    "error": "",
+    "retrieved_utc": "2026-10-09T18:12:36Z",
+    "sha256": "1995ba15f14def53a9ac706bf8120f26d16f8b1a308ea07698abc4a913fee654",
+    "attempts": [
+      {
+        "url": "https://investors.intuit.com/_assets/_1dd06c04c67bf383f19eaab5661c4ac7/intuit/db/946/9255/fact_sheet/Q4-FY-20-Fact-Sheet.pdf",
+        "status": 200,
+        "exit_code": 0,
+        "error": "",
+        "retrieved_utc": "2026-10-09T18:12:36Z",
+        "sha256": "1995ba15f14def53a9ac706bf8120f26d16f8b1a308ea07698abc4a913fee654"
+      }
+    ]
+  },
+  {
+    "release_id": "209",
+    "release_source": "https://investors.intuit.com/news-events/press-releases/detail/209/intuit-first-quarter-revenue-grew-14-percent-company-provides-guidance-for-fiscal-2021",
+    "release_published": "2020-11-19 16:00:00-05:00",
+    "reported_fiscal_year": 2021,
+    "reported_quarter": 1,
+    "file": "original_facts_209.pdf",
+    "url": "https://investors.intuit.com/_assets/_1dd06c04c67bf383f19eaab5661c4ac7/intuit/db/946/9256/fact_sheet/Fact-Sheet-FY-21-Q1-External-v7.pdf",
+    "status": 200,
+    "exit_code": 0,
+    "error": "",
+    "retrieved_utc": "2026-10-09T18:14:35Z",
+    "sha256": "85b20d478f0f1a82aded470c6f5c5fb700cac983f39db0aee55665068350ea33",
+    "attempts": [
+      {
+        "url": "https://investors.intuit.com/_assets/_1dd06c04c67bf383f19eaab5661c4ac7/intuit/db/946/9256/fact_sheet/Fact-Sheet-FY-21-Q1-External-v7.pdf",
+        "status": 200,
+        "exit_code": 0,
+        "error": "",
+        "retrieved_utc": "2026-10-09T18:14:35Z",
+        "sha256": "85b20d478f0f1a82aded470c6f5c5fb700cac983f39db0aee55665068350ea33"
+      }
+    ]
+  },
+  {
+    "release_id": "186",
+    "release_source": "https://investors.intuit.com/news-events/press-releases/detail/186/intuit-reports-second-quarter-results-and-reiterates-full-year-guidance-small-business-online-ecosystem-revenue-grew-22-percent",
+    "release_published": "2021-02-23 16:00:00-05:00",
+    "reported_fiscal_year": 2021,
+    "reported_quarter": 2,
+    "file": "original_facts_186.pdf",
+    "url": "https://investors.intuit.com/_assets/_1dd06c04c67bf383f19eaab5661c4ac7/intuit/db/946/9257/fact_sheet/Fact-Sheet-FY-21-Q2-External-v5.pdf",
+    "status": 200,
+    "exit_code": 0,
+    "error": "",
+    "retrieved_utc": "2026-10-09T18:10:34Z",
+    "sha256": "87d05fb6b26e3c5dffbfe7df42a47c232fcbc072b2a4849a5215b250dd833118"
+  },
+  {
+    "release_id": "173",
+    "release_source": "https://investors.intuit.com/news-events/press-releases/detail/173/intuit-reports-third-quarter-results-and-raises-full-year-guidance-grows-small-business-online-ecosystem-revenue-28-percent-in-third-quarter",
+    "release_published": "2021-05-25 16:00:00-04:00",
+    "reported_fiscal_year": 2021,
+    "reported_quarter": 3,
+    "file": "original_facts_173.pdf",
+    "url": "https://investors.intuit.com/_assets/_1dd06c04c67bf383f19eaab5661c4ac7/intuit/db/946/9258/fact_sheet/FQ3-2021-Fact-sheet-External-05-21-2021.pdf",
+    "status": 200,
+    "exit_code": 0,
+    "error": "",
+    "retrieved_utc": "2026-10-09T18:12:39Z",
+    "sha256": "cd66b03bc69b5b2ea79d79ac5fc0fb3872622d8ccefe0e283bbec43ce3e93854",
+    "attempts": [
+      {
+        "url": "https://investors.intuit.com/_assets/_1dd06c04c67bf383f19eaab5661c4ac7/intuit/db/946/9258/fact_sheet/FQ3-2021-Fact-sheet-External-05-21-2021.pdf",
+        "status": 200,
+        "exit_code": 0,
+        "error": "",
+        "retrieved_utc": "2026-10-09T18:12:39Z",
+        "sha256": "cd66b03bc69b5b2ea79d79ac5fc0fb3872622d8ccefe0e283bbec43ce3e93854"
+      }
+    ]
+  },
+  {
+    "release_id": "165",
+    "release_source": "https://investors.intuit.com/news-events/press-releases/detail/165/intuit-reports-strong-full-year-results-and-sets-fiscal-2022-guidance",
+    "release_published": "2021-08-24 16:00:00-04:00",
+    "reported_fiscal_year": 2021,
+    "reported_quarter": 4,
+    "file": "original_facts_165.pdf",
+    "url": "https://investors.intuit.com/_assets/_1dd06c04c67bf383f19eaab5661c4ac7/intuit/db/946/9259/fact_sheet/Fact-Sheet-FY21-Q4-External-v5.pdf",
+    "status": 200,
+    "exit_code": 0,
+    "error": "",
+    "retrieved_utc": "2026-10-09T18:12:42Z",
+    "sha256": "485b9aa4698ed93b05e4702538823fbe152c851326793e0b31285494210a6921",
+    "attempts": [
+      {
+        "url": "https://investors.intuit.com/_assets/_1dd06c04c67bf383f19eaab5661c4ac7/intuit/db/946/9259/fact_sheet/Fact-Sheet-FY21-Q4-External-v5.pdf",
+        "status": 200,
+        "exit_code": 0,
+        "error": "",
+        "retrieved_utc": "2026-10-09T18:12:42Z",
+        "sha256": "485b9aa4698ed93b05e4702538823fbe152c851326793e0b31285494210a6921"
+      }
+    ]
+  },
+  {
+    "release_id": "148",
+    "release_source": "https://investors.intuit.com/news-events/press-releases/detail/148/intuit-reports-strong-first-quarter-results-and-raises-full-year-revenue-guidance-reflecting-early-momentum-in-the-year-and-the-acquisition-of-mailchimp",
+    "release_published": "2021-11-18 16:00:00-05:00",
+    "reported_fiscal_year": 2022,
+    "reported_quarter": 1,
+    "file": "original_facts_148.pdf",
+    "url": "https://investors.intuit.com/_assets/_1dd06c04c67bf383f19eaab5661c4ac7/intuit/db/946/9260/fact_sheet/FQ1-2022-Fact-Sheet-External.pdf",
+    "status": 200,
+    "exit_code": 0,
+    "error": "",
+    "retrieved_utc": "2026-10-09T18:10:36Z",
+    "sha256": "2ba6565c66b452d17d3d72aebdd851fe966224454be3136d4f1b81d920f538b2"
+  },
+  {
+    "release_id": "128",
+    "release_source": "https://investors.intuit.com/news-events/press-releases/detail/128/intuit-reports-second-quarter-results-and-reiterates-full-year-guidance-organic-online-ecosystem-revenue-grew-37-percent",
+    "release_published": "2022-02-24 16:00:00-05:00",
+    "reported_fiscal_year": 2022,
+    "reported_quarter": 2,
+    "file": "original_facts_128.pdf",
+    "url": "https://investors.intuit.com/_assets/_1dd06c04c67bf383f19eaab5661c4ac7/intuit/db/946/9261/fact_sheet/FQ2-2022-Fact-Sheet.pdf",
+    "status": 200,
+    "exit_code": 0,
+    "error": "",
+    "retrieved_utc": "2026-10-09T18:12:44Z",
+    "sha256": "beda0f6202f4b8b4a7b4bb5afa3cfb1af06fa183ecfa210e003fb89007e8e67a",
+    "attempts": [
+      {
+        "url": "https://investors.intuit.com/_assets/_1dd06c04c67bf383f19eaab5661c4ac7/intuit/db/946/9261/fact_sheet/FQ2-2022-Fact-Sheet.pdf",
+        "status": 200,
+        "exit_code": 0,
+        "error": "",
+        "retrieved_utc": "2026-10-09T18:12:44Z",
+        "sha256": "beda0f6202f4b8b4a7b4bb5afa3cfb1af06fa183ecfa210e003fb89007e8e67a"
+      }
+    ]
+  },
+  {
+    "release_id": "119",
+    "release_source": "https://investors.intuit.com/news-events/press-releases/detail/119/intuit-reports-third-quarter-results-and-raises-full-year-revenue-and-operating-income-guidance",
+    "release_published": "2022-05-24 16:00:00-04:00",
+    "reported_fiscal_year": 2022,
+    "reported_quarter": 3,
+    "file": "original_facts_119.pdf",
+    "url": "https://investors.intuit.com/_assets/_1dd06c04c67bf383f19eaab5661c4ac7/intuit/db/946/9262/fact_sheet/FQ3-2022-Fact-Sheet-External.pdf",
+    "status": 200,
+    "exit_code": 0,
+    "error": "",
+    "retrieved_utc": "2026-10-09T18:12:47Z",
+    "sha256": "3196eb7bcc0b8e4d8fbae48998e6fc4e5bab2f00dce7e8e2bd88f5eb18949963",
+    "attempts": [
+      {
+        "url": "https://investors.intuit.com/_assets/_1dd06c04c67bf383f19eaab5661c4ac7/intuit/db/946/9262/fact_sheet/FQ3-2022-Fact-Sheet-External.pdf",
+        "status": 200,
+        "exit_code": 0,
+        "error": "",
+        "retrieved_utc": "2026-10-09T18:12:47Z",
+        "sha256": "3196eb7bcc0b8e4d8fbae48998e6fc4e5bab2f00dce7e8e2bd88f5eb18949963"
+      }
+    ]
+  },
+  {
+    "release_id": "113",
+    "release_source": "https://investors.intuit.com/news-events/press-releases/detail/113/intuit-reports-strong-full-year-results-and-sets-fiscal-2023-guidance",
+    "release_published": "2022-08-23 16:00:00-04:00",
+    "reported_fiscal_year": 2022,
+    "reported_quarter": 4,
+    "file": "original_facts_113.pdf",
+    "url": "https://investors.intuit.com/_assets/_1dd06c04c67bf383f19eaab5661c4ac7/intuit/db/946/9263/fact_sheet/FQ4-2022-Fact-Sheet-External-08-23-2022.pdf",
+    "status": 200,
+    "exit_code": 0,
+    "error": "",
+    "retrieved_utc": "2026-10-09T18:12:50Z",
+    "sha256": "a82806494d369b3f5081b53805de68554470a01bde92392db9d6f09c42ccdfe9",
+    "attempts": [
+      {
+        "url": "https://investors.intuit.com/_assets/_1dd06c04c67bf383f19eaab5661c4ac7/intuit/db/946/9263/fact_sheet/FQ4-2022-Fact-Sheet-External-08-23-2022.pdf",
+        "status": 200,
+        "exit_code": 0,
+        "error": "",
+        "retrieved_utc": "2026-10-09T18:12:50Z",
+        "sha256": "a82806494d369b3f5081b53805de68554470a01bde92392db9d6f09c42ccdfe9"
+      }
+    ]
+  },
+  {
+    "release_id": "94",
+    "release_source": "https://investors.intuit.com/news-events/press-releases/detail/94/intuit-reports-strong-first-quarter-results-and-reiterates-full-year-operating-income-and-earnings-per-share-guidance",
+    "release_published": "2022-11-29 16:00:00-05:00",
+    "reported_fiscal_year": 2023,
+    "reported_quarter": 1,
+    "file": "original_facts_94.pdf",
+    "url": "https://investors.intuit.com/_assets/_1dd06c04c67bf383f19eaab5661c4ac7/intuit/db/946/9264/fact_sheet/FQ1-2023-Fact-Sheet-External.pdf",
+    "status": 200,
+    "exit_code": 0,
+    "error": "",
+    "retrieved_utc": "2026-10-09T18:12:52Z",
+    "sha256": "c8029421d762198b6b476822a5b5a5fce2fb8a2806eaba21d488cce5fb75e735",
+    "attempts": [
+      {
+        "url": "https://investors.intuit.com/_assets/_1dd06c04c67bf383f19eaab5661c4ac7/intuit/db/946/9264/fact_sheet/FQ1-2023-Fact-Sheet-External.pdf",
+        "status": 200,
+        "exit_code": 0,
+        "error": "",
+        "retrieved_utc": "2026-10-09T18:12:52Z",
+        "sha256": "c8029421d762198b6b476822a5b5a5fce2fb8a2806eaba21d488cce5fb75e735"
+      }
+    ]
+  },
+  {
+    "release_id": "79",
+    "release_source": "https://investors.intuit.com/news-events/press-releases/detail/79/intuit-reports-strong-second-quarter-results-and-reiterates-full-year-guidance",
+    "release_published": "2023-02-23 16:00:00-05:00",
+    "reported_fiscal_year": 2023,
+    "reported_quarter": 2,
+    "file": "original_facts_79.pdf",
+    "url": "https://investors.intuit.com/_assets/_1dd06c04c67bf383f19eaab5661c4ac7/intuit/db/946/9265/fact_sheet/FQ2-2023-Fact-Sheet-External.pdf",
+    "status": 200,
+    "exit_code": 0,
+    "error": "",
+    "retrieved_utc": "2026-10-09T18:12:55Z",
+    "sha256": "c1ce35ccbb52646c786f5e8a47294690777829bbfc4abbdc8069c96b9138265c",
+    "attempts": [
+      {
+        "url": "https://investors.intuit.com/_assets/_1dd06c04c67bf383f19eaab5661c4ac7/intuit/db/946/9265/fact_sheet/FQ2-2023-Fact-Sheet-External.pdf",
+        "status": 200,
+        "exit_code": 0,
+        "error": "",
+        "retrieved_utc": "2026-10-09T18:12:55Z",
+        "sha256": "c1ce35ccbb52646c786f5e8a47294690777829bbfc4abbdc8069c96b9138265c"
+      }
+    ]
+  },
+  {
+    "release_id": "64",
+    "release_source": "https://investors.intuit.com/news-events/press-releases/detail/64/intuit-reports-third-quarter-results-and-raises-total-company-full-year-guidance",
+    "release_published": "2023-05-23 16:00:00-04:00",
+    "reported_fiscal_year": 2023,
+    "reported_quarter": 3,
+    "file": "original_facts_64.pdf",
+    "url": "https://investors.intuit.com/_assets/_1dd06c04c67bf383f19eaab5661c4ac7/intuit/db/946/9266/fact_sheet/FQ3-2023-Fact-Sheet-External.pdf",
+    "status": 200,
+    "exit_code": 0,
+    "error": "",
+    "retrieved_utc": "2026-10-09T18:12:58Z",
+    "sha256": "d78a7f18a24bea347a5fb4ad7b1f0edc79bf1dadde0421f6fc13c5f7031f3488",
+    "attempts": [
+      {
+        "url": "https://investors.intuit.com/_assets/_1dd06c04c67bf383f19eaab5661c4ac7/intuit/db/946/9266/fact_sheet/FQ3-2023-Fact-Sheet-External.pdf",
+        "status": 200,
+        "exit_code": 0,
+        "error": "",
+        "retrieved_utc": "2026-10-09T18:12:58Z",
+        "sha256": "d78a7f18a24bea347a5fb4ad7b1f0edc79bf1dadde0421f6fc13c5f7031f3488"
+      }
+    ]
+  },
+  {
+    "release_id": "47",
+    "release_source": "https://investors.intuit.com/news-events/press-releases/detail/47/intuit-reports-strong-fourth-quarter-and-full-year-results-sets-fiscal-2024-guidance",
+    "release_published": "2023-08-24 16:00:00-04:00",
+    "reported_fiscal_year": 2023,
+    "reported_quarter": 4,
+    "file": "original_facts_47.pdf",
+    "url": "https://investors.intuit.com/_assets/_1dd06c04c67bf383f19eaab5661c4ac7/intuit/db/946/9267/fact_sheet/FQ4-2023-Fact-Sheet-External.pdf",
+    "status": 200,
+    "exit_code": 0,
+    "error": "",
+    "retrieved_utc": "2026-10-09T18:13:00Z",
+    "sha256": "2b863771e18925ac12a98fa363a6cc8cb0496fece127e70aeafd9bbee484d8e6",
+    "attempts": [
+      {
+        "url": "https://investors.intuit.com/_assets/_1dd06c04c67bf383f19eaab5661c4ac7/intuit/db/946/9267/fact_sheet/FQ4-2023-Fact-Sheet-External.pdf",
+        "status": 200,
+        "exit_code": 0,
+        "error": "",
+        "retrieved_utc": "2026-10-09T18:13:00Z",
+        "sha256": "2b863771e18925ac12a98fa363a6cc8cb0496fece127e70aeafd9bbee484d8e6"
+      }
+    ]
+  },
+  {
+    "release_id": "20",
+    "release_source": "https://investors.intuit.com/news-events/press-releases/detail/20/intuit-reports-strong-first-quarter-results-and-reiterates-full-year-guidance",
+    "release_published": "2023-11-28 16:00:00-05:00",
+    "reported_fiscal_year": 2024,
+    "reported_quarter": 1,
+    "file": "original_facts_20.pdf",
+    "url": "https://investors.intuit.com/_assets/_1dd06c04c67bf383f19eaab5661c4ac7/intuit/db/946/9268/fact_sheet/FQ1-2024-Fact-Sheet-External.pdf",
+    "status": 200,
+    "exit_code": 0,
+    "error": "",
+    "retrieved_utc": "2026-10-09T18:13:03Z",
+    "sha256": "ac7fe81aa90fc0171f245f00ab173de4b7c56f83d40ced325ad16d982469fe5b",
+    "attempts": [
+      {
+        "url": "https://investors.intuit.com/_assets/_1dd06c04c67bf383f19eaab5661c4ac7/intuit/db/946/9268/fact_sheet/FQ1-2024-Fact-Sheet-External.pdf",
+        "status": 200,
+        "exit_code": 0,
+        "error": "",
+        "retrieved_utc": "2026-10-09T18:13:03Z",
+        "sha256": "ac7fe81aa90fc0171f245f00ab173de4b7c56f83d40ced325ad16d982469fe5b"
+      }
+    ]
+  },
+  {
+    "release_id": "11",
+    "release_source": "https://investors.intuit.com/news-events/press-releases/detail/11/intuit-reports-strong-second-quarter-results-and-reiterates-full-year-guidance",
+    "release_published": "2024-02-22 16:00:00-05:00",
+    "reported_fiscal_year": 2024,
+    "reported_quarter": 2,
+    "file": "original_facts_11.pdf",
+    "url": "https://investors.intuit.com/_assets/_1dd06c04c67bf383f19eaab5661c4ac7/intuit/db/946/9269/fact_sheet/FQ2-2024-Fact-Sheet-External.pdf",
+    "status": 200,
+    "exit_code": 0,
+    "error": "",
+    "retrieved_utc": "2026-10-09T18:13:06Z",
+    "sha256": "943b4e3f13aeac1aad2af21ecad94675c707bfe33b06f984fc670919d211f23f",
+    "attempts": [
+      {
+        "url": "https://investors.intuit.com/_assets/_1dd06c04c67bf383f19eaab5661c4ac7/intuit/db/946/9269/fact_sheet/FQ2-2024-Fact-Sheet-External.pdf",
+        "status": 200,
+        "exit_code": 0,
+        "error": "",
+        "retrieved_utc": "2026-10-09T18:13:06Z",
+        "sha256": "943b4e3f13aeac1aad2af21ecad94675c707bfe33b06f984fc670919d211f23f"
+      }
+    ]
+  },
+  {
+    "release_id": "1188",
+    "release_source": "https://investors.intuit.com/news-events/press-releases/detail/1188/intuit-reports-strong-third-quarter-results-and-raises-full-year-guidance",
+    "release_published": "2024-05-23 16:00:00-04:00",
+    "reported_fiscal_year": 2024,
+    "reported_quarter": 3,
+    "file": "original_facts_1188.pdf",
+    "url": "https://investors.intuit.com/_assets/_1dd06c04c67bf383f19eaab5661c4ac7/intuit/db/946/9270/fact_sheet/FQ3-2024-Fact-Sheet-External_FINAL.pdf",
+    "status": 200,
+    "exit_code": 0,
+    "error": "",
+    "retrieved_utc": "2026-10-09T18:13:09Z",
+    "sha256": "b2856fe37f537211a30650e15db56997a96ae6819960789bad2d41eb3847de5d",
+    "attempts": [
+      {
+        "url": "https://investors.intuit.com/_assets/_1dd06c04c67bf383f19eaab5661c4ac7/intuit/db/946/9270/fact_sheet/FQ3-2024-Fact-Sheet-External_FINAL.pdf",
+        "status": 200,
+        "exit_code": 0,
+        "error": "",
+        "retrieved_utc": "2026-10-09T18:13:09Z",
+        "sha256": "b2856fe37f537211a30650e15db56997a96ae6819960789bad2d41eb3847de5d"
+      }
+    ]
+  },
+  {
+    "release_id": "1202",
+    "release_source": "https://investors.intuit.com/news-events/press-releases/detail/1202/intuit-reports-strong-fourth-quarter-and-full-year-results-sets-fiscal-2025-guidance-with-double-digit-revenue-and-earnings-growth",
+    "release_published": "2024-08-22 16:00:00-04:00",
+    "reported_fiscal_year": 2024,
+    "reported_quarter": 4,
+    "file": "original_facts_1202.pdf",
+    "url": "https://investors.intuit.com/_assets/_1dd06c04c67bf383f19eaab5661c4ac7/intuit/db/946/9949/fact_sheet/FQ4+2024+Fact+Sheet+External_.pdf",
+    "status": 200,
+    "exit_code": 0,
+    "error": "",
+    "retrieved_utc": "2026-10-09T18:13:12Z",
+    "sha256": "297cf159d339916596583c434f20d64548a68533b6695e729416361abe6b070f",
+    "attempts": [
+      {
+        "url": "https://investors.intuit.com/_assets/_1dd06c04c67bf383f19eaab5661c4ac7/intuit/db/946/9949/fact_sheet/FQ4+2024+Fact+Sheet+External_.pdf",
+        "status": 200,
+        "exit_code": 0,
+        "error": "",
+        "retrieved_utc": "2026-10-09T18:13:12Z",
+        "sha256": "297cf159d339916596583c434f20d64548a68533b6695e729416361abe6b070f"
+      }
+    ]
+  },
+  {
+    "release_id": "1223",
+    "release_source": "https://investors.intuit.com/news-events/press-releases/detail/1223/intuit-reports-strong-first-quarter-results-and-reiterates-full-year-guidance",
+    "release_published": "2024-11-21 16:00:00-05:00",
+    "reported_fiscal_year": 2025,
+    "reported_quarter": 1,
+    "file": "original_facts_1223.pdf",
+    "url": "https://investors.intuit.com/_assets/_1dd06c04c67bf383f19eaab5661c4ac7/intuit/db/946/10233/fact_sheet/Q1+FY25+External+Factsheet+v2.pdf",
+    "status": 200,
+    "exit_code": 0,
+    "error": "",
+    "retrieved_utc": "2026-10-09T18:13:14Z",
+    "sha256": "0b0a64c8bcb606965047e8a5da0fc4819fa82744f4ae827bab19ab760089d026",
+    "attempts": [
+      {
+        "url": "https://investors.intuit.com/_assets/_1dd06c04c67bf383f19eaab5661c4ac7/intuit/db/946/10233/fact_sheet/Q1+FY25+External+Factsheet+v2.pdf",
+        "status": 200,
+        "exit_code": 0,
+        "error": "",
+        "retrieved_utc": "2026-10-09T18:13:14Z",
+        "sha256": "0b0a64c8bcb606965047e8a5da0fc4819fa82744f4ae827bab19ab760089d026"
+      }
+    ]
+  },
+  {
+    "release_id": "1239",
+    "release_source": "https://investors.intuit.com/news-events/press-releases/detail/1239/intuit-reports-strong-second-quarter-results-and-reiterates-full-year-guidance",
+    "release_published": "2025-02-25 16:00:00-05:00",
+    "reported_fiscal_year": 2025,
+    "reported_quarter": 2,
+    "file": "original_facts_1239.pdf",
+    "url": "https://investors.intuit.com/_assets/_1dd06c04c67bf383f19eaab5661c4ac7/intuit/db/946/10258/fact_sheet/Q2+FY25+External+Fact+Sheet+%281%29.pdf",
+    "status": 200,
+    "exit_code": 0,
+    "error": "",
+    "retrieved_utc": "2026-10-09T18:13:17Z",
+    "sha256": "e71512d4f8fe72a0ed20116ae578ba5409589ac41e8679e006d8f16f8a99900c",
+    "attempts": [
+      {
+        "url": "https://investors.intuit.com/_assets/_1dd06c04c67bf383f19eaab5661c4ac7/intuit/db/946/10258/fact_sheet/Q2+FY25+External+Fact+Sheet+%281%29.pdf",
+        "status": 200,
+        "exit_code": 0,
+        "error": "",
+        "retrieved_utc": "2026-10-09T18:13:17Z",
+        "sha256": "e71512d4f8fe72a0ed20116ae578ba5409589ac41e8679e006d8f16f8a99900c"
+      }
+    ]
+  },
+  {
+    "release_id": "1251",
+    "release_source": "https://investors.intuit.com/news-events/press-releases/detail/1251/intuit-reports-strong-third-quarter-results-and-raises-full-year-guidance",
+    "release_published": "2025-05-22 16:00:00-04:00",
+    "reported_fiscal_year": 2025,
+    "reported_quarter": 3,
+    "file": "original_facts_1251.pdf",
+    "url": "https://investors.intuit.com/_assets/_1dd06c04c67bf383f19eaab5661c4ac7/intuit/db/946/10275/fact_sheet/Q3+FY25+External+Factsheet+%281%29.pdf",
+    "status": 200,
+    "exit_code": 0,
+    "error": "",
+    "retrieved_utc": "2026-10-09T18:13:19Z",
+    "sha256": "d8ef8b72e82977b03ab4fa60e85b1413bd98dd0f0141397ea5604aac5f94de93",
+    "attempts": [
+      {
+        "url": "https://investors.intuit.com/_assets/_1dd06c04c67bf383f19eaab5661c4ac7/intuit/db/946/10275/fact_sheet/Q3+FY25+External+Factsheet+%281%29.pdf",
+        "status": 200,
+        "exit_code": 0,
+        "error": "",
+        "retrieved_utc": "2026-10-09T18:13:19Z",
+        "sha256": "d8ef8b72e82977b03ab4fa60e85b1413bd98dd0f0141397ea5604aac5f94de93"
+      }
+    ]
+  },
+  {
+    "release_id": "1266",
+    "release_source": "https://investors.intuit.com/news-events/press-releases/detail/1266/intuit-reports-strong-fourth-quarter-and-full-year-fiscal-2025-results-sets-fiscal-2026-guidance-with-double-digit-revenue-growth-and-continued-operating-margin-expansion",
+    "release_published": "2025-08-21 16:00:00-04:00",
+    "reported_fiscal_year": 2025,
+    "reported_quarter": 4,
+    "file": "original_facts_1266.pdf",
+    "url": "https://investors.intuit.com/_assets/_1dd06c04c67bf383f19eaab5661c4ac7/intuit/db/946/10311/fact_sheet/Q4+FY25+External+Factsheet.pdf",
+    "status": 200,
+    "exit_code": 0,
+    "error": "",
+    "retrieved_utc": "2026-10-09T18:13:21Z",
+    "sha256": "20eb8695eeaeb234db453a7f10615cf567a7820a74d0f80968532902d6da5c1c",
+    "attempts": [
+      {
+        "url": "https://investors.intuit.com/_assets/_1dd06c04c67bf383f19eaab5661c4ac7/intuit/db/946/10311/fact_sheet/Q4+FY25+External+Factsheet.pdf",
+        "status": 200,
+        "exit_code": 0,
+        "error": "",
+        "retrieved_utc": "2026-10-09T18:13:21Z",
+        "sha256": "20eb8695eeaeb234db453a7f10615cf567a7820a74d0f80968532902d6da5c1c"
+      }
+    ]
+  },
+  {
+    "release_id": "1286",
+    "release_source": "https://investors.intuit.com/news-events/press-releases/detail/1286/intuit-reports-strong-first-quarter-results-and-reiterates-full-year-guidance",
+    "release_published": "2025-11-20 16:00:00-05:00",
+    "reported_fiscal_year": 2026,
+    "reported_quarter": 1,
+    "file": "original_facts_1286.pdf",
+    "url": "https://investors.intuit.com/_assets/_1dd06c04c67bf383f19eaab5661c4ac7/intuit/db/946/10339/fact_sheet/Q1+FY26+External+Fact+Sheet.pdf",
+    "status": 200,
+    "exit_code": 0,
+    "error": "",
+    "retrieved_utc": "2026-10-09T18:13:24Z",
+    "sha256": "7696d271a332438fbc77568b21ce5414abaaddc4aaac90094869ff266bcf546d",
+    "attempts": [
+      {
+        "url": "https://investors.intuit.com/_assets/_1dd06c04c67bf383f19eaab5661c4ac7/intuit/db/946/10339/fact_sheet/Q1+FY26+External+Fact+Sheet.pdf",
+        "status": 200,
+        "exit_code": 0,
+        "error": "",
+        "retrieved_utc": "2026-10-09T18:13:24Z",
+        "sha256": "7696d271a332438fbc77568b21ce5414abaaddc4aaac90094869ff266bcf546d"
+      }
+    ]
+  },
+  {
+    "release_id": "1307",
+    "release_source": "https://investors.intuit.com/news-events/press-releases/detail/1307/intuit-reports-strong-second-quarter-results-and-reiterates-full-year-guidance",
+    "release_published": "2026-02-26 16:00:00-05:00",
+    "reported_fiscal_year": 2026,
+    "reported_quarter": 2,
+    "file": "original_facts_1307.pdf",
+    "url": "https://investors.intuit.com/_assets/_1dd06c04c67bf383f19eaab5661c4ac7/intuit/db/946/10358/fact_sheet/Q2+FY26+Fact+Sheet+External.pdf",
+    "status": 200,
+    "exit_code": 0,
+    "error": "",
+    "retrieved_utc": "2026-10-09T18:13:26Z",
+    "sha256": "c1bafa6fb61f4ba50f5e05254665b3f2199902b0e647eb3ddc3bd23a74e7ce9c",
+    "attempts": [
+      {
+        "url": "https://investors.intuit.com/_assets/_1dd06c04c67bf383f19eaab5661c4ac7/intuit/db/946/10358/fact_sheet/Q2+FY26+Fact+Sheet+External.pdf",
+        "status": 200,
+        "exit_code": 0,
+        "error": "",
+        "retrieved_utc": "2026-10-09T18:13:26Z",
+        "sha256": "c1bafa6fb61f4ba50f5e05254665b3f2199902b0e647eb3ddc3bd23a74e7ce9c"
+      }
+    ]
+  },
+  {
+    "release_id": "1312",
+    "release_source": "https://investors.intuit.com/news-events/press-releases/detail/1312/intuit-reports-strong-third-quarter-results-and-raises-full-year-revenue-guidance",
+    "release_published": "2026-05-20 16:00:00-04:00",
+    "reported_fiscal_year": 2026,
+    "reported_quarter": 3,
+    "file": "original_facts_1312.pdf",
+    "url": "https://investors.intuit.com/_assets/_1dd06c04c67bf383f19eaab5661c4ac7/intuit/db/946/10372/fact_sheet/Q3+FY26+Fact+Sheet+External.pdf",
+    "status": 200,
+    "exit_code": 0,
+    "error": "",
+    "retrieved_utc": "2026-10-09T18:13:29Z",
+    "sha256": "19be87c8f7c1c44a30cd49f3c1a7e9c012cc1f88858c78fa26198643b579cea5",
+    "attempts": [
+      {
+        "url": "https://investors.intuit.com/_assets/_1dd06c04c67bf383f19eaab5661c4ac7/intuit/db/946/10372/fact_sheet/Q3+FY26+Fact+Sheet+External.pdf",
+        "status": 200,
+        "exit_code": 0,
+        "error": "",
+        "retrieved_utc": "2026-10-09T18:13:29Z",
+        "sha256": "19be87c8f7c1c44a30cd49f3c1a7e9c012cc1f88858c78fa26198643b579cea5"
+      }
+    ]
+  },
+  {
+    "release_id": "1320",
+    "release_source": "https://investors.intuit.com/news-events/press-releases/detail/1320/intuit-reports-fourth-quarter-and-full-year-fiscal-2026-results-sets-fiscal-2027-guidance",
+    "release_published": "2026-08-25 16:00:00-04:00",
+    "reported_fiscal_year": 2026,
+    "reported_quarter": 4,
+    "file": "original_facts_1320.pdf",
+    "url": "https://investors.intuit.com/_assets/_1dd06c04c67bf383f19eaab5661c4ac7/intuit/db/946/10378/fact_sheet/Q4+FY26+Fact+Sheet+External+vf.pdf",
+    "status": 200,
+    "exit_code": 0,
+    "error": "",
+    "retrieved_utc": "2026-10-09T18:13:32Z",
+    "sha256": "28ac922fa850f273e083f46f0003a47fe00249b7050c7a82088b15d68f3d4f25",
+    "attempts": [
+      {
+        "url": "https://investors.intuit.com/_assets/_1dd06c04c67bf383f19eaab5661c4ac7/intuit/db/946/10378/fact_sheet/Q4+FY26+Fact+Sheet+External+vf.pdf",
+        "status": 200,
+        "exit_code": 0,
+        "error": "",
+        "retrieved_utc": "2026-10-09T18:13:32Z",
+        "sha256": "28ac922fa850f273e083f46f0003a47fe00249b7050c7a82088b15d68f3d4f25"
+      }
+    ]
+  }
+]

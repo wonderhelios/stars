@@ -1,0 +1,22 @@
+[
+  {
+    "release_id": "186",
+    "file": "original_call_186.pdf",
+    "url": "https://investors.intuit.com/_assets/_1dd06c04c67bf383f19eaab5661c4ac7/intuit/db/946/9257/webcast_transcript/Q2-FY-21-Earnings-Script-02-23-21.pdf",
+    "status": 200,
+    "exit_code": 0,
+    "error": "",
+    "retrieved_utc": "2026-10-09T18:09:54Z",
+    "sha256": "7684392ceea8e6f23cad48514bdc88a26f1163637ece5d8dc52f89c749333dad"
+  },
+  {
+    "release_id": "148",
+    "file": "original_call_148.pdf",
+    "url": "https://investors.intuit.com/_assets/_1dd06c04c67bf383f19eaab5661c4ac7/intuit/db/946/9260/webcast_transcript/Q1-FY-22-Earnings-Script-Final.pdf",
+    "status": 200,
+    "exit_code": 0,
+    "error": "",
+    "retrieved_utc": "2026-10-09T18:09:55Z",
+    "sha256": "90bdc579dd048fde1cc3c9a1bb9d9e6abb868237c7bc315983089d1f42ed6477"
+  }
+]

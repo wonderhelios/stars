@@ -1,0 +1,18 @@
+{
+  "url": "https://investors.intuit.com/news-events/press-releases/detail/101/intuit-reiterates-operating-income-and-earnings-per-share-guidance-for-fiscal-year-2023-expects-to-report-first-quarter-results-above-guidance",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "80a7de7ff37b8c9e83302c5e6710cd237da915384892f0fe25f303e2e01104dc",
+  "retrieved_utc": "2026-10-09T18:02:10Z",
+  "attempts": [
+    {
+      "url": "https://investors.intuit.com/news-events/press-releases/detail/101/intuit-reiterates-operating-income-and-earnings-per-share-guidance-for-fiscal-year-2023-expects-to-report-first-quarter-results-above-guidance",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "80a7de7ff37b8c9e83302c5e6710cd237da915384892f0fe25f303e2e01104dc",
+      "retrieved_utc": "2026-10-09T18:02:10Z"
+    }
+  ]
+}

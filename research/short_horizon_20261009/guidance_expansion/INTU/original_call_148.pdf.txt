@@ -1,0 +1,409 @@
+1 
+Intuit Inc. 
+First-quarter Fiscal 2022 
+Conference Call Remarks 
+November 18, 2021 
+ 
+Introduction 
+Good afternoon and welcome to Intuit’s first-quarter fiscal 2022 conference 
+call. I’m here with Intuit's CEO Sasan Goodarzi and Michelle Clatterbuck, 
+our CFO. 
+Before we start, I’d like to remind everyone that our remarks will include 
+forward-looking statements. There are a number of factors that could cause 
+Intuit’s results to differ materially from our expectations. You can learn 
+more about these risks in the press release we issued earlier this 
+afternoon, our Form 10-K for fiscal 2021 and our other SEC filings. All of 
+those documents are available on the Investor Relations page of Intuit’s 
+website at intuit.com. We assume no obligation to update any forward-
+looking statement. 
+
+2 
+Some of the numbers in these remarks are presented on a non-GAAP 
+basis. We’ve reconciled the comparable GAAP and non-GAAP numbers in 
+today’s press release. 
+Unless otherwise noted, all growth rates refer to the current period versus 
+the comparable prior-year period, and the business metrics and associated 
+growth rates refer to worldwide business metrics. 
+A copy of our prepared remarks and supplemental financial information will 
+be available on our website after this call ends. 
+With that, I’ll turn the call over to Sasan. 
+First-quarter Fiscal 2022 Overview 
+Thanks Kim, and thanks to all of you for joining us today. 
+We are off to a strong start in fiscal year 2022 with continued momentum 
+across the company given our strategy of becoming a global AI-driven 
+expert platform powering the prosperity of consumers and small 
+businesses. We have a nearly $300 billion addressable market driven by 
+
+3 
+digital tailwinds that include a shift to virtual solutions, acceleration to online 
+and omnichannel capabilities, and digital money offerings.  
+First quarter revenue grew 52 percent, including 32 points from the addition 
+of Credit Karma. Total revenue growth was fueled by Small Business and 
+Self-Employed Group revenue growth of 22 percent, and Credit Karma 
+revenue of $418 million, another record quarter. Consumer Group and 
+ProConnect Group revenue was in-line with our expectations in a 
+seasonally smaller quarter. As a result of both our strong start to the year 
+and the close of the Mailchimp transaction, we are raising our revenue and 
+non-GAAP operating income and earnings per share guidance for fiscal 
+year 2022.  Michelle will cover this in detail later.  
+Our AI-driven expert platform strategy is accelerating innovation and our 
+five Big Bets are solving the largest problems our customers face. We 
+continue to deliver strong proof points that demonstrate this success, and 
+are well-positioned for durable growth in the future. As a reminder, these 
+Big Bets are: 
+
+4 
+● Revolutionize speed to benefit 
+● Connect people to experts 
+● Unlock smart money decisions 
+● Be the center of small business growth, and 
+● Disrupt the small business mid-market  
+Today, I’d like to highlight examples of our recent progress across three of 
+these Big Bets. 
+Our third big bet is to “unlock smart money decisions.” I’m extremely proud 
+of the momentum we’re seeing with Credit Karma. Credit Karma is a data 
+platform with powerful network effects solving a two-sided problem. We are 
+focused on our goal of creating a personal financial assistant that helps 
+consumers find the right financial products, put more money in their 
+pockets and access financial expertise and insights.  
+Credit Karma achieved record high revenue again in Q1. We continue to 
+deliver innovation across all verticals fueled by our proprietary Lightbox 
+platform enabling personalized experiences for our members, creating a 
+network effect.  
+
+5 
+● Within the core, partners’ usage of Lightbox reached all-time highs 
+across both credit cards and personal loans. Lightbox more than 
+doubles the average approval rate for members who apply for credit 
+cards on Credit Karma versus outside of Credit Karma.  
+● Within the growth verticals, we are solving a larger set of financial 
+challenges for consumers. Karma Drive is giving U.S. members the 
+opportunity to see if they can save money on auto insurance with 
+usage based pricing. We are actively exploring expansion 
+opportunities with Lightbox in other verticals including auto loans, 
+building off the successes we’ve seen in credit cards and personal 
+loans. 
+● Within the emerging verticals, we remain focused on innovation with 
+Credit Karma Money. We integrated Credit Karma Money into 
+TurboTax last season and experimented with how we could best 
+meet our customers’ needs, and announced an integration with 
+QuickBooks Online Payroll. Given our learnings, we are excited about 
+launching our improved experiences in the upcoming tax season. We 
+
+6 
+believe Credit Karma Money is key to driving growth in frequency of 
+visits over time, one of the many key drivers of average revenue per 
+monthly active user. 
+Zooming out, we continue to grow members, and are focused on building 
+trust by delivering personalized financial products right for members, 
+helping members save money, pay down debt and get faster access to 
+their money while providing insights and advice. Over time, we are creating  
+a virtuous cycle, which we expect to increase the frequency of 
+engagement, transactions, and monetization across our ecosystem. 
+Our fourth big bet is to “become the center of small business growth” by 
+helping our customers get customers, get paid fast, manage capital, pay 
+employees with confidence and grow in an omnichannel world. Sixty 
+percent of small businesses struggle with cash flow, and we are continuing 
+to innovate to create solutions for customers to overcome this challenge.  
+● In fiscal 2021, total payments volume on our platform grew 40 
+percent year-over-year to over $90 billion. And online payments 
+
+7 
+volume grew more than 60 percent, driven by an increase in 
+customers using our payments offering.  
+● As we continue to innovate for our customers in payments, those 
+using QuickBooks Cash have nearly three times higher engagement 
+compared to customers who just use QuickBooks Online. To 
+accelerate engagement and usage of our platform, we recently 
+introduced Get Paid Upfront, a game changing innovation that will 
+help qualified customers get paid soon after the invoice is sent.  
+Our fifth big bet is to “disrupt the small business mid-market'' with 
+QuickBooks Online Advanced. We are seeing strong traction with QBO 
+Advanced, with customers growing to 118,000 in fiscal 2021, up 57 percent 
+year-over-year. As we continue to move up market and serve these 
+customers’ most critical needs, we’re seeing a services ecosystem ARPC 
+that is four times higher than ARPC for QBO customers.  
+We are pleased with our results and remain confident in our game plan to 
+win. Across all of our big bets, we are building momentum and accelerating 
+
+8 
+innovation which we believe positions us well for durable growth into the 
+future. This will be further fueled by Mailchimp. 
+I am delighted that we closed the acquisition earlier this month which seeks 
+to significantly accelerate two of our big bets, to “be the center of small 
+business growth,” and to “disrupt the small business mid-market.” Getting 
+and engaging customers remains a significant pain point for small and mid-
+market businesses. We are well on our way to becoming the source of truth 
+for our customers to help them grow and run their business. 
+We have three acceleration priorities with Mailchimp:  
+● First priority is to deliver on our vision of an end-to-end customer 
+growth platform to help customers get their business online, market 
+their business, manage their customer relationships, get paid, access 
+capital, pay employees, manage cash flow and be compliant, with 
+virtual experts at their fingertips all in one place; 
+● Second, disrupting the mid-market, by developing a full marketing 
+automation, CRM and eCommerce suite for mid-market customers at 
+
+9 
+an attractive price point, enabling mid-market customers to use the 
+power of the platform to grow their business; and 
+● Third, accelerating global growth with a holistic go-to-market 
+approach. 
+With Mailchimp now part of the Intuit family, we are uniquely positioned to 
+enable small and mid-market businesses to combine their customer data 
+from Mailchimp and purchase data from QuickBooks to deliver actionable 
+insights they need to grow and run their businesses with confidence. This is 
+where the real magic happens. Our combined platform technology enables 
+us to move with speed and we’ve already seen strong interest from our 
+customers. The teams are hard at work and we’re excited about the 
+opportunity ahead. 
+Foundational to our company's success is building a high performance 
+culture. I want to take a moment to acknowledge our progress with our 
+diversity, equity and inclusion efforts. Last year, we declared our focus on 
+increasing the percentages of women in technology roles and 
+underrepresented minorities across our business. We achieved 30 percent 
+
+10 
+and 13 percent, respectively, and we are inspired to accelerate our plans 
+and push even harder as much work remains to be done. 
+Additionally, we’ve made meaningful progress supporting our communities. 
+First, we recently announced the Intuit Climate Action Marketplace which 
+will help 1 million US small businesses find sustainable solutions to reduce 
+carbon emissions. This is part of our decade-long climate positive goal to 
+go beyond being net carbon neutral and reduce global carbon emissions by 
+2 million metric tonnes by 2030 or 50 times greater than our 2018 
+operational footprint.  
+We also recently announced a 23-year partnership with the Los Angeles 
+Clippers that includes economic benefits for the local community with Intuit 
+Dome, the team’s future home. And finally, we launched Intuit Ventures to 
+invest in the startup community and accelerate fintech innovation for 
+consumers and small businesses.  
+
+11 
+All the work we do starts with our mission of powering prosperity around 
+the world, and I’m proud of the momentum across the company in 
+delivering on that mission for our customers and communities. 
+Now let me hand it over to Michelle. 
+Financial Results and Segment Details 
+Thanks, Sasan. Good afternoon everyone and I’d also like to welcome the 
+Mailchimp team to Intuit. Now let me turn to the results. 
+For the first quarter of fiscal 2022, we delivered: 
+● Revenue of $2.0 billion. 
+● GAAP operating income of $195 million, versus $209 million last 
+year.  
+● Non-GAAP operating income of $555 million, versus $334 million last 
+year. 
+● GAAP diluted earnings per share of $0.82, versus $0.75 a year ago.  
+● And non-GAAP diluted earnings per share of $1.53, versus $0.94 last 
+year. 
+
+12 
+Note that our GAAP results include a $39 million net gain on other long-
+term investments. 
+Business Segment Results 
+Turning to the business segments: 
+Small Business and Self-Employed Group 
+In the Small Business and Self-Employed Group, revenue grew 22 percent 
+during the quarter, with Online Ecosystem revenue up 36 percent. With the 
+aim of being the source of truth for small businesses, our strategic focus 
+within Small Business and Self-Employed is three-fold: grow the core, 
+connect the ecosystem and expand globally. 
+● First, we continue to focus on growing the core. QuickBooks online 
+accounting revenue grew 32 percent in fiscal Q1, driven mainly by 
+customer growth, higher effective prices, and mix-shift.  
+● Second, we continue to focus on connecting the ecosystem. Online 
+Services revenue - which includes payroll, payments, capital and time 
+tracking - grew 42 percent in fiscal Q1.  
+
+13 
+○ Within payroll, we continued to see revenue tailwinds during the 
+quarter from growth in payroll customers and a mix-shift to our 
+full service offering. 
+○ Within payments, revenue growth reflects ongoing customer 
+growth, along with an increase in charge volume per customer.  
+● Third, our progress expanding globally added to the growth of Online 
+Ecosystem revenue during fiscal Q1. Total international online 
+revenue grew 39 percent on a constant currency basis. 
+We believe the best measure of the health and success of our strategy is 
+Online Ecosystem revenue growth, which we expect to grow better than 30 
+percent organically over time. This is driven by 10 to 20 percent expected 
+growth in both customers and ARPC. 
+Desktop Ecosystem revenue grew 7 percent in the first quarter. 
+QuickBooks Desktop Enterprise revenue grew high-single digits, driven by 
+strong customer growth and price increases we put in place late last year. 
+As a reminder, this fall we transitioned to a subscription model for this 
+year’s desktop offering, which we expect to be a headwind to revenue 
+
+14 
+growth in the second half of the year. We expect the desktop business to 
+decline longer term.  
+Credit Karma 
+Moving on to Credit Karma, revenue was $418 million in Q1, another 
+record revenue quarter, driven by high levels of monthly active users and 
+revenue per monthly active user. 
+Within the core, we saw another record quarter driven by the combined 
+strength in personal loans and credit cards. The growth verticals also 
+achieved another strong quarter, reflecting momentum in home loans and 
+auto loans. And we are developing the emerging vertical by focusing on 
+innovation with Credit Karma Money, part of our digital money offering, 
+though this is not a large revenue driver today. 
+We continue to expect pent up demand across the core verticals to taper 
+sometime in the second half of fiscal 2022 after a strong year of investment 
+by our partners. We remain excited about the opportunities ahead.  
+Consumer and ProConnect Groups 
+
+15 
+Consumer Group revenue of $120 million in Q1 was in-line with our 
+expectations. Looking ahead to the upcoming tax season, we continue to 
+focus on our strategy to expand our lead in DIY and transform the assisted 
+segment with TurboTax Live. 
+As for the ProConnect Group, revenue of $26 million in the quarter was 
+also in-line with our expectations. 
+Financial Principles and Capital Allocation 
+Turning to our financial principles. We remain committed to growing organic 
+revenue double-digits and growing operating income dollars faster than 
+revenue. As I’ve shared before, as we lean into our platform strategy, we 
+see the opportunity for margin expansion over time. We take a disciplined 
+approach to capital management, investing the cash we generate in 
+opportunities that yield an expected return on investment greater than 15 
+percent. We continue to reallocate resources to top priorities, with an 
+emphasis on becoming an AI-driven expert platform. These principles 
+guide our decisions and remain our long-term commitment.  
+
+16 
+Our first priority for the cash we generate is investing in the business to 
+drive customer and revenue growth. We consider acquisitions to accelerate 
+our growth and fill out our product roadmap. We return excess cash that we 
+can’t invest profitably in the business to shareholders via both share 
+repurchases and dividends. 
+● We finished the quarter with approximately $3.3 billion in cash and 
+investments on our balance sheet. On November 1, we entered into  
+a $4.7B term loan under a new credit agreement to partially fund the 
+Mailchimp acquisition. 
+● We repurchased $339 million of stock during the first quarter. 
+Depending on market conditions and other factors, our aim is to be in 
+the market each quarter. 
+● The Board approved a quarterly dividend of $0.68 per share, payable 
+January 18, 2022. This represents a 15 percent increase versus last 
+year. 
+Fiscal 2022 and Q2 Guidance 
+
+17 
+Moving on to guidance. We are raising our full year fiscal 2022 revenue 
+and non-GAAP operating income and earnings per share guidance to 
+reflect both the acquisition of Mailchimp and the stronger than expected 
+start to the year in the Small Business and Self-Employed Group and 
+Credit Karma. Our updated fiscal 2022 guidance includes: 
+● Revenue of $12.165 billion to $12.300 billion, growth of 26 to 28 
+percent, including Mailchimp as of November 1 and a full year of 
+Credit Karma;  
+● Excluding Mailchimp, revenue growth of 18 to 20 percent, up from our 
+prior guidance of 15 to 16 percent;  
+● GAAP earnings per share of $7.00 to $7.16, and 
+● Non-GAAP earnings per share of $11.48 to $11.64. 
+This updated fiscal 2022 guidance includes organic growth for the Small 
+Business and Self-Employed Segment of 16 to 17 percent, up from 12 to 
+14 percent; expected Mailchimp revenue of $760 million to $770 million, 
+and Credit Karma revenue of $1.540 billion to $1.565 billion, up from 
+$1.345 billion to $1.380 billion. 
+
+18 
+As I’ve shared before, we continue to see opportunities to leverage the 
+platform and drive margin expansion over time. Excluding Mailchimp, our 
+non-GAAP operating income guidance continues to imply approximately 60 
+basis points of margin expansion in fiscal 2022. Our guidance assumes the 
+Mailchimp transaction is accretive to Intuit’s non-GAAP earnings per share 
+in full year fiscal 2022. However, we expect an approximately 80 basis 
+point one-time step down in non-GAAP operating margin reflecting the 
+impact of Mailchimp as we plan to invest aggressively in the business. We 
+expect non-GAAP operating margin expansion to continue from this new 
+level over time, in-line with our financial principles.  
+Our fiscal 2022 GAAP operating income guidance includes approximately 
+$165 million for stock based compensation associated with the acquisition 
+of Mailchimp. In addition, our GAAP operating income guidance includes 
+the impact of the Credit Karma acquisition, along with investments we are 
+making in stock compensation to attract and retain talent. We are confident 
+these are the right decisions to drive long-term growth.  
+We expect a GAAP tax rate of 18 percent in fiscal 2022. 
+
+19 
+Our guidance for the second quarter of fiscal 2022 includes: 
+● Revenue growth of 73 to 74 percent. 
+● GAAP earnings per share of $0.55 to $0.59, and 
+● Non-GAAP earnings per share of $1.84 to $1.88. 
+You can find our full Q2 and updated fiscal 2022 guidance details in our 
+press release and on our fact sheet. 
+With that, I’ll turn it back over to Sasan.  
+Closing Comments (Sasan) 
+Thanks, Michelle. 
+We are off to a strong start this year with continued momentum across the 
+company given our strategy of being an AI-driven expert platform that is 
+powering prosperity for consumers and small businesses. I am proud of 
+what our employees accomplished this quarter and I am excited about the 
+opportunities ahead to find new, innovative ways to serve our more than 
+100 million customers. Let's now open it up to your questions. 
+
+20 
+Closing Comments After Q&A 
+Thank you everyone for your time and questions today. I would like to close 
+by thanking our employees, customers and partners for a strong start to the 
+year. We come to work every day passionate about helping customers and 
+communities overcome their most important financial challenges. We are 
+proud of what we’ve accomplished, and the speed we were able to deliver 
+new innovations to help our customers. 
+Cautions About Forward-looking Statements 
+These materials contain forward-looking statements, including expectations 
+regarding: forecasts and timing of growth and future financial results of 
+Intuit and its reporting segments; Intuit’s prospects for the business in fiscal 
+2022 and beyond; Intuit’s growth outside the US; timing and growth of 
+revenue from current or future products and services; demand for our 
+products; customer growth and ARPC; Intuit's corporate tax rate; changes 
+to our products and their impact on Intuit’s business; the amount and timing 
+of any future dividends or share repurchases; availability of our offerings; 
+
+21 
+and acquisitions and their impact on our business and strategic decisions; 
+as well as all of the statements under the heading “Fiscal 2022 and Q2 
+Guidance.” 
+Because these forward-looking statements involve risks and uncertainties, 
+there are important factors that could cause our actual results to differ 
+materially from the expectations expressed in the forward-looking 
+statements. These risks and uncertainties may be amplified by the COVID-
+19 pandemic, which has caused significant global economic instability and 
+uncertainty. These factors include, without limitation, the following: our 
+ability to compete successfully; potential governmental encroachment in 
+our tax businesses; our ability to adapt to technological change; our ability 
+to predict consumer behavior; our reliance on third-party intellectual 
+property; our ability to protect our intellectual property rights; any harm to 
+our reputation; risks associated with acquisition and divestiture activity, 
+including the acquisition and integration of Credit Karma and Mailchimp; 
+the issuance of equity or incurrence of debt to fund an acquisition; our 
+cybersecurity incidents (including those affecting the third parties we rely 
+
+22 
+on); customer concerns about privacy and cybersecurity incidents; 
+fraudulent activities by third parties using our offerings; our failure to 
+process transactions effectively; interruption or failure of our information 
+technology; our ability to maintain critical third-party business relationships; 
+our ability to attract and retain talent; any deficiency in the quality or 
+accuracy of our products (including the advice given by experts on our 
+platform); any delays in product launches; difficulties in processing or filing 
+customer tax submissions; risks tax rate associated with international 
+operations; changes to public policy, laws or regulations affecting our 
+businesses; litigation in which we are involved; the seasonal nature of our 
+tax business; changes in tax rates and tax reform legislation; global 
+economic changes; exposure to credit, counterparty and other risks in 
+providing capital to businesses; amortization of acquired intangible assets 
+and impairment charges; our ability to repay or otherwise comply with the 
+terms of our outstanding debt; our ability to repurchase shares or distribute 
+dividends; volatility of our stock price; and our ability to successfully market 
+our offerings. More details about these and other risks that may impact our 
+
+23 
+business are included in our Form 10-K for fiscal 2021 and in our other 
+SEC filings. You can locate these reports through our website at 
+http://investors.intuit.com. Fiscal 2022 full-year and Q2 guidance speaks 
+only as of the date it was publicly issued by Intuit. Other forward-looking 
+statements represent the judgment of the management of Intuit as of the 
+date of this presentation.  We do not undertake any duty to update any 
+forward-looking statement or other information in this presentation. 

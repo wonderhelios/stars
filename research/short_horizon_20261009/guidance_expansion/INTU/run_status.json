@@ -1,0 +1,14 @@
+{
+  "status": "exact_numeric_merge_complete_interim_scope_pending",
+  "quarter_actuals_verified": 27,
+  "exact_forecasts_verified": 25,
+  "source_prefix_checks": 27,
+  "decimal_pair_checks": 17,
+  "unfiltered_archive_titles": 390,
+  "selected_originals": 62,
+  "unique_originals": 65,
+  "investor_day_reaffirmations": 6,
+  "market_performance_read": false,
+  "all_collection_processes_finished": true,
+  "remaining": "Review additional scope evidence and historical versions; continue other fixed-universe company coverage. Do not rerun failed performance batches."
+}

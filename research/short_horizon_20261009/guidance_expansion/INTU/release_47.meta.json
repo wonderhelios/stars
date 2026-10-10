@@ -1,0 +1,18 @@
+{
+  "url": "https://investors.intuit.com/news-events/press-releases/detail/47/intuit-reports-strong-fourth-quarter-and-full-year-results-sets-fiscal-2024-guidance",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "f4d0f6a0c21139beb051d79934097a7dd58ceae8138f985ac87c4acbdb0dab0e",
+  "retrieved_utc": "2026-10-09T18:02:20Z",
+  "attempts": [
+    {
+      "url": "https://investors.intuit.com/news-events/press-releases/detail/47/intuit-reports-strong-fourth-quarter-and-full-year-results-sets-fiscal-2024-guidance",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "f4d0f6a0c21139beb051d79934097a7dd58ceae8138f985ac87c4acbdb0dab0e",
+      "retrieved_utc": "2026-10-09T18:02:20Z"
+    }
+  ]
+}

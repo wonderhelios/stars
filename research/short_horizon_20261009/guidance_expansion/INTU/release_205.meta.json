@@ -1,0 +1,18 @@
+{
+  "url": "https://investors.intuit.com/news-events/press-releases/detail/205/intuit-and-credit-karma-receive-clearance-from-department-of-justice-for-acquisition-of-credit-karma",
+  "status": 200,
+  "exit_code": 0,
+  "error": "",
+  "sha256": "ad3477acf0ef05b91ecd192562942466f10ee047122d1f74f543d3616bc45800",
+  "retrieved_utc": "2026-10-09T22:28:09Z",
+  "attempts": [
+    {
+      "url": "https://investors.intuit.com/news-events/press-releases/detail/205/intuit-and-credit-karma-receive-clearance-from-department-of-justice-for-acquisition-of-credit-karma",
+      "status": 200,
+      "exit_code": 0,
+      "error": "",
+      "sha256": "ad3477acf0ef05b91ecd192562942466f10ee047122d1f74f543d3616bc45800",
+      "retrieved_utc": "2026-10-09T22:28:09Z"
+    }
+  ]
+}
