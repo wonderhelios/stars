@@ -23,8 +23,10 @@ Uint8Array Int8Array Float64Array ArrayBuffer TextEncoder TextDecoder URL URLSea
 const called = new Set(
   [...app.matchAll(/(?<![.\w$])([A-Za-z_$][\w$]*)\s*\(/g)].map((m) => m[1])
 );
+// SVG fill="url(#gradient)" is paint syntax, not a JavaScript call.
+const CSS_FUNCTIONS = new Set(["url"]);
 const missing = [...called]
-  .filter((c) => !defined.has(c) && !GLOBALS.has(c) && !KEYWORDS.has(c))
+  .filter((c) => !defined.has(c) && !GLOBALS.has(c) && !KEYWORDS.has(c) && !CSS_FUNCTIONS.has(c))
   .sort();
 
 const ids = new Set([...app.matchAll(/\$\("([\w-]+)"\)/g)].map((m) => m[1]));

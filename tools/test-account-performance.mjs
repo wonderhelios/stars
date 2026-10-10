@@ -43,9 +43,10 @@ assert.equal(vm.runInContext("txPnl", tx), null);
 const elements = new Map();
 const get = id => { if (!elements.has(id)) elements.set(id, {innerHTML:"",textContent:""}); return elements.get(id); };
 const renderContext = vm.createContext({ ...context, $:get, LIVE_EXCHANGE:"Hyperliquid", liveFetchedAt:0,
-  lastLiveData:null, LIVE_PAGE_SIZE:20, posPage:0, livePage:0, orderPage:0, entryHints:() => [],
+  sideLabel:() => "", fmtCompact:v => String(v), pager:() => "",
+  lastLiveData:null, recordScope:"all", chartRange:"week", LIVE_PAGE_SIZE:20, posPage:0, livePage:0, orderPage:0, entryHints:() => [],
   chronRecords:() => ({realized:9.03, slip:null, n:1, records:[]}), slippageStats:() => null,
-  ts2m:() => "10-09 00:00", fmt:(v,n) => v.toFixed(n), pct:v => `${v >= 0 ? "+" : ""}${v.toFixed(2)}%`,
+  ts2m:() => "10-09 00:00", fmt:(v,n) => Number(v || 0).toFixed(n), pct:v => `${v >= 0 ? "+" : ""}${v.toFixed(2)}%`,
   renderLiveChart:() => {},
 });
 vm.runInContext(source.slice(source.indexOf("function metric("), source.indexOf("// 轮询后台")), renderContext);
@@ -58,3 +59,32 @@ assert.match(html, /记录起点资金/);
 assert.match(html, /包含出入金/);
 assert.doesNotMatch(html, /真实总盈亏|>收益率</);
 console.log("✓ Account changes use persisted equity; unavailable baselines stay unknown; TxFlow route and account cache are isolated");
+
+// Live PNL is current positions only, including losses/flat/unknown states.
+for (const [positions, expected] of [[[{unrealized:12}, {unrealized:-5}], '+$7.00'], [[{unrealized:-4}], '−$4.00'], [[], '+$0.00']]) {
+  renderContext.renderMonitor({...base, positions, records:[], config:{}, history:[]});
+  assert.match(get('mo-metrics').innerHTML, new RegExp(expected.replace(/[+$]/g, '\\$&')));
+}
+renderContext.renderMonitor({...base, error:'offline', positions:[], records:[], config:{}, history:[]});
+assert.match(get('mo-status').innerHTML, /账户数据不可用/);
+assert.doesNotMatch(get('mo-metrics').innerHTML, /\+\$0\.00/);
+assert.equal(renderContext.recordAction({tid:1,action:'止盈/被动成交'}), '交易所补录');
+assert.equal(renderContext.recordPositionSide({side:'买',reduce_only:true}), 'short');
+assert.equal(renderContext.recordPositionSide({side:'卖',reduce_only:true}), 'long');
+const hour=3600000, endTime=2000*hour;
+const history=Array.from({length:10001}, (_,i)=>({ts:endTime-(10000-i)*hour/12,equity:500+i/100}));
+for (const [range,hours] of [['day',24],['week',168],['month',720],['all',Infinity]]) {
+  const {raw,points}=renderContext.equityWindow([...history,{ts:endTime+1,equity:1},{ts:endTime,equity:600}],range,endTime);
+  assert.ok(raw.every(p=>p.ts>=endTime-hours*hour && p.ts<=endTime));
+  assert.equal(points[0].ts,raw[0].ts);
+  assert.equal(points.at(-1).equity,600);
+  assert.ok(points.length<=183);
+}
+assert.equal(renderContext.equityWindow([{ts:1,equity:1},{ts:100,equity:2}], 'all',100).points.length,2);
+vm.runInContext(source.slice(source.indexOf('function chronRecords('), source.indexOf('function slippageStats(')), renderContext);
+assert.equal(renderContext.chronRecords({records:[{tid:1,pnl:3},{tid:1,pnl:3},{tid:2,pnl:-1}]}).realized,2);
+console.log('✓ Current PNL, unavailable accounts, neutral fill labels, close direction, bounded chart windows and receipt deduplication');
+vm.runInContext(source.slice(source.indexOf('function parseFill('),source.indexOf('// 旧记录没存入场价')),renderContext);
+const partial={side:'卖', action:'平仓', reduce_only:true, size:10, price:12, entry_px:10, result:'成交 2@12'};
+assert.equal(renderContext.parseFill(partial).pnl,4);
+assert.equal(renderContext.parseFill({...partial,reduce_only:false,action:'开仓'}).pnl,null);

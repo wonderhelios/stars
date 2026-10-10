@@ -331,6 +331,8 @@ let livePage = 0;
 let posPage = 0;
 let orderPage = 0;
 let lastLiveData = null;
+let chartRange = "week";
+let recordScope = "all";
 
 // 从下单记录里还原真实成交滑点（正 = 成本增加）
 // 汇总下单记录：已实现盈亏 + 实测滑点（都用同一套解析，避免口径不一致）
@@ -340,20 +342,19 @@ function chronRecords(d) {
   let realized = 0;
   let n = 0;
   const slips = [];
+  const seen = new Set();
   recs.forEach((r, i) => {
-    // 后端对账补入的被动成交（止盈单）直接带 pnl，用它更准；
-    // 我们自己发的调仓单则要从成交回执里解析。
-    if (r.pnl != null) {
+    // 只汇总带唯一成交 ID 的交易所回执；系统订单估算不混入已实现汇总。
+    if (r.tid != null && seen.has(r.tid)) return;
+    if (r.tid != null && Number.isFinite(r.pnl)) {
+      seen.add(r.tid);
       realized += r.pnl;
       n++;
       return;
     }
     const f = parseFill(r, hints[i]);
     if (f.kind === "filled") {
-      if (f.pnl != null) {
-        realized += f.pnl;
-        n++;
-      }
+
       if (isFinite(f.slip)) slips.push(f.slip);
     }
   });
@@ -394,9 +395,9 @@ function parseFill(r, entryHint) {
     // 平仓/减仓单：用入场价算这笔的已实现盈亏
     let pnl = null;
     const entry = r.entry_px > 0 ? r.entry_px : entryHint > 0 ? entryHint : 0;
-    if (entry > 0) {
+    if (entry > 0 && recordIsClosing(r)) {
       // 卖 = 平多；买 = 平空
-      pnl = r.side === "卖" ? (px - entry) * r.size : (entry - px) * r.size;
+      pnl = r.side === "卖" ? (px - entry) * parseFloat(m[1]) : (entry - px) * parseFloat(m[1]);
     }
     return { kind: "filled", px, slip, pnl };
   }
@@ -449,6 +450,22 @@ function capitalPerformance(d) {
     percent: valid ? (d.equity / base - 1) * 100 : null };
 }
 
+function escapeHTML(value) {
+  return String(value ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;"}[c]));
+}
+
+function recordAction(r) {
+  return r.tid != null || /止盈\/被动成交|被动成交/.test(r.action || "") ? "交易所补录" : (r.action || "—");
+}
+
+function recordIsClosing(r) {
+  return !!r.reduce_only || /平仓|减仓|止盈\/被动成交/.test(r.action || "");
+}
+
+function recordPositionSide(r) {
+  return r.side === "买" ? (recordIsClosing(r) ? "short" : "long") : (recordIsClosing(r) ? "long" : "short");
+}
+
 function renderMonitor(d) {
   if (!d) return;
   if (txPnl && (txPnl.account || "").toLowerCase() === (d.account || "").toLowerCase()) {
@@ -482,7 +499,11 @@ function renderMonitor(d) {
 
   // 状态横幅：一眼看出到底跑没跑
   let cls, tag, text;
-  if (c.armed && keyed && holding) {
+  if (d.error) {
+    cls = "idle";
+    tag = "● 账户数据不可用";
+    text = escapeHTML(d.error);
+  } else if (c.armed && keyed && holding) {
     cls = "run";
     tag = "● 运行中";
     text = `<b>实盘已启动</b> · 持有 <b>${pos.length}</b> 个仓位 · 总名义 $${fmt(d.gross_notional || 0, 0)}`;
@@ -522,6 +543,9 @@ function renderMonitor(d) {
   const actualLev = eq > 0 ? (d.gross_notional || 0) / eq : 0;
   const nPos = pos.length;
   const nCross = nPos - (d.isolated_count || 0);
+  const currentValid = !d.error && Number.isFinite(d.equity) && pos.every(p => Number.isFinite(p.unrealized));
+  const unrealized = pos.reduce((sum, p) => sum + (Number.isFinite(p.unrealized) ? p.unrealized : 0), 0);
+  const moneySigned = v => (v >= 0 ? "+" : "−") + "$" + fmt(Math.abs(v), 2);
 
   // 拿不到行情的持仓：必须显眼提示，否则净值看着正常但风险是隐形的
   const unp = d.unpriced || [];
@@ -534,18 +558,27 @@ function renderMonitor(d) {
 
   $("mo-metrics").innerHTML =
     metricGroup(
-      "账户 · 相对记录起点",
-      metric("当前资金", d.error ? "—" : "$" + fmt(eq, 2)) +
-        metric("记录起点资金", capital.base > 0 ? "$" + fmt(capital.base, 2) : "—") +
-        metric("起点以来资金增减", valid ? (pnl >= 0 ? "+" : "") + "$" + fmt(pnl, 2) : "—", valid && pnl >= 0 ? "pos" : "neg") +
-        metric("资金变化率", valid ? pct(pnlPct) : "—", valid ? (pnlPct >= 0 ? "pos" : "neg") : ""),
-      "capital-account",
-      `<p class="muted" style="margin:18px 0 0;line-height:1.7">资金增减已包含手续费与资金费的影响；也包含出入金，无后续出入金时等于净收益。<br>记录起点：${d.capital_baseline ? (d.capital_baseline.ts ? ts2m(d.capital_baseline.ts) + " UTC" : "历史已保存基准（时间未知）") : "等待首次净值记录"}。旧账户最早留存记录可能晚于系统首次启动。</p>`
+      "实时概览 · 当前账户与持仓",
+      metric("账户净值", currentValid ? "$" + fmt(eq, 2) : "—") +
+      metric("未实现盈亏 · PNL", currentValid ? moneySigned(unrealized) : "—", currentValid ? (unrealized >= 0 ? "pos" : "neg") : "") +
+      metric("持仓数量", currentValid ? nPos + '<span class="metric-unit"> 个</span>' : "—") +
+      metric("实际杠杆", currentValid ? fmt(actualLev, 2) + '<span class="metric-unit"> x</span>' : "—"),
+      "live-overview",
+      '<div class="metric-footnote"><span class="live-dot"></span>未实现盈亏为当前持仓浮盈浮亏，不与历史已实现盈亏相加。</div>'
     ) +
     metricGroup(
-      "风险",
-      metric("账户强平缓冲", fmt(buffer, 1) + "%", buffer < 40 ? "neg" : "pos") +
-        metric("净敞口", "$" + fmt(d.net_notional || 0, 2), Math.abs(d.net_notional || 0) < 5 ? "pos" : "neg") +
+      "资金表现 · 相对记录起点",
+      metric("记录起点资金", capital.base > 0 ? "$" + fmt(capital.base, 2) : "—") +
+        metric("起点以来资金增减", valid ? (pnl >= 0 ? "+" : "") + "$" + fmt(pnl, 2) : "—", valid && pnl >= 0 ? "pos" : "neg") +
+        metric("资金变化率", valid ? pct(pnlPct) : "—", valid ? (pnlPct >= 0 ? "pos" : "neg") : "") +
+        metric("记录起点 · UTC", d.capital_baseline?.ts ? `<span class="sm">${ts2m(d.capital_baseline.ts)}</span>` : "时间未知"),
+      "capital-account",
+      '<details class="metric-definition"><summary>资金口径说明 · 包含出入金</summary><p>资金增减 = 当前净值 − 记录起点资金，已体现手续费与资金费，也包含出入金。无后续出入金时才等于净收益。旧账户的最早留存记录可能晚于系统首次启动。</p></details>'
+    ) +
+    metricGroup(
+      "风险与仓位",
+      metric("账户强平缓冲", currentValid ? fmt(buffer, 1) + "%" : "—", buffer < 40 ? "neg" : "pos") +
+        metric("净敞口 · 多减空", currentValid ? moneySigned(d.net_notional || 0) : "—", Math.abs(d.net_notional || 0) <= eq * 0.1 ? "" : "neg") +
         metric("实际 / 目标杠杆", fmt(actualLev, 2) + "x / " + fmt(targetLev, 2) + "x",
           actualLev < targetLev * 0.9 ? "neg" : "pos") +
         metric(
@@ -561,12 +594,12 @@ function renderMonitor(d) {
         )
     ) +
     metricGroup(
-      "执行",
+      "执行质量与回执",
       metric("实测平均滑点", slip ? slip.avg.toFixed(3) + "%" : "—", slip && slip.avg > 0.15 ? "neg" : "pos") +
-        metric("记录内已实现（未扣费）", parsed.n ? (realized >= 0 ? "+" : "") + "$" + fmt(realized, 2) : "—",
+        metric("补录已实现 · 未扣费", parsed.n ? moneySigned(realized) : "—",
           realized >= 0 ? "pos" : "neg") +
         metric("总名义敞口", "$" + fmt(d.gross_notional || 0, 0)) +
-        metric("止盈挂单", (d.tp_orders || []).length + " / " + nPos, (d.tp_orders || []).length >= nPos ? "pos" : "") +
+        metric("当前挂单", currentValid ? (d.tp_orders || []).length + " 笔" : "—") +
         metric("最后调仓", d.last_run_at ? `<span class="sm">${ts2m(d.last_run_at)}</span>` : "—")
     ) +
     // Returned exchange records may be truncated; never infer total account profit from them.
@@ -608,7 +641,7 @@ function renderMonitor(d) {
   mark("ck-buf-s", "ck-buf-b", buffer > 40, "已通过",
     buffer > 40 ? `当前 ${buffer.toFixed(1)}%，安全` : `当前 ${buffer.toFixed(1)}%，偏低`);
 
-  const err = d.error ? `<div class="note neg">${d.error}</div>` : "";
+  const err = d.error ? `<div class="note neg">${escapeHTML(d.error)}</div>` : "";
   if (!pos.length) {
     $("mo-positions").innerHTML = err + '<div class="empty">账户当前没有持仓</div>';
   } else {
@@ -626,7 +659,7 @@ function renderMonitor(d) {
           <td>${fmtCompact(p.entry_px)}</td>
           <td>${fmtCompact(p.mark_px)}</td>
           <td>$${fmt(p.notional, 0)}</td>
-          <td class="${cls}">${p.unrealized >= 0 ? "+" : ""}$${fmt(p.unrealized, 2)}</td>
+          <td class="${cls}">${moneySigned(p.unrealized)}</td>
           <td>${p.liq_px == null ? "—" : fmtCompact(p.liq_px)}</td>
           <td class="${p.dist_pct != null && p.dist_pct < 20 ? "neg" : "muted"}">${dist}</td>
           <td>${p.is_cross ? '<span class="badge-mini ok">全仓</span>' : '<span class="badge-mini err">逐仓</span>'}</td>
@@ -635,7 +668,7 @@ function renderMonitor(d) {
       .join("");
     $("mo-positions").innerHTML = err + `<div class="table-scroll"><table><thead><tr>
       <th>币</th><th>方向</th><th>数量</th><th>入场价</th><th>当前价</th>
-      <th>名义</th><th>未实现盈亏</th><th>爆仓价</th><th>距爆仓</th>
+      <th>名义</th><th>未实现盈亏</th><th>强平价</th><th>距强平</th><th>保证金模式</th>
     </tr></thead><tbody>${rows}</tbody></table></div>` + pager("pos", pos.length, posPage, LIVE_PAGE_SIZE);
   }
 
@@ -651,16 +684,18 @@ function renderMonitor(d) {
         .slice(orderPage * LIVE_PAGE_SIZE, (orderPage + 1) * LIVE_PAGE_SIZE)
         .map((o) => `<tr><td>${o.coin}</td><td>${orderSideLabel(o.side)}</td><td>${fmtCompact(o.px)}</td><td>${fmtCompact(o.sz)}</td></tr>`)
         .join("")}</tbody></table></div>` + pager("order", orders.length, orderPage, LIVE_PAGE_SIZE)
-    : '<div class="empty">当前没有挂单（价格碰到止盈价会自动成交）</div>';
+    : '<div class="empty">当前没有未成交挂单</div>';
 
-  const recs = chron.map((r, i) => ({ r, hint: hints[i] })).reverse();
+  const recs = chron.map((r, i) => ({ r, hint: hints[i] }))
+    .filter(({ r }) => recordScope === "all" || (recordScope === "exchange" ? r.tid != null : r.tid == null))
+    .sort((a, b) => b.r.ts - a.r.ts);
   const pages = Math.max(1, Math.ceil(recs.length / LIVE_PAGE_SIZE));
   if (livePage > pages - 1) livePage = 0;
   const pageItems = recs.slice(livePage * LIVE_PAGE_SIZE, (livePage + 1) * LIVE_PAGE_SIZE);
   $("mo-records").innerHTML = recs.length
     ? `<div class="table-scroll"><table><thead><tr>
-        <th>时间</th><th>币</th><th>方向</th><th>动作</th><th>数量</th>
-        <th>计划价</th><th>成交价</th><th>滑点</th><th>盈亏</th><th>状态</th>
+        <th>时间 · UTC</th><th>币</th><th>持仓方向</th><th>动作 / 来源</th><th>数量</th>
+        <th>计划价</th><th>成交价</th><th>滑点</th><th>已实现 · 未扣费</th><th>状态</th>
       </tr></thead><tbody>${pageItems
         .map(({ r, hint }) => {
           const f = parseFill(r, hint);
@@ -668,19 +703,19 @@ function renderMonitor(d) {
           let slipCell = '<span class="muted">—</span>';
           let pnlCell = '<span class="muted">—</span>';
           let status = '<span class="badge-mini mute">—</span>';
-          // 对账补入的被动成交（止盈单）：交易所回执里直接带成交价和盈亏，
+          // 交易所补录回执直接带成交价和盈亏，无法据此判断订单意图，
           // 但没有我们自己下单时的「计划价 vs 成交价」结构，所以 parseFill
           // 认不出来 —— 必须在解析之前单独处理，否则这几列全是空的。
           if (r.pnl != null) {
             status = '<span class="badge-mini ok">成交</span>';
             pxCell = r.price ? fmtCompact(r.price) : '<span class="muted">—</span>';
             const cls = r.pnl >= 0 ? "pos" : "neg";
-            pnlCell = `<span class="${cls}">${r.pnl >= 0 ? "+" : ""}$${fmt(r.pnl, 2)}</span>`;
+            pnlCell = `<span class="${cls}">${moneySigned(r.pnl)}</span>`;
             return `<tr>
               <td class="muted">${ts2m(r.ts)}</td>
-              <td>${r.coin}</td>
-              <td>${sideLabel(r.side === "买" ? "long" : "short", true)}</td>
-              <td class="muted">${r.action}</td>
+              <td>${escapeHTML(r.coin)}</td>
+              <td>${sideLabel(recordPositionSide(r), recordIsClosing(r))}</td>
+              <td class="muted">${escapeHTML(recordAction(r))}${r.tid != null ? '<span class="record-origin">成交回执 · 意图未确认</span>' : '<span class="record-origin">系统订单</span>'}</td>
               <td>${fmtCompact(r.size)}</td>
               <td class="muted">—</td>
               <td>${pxCell}</td>
@@ -695,12 +730,12 @@ function renderMonitor(d) {
             const cls = f.slip > 0.03 ? "neg" : f.slip < -0.03 ? "pos" : "muted";
             slipCell = `<span class="${cls}">${f.slip >= 0 ? "+" : ""}${f.slip.toFixed(3)}%</span>`;
             if (f.pnl != null) {
-              pnlCell = `<b class="${f.pnl >= 0 ? "pos" : "neg"}">${f.pnl >= 0 ? "+" : ""}$${fmt(f.pnl, 2)}</b>`;
+              pnlCell = `<span class="${f.pnl >= 0 ? "pos" : "neg"}">${moneySigned(f.pnl)}<span class="record-origin">估算</span></span>`;
             }
           } else if (f.kind === "unfilled") {
             status = '<span class="badge-mini warn">未成交</span>';
           } else if (f.kind === "failed") {
-            status = `<span class="badge-mini err" title="${f.msg}">失败</span>`;
+            status = `<span class="badge-mini err" title="${escapeHTML(f.msg)}">失败</span>`;
           } else if (f.kind === "plan") {
             status = '<span class="badge-mini mute">计划</span>';
           }
@@ -709,13 +744,13 @@ function renderMonitor(d) {
           const posLong = r.side === "买" ? !closing : closing;
           const note =
             f.kind === "failed" && f.msg
-              ? `<div class="muted" style="font-size:11px;max-width:220px;white-space:normal">${f.msg}</div>`
+              ? `<div class="muted" style="font-size:11px;max-width:220px;white-space:normal">${escapeHTML(f.msg)}</div>`
               : "";
           return `<tr>
             <td class="muted">${ts2m(r.ts)}</td>
-            <td>${r.coin}</td>
+            <td>${escapeHTML(r.coin)}</td>
             <td>${sideLabel(posLong ? "long" : "short", closing)}</td>
-            <td class="muted">${r.action}</td>
+            <td class="muted">${escapeHTML(recordAction(r))}${r.tid != null ? '<span class="record-origin">成交回执 · 意图未确认</span>' : '<span class="record-origin">系统订单</span>'}</td>
             <td>${fmtCompact(r.size)}</td>
             <td class="muted">${fmtCompact(r.price)}</td>
             <td>${pxCell}</td>
@@ -729,78 +764,64 @@ function renderMonitor(d) {
     : '<div class="empty">还没有下单记录</div>';
 }
 
+// Window selection and time aggregation are independent of the drawing code.
+function equityWindow(history, range, now) {
+  const hours = { day: 24, week: 168, month: 720 };
+  const cutoff = hours[range] ? now - hours[range] * 3600000 : -Infinity;
+  const unique = new Map();
+  for (const p of history || []) {
+    if (Number.isFinite(p.ts) && Number.isFinite(p.equity) && p.equity >= 0 && p.ts <= now && p.ts >= cutoff) unique.set(p.ts, p);
+  }
+  const raw = [...unique.values()].sort((a, b) => a.ts - b.ts);
+  if (raw.length < 2) return { raw, points: raw };
+  const interval = range === "day" ? 3600000 : range === "week" ? 3 * 3600000 : range === "month" ? 6 * 3600000 : Math.max(3600000, Math.ceil((raw.at(-1).ts - raw[0].ts) / 180));
+  const buckets = new Map();
+  for (const p of raw) buckets.set(Math.floor(p.ts / interval), p);
+  // Preserve exact first/last observed values, without filling missing periods.
+  const points = [raw[0], ...buckets.values()].filter((p, i, list) => !i || p.ts !== list[i - 1].ts);
+  return { raw, points };
+}
+
 function renderLiveChart(history, shadow) {
   const el = $("mo-chart");
-  if (!history || history.length < 2) {
-    el.innerHTML = '<div class="empty">还没有足够的数据点（每天自动记录一次净值）</div>';
+  const now = Date.now();
+  const observations = [...(history || [])];
+  if (lastLiveData && !lastLiveData.error && Number.isFinite(lastLiveData.equity) && liveFetchedAt > 0) {
+    observations.push({ ts: liveFetchedAt, equity: lastLiveData.equity });
+  }
+  const { raw, points } = equityWindow(observations, chartRange, now);
+  const names = { day: "最近 24 小时", week: "最近 7 天", month: "最近 30 天", all: "全部留存记录" };
+  if (!raw.length) {
+    el.innerHTML = `<div class="empty">${names[chartRange]}暂无净值记录。可以切换更长区间查看。</div>`;
     return;
   }
-  const W = 1080, H = 300;
-  const padL = 78, padR = 84, padT = 16, padB = 34;
-  const vals = history.map((p) => p.equity);
-  const base = vals[0];
-  const ax = niceAxis(Math.min(...vals, base), Math.max(...vals, base), 5);
+  const first = raw[0], last = raw.at(-1), change = last.equity - first.equity;
+  const W = Math.max(360, el.clientWidth || 960), H = 280;
+  const padL = 64, padR = 22, padT = 24, padB = 36;
+  const values = raw.map(p => p.equity);
+  const ax = niceAxis(Math.min(...values), Math.max(...values), 4);
   const span = ax.hi - ax.lo || 1;
-  const n = history.length;
-  const X = (i) => padL + (i / (n - 1)) * (W - padL - padR);
-  const Y = (v) => padT + (1 - (v - ax.lo) / span) * (H - padT - padB);
-  const money = (v) => "$" + Math.round(v).toLocaleString();
-
-  const grid = ax.lines
-    .map((v) => `<line x1="${padL}" y1="${Y(v)}" x2="${W - padR}" y2="${Y(v)}" stroke="#eef1f6"/>
-      <text x="${padL - 8}" y="${Y(v) + 4}" text-anchor="end" font-size="11" fill="#768297">${money(v)}</text>`)
-    .join("");
-  // 时间跨度不足两天时只显示时分，否则三个标签会全是同一天
-  const spanMs = history[n - 1].ts - history[0].ts;
-  const xfmt = spanMs < 2 * 86_400_000 ? (ms) => new Date(ms).toISOString().slice(11, 16) : ts2d;
-  const xlabels = [0, Math.floor((n - 1) / 2), n - 1]
-    .map((i) => {
-      const anchor = i === 0 ? "start" : i === n - 1 ? "end" : "middle";
-      return `<text x="${X(i)}" y="${H - 10}" text-anchor="${anchor}" font-size="11" fill="#768297">${xfmt(history[i].ts)}</text>`;
-    })
-    .join("");
-  const baseY = Y(base);
-  const endY = Y(vals[n - 1]);
-  const line = `<polyline points="${vals.map((v, i) => `${X(i)},${Y(v)}`).join(" ")}" fill="none" stroke="#2d6df6" stroke-width="2.2"/>`;
-  // 影子回测：把它的净值和实盘对齐到同一个起点，画成虚线对照。
-  // 实盘明显低于虚线，说明差额来自执行而不是信号。
-  let shadowLine = "";
-  if (shadow && shadow.length > 1 && base > 0) {
-    const byDay = new Map();
-    for (const p of shadow) byDay.set(Math.floor(p.ts / 86400000), p.equity);
-    const pts = [];
-    let scale = null;
-    for (let i = 0; i < n; i++) {
-      const key = Math.floor(history[i].ts / 86400000);
-      const v = byDay.get(key);
-      if (v == null) continue;
-      if (scale == null) scale = history[i].equity / v; // 对齐起点
-      pts.push(`${X(i)},${Y(v * scale)}`);
-    }
-    if (pts.length > 1) {
-      shadowLine = `<polyline points="${pts.join(" ")}" fill="none" stroke="#9aa6b8" stroke-width="1.8" stroke-dasharray="6 4"/>`;
-    }
-  }
-  // 曲线平直时起点与终点重合，两个标签叠一起会糊 —— 只在分得开时才画起点
-  const baseLabel =
-    Math.abs(endY - baseY) >= 15
-      ? `<text x="${W - padR + 6}" y="${baseY + 4}" font-size="11" fill="#9aa6b8" paint-order="stroke" stroke="#fff" stroke-width="3">起点</text>`
-      : "";
-
-  el.innerHTML = `
-    <svg viewBox="0 0 ${W} ${H}" role="img" aria-label="实盘净值曲线">
+  const X = ts => padL + (last.ts === first.ts ? 0.5 : (ts - first.ts) / (last.ts - first.ts)) * (W - padL - padR);
+  const Y = v => padT + (1 - (v - ax.lo) / span) * (H - padT - padB);
+  const money = v => "$" + v.toFixed(2);
+  const grid = ax.lines.map(v => `<line x1="${padL}" y1="${Y(v)}" x2="${W-padR}" y2="${Y(v)}" stroke="#eaf0f0"/><text x="${padL-10}" y="${Y(v)+4}" text-anchor="end" font-size="11" fill="#86949d">$${v.toFixed(span < 10 ? 2 : 0)}</text>`).join("");
+  const label = ts => chartRange === "day" ? new Date(ts).toISOString().slice(11,16) : ts2m(ts).slice(0,5);
+  const ticks = last.ts === first.ts ? [first.ts] : [first.ts, first.ts + (last.ts-first.ts)/2, last.ts];
+  const xlabels = ticks.map((ts,i) => `<text x="${X(ts)}" y="${H-10}" text-anchor="${i === 0 ? "start" : i === ticks.length-1 ? "end" : "middle"}" font-size="11" fill="#86949d">${label(ts)}</text>`).join("");
+  const line = points.map(p => `${X(p.ts)},${Y(p.equity)}`).join(" ");
+  const circles = points.map(p => `<circle cx="${X(p.ts)}" cy="${Y(p.equity)}" r="6" fill="transparent" class="equity-point"><title>${ts2m(p.ts)} UTC · ${money(p.equity)}</title></circle>`).join("");
+  el.innerHTML = `<div class="chart-summary"><div><span class="chart-eyebrow">${names[chartRange]} · 末值</span><strong>${money(last.equity)}</strong></div><div><span class="chart-eyebrow">区间记录变化</span><strong class="${change >= 0 ? "pos" : "neg"}">${change >= 0 ? "+" : "−"}$${Math.abs(change).toFixed(2)}</strong></div><div class="chart-coverage"><span class="chart-eyebrow">实际记录区间 · UTC</span>${ts2m(first.ts)} — ${ts2m(last.ts)}</div></div>
+    <svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${names[chartRange]}账户净值曲线">
+      <defs><linearGradient id="equity-area" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#168473" stop-opacity="0.14"/><stop offset="100%" stop-color="#168473" stop-opacity="0"/></linearGradient></defs>
       ${grid}
-      <line x1="${padL}" y1="${baseY}" x2="${W - padR}" y2="${baseY}" stroke="#c9d3e3" stroke-width="1" stroke-dasharray="4 4"/>
-      ${baseLabel}
-      ${line}${shadowLine}
-      <text x="${W - padR + 6}" y="${endY + 4}" font-size="12" font-weight="600" fill="#2d6df6" paint-order="stroke" stroke="#fff" stroke-width="3">${money(vals[n - 1])}</text>
-      ${xlabels}
-    </svg>
-    <div class="legend">
-      <span><span style="color:#2d6df6">━</span> 实盘账户净值</span>
-      <span>起点 ${money(base)} · ${ts2d(history[0].ts)} → ${ts2d(history[n - 1].ts)}</span>
-    </div>`;
+      ${points.length > 1 ? `<polygon points="${X(first.ts)},${H-padB} ${line} ${X(last.ts)},${H-padB}" fill="url(#equity-area)"/>` : ""}
+      <line x1="${padL}" y1="${Y(first.equity)}" x2="${W-padR}" y2="${Y(first.equity)}" stroke="#bacac8" stroke-dasharray="4 5"/>
+      <polyline points="${line}" fill="none" stroke="#168473" stroke-width="2.5" stroke-linejoin="round"/>
+      <circle cx="${X(last.ts)}" cy="${Y(last.equity)}" r="4" fill="#168473" stroke="white" stroke-width="2"/>
+      ${circles}${xlabels}
+    </svg><div class="chart-caption"><span><i></i>账户净值 <span class="muted">· 虚线为区间记录起点</span></span><span>${raw.length === 1 ? "仅一条记录，等待下一次采样" : "悬停查看采样值"} · 含出入金，非纯策略收益</span></div>`;
 }
+
 
 let liveFetchedAt = 0;
 
@@ -829,7 +850,7 @@ async function refreshMonitor(force) {
 
 $("mo-refresh").addEventListener("click", () => refreshMonitor(true));
 $("mo-clear").addEventListener("click", async () => {
-  if (!confirm("清空所有下单记录，并把净值曲线从现在重新开始？配置会保留。")) return;
+  if (!confirm("清空订单与成交记录？净值曲线、记录起点资金和配置均保留。")) return;
   try {
     const res = await fetch("/api/live/records/clear", { method: "POST" });
     const d = await res.json();
@@ -842,6 +863,22 @@ $("mo-clear").addEventListener("click", async () => {
 
 
 
+
+$("mo-chart-tabs").addEventListener("click", event => {
+  const button = event.target.closest("button[data-range]");
+  if (!button) return;
+  chartRange = button.dataset.range;
+  $("mo-chart-tabs").querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", String(b === button)));
+  if (lastLiveData) renderLiveChart(lastLiveData.history, lastLiveData.shadow);
+});
+$("mo-record-tabs").addEventListener("click", event => {
+  const button = event.target.closest("button[data-scope]");
+  if (!button) return;
+  recordScope = button.dataset.scope;
+  livePage = 0;
+  $("mo-record-tabs").querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", String(b === button)));
+  if (lastLiveData) renderMonitor(lastLiveData);
+});
 
 // ---------- 启动 ----------
 refreshStatus();

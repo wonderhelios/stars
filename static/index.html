@@ -125,6 +125,50 @@
         .metric-group.tx-perf .metrics { grid-template-columns:repeat(6,minmax(0,1fr)); }
       }
       .metric-group.tx-perf .metrics { grid-template-columns:repeat(3,minmax(0,1fr)); row-gap:18px; }
+
+      /* Monitor: live positions, capital history and execution have distinct scopes. */
+      #mo-metrics { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+      #mo-metrics > .metric-group { margin:0; padding:24px; }
+      #mo-metrics > .live-overview, #mo-metrics > .capital-account, #mo-metrics > .tx-perf { grid-column:1/-1; }
+      #mo-metrics > .live-overview { border-top:3px solid #168473; background:linear-gradient(115deg,#fff,#f6fbf9); }
+      #mo-metrics .live-overview .metrics, #mo-metrics .capital-account .metrics { grid-template-columns:repeat(4,minmax(0,1fr)); }
+      #mo-metrics .capital-account .v { font-size:24px; }
+      #mo-metrics .live-overview .v { font-size:clamp(25px,2.5vw,38px); letter-spacing:-1px; }
+      #mo-metrics .metric-group:not(.live-overview):not(.capital-account) .metrics { grid-template-columns:repeat(2,minmax(0,1fr)); }
+      #mo-metrics .g-title { color:#5f7774; letter-spacing:1px; font-size:11px; margin-bottom:22px; }
+      .metric-unit { font-size:15px; font-weight:450; color:#82938f; }
+      .metric-footnote { font-size:11px; color:#728780; margin-top:20px; display:flex; align-items:center; gap:7px; }
+      .live-dot { width:6px; height:6px; border-radius:50%; background:#168473; display:inline-block; flex-shrink:0; }
+      .metric-definition { color:#7c8c96; font-size:11px; margin-top:20px; line-height:1.8; }
+      .metric-definition summary { cursor:pointer; width:fit-content; }
+      .metric-definition p { max-width:800px; margin:8px 0 0; }
+      .section-eyebrow { display:block; color:#859b96; font-size:9px; letter-spacing:1.6px; margin-bottom:7px; }
+      .monitor-section-head { align-items:center; flex-wrap:wrap; gap:16px; margin:0 0 20px; }
+      .monitor-section-head h2 { font-size:19px; margin:0; }
+      .segmented { display:flex; gap:3px; padding:4px; background:#f1f5f4; border:1px solid #e3ebe8; border-radius:10px; }
+      .segmented button { border:0; background:transparent; color:#7b8c86; padding:8px 17px; font:inherit; font-size:12px; border-radius:7px; cursor:pointer; }
+      .segmented button[aria-pressed="true"] { background:white; color:#176e60; box-shadow:0 1px 5px #173c2914; font-weight:650; }
+      .segmented button:focus-visible { outline:2px solid #168473; outline-offset:2px; }
+      #mo-chart { overflow:hidden; }
+      #mo-chart svg { display:block; width:100%; min-width:0; }
+      .chart-summary { display:flex; align-items:flex-end; gap:32px; margin:4px 0 14px; }
+      .chart-summary strong { font-size:25px; font-weight:620; letter-spacing:-.7px; display:block; margin-top:7px; }
+      .chart-eyebrow { display:block; color:#8b999f; font-size:10px; letter-spacing:.3px; }
+      .chart-coverage { margin-left:auto; font-size:11px; color:#77868b; line-height:2; }
+      .chart-caption { display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px; color:#86949d; font-size:10px; padding-top:6px; }
+      .chart-caption i { display:inline-block; width:14px; height:2px; background:#168473; vertical-align:middle; margin-right:6px; }
+      .equity-point:hover { fill:#168473; stroke:white; stroke-width:2; }
+      .record-origin { display:block; font-size:10px; color:#9aa6a9; margin-top:3px; font-weight:400; white-space:nowrap; }
+      @media(max-width:760px) {
+        #mo-metrics { grid-template-columns:1fr; gap:12px; }
+        #mo-metrics > .metric-group { padding:18px 16px; }
+        #mo-metrics .live-overview .metrics, #mo-metrics .capital-account .metrics { grid-template-columns:repeat(2,minmax(0,1fr)); gap:20px 12px; }
+        #mo-metrics .capital-account .v { font-size:21px; }
+        .chart-summary { gap:20px; flex-wrap:wrap; }
+        .chart-summary strong { font-size:23px; }
+        .chart-coverage { margin-left:0; width:100%; }
+        .segmented button { padding:8px 13px; }
+      }
     </style>
   </head>
   <body>
@@ -249,14 +293,14 @@
           <div id="mo-status"></div>
           <div id="mo-warn"></div>
           <div class="metrics" id="mo-metrics"></div>
-          <div class="content-card"><div class="panel-head" style="margin-top:14px"><h2>净值曲线</h2></div>
+          <div class="content-card equity-card"><div class="panel-head monitor-section-head"><div><span class="section-eyebrow">ACCOUNT EQUITY</span><h2>账户净值</h2></div><div class="segmented" id="mo-chart-tabs" role="group" aria-label="净值时间区间"><button type="button" data-range="day" aria-pressed="false">日</button><button type="button" data-range="week" aria-pressed="true">周</button><button type="button" data-range="month" aria-pressed="false">月</button><button type="button" data-range="all" aria-pressed="false">全部</button></div></div>
           <div class="chart" id="mo-chart"></div></div>
           <div class="content-card"><div class="panel-head" style="margin-top:14px"><h2>当前持仓</h2></div>
           <div id="mo-positions"></div></div>
-          <div class="content-card"><div class="panel-head" style="margin-top:14px"><h2>盘口挂单（止盈）</h2></div>
+          <div class="content-card"><div class="panel-head" style="margin-top:14px"><h2>当前挂单</h2></div>
           <div id="mo-orders"></div></div>
-          <div class="content-card"><div class="panel-head" style="margin-top:14px"><h2>下单记录</h2></div>
-          <p class="note">只记录真实下单。修复前的版本曾把「设置杠杆失败」写到了错误的币上（用数组下标对应两个不同长度的列表）——那些是历史记录，无法追溯修正，可以点右上角「清空记录」清掉。</p>
+          <div class="content-card"><div class="panel-head monitor-section-head"><div><span class="section-eyebrow">EXECUTION JOURNAL</span><h2>订单与成交</h2></div><div class="segmented" id="mo-record-tabs" role="group" aria-label="记录来源"><button type="button" data-scope="all" aria-pressed="true">全部</button><button type="button" data-scope="system" aria-pressed="false">系统订单</button><button type="button" data-scope="exchange" aria-pressed="false">交易所补录</button></div></div>
+          <p class="note">系统订单展示调仓意图；交易所补录展示成交回执，无法据此确认是调仓、手动平仓或止盈。盈亏为未扣费金额，“估算”与交易所回执分开标注。</p>
           <div id="mo-records"></div></div>
         </div>
       </section>

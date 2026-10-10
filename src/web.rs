@@ -362,32 +362,22 @@ async fn live_markets(state: &AppState) -> std::collections::HashMap<String, cra
 async fn live_status(State(state): State<AppState>) -> Response {
     let mut st = state.live.lock().await.clone();
     let markets = live_markets(&state).await;
-    // 与交易所对账，把止盈单的被动成交补进记录。止盈单是挂在盘口由交易所撮合的，
-    // 程序不经手，只记录自己发的调仓单会让「已实现盈亏」漏掉全部止盈利润。
-    // 节流 5 分钟，避免每次轮询都打交易所。
-    if st.config.can_sign() {
+    // Read-only receipts: an exchange fill does not establish take-profit intent.
+    if !st.config.account.is_empty() {
         let now = crate::live::now_ms_pub();
         if now - st.last_reconcile_ms > 300_000 {
             st.last_reconcile_ms = now;
-            if let Ok(exec) = crate::exchange::Exec::signer_config(&st.config)
-            .await
-            {
+            if let Ok(exec) = crate::exchange::Exec::reader_config(&st.config).await {
                 match crate::live::reconcile_fills(&exec, &mut st).await {
-                    Ok(n) if n > 0 => {
-                        tracing::info!("对账：补入 {n} 笔被动成交");
-                        let mut g = state.live.lock().await;
-                        if g.config.txflow {
-                            crate::live::merge_txflow_reconciliation(&mut g,&st);
-                        } else {
-                            g.records = st.records.clone();
-                            g.reconciled_to = st.reconciled_to;
-                            g.last_reconcile_ms = st.last_reconcile_ms;
+                    Ok(n) => {
+                        if n > 0 { tracing::info!("对账：补入 {n} 笔交易所成交回执"); }
+                        let mut current = state.live.lock().await;
+                        let previous = current.clone();
+                        crate::live::merge_txflow_reconciliation(&mut current, &st);
+                        if let Err(e) = current.save(&state.live_path) {
+                            *current = previous;
+                            tracing::warn!("成交对账保存失败: {e}");
                         }
-                        let _ = g.save(&state.live_path);
-                    }
-                    Ok(_) => {
-                        let mut g = state.live.lock().await;
-                        g.last_reconcile_ms = st.last_reconcile_ms;
                     }
                     Err(e) => tracing::warn!("对账失败: {e}"),
                 }
@@ -672,9 +662,7 @@ async fn live_records_clear(State(state): State<AppState>) -> Response {
     st.capital_baseline = st.baseline();
     let n = st.records.len();
     st.records.clear();
-    // 净值曲线也一起重置：否则它会从上一套策略（或入金前）延续下来，
-    // 基线和当前策略对不上，图上会出现一段根本不是策略赚的"盈利"。
-    st.history.clear();
+    // Clearing the execution log must not erase account performance history.
     if let Err(e) = st.save(&state.live_path) {
         *st = previous;
         return (StatusCode::INTERNAL_SERVER_ERROR, Json(json!({"ok":false,"error":format!("清除记录保存失败: {e}")}))).into_response();

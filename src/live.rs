@@ -134,10 +134,7 @@ impl LiveConfig {
 pub struct EquityPoint {
     pub ts: i64,
     pub equity: f64,
-    /// 该时刻的策略累计盈亏（已实现 + 未实现）。
-    ///
-    /// 曲线必须画这个而不是净值：净值里混着入金/出金，一次充值会在图上显示成
-    /// 一段陡峭的"盈利"，而那根本不是策略赚的。
+    /// Historical auxiliary field; the account equity chart uses equity, including cash flows.
     pub pnl: f64,
 }
 
@@ -153,8 +150,7 @@ pub struct LiveRecord {
     pub notional: f64,
     pub result: String,
     pub live: bool,
-    /// 该笔成交的已实现盈亏。来源有两个：调仓单由程序自己解析，止盈单则由
-    /// 交易所的成交回执提供（程序没经手那笔单，算不出来）。
+    /// 交易所成交回执的已实现盈亏，不据此推断订单意图。
     pub pnl: Option<f64>,
     /// 交易所成交号，用于对账去重。
     pub tid: Option<u64>,
@@ -1279,29 +1275,22 @@ mod tests {
 
 
 impl LiveState {
-    /// 当前持仓的未实现盈亏合计。
-    ///
-    /// 已实现盈亏没法在这里算：它要从成交明细里解析（`LiveRecord` 只存了订单
-    /// 和交易所回执文本）。所以页面上显示的「累计盈亏」由前端用「已实现 + 未实现」
-    /// 计算 —— 那才是与入金无关的正确口径。
+    /// Current position unrealized PnL; separate from capital change and realized receipts.
     pub fn unrealized_pnl(&self, positions: &[crate::live::LivePosition]) -> f64 {
         positions.iter().map(|p| p.unrealized).sum()
     }
 }
 
 
-/// 从交易所拉成交，把「程序没经手的成交」补进记录 —— 主要是止盈单。
-///
-/// 止盈单挂在盘口等价格来碰，成交由交易所撮合，程序完全不经手；只记录自己
-/// 发出的调仓单会让已实现盈亏漏掉全部止盈利润（实测漏了 \$14.34，把 +0.59 显示
-/// 成 −13.75）。这里按时间水位增量导入并用 tid 去重。
+/// Import exchange close-fill receipts. An unmatched fill does not establish
+/// order intent: it may be a split rebalance fill, a manual close or a trigger.
 pub async fn reconcile_fills(exec: &Exec, state: &mut LiveState) -> Result<usize> {
-    let Some(v) = exec.user_fills(500).await.ok() else {
-        return Ok(0);
-    };
-    let Some(arr) = v.as_array() else {
-        return Ok(0);
-    };
+    let v = exec.user_fills(500).await?;
+    let arr = v.as_array().context("成交回执格式错误")?;
+    reconcile_fill_rows(arr, state)
+}
+
+fn reconcile_fill_rows(arr: &[serde_json::Value], state: &mut LiveState) -> Result<usize> {
     // 首次对账绝不能回溯：水位为 0 时直接对齐到「现在」，导入 0 笔。
     //
     // 否则 userFills 会把账户有史以来的成交全倒进来 —— 包括这个策略上线前的
@@ -1311,7 +1300,7 @@ pub async fn reconcile_fills(exec: &Exec, state: &mut LiveState) -> Result<usize
         state.reconciled_to = now_ms_pub();
         return Ok(0);
     }
-    let known: std::collections::HashSet<u64> =
+    let mut known: std::collections::HashSet<u64> =
         state.records.iter().filter_map(|r| r.tid).collect();
     // 我们自己下的单在记录里没有 tid（下单回执里就没有），所以**只靠 tid 去重
     // 不够** —— 每次调仓的平仓都会被当成"被动成交"再导入一遍，盈亏双计，
@@ -1362,17 +1351,18 @@ pub async fn reconcile_fills(exec: &Exec, state: &mut LiveState) -> Result<usize
             ts,
             coin: coin.clone(),
             side: if f["side"].as_str() == Some("B") { "买".into() } else { "卖".into() },
-            action: "止盈/被动成交".into(),
+            action: "交易所成交补录".into(),
             size: sz,
             price: px,
             notional: sz * px,
-            result: format!("被动成交 · 已实现 {:+.2}", pnl),
+            result: format!("交易所回执 · 已实现 {:+.2}", pnl),
             live: true,
             pnl: Some(pnl),
             tid: Some(tid),
             entry_px: None,
             reduce_only: true,
         });
+        known.insert(tid);
         added += 1;
         if ts > max_ts {
             max_ts = ts;
@@ -1801,5 +1791,30 @@ mod capital_regressions {
         assert!(fresh_binance_panel(&store, 30, now+2*day).unwrap_err().to_string().contains("合格 0/20"));
         assert!(fresh_binance_panel(&store, 120, now).is_err());
         drop(store); std::fs::remove_dir_all(dir).unwrap();
+    }
+}
+
+#[cfg(test)]
+mod monitor_receipt_tests {
+    use super::*;
+    #[test]
+    fn split_close_receipts_are_not_assumed_to_be_take_profits() {
+        let mut state = LiveState::default(); state.reconciled_to = 100;
+        let rows = vec![
+            serde_json::json!({"time":200,"tid":1,"coin":"AERO","sz":"57","px":"0.80177","dir":"Close Short","side":"B","closedPnl":"-1.27"}),
+            serde_json::json!({"time":200,"tid":2,"coin":"AERO","sz":"46","px":"0.80171","dir":"Close Short","side":"B","closedPnl":"-1.03"}),
+            serde_json::json!({"time":200,"tid":2,"coin":"AERO","sz":"46","px":"0.80171","dir":"Close Short","side":"B","closedPnl":"-1.03"}),
+        ];
+        assert_eq!(reconcile_fill_rows(&rows, &mut state).unwrap(), 2);
+        assert!(state.records.iter().all(|r| r.action == "交易所成交补录" && !r.result.contains("被动") && r.reduce_only && r.side == "买"));
+        assert!((state.records.iter().map(|r| r.pnl.unwrap()).sum::<f64>() + 2.30).abs() < 1e-8);
+        assert_eq!(reconcile_fill_rows(&rows, &mut state).unwrap(), 0);
+    }
+    #[test]
+    fn first_receipt_watermark_survives_merge_without_fills() {
+        let mut current = LiveState::default(); let mut snapshot = current.clone();
+        assert_eq!(reconcile_fill_rows(&[], &mut snapshot).unwrap(), 0);
+        merge_txflow_reconciliation(&mut current, &snapshot);
+        assert!(current.reconciled_to > 0);
     }
 }
