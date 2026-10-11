@@ -552,19 +552,21 @@ function renderExecDaily(d) {
   const money = v => Number.isFinite(v) ? "$" + fmt(v,2) : "—";
   const dayLabel = day => new Date(day*86400000).toISOString().slice(0,10);
   const peak = Math.max(1,...valid("notional"));
-  const width = 900, height = 100, count = days.length;
-  const barWidth = count ? Math.max(2, Math.min(28,width/count*.62)) : 0;
-  const bars = days.map((r,i)=>{
-    const h = Number.isFinite(r.notional) ? Math.max(0,r.notional)/peak*height : 0;
-    const x=(i+.5)*width/count-barWidth/2;
-    return `<rect x="${x}" y="${height-h}" width="${barWidth}" height="${Math.max(h,1)}" rx="2"><title>${dayLabel(r.day)} · 记录名义额 ${money(r.notional)} · ${value(r.orders,0)} 笔</title></rect>`;
+  const count = days.length;
+  const cellWidth = Math.max(110,...days.map(r=>money(r.notional).length*8+24));
+  const bars = days.map(r=>{
+    const h = Number.isFinite(r.notional) ? Math.max(0,r.notional)/peak*120 : 0;
+    return `<div class="daily-exec-bar" role="listitem" aria-label="${dayLabel(r.day)} · ${money(r.notional)} · ${value(r.orders,0)} 笔">
+      <span class="daily-exec-bar-value" style="bottom:${24+h+6}px">${money(r.notional)}</span>
+      <span class="daily-exec-bar-fill" style="height:${h}px"></span>
+      <span class="daily-exec-bar-date">${dayLabel(r.day).slice(5)}</span></div>`;
   }).join("");
   const pages=Math.max(1,Math.ceil(days.length/10));execDailyPage=Math.min(execDailyPage,pages-1);
   const rows=[...days].reverse().slice(execDailyPage*10,execDailyPage*10+10);
   root.innerHTML = `<header class="daily-exec-head"><div><span class="section-eyebrow">DAILY EXECUTION</span><h2>每日执行</h2><p>观察调仓频率与执行摩擦 · UTC 自然日</p></div>
     <div class="segmented" role="group" aria-label="每日执行时间范围">${[7,30,90].map(n=>`<button type="button" data-exec-range="${n}" aria-pressed="${execDailyRange===n}">近 ${n} 天</button>`).join("")}</div></header>
     <div class="daily-exec-kpis">${metric("区间记录笔数",days.length ? value(total("orders"),0) : "—")}${metric("区间记录名义额",days.length ? money(total("notional")) : "—")}${metric("有数据日均参考换手",turns.length ? value(turns.reduce((a,b)=>a+b,0)/turns.length)+"×" : "—")}${metric("有数据日均滑点",slips.length ? value(slips.reduce((a,b)=>a+b,0)/slips.length,3)+"%" : "—")}</div>
-    ${days.length ? `<div class="daily-exec-chart"><div class="daily-exec-chart-label"><span>每日记录名义额</span><span>当日记录可能仍在更新</span></div><svg viewBox="0 0 ${width} ${height+8}" preserveAspectRatio="none" role="img" aria-label="每日记录名义额柱状图">${bars}</svg><div class="daily-exec-chart-label"><span>${dayLabel(days[0].day)}</span><span>${dayLabel(days.at(-1).day)}</span></div></div>
+    ${days.length ? `<div class="daily-exec-chart"><div class="daily-exec-chart-label"><span>每日记录名义额</span><span>当日记录可能仍在更新</span></div><div class="daily-exec-plot"><div class="daily-exec-axis" style="min-width:${Math.max(70,money(peak).length*6+14)}px" aria-label="金额刻度 · USD"><span style="top:28px">${money(peak)}</span><span style="top:88px">${money(peak/2)}</span><span style="top:148px">$0</span></div><div class="daily-exec-scroll" tabindex="0" role="region" aria-label="每日金额图，可横向滚动"><div class="daily-exec-bars" role="list" style="grid-template-columns:repeat(${count},minmax(${cellWidth}px,1fr));min-width:${count*cellWidth}px">${bars}</div></div></div><div class="daily-exec-chart-label"><span>${dayLabel(days[0].day)} — ${dayLabel(days.at(-1).day)} · UTC</span><span>每柱金额精确到分 · 多日可横向滚动</span></div></div>
     <div class="table-scroll"><table><thead><tr><th>日期 · UTC</th><th>记录笔数</th><th>记录名义额</th><th>参考换手</th><th>平均不利滑点</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${dayLabel(r.day)}${r.day===today ? '<span class="record-origin">今日 · 未结束</span>':''}</td><td>${value(r.orders,0)}</td><td>${money(r.notional)}</td><td>${Number.isFinite(r.turnover)&&d.equity>0 ? value(r.turnover)+"×" : "—"}</td><td class="${Number.isFinite(r.avg_slip_pct)&&r.avg_slip_pct>0 ? 'neg':''}">${Number.isFinite(r.avg_slip_pct)?value(r.avg_slip_pct,3)+"%":"—"}</td></tr>`).join("")}</tbody></table></div>
     <div class="daily-exec-pagination"><span>${days.length} 个有记录日 · ${execDailyPage+1} / ${pages} 页</span><div><button type="button" class="btn ghost" data-exec-page="prev" ${execDailyPage===0?'disabled':''}>上一页</button><button type="button" class="btn ghost" data-exec-page="next" ${execDailyPage===pages-1?'disabled':''}>下一页</button></div></div>` : '<div class="empty">所选区间暂无执行记录；不将缺失数据记为零。</div>'}
     <details class="daily-exec-definition"><summary>统计口径</summary><p>按接口 exec_daily 展示：记录可能包含失败、未执行及交易所补录，并非去重后的实际成交笔数或成交额。参考换手 = 当日记录名义额 ÷ 当前净值，出入金会改变这一数值，不能与回测日换手直接比较。日均值仅取有数据的日期；区间滑点为每日平均值的算术平均，非逐笔或成交额加权。正滑点表示不利，缺失显示 —。此处不推算手续费、年化收益或翻倍时间。</p></details>`;

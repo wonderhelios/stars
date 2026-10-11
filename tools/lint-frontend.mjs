@@ -24,7 +24,7 @@ const called = new Set(
   [...app.matchAll(/(?<![.\w$])([A-Za-z_$][\w$]*)\s*\(/g)].map((m) => m[1])
 );
 // SVG fill="url(#gradient)" is paint syntax, not a JavaScript call.
-const CSS_FUNCTIONS = new Set(["url"]);
+const CSS_FUNCTIONS = new Set(["url", "repeat", "minmax"]);
 const missing = [...called]
   .filter((c) => !defined.has(c) && !GLOBALS.has(c) && !KEYWORDS.has(c) && !CSS_FUNCTIONS.has(c))
   .sort();

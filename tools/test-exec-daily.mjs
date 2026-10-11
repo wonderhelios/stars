@@ -18,3 +18,11 @@ ctx.renderExecDaily({equity:0,exec_daily:[{day:today,orders:1,notional:100,turno
 assert.doesNotMatch(el.innerHTML,/0.000%|0.00×/);
 assert.match(el.innerHTML,/当前净值/);assert.match(el.innerHTML,/包含失败/);
 console.log('✓ Daily execution handles UTC windows, paging, missing API, unknown slippage and invalid equity without inventing zero values');
+
+ctx.renderExecDaily(data);
+assert.match(el.innerHTML,/class="daily-exec-bar-value"[^>]*>\$100\.00<\/span>/);
+assert.equal((el.innerHTML.match(/class="daily-exec-bar-date"/g)||[]).length,30);
+assert.match(el.innerHTML,/金额刻度 · USD/);
+assert.match(el.innerHTML,/可横向滚动/);
+assert.doesNotMatch(el.innerHTML,/<title>/,'amounts must be visible without hovering');
+console.log('✓ Every bar has a visible precise amount and date, with scale and scroll access');

@@ -210,8 +210,17 @@
       .daily-exec-kpis .v { font-size:25px; font-variant-numeric:tabular-nums; }
       .daily-exec-kpis .k { font-size:11px; }
       .daily-exec-chart { padding:0 0 22px; }
-      .daily-exec-chart svg { width:100%; height:112px; display:block; margin:12px 0 8px; fill:#259482; }
-      .daily-exec-chart rect:hover { fill:#155e53; }
+      .daily-exec-plot { display:flex; margin:18px 0 12px; min-width:0; }
+      .daily-exec-axis { flex-shrink:0; min-width:70px; padding-right:12px; position:relative; height:172px; color:#82928f; font-size:10px; }
+      .daily-exec-axis span { position:absolute; right:12px; transform:translateY(-50%); white-space:nowrap; }
+      .daily-exec-scroll { flex:1; min-width:0; overflow-x:auto; padding-top:2px; }
+      .daily-exec-scroll:focus-visible { outline:2px solid #168473; outline-offset:3px; }
+      .daily-exec-bars { display:grid; height:172px; background-image:linear-gradient(#e8eeec,#e8eeec),linear-gradient(#e8eeec,#e8eeec),linear-gradient(#d3dfdb,#d3dfdb); background-size:100% 1px; background-position:0 28px,0 88px,0 148px; background-repeat:no-repeat; }
+      .daily-exec-bar { height:172px; position:relative; text-align:center; }
+      .daily-exec-bar-value { position:absolute; left:0; right:0; font-size:12px; font-weight:600; color:#284b43; white-space:nowrap; font-variant-numeric:tabular-nums; }
+      .daily-exec-bar-fill { position:absolute; bottom:24px; left:calc(50% - 16px); width:32px; background:#259482; border-radius:3px 3px 0 0; }
+      .daily-exec-bar:hover .daily-exec-bar-fill { background:#155e53; }
+      .daily-exec-bar-date { position:absolute; bottom:0; left:0; right:0; font-size:11px; color:#6e827b; line-height:18px; }
       .daily-exec-chart-label,.daily-exec-pagination { display:flex; justify-content:space-between; gap:12px; color:#80928d; font-size:11px; }
       .daily-exec-pagination { align-items:center; margin:14px 0; }
       .daily-exec-pagination .btn { margin-left:8px; }
