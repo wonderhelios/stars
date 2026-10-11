@@ -82,6 +82,10 @@ function metricGroup(title, html, cls, note) {
   return `<div class="metric-group${cls ? " " + cls : ""}"><div class="g-title">${title}</div><div class="metrics">${html}</div>${note || ""}</div>`;
 }
 
+function moneySigned(v) {
+  return (v >= 0 ? "+" : "−") + "$" + fmt(Math.abs(v), 2);
+}
+
 // 轮询后台调仓结果（每 3 秒一次，最多 tries 次）
 async function pollPlanOut(tries) {
   for (let i = 0; i < tries; i++) {
@@ -632,7 +636,6 @@ function renderMonitor(d) {
   const nCross = nPos - (d.isolated_count || 0);
   const currentValid = !d.error && Number.isFinite(d.equity) && pos.every(p => Number.isFinite(p.unrealized));
   const unrealized = pos.reduce((sum, p) => sum + (Number.isFinite(p.unrealized) ? p.unrealized : 0), 0);
-  const moneySigned = v => (v >= 0 ? "+" : "−") + "$" + fmt(Math.abs(v), 2);
 
   // 拿不到行情的持仓：必须显眼提示，否则净值看着正常但风险是隐形的
   const unp = d.unpriced || [];

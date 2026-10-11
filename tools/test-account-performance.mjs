@@ -101,3 +101,19 @@ assert.equal(context.capitalPerformance({...base,net_deposit:NaN}).valid,false);
 assert.equal(context.capitalPerformance({...base,net_deposit:Infinity}).valid,false);
 assert.ok(Math.abs(context.capitalPerformance({...base,net_deposit:-100}).percent-42.2725)<1e-8);
 console.log('✓ Deposits/withdrawals adjust principal and simple return, nonpositive principal stays undefined');
+
+// Real TxFlow audit data must not interrupt positions, orders or chart rendering.
+// Use the production formatter; injecting a test-only moneySigned masks scope errors.
+renderContext.LIVE_EXCHANGE='TxFlow';
+vm.runInContext(`txPnl={account:'a',audit:{fills:1,matched_fills:1,unassigned_fills:0,
+ known_realized:-2,known_fees_usd:1,incomplete_rows:0,limitation:'可能截断',
+ rows:[{time:1,coin:'BTC-USDC',oid:'12',size:1,price:100,fee_usd:1,slippage_pct:.1,system_order:true}]}}`,renderContext);
+let chartRendered=false;
+renderContext.renderLiveChart=()=>{chartRendered=true;};
+renderContext.renderMonitor({...base,positions:[{coin:'BTC-USDC',size:1,entry_px:100,unrealized:5}],records:[],config:{},history:[{ts:1,equity:500}]});
+assert.match(get('mo-metrics').innerHTML,/TxFlow 成交核验/);
+assert.match(get('mo-metrics').innerHTML,/−\$2\.00/);
+assert.match(get('mo-positions').innerHTML,/BTC-USDC/);
+assert.ok(chartRendered,'chart rendering must be reached after the audit panel');
+assert.match(get('mo-orders').innerHTML,/当前没有未成交挂单/);
+console.log('✓ TxFlow with populated audit renders metrics, positions, orders and chart without test-only formatters');

@@ -11,8 +11,9 @@ assert.equal(ctx.parseFill({result:'成交 4000@0.1 [requested=4000]',price:.1})
 assert.equal(ctx.parseFill({result:'TxFlow 下单失败'}).kind,'failed');
 console.log('✓ Receipt-only Success is unverified; partial fills use submitted size; scientific prices parse correctly');
 const render = vm.createContext({LIVE_EXCHANGE:'TxFlow', txPnl:null, txPnlAt:0,
- metricGroup:(a,b)=>a+b, metric:(a,b)=>a+b, escapeHTML:String, moneySigned:String,
+ metricGroup:(a,b)=>a+b, metric:(a,b)=>a+b, escapeHTML:String,
  ts2m:String,fmtCompact:String,fmt:String});
+vm.runInContext(source.slice(source.indexOf('function moneySigned('),source.indexOf('// 轮询后台')),render);
 vm.runInContext(source.slice(source.indexOf('function renderTxAudit('),source.indexOf('function renderMonitor(')),render);
 assert.match(render.renderTxAudit('a'),/暂不可用/);
 render.txPnl={account:'a',audit:{fills:2,matched_fills:0,unassigned_fills:2,known_realized:-2,known_fees_usd:1,incomplete_rows:0,limitation:'历史未核验',rows:[]}};
