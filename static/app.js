@@ -534,6 +534,47 @@ function recordPositionSide(r) {
   return r.side === "买" ? (recordIsClosing(r) ? "short" : "long") : (recordIsClosing(r) ? "long" : "short");
 }
 
+let execDailyRange = 7;
+let execDailyPage = 0;
+function renderExecDaily(d) {
+  const root = $("mo-exec-daily");
+  if (!root) return;
+  if (!Array.isArray(d.exec_daily)) {
+    root.innerHTML = '<div class="empty">当前接口尚未提供每日执行数据，请更新服务后刷新。</div>'; return;
+  }
+  const today = Math.floor(Date.now() / 86400000);
+  const days = d.exec_daily.filter(r => Number.isInteger(r.day) && r.day <= today && r.day > today - execDailyRange)
+    .sort((a,b) => a.day - b.day);
+  const valid = (key) => days.map(r=>r[key]).filter(v=>Number.isFinite(v));
+  const total = key => valid(key).reduce((a,b)=>a+b,0);
+  const slips = valid("avg_slip_pct"), turns = d.equity > 0 ? valid("turnover") : [];
+  const value = (v,n=2) => Number.isFinite(v) ? fmt(v,n) : "—";
+  const money = v => Number.isFinite(v) ? "$" + fmt(v,2) : "—";
+  const dayLabel = day => new Date(day*86400000).toISOString().slice(0,10);
+  const peak = Math.max(1,...valid("notional"));
+  const width = 900, height = 100, count = days.length;
+  const barWidth = count ? Math.max(2, Math.min(28,width/count*.62)) : 0;
+  const bars = days.map((r,i)=>{
+    const h = Number.isFinite(r.notional) ? Math.max(0,r.notional)/peak*height : 0;
+    const x=(i+.5)*width/count-barWidth/2;
+    return `<rect x="${x}" y="${height-h}" width="${barWidth}" height="${Math.max(h,1)}" rx="2"><title>${dayLabel(r.day)} · 记录名义额 ${money(r.notional)} · ${value(r.orders,0)} 笔</title></rect>`;
+  }).join("");
+  const pages=Math.max(1,Math.ceil(days.length/10));execDailyPage=Math.min(execDailyPage,pages-1);
+  const rows=[...days].reverse().slice(execDailyPage*10,execDailyPage*10+10);
+  root.innerHTML = `<header class="daily-exec-head"><div><span class="section-eyebrow">DAILY EXECUTION</span><h2>每日执行</h2><p>观察调仓频率与执行摩擦 · UTC 自然日</p></div>
+    <div class="segmented" role="group" aria-label="每日执行时间范围">${[7,30,90].map(n=>`<button type="button" data-exec-range="${n}" aria-pressed="${execDailyRange===n}">近 ${n} 天</button>`).join("")}</div></header>
+    <div class="daily-exec-kpis">${metric("区间记录笔数",days.length ? value(total("orders"),0) : "—")}${metric("区间记录名义额",days.length ? money(total("notional")) : "—")}${metric("有数据日均参考换手",turns.length ? value(turns.reduce((a,b)=>a+b,0)/turns.length)+"×" : "—")}${metric("有数据日均滑点",slips.length ? value(slips.reduce((a,b)=>a+b,0)/slips.length,3)+"%" : "—")}</div>
+    ${days.length ? `<div class="daily-exec-chart"><div class="daily-exec-chart-label"><span>每日记录名义额</span><span>当日记录可能仍在更新</span></div><svg viewBox="0 0 ${width} ${height+8}" preserveAspectRatio="none" role="img" aria-label="每日记录名义额柱状图">${bars}</svg><div class="daily-exec-chart-label"><span>${dayLabel(days[0].day)}</span><span>${dayLabel(days.at(-1).day)}</span></div></div>
+    <div class="table-scroll"><table><thead><tr><th>日期 · UTC</th><th>记录笔数</th><th>记录名义额</th><th>参考换手</th><th>平均不利滑点</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${dayLabel(r.day)}${r.day===today ? '<span class="record-origin">今日 · 未结束</span>':''}</td><td>${value(r.orders,0)}</td><td>${money(r.notional)}</td><td>${Number.isFinite(r.turnover)&&d.equity>0 ? value(r.turnover)+"×" : "—"}</td><td class="${Number.isFinite(r.avg_slip_pct)&&r.avg_slip_pct>0 ? 'neg':''}">${Number.isFinite(r.avg_slip_pct)?value(r.avg_slip_pct,3)+"%":"—"}</td></tr>`).join("")}</tbody></table></div>
+    <div class="daily-exec-pagination"><span>${days.length} 个有记录日 · ${execDailyPage+1} / ${pages} 页</span><div><button type="button" class="btn ghost" data-exec-page="prev" ${execDailyPage===0?'disabled':''}>上一页</button><button type="button" class="btn ghost" data-exec-page="next" ${execDailyPage===pages-1?'disabled':''}>下一页</button></div></div>` : '<div class="empty">所选区间暂无执行记录；不将缺失数据记为零。</div>'}
+    <details class="daily-exec-definition"><summary>统计口径</summary><p>按接口 exec_daily 展示：记录可能包含失败、未执行及交易所补录，并非去重后的实际成交笔数或成交额。参考换手 = 当日记录名义额 ÷ 当前净值，出入金会改变这一数值，不能与回测日换手直接比较。日均值仅取有数据的日期；区间滑点为每日平均值的算术平均，非逐笔或成交额加权。正滑点表示不利，缺失显示 —。此处不推算手续费、年化收益或翻倍时间。</p></details>`;
+  root.onclick = event => {
+    const range=event.target.closest("[data-exec-range]"),page=event.target.closest("[data-exec-page]");
+    if(range) {execDailyRange=Number(range.dataset.execRange);execDailyPage=0;renderExecDaily(d);}
+    else if(page&&!page.disabled) {execDailyPage+=page.dataset.execPage==='next'?1:-1;renderExecDaily(d);}
+  };
+}
+
 function renderTxReconciliation(r) {
   if (!r || r.status === "waiting") return `<div class="tx-reconciliation"><p class="tx-audit-note">${escapeHTML(r?.label || "等待账户对账快照")}。从升级后首次同时记录净值和浮盈开始核对，不重置原有收益起点。</p></div>`;
   const amount = v => Number.isFinite(v) ? moneySigned(v) : "—";
@@ -783,6 +824,7 @@ function renderMonitor(d) {
     </tr></thead><tbody>${rows}</tbody></table></div>` + pager("pos", pos.length, posPage, LIVE_PAGE_SIZE);
   }
 
+  renderExecDaily(d);
   renderLiveChart(hist, d.shadow);
 
   const chron = d.records || [];

@@ -250,6 +250,24 @@
         #mo-metrics .tx-audit-kpis .v { font-size:23px; }
         .tx-audit-status { gap:12px 18px; }
       }
+
+      .daily-exec-head { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px; }
+      .daily-exec-head h2 { font-size:19px; margin:0; }
+      .daily-exec-head p { font-size:12px; color:#7c8c96; margin:8px 0 0; }
+      .daily-exec-kpis { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:20px; margin:24px 0; padding:20px 0; border-top:1px solid #edf1f3; border-bottom:1px solid #edf1f3; }
+      .daily-exec-kpis .metric { padding:0; border:0; border-radius:0; background:transparent; box-shadow:none; }
+      .daily-exec-kpis .v { font-size:25px; font-variant-numeric:tabular-nums; }
+      .daily-exec-kpis .k { font-size:11px; }
+      .daily-exec-chart { padding:0 0 22px; }
+      .daily-exec-chart svg { width:100%; height:112px; display:block; margin:12px 0 8px; fill:#259482; }
+      .daily-exec-chart rect:hover { fill:#155e53; }
+      .daily-exec-chart-label,.daily-exec-pagination { display:flex; justify-content:space-between; gap:12px; color:#80928d; font-size:11px; }
+      .daily-exec-pagination { align-items:center; margin:14px 0; }
+      .daily-exec-pagination .btn { margin-left:8px; }
+      .daily-exec-definition { border-top:1px solid #edf1f3; padding-top:14px; font-size:12px; color:#7c8c96; }
+      .daily-exec-definition summary { cursor:pointer; }
+      .daily-exec-definition p { line-height:1.9; max-width:950px; }
+      @media(max-width:760px) { .daily-exec-kpis { grid-template-columns:repeat(2,minmax(0,1fr)); } .daily-exec-kpis .v { font-size:22px; } .daily-exec-head .segmented { width:100%; } .daily-exec-head .segmented button { flex:1; } }
     </style>
   </head>
   <body>
@@ -346,6 +364,7 @@
           </section>
           <div class="content-card equity-card"><div class="panel-head monitor-section-head"><div><span class="section-eyebrow">STRATEGY PNL</span><h2>策略盈亏曲线</h2></div><div class="segmented" id="mo-chart-tabs" role="group" aria-label="策略盈亏时间区间"><button type="button" data-range="day" aria-pressed="false">日</button><button type="button" data-range="week" aria-pressed="true">周</button><button type="button" data-range="month" aria-pressed="false">月</button><button type="button" data-range="all" aria-pressed="false">全部</button></div></div>
           <div class="chart" id="mo-chart"></div></div>
+          <section class="content-card" id="mo-exec-daily" aria-label="每日执行统计"></section>
           <div class="content-card"><div class="panel-head" style="margin-top:14px"><h2>当前持仓</h2></div>
           <div id="mo-positions"></div></div>
           <div class="content-card"><div class="panel-head" style="margin-top:14px"><h2>当前挂单</h2></div>
