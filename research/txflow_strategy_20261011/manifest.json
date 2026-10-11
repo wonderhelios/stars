@@ -1,0 +1,22 @@
+{
+  "selection_only_2024": "V_1",
+  "days": {
+    "full": 966,
+    "train2024": 321,
+    "valid2025": 365,
+    "diagnostic2026": 280,
+    "late2025_26": 645
+  },
+  "markets": 81,
+  "rows": 70267,
+  "start": "2024-02-15 00:00:00+00:00",
+  "end": "2026-10-07 00:00:00+00:00",
+  "universe_mean": 54.19111570247934,
+  "initial_equity": 3000,
+  "attempts": 280,
+  "families": 21,
+  "phase_paths": 56,
+  "db_sha256": "5c34efb18974fbfa781e96b5225e5b2905fc219d08503ffa0e8794083d06ce40",
+  "metadata_sha256": "69c93d8ed911a3a7bd3254efeaba2b2ca14a5ac2c845356c1759965cde795f1a",
+  "mapping_sha256": "76ca29ee5c3b34266b334d9fd31e315538da258e258c3fdc477ecfe046ef5566"
+}

@@ -1,0 +1,9 @@
+{
+  "all_paths_finite": true,
+  "bankrupt_paths": 0,
+  "factor_prefix_invariant": true,
+  "ledger_future_perturbation_invariant": true,
+  "independent_constant_price_fee_ledger": true,
+  "paths": 280,
+  "unpriced_paths": 0
+}

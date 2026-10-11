@@ -1,0 +1,6 @@
+Collecting scipy
+  Downloading scipy-1.18.1-cp312-cp312-macosx_14_0_arm64.whl.metadata (62 kB)
+Downloading scipy-1.18.1-cp312-cp312-macosx_14_0_arm64.whl (20.5 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 20.5/20.5 MB 11.0 MB/s  0:00:02
+Installing collected packages: scipy
+Successfully installed scipy-1.18.1

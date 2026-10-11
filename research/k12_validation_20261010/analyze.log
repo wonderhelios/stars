@@ -1,0 +1,4 @@
+metrics checkpoint
+bootstrap checkpoint 10 [0.4494 0.0528 1.     0.0528]
+bootstrap checkpoint 20 [0.4919 0.0605 1.     0.0611]
+bootstrap checkpoint 40 [0.5055 0.0565 1.     0.057 ]

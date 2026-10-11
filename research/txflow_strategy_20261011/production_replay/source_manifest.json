@@ -1,0 +1,9 @@
+{
+  "git_commit": "caeb38ed52851be057698a2f30e32264ce321ef3",
+  "trader_sha256": "57b7664b273ddba8d11c4fac49efa8874be82f1bfd9f69e1019ae138ed50a9d8",
+  "exchange_sha256": "4b07bd9dd57d2ead86f0e963843f3c0dd465ad6c0a6a82a4b291d975a44e0126",
+  "pure_planner_sha256": "dbc084e1ca2fb22a3d2e51f996489d360d0e6f27a8c53f6d154a74ec59500373",
+  "network_or_signer_in_harness": false,
+  "replay_input_sha256": "a887153f6af88973a7da3a41cfb2b131fa3cdcb4696ae03e6a1e60bfa520b0a4",
+  "replay_output_sha256": "107bf1e1a3fab56f83b97cbd94959c15c68c05c7c3f88e9e0318cab774c905c8"
+}

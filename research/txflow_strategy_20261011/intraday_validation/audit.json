@@ -1,0 +1,13 @@
+{
+  "days": 92,
+  "markets": 81,
+  "matching_daily_intraday_observations": 7433,
+  "max_daily_open_relative_difference": 0.003816793893129722,
+  "available_intraday_points": {
+    "0": 7433,
+    "300000": 7433,
+    "3600000": 7433
+  },
+  "all_paths_finite": true,
+  "held_missing_price_days": 0
+}

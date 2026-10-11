@@ -1,0 +1,320 @@
+[
+  {
+    "date_ms": 1768953600000,
+    "coin": "GAS-USDC",
+    "intraday_open": 1.851,
+    "daily_open": 1.856
+  },
+  {
+    "date_ms": 1771372800000,
+    "coin": "EIGEN-USDC",
+    "intraday_open": 0.207,
+    "daily_open": 0.208
+  },
+  {
+    "date_ms": 1771804800000,
+    "coin": "BLUR-USDC",
+    "intraday_open": 0.02005,
+    "daily_open": 0.02001
+  },
+  {
+    "date_ms": 1771804800000,
+    "coin": "CELO-USDC",
+    "intraday_open": 0.0749,
+    "daily_open": 0.0748
+  },
+  {
+    "date_ms": 1773187200000,
+    "coin": "BLUR-USDC",
+    "intraday_open": 0.01918,
+    "daily_open": 0.01922
+  },
+  {
+    "date_ms": 1773446400000,
+    "coin": "BLUR-USDC",
+    "intraday_open": 0.01924,
+    "daily_open": 0.01923
+  },
+  {
+    "date_ms": 1773532800000,
+    "coin": "MANTA-USDC",
+    "intraday_open": 0.07027,
+    "daily_open": 0.07007
+  },
+  {
+    "date_ms": 1774310400000,
+    "coin": "MET-USDC",
+    "intraday_open": 0.1404,
+    "daily_open": 0.1401
+  },
+  {
+    "date_ms": 1774828800000,
+    "coin": "MANTA-USDC",
+    "intraday_open": 0.05996,
+    "daily_open": 0.06026
+  },
+  {
+    "date_ms": 1774828800000,
+    "coin": "STRK-USDC",
+    "intraday_open": 0.0335,
+    "daily_open": 0.0334
+  },
+  {
+    "date_ms": 1774915200000,
+    "coin": "WIF-USDC",
+    "intraday_open": 0.176,
+    "daily_open": 0.177
+  },
+  {
+    "date_ms": 1775001600000,
+    "coin": "COMP-USDC",
+    "intraday_open": 17.63,
+    "daily_open": 17.62
+  },
+  {
+    "date_ms": 1777420800000,
+    "coin": "CELO-USDC",
+    "intraday_open": 0.08877,
+    "daily_open": 0.08878
+  },
+  {
+    "date_ms": 1777593600000,
+    "coin": "NIL-USDC",
+    "intraday_open": 0.03855,
+    "daily_open": 0.03851
+  },
+  {
+    "date_ms": 1777680000000,
+    "coin": "MET-USDC",
+    "intraday_open": 0.1595,
+    "daily_open": 0.1589
+  },
+  {
+    "date_ms": 1778976000000,
+    "coin": "GMX-USDC",
+    "intraday_open": 6.74,
+    "daily_open": 6.76
+  },
+  {
+    "date_ms": 1779235200000,
+    "coin": "WIF-USDC",
+    "intraday_open": 0.189,
+    "daily_open": 0.19
+  },
+  {
+    "date_ms": 1780185600000,
+    "coin": "MET-USDC",
+    "intraday_open": 0.127,
+    "daily_open": 0.1272
+  },
+  {
+    "date_ms": 1780876800000,
+    "coin": "BLUR-USDC",
+    "intraday_open": 0.0174,
+    "daily_open": 0.01734
+  },
+  {
+    "date_ms": 1781654400000,
+    "coin": "NEO-USDC",
+    "intraday_open": 2.286,
+    "daily_open": 2.296
+  },
+  {
+    "date_ms": 1782172800000,
+    "coin": "GAS-USDC",
+    "intraday_open": 1.081,
+    "daily_open": 1.08
+  },
+  {
+    "date_ms": 1783209600000,
+    "coin": "MINA-USDC",
+    "intraday_open": 0.0467,
+    "daily_open": 0.0466
+  },
+  {
+    "date_ms": 1783382400000,
+    "coin": "STRK-USDC",
+    "intraday_open": 0.0314,
+    "daily_open": 0.0313
+  },
+  {
+    "date_ms": 1783728000000,
+    "coin": "NEO-USDC",
+    "intraday_open": 1.963,
+    "daily_open": 1.962
+  },
+  {
+    "date_ms": 1784073600000,
+    "coin": "GAS-USDC",
+    "intraday_open": 1.056,
+    "daily_open": 1.053
+  },
+  {
+    "date_ms": 1784332800000,
+    "coin": "IOTA-USDC",
+    "intraday_open": 0.0359,
+    "daily_open": 0.036
+  },
+  {
+    "date_ms": 1784332800000,
+    "coin": "NEO-USDC",
+    "intraday_open": 1.947,
+    "daily_open": 1.949
+  },
+  {
+    "date_ms": 1784419200000,
+    "coin": "IMX-USDC",
+    "intraday_open": 0.1272,
+    "daily_open": 0.1273
+  },
+  {
+    "date_ms": 1785110400000,
+    "coin": "GAS-USDC",
+    "intraday_open": 1.025,
+    "daily_open": 1.024
+  },
+  {
+    "date_ms": 1785110400000,
+    "coin": "MANTA-USDC",
+    "intraday_open": 0.06191,
+    "daily_open": 0.06186
+  },
+  {
+    "date_ms": 1785369600000,
+    "coin": "BLUR-USDC",
+    "intraday_open": 0.01403,
+    "daily_open": 0.01405
+  },
+  {
+    "date_ms": 1785628800000,
+    "coin": "GAS-USDC",
+    "intraday_open": 0.924,
+    "daily_open": 0.925
+  },
+  {
+    "date_ms": 1785628800000,
+    "coin": "MINA-USDC",
+    "intraday_open": 0.0405,
+    "daily_open": 0.0406
+  },
+  {
+    "date_ms": 1785888000000,
+    "coin": "GAS-USDC",
+    "intraday_open": 0.927,
+    "daily_open": 0.926
+  },
+  {
+    "date_ms": 1785888000000,
+    "coin": "MINA-USDC",
+    "intraday_open": 0.0408,
+    "daily_open": 0.0409
+  },
+  {
+    "date_ms": 1786060800000,
+    "coin": "GAS-USDC",
+    "intraday_open": 0.936,
+    "daily_open": 0.937
+  },
+  {
+    "date_ms": 1786060800000,
+    "coin": "LINEA-USDC",
+    "intraday_open": 0.00224,
+    "daily_open": 0.002241
+  },
+  {
+    "date_ms": 1786147200000,
+    "coin": "CELO-USDC",
+    "intraday_open": 0.06058,
+    "daily_open": 0.06059
+  },
+  {
+    "date_ms": 1786147200000,
+    "coin": "MINA-USDC",
+    "intraday_open": 0.0408,
+    "daily_open": 0.0409
+  },
+  {
+    "date_ms": 1786233600000,
+    "coin": "NEO-USDC",
+    "intraday_open": 1.856,
+    "daily_open": 1.858
+  },
+  {
+    "date_ms": 1786320000000,
+    "coin": "LINEA-USDC",
+    "intraday_open": 0.002239,
+    "daily_open": 0.002243
+  },
+  {
+    "date_ms": 1786492800000,
+    "coin": "GAS-USDC",
+    "intraday_open": 0.93,
+    "daily_open": 0.931
+  },
+  {
+    "date_ms": 1786492800000,
+    "coin": "IMX-USDC",
+    "intraday_open": 0.1122,
+    "daily_open": 0.1123
+  },
+  {
+    "date_ms": 1786579200000,
+    "coin": "ASTER-USDC",
+    "intraday_open": 0.603,
+    "daily_open": 0.602
+  },
+  {
+    "date_ms": 1786665600000,
+    "coin": "ASTER-USDC",
+    "intraday_open": 0.604,
+    "daily_open": 0.603
+  },
+  {
+    "date_ms": 1786665600000,
+    "coin": "GAS-USDC",
+    "intraday_open": 0.931,
+    "daily_open": 0.932
+  },
+  {
+    "date_ms": 1787011200000,
+    "coin": "BLUR-USDC",
+    "intraday_open": 0.01315,
+    "daily_open": 0.0131
+  },
+  {
+    "date_ms": 1787616000000,
+    "coin": "MANTA-USDC",
+    "intraday_open": 0.06025,
+    "daily_open": 0.06038
+  },
+  {
+    "date_ms": 1788307200000,
+    "coin": "IOTA-USDC",
+    "intraday_open": 0.0396,
+    "daily_open": 0.0397
+  },
+  {
+    "date_ms": 1788393600000,
+    "coin": "WLFI-USDC",
+    "intraday_open": 0.056,
+    "daily_open": 0.0561
+  },
+  {
+    "date_ms": 1788652800000,
+    "coin": "BLUR-USDC",
+    "intraday_open": 0.01688,
+    "daily_open": 0.01691
+  },
+  {
+    "date_ms": 1789689600000,
+    "coin": "MANTA-USDC",
+    "intraday_open": 0.05913,
+    "daily_open": 0.05906
+  },
+  {
+    "date_ms": 1790726400000,
+    "coin": "NEO-USDC",
+    "intraday_open": 2.506,
+    "daily_open": 2.509
+  }
+]

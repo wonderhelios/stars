@@ -1,0 +1,8 @@
+{
+  "minimum_fresh_coins": 79,
+  "days_weights_changed": {
+    "MLV": 33,
+    "MV": 33
+  },
+  "required_consecutive_days": 33
+}

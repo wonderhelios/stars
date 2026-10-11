@@ -1,0 +1,254 @@
+[
+  {
+    "factor": "MLV",
+    "offset_minutes": 0,
+    "scenario": "base",
+    "implementation": "initial_missing_freshness",
+    "valid_for_final_report": false
+  },
+  {
+    "factor": "MLV",
+    "offset_minutes": 0,
+    "scenario": "slip6",
+    "implementation": "initial_missing_freshness",
+    "valid_for_final_report": false
+  },
+  {
+    "factor": "MLV",
+    "offset_minutes": 0,
+    "scenario": "slip6_funding3",
+    "implementation": "initial_missing_freshness",
+    "valid_for_final_report": false
+  },
+  {
+    "factor": "MLV",
+    "offset_minutes": 5,
+    "scenario": "base",
+    "implementation": "initial_missing_freshness",
+    "valid_for_final_report": false
+  },
+  {
+    "factor": "MLV",
+    "offset_minutes": 5,
+    "scenario": "slip6",
+    "implementation": "initial_missing_freshness",
+    "valid_for_final_report": false
+  },
+  {
+    "factor": "MLV",
+    "offset_minutes": 5,
+    "scenario": "slip6_funding3",
+    "implementation": "initial_missing_freshness",
+    "valid_for_final_report": false
+  },
+  {
+    "factor": "MLV",
+    "offset_minutes": 60,
+    "scenario": "base",
+    "implementation": "initial_missing_freshness",
+    "valid_for_final_report": false
+  },
+  {
+    "factor": "MLV",
+    "offset_minutes": 60,
+    "scenario": "slip6",
+    "implementation": "initial_missing_freshness",
+    "valid_for_final_report": false
+  },
+  {
+    "factor": "MLV",
+    "offset_minutes": 60,
+    "scenario": "slip6_funding3",
+    "implementation": "initial_missing_freshness",
+    "valid_for_final_report": false
+  },
+  {
+    "factor": "MV",
+    "offset_minutes": 0,
+    "scenario": "base",
+    "implementation": "initial_missing_freshness",
+    "valid_for_final_report": false
+  },
+  {
+    "factor": "MV",
+    "offset_minutes": 0,
+    "scenario": "slip6",
+    "implementation": "initial_missing_freshness",
+    "valid_for_final_report": false
+  },
+  {
+    "factor": "MV",
+    "offset_minutes": 0,
+    "scenario": "slip6_funding3",
+    "implementation": "initial_missing_freshness",
+    "valid_for_final_report": false
+  },
+  {
+    "factor": "MV",
+    "offset_minutes": 5,
+    "scenario": "base",
+    "implementation": "initial_missing_freshness",
+    "valid_for_final_report": false
+  },
+  {
+    "factor": "MV",
+    "offset_minutes": 5,
+    "scenario": "slip6",
+    "implementation": "initial_missing_freshness",
+    "valid_for_final_report": false
+  },
+  {
+    "factor": "MV",
+    "offset_minutes": 5,
+    "scenario": "slip6_funding3",
+    "implementation": "initial_missing_freshness",
+    "valid_for_final_report": false
+  },
+  {
+    "factor": "MV",
+    "offset_minutes": 60,
+    "scenario": "base",
+    "implementation": "initial_missing_freshness",
+    "valid_for_final_report": false
+  },
+  {
+    "factor": "MV",
+    "offset_minutes": 60,
+    "scenario": "slip6",
+    "implementation": "initial_missing_freshness",
+    "valid_for_final_report": false
+  },
+  {
+    "factor": "MV",
+    "offset_minutes": 60,
+    "scenario": "slip6_funding3",
+    "implementation": "initial_missing_freshness",
+    "valid_for_final_report": false
+  },
+  {
+    "factor": "MLV",
+    "offset_minutes": 0,
+    "scenario": "base",
+    "implementation": "freshness_corrected",
+    "valid_for_final_report": true
+  },
+  {
+    "factor": "MLV",
+    "offset_minutes": 0,
+    "scenario": "slip6",
+    "implementation": "freshness_corrected",
+    "valid_for_final_report": true
+  },
+  {
+    "factor": "MLV",
+    "offset_minutes": 0,
+    "scenario": "slip6_funding3",
+    "implementation": "freshness_corrected",
+    "valid_for_final_report": true
+  },
+  {
+    "factor": "MLV",
+    "offset_minutes": 5,
+    "scenario": "base",
+    "implementation": "freshness_corrected",
+    "valid_for_final_report": true
+  },
+  {
+    "factor": "MLV",
+    "offset_minutes": 5,
+    "scenario": "slip6",
+    "implementation": "freshness_corrected",
+    "valid_for_final_report": true
+  },
+  {
+    "factor": "MLV",
+    "offset_minutes": 5,
+    "scenario": "slip6_funding3",
+    "implementation": "freshness_corrected",
+    "valid_for_final_report": true
+  },
+  {
+    "factor": "MLV",
+    "offset_minutes": 60,
+    "scenario": "base",
+    "implementation": "freshness_corrected",
+    "valid_for_final_report": true
+  },
+  {
+    "factor": "MLV",
+    "offset_minutes": 60,
+    "scenario": "slip6",
+    "implementation": "freshness_corrected",
+    "valid_for_final_report": true
+  },
+  {
+    "factor": "MLV",
+    "offset_minutes": 60,
+    "scenario": "slip6_funding3",
+    "implementation": "freshness_corrected",
+    "valid_for_final_report": true
+  },
+  {
+    "factor": "MV",
+    "offset_minutes": 0,
+    "scenario": "base",
+    "implementation": "freshness_corrected",
+    "valid_for_final_report": true
+  },
+  {
+    "factor": "MV",
+    "offset_minutes": 0,
+    "scenario": "slip6",
+    "implementation": "freshness_corrected",
+    "valid_for_final_report": true
+  },
+  {
+    "factor": "MV",
+    "offset_minutes": 0,
+    "scenario": "slip6_funding3",
+    "implementation": "freshness_corrected",
+    "valid_for_final_report": true
+  },
+  {
+    "factor": "MV",
+    "offset_minutes": 5,
+    "scenario": "base",
+    "implementation": "freshness_corrected",
+    "valid_for_final_report": true
+  },
+  {
+    "factor": "MV",
+    "offset_minutes": 5,
+    "scenario": "slip6",
+    "implementation": "freshness_corrected",
+    "valid_for_final_report": true
+  },
+  {
+    "factor": "MV",
+    "offset_minutes": 5,
+    "scenario": "slip6_funding3",
+    "implementation": "freshness_corrected",
+    "valid_for_final_report": true
+  },
+  {
+    "factor": "MV",
+    "offset_minutes": 60,
+    "scenario": "base",
+    "implementation": "freshness_corrected",
+    "valid_for_final_report": true
+  },
+  {
+    "factor": "MV",
+    "offset_minutes": 60,
+    "scenario": "slip6",
+    "implementation": "freshness_corrected",
+    "valid_for_final_report": true
+  },
+  {
+    "factor": "MV",
+    "offset_minutes": 60,
+    "scenario": "slip6_funding3",
+    "implementation": "freshness_corrected",
+    "valid_for_final_report": true
+  }
+]

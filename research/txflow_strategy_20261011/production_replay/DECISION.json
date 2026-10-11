@@ -1,0 +1,21 @@
+{
+  "candidate": "MV",
+  "venue": "TxFlow",
+  "deploy": false,
+  "status": "failed_validation",
+  "reasons": [
+    "Sharpe improvement not statistically established after multiple search correction",
+    "drawdown worse than baseline",
+    "prior proxy execution and new-listing filters differed from production",
+    "actual historical funding and orderbook execution unavailable; public read requests returned HTTP403",
+    "full protocol historical regimes and forward validation incomplete"
+  ],
+  "hyperliquid_changed": false,
+  "txflow_strategy_changed": false,
+  "production_source_changed": false,
+  "real_orders_submitted": false,
+  "tests_passed": 4,
+  "daily_rust_python_weight_checks": 546,
+  "price_proxy": "Binance spot 5-minute openings",
+  "actual_fee_bps_recent_snapshot": 4.5
+}

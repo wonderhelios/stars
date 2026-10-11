@@ -1,0 +1,118 @@
+{
+  "B0": {
+    "fixed_drawdown": {
+      "start": "2024-03-05",
+      "end": "2024-10-15",
+      "days": 225,
+      "gross_mean": 2.7037384492073504,
+      "price_pnl": -1045233.7249620006,
+      "cost": 319685.9927626848,
+      "starting_equity": 1820927.797907818,
+      "ending_equity": 456008.08018313255,
+      "price_pnl_per_start": -0.5740116253719325,
+      "cost_per_start": 0.17556214646730792,
+      "net_return": -0.7495737718392406
+    },
+    "recovery": {
+      "start": "2024-10-16",
+      "end": "2025-11-04",
+      "days": 385,
+      "gross_mean": 2.7033624325578653,
+      "price_pnl": 2583374.5244360003,
+      "cost": 489033.13932337344,
+      "starting_equity": 456008.08018313255,
+      "ending_equity": 2550349.465295762,
+      "price_pnl_per_start": 5.665194624179727,
+      "cost_per_start": 1.0724220920098126,
+      "net_return": 4.592772532169919
+    },
+    "anchor_recovery": "2025-11-04"
+  },
+  "K12": {
+    "fixed_drawdown": {
+      "start": "2024-03-05",
+      "end": "2024-10-15",
+      "days": 225,
+      "gross_mean": 2.7029578754585963,
+      "price_pnl": -6797.744629999623,
+      "cost": 350897.207350963,
+      "starting_equity": 1285607.2957157842,
+      "ending_equity": 927912.3437348189,
+      "price_pnl_per_start": -0.005287574714808118,
+      "cost_per_start": 0.2729427629419254,
+      "net_return": -0.27823033765673555
+    },
+    "recovery": {
+      "start": "2024-10-16",
+      "end": "2024-11-16",
+      "days": 32,
+      "gross_mean": 2.7026295610092026,
+      "price_pnl": 612599.6988710003,
+      "cost": 39886.281140198495,
+      "starting_equity": 927912.3437348189,
+      "ending_equity": 1500625.7614656198,
+      "price_pnl_per_start": 0.6601913456666664,
+      "cost_per_start": 0.04298496663990634,
+      "net_return": 0.617206379026759
+    },
+    "anchor_recovery": "2024-11-16"
+  },
+  "A": {
+    "fixed_drawdown": {
+      "start": "2024-03-05",
+      "end": "2024-10-15",
+      "days": 225,
+      "gross_mean": 1.9509645268445641,
+      "price_pnl": -684662.1700860005,
+      "cost": 239206.49538873427,
+      "starting_equity": 1632654.7650048188,
+      "ending_equity": 708786.0995300848,
+      "price_pnl_per_start": -0.41935514155313763,
+      "cost_per_start": 0.14651382552883324,
+      "net_return": -0.5658689670819705
+    },
+    "recovery": {
+      "start": "2024-10-16",
+      "end": "2025-07-17",
+      "days": 275,
+      "gross_mean": 2.1618387663182106,
+      "price_pnl": 1704850.8224840001,
+      "cost": 332348.8768587365,
+      "starting_equity": 708786.0995300848,
+      "ending_equity": 2081288.0451553492,
+      "price_pnl_per_start": 2.4053107469436723,
+      "cost_per_start": 0.46889869465425343,
+      "net_return": 1.9364120522894197
+    },
+    "anchor_recovery": "2025-07-17"
+  },
+  "A_const": {
+    "fixed_drawdown": {
+      "start": "2024-03-05",
+      "end": "2024-10-15",
+      "days": 225,
+      "gross_mean": 2.057651192800002,
+      "price_pnl": -772145.5429010005,
+      "cost": 249703.0433748816,
+      "starting_equity": 1609914.4212886372,
+      "ending_equity": 588065.8350127552,
+      "price_pnl_per_start": -0.4796189988055052,
+      "cost_per_start": 0.1551033024320695,
+      "net_return": -0.6347223012375747
+    },
+    "recovery": {
+      "start": "2024-10-16",
+      "end": "2025-10-11",
+      "days": 361,
+      "gross_mean": 2.0574750464249534,
+      "price_pnl": 1882674.8261980005,
+      "cost": 365775.3783699211,
+      "starting_equity": 588065.8350127552,
+      "ending_equity": 2104965.2828408345,
+      "price_pnl_per_start": 3.2014694853972685,
+      "cost_per_start": 0.6219973285167764,
+      "net_return": 2.5794721568804917
+    },
+    "anchor_recovery": "2025-10-11"
+  }
+}

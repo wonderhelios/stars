@@ -1,0 +1,15 @@
+Traceback (most recent call last):
+  File "/Users/wonder/Code/stars/research/k12_validation_20261010/vendor/scipy/__init__.py", line 83, in <module>
+    from scipy._lib._ccallback import LowLevelCallable
+  File "/Users/wonder/Code/stars/research/k12_validation_20261010/vendor/scipy/_lib/_ccallback.py", line 1, in <module>
+    from . import _ccallback_c
+ImportError: dlopen(/Users/wonder/Code/stars/research/k12_validation_20261010/vendor/scipy/_lib/_ccallback_c.cpython-312-darwin.so, 0x0002): tried: '/Users/wonder/Code/stars/research/k12_validation_20261010/vendor/scipy/_lib/_ccallback_c.cpython-312-darwin.so' (code signature in <A91EBD7F-F808-3465-BD95-698EDC2E3267> '/Users/wonder/Code/stars/research/k12_validation_20261010/vendor/scipy/_lib/_ccallback_c.cpython-312-darwin.so' not valid for use in process: mapping process and mapped file (non-platform) have different Team IDs), '/System/Volumes/Preboot/Cryptexes/OS/Users/wonder/Code/stars/research/k12_validation_20261010/vendor/scipy/_lib/_ccallback_c.cpython-312-darwin.so' (no such file), '/Users/wonder/Code/stars/research/k12_validation_20261010/vendor/scipy/_lib/_ccallback_c.cpython-312-darwin.so' (code signature in <A91EBD7F-F808-3465-BD95-698EDC2E3267> '/Users/wonder/Code/stars/research/k12_validation_20261010/vendor/scipy/_lib/_ccallback_c.cpython-312-darwin.so' not valid for use in process: mapping process and mapped file (non-platform) have different Team IDs)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/wonder/Code/stars/research/k12_validation_20261010/extra_targets.py", line 5, in <module>
+    import scipy
+  File "/Users/wonder/Code/stars/research/k12_validation_20261010/vendor/scipy/__init__.py", line 88, in <module>
+    raise ImportError(msg) from e
+ImportError: The `scipy` install you are using seems to be broken, (extension modules cannot be imported), please try reinstalling.

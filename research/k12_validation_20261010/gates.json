@@ -1,0 +1,142 @@
+{
+  "K12-B0": {
+    "checks": {
+      "positive_delta": true,
+      "all_three_fwer": false,
+      "both_segments_positive_and_improved": true,
+      "both_segments_improved_at_7_5bp": true,
+      "startup_mean_exceeds_range": true,
+      "turnover_budget": true
+    },
+    "passed": false,
+    "turnover_ratio_B0": 0.8782889587710543,
+    "execution_sensitive": true,
+    "stress_deltas": {
+      "f0.00105_d0": {
+        "common": 0.4853027308641477,
+        "common_2023-24": 0.8016833052372153,
+        "common_2025-26": 0.23981295314026152
+      },
+      "f0.0007_d1": {
+        "common": 0.04472252437168963,
+        "common_2023-24": 0.2895737443197697,
+        "common_2025-26": -0.13373339634946482
+      },
+      "f0.00075_d1": {
+        "common": 0.04190990506345941,
+        "common_2023-24": 0.28830625542467747,
+        "common_2025-26": -0.1379835026324118
+      },
+      "f0.00105_d1": {
+        "common": 0.024841348062081898,
+        "common_2023-24": 0.2790618794223682,
+        "common_2025-26": -0.16252146735898668
+      }
+    }
+  },
+  "A-B0": {
+    "checks": {
+      "positive_delta": true,
+      "all_three_fwer": false,
+      "both_segments_positive_and_improved": true,
+      "both_segments_improved_at_7_5bp": true,
+      "startup_mean_exceeds_range": true,
+      "turnover_budget": true
+    },
+    "passed": false,
+    "turnover_ratio_B0": 0.720607610759413,
+    "execution_sensitive": false,
+    "stress_deltas": {
+      "f0.00105_d0": {
+        "common": 0.2870011063114548,
+        "common_2023-24": 0.26262019205117837,
+        "common_2025-26": 0.26958691409478136
+      },
+      "f0.0007_d1": {
+        "common": 0.21311176882388647,
+        "common_2023-24": 0.3510690770968444,
+        "common_2025-26": 0.06140192246959749
+      },
+      "f0.00075_d1": {
+        "common": 0.21578080850158288,
+        "common_2023-24": 0.3528679497995448,
+        "common_2025-26": 0.0648801279153608
+      },
+      "f0.00105_d1": {
+        "common": 0.23229624477716068,
+        "common_2023-24": 0.3629073522394159,
+        "common_2025-26": 0.08739653794093094
+      }
+    }
+  },
+  "A-K12": {
+    "checks": {
+      "positive_delta": false,
+      "all_three_fwer": false,
+      "both_segments_positive_and_improved": false,
+      "both_segments_improved_at_7_5bp": false,
+      "startup_mean_exceeds_range": false,
+      "turnover_budget": true
+    },
+    "passed": false,
+    "turnover_ratio_B0": 0.720607610759413,
+    "execution_sensitive": true,
+    "stress_deltas": {
+      "f0.00105_d0": {
+        "common": -0.19830162455269287,
+        "common_2023-24": -0.539063113186037,
+        "common_2025-26": 0.029773960954519858
+      },
+      "f0.0007_d1": {
+        "common": 0.16838924445219683,
+        "common_2023-24": 0.06149533277707472,
+        "common_2025-26": 0.19513531881906232
+      },
+      "f0.00075_d1": {
+        "common": 0.17387090343812348,
+        "common_2023-24": 0.06456169437486732,
+        "common_2025-26": 0.2028636305477726
+      },
+      "f0.00105_d1": {
+        "common": 0.20745489671507877,
+        "common_2023-24": 0.0838454728170477,
+        "common_2025-26": 0.24991800529991762
+      }
+    }
+  },
+  "A-A_const": {
+    "checks": {
+      "positive_delta": true,
+      "all_three_fwer": false,
+      "both_segments_positive_and_improved": true,
+      "both_segments_improved_at_7_5bp": true,
+      "startup_mean_exceeds_range": true,
+      "turnover_budget": true
+    },
+    "passed": false,
+    "turnover_ratio_B0": 0.720607610759413,
+    "execution_sensitive": false,
+    "stress_deltas": {
+      "f0.00105_d0": {
+        "common": 0.28470526587494344,
+        "common_2023-24": 0.2616784310654596,
+        "common_2025-26": 0.26672463236439614
+      },
+      "f0.0007_d1": {
+        "common": 0.21205795651256246,
+        "common_2023-24": 0.35203791919765437,
+        "common_2025-26": 0.05857297700211728
+      },
+      "f0.00075_d1": {
+        "common": 0.21425298897854098,
+        "common_2023-24": 0.352912453078597,
+        "common_2025-26": 0.062000784493738324
+      },
+      "f0.00105_d1": {
+        "common": 0.22995755340054846,
+        "common_2023-24": 0.36203943688024154,
+        "common_2025-26": 0.08374434620413378
+      }
+    }
+  }
+}

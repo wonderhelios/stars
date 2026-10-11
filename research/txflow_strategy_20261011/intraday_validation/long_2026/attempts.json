@@ -1,0 +1,110 @@
+[
+  {
+    "id": "MLV_0_base",
+    "factor": "MLV",
+    "offset_minutes": 0,
+    "scenario": "base"
+  },
+  {
+    "id": "MLV_0_slip6",
+    "factor": "MLV",
+    "offset_minutes": 0,
+    "scenario": "slip6"
+  },
+  {
+    "id": "MLV_0_slip6_funding3",
+    "factor": "MLV",
+    "offset_minutes": 0,
+    "scenario": "slip6_funding3"
+  },
+  {
+    "id": "MLV_300000_base",
+    "factor": "MLV",
+    "offset_minutes": 5,
+    "scenario": "base"
+  },
+  {
+    "id": "MLV_300000_slip6",
+    "factor": "MLV",
+    "offset_minutes": 5,
+    "scenario": "slip6"
+  },
+  {
+    "id": "MLV_300000_slip6_funding3",
+    "factor": "MLV",
+    "offset_minutes": 5,
+    "scenario": "slip6_funding3"
+  },
+  {
+    "id": "MLV_3600000_base",
+    "factor": "MLV",
+    "offset_minutes": 60,
+    "scenario": "base"
+  },
+  {
+    "id": "MLV_3600000_slip6",
+    "factor": "MLV",
+    "offset_minutes": 60,
+    "scenario": "slip6"
+  },
+  {
+    "id": "MLV_3600000_slip6_funding3",
+    "factor": "MLV",
+    "offset_minutes": 60,
+    "scenario": "slip6_funding3"
+  },
+  {
+    "id": "MV_0_base",
+    "factor": "MV",
+    "offset_minutes": 0,
+    "scenario": "base"
+  },
+  {
+    "id": "MV_0_slip6",
+    "factor": "MV",
+    "offset_minutes": 0,
+    "scenario": "slip6"
+  },
+  {
+    "id": "MV_0_slip6_funding3",
+    "factor": "MV",
+    "offset_minutes": 0,
+    "scenario": "slip6_funding3"
+  },
+  {
+    "id": "MV_300000_base",
+    "factor": "MV",
+    "offset_minutes": 5,
+    "scenario": "base"
+  },
+  {
+    "id": "MV_300000_slip6",
+    "factor": "MV",
+    "offset_minutes": 5,
+    "scenario": "slip6"
+  },
+  {
+    "id": "MV_300000_slip6_funding3",
+    "factor": "MV",
+    "offset_minutes": 5,
+    "scenario": "slip6_funding3"
+  },
+  {
+    "id": "MV_3600000_base",
+    "factor": "MV",
+    "offset_minutes": 60,
+    "scenario": "base"
+  },
+  {
+    "id": "MV_3600000_slip6",
+    "factor": "MV",
+    "offset_minutes": 60,
+    "scenario": "slip6"
+  },
+  {
+    "id": "MV_3600000_slip6_funding3",
+    "factor": "MV",
+    "offset_minutes": 60,
+    "scenario": "slip6_funding3"
+  }
+]

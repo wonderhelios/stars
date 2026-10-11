@@ -1,0 +1,2242 @@
+[
+  {
+    "id": "MLV_1_0_base",
+    "family": "MLV_1",
+    "factor": "MLV",
+    "period": 1,
+    "phase": 0,
+    "scenario": "base"
+  },
+  {
+    "id": "MLV_1_0_slip6",
+    "family": "MLV_1",
+    "factor": "MLV",
+    "period": 1,
+    "phase": 0,
+    "scenario": "slip6"
+  },
+  {
+    "id": "MLV_1_0_maker_upper",
+    "family": "MLV_1",
+    "factor": "MLV",
+    "period": 1,
+    "phase": 0,
+    "scenario": "maker_upper"
+  },
+  {
+    "id": "MLV_1_0_funding3pct",
+    "family": "MLV_1",
+    "factor": "MLV",
+    "period": 1,
+    "phase": 0,
+    "scenario": "funding3pct"
+  },
+  {
+    "id": "MLV_1_0_next_open_upper",
+    "family": "MLV_1",
+    "factor": "MLV",
+    "period": 1,
+    "phase": 0,
+    "scenario": "next_open_upper"
+  },
+  {
+    "id": "MLV_3_0_base",
+    "family": "MLV_3",
+    "factor": "MLV",
+    "period": 3,
+    "phase": 0,
+    "scenario": "base"
+  },
+  {
+    "id": "MLV_3_0_slip6",
+    "family": "MLV_3",
+    "factor": "MLV",
+    "period": 3,
+    "phase": 0,
+    "scenario": "slip6"
+  },
+  {
+    "id": "MLV_3_0_maker_upper",
+    "family": "MLV_3",
+    "factor": "MLV",
+    "period": 3,
+    "phase": 0,
+    "scenario": "maker_upper"
+  },
+  {
+    "id": "MLV_3_0_funding3pct",
+    "family": "MLV_3",
+    "factor": "MLV",
+    "period": 3,
+    "phase": 0,
+    "scenario": "funding3pct"
+  },
+  {
+    "id": "MLV_3_0_next_open_upper",
+    "family": "MLV_3",
+    "factor": "MLV",
+    "period": 3,
+    "phase": 0,
+    "scenario": "next_open_upper"
+  },
+  {
+    "id": "MLV_3_1_base",
+    "family": "MLV_3",
+    "factor": "MLV",
+    "period": 3,
+    "phase": 1,
+    "scenario": "base"
+  },
+  {
+    "id": "MLV_3_1_slip6",
+    "family": "MLV_3",
+    "factor": "MLV",
+    "period": 3,
+    "phase": 1,
+    "scenario": "slip6"
+  },
+  {
+    "id": "MLV_3_1_maker_upper",
+    "family": "MLV_3",
+    "factor": "MLV",
+    "period": 3,
+    "phase": 1,
+    "scenario": "maker_upper"
+  },
+  {
+    "id": "MLV_3_1_funding3pct",
+    "family": "MLV_3",
+    "factor": "MLV",
+    "period": 3,
+    "phase": 1,
+    "scenario": "funding3pct"
+  },
+  {
+    "id": "MLV_3_1_next_open_upper",
+    "family": "MLV_3",
+    "factor": "MLV",
+    "period": 3,
+    "phase": 1,
+    "scenario": "next_open_upper"
+  },
+  {
+    "id": "MLV_3_2_base",
+    "family": "MLV_3",
+    "factor": "MLV",
+    "period": 3,
+    "phase": 2,
+    "scenario": "base"
+  },
+  {
+    "id": "MLV_3_2_slip6",
+    "family": "MLV_3",
+    "factor": "MLV",
+    "period": 3,
+    "phase": 2,
+    "scenario": "slip6"
+  },
+  {
+    "id": "MLV_3_2_maker_upper",
+    "family": "MLV_3",
+    "factor": "MLV",
+    "period": 3,
+    "phase": 2,
+    "scenario": "maker_upper"
+  },
+  {
+    "id": "MLV_3_2_funding3pct",
+    "family": "MLV_3",
+    "factor": "MLV",
+    "period": 3,
+    "phase": 2,
+    "scenario": "funding3pct"
+  },
+  {
+    "id": "MLV_3_2_next_open_upper",
+    "family": "MLV_3",
+    "factor": "MLV",
+    "period": 3,
+    "phase": 2,
+    "scenario": "next_open_upper"
+  },
+  {
+    "id": "MLV_4_0_base",
+    "family": "MLV_4",
+    "factor": "MLV",
+    "period": 4,
+    "phase": 0,
+    "scenario": "base"
+  },
+  {
+    "id": "MLV_4_0_slip6",
+    "family": "MLV_4",
+    "factor": "MLV",
+    "period": 4,
+    "phase": 0,
+    "scenario": "slip6"
+  },
+  {
+    "id": "MLV_4_0_maker_upper",
+    "family": "MLV_4",
+    "factor": "MLV",
+    "period": 4,
+    "phase": 0,
+    "scenario": "maker_upper"
+  },
+  {
+    "id": "MLV_4_0_funding3pct",
+    "family": "MLV_4",
+    "factor": "MLV",
+    "period": 4,
+    "phase": 0,
+    "scenario": "funding3pct"
+  },
+  {
+    "id": "MLV_4_0_next_open_upper",
+    "family": "MLV_4",
+    "factor": "MLV",
+    "period": 4,
+    "phase": 0,
+    "scenario": "next_open_upper"
+  },
+  {
+    "id": "MLV_4_1_base",
+    "family": "MLV_4",
+    "factor": "MLV",
+    "period": 4,
+    "phase": 1,
+    "scenario": "base"
+  },
+  {
+    "id": "MLV_4_1_slip6",
+    "family": "MLV_4",
+    "factor": "MLV",
+    "period": 4,
+    "phase": 1,
+    "scenario": "slip6"
+  },
+  {
+    "id": "MLV_4_1_maker_upper",
+    "family": "MLV_4",
+    "factor": "MLV",
+    "period": 4,
+    "phase": 1,
+    "scenario": "maker_upper"
+  },
+  {
+    "id": "MLV_4_1_funding3pct",
+    "family": "MLV_4",
+    "factor": "MLV",
+    "period": 4,
+    "phase": 1,
+    "scenario": "funding3pct"
+  },
+  {
+    "id": "MLV_4_1_next_open_upper",
+    "family": "MLV_4",
+    "factor": "MLV",
+    "period": 4,
+    "phase": 1,
+    "scenario": "next_open_upper"
+  },
+  {
+    "id": "MLV_4_2_base",
+    "family": "MLV_4",
+    "factor": "MLV",
+    "period": 4,
+    "phase": 2,
+    "scenario": "base"
+  },
+  {
+    "id": "MLV_4_2_slip6",
+    "family": "MLV_4",
+    "factor": "MLV",
+    "period": 4,
+    "phase": 2,
+    "scenario": "slip6"
+  },
+  {
+    "id": "MLV_4_2_maker_upper",
+    "family": "MLV_4",
+    "factor": "MLV",
+    "period": 4,
+    "phase": 2,
+    "scenario": "maker_upper"
+  },
+  {
+    "id": "MLV_4_2_funding3pct",
+    "family": "MLV_4",
+    "factor": "MLV",
+    "period": 4,
+    "phase": 2,
+    "scenario": "funding3pct"
+  },
+  {
+    "id": "MLV_4_2_next_open_upper",
+    "family": "MLV_4",
+    "factor": "MLV",
+    "period": 4,
+    "phase": 2,
+    "scenario": "next_open_upper"
+  },
+  {
+    "id": "MLV_4_3_base",
+    "family": "MLV_4",
+    "factor": "MLV",
+    "period": 4,
+    "phase": 3,
+    "scenario": "base"
+  },
+  {
+    "id": "MLV_4_3_slip6",
+    "family": "MLV_4",
+    "factor": "MLV",
+    "period": 4,
+    "phase": 3,
+    "scenario": "slip6"
+  },
+  {
+    "id": "MLV_4_3_maker_upper",
+    "family": "MLV_4",
+    "factor": "MLV",
+    "period": 4,
+    "phase": 3,
+    "scenario": "maker_upper"
+  },
+  {
+    "id": "MLV_4_3_funding3pct",
+    "family": "MLV_4",
+    "factor": "MLV",
+    "period": 4,
+    "phase": 3,
+    "scenario": "funding3pct"
+  },
+  {
+    "id": "MLV_4_3_next_open_upper",
+    "family": "MLV_4",
+    "factor": "MLV",
+    "period": 4,
+    "phase": 3,
+    "scenario": "next_open_upper"
+  },
+  {
+    "id": "M_1_0_base",
+    "family": "M_1",
+    "factor": "M",
+    "period": 1,
+    "phase": 0,
+    "scenario": "base"
+  },
+  {
+    "id": "M_1_0_slip6",
+    "family": "M_1",
+    "factor": "M",
+    "period": 1,
+    "phase": 0,
+    "scenario": "slip6"
+  },
+  {
+    "id": "M_1_0_maker_upper",
+    "family": "M_1",
+    "factor": "M",
+    "period": 1,
+    "phase": 0,
+    "scenario": "maker_upper"
+  },
+  {
+    "id": "M_1_0_funding3pct",
+    "family": "M_1",
+    "factor": "M",
+    "period": 1,
+    "phase": 0,
+    "scenario": "funding3pct"
+  },
+  {
+    "id": "M_1_0_next_open_upper",
+    "family": "M_1",
+    "factor": "M",
+    "period": 1,
+    "phase": 0,
+    "scenario": "next_open_upper"
+  },
+  {
+    "id": "M_3_0_base",
+    "family": "M_3",
+    "factor": "M",
+    "period": 3,
+    "phase": 0,
+    "scenario": "base"
+  },
+  {
+    "id": "M_3_0_slip6",
+    "family": "M_3",
+    "factor": "M",
+    "period": 3,
+    "phase": 0,
+    "scenario": "slip6"
+  },
+  {
+    "id": "M_3_0_maker_upper",
+    "family": "M_3",
+    "factor": "M",
+    "period": 3,
+    "phase": 0,
+    "scenario": "maker_upper"
+  },
+  {
+    "id": "M_3_0_funding3pct",
+    "family": "M_3",
+    "factor": "M",
+    "period": 3,
+    "phase": 0,
+    "scenario": "funding3pct"
+  },
+  {
+    "id": "M_3_0_next_open_upper",
+    "family": "M_3",
+    "factor": "M",
+    "period": 3,
+    "phase": 0,
+    "scenario": "next_open_upper"
+  },
+  {
+    "id": "M_3_1_base",
+    "family": "M_3",
+    "factor": "M",
+    "period": 3,
+    "phase": 1,
+    "scenario": "base"
+  },
+  {
+    "id": "M_3_1_slip6",
+    "family": "M_3",
+    "factor": "M",
+    "period": 3,
+    "phase": 1,
+    "scenario": "slip6"
+  },
+  {
+    "id": "M_3_1_maker_upper",
+    "family": "M_3",
+    "factor": "M",
+    "period": 3,
+    "phase": 1,
+    "scenario": "maker_upper"
+  },
+  {
+    "id": "M_3_1_funding3pct",
+    "family": "M_3",
+    "factor": "M",
+    "period": 3,
+    "phase": 1,
+    "scenario": "funding3pct"
+  },
+  {
+    "id": "M_3_1_next_open_upper",
+    "family": "M_3",
+    "factor": "M",
+    "period": 3,
+    "phase": 1,
+    "scenario": "next_open_upper"
+  },
+  {
+    "id": "M_3_2_base",
+    "family": "M_3",
+    "factor": "M",
+    "period": 3,
+    "phase": 2,
+    "scenario": "base"
+  },
+  {
+    "id": "M_3_2_slip6",
+    "family": "M_3",
+    "factor": "M",
+    "period": 3,
+    "phase": 2,
+    "scenario": "slip6"
+  },
+  {
+    "id": "M_3_2_maker_upper",
+    "family": "M_3",
+    "factor": "M",
+    "period": 3,
+    "phase": 2,
+    "scenario": "maker_upper"
+  },
+  {
+    "id": "M_3_2_funding3pct",
+    "family": "M_3",
+    "factor": "M",
+    "period": 3,
+    "phase": 2,
+    "scenario": "funding3pct"
+  },
+  {
+    "id": "M_3_2_next_open_upper",
+    "family": "M_3",
+    "factor": "M",
+    "period": 3,
+    "phase": 2,
+    "scenario": "next_open_upper"
+  },
+  {
+    "id": "M_4_0_base",
+    "family": "M_4",
+    "factor": "M",
+    "period": 4,
+    "phase": 0,
+    "scenario": "base"
+  },
+  {
+    "id": "M_4_0_slip6",
+    "family": "M_4",
+    "factor": "M",
+    "period": 4,
+    "phase": 0,
+    "scenario": "slip6"
+  },
+  {
+    "id": "M_4_0_maker_upper",
+    "family": "M_4",
+    "factor": "M",
+    "period": 4,
+    "phase": 0,
+    "scenario": "maker_upper"
+  },
+  {
+    "id": "M_4_0_funding3pct",
+    "family": "M_4",
+    "factor": "M",
+    "period": 4,
+    "phase": 0,
+    "scenario": "funding3pct"
+  },
+  {
+    "id": "M_4_0_next_open_upper",
+    "family": "M_4",
+    "factor": "M",
+    "period": 4,
+    "phase": 0,
+    "scenario": "next_open_upper"
+  },
+  {
+    "id": "M_4_1_base",
+    "family": "M_4",
+    "factor": "M",
+    "period": 4,
+    "phase": 1,
+    "scenario": "base"
+  },
+  {
+    "id": "M_4_1_slip6",
+    "family": "M_4",
+    "factor": "M",
+    "period": 4,
+    "phase": 1,
+    "scenario": "slip6"
+  },
+  {
+    "id": "M_4_1_maker_upper",
+    "family": "M_4",
+    "factor": "M",
+    "period": 4,
+    "phase": 1,
+    "scenario": "maker_upper"
+  },
+  {
+    "id": "M_4_1_funding3pct",
+    "family": "M_4",
+    "factor": "M",
+    "period": 4,
+    "phase": 1,
+    "scenario": "funding3pct"
+  },
+  {
+    "id": "M_4_1_next_open_upper",
+    "family": "M_4",
+    "factor": "M",
+    "period": 4,
+    "phase": 1,
+    "scenario": "next_open_upper"
+  },
+  {
+    "id": "M_4_2_base",
+    "family": "M_4",
+    "factor": "M",
+    "period": 4,
+    "phase": 2,
+    "scenario": "base"
+  },
+  {
+    "id": "M_4_2_slip6",
+    "family": "M_4",
+    "factor": "M",
+    "period": 4,
+    "phase": 2,
+    "scenario": "slip6"
+  },
+  {
+    "id": "M_4_2_maker_upper",
+    "family": "M_4",
+    "factor": "M",
+    "period": 4,
+    "phase": 2,
+    "scenario": "maker_upper"
+  },
+  {
+    "id": "M_4_2_funding3pct",
+    "family": "M_4",
+    "factor": "M",
+    "period": 4,
+    "phase": 2,
+    "scenario": "funding3pct"
+  },
+  {
+    "id": "M_4_2_next_open_upper",
+    "family": "M_4",
+    "factor": "M",
+    "period": 4,
+    "phase": 2,
+    "scenario": "next_open_upper"
+  },
+  {
+    "id": "M_4_3_base",
+    "family": "M_4",
+    "factor": "M",
+    "period": 4,
+    "phase": 3,
+    "scenario": "base"
+  },
+  {
+    "id": "M_4_3_slip6",
+    "family": "M_4",
+    "factor": "M",
+    "period": 4,
+    "phase": 3,
+    "scenario": "slip6"
+  },
+  {
+    "id": "M_4_3_maker_upper",
+    "family": "M_4",
+    "factor": "M",
+    "period": 4,
+    "phase": 3,
+    "scenario": "maker_upper"
+  },
+  {
+    "id": "M_4_3_funding3pct",
+    "family": "M_4",
+    "factor": "M",
+    "period": 4,
+    "phase": 3,
+    "scenario": "funding3pct"
+  },
+  {
+    "id": "M_4_3_next_open_upper",
+    "family": "M_4",
+    "factor": "M",
+    "period": 4,
+    "phase": 3,
+    "scenario": "next_open_upper"
+  },
+  {
+    "id": "L_1_0_base",
+    "family": "L_1",
+    "factor": "L",
+    "period": 1,
+    "phase": 0,
+    "scenario": "base"
+  },
+  {
+    "id": "L_1_0_slip6",
+    "family": "L_1",
+    "factor": "L",
+    "period": 1,
+    "phase": 0,
+    "scenario": "slip6"
+  },
+  {
+    "id": "L_1_0_maker_upper",
+    "family": "L_1",
+    "factor": "L",
+    "period": 1,
+    "phase": 0,
+    "scenario": "maker_upper"
+  },
+  {
+    "id": "L_1_0_funding3pct",
+    "family": "L_1",
+    "factor": "L",
+    "period": 1,
+    "phase": 0,
+    "scenario": "funding3pct"
+  },
+  {
+    "id": "L_1_0_next_open_upper",
+    "family": "L_1",
+    "factor": "L",
+    "period": 1,
+    "phase": 0,
+    "scenario": "next_open_upper"
+  },
+  {
+    "id": "L_3_0_base",
+    "family": "L_3",
+    "factor": "L",
+    "period": 3,
+    "phase": 0,
+    "scenario": "base"
+  },
+  {
+    "id": "L_3_0_slip6",
+    "family": "L_3",
+    "factor": "L",
+    "period": 3,
+    "phase": 0,
+    "scenario": "slip6"
+  },
+  {
+    "id": "L_3_0_maker_upper",
+    "family": "L_3",
+    "factor": "L",
+    "period": 3,
+    "phase": 0,
+    "scenario": "maker_upper"
+  },
+  {
+    "id": "L_3_0_funding3pct",
+    "family": "L_3",
+    "factor": "L",
+    "period": 3,
+    "phase": 0,
+    "scenario": "funding3pct"
+  },
+  {
+    "id": "L_3_0_next_open_upper",
+    "family": "L_3",
+    "factor": "L",
+    "period": 3,
+    "phase": 0,
+    "scenario": "next_open_upper"
+  },
+  {
+    "id": "L_3_1_base",
+    "family": "L_3",
+    "factor": "L",
+    "period": 3,
+    "phase": 1,
+    "scenario": "base"
+  },
+  {
+    "id": "L_3_1_slip6",
+    "family": "L_3",
+    "factor": "L",
+    "period": 3,
+    "phase": 1,
+    "scenario": "slip6"
+  },
+  {
+    "id": "L_3_1_maker_upper",
+    "family": "L_3",
+    "factor": "L",
+    "period": 3,
+    "phase": 1,
+    "scenario": "maker_upper"
+  },
+  {
+    "id": "L_3_1_funding3pct",
+    "family": "L_3",
+    "factor": "L",
+    "period": 3,
+    "phase": 1,
+    "scenario": "funding3pct"
+  },
+  {
+    "id": "L_3_1_next_open_upper",
+    "family": "L_3",
+    "factor": "L",
+    "period": 3,
+    "phase": 1,
+    "scenario": "next_open_upper"
+  },
+  {
+    "id": "L_3_2_base",
+    "family": "L_3",
+    "factor": "L",
+    "period": 3,
+    "phase": 2,
+    "scenario": "base"
+  },
+  {
+    "id": "L_3_2_slip6",
+    "family": "L_3",
+    "factor": "L",
+    "period": 3,
+    "phase": 2,
+    "scenario": "slip6"
+  },
+  {
+    "id": "L_3_2_maker_upper",
+    "family": "L_3",
+    "factor": "L",
+    "period": 3,
+    "phase": 2,
+    "scenario": "maker_upper"
+  },
+  {
+    "id": "L_3_2_funding3pct",
+    "family": "L_3",
+    "factor": "L",
+    "period": 3,
+    "phase": 2,
+    "scenario": "funding3pct"
+  },
+  {
+    "id": "L_3_2_next_open_upper",
+    "family": "L_3",
+    "factor": "L",
+    "period": 3,
+    "phase": 2,
+    "scenario": "next_open_upper"
+  },
+  {
+    "id": "L_4_0_base",
+    "family": "L_4",
+    "factor": "L",
+    "period": 4,
+    "phase": 0,
+    "scenario": "base"
+  },
+  {
+    "id": "L_4_0_slip6",
+    "family": "L_4",
+    "factor": "L",
+    "period": 4,
+    "phase": 0,
+    "scenario": "slip6"
+  },
+  {
+    "id": "L_4_0_maker_upper",
+    "family": "L_4",
+    "factor": "L",
+    "period": 4,
+    "phase": 0,
+    "scenario": "maker_upper"
+  },
+  {
+    "id": "L_4_0_funding3pct",
+    "family": "L_4",
+    "factor": "L",
+    "period": 4,
+    "phase": 0,
+    "scenario": "funding3pct"
+  },
+  {
+    "id": "L_4_0_next_open_upper",
+    "family": "L_4",
+    "factor": "L",
+    "period": 4,
+    "phase": 0,
+    "scenario": "next_open_upper"
+  },
+  {
+    "id": "L_4_1_base",
+    "family": "L_4",
+    "factor": "L",
+    "period": 4,
+    "phase": 1,
+    "scenario": "base"
+  },
+  {
+    "id": "L_4_1_slip6",
+    "family": "L_4",
+    "factor": "L",
+    "period": 4,
+    "phase": 1,
+    "scenario": "slip6"
+  },
+  {
+    "id": "L_4_1_maker_upper",
+    "family": "L_4",
+    "factor": "L",
+    "period": 4,
+    "phase": 1,
+    "scenario": "maker_upper"
+  },
+  {
+    "id": "L_4_1_funding3pct",
+    "family": "L_4",
+    "factor": "L",
+    "period": 4,
+    "phase": 1,
+    "scenario": "funding3pct"
+  },
+  {
+    "id": "L_4_1_next_open_upper",
+    "family": "L_4",
+    "factor": "L",
+    "period": 4,
+    "phase": 1,
+    "scenario": "next_open_upper"
+  },
+  {
+    "id": "L_4_2_base",
+    "family": "L_4",
+    "factor": "L",
+    "period": 4,
+    "phase": 2,
+    "scenario": "base"
+  },
+  {
+    "id": "L_4_2_slip6",
+    "family": "L_4",
+    "factor": "L",
+    "period": 4,
+    "phase": 2,
+    "scenario": "slip6"
+  },
+  {
+    "id": "L_4_2_maker_upper",
+    "family": "L_4",
+    "factor": "L",
+    "period": 4,
+    "phase": 2,
+    "scenario": "maker_upper"
+  },
+  {
+    "id": "L_4_2_funding3pct",
+    "family": "L_4",
+    "factor": "L",
+    "period": 4,
+    "phase": 2,
+    "scenario": "funding3pct"
+  },
+  {
+    "id": "L_4_2_next_open_upper",
+    "family": "L_4",
+    "factor": "L",
+    "period": 4,
+    "phase": 2,
+    "scenario": "next_open_upper"
+  },
+  {
+    "id": "L_4_3_base",
+    "family": "L_4",
+    "factor": "L",
+    "period": 4,
+    "phase": 3,
+    "scenario": "base"
+  },
+  {
+    "id": "L_4_3_slip6",
+    "family": "L_4",
+    "factor": "L",
+    "period": 4,
+    "phase": 3,
+    "scenario": "slip6"
+  },
+  {
+    "id": "L_4_3_maker_upper",
+    "family": "L_4",
+    "factor": "L",
+    "period": 4,
+    "phase": 3,
+    "scenario": "maker_upper"
+  },
+  {
+    "id": "L_4_3_funding3pct",
+    "family": "L_4",
+    "factor": "L",
+    "period": 4,
+    "phase": 3,
+    "scenario": "funding3pct"
+  },
+  {
+    "id": "L_4_3_next_open_upper",
+    "family": "L_4",
+    "factor": "L",
+    "period": 4,
+    "phase": 3,
+    "scenario": "next_open_upper"
+  },
+  {
+    "id": "V_1_0_base",
+    "family": "V_1",
+    "factor": "V",
+    "period": 1,
+    "phase": 0,
+    "scenario": "base"
+  },
+  {
+    "id": "V_1_0_slip6",
+    "family": "V_1",
+    "factor": "V",
+    "period": 1,
+    "phase": 0,
+    "scenario": "slip6"
+  },
+  {
+    "id": "V_1_0_maker_upper",
+    "family": "V_1",
+    "factor": "V",
+    "period": 1,
+    "phase": 0,
+    "scenario": "maker_upper"
+  },
+  {
+    "id": "V_1_0_funding3pct",
+    "family": "V_1",
+    "factor": "V",
+    "period": 1,
+    "phase": 0,
+    "scenario": "funding3pct"
+  },
+  {
+    "id": "V_1_0_next_open_upper",
+    "family": "V_1",
+    "factor": "V",
+    "period": 1,
+    "phase": 0,
+    "scenario": "next_open_upper"
+  },
+  {
+    "id": "V_3_0_base",
+    "family": "V_3",
+    "factor": "V",
+    "period": 3,
+    "phase": 0,
+    "scenario": "base"
+  },
+  {
+    "id": "V_3_0_slip6",
+    "family": "V_3",
+    "factor": "V",
+    "period": 3,
+    "phase": 0,
+    "scenario": "slip6"
+  },
+  {
+    "id": "V_3_0_maker_upper",
+    "family": "V_3",
+    "factor": "V",
+    "period": 3,
+    "phase": 0,
+    "scenario": "maker_upper"
+  },
+  {
+    "id": "V_3_0_funding3pct",
+    "family": "V_3",
+    "factor": "V",
+    "period": 3,
+    "phase": 0,
+    "scenario": "funding3pct"
+  },
+  {
+    "id": "V_3_0_next_open_upper",
+    "family": "V_3",
+    "factor": "V",
+    "period": 3,
+    "phase": 0,
+    "scenario": "next_open_upper"
+  },
+  {
+    "id": "V_3_1_base",
+    "family": "V_3",
+    "factor": "V",
+    "period": 3,
+    "phase": 1,
+    "scenario": "base"
+  },
+  {
+    "id": "V_3_1_slip6",
+    "family": "V_3",
+    "factor": "V",
+    "period": 3,
+    "phase": 1,
+    "scenario": "slip6"
+  },
+  {
+    "id": "V_3_1_maker_upper",
+    "family": "V_3",
+    "factor": "V",
+    "period": 3,
+    "phase": 1,
+    "scenario": "maker_upper"
+  },
+  {
+    "id": "V_3_1_funding3pct",
+    "family": "V_3",
+    "factor": "V",
+    "period": 3,
+    "phase": 1,
+    "scenario": "funding3pct"
+  },
+  {
+    "id": "V_3_1_next_open_upper",
+    "family": "V_3",
+    "factor": "V",
+    "period": 3,
+    "phase": 1,
+    "scenario": "next_open_upper"
+  },
+  {
+    "id": "V_3_2_base",
+    "family": "V_3",
+    "factor": "V",
+    "period": 3,
+    "phase": 2,
+    "scenario": "base"
+  },
+  {
+    "id": "V_3_2_slip6",
+    "family": "V_3",
+    "factor": "V",
+    "period": 3,
+    "phase": 2,
+    "scenario": "slip6"
+  },
+  {
+    "id": "V_3_2_maker_upper",
+    "family": "V_3",
+    "factor": "V",
+    "period": 3,
+    "phase": 2,
+    "scenario": "maker_upper"
+  },
+  {
+    "id": "V_3_2_funding3pct",
+    "family": "V_3",
+    "factor": "V",
+    "period": 3,
+    "phase": 2,
+    "scenario": "funding3pct"
+  },
+  {
+    "id": "V_3_2_next_open_upper",
+    "family": "V_3",
+    "factor": "V",
+    "period": 3,
+    "phase": 2,
+    "scenario": "next_open_upper"
+  },
+  {
+    "id": "V_4_0_base",
+    "family": "V_4",
+    "factor": "V",
+    "period": 4,
+    "phase": 0,
+    "scenario": "base"
+  },
+  {
+    "id": "V_4_0_slip6",
+    "family": "V_4",
+    "factor": "V",
+    "period": 4,
+    "phase": 0,
+    "scenario": "slip6"
+  },
+  {
+    "id": "V_4_0_maker_upper",
+    "family": "V_4",
+    "factor": "V",
+    "period": 4,
+    "phase": 0,
+    "scenario": "maker_upper"
+  },
+  {
+    "id": "V_4_0_funding3pct",
+    "family": "V_4",
+    "factor": "V",
+    "period": 4,
+    "phase": 0,
+    "scenario": "funding3pct"
+  },
+  {
+    "id": "V_4_0_next_open_upper",
+    "family": "V_4",
+    "factor": "V",
+    "period": 4,
+    "phase": 0,
+    "scenario": "next_open_upper"
+  },
+  {
+    "id": "V_4_1_base",
+    "family": "V_4",
+    "factor": "V",
+    "period": 4,
+    "phase": 1,
+    "scenario": "base"
+  },
+  {
+    "id": "V_4_1_slip6",
+    "family": "V_4",
+    "factor": "V",
+    "period": 4,
+    "phase": 1,
+    "scenario": "slip6"
+  },
+  {
+    "id": "V_4_1_maker_upper",
+    "family": "V_4",
+    "factor": "V",
+    "period": 4,
+    "phase": 1,
+    "scenario": "maker_upper"
+  },
+  {
+    "id": "V_4_1_funding3pct",
+    "family": "V_4",
+    "factor": "V",
+    "period": 4,
+    "phase": 1,
+    "scenario": "funding3pct"
+  },
+  {
+    "id": "V_4_1_next_open_upper",
+    "family": "V_4",
+    "factor": "V",
+    "period": 4,
+    "phase": 1,
+    "scenario": "next_open_upper"
+  },
+  {
+    "id": "V_4_2_base",
+    "family": "V_4",
+    "factor": "V",
+    "period": 4,
+    "phase": 2,
+    "scenario": "base"
+  },
+  {
+    "id": "V_4_2_slip6",
+    "family": "V_4",
+    "factor": "V",
+    "period": 4,
+    "phase": 2,
+    "scenario": "slip6"
+  },
+  {
+    "id": "V_4_2_maker_upper",
+    "family": "V_4",
+    "factor": "V",
+    "period": 4,
+    "phase": 2,
+    "scenario": "maker_upper"
+  },
+  {
+    "id": "V_4_2_funding3pct",
+    "family": "V_4",
+    "factor": "V",
+    "period": 4,
+    "phase": 2,
+    "scenario": "funding3pct"
+  },
+  {
+    "id": "V_4_2_next_open_upper",
+    "family": "V_4",
+    "factor": "V",
+    "period": 4,
+    "phase": 2,
+    "scenario": "next_open_upper"
+  },
+  {
+    "id": "V_4_3_base",
+    "family": "V_4",
+    "factor": "V",
+    "period": 4,
+    "phase": 3,
+    "scenario": "base"
+  },
+  {
+    "id": "V_4_3_slip6",
+    "family": "V_4",
+    "factor": "V",
+    "period": 4,
+    "phase": 3,
+    "scenario": "slip6"
+  },
+  {
+    "id": "V_4_3_maker_upper",
+    "family": "V_4",
+    "factor": "V",
+    "period": 4,
+    "phase": 3,
+    "scenario": "maker_upper"
+  },
+  {
+    "id": "V_4_3_funding3pct",
+    "family": "V_4",
+    "factor": "V",
+    "period": 4,
+    "phase": 3,
+    "scenario": "funding3pct"
+  },
+  {
+    "id": "V_4_3_next_open_upper",
+    "family": "V_4",
+    "factor": "V",
+    "period": 4,
+    "phase": 3,
+    "scenario": "next_open_upper"
+  },
+  {
+    "id": "ML_1_0_base",
+    "family": "ML_1",
+    "factor": "ML",
+    "period": 1,
+    "phase": 0,
+    "scenario": "base"
+  },
+  {
+    "id": "ML_1_0_slip6",
+    "family": "ML_1",
+    "factor": "ML",
+    "period": 1,
+    "phase": 0,
+    "scenario": "slip6"
+  },
+  {
+    "id": "ML_1_0_maker_upper",
+    "family": "ML_1",
+    "factor": "ML",
+    "period": 1,
+    "phase": 0,
+    "scenario": "maker_upper"
+  },
+  {
+    "id": "ML_1_0_funding3pct",
+    "family": "ML_1",
+    "factor": "ML",
+    "period": 1,
+    "phase": 0,
+    "scenario": "funding3pct"
+  },
+  {
+    "id": "ML_1_0_next_open_upper",
+    "family": "ML_1",
+    "factor": "ML",
+    "period": 1,
+    "phase": 0,
+    "scenario": "next_open_upper"
+  },
+  {
+    "id": "ML_3_0_base",
+    "family": "ML_3",
+    "factor": "ML",
+    "period": 3,
+    "phase": 0,
+    "scenario": "base"
+  },
+  {
+    "id": "ML_3_0_slip6",
+    "family": "ML_3",
+    "factor": "ML",
+    "period": 3,
+    "phase": 0,
+    "scenario": "slip6"
+  },
+  {
+    "id": "ML_3_0_maker_upper",
+    "family": "ML_3",
+    "factor": "ML",
+    "period": 3,
+    "phase": 0,
+    "scenario": "maker_upper"
+  },
+  {
+    "id": "ML_3_0_funding3pct",
+    "family": "ML_3",
+    "factor": "ML",
+    "period": 3,
+    "phase": 0,
+    "scenario": "funding3pct"
+  },
+  {
+    "id": "ML_3_0_next_open_upper",
+    "family": "ML_3",
+    "factor": "ML",
+    "period": 3,
+    "phase": 0,
+    "scenario": "next_open_upper"
+  },
+  {
+    "id": "ML_3_1_base",
+    "family": "ML_3",
+    "factor": "ML",
+    "period": 3,
+    "phase": 1,
+    "scenario": "base"
+  },
+  {
+    "id": "ML_3_1_slip6",
+    "family": "ML_3",
+    "factor": "ML",
+    "period": 3,
+    "phase": 1,
+    "scenario": "slip6"
+  },
+  {
+    "id": "ML_3_1_maker_upper",
+    "family": "ML_3",
+    "factor": "ML",
+    "period": 3,
+    "phase": 1,
+    "scenario": "maker_upper"
+  },
+  {
+    "id": "ML_3_1_funding3pct",
+    "family": "ML_3",
+    "factor": "ML",
+    "period": 3,
+    "phase": 1,
+    "scenario": "funding3pct"
+  },
+  {
+    "id": "ML_3_1_next_open_upper",
+    "family": "ML_3",
+    "factor": "ML",
+    "period": 3,
+    "phase": 1,
+    "scenario": "next_open_upper"
+  },
+  {
+    "id": "ML_3_2_base",
+    "family": "ML_3",
+    "factor": "ML",
+    "period": 3,
+    "phase": 2,
+    "scenario": "base"
+  },
+  {
+    "id": "ML_3_2_slip6",
+    "family": "ML_3",
+    "factor": "ML",
+    "period": 3,
+    "phase": 2,
+    "scenario": "slip6"
+  },
+  {
+    "id": "ML_3_2_maker_upper",
+    "family": "ML_3",
+    "factor": "ML",
+    "period": 3,
+    "phase": 2,
+    "scenario": "maker_upper"
+  },
+  {
+    "id": "ML_3_2_funding3pct",
+    "family": "ML_3",
+    "factor": "ML",
+    "period": 3,
+    "phase": 2,
+    "scenario": "funding3pct"
+  },
+  {
+    "id": "ML_3_2_next_open_upper",
+    "family": "ML_3",
+    "factor": "ML",
+    "period": 3,
+    "phase": 2,
+    "scenario": "next_open_upper"
+  },
+  {
+    "id": "ML_4_0_base",
+    "family": "ML_4",
+    "factor": "ML",
+    "period": 4,
+    "phase": 0,
+    "scenario": "base"
+  },
+  {
+    "id": "ML_4_0_slip6",
+    "family": "ML_4",
+    "factor": "ML",
+    "period": 4,
+    "phase": 0,
+    "scenario": "slip6"
+  },
+  {
+    "id": "ML_4_0_maker_upper",
+    "family": "ML_4",
+    "factor": "ML",
+    "period": 4,
+    "phase": 0,
+    "scenario": "maker_upper"
+  },
+  {
+    "id": "ML_4_0_funding3pct",
+    "family": "ML_4",
+    "factor": "ML",
+    "period": 4,
+    "phase": 0,
+    "scenario": "funding3pct"
+  },
+  {
+    "id": "ML_4_0_next_open_upper",
+    "family": "ML_4",
+    "factor": "ML",
+    "period": 4,
+    "phase": 0,
+    "scenario": "next_open_upper"
+  },
+  {
+    "id": "ML_4_1_base",
+    "family": "ML_4",
+    "factor": "ML",
+    "period": 4,
+    "phase": 1,
+    "scenario": "base"
+  },
+  {
+    "id": "ML_4_1_slip6",
+    "family": "ML_4",
+    "factor": "ML",
+    "period": 4,
+    "phase": 1,
+    "scenario": "slip6"
+  },
+  {
+    "id": "ML_4_1_maker_upper",
+    "family": "ML_4",
+    "factor": "ML",
+    "period": 4,
+    "phase": 1,
+    "scenario": "maker_upper"
+  },
+  {
+    "id": "ML_4_1_funding3pct",
+    "family": "ML_4",
+    "factor": "ML",
+    "period": 4,
+    "phase": 1,
+    "scenario": "funding3pct"
+  },
+  {
+    "id": "ML_4_1_next_open_upper",
+    "family": "ML_4",
+    "factor": "ML",
+    "period": 4,
+    "phase": 1,
+    "scenario": "next_open_upper"
+  },
+  {
+    "id": "ML_4_2_base",
+    "family": "ML_4",
+    "factor": "ML",
+    "period": 4,
+    "phase": 2,
+    "scenario": "base"
+  },
+  {
+    "id": "ML_4_2_slip6",
+    "family": "ML_4",
+    "factor": "ML",
+    "period": 4,
+    "phase": 2,
+    "scenario": "slip6"
+  },
+  {
+    "id": "ML_4_2_maker_upper",
+    "family": "ML_4",
+    "factor": "ML",
+    "period": 4,
+    "phase": 2,
+    "scenario": "maker_upper"
+  },
+  {
+    "id": "ML_4_2_funding3pct",
+    "family": "ML_4",
+    "factor": "ML",
+    "period": 4,
+    "phase": 2,
+    "scenario": "funding3pct"
+  },
+  {
+    "id": "ML_4_2_next_open_upper",
+    "family": "ML_4",
+    "factor": "ML",
+    "period": 4,
+    "phase": 2,
+    "scenario": "next_open_upper"
+  },
+  {
+    "id": "ML_4_3_base",
+    "family": "ML_4",
+    "factor": "ML",
+    "period": 4,
+    "phase": 3,
+    "scenario": "base"
+  },
+  {
+    "id": "ML_4_3_slip6",
+    "family": "ML_4",
+    "factor": "ML",
+    "period": 4,
+    "phase": 3,
+    "scenario": "slip6"
+  },
+  {
+    "id": "ML_4_3_maker_upper",
+    "family": "ML_4",
+    "factor": "ML",
+    "period": 4,
+    "phase": 3,
+    "scenario": "maker_upper"
+  },
+  {
+    "id": "ML_4_3_funding3pct",
+    "family": "ML_4",
+    "factor": "ML",
+    "period": 4,
+    "phase": 3,
+    "scenario": "funding3pct"
+  },
+  {
+    "id": "ML_4_3_next_open_upper",
+    "family": "ML_4",
+    "factor": "ML",
+    "period": 4,
+    "phase": 3,
+    "scenario": "next_open_upper"
+  },
+  {
+    "id": "MV_1_0_base",
+    "family": "MV_1",
+    "factor": "MV",
+    "period": 1,
+    "phase": 0,
+    "scenario": "base"
+  },
+  {
+    "id": "MV_1_0_slip6",
+    "family": "MV_1",
+    "factor": "MV",
+    "period": 1,
+    "phase": 0,
+    "scenario": "slip6"
+  },
+  {
+    "id": "MV_1_0_maker_upper",
+    "family": "MV_1",
+    "factor": "MV",
+    "period": 1,
+    "phase": 0,
+    "scenario": "maker_upper"
+  },
+  {
+    "id": "MV_1_0_funding3pct",
+    "family": "MV_1",
+    "factor": "MV",
+    "period": 1,
+    "phase": 0,
+    "scenario": "funding3pct"
+  },
+  {
+    "id": "MV_1_0_next_open_upper",
+    "family": "MV_1",
+    "factor": "MV",
+    "period": 1,
+    "phase": 0,
+    "scenario": "next_open_upper"
+  },
+  {
+    "id": "MV_3_0_base",
+    "family": "MV_3",
+    "factor": "MV",
+    "period": 3,
+    "phase": 0,
+    "scenario": "base"
+  },
+  {
+    "id": "MV_3_0_slip6",
+    "family": "MV_3",
+    "factor": "MV",
+    "period": 3,
+    "phase": 0,
+    "scenario": "slip6"
+  },
+  {
+    "id": "MV_3_0_maker_upper",
+    "family": "MV_3",
+    "factor": "MV",
+    "period": 3,
+    "phase": 0,
+    "scenario": "maker_upper"
+  },
+  {
+    "id": "MV_3_0_funding3pct",
+    "family": "MV_3",
+    "factor": "MV",
+    "period": 3,
+    "phase": 0,
+    "scenario": "funding3pct"
+  },
+  {
+    "id": "MV_3_0_next_open_upper",
+    "family": "MV_3",
+    "factor": "MV",
+    "period": 3,
+    "phase": 0,
+    "scenario": "next_open_upper"
+  },
+  {
+    "id": "MV_3_1_base",
+    "family": "MV_3",
+    "factor": "MV",
+    "period": 3,
+    "phase": 1,
+    "scenario": "base"
+  },
+  {
+    "id": "MV_3_1_slip6",
+    "family": "MV_3",
+    "factor": "MV",
+    "period": 3,
+    "phase": 1,
+    "scenario": "slip6"
+  },
+  {
+    "id": "MV_3_1_maker_upper",
+    "family": "MV_3",
+    "factor": "MV",
+    "period": 3,
+    "phase": 1,
+    "scenario": "maker_upper"
+  },
+  {
+    "id": "MV_3_1_funding3pct",
+    "family": "MV_3",
+    "factor": "MV",
+    "period": 3,
+    "phase": 1,
+    "scenario": "funding3pct"
+  },
+  {
+    "id": "MV_3_1_next_open_upper",
+    "family": "MV_3",
+    "factor": "MV",
+    "period": 3,
+    "phase": 1,
+    "scenario": "next_open_upper"
+  },
+  {
+    "id": "MV_3_2_base",
+    "family": "MV_3",
+    "factor": "MV",
+    "period": 3,
+    "phase": 2,
+    "scenario": "base"
+  },
+  {
+    "id": "MV_3_2_slip6",
+    "family": "MV_3",
+    "factor": "MV",
+    "period": 3,
+    "phase": 2,
+    "scenario": "slip6"
+  },
+  {
+    "id": "MV_3_2_maker_upper",
+    "family": "MV_3",
+    "factor": "MV",
+    "period": 3,
+    "phase": 2,
+    "scenario": "maker_upper"
+  },
+  {
+    "id": "MV_3_2_funding3pct",
+    "family": "MV_3",
+    "factor": "MV",
+    "period": 3,
+    "phase": 2,
+    "scenario": "funding3pct"
+  },
+  {
+    "id": "MV_3_2_next_open_upper",
+    "family": "MV_3",
+    "factor": "MV",
+    "period": 3,
+    "phase": 2,
+    "scenario": "next_open_upper"
+  },
+  {
+    "id": "MV_4_0_base",
+    "family": "MV_4",
+    "factor": "MV",
+    "period": 4,
+    "phase": 0,
+    "scenario": "base"
+  },
+  {
+    "id": "MV_4_0_slip6",
+    "family": "MV_4",
+    "factor": "MV",
+    "period": 4,
+    "phase": 0,
+    "scenario": "slip6"
+  },
+  {
+    "id": "MV_4_0_maker_upper",
+    "family": "MV_4",
+    "factor": "MV",
+    "period": 4,
+    "phase": 0,
+    "scenario": "maker_upper"
+  },
+  {
+    "id": "MV_4_0_funding3pct",
+    "family": "MV_4",
+    "factor": "MV",
+    "period": 4,
+    "phase": 0,
+    "scenario": "funding3pct"
+  },
+  {
+    "id": "MV_4_0_next_open_upper",
+    "family": "MV_4",
+    "factor": "MV",
+    "period": 4,
+    "phase": 0,
+    "scenario": "next_open_upper"
+  },
+  {
+    "id": "MV_4_1_base",
+    "family": "MV_4",
+    "factor": "MV",
+    "period": 4,
+    "phase": 1,
+    "scenario": "base"
+  },
+  {
+    "id": "MV_4_1_slip6",
+    "family": "MV_4",
+    "factor": "MV",
+    "period": 4,
+    "phase": 1,
+    "scenario": "slip6"
+  },
+  {
+    "id": "MV_4_1_maker_upper",
+    "family": "MV_4",
+    "factor": "MV",
+    "period": 4,
+    "phase": 1,
+    "scenario": "maker_upper"
+  },
+  {
+    "id": "MV_4_1_funding3pct",
+    "family": "MV_4",
+    "factor": "MV",
+    "period": 4,
+    "phase": 1,
+    "scenario": "funding3pct"
+  },
+  {
+    "id": "MV_4_1_next_open_upper",
+    "family": "MV_4",
+    "factor": "MV",
+    "period": 4,
+    "phase": 1,
+    "scenario": "next_open_upper"
+  },
+  {
+    "id": "MV_4_2_base",
+    "family": "MV_4",
+    "factor": "MV",
+    "period": 4,
+    "phase": 2,
+    "scenario": "base"
+  },
+  {
+    "id": "MV_4_2_slip6",
+    "family": "MV_4",
+    "factor": "MV",
+    "period": 4,
+    "phase": 2,
+    "scenario": "slip6"
+  },
+  {
+    "id": "MV_4_2_maker_upper",
+    "family": "MV_4",
+    "factor": "MV",
+    "period": 4,
+    "phase": 2,
+    "scenario": "maker_upper"
+  },
+  {
+    "id": "MV_4_2_funding3pct",
+    "family": "MV_4",
+    "factor": "MV",
+    "period": 4,
+    "phase": 2,
+    "scenario": "funding3pct"
+  },
+  {
+    "id": "MV_4_2_next_open_upper",
+    "family": "MV_4",
+    "factor": "MV",
+    "period": 4,
+    "phase": 2,
+    "scenario": "next_open_upper"
+  },
+  {
+    "id": "MV_4_3_base",
+    "family": "MV_4",
+    "factor": "MV",
+    "period": 4,
+    "phase": 3,
+    "scenario": "base"
+  },
+  {
+    "id": "MV_4_3_slip6",
+    "family": "MV_4",
+    "factor": "MV",
+    "period": 4,
+    "phase": 3,
+    "scenario": "slip6"
+  },
+  {
+    "id": "MV_4_3_maker_upper",
+    "family": "MV_4",
+    "factor": "MV",
+    "period": 4,
+    "phase": 3,
+    "scenario": "maker_upper"
+  },
+  {
+    "id": "MV_4_3_funding3pct",
+    "family": "MV_4",
+    "factor": "MV",
+    "period": 4,
+    "phase": 3,
+    "scenario": "funding3pct"
+  },
+  {
+    "id": "MV_4_3_next_open_upper",
+    "family": "MV_4",
+    "factor": "MV",
+    "period": 4,
+    "phase": 3,
+    "scenario": "next_open_upper"
+  },
+  {
+    "id": "LV_1_0_base",
+    "family": "LV_1",
+    "factor": "LV",
+    "period": 1,
+    "phase": 0,
+    "scenario": "base"
+  },
+  {
+    "id": "LV_1_0_slip6",
+    "family": "LV_1",
+    "factor": "LV",
+    "period": 1,
+    "phase": 0,
+    "scenario": "slip6"
+  },
+  {
+    "id": "LV_1_0_maker_upper",
+    "family": "LV_1",
+    "factor": "LV",
+    "period": 1,
+    "phase": 0,
+    "scenario": "maker_upper"
+  },
+  {
+    "id": "LV_1_0_funding3pct",
+    "family": "LV_1",
+    "factor": "LV",
+    "period": 1,
+    "phase": 0,
+    "scenario": "funding3pct"
+  },
+  {
+    "id": "LV_1_0_next_open_upper",
+    "family": "LV_1",
+    "factor": "LV",
+    "period": 1,
+    "phase": 0,
+    "scenario": "next_open_upper"
+  },
+  {
+    "id": "LV_3_0_base",
+    "family": "LV_3",
+    "factor": "LV",
+    "period": 3,
+    "phase": 0,
+    "scenario": "base"
+  },
+  {
+    "id": "LV_3_0_slip6",
+    "family": "LV_3",
+    "factor": "LV",
+    "period": 3,
+    "phase": 0,
+    "scenario": "slip6"
+  },
+  {
+    "id": "LV_3_0_maker_upper",
+    "family": "LV_3",
+    "factor": "LV",
+    "period": 3,
+    "phase": 0,
+    "scenario": "maker_upper"
+  },
+  {
+    "id": "LV_3_0_funding3pct",
+    "family": "LV_3",
+    "factor": "LV",
+    "period": 3,
+    "phase": 0,
+    "scenario": "funding3pct"
+  },
+  {
+    "id": "LV_3_0_next_open_upper",
+    "family": "LV_3",
+    "factor": "LV",
+    "period": 3,
+    "phase": 0,
+    "scenario": "next_open_upper"
+  },
+  {
+    "id": "LV_3_1_base",
+    "family": "LV_3",
+    "factor": "LV",
+    "period": 3,
+    "phase": 1,
+    "scenario": "base"
+  },
+  {
+    "id": "LV_3_1_slip6",
+    "family": "LV_3",
+    "factor": "LV",
+    "period": 3,
+    "phase": 1,
+    "scenario": "slip6"
+  },
+  {
+    "id": "LV_3_1_maker_upper",
+    "family": "LV_3",
+    "factor": "LV",
+    "period": 3,
+    "phase": 1,
+    "scenario": "maker_upper"
+  },
+  {
+    "id": "LV_3_1_funding3pct",
+    "family": "LV_3",
+    "factor": "LV",
+    "period": 3,
+    "phase": 1,
+    "scenario": "funding3pct"
+  },
+  {
+    "id": "LV_3_1_next_open_upper",
+    "family": "LV_3",
+    "factor": "LV",
+    "period": 3,
+    "phase": 1,
+    "scenario": "next_open_upper"
+  },
+  {
+    "id": "LV_3_2_base",
+    "family": "LV_3",
+    "factor": "LV",
+    "period": 3,
+    "phase": 2,
+    "scenario": "base"
+  },
+  {
+    "id": "LV_3_2_slip6",
+    "family": "LV_3",
+    "factor": "LV",
+    "period": 3,
+    "phase": 2,
+    "scenario": "slip6"
+  },
+  {
+    "id": "LV_3_2_maker_upper",
+    "family": "LV_3",
+    "factor": "LV",
+    "period": 3,
+    "phase": 2,
+    "scenario": "maker_upper"
+  },
+  {
+    "id": "LV_3_2_funding3pct",
+    "family": "LV_3",
+    "factor": "LV",
+    "period": 3,
+    "phase": 2,
+    "scenario": "funding3pct"
+  },
+  {
+    "id": "LV_3_2_next_open_upper",
+    "family": "LV_3",
+    "factor": "LV",
+    "period": 3,
+    "phase": 2,
+    "scenario": "next_open_upper"
+  },
+  {
+    "id": "LV_4_0_base",
+    "family": "LV_4",
+    "factor": "LV",
+    "period": 4,
+    "phase": 0,
+    "scenario": "base"
+  },
+  {
+    "id": "LV_4_0_slip6",
+    "family": "LV_4",
+    "factor": "LV",
+    "period": 4,
+    "phase": 0,
+    "scenario": "slip6"
+  },
+  {
+    "id": "LV_4_0_maker_upper",
+    "family": "LV_4",
+    "factor": "LV",
+    "period": 4,
+    "phase": 0,
+    "scenario": "maker_upper"
+  },
+  {
+    "id": "LV_4_0_funding3pct",
+    "family": "LV_4",
+    "factor": "LV",
+    "period": 4,
+    "phase": 0,
+    "scenario": "funding3pct"
+  },
+  {
+    "id": "LV_4_0_next_open_upper",
+    "family": "LV_4",
+    "factor": "LV",
+    "period": 4,
+    "phase": 0,
+    "scenario": "next_open_upper"
+  },
+  {
+    "id": "LV_4_1_base",
+    "family": "LV_4",
+    "factor": "LV",
+    "period": 4,
+    "phase": 1,
+    "scenario": "base"
+  },
+  {
+    "id": "LV_4_1_slip6",
+    "family": "LV_4",
+    "factor": "LV",
+    "period": 4,
+    "phase": 1,
+    "scenario": "slip6"
+  },
+  {
+    "id": "LV_4_1_maker_upper",
+    "family": "LV_4",
+    "factor": "LV",
+    "period": 4,
+    "phase": 1,
+    "scenario": "maker_upper"
+  },
+  {
+    "id": "LV_4_1_funding3pct",
+    "family": "LV_4",
+    "factor": "LV",
+    "period": 4,
+    "phase": 1,
+    "scenario": "funding3pct"
+  },
+  {
+    "id": "LV_4_1_next_open_upper",
+    "family": "LV_4",
+    "factor": "LV",
+    "period": 4,
+    "phase": 1,
+    "scenario": "next_open_upper"
+  },
+  {
+    "id": "LV_4_2_base",
+    "family": "LV_4",
+    "factor": "LV",
+    "period": 4,
+    "phase": 2,
+    "scenario": "base"
+  },
+  {
+    "id": "LV_4_2_slip6",
+    "family": "LV_4",
+    "factor": "LV",
+    "period": 4,
+    "phase": 2,
+    "scenario": "slip6"
+  },
+  {
+    "id": "LV_4_2_maker_upper",
+    "family": "LV_4",
+    "factor": "LV",
+    "period": 4,
+    "phase": 2,
+    "scenario": "maker_upper"
+  },
+  {
+    "id": "LV_4_2_funding3pct",
+    "family": "LV_4",
+    "factor": "LV",
+    "period": 4,
+    "phase": 2,
+    "scenario": "funding3pct"
+  },
+  {
+    "id": "LV_4_2_next_open_upper",
+    "family": "LV_4",
+    "factor": "LV",
+    "period": 4,
+    "phase": 2,
+    "scenario": "next_open_upper"
+  },
+  {
+    "id": "LV_4_3_base",
+    "family": "LV_4",
+    "factor": "LV",
+    "period": 4,
+    "phase": 3,
+    "scenario": "base"
+  },
+  {
+    "id": "LV_4_3_slip6",
+    "family": "LV_4",
+    "factor": "LV",
+    "period": 4,
+    "phase": 3,
+    "scenario": "slip6"
+  },
+  {
+    "id": "LV_4_3_maker_upper",
+    "family": "LV_4",
+    "factor": "LV",
+    "period": 4,
+    "phase": 3,
+    "scenario": "maker_upper"
+  },
+  {
+    "id": "LV_4_3_funding3pct",
+    "family": "LV_4",
+    "factor": "LV",
+    "period": 4,
+    "phase": 3,
+    "scenario": "funding3pct"
+  },
+  {
+    "id": "LV_4_3_next_open_upper",
+    "family": "LV_4",
+    "factor": "LV",
+    "period": 4,
+    "phase": 3,
+    "scenario": "next_open_upper"
+  }
+]

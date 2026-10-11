@@ -1,0 +1,9 @@
+{
+  "venue": "TxFlow",
+  "request_type": "fundingHistory",
+  "coin": "BTC-USDC",
+  "result": "transport_failed",
+  "curl_exit": 35,
+  "http": "000",
+  "use_in_backtest": "not_used; explicit funding stress only"
+}

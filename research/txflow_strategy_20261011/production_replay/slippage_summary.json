@@ -1,0 +1,4 @@
+{
+  "matched_system_fills": 0,
+  "note": "Only records with explicit system reference price and filled size/price; excludes exchange-only receipts, no fill completeness claim."
+}

@@ -1,0 +1,13 @@
+{
+  "max_return_difference": 0.0,
+  "max_turn_difference": 0.0,
+  "same_dates": true,
+  "baseline_sha256": "3ac84286295d5c8ff6c27b1332554d39d84981496bc040480a85428a3a019511",
+  "full_mdd": -0.8089830930375639,
+  "peak": "2024-03-05",
+  "trough": "2024-10-15",
+  "window_observations": 224,
+  "window_start_equity": 2387265.543320771,
+  "window_end_equity": 456008.08018313255,
+  "missing_held_quotes": []
+}

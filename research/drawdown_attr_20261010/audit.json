@@ -1,0 +1,21 @@
+{
+  "checks": {
+    "equity_recursion_max_abs": 0.0,
+    "return_from_equity_max_abs": 4.996003610813204e-16,
+    "exposure_from_previous_trade_max_abs": 0.0,
+    "return_from_actual_holdings_max_abs": 2.42861286636753e-16,
+    "factor_execution_cost_sum_error": 1.1102230246251565e-16,
+    "rolling_beta_vs_direct_ols_max_abs": 5.773159728050814e-15,
+    "beta_residual_cost_conservation_error": 5.10702591327572e-15,
+    "normalization_target_match": true,
+    "input_manifest_unchanged": true
+  },
+  "concentration": {
+    "top5_coin_loss_share": 0.6184866006398178,
+    "top10_coin_loss_share": 0.8898785450964655,
+    "worst_day_loss_share": 0.12833930893903064,
+    "worst10_days_net_contribution": -0.5037773167657924,
+    "worst_single_event_peak_contribution": -0.0526659307640776,
+    "worst_single_event_daily_contribution": -0.1161883084517113
+  }
+}

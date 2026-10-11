@@ -507,7 +507,15 @@ pub fn build_plan(
         let flip = cur * target < 0.0;
         if target == 0.0 || flip {
             let size = round_size(cur.abs(), m.sz_decimals);
-            if size * mid >= cfg.effective_min_order_usd(acct.equity) {
+            // **平仓只用绝对下限，不用按净值比例算的门槛。**
+            //
+            // 真实事故：把「最小下单额占净值 %」设成 1.7% 后（$3,104 净值 → 门槛 $52.76），
+            // 账上 4 个约 $45~47 的小仓位【既不在目标名单里、又平不掉】，
+            // 永远挂在那儿占着保证金和敞口。
+            //
+            // 比例门槛的用途是压制小额调仓的 churn；平仓是【降风险】，
+            // 只要超过交易所的最小下单额（绝对下限）就必须允许。
+            if size * mid >= cfg.min_order_usd {
                 closes.push(Order {
                     coin: coin.clone(),
                     buy: cur < 0.0, // buy to close a short
@@ -1396,5 +1404,30 @@ mod txflow_portfolio_tests {
 
     #[test] fn txflow_balanced_portfolio_without_resting_orders_is_admitted() {
         let (w,a,m,p,c)=fixture();assert!(build_txflow_plan(&w,&a,&[],&m,&p,&c).is_ok());
+    }
+}
+
+
+#[cfg(test)]
+mod close_threshold_tests {
+    use super::*;
+
+    /// 回归：设了 `min_order_pct` 之后，掉出名单的【小仓位】必须仍然能平掉。
+    ///
+    /// 真实事故：$3,104 净值上设 1.7% → 比例门槛 $52.76，
+    /// 而账上有 4 个 $45~47 的残仓，被这个门槛挡住平不掉，永远挂着。
+    /// 平仓是降风险，只应受【绝对下限】（交易所最小下单额）约束。
+    #[test]
+    fn small_position_below_pct_threshold_must_still_close() {
+        let mut cfg = TradeConfig::default();
+        cfg.min_order_usd = 10.0;
+        cfg.min_order_pct = 0.017;
+        let equity = 3104.0;
+        // 比例门槛确实是 52.76
+        assert!((cfg.effective_min_order_usd(equity) - 52.768).abs() < 0.01);
+        // 一个 $46 的残仓：低于比例门槛，但高于绝对下限 → 必须可平
+        let pos_notional = 46.0;
+        assert!(pos_notional < cfg.effective_min_order_usd(equity), "前提：它低于比例门槛");
+        assert!(pos_notional >= cfg.min_order_usd, "且高于绝对下限 → 平仓判定应通过");
     }
 }
