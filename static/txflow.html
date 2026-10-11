@@ -206,6 +206,12 @@
       .points-fields label { display:grid; gap:8px; font-size:13px; color:#5f7774; }
       .points-fields input[type=checkbox] { width:auto; }
 
+      .tx-reconciliation { margin-bottom:20px; padding:18px; border-radius:10px; background:#f7faf9; }
+      .tx-reconciliation-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px; margin:12px 0; }
+      #mo-metrics .tx-reconciliation-grid .metric { padding:0; border:0; background:transparent; box-shadow:none; }
+      #mo-metrics .tx-reconciliation-grid .v { font-size:23px; }
+      .tx-reconciliation ul { padding-left:18px; font-size:12px; color:#7a898f; line-height:1.9; }
+      @media(max-width:600px) { .tx-reconciliation-grid { grid-template-columns:1fr; } }
       /* One full-width audit card: evidence, caveats and details stay together. */
       #mo-metrics { align-items:start; }
       #mo-metrics > .tx-audit { grid-column:1/-1; min-width:0; background:#fff; border:1px solid var(--line); border-radius:16px; padding:26px; }

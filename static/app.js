@@ -534,12 +534,30 @@ function recordPositionSide(r) {
   return r.side === "买" ? (recordIsClosing(r) ? "short" : "long") : (recordIsClosing(r) ? "long" : "short");
 }
 
+function renderTxReconciliation(r) {
+  if (!r || r.status === "waiting") return `<div class="tx-reconciliation"><p class="tx-audit-note">${escapeHTML(r?.label || "等待账户对账快照")}。从升级后首次同时记录净值和浮盈开始核对，不重置原有收益起点。</p></div>`;
+  const amount = v => Number.isFinite(v) ? moneySigned(v) : "—";
+  return `<div class="tx-reconciliation"><div class="tx-audit-meta"><span>账户对账区间 · UTC <b>${ts2m(r.start)} — ${ts2m(r.end)}</b></span><span>容差 $0.01</span></div>
+    <div class="tx-reconciliation-grid">
+      ${metric("账户变化 · 扣已知净入金",amount(r.account_net))}
+      ${metric("明细可解释金额",amount(r.explained))}
+      ${metric("待解释差额",amount(r.unexplained),Math.abs(r.unexplained || 0) > .01 ? "neg" : "")}
+    </div>
+    <details class="tx-audit-disclosure"><summary>查看对账算式与缺失项</summary>
+      <p>净值 ${amount(r.closing_equity)} − 起点净值 ${amount(r.opening_equity)} − 已知到账净入金 ${amount(r.net_deposit)} = ${amount(r.account_net)}<br>
+      已实现 ${amount(r.realized)} − 手续费 ${amount(r.fees)} + 浮盈变化 ${amount(r.unrealized_change)} + 已取得资金费 ${amount(r.known_funding)} = ${amount(r.explained)}<br>
+      资金费：${r.funding_available ? "已取得返回流水，完整性仍待核实" : "未完整取得，不能视为零"}。差额仅代表尚待解释金额，不推断为资金费或资金丢失。未关联系统订单不影响账户级求和。</p>
+      <ul>${(r.gaps || []).map(g=>`<li>${escapeHTML(g)}</li>`).join("")}</ul>
+    </details></div>`;
+}
+
 function renderTxAudit(account) {
   if (LIVE_EXCHANGE !== "TxFlow") return "";
   const a = txPnl && (txPnl.account || "").toLowerCase() === (account || "").toLowerCase() && txPnl.audit;
   if (!a) return `<section class="tx-audit"><header class="tx-audit-head"><div><span class="section-eyebrow">EXECUTION REVIEW</span><h3>TxFlow 成交核验</h3></div><span class="tx-audit-tag">等待数据</span></header><p class="tx-audit-note">成交证据暂不可用，策略归因待核验。</p></section>`;
   return `<section class="tx-audit">
-    <header class="tx-audit-head"><div><span class="section-eyebrow">EXECUTION REVIEW</span><h3>TxFlow 成交核验</h3><p>已保存的账户流水 · 不等同于策略净收益</p></div><span class="tx-audit-tag">收益归因尚未闭合</span></header>
+    <header class="tx-audit-head"><div><span class="section-eyebrow">EXECUTION REVIEW</span><h3>TxFlow 成交核验</h3><p>已保存的账户流水 · 不等同于策略净收益</p></div><span class="tx-audit-tag">${escapeHTML(a.reconciliation?.label || "等待账户对账快照")}</span></header>
+    ${renderTxReconciliation(a.reconciliation)}
     <div class="tx-audit-kpis">` +
       metric("已保存成交", String(a.fills), "") +
       metric("关联系统订单", String(a.matched_fills), "") +
@@ -548,7 +566,7 @@ function renderTxAudit(account) {
     `</div><div class="tx-audit-status">
       <span><i class="tx-audit-dot"></i>未归属成交 <b>${a.unassigned_fills}</b></span>
       <span>字段不完整 <b>${a.incomplete_rows}</b></span>
-      <span>资金费<span class="tx-audit-pending">待核验</span></span>
+      <span>资金费<span class="tx-audit-pending">见区间对账明细</span></span>
     </div>
     <div class="tx-audit-meta"><span>成交覆盖 · UTC <b>${a.first_fill_at ? ts2m(a.first_fill_at) : "—"} — ${a.last_fill_at ? ts2m(a.last_fill_at) : "—"}</b></span><span>最近抓取 ${ts2m(txPnlAt)} UTC</span></div>
     <details class="tx-audit-disclosure"><summary>数据范围与收益口径</summary><p>${escapeHTML(a.limitation)} 持仓浮盈需比较期初与期末；以上已实现和手续费不能直接等同于账户净收益。</p></details>` +

@@ -773,6 +773,12 @@ impl Client {
         Ok(v)
     }
 
+    /// Optional read-only funding evidence. Unsupported endpoints remain an explicit gap.
+    pub async fn account_funding(&self, start: i64, end: i64) -> Result<Vec<Value>> {
+        let v = self.info(json!({"type":"userFunding","user":self.account,"startTime":start,"endTime":end})).await?;
+        v.as_array().cloned().context("TxFlow funding 格式错误或接口不支持")
+    }
+
     pub async fn maintenance_margin(&self) -> Result<f64> {
         let v = self.info(json!({"type":"clearinghouseState","user":self.account,"accountType":"perps","exchangeId":0})).await?;
         number(&v["crossMaintenanceMarginUsed"]).context("TxFlow 缺少维持保证金字段")

@@ -13,7 +13,13 @@ The monitor now separates acknowledged orders from verified fills. This is instr
 
 The exchange may truncate returned history even when 1,000 records are requested. Five-minute collection cannot guarantee no gaps during high activity or downtime. Archives accumulate observed evidence but do not certify full coverage. Old orders cannot be reliably reconstructed from matching coin/size/time alone.
 
-Known realized PNL minus known fees is **not** account or strategy net profit. A full reconciliation also needs complete cashflows, funding, initial and final unrealized PNL, and event-aligned equity snapshots. These are not yet validated here. The monitor explicitly shows that attribution is not closed.
+Known realized PNL minus known fees is **not** account or strategy net profit. The collector now persists its first and latest paired equity/unrealized-PNL samples. The independent reconciliation window begins at the first such sample; the original capital baseline and strategy chart are never reset. Historical `EquityPoint.pnl` has mixed legacy semantics and is not silently accepted as a verified opening unrealized PNL.
+
+For `(first sample, latest sample]`, the API computes equity change less dated registered cashflows, realized PNL, fees, unrealized-PNL change, observed signed funding, and an unexplained residual. Exchange deposit/withdraw rows are compared against registered cashflows but are not silently substituted or double counted. Unknown ledger adjustments and missing effective dates are reported as gaps.
+
+Funding uses an optional read-only `userFunding` request, bounded to ten seconds. This endpoint's availability on the production account has not yet been established. Unsupported/error responses remain explicit gaps and never verify a zero funding value. Returned funding uses signed `delta.usdc`; missing fields are incomplete. Funding rows are persisted and deduplicated by payload hash. This is not a guarantee of full history or uniqueness if the exchange rewrites rows.
+
+The badge now follows evidence: waiting for samples, missing data, unexplained residual, or observed numerical agreement within $0.01. Agreement does not certify completeness: requests are not atomic, the receipt cache may lag by up to 60 seconds, and returned history can be capped. A residual is not automatically classified as missing money, strategy loss, or funding. Exact system-order matching is separate from account-level arithmetic.
 
 No trading parameters, targets, orders or production processes are changed by installing the source patch. Deploying the binary starts only the additional read-only collector alongside the pre-existing application behavior. Existing trading jobs remain governed by their current configuration.
 

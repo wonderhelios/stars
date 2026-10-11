@@ -7,6 +7,16 @@ use std::{collections::BTreeMap, path::Path};
 #[derive(Default, Serialize, Deserialize)]
 struct Archive {
     account: String,
+    #[serde(default)]
+    checkpoints: Vec<Checkpoint>,
+    #[serde(default)]
+    funding: BTreeMap<String, Value>,
+    #[serde(default)]
+    funding_error: Option<String>,
+    #[serde(default)]
+    funding_read_until: Option<i64>,
+    #[serde(default)]
+    capital_flows: Vec<crate::live::CapitalFlow>,
     fills: BTreeMap<String, Value>,
     ledger: BTreeMap<String, Value>,
     #[serde(default)]
@@ -64,12 +74,82 @@ fn summarize(a: &Archive, since: i64, _records: &[crate::live::LiveRecord]) -> V
     json!({"fills":count,"known_realized":realized,"known_fees_usd":fees,"known_volume":volume,
         "incomplete_rows":missing,"matched_fills":matched,"unassigned_fills":count-matched,
         "first_fill_at":first,"last_fill_at":last,"funding":null,"history_complete":false,
-        "ledger_rows":a.ledger.len(),"rows":rows,
+        "ledger_rows":a.ledger.len(),"rows":rows,"reconciliation":reconcile(a),
         "limitation":"仅已抓取流水；资金费及完整历史未核验，未关联成交不能归因于策略。"})
+}
+
+#[derive(Clone, Serialize, Deserialize)]
+struct Checkpoint { ts: i64, equity: f64, unrealized: f64 }
+
+fn reconcile(a: &Archive) -> Value {
+    let (Some(start), Some(end)) = (a.checkpoints.first(), a.checkpoints.last()) else {
+        return json!({"status":"waiting","label":"等待账户对账快照","gaps":["升级后首次采集净值和浮盈，旧流水不会被当作完整账本"]});
+    };
+    if end.ts <= start.ts { return json!({"status":"waiting","label":"已建立对账起点，等待下次采样","start":start.ts,"gaps":[]}); }
+    let inside = |t:i64| t > start.ts && t <= end.ts;
+    let mut gaps = vec!["交易所流水可能截断；采样非原子，数值一致也不代表历史完整".to_string()];
+    let mut realized=0.; let mut fees=0.; let mut incomplete=0;
+    for f in a.fills.values() {
+        let Some(t)=f["time"].as_i64() else { incomplete+=1; continue };
+        if !inside(t) {continue;}
+        match number(&f["closedPnl"]) { Some(v)=>realized+=v, None=>incomplete+=1 }
+        match number(&f["fee"]).filter(|_|matches!(f["feeToken"].as_str(),Some("USDC")|Some("USD"))) {
+            Some(v)=>fees+=v, None=>incomplete+=1
+        }
+    }
+    if incomplete>0 { gaps.push(format!("{incomplete} 个成交字段缺失，已知部分仍列出")); }
+    let mut deposits=0.; let mut flow_time_unknown=false;
+    for f in &a.capital_flows {
+        match f.effective_ts {
+            Some(t) if inside(t) => deposits+=f.amount,
+            None => { if f.ts > start.ts { flow_time_unknown=true; gaps.push("有登记出入金缺少实际到账时间".into()); } },
+            _=>{}
+        }
+    }
+    let mut exchange_deposits=0.; let mut ledger_missing=false;
+    for row in a.ledger.values() {
+        let Some(t)=row["time"].as_i64() else { ledger_missing=true;continue; };
+        if !inside(t) {continue;}
+        let d=&row["delta"];
+        match (d["type"].as_str(),number(&d["amount"])) {
+            (Some("deposit"),Some(v))=>exchange_deposits+=v,
+            (Some("withdraw"),Some(v))=>exchange_deposits-=v,
+            _=>ledger_missing=true,
+        }
+    }
+    if ledger_missing {gaps.push("账户流水包含未解析调整或缺少时间".into());}
+    let flows_disagree=(exchange_deposits-deposits).abs()>0.01;
+    if flows_disagree {gaps.push("登记出入金与交易所返回流水不一致，请核对资金流水".into());}
+    let mut funding=0.;let mut funding_missing=false;
+    for row in a.funding.values() {
+        let Some(t)=row["time"].as_i64() else {funding_missing=true;continue;};
+        if !inside(t) {continue;}
+        // userFunding delta.usdc is signed account income, not a rate or nominal value.
+        match number(&row["delta"]["usdc"]) {Some(v)=>funding+=v,None=>funding_missing=true}
+    }
+    let funding_available=a.funding_error.is_none() && a.funding_read_until.map(|t|t>=end.ts).unwrap_or(false) && !funding_missing;
+    if !funding_available { gaps.push(a.funding_error.clone().unwrap_or("资金费流水未完整取得或格式未识别".into())); }
+    let net=end.equity-start.equity-deposits;
+    let unrealized=end.unrealized-start.unrealized;
+    let explained=realized-fees+unrealized+funding;
+    let residual=net-explained;
+    let label=if !funding_available || incomplete>0 || ledger_missing || flows_disagree || flow_time_unknown {"部分数据待补齐"}
+        else if residual.abs()>0.01 {"存在待解释差额"} else {"已采集项目数值一致"};
+    json!({"status":if label=="已采集项目数值一致" {"observed_balanced"} else {"incomplete"},"label":label,
+        "start":start.ts,"end":end.ts,"opening_equity":start.equity,"closing_equity":end.equity,
+        "net_deposit":deposits,"exchange_net_deposit":exchange_deposits,"account_net":net,
+        "realized":realized,"fees":fees,"unrealized_change":unrealized,
+        "known_funding":funding,"funding_available":funding_available,"explained":explained,
+        "unexplained":residual,"gaps":gaps,"history_complete":false,"tolerance_usd":0.01})
 }
 
 /// Independent from clear-records. Call under the live-state lock to serialize file writes.
 pub fn update(path: &Path, account: &str, since: i64, fills: &[Value], ledger: &[Value], records: &[crate::live::LiveRecord]) -> Result<Value> {
+    update_with_checkpoint(path, account, since, fills, ledger, records, None)
+}
+
+fn update_with_checkpoint(path: &Path, account: &str, since: i64, fills: &[Value], ledger: &[Value], records: &[crate::live::LiveRecord],
+    checkpoint: Option<(Checkpoint, Result<Vec<Value>>, Vec<crate::live::CapitalFlow>)>) -> Result<Value> {
     let account = account.to_lowercase();
     let hash = alloy::primitives::keccak256(account.as_bytes());
     let path = path.with_extension(format!("audit-{hash}.json"));
@@ -81,6 +161,18 @@ pub fn update(path: &Path, account: &str, since: i64, fills: &[Value], ledger: &
     let marker = format!("[account={hash}]");
     for r in records.iter().filter(|r| r.live && r.tid.is_none() && r.result.contains(&marker) && r.result.contains("[oid=")) {
         a.orders.insert(format!("{}:{}:{}", r.ts, r.coin, r.result), r.clone());
+    }
+    if let Some((point, funding, flows)) = checkpoint {
+        match funding {
+            Ok(rows) => {
+                for row in rows { a.funding.insert(alloy::primitives::keccak256(row.to_string()).to_string(), row); }
+                a.funding_error=None; a.funding_read_until=Some(point.ts);
+            },
+            Err(e)=>a.funding_error=Some(format!("资金费读取失败: {e}")),
+        }
+        a.capital_flows=flows;
+        if a.checkpoints.last().map(|p|p.ts<point.ts).unwrap_or(true) { a.checkpoints.push(point); }
+        if a.checkpoints.len()>2 { let last=a.checkpoints.pop().unwrap(); a.checkpoints.truncate(1);a.checkpoints.push(last); }
     }
     let bytes = serde_json::to_vec(&a)?;
     let tmp = path.with_extension("tmp");
@@ -95,6 +187,39 @@ pub fn update(path: &Path, account: &str, since: i64, fills: &[Value], ledger: &
 #[cfg(test)]
 mod tests {
     use super::*;
+    fn balanced_archive() -> Archive {
+        let mut a=Archive::default();
+        a.checkpoints=vec![Checkpoint {ts:100,equity:500.,unrealized:5.},Checkpoint {ts:200,equity:612.,unrealized:8.}];
+        a.capital_flows=vec![crate::live::CapitalFlow{ts:155,effective_ts:Some(150),amount:100.,note:String::new()}];
+        ingest(&mut a,&[json!({"tid":1,"time":200,"coin":"A","closedPnl":10,"fee":2,"feeToken":"USDC"}),
+            json!({"tid":2,"time":100,"coin":"A","closedPnl":999,"fee":999,"feeToken":"USDC"}),
+            json!({"tid":3,"time":201,"coin":"A","closedPnl":999,"fee":999,"feeToken":"USDC"})],
+            &[json!({"time":150,"delta":{"type":"deposit","amount":"100"}})]);
+        a.funding.insert("1".into(),json!({"time":180,"delta":{"usdc":"1"}}));a.funding_read_until=Some(200);a
+    }
+    #[test] fn reconciles_same_interval_without_order_associations() {
+        let a=balanced_archive();let r=reconcile(&a);
+        assert!(a.orders.is_empty());assert_eq!(r["account_net"],12.);assert_eq!(r["explained"],12.);
+        assert_eq!(r["unexplained"],0.);assert_eq!(r["status"],"observed_balanced");
+        assert_eq!(r["history_complete"],false);assert_eq!(r["unrealized_change"],3.);
+    }
+    #[test] fn missing_funding_never_means_verified_zero() {
+        let mut a=balanced_archive();a.funding.clear();a.funding_error=Some("资金费接口不支持".into());
+        let r=reconcile(&a);assert_eq!(r["funding_available"],false);assert_eq!(r["status"],"incomplete");assert_eq!(r["unexplained"],1.);
+        a.checkpoints[1].equity-=1.;assert_eq!(reconcile(&a)["status"],"incomplete","zero residual is not completeness");
+    }
+    #[test] fn cashflow_conflicts_and_unknown_ledger_adjustments_are_visible() {
+        let mut a=balanced_archive();a.capital_flows[0].amount=50.;
+        let r=reconcile(&a);assert_eq!(r["unexplained"],50.);assert!(r["gaps"].to_string().contains("出入金"));
+        a=balanced_archive();a.ledger.insert("unknown".into(),json!({"time":160,"delta":{"type":"transfer","amount":1}}));
+        assert_eq!(reconcile(&a)["status"],"incomplete");
+    }
+    #[test] fn old_archives_wait_for_real_snapshots_and_missing_fields_stay_incomplete() {
+        assert_eq!(reconcile(&Archive::default())["status"],"waiting");
+        let mut a=balanced_archive();a.fills.insert("missing".into(),json!({"time":170,"fee":1,"closedPnl":2}));
+        assert_eq!(reconcile(&a)["status"],"incomplete");
+        a.checkpoints.truncate(1);assert_eq!(reconcile(&a)["status"],"waiting");
+    }
     #[test]
     fn retains_same_timestamp_and_late_fills_without_duplicates() {
         let mut a = Archive::default();
@@ -164,11 +289,20 @@ pub async fn background(state: crate::web::AppState) {
             if st.config.account.is_empty() { return Ok::<(), anyhow::Error>(()); }
             let since = st.baseline().and_then(|b| b.ts).unwrap_or(0);
             let exec = crate::exchange::Exec::reader_config(&st.config).await?;
+            let acct = exec.account().await?;
+            let point = Checkpoint {ts:crate::live::now_ms_pub(),equity:acct.equity,
+                unrealized:acct.positions.values().map(|p|p.unrealized_pnl).sum()};
+            anyhow::ensure!(point.equity.is_finite() && point.unrealized.is_finite(), "无效的对账账户快照");
+            // Read receipts after the equity sample and restrict them to the sample boundary.
             if let Some(p) = exec.txflow_pnl(since).await {
                 let p = p?;
+                let funding = match tokio::time::timeout(std::time::Duration::from_secs(10),exec.txflow_account_funding(since,point.ts)).await {
+                    Ok(v)=>v, Err(_)=>Err(anyhow::anyhow!("资金费接口超时")),
+                };
                 let current = state.live.lock().await;
                 if current.config.account.eq_ignore_ascii_case(&st.config.account) {
-                    update(&state.live_path, &st.config.account, since, &p.raw_fills, &p.raw_ledger, &current.records)?;
+                    update_with_checkpoint(&state.live_path, &st.config.account, since, &p.raw_fills, &p.raw_ledger, &current.records,
+                        Some((point,funding,current.capital_flows.clone())))?;
                 }
             }
             Ok(())

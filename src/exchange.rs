@@ -405,6 +405,10 @@ impl Exec {
         }
     }
 
+    pub async fn txflow_account_funding(&self, start: i64, end: i64) -> anyhow::Result<Vec<serde_json::Value>> {
+        self.txflow.as_ref().context("非 TxFlow 账户")?.account_funding(start, end).await
+    }
+
     /// 最近的成交明细。止盈单是被动挂单、由交易所自动成交的，程序不经手，
     /// 所以必须回头拉成交才能把这块盈亏算进来。
     pub async fn user_fills(&self, limit: usize) -> Result<serde_json::Value> {
