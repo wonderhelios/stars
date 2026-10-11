@@ -242,8 +242,29 @@ fn fill_px(result: &str) -> Option<f64> {
 }
 
 /// 把成交记录聚合成每日执行指标。
-pub fn daily_execution(records: &[LiveRecord], equity: f64) -> Vec<DailyExec> {
+///
+/// **换手的分母必须是【当天的净值】**，不是当前净值。
+/// 真实 bug：用当前净值当所有天的分母，账户从 $550 充到 $3,100 之后，
+/// 10-07 那天的换手被算成 0.44（真实 2.41），低估 5 倍 —— 正好把
+/// "线上换手和回测差不多的 1.7/天"这个结论掩盖成"线上换手只有 0.3/天"。
+pub fn daily_execution(
+    records: &[LiveRecord],
+    history: &[EquityPoint],
+    fallback_equity: f64,
+) -> Vec<DailyExec> {
     use std::collections::BTreeMap;
+    // 每天用【当天最后一条】净值；没有当天记录就沿用最近一个更早的值。
+    let mut eq_by_day: BTreeMap<i64, f64> = BTreeMap::new();
+    for p in history.iter().filter(|p| p.equity.is_finite() && p.equity > 0.0) {
+        eq_by_day.insert(p.ts / 86_400_000, p.equity);
+    }
+    let equity_on = |day: i64| -> f64 {
+        eq_by_day
+            .range(..=day)
+            .next_back()
+            .map(|(_, v)| *v)
+            .unwrap_or(fallback_equity)
+    };
     // day -> (笔数, 名义, 滑点合计, 有滑点的笔数)
     let mut acc: BTreeMap<i64, (usize, f64, f64, usize)> = BTreeMap::new();
     for r in records.iter().filter(|r| r.live) {
@@ -264,12 +285,15 @@ pub fn daily_execution(records: &[LiveRecord], equity: f64) -> Vec<DailyExec> {
         }
     }
     acc.into_iter()
-        .map(|(day, (orders, notional, ss, sn))| DailyExec {
-            day,
-            orders,
-            notional,
-            turnover: if equity > 0.0 { notional / equity } else { 0.0 },
-            avg_slip_pct: (sn > 0).then(|| ss / sn as f64 * 100.0),
+        .map(|(day, (orders, notional, ss, sn))| {
+            let eq = equity_on(day);
+            DailyExec {
+                day,
+                orders,
+                notional,
+                turnover: if eq > 0.0 { notional / eq } else { 0.0 },
+                avg_slip_pct: (sn > 0).then(|| ss / sn as f64 * 100.0),
+            }
         })
         .collect()
 }
@@ -622,7 +646,7 @@ pub async fn snapshot(
     snap.start_equity = state.baseline().map(|b| b.equity).unwrap_or(0.);
     snap.net_deposit = state.net_deposit;
     snap.capital_flows = state.capital_flows.clone();
-    snap.exec_daily = daily_execution(&state.records, snap.equity);
+    snap.exec_daily = daily_execution(&state.records, &state.history, snap.equity);
     // 不按 reduceOnly 过滤：该字段在 openOrders 里不一定存在，过滤会导致
     // 表格永远是空的。程序只挂只减仓单，所以全部展示即可。
     if let Ok(orders) = exec.open_order_details().await {

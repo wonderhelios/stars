@@ -1,0 +1,33 @@
+{
+  "original_dynamic_replay_0": {
+    "return_max_abs": 0.0,
+    "turn_max_abs": 0.0
+  },
+  "original_dynamic_replay_1": {
+    "return_max_abs": 0.0,
+    "turn_max_abs": 0.0
+  },
+  "prefix_2024-03-06": {
+    "days": 247,
+    "all_43_features_equal": true,
+    "all_online_ranks_equal": true,
+    "endogenous_gate_equal": true
+  },
+  "prefix_2024-07-17": {
+    "days": 380,
+    "all_43_features_equal": true,
+    "all_online_ranks_equal": true,
+    "endogenous_gate_equal": true
+  },
+  "prefix_2025-07-01": {
+    "days": 729,
+    "all_43_features_equal": true,
+    "all_online_ranks_equal": true,
+    "endogenous_gate_equal": true
+  },
+  "thresholds_exclude_current_and_future": true,
+  "forward_returns_start_next_day": true,
+  "influence_finite_difference": true,
+  "FWER_ge_raw_and_9999_resolution": true,
+  "all_input_hashes_unchanged": true
+}

@@ -1,0 +1,14 @@
+{
+  "B": 9999,
+  "blocks": [
+    10,
+    20,
+    40,
+    80,
+    120
+  ],
+  "seed_base": 20261011,
+  "hypotheses": 516,
+  "max_influence_mean": 3.624244826695813e-15,
+  "method": "single-step centered circular-block delta influence maxT, two-sided"
+}

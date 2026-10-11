@@ -1,0 +1,7 @@
+{
+  "max_return_difference": 0.0,
+  "max_turnover_difference": 0.0,
+  "n_features": 43,
+  "n_price_files": 178,
+  "volume_count_diff_days": 362
+}

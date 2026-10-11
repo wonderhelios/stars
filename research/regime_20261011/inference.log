@@ -1,0 +1,11 @@
+/Users/wonder/Code/stars/research/regime_20261011/inference.py:78: RuntimeWarning: Mean of empty slice
+  groups.append(dict(candidate=c,period=period,mode=mode,quintile=bucket+1,**stats(future[1][mm]),mean_future20=float(np.nanmean(future[20][mm & (idx+20<N) & np.r_[mask[20:],np.zeros(20,bool)]])) if mm.any() else np.nan))
+/Users/wonder/.dsh/dsh-runtimes/dsh-primary-runtime/dependencies/python/lib/python3.12/site-packages/numpy/_core/_methods.py:222: RuntimeWarning: Degrees of freedom <= 0 for slice
+  ret = _var(a, axis=axis, dtype=dtype, out=out, ddof=ddof,
+/Users/wonder/.dsh/dsh-runtimes/dsh-primary-runtime/dependencies/python/lib/python3.12/site-packages/numpy/_core/_methods.py:214: RuntimeWarning: invalid value encountered in scalar divide
+  ret = ret.dtype.type(ret / rcount)
+BOOTSTRAP 10 B 9999 M 516 significant 30 minimum 0.0001
+BOOTSTRAP 20 B 9999 M 516 significant 19 minimum 0.0001
+BOOTSTRAP 40 B 9999 M 516 significant 14 minimum 0.0001
+BOOTSTRAP 80 B 9999 M 516 significant 15 minimum 0.0001
+BOOTSTRAP 120 B 9999 M 516 significant 22 minimum 0.0001

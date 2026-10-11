@@ -107,3 +107,22 @@ for label,rb_ in [('删低波动 − 基线',rb),('只剩动量 − 基线',rm)]
     for bl in (20,):
         obs,se,p1,p2=block_boot(ra,rb_,bl)
         print(f"{label:<22}{obs:>+10.4f}{se:>10.4f}{p1:>10.3f}{p2:>10.3f}")
+
+print()
+print("="*78)
+print("当前策略 vs 旧策略（精确指标，cap=5、2.7x、含成本）")
+print("="*78)
+for lbl,which in [('旧: 三因子','all'),('现在: 两因子(删低波动)','nolow')]:
+    o=store[which]; f=o['full']
+    cagr=(o['ending']/1e6)**(365/len(ra))-1
+    vol=f['annual']/f['sharpe']
+    print(f"{lbl}")
+    print(f"   Sharpe        {f['sharpe']:.4f}")
+    print(f"   算术年化       {f['annual']*100:+.1f}%")
+    print(f"   复利 CAGR      {cagr*100:+.1f}%")
+    print(f"   年化波动       {vol*100:.1f}%")
+    print(f"   日换手         {f['turnover']:.3f}")
+    print(f"   年成本         {f['cost']*100:.1f}%")
+    print(f"   最大回撤       {o['mdd']*100:.1f}%")
+    print(f"   子区间 Sharpe  2023-24 {o['2023-24']['sharpe']:.2f} | 2025-26 {o['2025-26']['sharpe']:.2f}")
+    print()
