@@ -537,23 +537,26 @@ function recordPositionSide(r) {
 function renderTxAudit(account) {
   if (LIVE_EXCHANGE !== "TxFlow") return "";
   const a = txPnl && (txPnl.account || "").toLowerCase() === (account || "").toLowerCase() && txPnl.audit;
-  if (!a) return metricGroup("TxFlow 成交核验", metric("成交证据", "暂不可用") + metric("策略归因", "待核验"));
-  return metricGroup("TxFlow 成交核验 · 已保存的流水",
-    metric("已保存成交", String(a.fills)) +
-    metric("关联系统订单", String(a.matched_fills)) +
-    metric("未归属成交", String(a.unassigned_fills), a.unassigned_fills ? "neg" : "") +
-    metric("已知已实现 · 未扣费", moneySigned(a.known_realized)) +
-    metric("已知手续费 · USD", moneySigned(-a.known_fees_usd)) +
-    metric("字段不完整", String(a.incomplete_rows)) +
-    metric("资金费", "待核验") + metric("完整收益归因", "尚未闭合") +
-    metric("最早已保存成交 · UTC", a.first_fill_at ? ts2m(a.first_fill_at) : "—") +
-    metric("最新已保存成交 · UTC", a.last_fill_at ? ts2m(a.last_fill_at) : "—")) +
-    `<p class="muted">${escapeHTML(a.limitation)} 持仓浮盈需比较期初与期末；以上已实现和手续费不能直接等同于账户净收益。最近抓取：${ts2m(txPnlAt)} UTC。</p>` +
-    `<details><summary>查看最近成交证据（最多 100 笔）</summary><div class="table-scroll"><table><thead><tr><th>时间 · UTC</th><th>币</th><th>订单号</th><th>数量</th><th>成交价</th><th>手续费 · USD</th><th>滑点</th><th>归属</th></tr></thead><tbody>${(a.rows || []).map(r => `<tr>
+  if (!a) return `<section class="tx-audit"><header class="tx-audit-head"><div><span class="section-eyebrow">EXECUTION REVIEW</span><h3>TxFlow 成交核验</h3></div><span class="tx-audit-tag">等待数据</span></header><p class="tx-audit-note">成交证据暂不可用，策略归因待核验。</p></section>`;
+  return `<section class="tx-audit">
+    <header class="tx-audit-head"><div><span class="section-eyebrow">EXECUTION REVIEW</span><h3>TxFlow 成交核验</h3><p>已保存的账户流水 · 不等同于策略净收益</p></div><span class="tx-audit-tag">收益归因尚未闭合</span></header>
+    <div class="tx-audit-kpis">` +
+      metric("已保存成交", String(a.fills), "") +
+      metric("关联系统订单", String(a.matched_fills), "") +
+      metric("已知已实现 · 未扣费", moneySigned(a.known_realized), a.known_realized < 0 ? "neg" : "pos") +
+      metric("已知手续费 · USD", moneySigned(-a.known_fees_usd), "") +
+    `</div><div class="tx-audit-status">
+      <span><i class="tx-audit-dot"></i>未归属成交 <b>${a.unassigned_fills}</b></span>
+      <span>字段不完整 <b>${a.incomplete_rows}</b></span>
+      <span>资金费<span class="tx-audit-pending">待核验</span></span>
+    </div>
+    <div class="tx-audit-meta"><span>成交覆盖 · UTC <b>${a.first_fill_at ? ts2m(a.first_fill_at) : "—"} — ${a.last_fill_at ? ts2m(a.last_fill_at) : "—"}</b></span><span>最近抓取 ${ts2m(txPnlAt)} UTC</span></div>
+    <details class="tx-audit-disclosure"><summary>数据范围与收益口径</summary><p>${escapeHTML(a.limitation)} 持仓浮盈需比较期初与期末；以上已实现和手续费不能直接等同于账户净收益。</p></details>` +
+    `<details class="tx-audit-disclosure"><summary>查看最近成交证据（最多 100 笔）</summary><div class="table-scroll"><table><thead><tr><th>时间 · UTC</th><th>币</th><th>订单号</th><th>数量</th><th>成交价</th><th>手续费 · USD</th><th>滑点</th><th>归属</th></tr></thead><tbody>${(a.rows || []).map(r => `<tr>
       <td>${ts2m(r.time)}</td><td>${escapeHTML(String(r.coin || "—"))}</td><td>${escapeHTML(String(r.oid || "—"))}</td>
       <td>${r.size == null ? "—" : fmtCompact(r.size)}</td><td>${r.price == null ? "—" : fmtCompact(r.price)}</td>
       <td>${r.fee_usd == null ? "待核验" : fmt(r.fee_usd, 4)}</td><td>${r.slippage_pct == null ? "—" : fmt(r.slippage_pct, 3) + "%"}</td>
-      <td>${r.system_order ? "系统订单" : "未归属"}</td></tr>`).join("")}</tbody></table></div></details>`;
+      <td>${r.system_order ? "系统订单" : "未归属"}</td></tr>`).join("")}</tbody></table></div></details></section>`;
 }
 
 function renderMonitor(d) {

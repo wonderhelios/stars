@@ -18,6 +18,6 @@ vm.runInContext(source.slice(source.indexOf('function renderTxAudit('),source.in
 assert.match(render.renderTxAudit('a'),/暂不可用/);
 render.txPnl={account:'a',audit:{fills:2,matched_fills:0,unassigned_fills:2,known_realized:-2,known_fees_usd:1,incomplete_rows:0,limitation:'历史未核验',rows:[]}};
 assert.match(render.renderTxAudit('a'),/尚未闭合/);
-assert.match(render.renderTxAudit('a'),/资金费待核验/);
+assert.match(render.renderTxAudit('a').replace(/<[^>]*>/g,''),/资金费待核验/);
 assert.match(render.renderTxAudit('b'),/暂不可用/);
 console.log('✓ Audit UI keeps funding and attribution unknown; account changes hide stale evidence');
