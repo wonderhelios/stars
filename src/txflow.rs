@@ -604,8 +604,8 @@ impl Client {
             orders: vec![WireOrder {
                 a: m.index,
                 b: buy,
-                p: decimal(px),
-                s: decimal(sz),
+                p: decimal(px, decimal_places(m.tick)),
+                s: decimal(sz, m.decimals.max(0) as usize),
                 r: reduce,
                 t: OrderType {
                     limit: Limit { tif },
@@ -805,11 +805,15 @@ struct Cancel {
     a: u32,
     o: u64,
 }
-fn decimal(v: f64) -> String {
-    format!("{v:.8}")
-        .trim_end_matches('0')
-        .trim_end_matches('.')
-        .to_string()
+fn decimal_places(step: f64) -> usize {
+    step.to_string().split_once('.').map_or(0, |(_, fraction)| fraction.len())
+}
+fn decimal(v: f64, places: usize) -> String {
+    let formatted = format!("{v:.places$}");
+    // Never remove integer zeroes: 59300000 must remain 59300000.
+    if formatted.contains('.') {
+        formatted.trim_end_matches('0').trim_end_matches('.').to_string()
+    } else { formatted }
 }
 fn tick_price(px: f64, tick: f64, buy: bool) -> Result<f64> {
     anyhow::ensure!(
@@ -1048,8 +1052,22 @@ mod tests {
     fn tick_rounding_respects_slippage_and_decimal_normalization() {
         assert!((tick_price(89.235, 0.01, true).unwrap() - 89.23).abs() < 1e-9);
         assert!((tick_price(89.235, 0.01, false).unwrap() - 89.24).abs() < 1e-9);
-        assert_eq!(decimal(1.20), "1.2");
+        assert_eq!(decimal(1.20, 2), "1.2");
         assert!(tick_price(f64::NAN, 0.01, true).is_err());
+    }
+    #[test]
+    fn pepe_integer_lots_and_nine_decimal_prices_survive_encoding() {
+        for size in [59_300_000.0, 59_200_000.0, 100_000.0] {
+            let rounded = crate::exchange::round_size(size, -5);
+            assert_eq!(rounded, size);
+            assert_eq!(decimal(rounded, 0), format!("{size:.0}"));
+        }
+        assert_eq!(crate::exchange::round_size(99_999.0, -5), 0.0);
+        assert_eq!(crate::exchange::round_size(59_399_999.0, -5), 59_300_000.0);
+        assert_eq!(crate::exchange::round_size(70_200.0, -2), 70_200.0);
+        assert_eq!(decimal(0.000004123, decimal_places(0.000000001)), "0.000004123");
+        assert_eq!(decimal(100.0, 0), "100");
+        assert_eq!(decimal(0.003392, decimal_places(0.000001)), "0.003392");
     }
     // Independent fixtures produced by the browser's @msgpack/msgpack (BigInt64)
     // and ethers TypedDataEncoder; catches domain, key order and uint64 differences.
@@ -1322,6 +1340,30 @@ mod public_tests {
  server.abort(); let _=server.await;
  let prices=result.expect("one failed book must not erase the successful book");
  assert_eq!(prices.len(),1); assert_eq!(prices["C0-USDC"],100.);
+ }
+ #[tokio::test]
+ async fn pepe_order_wire_preserves_exchange_lot_and_price_precision() {
+    let _mock = MOCK_LOCK.lock().await;
+    let captured = Arc::new(Mutex::new(Vec::<Value>::new())); let copy=captured.clone();
+    let app=Router::new().route("/exchange",post(move |Json(body):Json<Value>| {
+        let copy=copy.clone(); async move {
+            copy.lock().await.push(body.clone());
+            let order=&body["action"]["orders"][0];
+            Json(json!({"status":"ok","response":{"data":{"statuses":[{"filled":{"totalSz":order["s"],"avgPx":order["p"],"oid":1}}]}}}))
+        }
+    }));
+    let listener=tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+    MOCK_PORT.store(listener.local_addr().unwrap().port(),Ordering::SeqCst);
+    let server=tokio::spawn(async move {axum::serve(listener,app).await.unwrap()});
+    let client=Client {http:reqwest::Client::builder().no_proxy().build().unwrap(),account:"mock".into(),signer:Some(PrivateKeySigner::random()),markets:HashMap::from([("PEPE-USDC".into(),Market{name:"PEPE-USDC".into(),index:146,decimals:-5,max_leverage:40,tick:0.000000001,max_order_size:100_000_000_000.})]),owned_path:PathBuf::new(),_account_lock:None};
+    client.ioc("PEPE-USDC",false,false,59_300_000.,0.0000041234,0.).await.unwrap();
+    client.ioc("PEPE-USDC",true,true,59_200_000.,0.0000041234,0.).await.unwrap();
+    let rows=captured.lock().await;
+    assert_eq!(rows[0]["action"]["orders"][0]["s"],"59300000");
+    assert_eq!(rows[1]["action"]["orders"][0]["s"],"59200000");
+    assert_eq!(rows[0]["action"]["orders"][0]["p"],"0.000004124");
+    assert_eq!(rows[1]["action"]["orders"][0]["p"],"0.000004123");
+    server.abort(); let _=server.await;
  }
  async fn execution_scenario(mode: &str) -> (crate::trader::Outcome, usize) {
  let _mock = MOCK_LOCK.lock().await;

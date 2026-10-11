@@ -581,6 +581,12 @@ pub fn round_size(size: f64, sz_decimals: i32) -> f64 {
     if !size.is_finite() || size <= 0.0 {
         return 0.0;
     }
+    if sz_decimals < 0 {
+        // Integer lot sizes must use an integer step, not its inexact reciprocal.
+        // 593 / 0.00001 becomes 59299999.99999999 and violates PEPE lot sizing.
+        let step = 10_f64.powi(-sz_decimals);
+        return (size / step).floor() * step;
+    }
     let factor = 10_f64.powi(sz_decimals);
     (size * factor).floor() / factor
 }
