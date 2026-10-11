@@ -885,7 +885,7 @@ async fn execute_inner(
                 if o.buy { "买" } else { "卖" },
                 o.coin,
                 o.size,
-                crate::exchange::describe(&st),
+                if exec.is_txflow() { crate::exchange::describe_txflow(&st, o.size) } else { crate::exchange::describe(&st) },
                 o.reason
             ),
             Err(e) if exec.is_txflow() => return Ok(Outcome::abort(prelim, orders, Some(i), format!("TxFlow 平仓失败: {e}"))),
@@ -962,7 +962,7 @@ async fn execute_inner(
                         if actual < 0.0 { "买" } else { "卖" },
                         o.coin,
                         actual.abs(),
-                        crate::exchange::describe(&st)
+                        if exec.is_txflow() { crate::exchange::describe_txflow(&st, actual.abs()) } else { crate::exchange::describe(&st) }
                     ),
                     Err(e) if exec.is_txflow() => return Ok(Outcome::abort(prelim, orders, Some(i), format!("TxFlow 残余平仓失败: {e}"))),
                     Err(e) => format!("{} 纠正残余仓位失败: {e}", o.coin),
@@ -999,7 +999,7 @@ async fn execute_inner(
                     o.coin,
                     if reduce_only { "只减仓" } else { "开仓" },
                     dsize,
-                    crate::exchange::describe(&st),
+                    if exec.is_txflow() { crate::exchange::describe_txflow(&st, dsize) } else { crate::exchange::describe(&st) },
                     if (dsize - o.size).abs() > 1e-12 {
                         format!("{}（按实际仓位修正）", o.reason)
                     } else {

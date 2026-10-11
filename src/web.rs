@@ -106,7 +106,18 @@ async fn txflow_pnl(State(state): State<AppState>) -> Response {
         Err(e) => return Json(json!({"ok": false, "error": format!("{e}")})).into_response(),
     };
     match exec.txflow_pnl(since).await {
-        Some(Ok(p)) => Json(json!({
+        Some(Ok(p)) => {
+            let current = state.live.lock().await;
+            if !current.config.account.eq_ignore_ascii_case(&st.config.account) {
+                return Json(json!({"ok":false,"error":"账户已切换，请刷新"})).into_response();
+            }
+            let audit = match crate::txflow_audit::update(&state.live_path, &st.config.account, since,
+                &p.raw_fills, &p.raw_ledger, &current.records) {
+                Ok(a) => a,
+                Err(e) => return Json(json!({"ok":false,"error":format!("审计保存失败: {e}")})).into_response(),
+            };
+            Json(json!({
+            "audit": audit,
             "ok": true,
             "account": st.config.account,
             "since": since,
@@ -116,7 +127,7 @@ async fn txflow_pnl(State(state): State<AppState>) -> Response {
             "fills": p.fills,
             "net_deposit": p.net_deposit,
         }))
-        .into_response(),
+        .into_response() },
         Some(Err(e)) => Json(json!({"ok": false, "error": format!("{e}")})).into_response(),
         None => Json(json!({"ok": false, "error": "无 TxFlow 客户端"})).into_response(),
     }
@@ -139,6 +150,8 @@ pub fn txflow_router(state: AppState) -> Router {
         .route("/txflow", get(txflow_html))
         .route("/txflow/app.js", get(txflow_js))
         .route("/txflow/agent.js", get(crate::txflow_agent::script))
+        .route("/txflow/points.js", get(|| async { ([(header::CONTENT_TYPE,"text/javascript; charset=utf-8")], include_str!("../static/txflow-points.js")) }))
+        .route("/api/txflow/points", get(crate::txflow_points::get).post(crate::txflow_points::save))
         .route("/api/txflow/agent/prepare", post(crate::txflow_agent::prepare))
         .route("/api/txflow/agent/approve", post(crate::txflow_agent::approve))
         .route("/api/txflow/status", get(status))
@@ -833,7 +846,7 @@ mod txflow_routes_tests {
         assert!(Arc::ptr_eq(&tx.signal_store().unwrap(),tx.binance_store.as_ref().unwrap()));
         assert!(!Arc::ptr_eq(&tx.signal_store().unwrap(),tx.hl_store.as_ref().unwrap()));
         let app = router(base.clone()).merge(txflow_router(tx.clone()));
-        for path in ["/", "/txflow", "/txflow/app.js", "/api/txflow/status", "/api/txflow/live"] {
+        for path in ["/", "/txflow", "/txflow/app.js", "/txflow/points.js", "/api/txflow/points", "/api/txflow/status", "/api/txflow/live"] {
             let response = app.clone().oneshot(Request::builder().uri(path).body(Body::empty()).unwrap()).await.unwrap();
             assert_eq!(response.status(), StatusCode::OK, "{path}");
             let body = String::from_utf8(to_bytes(response.into_body(), 1_000_000).await.unwrap().to_vec()).unwrap();
@@ -846,6 +859,20 @@ mod txflow_routes_tests {
                 assert!(body.contains("const LIVE_EXCHANGE = \"TxFlow\";"));
             }
         }
+        tx.live.lock().await.config.account = "points-a".into();
+        let points = json!({"account":"points-a","week_start":345600000,"trader_points":12.,"referral_points":3.,"final_allocation":false});
+        let request = Request::builder().method("POST").uri("/api/txflow/points")
+            .header("content-type","application/json").body(Body::from(points.to_string())).unwrap();
+        let response=app.clone().oneshot(request).await.unwrap();
+        let value:serde_json::Value=serde_json::from_slice(&to_bytes(response.into_body(),10000).await.unwrap()).unwrap();
+        assert_eq!(value["ok"],true);
+        tx.live.lock().await.config.account="points-b".into();
+        let request = Request::builder().method("POST").uri("/api/txflow/points")
+            .header("content-type","application/json").body(Body::from(points.to_string())).unwrap();
+        let response=app.clone().oneshot(request).await.unwrap();
+        let value:serde_json::Value=serde_json::from_slice(&to_bytes(response.into_body(),10000).await.unwrap()).unwrap();
+        assert_eq!(value["ok"],false,"stale account writes must fail");
+        assert_eq!(app.clone().oneshot(Request::builder().uri("/api/points").body(Body::empty()).unwrap()).await.unwrap().status(),StatusCode::NOT_FOUND);
         let request = Request::builder().method("POST").uri("/api/txflow/live/config")
             .header("content-type", "application/json").body(Body::from(r#"{"lookback":21,"target_positions":4,"txflow":false}"#)).unwrap();
         let response = app.clone().oneshot(request).await.unwrap();

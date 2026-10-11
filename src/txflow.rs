@@ -62,6 +62,10 @@ fn gate() -> Arc<Mutex<SubmissionGate>> {
 /// TxFlow 的真实业绩汇总（全部来自交易所流水，不依赖我们自己的记账）。
 #[derive(Clone, Debug, Default, serde::Serialize)]
 pub struct PnlSummary {
+    #[serde(skip)]
+    pub raw_fills: Vec<Value>,
+    #[serde(skip)]
+    pub raw_ledger: Vec<Value>,
     pub fills: usize,
     /// 已实现盈亏（交易所口径，不含手续费）
     pub realized: f64,
@@ -444,6 +448,8 @@ impl Client {
             volume,
             net_deposit,
             ledger_rows: led.len(),
+            raw_fills: fills,
+            raw_ledger: led,
         };
         // Only a complete successful read may replace the cached summary.
         *pnl_cache().lock().await = Some((std::time::Instant::now(), key, out.clone()));

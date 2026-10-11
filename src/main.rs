@@ -8,6 +8,8 @@ mod store;
 mod trader;
 mod web;
 mod txflow;
+mod txflow_audit;
+mod txflow_points;
 mod txflow_agent;
 
 use anyhow::Context;
@@ -127,6 +129,8 @@ async fn main() -> anyhow::Result<()> {
     if tx_load_error.is_none() {
         let tx = tx_state.clone();
         tokio::spawn(async move { txflow::background(tx).await; });
+        let audit = tx_state.clone();
+        tokio::spawn(async move { txflow_audit::background(audit).await; });
     }
 
     // ===== 净值曲线记录器（Hyperliquid）=====

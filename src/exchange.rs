@@ -650,3 +650,13 @@ pub fn describe(status: &ExchangeDataStatus) -> String {
 pub fn err(msg: &str) -> anyhow::Error {
     anyhow!(msg.to_string())
 }
+
+/// TxFlow-only evidence marker: acceptance without a fill stays unverified.
+pub fn describe_txflow(status: &ExchangeDataStatus, requested: f64) -> String {
+    let text = format!("{} [requested={requested}]", describe(status));
+    match status {
+        ExchangeDataStatus::Filled(f) if f.oid > 0 => format!("{text} [oid={}]", f.oid),
+        ExchangeDataStatus::Resting(r) if r.oid > 0 => format!("{text} [oid={}]", r.oid),
+        _ => text,
+    }
+}

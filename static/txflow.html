@@ -201,6 +201,10 @@
       @media(max-width:1100px) { .setup-layout { grid-template-columns:1fr; } .setup-aside { grid-template-columns:repeat(2,minmax(0,1fr)); } .setup-aside>.setup-card:last-child { grid-column:1/-1; } }
       @media(max-width:760px) { .setup-heading { align-items:flex-start; } .setup-chip { display:none; } .setup-layout { gap:16px; } .setup-card { padding:19px 16px; } .setup-aside { grid-template-columns:1fr; } .setup-fields { gap:17px 12px; } .setup-card header { margin-bottom:20px; } .setup-save>span { flex-basis:100%; } }
       .flow-entry details { font-size:11px; color:var(--muted); } .flow-entry input { max-width:100%; margin:8px 0; } .flow-entry summary { cursor:pointer; }
+    #tx-points { padding:24px; margin:16px 0; }
+      .points-fields { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:16px; align-items:end; margin-top:16px; }
+      .points-fields label { display:grid; gap:8px; font-size:13px; color:#5f7774; }
+      .points-fields input[type=checkbox] { width:auto; }
     </style>
   </head>
   <body>
@@ -277,6 +281,24 @@
           <div id="mo-status"></div>
           <div id="mo-warn"></div>
           <div class="metrics" id="mo-metrics"></div>
+          <section class="content-card" id="tx-points">
+            <h3>积分记录 <span class="muted">/ 收益优先</span></h3>
+            <p class="note">按 UTC 周一至下周一统计，官方周二发放。周内积分为估计值，季末才确认；不推算兑换价值、不为积分增加交易。</p>
+            <p id="tx-points-summary" class="note">正在读取…</p><p id="tx-points-read-status" class="note neg" role="status"></p>
+            <div class="table-scroll"><table><thead><tr><th>周期 · UTC</th><th>交易积分</th><th>推荐积分</th><th>积分状态</th><th>观察到的交易天数</th><th>已知成交额</th><th>已知手续费</th><th>已知已实现 · 未扣费</th></tr></thead><tbody id="tx-points-rows"></tbody></table></div>
+            <p class="note">成交统计来自已保存的账户流水，可能不完整，不代表计分资格或策略净收益。* 表示部分成交字段缺失；资金费尚未核验。</p>
+            <details><summary>登记或修正官方积分</summary>
+              <p class="note">尚未接入可靠的官方积分查询接口，请按官方面板抄录每周数值。相同周期覆盖更新，不重复累加。</p>
+              <form id="tx-points-form" class="points-fields">
+                <label>周期起点 · UTC 周一<input id="tx-points-week" type="date" required /></label>
+                <label>交易积分<input id="tx-points-trader" type="number" min="0" max="1000000000000" step="any" required /></label>
+                <label>推荐积分<input id="tx-points-referral" type="number" min="0" max="1000000000000" step="any" value="0" required /></label>
+                <label><input id="tx-points-final" type="checkbox" />官方已作季末确认</label>
+                <button class="btn ghost" id="tx-points-save" type="submit">保存积分</button>
+              </form><p id="tx-points-status" class="note" role="status" aria-live="polite"></p>
+            </details>
+            <p class="note"><a href="https://docs.txflow.com/points/how-points-work" target="_blank" rel="noopener noreferrer">官方积分规则</a></p>
+          </section>
           <div class="content-card equity-card"><div class="panel-head monitor-section-head"><div><span class="section-eyebrow">STRATEGY PNL</span><h2>策略盈亏曲线</h2></div><div class="segmented" id="mo-chart-tabs" role="group" aria-label="策略盈亏时间区间"><button type="button" data-range="day" aria-pressed="false">日</button><button type="button" data-range="week" aria-pressed="true">周</button><button type="button" data-range="month" aria-pressed="false">月</button><button type="button" data-range="all" aria-pressed="false">全部</button></div></div>
           <div class="chart" id="mo-chart"></div></div>
           <div class="content-card"><div class="panel-head" style="margin-top:14px"><h2>当前持仓</h2></div>
@@ -295,5 +317,6 @@
 
     <script src="/txflow/app.js"></script>
     <script src="/txflow/agent.js"></script>
+    <script src="/txflow/points.js"></script>
   </body>
 </html>

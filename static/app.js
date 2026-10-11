@@ -367,7 +367,7 @@ function chronRecords(d) {
 function slippageStats(records) {
   const list = [];
   for (const r of records || []) {
-    const m = /成交\s+([\d.]+)@([\d.]+)/.exec(r.result || "");
+    const m = /成交\s+([\d.eE+\-]+)@([\d.eE+\-]+)/.exec(r.result || "");
     if (!m || !r.price) continue;
     const fill = parseFloat(m[2]);
     if (!isFinite(fill) || fill <= 0) continue;
@@ -387,7 +387,7 @@ function slippageStats(records) {
 // 把交易所返回的结果文本拆成结构化字段（原来整列都是重复的一长串文字）
 function parseFill(r, entryHint) {
   const t = r.result || "";
-  const m = /成交\s+([\d.]+)@([\d.]+)/.exec(t);
+  const m = /成交\s+([\d.eE+\-]+)@([\d.eE+\-]+)/.exec(t);
   if (m) {
     const px = parseFloat(m[2]);
     let slip = r.price > 0 ? ((px - r.price) / r.price) * 100 : 0;
@@ -399,7 +399,9 @@ function parseFill(r, entryHint) {
       // 卖 = 平多；买 = 平空
       pnl = r.side === "卖" ? (px - entry) * parseFloat(m[1]) : (entry - px) * parseFloat(m[1]);
     }
-    return { kind: "filled", px, slip, pnl };
+    const requested = /\[requested=([\d.eE+\-]+)\]/.exec(t);
+    const partial = requested && Number(m[1]) < Number(requested[1]) * (1 - 1e-8);
+    return { kind: "filled", px, slip, pnl, partial };
   }
   if (/未成交|挂单/.test(t)) return { kind: "unfilled" };
   if (/失败|错误|invalid|rejected/i.test(t)) {
@@ -526,6 +528,28 @@ function recordIsClosing(r) {
 
 function recordPositionSide(r) {
   return r.side === "买" ? (recordIsClosing(r) ? "short" : "long") : (recordIsClosing(r) ? "long" : "short");
+}
+
+function renderTxAudit(account) {
+  if (LIVE_EXCHANGE !== "TxFlow") return "";
+  const a = txPnl && (txPnl.account || "").toLowerCase() === (account || "").toLowerCase() && txPnl.audit;
+  if (!a) return metricGroup("TxFlow 成交核验", metric("成交证据", "暂不可用") + metric("策略归因", "待核验"));
+  return metricGroup("TxFlow 成交核验 · 已保存的流水",
+    metric("已保存成交", String(a.fills)) +
+    metric("关联系统订单", String(a.matched_fills)) +
+    metric("未归属成交", String(a.unassigned_fills), a.unassigned_fills ? "neg" : "") +
+    metric("已知已实现 · 未扣费", moneySigned(a.known_realized)) +
+    metric("已知手续费 · USD", moneySigned(-a.known_fees_usd)) +
+    metric("字段不完整", String(a.incomplete_rows)) +
+    metric("资金费", "待核验") + metric("完整收益归因", "尚未闭合") +
+    metric("最早已保存成交 · UTC", a.first_fill_at ? ts2m(a.first_fill_at) : "—") +
+    metric("最新已保存成交 · UTC", a.last_fill_at ? ts2m(a.last_fill_at) : "—")) +
+    `<p class="muted">${escapeHTML(a.limitation)} 持仓浮盈需比较期初与期末；以上已实现和手续费不能直接等同于账户净收益。最近抓取：${ts2m(txPnlAt)} UTC。</p>` +
+    `<details><summary>查看最近成交证据（最多 100 笔）</summary><div class="table-scroll"><table><thead><tr><th>时间 · UTC</th><th>币</th><th>订单号</th><th>数量</th><th>成交价</th><th>手续费 · USD</th><th>滑点</th><th>归属</th></tr></thead><tbody>${(a.rows || []).map(r => `<tr>
+      <td>${ts2m(r.time)}</td><td>${escapeHTML(String(r.coin || "—"))}</td><td>${escapeHTML(String(r.oid || "—"))}</td>
+      <td>${r.size == null ? "—" : fmtCompact(r.size)}</td><td>${r.price == null ? "—" : fmtCompact(r.price)}</td>
+      <td>${r.fee_usd == null ? "待核验" : fmt(r.fee_usd, 4)}</td><td>${r.slippage_pct == null ? "—" : fmt(r.slippage_pct, 3) + "%"}</td>
+      <td>${r.system_order ? "系统订单" : "未归属"}</td></tr>`).join("")}</tbody></table></div></details>`;
 }
 
 function renderMonitor(d) {
@@ -666,7 +690,7 @@ function renderMonitor(d) {
         metric("最后调仓", d.last_run_at ? `<span class="sm">${ts2m(d.last_run_at)}</span>` : "—")
     ) +
     // Returned exchange records may be truncated; never infer total account profit from them.
-    (d.tx_fills
+    (LIVE_EXCHANGE !== "TxFlow" && d.tx_fills
       ? metricGroup(
           "交易所返回记录（可能截断，非完整净收益）",
             metric(
@@ -680,7 +704,7 @@ function renderMonitor(d) {
             metric("成交笔数", String(d.tx_fills)),
           "tx-perf"
         )
-      : "");
+      : "") + renderTxAudit(d.account);
 
   // 检查清单按实测结果自动打勾
   const sl = slippageStats(d.records || []);
@@ -788,7 +812,7 @@ function renderMonitor(d) {
             </tr>`;
           }
           if (f.kind === "filled") {
-            status = '<span class="badge-mini ok">成交</span>';
+            status = f.partial ? '<span class="badge-mini warn">部分成交</span>' : '<span class="badge-mini ok">成交</span>';
             pxCell = fmtCompact(f.px);
             const cls = f.slip > 0.03 ? "neg" : f.slip < -0.03 ? "pos" : "muted";
             slipCell = `<span class="${cls}">${f.slip >= 0 ? "+" : ""}${f.slip.toFixed(3)}%</span>`;
@@ -799,6 +823,8 @@ function renderMonitor(d) {
             status = '<span class="badge-mini warn">未成交</span>';
           } else if (f.kind === "failed") {
             status = `<span class="badge-mini err" title="${escapeHTML(f.msg)}">失败</span>`;
+          } else if (LIVE_EXCHANGE === "TxFlow" && /Success|已发送/.test(r.result || "")) {
+            status = '<span class="badge-mini warn">接单 · 成交待核验</span>';
           } else if (f.kind === "plan") {
             status = '<span class="badge-mini mute">计划</span>';
           }

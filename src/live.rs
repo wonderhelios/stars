@@ -896,7 +896,9 @@ pub async fn run(
             continue;
         }
         if let Some(r) = records.get_mut(i) {
-            r.result = line.clone();
+            r.result = if cfg.txflow {
+                format!("{} [account={}]", line, alloy::primitives::keccak256(cfg.account.to_lowercase().as_bytes()))
+            } else { line.clone() };
         }
     }
     let aborted = outcome.aborted;
