@@ -327,7 +327,20 @@ impl FactorPanel {
         // 分散化明显好于「先把排名平均、再选一批」——后者回撤大一倍。
         let n = coins.len();
         let mut acc: HashMap<String, f64> = HashMap::new();
-        for scores in [&mom_adj, &low_vol, &shock_v] {
+        // ★ 已移除「低波动」因子（原为 [&mom_adj, &low_vol, &shock_v]）。
+        //
+        // 证据（research/hl_polish_20261011/factor_test.py，自检复现基线 1.1293）：
+        //   三因子  Sharpe 1.1293 · 年化 89.9% · 换手 1.598 · 回撤 −80.9%
+        //   删低波动 Sharpe 1.2194 · 年化 111.8% · 换手 1.759 · 回撤 −79.8%
+        //
+        // 理由是它的 IC 全样本为负（−0.06，t=−10.4）——「做多低波动币」在这个
+        // 横截面上是反预测的。删掉它，动量和量冲击各占一半。
+        //
+        // 诚实标注：ΔSharpe +0.09 的配对块 bootstrap p=0.41，**不显著**，
+        // 且换手 +10%（年成本 40.8%→44.9%）、波动变大（4.17%→4.80%）。
+        // 这是一次方向正确但边际的改动，不是"验证过的改进"。
+        // 要回退：把 low_vol 加回列表、并把下面的 /2.0 改回 /3.0。
+        for scores in [&mom_adj, &shock_v] {
             let mut order: Vec<usize> = (0..n).collect();
             // 平局时按币名定序：分数来自 HashMap 迭代，顺序随进程哈希种子变化，
             // 只按分数排会让同一天的组合在不同进程里不一样。
@@ -351,7 +364,7 @@ impl FactorPanel {
                 } else {
                     continue;
                 };
-                *acc.entry(coins[j].clone()).or_insert(0.0) += w / 3.0;
+                *acc.entry(coins[j].clone()).or_insert(0.0) += w / 2.0;
             }
         }
         let mut out: Vec<(String, f64)> = acc
@@ -1411,6 +1424,66 @@ mod txflow_portfolio_tests {
 #[cfg(test)]
 mod close_threshold_tests {
     use super::*;
+
+    fn market(coin: &str) -> (String, MarketInfo) {
+        (
+            coin.to_string(),
+            MarketInfo { sz_decimals: 2, max_leverage: 25 },
+        )
+    }
+
+    /// **真调用 build_plan 的端到端回归**：$3,104 净值 + min_order_pct 1.7%
+    /// （比例门槛 $52.77）+ 一个约 $45 的 GRAM 残仓 + 它不在目标名单里
+    /// → 必须生成平仓单。这就是用户实际遇到的场景，不是算术推演。
+    #[test]
+    fn small_out_of_target_position_with_pct_threshold_is_still_closed() {
+        let cfg = TradeConfig {
+            min_order_pct: 0.017,
+            min_order_usd: 10.0,
+            rebalance_slices: 1,
+            ..TradeConfig::default()
+        };
+        let mut positions = std::collections::HashMap::new();
+        positions.insert(
+            "GRAM".to_string(),
+            crate::exchange::Pos {
+                size: 31.0, // 31 × 1.4465 ≈ $44.84
+                entry_px: 1.4,
+                liq_px: None,
+                is_cross: true,
+                leverage: 3,
+                position_value: 44.84,
+                unrealized_pnl: 0.0,
+            },
+        );
+        let acct = Acct { equity: 3104.0, positions };
+        let markets: std::collections::HashMap<String, MarketInfo> =
+            ["GRAM", "BTC", "ETH"].iter().map(|c| market(c)).collect();
+        let mids: std::collections::HashMap<String, f64> = vec![
+            ("GRAM".to_string(), 1.4465),
+            ("BTC".to_string(), 80000.0),
+            ("ETH".to_string(), 3000.0),
+        ]
+        .into_iter()
+        .collect();
+        // 目标里只有 BTC/ETH —— GRAM 掉出名单
+        let weights: Vec<(String, f64)> =
+            vec![("BTC".into(), 0.5), ("ETH".into(), -0.5)];
+
+        // 前提：$44.84 确实低于比例门槛 $52.77
+        assert!(44.84 < cfg.effective_min_order_usd(3104.0));
+
+        let plan = build_plan(&weights, &acct, &markets, &mids, &cfg, None);
+        let closed = plan.orders.iter().any(|o| o.coin == "GRAM" && o.reduce_only);
+        let seen: Vec<(String, String)> =
+            plan.orders.iter().map(|o| (o.coin.clone(), o.reason.clone())).collect();
+        assert!(
+            closed,
+            "GRAM 残仓（$44.84 < 比例门槛）必须仍然被平掉，实际订单: {seen:?}"
+        );
+        assert!(plan.notes.iter().all(|n| !n.contains("GRAM: 残余仓位")),
+            "不应再出现「残余仓位…无法平」: {:?}", plan.notes);
+    }
 
     /// 回归：设了 `min_order_pct` 之后，掉出名单的【小仓位】必须仍然能平掉。
     ///

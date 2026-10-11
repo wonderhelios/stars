@@ -213,6 +213,67 @@ pub struct CapitalBaseline {
     pub source: String,
 }
 
+/// 一天的执行指标 —— 一个月后判断"跑得对不对"的依据。
+///
+/// 从成交记录【按需聚合】，不单独落盘：记录本身不截断，随时可重算；
+/// 存第二份历史只会引入不一致。
+#[derive(Clone, Serialize)]
+pub struct DailyExec {
+    /// UTC 天序号（ts / 86_400_000）
+    pub day: i64,
+    /// 真实下单笔数
+    pub orders: usize,
+    /// 真实下单名义合计
+    pub notional: f64,
+    /// 换手 = 名义 / 快照净值
+    pub turnover: f64,
+    /// 成交记录里的平均【不利】滑点（%），正数 = 吃亏
+    pub avg_slip_pct: Option<f64>,
+}
+
+/// 从 `"成交 512.0@0.084119"` 里取出成交价。
+fn fill_px(result: &str) -> Option<f64> {
+    let at = result.split("成交 ").nth(1)?.split('@').nth(1)?;
+    let num: String = at
+        .chars()
+        .take_while(|c| c.is_ascii_digit() || *c == '.' || *c == '-')
+        .collect();
+    num.parse().ok()
+}
+
+/// 把成交记录聚合成每日执行指标。
+pub fn daily_execution(records: &[LiveRecord], equity: f64) -> Vec<DailyExec> {
+    use std::collections::BTreeMap;
+    // day -> (笔数, 名义, 滑点合计, 有滑点的笔数)
+    let mut acc: BTreeMap<i64, (usize, f64, f64, usize)> = BTreeMap::new();
+    for r in records.iter().filter(|r| r.live) {
+        let e = acc.entry(r.ts / 86_400_000).or_insert((0, 0.0, 0.0, 0));
+        e.0 += 1;
+        e.1 += r.notional.abs();
+        if let Some(fill) = fill_px(&r.result) {
+            if r.price > 0.0 && fill > 0.0 {
+                // 买入成交价偏高 = 吃亏；卖出成交价偏低 = 吃亏。统一成"正数=不利"。
+                let slip = if r.side.starts_with('买') {
+                    (fill - r.price) / r.price
+                } else {
+                    (r.price - fill) / r.price
+                };
+                e.2 += slip;
+                e.3 += 1;
+            }
+        }
+    }
+    acc.into_iter()
+        .map(|(day, (orders, notional, ss, sn))| DailyExec {
+            day,
+            orders,
+            notional,
+            turnover: if equity > 0.0 { notional / equity } else { 0.0 },
+            avg_slip_pct: (sn > 0).then(|| ss / sn as f64 * 100.0),
+        })
+        .collect()
+}
+
 /// 一笔入金或出金（amount 正 = 入金，负 = 出金）。收益率必须扣除它，
 /// 否则充钱会让净值跳升、被误当成策略赚的。
 #[derive(Clone, Serialize, Deserialize)]
@@ -390,6 +451,8 @@ pub struct LiveSnapshot {
     pub net_deposit: f64,
     /// 入金/出金流水。
     pub capital_flows: Vec<CapitalFlow>,
+    /// 每日执行指标（换手/笔数/滑点），用于月度执行质量复查。
+    pub exec_daily: Vec<DailyExec>,
     /// 拿不到行情、只能用交易所市值反推估值的币。非空时要显眼提示 ——
     /// 这些仓位的清算价、距离强平都算不出来，可能有隐藏风险。
     pub unpriced: Vec<String>,
@@ -441,6 +504,7 @@ pub async fn snapshot(
         tx_net_deposit: 0.0,
         net_deposit: 0.0,
         capital_flows: Vec::new(),
+        exec_daily: Vec::new(),
         tp_ref: HashMap::new(),
         config: cfg.clone(),
         history: state.history.clone(),
@@ -558,6 +622,7 @@ pub async fn snapshot(
     snap.start_equity = state.baseline().map(|b| b.equity).unwrap_or(0.);
     snap.net_deposit = state.net_deposit;
     snap.capital_flows = state.capital_flows.clone();
+    snap.exec_daily = daily_execution(&state.records, snap.equity);
     // 不按 reduceOnly 过滤：该字段在 openOrders 里不一定存在，过滤会导致
     // 表格永远是空的。程序只挂只减仓单，所以全部展示即可。
     if let Ok(orders) = exec.open_order_details().await {
