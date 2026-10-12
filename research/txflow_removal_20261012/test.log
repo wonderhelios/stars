@@ -1,0 +1,61 @@
+   Compiling stars v0.3.0 (/Users/wonder/Code/stars)
+warning: unused variable: `cfg`
+   --> src/trader.rs:911:13
+    |
+911 |         let cfg = TradeConfig {
+    |             ^^^ help: if this is intentional, prefix it with an underscore: `_cfg`
+    |
+    = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default
+
+warning: function `account_meets_targets` is never used
+   --> src/trader.rs:635:4
+    |
+635 | fn account_meets_targets(account: &Acct, plan: &Plan, cfg: &TradeConfig) -> bool {
+    |    ^^^^^^^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `stars` (bin "stars" test) generated 2 warnings
+    Finished `release` profile [optimized] target(s) in 3.61s
+     Running unittests src/main.rs (target/release/deps/stars-47ae36db0d915975)
+
+running 36 tests
+test hl::tests::coin_meta_reads_sz_decimals ... ok
+test hl::tests::coin_meta_reads_is_delisted ... ok
+test live::capital_flow_tests::deposit_does_not_change_trading_pnl ... ok
+test live::capital_flow_tests::cash_flows_follow_the_account_baseline ... ok
+test live::config_parity_tests::every_live_field_reaches_trade_config ... ok
+test live::capital_regressions::saved_baseline_wins_over_trimmed_history_and_cannot_cross_accounts ... ok
+test live::config_robustness::empty_object_still_parses ... ok
+test live::config_robustness::missing_fields_do_not_wipe_the_account ... ok
+test live::hl_signal_tests::fractional_leverage_is_preserved ... ok
+test live::hl_signal_tests::nonempty_weights_do_not_require_extra_candidate_limits ... ok
+test live::fill_dedup_tests::fills_with_no_matching_order_are_still_imported ... ok
+test live::fill_dedup_tests::split_fills_matching_our_aggregate_order_are_not_imported ... ok
+test live::min_order_pct_tests::effective_threshold_scales_with_equity ... ok
+test live::min_order_pct_tests::min_order_pct_reaches_trade_config ... ok
+test live::monitor_receipt_tests::first_receipt_watermark_survives_merge_without_fills ... ok
+test live::monitor_receipt_tests::split_close_receipts_are_not_assumed_to_be_take_profits ... ok
+test live::reconciliation_tests::reconciliation_preserves_concurrent_orders_and_deduplicates_fills ... ok
+test live::tests::take_profit_buys_below_market_for_shorts ... ok
+test live::tests::take_profit_price_is_never_zero_or_negative ... ok
+test live::tests::take_profit_sells_above_market_for_longs ... ok
+test live::tests::take_profit_stays_on_the_correct_side_after_rounding ... ok
+test trader::close_threshold_tests::small_out_of_target_position_with_pct_threshold_is_still_closed ... ok
+test trader::close_threshold_tests::small_position_below_pct_threshold_must_still_close ... ok
+test trader::slice_plan_tests::non_slot_positions_are_left_alone ... ok
+test trader::slice_tests::slice_of_is_deterministic_and_spreads_coins ... ok
+test live::capital_regressions::baseline_is_observed_not_inferred_and_rejects_old_account_and_failed_save ... ok
+test web::capital_time_tests::capital_time_requires_a_known_baseline_and_past_time ... ok
+test trader::tests::only_closed_bars_are_used ... ok
+test trader::tests::k_never_exceeds_half_the_universe ... ok
+test trader::tests::long_and_short_legs_are_balanced ... ok
+test live::capital_regressions::legacy_baseline_migrates_before_hour_dedup_and_survives_clear_restart ... ok
+test web::capital_time_tests::legacy_capital_flow_does_not_invent_an_effective_time ... ok
+test trader::tests::weights_are_normalised_to_unit_gross ... ok
+test live::hl_signal_tests::signal_panel_uses_the_hl_universe ... ok
+test web::live_routes_tests::live_page_and_configuration_preserve_save_and_execution_gates ... ok
+test live::hl_signal_tests::signal_panel_keeps_the_hl_store_bars ... ok
+
+test result: ok. 36 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+

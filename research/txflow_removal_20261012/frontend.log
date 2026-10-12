@@ -1,0 +1,34 @@
+$ node --check static/app.js
+exit code: 0
+
+$ node tools/lint-frontend.mjs
+✓ 前端静态检查通过（196 个定义 · 41 个元素引用）
+exit code: 0
+
+$ node tools/test-account-performance.mjs
+✓ Account changes use persisted equity; unavailable baselines stay unknown
+✓ Current PNL, unavailable accounts, neutral fill labels, close direction, bounded chart windows and receipt deduplication
+✓ Deposits/withdrawals adjust principal and simple return, nonpositive principal stays undefined
+exit code: 0
+
+$ node tools/test-capital-flow.mjs
+✓ Capital flow save refreshes metrics; read failure does not invite duplicate entries; invalid/save failures retain correct state
+✓ Time correction is bound to the original account/record and parses UTC explicitly
+exit code: 0
+
+$ node tools/test-exec-daily.mjs
+✓ Daily execution handles UTC windows, paging, missing API, unknown slippage and invalid equity without inventing zero values
+✓ Every bar has a visible precise amount and date, with scale and scroll access
+exit code: 0
+
+$ node tools/test-live-save.mjs
+✓ Config saving displays the server error, preserves settings, and allows retry
+exit code: 0
+
+$ node tools/test-receipts.mjs
+✓ Receipt-only Success is unverified; partial fills use submitted size; scientific prices parse correctly
+exit code: 0
+
+$ node tools/test-strategy-chart.mjs
+✓ Strategy curve removes deposits and withdrawals, preserves losses, respects effective times and window boundaries, detects inconsistent ledgers
+exit code: 0

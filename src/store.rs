@@ -39,17 +39,6 @@ impl Store {
         })
     }
 
-    /// TxFlow-only scheduler state. SQLite serializes increments across processes.
-    pub fn txflow_cursor(&self, total: usize, advance: usize) -> Result<usize> {
-        anyhow::ensure!(total>0,"TxFlow cursor universe is empty");
-        let mut conn=self.conn.lock().unwrap();
-        conn.execute_batch("CREATE TABLE IF NOT EXISTS txflow_refresh_cursor (id INTEGER PRIMARY KEY CHECK(id=1), value INTEGER NOT NULL); INSERT OR IGNORE INTO txflow_refresh_cursor VALUES(1,0);")?;
-        let tx=conn.transaction()?;
-        let cursor:usize=tx.query_row("SELECT value FROM txflow_refresh_cursor WHERE id=1",[],|r|r.get::<_,u64>(0))? as usize % total;
-        if advance>0 { tx.execute("UPDATE txflow_refresh_cursor SET value=? WHERE id=1",[((cursor+advance)%total) as u64])?; }
-        tx.commit()?;Ok(cursor)
-    }
-
     pub fn upsert_candles(&self, coin: &str, candles: &[Candle]) -> Result<usize> {
         let conn = self.conn.lock().unwrap();
         let mut n = 0;

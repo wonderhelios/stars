@@ -5,7 +5,7 @@ const s=fs.readFileSync(new URL('../static/app.js',import.meta.url),'utf8');
 const el={innerHTML:''}; const today=20738;
 const ctx=vm.createContext({$:()=>el,Date:class extends Date {static now(){return today*86400000+5000;}},fmt:(v,n)=>v.toFixed(n)});
 vm.runInContext(s.slice(s.indexOf('function metric('),s.indexOf('// 轮询后台')),ctx);
-vm.runInContext(s.slice(s.indexOf('let execDailyRange'),s.indexOf('function renderTxReconciliation(')),ctx);
+vm.runInContext(s.slice(s.indexOf('let execDailyRange'),s.indexOf('function renderMonitor(')),ctx);
 ctx.renderExecDaily({});assert.match(el.innerHTML,/尚未提供/);
 ctx.renderExecDaily({exec_daily:[],equity:100});assert.match(el.innerHTML,/暂无执行记录/);
 const data={equity:100,exec_daily:Array.from({length:35},(_,i)=>({day:today-i,orders:2,notional:100,turnover:1,avg_slip_pct:i===0?null:.1}))};

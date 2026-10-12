@@ -1,0 +1,42 @@
+[
+  {
+    "name": "build",
+    "command": [
+      "cargo",
+      "build",
+      "--release",
+      "--locked"
+    ],
+    "exit_code": 0
+  },
+  {
+    "name": "test",
+    "command": [
+      "cargo",
+      "test",
+      "--release"
+    ],
+    "exit_code": 0
+  },
+  {
+    "name": "residual",
+    "command": [
+      "grep",
+      "-rin",
+      "txflow\\|TxFlow\\|TXFLOW",
+      "src/",
+      "static/"
+    ],
+    "exit_code": 1
+  },
+  {
+    "name": "routes",
+    "command": [
+      "grep",
+      "-n",
+      "route(\"/api/live",
+      "src/web.rs"
+    ],
+    "exit_code": 0
+  }
+]

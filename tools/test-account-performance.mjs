@@ -3,11 +3,11 @@ import { readFileSync } from "node:fs";
 import vm from "node:vm";
 
 const source = readFileSync(new URL("../static/app.js", import.meta.url), "utf8");
-const start = source.indexOf("let txPnl = null;");
+const start = source.indexOf("function capitalPerformance(");
 const end = source.indexOf("function renderMonitor(d)", start);
 const snippet = source.slice(start, end).replace("setupCapitalFlow();", "").replace("setupCapitalTime();", "");
 const base = { account: "A", equity: 569.09, capital_baseline: { account: "a", equity: 500, ts: 1 } };
-const context = vm.createContext({ LIVE_EXCHANGE: "Hyperliquid", fetch: () => { throw Error("HL must not request TxFlow PnL"); } });
+const context = vm.createContext({ LIVE_EXCHANGE: "Hyperliquid" });
 vm.runInContext(snippet, context);
 let p = context.capitalPerformance(base);
 assert.equal(p.valid, true);
@@ -19,26 +19,6 @@ for (const bad of [{ ...base, capital_baseline: null }, { ...base, error: "offli
   { ...base, equity: NaN }, { ...base, account: "B" }, { ...base, capital_baseline: {account:"a",equity:0} }]) {
   assert.equal(context.capitalPerformance(bad).valid, false);
 }
-await context.fetchTxPnl("a");
-
-// Exercise the same prefix rewrite used by the actual TxFlow route.
-const rewritten = snippet.replaceAll("/api/", "/api/txflow/");
-let calls = [], fails = false, account = "a";
-let now = 1_000_000;
-const tx = vm.createContext({ LIVE_EXCHANGE: "TxFlow", Date: { now: () => now }, fetch: async url => {
-  calls.push(url);
-  if (fails) throw Error("network unavailable");
-  return { ok: true, json: async () => ({ok:true, account, realized:3.06, fees:1, fills:2}) };
-}});
-vm.runInContext(rewritten, tx);
-await tx.fetchTxPnl("a");
-assert.deepEqual(calls, ["/api/txflow/pnl"]);
-await tx.fetchTxPnl("a"); assert.equal(calls.length, 1);
-account = "b"; await tx.fetchTxPnl("b"); assert.equal(calls.length, 2);
-assert.equal(vm.runInContext("txPnl.account", tx), "b");
-now += 60001; fails = true; await tx.fetchTxPnl("b");
-assert.equal(vm.runInContext("txPnl", tx), null);
-
 // Render the complete monitor with an empty position list, without a browser or exchange.
 const elements = new Map();
 const get = id => { if (!elements.has(id)) elements.set(id, {innerHTML:"",textContent:""}); return elements.get(id); };
@@ -58,7 +38,7 @@ assert.match(html, /\+13\.82%/);
 assert.match(html, /记录起点资金/);
 assert.match(html, /净投入收益率/);
 assert.doesNotMatch(html, /真实总盈亏|>收益率</);
-console.log("✓ Account changes use persisted equity; unavailable baselines stay unknown; TxFlow route and account cache are isolated");
+console.log("✓ Account changes use persisted equity; unavailable baselines stay unknown");
 
 // Live PNL is current positions only, including losses/flat/unknown states.
 for (const [positions, expected] of [[[{unrealized:12}, {unrealized:-5}], '+$7.00'], [[{unrealized:-4}], '−$4.00'], [[], '+$0.00']]) {
@@ -101,19 +81,3 @@ assert.equal(context.capitalPerformance({...base,net_deposit:NaN}).valid,false);
 assert.equal(context.capitalPerformance({...base,net_deposit:Infinity}).valid,false);
 assert.ok(Math.abs(context.capitalPerformance({...base,net_deposit:-100}).percent-42.2725)<1e-8);
 console.log('✓ Deposits/withdrawals adjust principal and simple return, nonpositive principal stays undefined');
-
-// Real TxFlow audit data must not interrupt positions, orders or chart rendering.
-// Use the production formatter; injecting a test-only moneySigned masks scope errors.
-renderContext.LIVE_EXCHANGE='TxFlow';
-vm.runInContext(`txPnl={account:'a',audit:{fills:1,matched_fills:1,unassigned_fills:0,
- known_realized:-2,known_fees_usd:1,incomplete_rows:0,limitation:'可能截断',
- rows:[{time:1,coin:'BTC-USDC',oid:'12',size:1,price:100,fee_usd:1,slippage_pct:.1,system_order:true}]}}`,renderContext);
-let chartRendered=false;
-renderContext.renderLiveChart=()=>{chartRendered=true;};
-renderContext.renderMonitor({...base,positions:[{coin:'BTC-USDC',size:1,entry_px:100,unrealized:5}],records:[],config:{},history:[{ts:1,equity:500}]});
-assert.match(get('mo-metrics').innerHTML,/TxFlow 成交核验/);
-assert.match(get('mo-metrics').innerHTML,/−\$2\.00/);
-assert.match(get('mo-positions').innerHTML,/BTC-USDC/);
-assert.ok(chartRendered,'chart rendering must be reached after the audit panel');
-assert.match(get('mo-orders').innerHTML,/当前没有未成交挂单/);
-console.log('✓ TxFlow with populated audit renders metrics, positions, orders and chart without test-only formatters');

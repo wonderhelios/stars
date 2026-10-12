@@ -43,7 +43,7 @@ async function refreshStatus() {
     } else if (d.cached_coins > 0) {
       led.className = "led";
       $("statusText").textContent =
-        `已缓存 ${d.cached_coins} 币 · 流动性 ${d.universe_liquid} · ${d.exchange === "txflow" ? "TxFlow 日线就绪" : d.paper?.running ? "纸交易运行中" : "纸交易未启动"}`;
+        `已缓存 ${d.cached_coins} 币 · 流动性 ${d.universe_liquid} · ${d.paper?.running ? "纸交易运行中" : "纸交易未启动"}`;
     } else {
       led.className = "led off";
       $("statusText").textContent = "等待数据";
@@ -428,24 +428,6 @@ function entryHints(records) {
   return out;
 }
 
-// TxFlow 业绩单独、低频拉取（60 秒一次），不放在状态轮询里 ——
-// 否则每次轮询都要打两次交易所接口，在限速下会把状态请求拖到 502。
-let txPnl = null;
-let txPnlAt = 0;
-async function fetchTxPnl(account) {
-  if (LIVE_EXCHANGE !== "TxFlow") return;
-  const key = (account || "").toLowerCase();
-  if (txPnl && (txPnl.account || "").toLowerCase() !== key) { txPnl = null; txPnlAt = 0; }
-  if (Date.now() - txPnlAt < 60000) return;
-  txPnlAt = Date.now();
-  try {
-    // TxFlow's server rewrites the common /api/ prefix exactly once.
-    const r = await fetch("/api/pnl", { cache: "no-store" });
-    const j = await r.json();
-    txPnl = r.ok && j.ok && (j.account || "").toLowerCase() === key ? j : null;
-  } catch (e) { txPnl = null; }
-}
-
 function capitalPerformance(d) {
   const baseline = d.capital_baseline;
   const base = baseline && baseline.equity;
@@ -577,58 +559,8 @@ function renderExecDaily(d) {
   };
 }
 
-function renderTxReconciliation(r) {
-  if (!r || r.status === "waiting") return `<div class="tx-reconciliation"><p class="tx-audit-note">${escapeHTML(r?.label || "等待账户对账快照")}。从升级后首次同时记录净值和浮盈开始核对，不重置原有收益起点。</p></div>`;
-  const amount = v => Number.isFinite(v) ? moneySigned(v) : "—";
-  return `<div class="tx-reconciliation"><div class="tx-audit-meta"><span>账户对账区间 · UTC <b>${ts2m(r.start)} — ${ts2m(r.end)}</b></span><span>容差 $0.01</span></div>
-    <div class="tx-reconciliation-grid">
-      ${metric("账户变化 · 扣已知净入金",amount(r.account_net))}
-      ${metric("明细可解释金额",amount(r.explained))}
-      ${metric("待解释差额",amount(r.unexplained),Math.abs(r.unexplained || 0) > .01 ? "neg" : "")}
-    </div>
-    <details class="tx-audit-disclosure"><summary>查看对账算式与缺失项</summary>
-      <p>净值 ${amount(r.closing_equity)} − 起点净值 ${amount(r.opening_equity)} − 已知到账净入金 ${amount(r.net_deposit)} = ${amount(r.account_net)}<br>
-      已实现 ${amount(r.realized)} − 手续费 ${amount(r.fees)} + 浮盈变化 ${amount(r.unrealized_change)} + 已取得资金费 ${amount(r.known_funding)} = ${amount(r.explained)}<br>
-      资金费：${r.funding_available ? "已取得返回流水，完整性仍待核实" : "未完整取得，不能视为零"}。差额仅代表尚待解释金额，不推断为资金费或资金丢失。未关联系统订单不影响账户级求和。</p>
-      <ul>${(r.gaps || []).map(g=>`<li>${escapeHTML(g)}</li>`).join("")}</ul>
-    </details></div>`;
-}
-
-function renderTxAudit(account) {
-  if (LIVE_EXCHANGE !== "TxFlow") return "";
-  const a = txPnl && (txPnl.account || "").toLowerCase() === (account || "").toLowerCase() && txPnl.audit;
-  if (!a) return `<section class="tx-audit"><header class="tx-audit-head"><div><span class="section-eyebrow">EXECUTION REVIEW</span><h3>TxFlow 成交核验</h3></div><span class="tx-audit-tag">等待数据</span></header><p class="tx-audit-note">成交证据暂不可用，策略归因待核验。</p></section>`;
-  return `<section class="tx-audit">
-    <header class="tx-audit-head"><div><span class="section-eyebrow">EXECUTION REVIEW</span><h3>TxFlow 成交核验</h3><p>已保存的账户流水 · 不等同于策略净收益</p></div><span class="tx-audit-tag">${escapeHTML(a.reconciliation?.label || "等待账户对账快照")}</span></header>
-    ${renderTxReconciliation(a.reconciliation)}
-    <div class="tx-audit-kpis">` +
-      metric("已保存成交", String(a.fills), "") +
-      metric("关联系统订单", String(a.matched_fills), "") +
-      metric("已知已实现 · 未扣费", moneySigned(a.known_realized), a.known_realized < 0 ? "neg" : "pos") +
-      metric("已知手续费 · USD", moneySigned(-a.known_fees_usd), "") +
-    `</div><div class="tx-audit-status">
-      <span><i class="tx-audit-dot"></i>未归属成交 <b>${a.unassigned_fills}</b></span>
-      <span>字段不完整 <b>${a.incomplete_rows}</b></span>
-      <span>资金费<span class="tx-audit-pending">见区间对账明细</span></span>
-    </div>
-    <div class="tx-audit-meta"><span>成交覆盖 · UTC <b>${a.first_fill_at ? ts2m(a.first_fill_at) : "—"} — ${a.last_fill_at ? ts2m(a.last_fill_at) : "—"}</b></span><span>最近抓取 ${ts2m(txPnlAt)} UTC</span></div>
-    <details class="tx-audit-disclosure"><summary>数据范围与收益口径</summary><p>${escapeHTML(a.limitation)} 持仓浮盈需比较期初与期末；以上已实现和手续费不能直接等同于账户净收益。</p></details>` +
-    `<details class="tx-audit-disclosure"><summary>查看最近成交证据（最多 100 笔）</summary><div class="table-scroll"><table><thead><tr><th>时间 · UTC</th><th>币</th><th>订单号</th><th>数量</th><th>成交价</th><th>手续费 · USD</th><th>滑点</th><th>归属</th></tr></thead><tbody>${(a.rows || []).map(r => `<tr>
-      <td>${ts2m(r.time)}</td><td>${escapeHTML(String(r.coin || "—"))}</td><td>${escapeHTML(String(r.oid || "—"))}</td>
-      <td>${r.size == null ? "—" : fmtCompact(r.size)}</td><td>${r.price == null ? "—" : fmtCompact(r.price)}</td>
-      <td>${r.fee_usd == null ? "待核验" : fmt(r.fee_usd, 4)}</td><td>${r.slippage_pct == null ? "—" : fmt(r.slippage_pct, 3) + "%"}</td>
-      <td>${r.system_order ? "系统订单" : "未归属"}</td></tr>`).join("")}</tbody></table></div></details></section>`;
-}
-
 function renderMonitor(d) {
   if (!d) return;
-  if (txPnl && (txPnl.account || "").toLowerCase() === (d.account || "").toLowerCase()) {
-    d.tx_realized = txPnl.realized;
-    d.tx_fees = txPnl.fees;
-    d.tx_volume = txPnl.volume;
-    d.tx_fills = txPnl.fills;
-    d.tx_net_deposit = txPnl.net_deposit;
-  }
   lastLiveData = d;
   renderCapitalFlows(d);
   const c = d.config || {};
@@ -755,23 +687,7 @@ function renderMonitor(d) {
         metric("总名义敞口", "$" + fmt(d.gross_notional || 0, 0)) +
         metric("当前挂单", currentValid ? (d.tp_orders || []).length + " 笔" : "—") +
         metric("最后调仓", d.last_run_at ? `<span class="sm">${ts2m(d.last_run_at)}</span>` : "—")
-    ) +
-    // Returned exchange records may be truncated; never infer total account profit from them.
-    (LIVE_EXCHANGE !== "TxFlow" && d.tx_fills
-      ? metricGroup(
-          "交易所返回记录（可能截断，非完整净收益）",
-            metric(
-              "已实现（未扣费）",
-              (d.tx_realized >= 0 ? "+" : "") + "$" + fmt(d.tx_realized, 2),
-              d.tx_realized >= 0 ? "pos" : "neg"
-            ) +
-            metric("手续费", "$" + fmt(d.tx_fees, 2), "neg") +
-            metric("累计成交量", "$" + fmt(d.tx_volume, 0)) +
-            metric("返回流水净入金", "$" + fmt(d.tx_net_deposit, 2)) +
-            metric("成交笔数", String(d.tx_fills)),
-          "tx-perf"
-        )
-      : "") + renderTxAudit(d.account);
+    );
 
   // 检查清单按实测结果自动打勾
   const sl = slippageStats(d.records || []);
@@ -891,8 +807,6 @@ function renderMonitor(d) {
             status = '<span class="badge-mini warn">未成交</span>';
           } else if (f.kind === "failed") {
             status = `<span class="badge-mini err" title="${escapeHTML(f.msg)}">失败</span>`;
-          } else if (LIVE_EXCHANGE === "TxFlow" && /Success|已发送/.test(r.result || "")) {
-            status = '<span class="badge-mini warn">接单 · 成交待核验</span>';
           } else if (f.kind === "plan") {
             status = '<span class="badge-mini mute">计划</span>';
           }
@@ -1018,8 +932,6 @@ async function refreshMonitor(force) {
       lvConfigInto(d);
       liveLoaded = true;
     }
-    // 先拿业绩（有 60 秒缓存，不会每次都请求），再渲染
-    await fetchTxPnl(d.account);
     renderMonitor(d);
   } catch (e) {
     $("mo-metrics").innerHTML = `<div class="note neg">读取实盘状态失败：${e}</div>`;

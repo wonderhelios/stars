@@ -4,7 +4,6 @@ use crate::hl::{CoinMeta, MarketCtx};
 use crate::momentum::PanelEntry;
 use crate::paper::{self, PaperConfig, PaperState};
 use crate::store::Store;
-use anyhow::Context;
 use axum::{
     extract::State,
     http::{header, StatusCode},
@@ -17,17 +16,9 @@ use std::sync::Arc;
 use tokio::sync::Mutex;
 use tower_http::{compression::CompressionLayer, cors::CorsLayer};
 
-impl AppState {
-    pub fn signal_store(&self) -> Option<Arc<Store>> { self.binance_store.clone() }
-}
-
 #[derive(Clone)]
 pub struct AppState {
     pub store: Arc<Store>,
-    /// Dedicated Binance daily signal cache; never refreshed with TxFlow candles.
-    pub binance_store: Option<Arc<Store>>,
-    /// HL cache retained for explicit comparison; never silently used as Binance.
-    pub hl_store: Option<Arc<Store>>,
     pub paper: Arc<Mutex<PaperState>>,
     pub paper_path: Arc<std::path::PathBuf>,
     pub live: Arc<Mutex<crate::live::LiveState>>,
@@ -39,16 +30,12 @@ pub struct AppState {
     /// 调仓/止盈的执行闸门。互斥锁只保护状态、不覆盖下单过程，所以自动调仓
     /// 和手动点击可能同时进入 —— 两笔调仓交错会下重复单、把仓位搞乱。
     pub exec_gate: Arc<tokio::sync::Mutex<()>>,
-    /// Public candle refreshes serialize separately from trading and wallet/config operations.
-    pub refresh_gate: Arc<tokio::sync::Mutex<()>>,
     /// Prevent duplicate manual/automatic jobs while their public-data preparation runs.
     pub run_gate: Arc<tokio::sync::Mutex<()>>,
 }
 
 #[derive(Clone, Default)]
 pub struct MetaCache {
-    /// TxFlow daily availability is separate from complete trading metadata.
-    pub candle_available: Vec<String>,
     pub universe: Vec<CoinMeta>,
     pub ctxs: Vec<MarketCtx>,
     pub liquid: Vec<String>,
@@ -91,91 +78,6 @@ pub fn router(state: AppState) -> Router {
         .with_state(state)
 }
 
-/// The same monitor/config handlers backed by an isolated TxFlow AppState.
-/// 独立、低频的业绩查询。**不要**把它塞进 live_status —— 那会让每次页面轮询
-/// 都去拉两次交易所接口，在限速下直接把状态请求拖到 502。
-async fn txflow_pnl(State(state): State<AppState>) -> Response {
-    let st = state.live.lock().await.clone();
-    if !st.config.txflow {
-        return Json(json!({"ok": false, "error": "非 TxFlow 账户"})).into_response();
-    }
-    let since = st.baseline().and_then(|b| b.ts)
-        .or_else(|| st.records.iter().filter(|r| r.live).map(|r| r.ts).min()).unwrap_or(0);
-    let exec = match crate::exchange::Exec::reader_config(&st.config).await {
-        Ok(e) => e,
-        Err(e) => return Json(json!({"ok": false, "error": format!("{e}")})).into_response(),
-    };
-    match exec.txflow_pnl(since).await {
-        Some(Ok(p)) => {
-            let current = state.live.lock().await;
-            if !current.config.account.eq_ignore_ascii_case(&st.config.account) {
-                return Json(json!({"ok":false,"error":"账户已切换，请刷新"})).into_response();
-            }
-            let audit = match crate::txflow_audit::update(&state.live_path, &st.config.account, since,
-                &p.raw_fills, &p.raw_ledger, &current.records) {
-                Ok(a) => a,
-                Err(e) => return Json(json!({"ok":false,"error":format!("审计保存失败: {e}")})).into_response(),
-            };
-            Json(json!({
-            "audit": audit,
-            "ok": true,
-            "account": st.config.account,
-            "since": since,
-            "realized": p.realized,
-            "fees": p.fees,
-            "volume": p.volume,
-            "fills": p.fills,
-            "net_deposit": p.net_deposit,
-        }))
-        .into_response() },
-        Some(Err(e)) => Json(json!({"ok": false, "error": format!("{e}")})).into_response(),
-        None => Json(json!({"ok": false, "error": "无 TxFlow 客户端"})).into_response(),
-    }
-}
-
-/// No handlers or background jobs may operate on default state after a load error.
-pub fn txflow_unavailable_router(error: String) -> Router {
-    let message = std::sync::Arc::new(error);
-    let handler = move || { let message = message.clone(); async move {
-        (StatusCode::SERVICE_UNAVAILABLE, Json(json!({"ok":false,"error":message.as_str()})))
-    }};
-    Router::new()
-        .route("/txflow", axum::routing::any(handler.clone()))
-        .route("/txflow/*path", axum::routing::any(handler.clone()))
-        .route("/api/txflow/*path", axum::routing::any(handler))
-}
-
-pub fn txflow_router(state: AppState) -> Router {
-    Router::new()
-        .route("/txflow", get(txflow_html))
-        .route("/txflow/app.js", get(txflow_js))
-        .route("/txflow/agent.js", get(crate::txflow_agent::script))
-        .route("/txflow/points.js", get(|| async { ([(header::CONTENT_TYPE,"text/javascript; charset=utf-8")], include_str!("../static/txflow-points.js")) }))
-        .route("/api/txflow/points", get(crate::txflow_points::get).post(crate::txflow_points::save))
-        .route("/api/txflow/agent/prepare", post(crate::txflow_agent::prepare))
-        .route("/api/txflow/agent/approve", post(crate::txflow_agent::approve))
-        .route("/api/txflow/status", get(status))
-        .route("/api/txflow/live", get(live_status))
-        .route("/api/txflow/pnl", get(txflow_pnl))
-        .route("/api/txflow/live/config", post(live_config))
-        .route("/api/txflow/live/run", post(live_run))
-        .route("/api/txflow/live/reset", post(live_reset))
-        .route("/api/txflow/live/rebuild", post(live_rebuild))
-        .route("/api/txflow/live/tp", post(txflow_tp))
-        .route("/api/txflow/live/records/clear", post(live_records_clear))
-        .route("/api/txflow/live/capital", post(live_capital))
-        .route("/api/txflow/live/capital/time", post(live_capital_time))
-        .layer(CompressionLayer::new())
-        .with_state(state)
-}
-async fn txflow_html() -> impl IntoResponse {
-    ([(header::CONTENT_TYPE, "text/html; charset=utf-8")], include_str!("../static/txflow.html"))
-}
-async fn txflow_js() -> impl IntoResponse {
-    ([(header::CONTENT_TYPE, "text/javascript; charset=utf-8")], APP_JS.replace("/api/", "/api/txflow/")
-        .replace("const LIVE_EXCHANGE = \"Hyperliquid\";", "const LIVE_EXCHANGE = \"TxFlow\";"))
-}
-
 const INDEX_HTML: &str = include_str!("../static/index.html");
 const APP_JS: &str = include_str!("../static/app.js");
 
@@ -198,13 +100,6 @@ async fn status(State(state): State<AppState>) -> Json<serde_json::Value> {
     let meta = state.meta.lock().await;
     let cached = state.store.cached_coins().unwrap_or_default();
     let latest_ts = state.store.latest_ts().ok().flatten();
-    if state.live.lock().await.config.txflow {
-        let refresh = state.refresh.lock().await.clone();
-        return Json(json!({"exchange":"txflow","universe_total":meta.universe.len(),
-            "universe_liquid":meta.liquid.len(),"liquid_coins":meta.liquid,
-            "cached_coins":cached.len(),"latest_ts":latest_ts,"refreshed_at":meta.refreshed_at,
-            "fee_taker":meta.fee_taker,"fee_maker":meta.fee_maker,"refresh":refresh}));
-    }
     let paper = paper::snapshot(&*state.paper.lock().await);
     let refresh = state.refresh.lock().await.clone();
     let oi_cov = state
@@ -390,7 +285,7 @@ async fn live_status(State(state): State<AppState>) -> Response {
                         if n > 0 { tracing::info!("对账：补入 {n} 笔交易所成交回执"); }
                         let mut current = state.live.lock().await;
                         let previous = current.clone();
-                        crate::live::merge_txflow_reconciliation(&mut current, &st);
+                        crate::live::merge_reconciliation(&mut current, &st);
                         if let Err(e) = current.save(&state.live_path) {
                             *current = previous;
                             tracing::warn!("成交对账保存失败: {e}");
@@ -474,7 +369,7 @@ async fn live_config(
         c.target_positions = v.clamp(1, 30);
     }
     if let Some(v) = body.leverage {
-        c.leverage = if c.txflow { v.floor().clamp(1.0, 20.0) } else { v.clamp(1.0, 20.0) };
+        c.leverage = v.clamp(1.0, 20.0);
     }
     if let Some(v) = body.margin_buffer {
         c.margin_buffer = v.clamp(0.3, 1.0);
@@ -544,15 +439,11 @@ async fn live_run(State(state): State<AppState>, body: Option<Json<LiveRunBody>>
         }
     };
 
-    let txflow = state.live.lock().await.config.txflow;
-    let execution = if !txflow {
-        match state.exec_gate.clone().try_lock_owned() {
-            Ok(g) => Some(g),
-            Err(_) => return (StatusCode::CONFLICT, Json(json!({"ok":false,"error":"有订单操作正在执行，请稍后重试"}))).into_response(),
-        }
-    } else { None };
+    let execution = match state.exec_gate.clone().try_lock_owned() {
+        Ok(g) => g,
+        Err(_) => return (StatusCode::CONFLICT, Json(json!({"ok":false,"error":"有订单操作正在执行，请稍后重试"}))).into_response(),
+    };
     let store = state.store.clone();
-    let signal_store = state.signal_store();
     let live_state = state.live.clone();
     let live_path = state.live_path.clone();
     let markets = live_markets(&state).await;
@@ -561,13 +452,8 @@ async fn live_run(State(state): State<AppState>, body: Option<Json<LiveRunBody>>
         return (StatusCode::BAD_REQUEST, Json(json!({"ok":false,"error":"请先完成钱包授权并保存实盘配置，再执行调仓"}))).into_response();
     }
     let mut guard = state.live.lock().await;
-    guard.last_plan = vec![if txflow { "计划任务执行中：正在准备 TxFlow 行情…（期间可以保存配置）".into() } else { "调仓执行中…（页面会自动刷新结果）".into() }];
-    if let Err(e) = guard.save(&live_path) {
-        if st.config.txflow {
-            *guard = st.clone();
-            return (StatusCode::INTERNAL_SERVER_ERROR, Json(json!({"ok":false,"error":format!("交易记录无法持久保存，未开始下单: {e}")}))).into_response();
-        }
-    }
+    guard.last_plan = vec!["调仓执行中…（页面会自动刷新结果）".into()];
+    let _ = guard.save(&live_path);
     drop(guard);
 
     tokio::spawn(async move {
@@ -575,35 +461,17 @@ async fn live_run(State(state): State<AppState>, body: Option<Json<LiveRunBody>>
         let _job = job;
         let _held = execution;
         let outcome = async {
-            let markets = if st.config.txflow {
-                crate::txflow::ensure_binance_panel(&state).await?;
-                crate::txflow::refresh_meta_only(&state).await?;
-                live_markets(&state).await
-            } else { markets };
-            let _tx_execution = if txflow && live {
-                Some(state.exec_gate.clone().try_lock_owned().map_err(|_| anyhow::anyhow!("有订单或授权操作正在执行，请稍后重试"))?)
-            } else { None };
             let needs_baseline = live && live_state.lock().await.capital_baseline.is_none();
             if needs_baseline {
                 crate::live::record_equity_now(&live_state, &live_path).await?;
             }
             let st = live_state.lock().await.clone();
-            if txflow {
-                crate::live::fresh_binance_panel(signal_store.as_deref().context("缺少币安信号库")?, st.config.lookback, crate::live::now_ms_pub())?;
-            }
-            if txflow && live {
-                anyhow::ensure!(st.config.armed && st.config.can_sign(), "实盘配置已关闭或变更，未开始下单");
-                let mut current = live_state.lock().await;
-                current.begin_txflow_execution(&live_path)?;
-            }
-            crate::live::run(&store, signal_store.as_deref(), &st, &markets, live).await
+            crate::live::run(&store, &st, &markets, live).await
         }.await;
         let mut g = live_state.lock().await;
         match outcome {
             Ok((result, records)) => {
-                if txflow && live {
-                    g.complete_txflow_execution(result.aborted, crate::live::now_ms_pub());
-                } else if live || !st.config.txflow { g.last_run_at = Some(crate::live::now_ms_pub()); }
+                g.last_run_at = Some(crate::live::now_ms_pub());
                 g.last_plan = result.plan_lines.clone();
                 if let Some(r) = result.tp_ref.clone() {
                     g.tp_ref = r;
@@ -721,7 +589,6 @@ async fn live_rebuild(State(state): State<AppState>) -> Response {
     }
     let markets = live_markets(&state).await;
     let store = state.store.clone();
-    let signal_store = state.signal_store();
     let live = state.live.clone();
     let path = state.live_path.clone();
     {
@@ -731,7 +598,7 @@ async fn live_rebuild(State(state): State<AppState>) -> Response {
     }
     tokio::spawn(async move {
         let _held = gate;
-        let outcome = crate::live::rebuild_cross(&store, signal_store.as_deref(), &st, &markets).await;
+        let outcome = crate::live::rebuild_cross(&store, &st, &markets).await;
         let mut g = live.lock().await;
         g.last_plan = match outcome {
             Ok(log) => log,
@@ -785,207 +652,6 @@ async fn live_tp(State(state): State<AppState>) -> Response {
     }
 }
 
-/// TxFlow's paced TP replacement runs independently of the browser connection.
-async fn txflow_tp(State(state): State<AppState>) -> Response {
-    let gate = match state.exec_gate.clone().try_lock_owned() {
-        Ok(g) => g,
-        Err(_) => return Json(json!({"ok":false,"error":"有订单操作正在执行中"})).into_response(),
-    };
-    let st = state.live.lock().await.clone();
-    if !st.config.armed || !st.config.can_sign() {
-        return Json(json!({"ok":false,"error":"请先配置已授权的 Agent 钱包并启用实盘"})).into_response();
-    }
-    state.live.lock().await.last_plan = vec!["止盈单执行中…".into()];
-    tokio::spawn(async move {
-        let _gate = gate;
-        let result = async {
-            let exec = crate::exchange::Exec::signer_config(&st.config).await?;
-            let markets = live_markets(&state).await;
-            crate::live::refresh_take_profits(&exec, &markets, st.config.take_profit_pct, &st.tp_ref).await
-        }.await;
-        let mut g = state.live.lock().await;
-        g.last_plan = match result { Ok(log) => log, Err(e) => vec![format!("止盈单更新失败: {e}")] };
-        let _ = g.save(&state.live_path);
-    });
-    Json(json!({"ok":true,"started":true})).into_response()
-}
-
-#[cfg(test)]
-mod txflow_routes_tests {
-    use super::*;
-    use axum::{body::{Body, to_bytes}, http::Request};
-    use tower::ServiceExt;
-
-    #[tokio::test]
-    async fn txflow_page_and_configuration_are_isolated_from_hyperliquid() {
-        let root = std::env::temp_dir().join(format!("stars-routes-{}", uuid::Uuid::new_v4()));
-        std::fs::create_dir_all(&root).unwrap();
-        let base = AppState {
-            binance_store: None, hl_store: None,
-            store: Arc::new(Store::open(&root.join("hl.sqlite")).unwrap()),
-            paper: Arc::new(Mutex::new(PaperState::default())),
-            paper_path: Arc::new(root.join("paper.json")),
-            live: Arc::new(Mutex::new(crate::live::LiveState::default())),
-            live_path: Arc::new(root.join("hl.json")),
-            meta: Arc::new(Mutex::new(MetaCache::default())),
-            refresh: Arc::new(Mutex::new(RefreshStatus::default())),
-            http: reqwest::Client::new(), exec_gate: Arc::new(Mutex::new(())),
-            refresh_gate: Arc::new(Mutex::new(())),
-            run_gate: Arc::new(Mutex::new(())),
-        };
-        let mut tx_live = crate::live::LiveState::default();
-        tx_live.config.txflow = true;
-        let tx = AppState {
-            binance_store: Some(Arc::new(Store::open(&root.join("bn.sqlite")).unwrap())),
-            hl_store: Some(base.store.clone()),
-            store: Arc::new(Store::open(&root.join("tx.sqlite")).unwrap()),
-            live: Arc::new(Mutex::new(tx_live)), live_path: Arc::new(root.join("tx.json")),
-            exec_gate: Arc::new(Mutex::new(())), ..base.clone()
-        };
-        assert!(base.signal_store().is_none());
-        assert!(Arc::ptr_eq(&tx.signal_store().unwrap(),tx.binance_store.as_ref().unwrap()));
-        assert!(!Arc::ptr_eq(&tx.signal_store().unwrap(),tx.hl_store.as_ref().unwrap()));
-        let app = router(base.clone()).merge(txflow_router(tx.clone()));
-        for path in ["/", "/txflow", "/txflow/app.js", "/txflow/points.js", "/api/txflow/points", "/api/txflow/status", "/api/txflow/live"] {
-            let response = app.clone().oneshot(Request::builder().uri(path).body(Body::empty()).unwrap()).await.unwrap();
-            assert_eq!(response.status(), StatusCode::OK, "{path}");
-            let body = String::from_utf8(to_bytes(response.into_body(), 1_000_000).await.unwrap().to_vec()).unwrap();
-            if path == "/txflow" { assert!(body.contains("300ms") && body.contains("/txflow/app.js")); assert!(!body.contains("Sharpe <b>2.14")); }
-            if path == "/txflow/app.js" {
-                assert!(body.contains("/api/txflow/live/run"));
-                assert!(body.contains("fetch(\"/api/txflow/pnl\""));
-                assert!(!body.contains("/api/txflow/txflow/"));
-                assert!(!body.contains("fetch(\"/api/live"));
-                assert!(body.contains("const LIVE_EXCHANGE = \"TxFlow\";"));
-            }
-        }
-        tx.live.lock().await.config.account = "points-a".into();
-        let points = json!({"account":"points-a","week_start":345600000,"trader_points":12.,"referral_points":3.,"final_allocation":false});
-        let request = Request::builder().method("POST").uri("/api/txflow/points")
-            .header("content-type","application/json").body(Body::from(points.to_string())).unwrap();
-        let response=app.clone().oneshot(request).await.unwrap();
-        let value:serde_json::Value=serde_json::from_slice(&to_bytes(response.into_body(),10000).await.unwrap()).unwrap();
-        assert_eq!(value["ok"],true);
-        tx.live.lock().await.config.account="points-b".into();
-        let request = Request::builder().method("POST").uri("/api/txflow/points")
-            .header("content-type","application/json").body(Body::from(points.to_string())).unwrap();
-        let response=app.clone().oneshot(request).await.unwrap();
-        let value:serde_json::Value=serde_json::from_slice(&to_bytes(response.into_body(),10000).await.unwrap()).unwrap();
-        assert_eq!(value["ok"],false,"stale account writes must fail");
-        assert_eq!(app.clone().oneshot(Request::builder().uri("/api/points").body(Body::empty()).unwrap()).await.unwrap().status(),StatusCode::NOT_FOUND);
-        let request = Request::builder().method("POST").uri("/api/txflow/live/config")
-            .header("content-type", "application/json").body(Body::from(r#"{"lookback":21,"target_positions":4,"txflow":false}"#)).unwrap();
-        let response = app.clone().oneshot(request).await.unwrap();
-        assert_eq!(response.status(), StatusCode::OK);
-        assert_eq!(tx.live.lock().await.config.lookback, 21);
-        assert!(tx.live.lock().await.config.txflow);
-        assert!(!tx.live.lock().await.config.armed);
-        assert_eq!(base.live.lock().await.config.lookback, 14);
-        assert!(!base.live.lock().await.config.txflow);
-        assert!(tx.live_path.exists());
-        assert!(!base.live_path.exists());
-        let failing = AppState { live_path: Arc::new(root.clone()), ..tx.clone() };
-        let response = live_config(State(failing), Json(serde_json::from_value(json!({"armed":true})).unwrap())).await;
-        assert_eq!(response.status(), StatusCode::INTERNAL_SERVER_ERROR);
-        assert!(!tx.live.lock().await.config.armed);
-        // A public refresh or queued plan must not prevent disabling settings or preparing a wallet.
-        let refreshing = tx.refresh_gate.lock().await;
-        let planning = tx.run_gate.lock().await;
-        let request = Request::builder().method("POST").uri("/api/txflow/live/config")
-            .header("content-type", "application/json").body(Body::from(r#"{"armed":false,"auto_run":false,"min_vol_usd":1000000}"#)).unwrap();
-        assert_eq!(app.clone().oneshot(request).await.unwrap().status(), StatusCode::OK);
-        let prepare_request = || Request::builder().method("POST").uri("/api/txflow/agent/prepare")
-            .header("content-type", "application/json").header("host", "stars.example")
-            .header("origin", "https://stars.example").header("sec-fetch-site", "same-origin")
-            .body(Body::from(r#"{"account":"0x0000000000000000000000000000000000000001","signature_chain_id":42161}"#)).unwrap();
-        assert_eq!(app.clone().oneshot(prepare_request()).await.unwrap().status(), StatusCode::OK);
-        drop(refreshing); drop(planning);
-        // Actual order execution still excludes both operations.
-        let executing = tx.exec_gate.lock().await;
-        let request = Request::builder().method("POST").uri("/api/txflow/live/config")
-            .header("content-type", "application/json").body(Body::from(r#"{"armed":true}"#)).unwrap();
-        assert_eq!(app.clone().oneshot(request).await.unwrap().status(), StatusCode::CONFLICT);
-        assert_eq!(app.clone().oneshot(prepare_request()).await.unwrap().status(), StatusCode::CONFLICT);
-        assert!(!tx.live.lock().await.config.armed);
-        drop(executing);
-        drop(base); drop(tx);
-        std::fs::remove_dir_all(root).unwrap();
-    }
-}
-
-#[cfg(test)]
-mod report5_unavailable_tests {
-    #[tokio::test]
-    async fn report5_corrupt_txflow_routes_reject_every_operation() {
-        use tower::ServiceExt;
-        use axum::{body::Body, http::Request};
-        let router=super::txflow_unavailable_router("状态文件损坏；拒绝实盘".into());
-        for (method,path) in [("GET","/txflow"),("GET","/api/txflow/live"),("POST","/api/txflow/live/config"),("POST","/api/txflow/live/run"),("POST","/api/txflow/agent/approve"),("POST","/api/txflow/live/reset")] {
-            let response=router.clone().oneshot(Request::builder().method(method).uri(path).body(Body::empty()).unwrap()).await.unwrap();
-            assert_eq!(response.status(),503);
-            let bytes=axum::body::to_bytes(response.into_body(),4096).await.unwrap();
-            assert!(String::from_utf8(bytes.to_vec()).unwrap().contains("状态文件损坏"));
-        }
-    }
-}
-
-#[cfg(test)]
-mod repair_integration_tests {
-    use super::*;
-    fn state(root: &std::path::Path, binance: bool) -> AppState {
-        let mut live = crate::live::LiveState::default();
-        live.config.txflow = true;
-        live.config.account = "mock-account".into();
-        live.config.key_path = "never-open-this-key".into();
-        live.config.armed = true;
-        AppState {
-            store:Arc::new(Store::open(&root.join("tx.sqlite")).unwrap()),
-            binance_store: binance.then(|| Arc::new(Store::open(&root.join("bn.sqlite")).unwrap())),
-            hl_store:None, paper:Arc::new(Mutex::new(Default::default())),
-            paper_path:Arc::new(root.join("paper.json")), live:Arc::new(Mutex::new(live)),
-            live_path:Arc::new(root.join("live.json")), meta:Arc::new(Mutex::new(Default::default())),
-            refresh:Arc::new(Mutex::new(Default::default())), http:reqwest::Client::new(),
-            exec_gate:Arc::new(Mutex::new(())), refresh_gate:Arc::new(Mutex::new(())), run_gate:Arc::new(Mutex::new(())),
-        }
-    }
-    #[tokio::test]
-    async fn completed_downloads_resume_without_network_or_recovery_marker() {
-        let root = std::env::temp_dir().join(uuid::Uuid::new_v4().to_string());
-        let app = state(&root, true);
-        let daily = root.join("binance-daily"); std::fs::create_dir_all(&daily).unwrap();
-        let day = 86_400_000;
-        let yesterday = crate::live::now_ms_pub()/day*day-day;
-        let mut csv = "ts,open,high,low,close,volume\n".to_string();
-        for i in 0..40 { csv += &format!("{},2,3,1,2,100\n", yesterday-(39-i)*day); }
-        for entry in crate::binance::default_mapping().unwrap().iter().take(20) {
-            std::fs::write(daily.join(format!("{}.csv",entry["txflow_name"].as_str().unwrap())), &csv).unwrap();
-        }
-        tokio::time::timeout(std::time::Duration::from_secs(2), crate::txflow::ensure_binance_panel(&app)).await.unwrap().unwrap();
-        assert_eq!(crate::live::fresh_binance_panel(app.binance_store.as_deref().unwrap(),14,crate::live::now_ms_pub()).unwrap().len(),20);
-        assert!(app.live.lock().await.pending_recovery.is_none());
-        assert!(!app.live_path.exists());
-        drop(app); std::fs::remove_dir_all(root).unwrap();
-    }
-    #[tokio::test]
-    async fn manual_signal_failure_does_not_mark_execution_started_or_read_a_signing_key() {
-        let root = std::env::temp_dir().join(uuid::Uuid::new_v4().to_string());
-        let app = state(&root, false);
-        let response = live_run(State(app.clone()), Some(Json(LiveRunBody {live:true}))).await;
-        assert_eq!(response.status(), StatusCode::OK);
-        tokio::time::timeout(std::time::Duration::from_secs(2), async {
-            loop {
-                if app.live.lock().await.last_plan.iter().any(|s| s.starts_with("调仓失败")) { break; }
-                tokio::task::yield_now().await;
-            }
-        }).await.unwrap();
-        let st = app.live.lock().await;
-        assert!(st.pending_recovery.is_none()); assert!(st.last_run_at.is_none());
-        assert!(st.last_plan[0].contains("币安信号库不可用"));
-        assert!(st.records.is_empty());
-        drop(st); drop(app); std::fs::remove_dir_all(root).unwrap();
-    }
-}
-
 #[cfg(test)]
 mod capital_time_tests {
     use super::*;
@@ -1007,5 +673,57 @@ mod capital_time_tests {
         let restored: crate::live::CapitalFlow = serde_json::from_value(serde_json::to_value(updated).unwrap()).unwrap();
         assert_eq!(restored.ts,2000);
         assert_eq!(restored.effective_ts,Some(1500));
+    }
+}
+
+#[cfg(test)]
+mod live_routes_tests {
+    use super::*;
+    use axum::{body::Body, http::Request};
+    use tower::ServiceExt;
+
+    #[tokio::test]
+    async fn live_page_and_configuration_preserve_save_and_execution_gates() {
+        let root = std::env::temp_dir().join(format!("stars-routes-{}", uuid::Uuid::new_v4()));
+        std::fs::create_dir_all(&root).unwrap();
+        let base = AppState {
+            store: Arc::new(Store::open(&root.join("hl.sqlite")).unwrap()),
+            paper: Arc::new(Mutex::new(PaperState::default())),
+            paper_path: Arc::new(root.join("paper.json")),
+            live: Arc::new(Mutex::new(crate::live::LiveState::default())),
+            live_path: Arc::new(root.join("hl.json")),
+            meta: Arc::new(Mutex::new(MetaCache::default())),
+            refresh: Arc::new(Mutex::new(RefreshStatus::default())),
+            http: reqwest::Client::new(), exec_gate: Arc::new(Mutex::new(())),
+            run_gate: Arc::new(Mutex::new(())),
+        };
+        let app = router(base.clone());
+        let response = app.clone().oneshot(Request::builder().uri("/").body(Body::empty()).unwrap()).await.unwrap();
+        assert_eq!(response.status(), StatusCode::OK);
+        assert_eq!(app.clone().oneshot(Request::builder().uri("/api/points").body(Body::empty()).unwrap()).await.unwrap().status(), StatusCode::NOT_FOUND);
+        let request = Request::builder().method("POST").uri("/api/live/config")
+            .header("content-type", "application/json").body(Body::from(r#"{"lookback":21,"target_positions":4}"#)).unwrap();
+        let response = app.clone().oneshot(request).await.unwrap();
+        assert_eq!(response.status(), StatusCode::OK);
+        assert_eq!(base.live.lock().await.config.lookback, 21);
+        assert!(!base.live.lock().await.config.armed);
+        assert!(base.live_path.exists());
+        let failing = AppState { live_path: Arc::new(root.clone()), ..base.clone() };
+        let response = live_config(State(failing), Json(serde_json::from_value(json!({"armed":true})).unwrap())).await;
+        assert_eq!(response.status(), StatusCode::INTERNAL_SERVER_ERROR);
+        assert!(!base.live.lock().await.config.armed);
+        let planning = base.run_gate.lock().await;
+        let request = Request::builder().method("POST").uri("/api/live/config")
+            .header("content-type", "application/json").body(Body::from(r#"{"armed":false,"auto_run":false,"min_vol_usd":1000000}"#)).unwrap();
+        assert_eq!(app.clone().oneshot(request).await.unwrap().status(), StatusCode::OK);
+        drop(planning);
+        let executing = base.exec_gate.lock().await;
+        let request = Request::builder().method("POST").uri("/api/live/config")
+            .header("content-type", "application/json").body(Body::from(r#"{"armed":true}"#)).unwrap();
+        assert_eq!(app.clone().oneshot(request).await.unwrap().status(), StatusCode::CONFLICT);
+        assert!(!base.live.lock().await.config.armed);
+        drop(executing);
+        drop(app); drop(base);
+        std::fs::remove_dir_all(root).unwrap();
     }
 }

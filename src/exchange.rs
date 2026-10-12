@@ -77,33 +77,15 @@ pub struct Acct {
 }
 
 pub struct Exec {
-    txflow: Option<crate::txflow::Client>,
     http: reqwest::Client,
     trading: Option<ExchangeClient>,
     account: Option<Address>,
 }
 
 impl Exec {
-    #[cfg(test)]
-    pub fn test_txflow(client: crate::txflow::Client) -> Self {
-        Self { txflow:Some(client), http:reqwest::Client::new(), trading:None, account:None }
-    }
-    pub fn is_txflow(&self) -> bool { self.txflow.is_some() }
-    pub async fn txflow_prices(&self, coins: &[String]) -> Option<Result<HashMap<String, f64>>> {
-        if let Some(tx) = &self.txflow { Some(tx.prices(coins).await) } else { None }
-    }
-    pub async fn txflow_maintenance_margin(&self) -> Option<Result<f64>> {
-        if let Some(tx) = &self.txflow { Some(tx.maintenance_margin().await) } else { None }
-    }
     pub async fn signer_config(cfg: &crate::live::LiveConfig) -> Result<Self> {
-        if cfg.txflow { Self::txflow(&cfg.account, Some(Path::new(&cfg.key_path))).await }
-        else { Self::signer(&cfg.account, Path::new(&cfg.key_path)).await }
+        Self::signer(&cfg.account, Path::new(&cfg.key_path)).await
     }
-    pub async fn txflow(account: &str, key: Option<&Path>) -> Result<Self> {
-        let client = crate::txflow::Client::new(account, key).await?;
-        Ok(Self { txflow: Some(client), http: reqwest::Client::new(), trading: None, account: None })
-    }
-
     async fn info_post(&self, body: Value) -> Result<Value> {
         let mut last: Option<anyhow::Error> = None;
         for attempt in 0..5u32 {
@@ -150,7 +132,6 @@ impl Exec {
             None => None,
         };
         Ok(Self {
-            txflow: None,
             http,
             trading: None,
             account,
@@ -158,8 +139,7 @@ impl Exec {
     }
 
     pub async fn reader_config(cfg: &crate::live::LiveConfig) -> Result<Self> {
-        if cfg.txflow {Self::txflow(&cfg.account,None).await}
-        else {Self::reader_for(Some(&cfg.account)).await}
+        Self::reader_for(Some(&cfg.account)).await
     }
 
     pub async fn reader_for(account: Option<&str>) -> Result<Self> {
@@ -171,7 +151,6 @@ impl Exec {
             None => None,
         };
         Ok(Self {
-            txflow: None,
             http,
             trading: None,
             account,
@@ -200,7 +179,6 @@ impl Exec {
         .await
         .context("exchange client init timed out")??;
         Ok(Self {
-            txflow: None,
             http,
             trading: Some(trading),
             account: Some(address),
@@ -235,7 +213,6 @@ impl Exec {
 
     /// Every mid price in one request (avoids one l2 call per coin).
     pub async fn all_mids(&self) -> Result<HashMap<String, f64>> {
-        if let Some(tx) = &self.txflow { return tx.all_mids().await; }
         let v = self.info_post(json!({"type": "allMids"})).await?;
         let mut out = HashMap::new();
         if let Some(obj) = v.as_object() {
@@ -255,7 +232,6 @@ impl Exec {
     }
 
     pub async fn account(&self) -> Result<Acct> {
-        if let Some(tx) = &self.txflow { return tx.account().await; }
         let account = self.account.context("read-only client has no account")?;
         let addr = account.to_string();
         // Both views in one round trip.
@@ -350,7 +326,6 @@ impl Exec {
     /// 就会被单独强平，而组合整体其实还在盈亏相抵。第三个参数是 is_cross，
     /// 传 false 会变成逐仓（这里曾经写错成 false）。
     pub async fn set_leverage(&self, coin: &str, leverage: u32) -> Result<()> {
-        if let Some(tx) = &self.txflow { return tx.set_leverage(coin, leverage).await; }
         let trading = self.trading.as_ref().context("not a signing client")?;
         let resp = sdk_retry(&format!("设置 {coin} 杠杆"), || {
             trading.update_leverage(leverage, coin, true, None)
@@ -371,7 +346,6 @@ impl Exec {
         size: f64,
         px: f64,
     ) -> Result<u64> {
-        if let Some(tx) = &self.txflow { return tx.resting_reduce_order(coin, buy, size, px).await; }
         let trading = self.trading.as_ref().context("not a signing client")?;
         anyhow::ensure!(px > 0.0 && size > 0.0, "invalid resting order {coin}");
         let cloid = stars_cloid();
@@ -397,22 +371,9 @@ impl Exec {
         }
     }
 
-    /// TxFlow 的真实业绩汇总（已实现/手续费/净入金）。非 TxFlow 时返回 None。
-    pub async fn txflow_pnl(&self, since_ms: i64) -> Option<anyhow::Result<crate::txflow::PnlSummary>> {
-        match &self.txflow {
-            Some(tx) => Some(tx.pnl_summary(since_ms).await),
-            None => None,
-        }
-    }
-
-    pub async fn txflow_account_funding(&self, start: i64, end: i64) -> anyhow::Result<Vec<serde_json::Value>> {
-        self.txflow.as_ref().context("非 TxFlow 账户")?.account_funding(start, end).await
-    }
-
     /// 最近的成交明细。止盈单是被动挂单、由交易所自动成交的，程序不经手，
     /// 所以必须回头拉成交才能把这块盈亏算进来。
     pub async fn user_fills(&self, limit: usize) -> Result<serde_json::Value> {
-        if let Some(tx) = &self.txflow { return tx.user_fills(limit).await; }
         let account = self.account.context("read-only client has no account")?;
         self.info_post(json!({
             "type": "userFills",
@@ -428,7 +389,6 @@ impl Exec {
 
     /// 挂单详情，给前端展示。
     pub async fn open_order_details(&self) -> Result<Vec<OpenOrder>> {
-        if let Some(tx) = &self.txflow { return tx.open_orders().await; }
         let account = self.account.context("read-only client has no account")?;
         let v = self
             .info_post(json!({"type": "openOrders", "user": account.to_string()}))
@@ -458,7 +418,6 @@ impl Exec {
 
     /// 批量撤单。返回成功撤销的数量。
     pub async fn cancel_orders(&self, orders: &[(String, u64)]) -> Result<usize> {
-        if let Some(tx) = &self.txflow { return tx.cancel_orders(orders).await; }
         if orders.is_empty() {
             return Ok(0);
         }
@@ -530,7 +489,6 @@ impl Exec {
         slippage: f64,
         sz_decimals: i32,
     ) -> Result<ExchangeDataStatus> {
-        if let Some(tx) = &self.txflow { return tx.ioc(coin, buy, reduce_only, size, mid, slippage).await; }
         let trading = self.trading.as_ref().context("not a signing client")?;
         let aggressive = if buy {
             mid * (1.0 + slippage)
@@ -653,14 +611,4 @@ pub fn describe(status: &ExchangeDataStatus) -> String {
 #[allow(dead_code)]
 pub fn err(msg: &str) -> anyhow::Error {
     anyhow!(msg.to_string())
-}
-
-/// TxFlow-only evidence marker: acceptance without a fill stays unverified.
-pub fn describe_txflow(status: &ExchangeDataStatus, requested: f64) -> String {
-    let text = format!("{} [requested={requested}]", describe(status));
-    match status {
-        ExchangeDataStatus::Filled(f) if f.oid > 0 => format!("{text} [oid={}]", f.oid),
-        ExchangeDataStatus::Resting(r) if r.oid > 0 => format!("{text} [oid={}]", r.oid),
-        _ => text,
-    }
 }

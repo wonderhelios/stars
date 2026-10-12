@@ -1,4 +1,3 @@
-mod binance;
 mod exchange;
 mod hl;
 mod live;
@@ -7,10 +6,6 @@ mod paper;
 mod store;
 mod trader;
 mod web;
-mod txflow;
-mod txflow_audit;
-mod txflow_points;
-mod txflow_agent;
 
 use anyhow::Context;
 use crate::hl::{CoinMeta, HlClient, MarketCtx};
@@ -45,12 +40,6 @@ async fn main() -> anyhow::Result<()> {
 
     // ===== trade subcommand (live execution) =====
     let args: Vec<String> = std::env::args().collect();
-    if args.get(1).map(|s| s.as_str()) == Some("import-binance") {
-        return binance::command(&args, std::path::Path::new(&db_path));
-    }
-    if args.get(1).map(|s| s.as_str()) == Some("fetch-binance") {
-        return binance::fetch_command(&args).await;
-    }
     if args.get(1).map(|s| s.as_str()) == Some("trade") {
         return run_trade(&args, &db_path).await;
     }
@@ -58,17 +47,13 @@ async fn main() -> anyhow::Result<()> {
     let store = Arc::new(Store::open(std::path::Path::new(&db_path))?);
     let client = HlClient::new();
     let paper = Arc::new(Mutex::new(PaperState::load(std::path::Path::new(&paper_path))));
-    let mut hl_live = live::LiveState::load(std::path::Path::new(&live_path));
-    hl_live.config.txflow = false;
+    let hl_live = live::LiveState::load(std::path::Path::new(&live_path));
     let live = Arc::new(Mutex::new(hl_live));
     let meta = Arc::new(Mutex::new(MetaCache::default()));
     let refresh = Arc::new(Mutex::new(RefreshStatus::default()));
 
     let state = AppState {
-        binance_store: None,
-        hl_store: None, // HL 自己就是信号源
         exec_gate: std::sync::Arc::new(tokio::sync::Mutex::new(())),
-        refresh_gate: std::sync::Arc::new(tokio::sync::Mutex::new(())),
         run_gate: std::sync::Arc::new(tokio::sync::Mutex::new(())),
         store: store.clone(),
         paper: paper.clone(),
@@ -82,56 +67,6 @@ async fn main() -> anyhow::Result<()> {
         meta: meta.clone(),
         refresh: refresh.clone(),
     };
-
-    // TxFlow owns its database, settings and records; no HL data is reused.
-    let tx_db = std::env::var("STARS_TXFLOW_DB").unwrap_or_else(|_| {
-        std::path::Path::new(&db_path).with_file_name("txflow-candles.sqlite").to_string_lossy().into_owned()
-    });
-    let tx_path = std::env::var("STARS_TXFLOW_LIVE").unwrap_or_else(|_| {
-        std::path::Path::new(&live_path).with_file_name("txflow-live.json").to_string_lossy().into_owned()
-    });
-    anyhow::ensure!(tx_db != db_path && tx_path != live_path, "TxFlow 数据路径不能与 Hyperliquid 相同");
-    let (mut tx_live, tx_load_error) = match live::LiveState::load_txflow(std::path::Path::new(&tx_path)) {
-        Ok(live) => (live, None),
-        Err(error) => (live::LiveState::default(), Some(format!("{error:#}"))),
-    };
-    if !std::path::Path::new(&tx_path).exists() {
-        tx_live.config.min_vol_usd = 500_000.0;
-    }
-    tx_live.config.txflow = true;
-    // TxFlow 的**数据库**打不开时，绝不能拖垮整个进程 —— HL 正在跑真钱。
-    //
-    // 原来这里是 `Store::open(&tx_db)?`：TxFlow 的 sqlite 损坏/被锁/路径不可写，
-    // 整进程直接退出，连 HL 的下单和自动管理都一起停掉。用临时库占位，
-    // 并把 TxFlow 标记为不可用（与"状态文件损坏"走同一套降级路径）。
-    let tx_store = match Store::open(std::path::Path::new(&tx_db)) {
-        Ok(s) => Arc::new(s),
-        Err(e) => {
-            warn!("TxFlow 数据库打开失败，不影响 Hyperliquid：{e:#}");
-            let tmp = std::env::temp_dir().join("stars-txflow-unavailable.sqlite");
-            Arc::new(Store::open(&tmp)?)
-        }
-    };
-
-    let tx_state = AppState {
-        store: tx_store.clone(),
-        binance_store: binance::open_signal_store(&db_path, &tx_db),
-        hl_store: Some(state.store.clone()),
-        live: Arc::new(Mutex::new(tx_live)),
-        live_path: Arc::new(std::path::PathBuf::from(tx_path)),
-        meta: Arc::new(Mutex::new(MetaCache::default())),
-        refresh: Arc::new(Mutex::new(RefreshStatus::default())),
-        exec_gate: Arc::new(Mutex::new(())),
-        refresh_gate: Arc::new(Mutex::new(())),
-        run_gate: Arc::new(Mutex::new(())),
-        ..state.clone()
-    };
-    if tx_load_error.is_none() {
-        let tx = tx_state.clone();
-        tokio::spawn(async move { txflow::background(tx).await; });
-        let audit = tx_state.clone();
-        tokio::spawn(async move { txflow_audit::background(audit).await; });
-    }
 
     // ===== 净值曲线记录器（Hyperliquid）=====
     //
@@ -226,7 +161,7 @@ async fn main() -> anyhow::Result<()> {
                     let meta = st.meta.lock().await;
                     live::markets_from_meta(&meta.universe)
                 };
-                match live::run(&st.store, st.hl_store.as_deref(), &snapshot, &markets, true).await {
+                match live::run(&st.store, &snapshot, &markets, true).await {
                     Ok((result, records)) => {
                         let mut guard = st.live.lock().await;
                         guard.last_run_at = Some(now_ms());
@@ -281,11 +216,7 @@ async fn main() -> anyhow::Result<()> {
     }
 
     // ===== HTTP =====
-    let tx_router = match tx_load_error {
-        Some(error) => web::txflow_unavailable_router(error),
-        None => web::txflow_router(tx_state),
-    };
-    let app = web::router(state).merge(tx_router);
+    let app = web::router(state);
     let addr = std::env::var("STARS_BIND_ADDR").unwrap_or_else(|_| "0.0.0.0:3000".into());
     let listener = tokio::net::TcpListener::bind(&addr).await?;
     info!("stars listening on http://{addr}");

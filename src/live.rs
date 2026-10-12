@@ -36,8 +36,6 @@ pub fn markets_from_meta(universe: &[crate::hl::CoinMeta]) -> HashMap<String, Ma
 // 而这里会用真正想要的 3.0 / 0.9。字段缺失再也不会毁掉整个配置。
 #[serde(default)]
 pub struct LiveConfig {
-    /// Fixed by the server route; clients cannot choose the execution venue.
-    pub txflow: bool,
     pub account: String,
     pub key_path: String,
     pub target_positions: usize,
@@ -51,7 +49,7 @@ pub struct LiveConfig {
     ///
     /// 为什么需要：`min_order_usd` 是绝对值，而仓位随账号缩放。同一个 $10 门槛，
     /// 对 $585 的账号是一个仓位的 17.7%（几乎不调仓），对 $2900 的账号是 3.8%
-    /// （每天微调一堆）。这就是"HL 不需要调、TxFlow 一大堆要调"的真实原因。
+    /// （每天微调一堆）。这解释了不同账号的调仓频率差异。
     /// 设成比例之后，两边的**执行粒度**才可比。
     pub min_order_pct: f64,
     /// 错峰调仓档数：每个币每 N 天轮到一次。1 = 每日全量。
@@ -73,7 +71,6 @@ pub struct LiveConfig {
 impl Default for LiveConfig {
     fn default() -> Self {
         Self {
-            txflow: false,
             account: String::new(),
             key_path: String::new(),
             target_positions: 8,
@@ -105,7 +102,7 @@ fn default_tp() -> f64 {
 
 impl LiveConfig {
     pub fn effective_leverage(&self) -> f64 {
-        if self.txflow { self.leverage.floor().clamp(1., 20.) } else { self.leverage }
+        self.leverage
     }
 
     pub fn trade_config(&self) -> TradeConfig {
@@ -162,19 +159,10 @@ pub struct LiveRecord {
     pub reduce_only: bool,
 }
 
-#[derive(Clone, Serialize, Deserialize)]
-pub struct RecoveryState {
-    pub account: String,
-    pub started_at: i64,
-    pub reason: String,
-}
-
 #[derive(Clone, Serialize, Deserialize, Default)]
 pub struct LiveState {
     #[serde(default)]
     pub capital_baseline: Option<CapitalBaseline>,
-    #[serde(default)]
-    pub pending_recovery: Option<RecoveryState>,
     pub config: LiveConfig,
     pub history: Vec<EquityPoint>,
     pub records: Vec<LiveRecord>,
@@ -310,7 +298,7 @@ pub struct CapitalFlow {
     pub note: String,
 }
 
-pub fn merge_txflow_reconciliation(current: &mut LiveState, snapshot: &LiveState) {
+pub fn merge_reconciliation(current: &mut LiveState, snapshot: &LiveState) {
     if !current.config.account.eq_ignore_ascii_case(&snapshot.config.account) { return; }
     let mut known:std::collections::HashSet<u64>=current.records.iter().filter_map(|r|r.tid).collect();
     for record in &snapshot.records {
@@ -348,56 +336,6 @@ impl LiveState {
             source: if saved.is_some() { "已保存的起始资金" } else { "最早留存净值（启动前数据未知）" }.into(),
         })
     }
-    pub fn begin_txflow_execution(&mut self, path: &std::path::Path) -> Result<()> {
-        if let Some(pending) = &self.pending_recovery {
-            anyhow::ensure!(pending.account.eq_ignore_ascii_case(&self.config.account),
-                "TxFlow 恢复账户与当前配置不一致，拒绝执行");
-        }
-        let previous=self.clone();
-        if self.pending_recovery.is_none() {
-            self.pending_recovery=Some(RecoveryState {
-                account:self.config.account.clone(), started_at:now_ms_pub(),
-                reason:"执行已开始，结果尚未核验；中断后优先全组合恢复".into(),
-            });
-        }
-        if let Err(e)=self.save(path) { *self=previous; return Err(e); }
-        Ok(())
-    }
-
-    pub fn complete_txflow_execution(&mut self, aborted: bool, now: i64) {
-        if aborted {
-            if let Some(pending)=&mut self.pending_recovery {
-                pending.reason="未达风险目标或结果未知，等待优先全组合恢复".into();
-            }
-        } else {
-            self.pending_recovery=None;
-            self.last_run_at=Some(now);
-        }
-    }
-
-    /// TxFlow must not trade after losing persisted configuration/recovery.
-    /// Missing file is a first start; any existing unreadable/invalid file is fatal.
-    pub fn load_txflow(path: &std::path::Path) -> Result<Self> {
-        let result = (|| -> Result<Self> {
-            let bytes = match std::fs::read(path) {
-                Ok(bytes) => bytes,
-                Err(e) if e.kind() == std::io::ErrorKind::NotFound => return Ok(Self::default()),
-                Err(e) => return Err(e.into()),
-            };
-            let value: serde_json::Value = serde_json::from_slice(&bytes)?;
-            let config = value.get("config").and_then(|v| v.as_object())
-                .context("缺失必填 config 对象")?;
-            for field in ["account", "key_path", "armed"] {
-                anyhow::ensure!(config.contains_key(field), "缺失必填 config.{field}");
-            }
-            let state: Self = serde_json::from_value(value)?;
-            anyhow::ensure!(!state.config.armed || state.config.can_sign(), "已启用实盘但 account/key_path 为空");
-            Ok(state)
-        })().with_context(|| format!("TxFlow 状态文件损坏或不可读取 {}；拒绝启动实盘，请修复状态文件（恢复记录不得丢弃）", path.display()));
-        if let Err(error) = &result { eprintln!("警告: {error:#}"); }
-        result
-    }
-
     pub fn load(path: &std::path::Path) -> Self {
         std::fs::read_to_string(path)
             .ok()
@@ -410,18 +348,7 @@ impl LiveState {
             std::fs::create_dir_all(parent)?;
         }
         let bytes=serde_json::to_vec_pretty(self)?;
-        if !self.config.txflow {
-            std::fs::write(path,bytes)?;
-            return Ok(());
-        }
-        use std::io::Write;
-        use std::os::unix::fs::OpenOptionsExt;
-        let tmp=path.with_extension("tmp");
-        let mut file=std::fs::OpenOptions::new().write(true).create(true).truncate(true).mode(0o600).open(&tmp)?;
-        file.write_all(&bytes)?;file.sync_all()?;
-        if path.exists() { std::fs::copy(path,path.with_extension("bak"))?; }
-        std::fs::rename(&tmp,path)?;
-        if let Some(parent)=path.parent() { std::fs::File::open(parent)?.sync_all()?; }
+        std::fs::write(path,bytes)?;
         Ok(())
     }
 }
@@ -463,15 +390,7 @@ pub struct LiveSnapshot {
     pub isolated_count: usize,
     /// 策略累计盈亏（已实现 + 未实现），与入金无关。
     pub cumulative_pnl: f64,
-    /// TxFlow：交易所口径的已实现盈亏、手续费、成交量、净入金。
-    /// 页面以前只显示未实现，导致一个赚了钱的实际看起来在亏。
-    pub tx_realized: f64,
-    pub tx_fees: f64,
-    pub tx_volume: f64,
-    pub tx_fills: usize,
-    /// 返回流水的净入金；接口可能截断，不能据此推导账户总收益。
-    pub tx_net_deposit: f64,
-    /// 用户手动记录的累计净入金（区别于从流水推导的 tx_net_deposit）。
+    /// 用户手动记录的累计净入金。
     pub net_deposit: f64,
     /// 入金/出金流水。
     pub capital_flows: Vec<CapitalFlow>,
@@ -521,11 +440,6 @@ pub async fn snapshot(
         cumulative_pnl: 0.0,
         shadow: Vec::new(),
         unpriced: Vec::new(),
-        tx_realized: 0.0,
-        tx_fees: 0.0,
-        tx_volume: 0.0,
-        tx_fills: 0,
-        tx_net_deposit: 0.0,
         net_deposit: 0.0,
         capital_flows: Vec::new(),
         exec_daily: Vec::new(),
@@ -541,12 +455,10 @@ pub async fn snapshot(
         snap.error = Some("未配置账户地址".into());
         return snap;
     }
-    let exec_res = if cfg.txflow {
-        Exec::txflow(&cfg.account, None).await
-    } else { match http {
+    let exec_res = match http {
         Some(h) => Exec::reader_shared(h, Some(&cfg.account)).await,
         None => Exec::reader_for(Some(&cfg.account)).await,
-    }};
+    };
     let exec = match exec_res {
         Ok(e) => e,
         Err(e) => {
@@ -563,18 +475,7 @@ pub async fn snapshot(
     };
     snap.equity = acct.equity;
     let coins: Vec<String> = acct.positions.keys().cloned().collect();
-    // TxFlow：**不拉盘口**。
-    //
-    // 这里的 mids 只用来给持仓估值，而 TxFlow 的 clearinghouseState 已经返回了
-    // `positionValue`（= |size| × 标记价），交易所口径、永远存在。
-    // 逐个拉盘口要为每个持仓发一次请求 —— 30 个持仓在 1 次/秒的限速下就是 30 秒，
-    // 直接超过 nginx 超时，页面报 502。Hyperliquid 那边一次批量请求就能拿到全部，
-    // 所以没有这个问题。
-    let mids = if cfg.txflow {
-        HashMap::new()
-    } else {
-        trader::fetch_mids(&exec, &coins).await
-    };
+    let mids = trader::fetch_mids(&exec, &coins).await;
     let mut unpriced: Vec<String> = Vec::new();
 
     for (coin, pos) in acct.positions.iter() {
@@ -591,8 +492,6 @@ pub async fn snapshot(
                     pos.entry_px
                 };
                 // 只有**连交易所市值都没有**才算真的定价不了。
-                // TxFlow 状态页本来就不拉盘口（为省掉每个持仓一次请求），
-                // 如果这里把所有持仓都推进 unpriced，页面会弹一屏假警告。
                 if !known {
                     unpriced.push(coin.clone());
                 }
@@ -662,22 +561,7 @@ pub async fn snapshot(
     } else {
         0.0
     };
-    if let Some(result) = exec.txflow_maintenance_margin().await {
-        match result {
-            Ok(margin) => {
-                snap.maintenance_margin = margin;
-                snap.liq_buffer_pct = if snap.equity > 0. { ((snap.equity-margin)/snap.equity*100.).max(0.) } else { 0. };
-            },
-            Err(e) => { snap.error = Some(format!("读取 TxFlow 维持保证金失败: {e}")); snap.liq_buffer_pct = 0.; }
-        }
-    }
     snap.unpriced = unpriced;
-    // 业绩不在这里查。
-    //
-    // 曾经在 snapshot() 里调 txflow_pnl()：那要发 2 个请求，而 snapshot 是页面
-    // 每次轮询都会走的路径。加上全局限速（回填正在占着闸门）之后，状态请求排队
-    // 到超过 nginx 超时，页面直接 502。
-    // 改成独立接口 /api/txflow/pnl，由页面单独、低频地拉。
     snap
 }
 
@@ -695,109 +579,21 @@ pub struct RunResult {
     pub live: bool,
 }
 
-fn ensure_candidates(
-    weights: &[(String, f64)],
-    liquid: &[String],
-    cfg: &LiveConfig,
-    panel_count: usize,
-    source: &str,
-) -> Result<()> {
-    if cfg.txflow {
-        anyhow::ensure!(panel_count >= 20 && liquid.len() >= 20,
-            "TxFlow 有效因子宇宙不足 20，拒绝计划");
-        let longs = weights.iter().filter(|(_, w)| *w > 0.).count();
-        let shorts = weights.iter().filter(|(_, w)| *w < 0.).count();
-        anyhow::ensure!(longs >= 3 && shorts >= 3, "TxFlow 每腿至少 3 个名字，拒绝计划");
-        let scale = cfg.effective_leverage() * cfg.margin_buffer;
-        anyhow::ensure!(scale.is_finite() && scale > 0., "TxFlow 风险预算非法");
-        anyhow::ensure!(weights.iter().all(|(_, w)| w.is_finite() && w.abs()*scale <= 0.5 + 1e-9),
-            "TxFlow 单币名义不得超过净值 50%，拒绝计划");
-        let long:f64 = weights.iter().map(|(_, w)| w.max(0.)*scale).sum();
-        let short:f64 = weights.iter().map(|(_, w)| (-w).max(0.)*scale).sum();
-        anyhow::ensure!(long <= 1.5 + 1e-9 && short <= 1.5 + 1e-9 && (long-short).abs() <= 0.1 + 1e-9,
-            "TxFlow 每腿名义上限 150%、净敞口上限 10%，拒绝计划");
-    }
+fn ensure_candidates(weights: &[(String, f64)]) -> Result<()> {
     if !weights.is_empty() {
         return Ok(());
-    }
-    // 消息里必须说清**用的是哪个数据源** —— 信号来自 Hyperliquid、执行在 TxFlow，
-    // 之前一律写"TxFlow 有效日线"，排查时分不清是哪个库的币不够。
-    if cfg.txflow && liquid.len() < 8 {
-        anyhow::bail!(
-            "候选不足：信号源【{source}】共 {} 个可用日线市场，近 30 日日均成交额达到 ${:.0} 的只有 {} 个，策略至少需要 8 个。请降低成交额门槛（当前 ${:.0}）或检查该数据源的回填情况",
-            panel_count,
-            cfg.min_vol_usd,
-            liquid.len(),
-            cfg.min_vol_usd
-        );
-    }
-    if cfg.txflow {
-        anyhow::bail!(
-            "信号源【{source}】成交额达标 {} 个市场，但未能生成目标权重；请检查回看期日线和因子数据",
-            liquid.len()
-        );
     }
     anyhow::bail!("流动性过滤后没有候选")
 }
 
-/// Compute the target book and, when `live` is true and the config is armed,
-/// send the orders. Ranking is identical to the paper engine.
-/// 选出用来算因子的面板。
-///
-/// TxFlow ranks the full Binance universe before execution filtering.
-fn signal_panel(
-    store: &crate::store::Store,
-    signal_store: Option<&crate::store::Store>,
-    cfg: &LiveConfig,
-    _markets: &HashMap<String, MarketInfo>,
-) -> Result<Vec<crate::momentum::PanelEntry>> {
-    if cfg.txflow {
-        let hs=signal_store.context("TxFlow 缺少币安信号源，拒绝计划")?;
-        return fresh_binance_panel(hs, cfg.lookback, now_ms_pub());
-    }
+fn signal_panel(store: &crate::store::Store) -> Result<Vec<crate::momentum::PanelEntry>> {
     trader::load_panel(store)
 }
 
-/// Public-data preflight shared by the scheduler, manual planner and executor.
-pub fn fresh_binance_panel(store: &crate::store::Store, lookback: usize, now: i64) -> Result<Vec<crate::momentum::PanelEntry>> {
-    let day = 86_400_000;
-    let yesterday = now / day * day - day;
-    let need = lookback.max(30) + 3;
-    let panel = trader::load_panel(store)?;
-    let total = panel.len();
-    let latest = panel.iter().flat_map(|e| e.candles.iter()).map(|c| c.t).max();
-    let mapped: Vec<_> = panel.into_iter().filter_map(|mut entry| {
-        entry.candles.retain(|c| c.t <= yesterday);
-        let recent = &entry.candles[entry.candles.len().saturating_sub(need)..];
-        if recent.len() < need || recent.last().map(|c| c.t) != Some(yesterday)
-            || !recent.windows(2).all(|w| w[1].t - w[0].t == day)
-            || !recent.iter().all(|c| c.c.is_finite() && c.c > 0. && c.v.is_finite() && c.v >= 0.) { return None; }
-        Some(entry)
-    }).collect();
-    let age = latest.map(|t| ((now / day * day - t) / day).to_string()).unwrap_or_else(|| "未知".into());
-    anyhow::ensure!(mapped.len() >= 20,
-        "TxFlow 新鲜且连续的币安信号宇宙不足 20：合格 {}/{total}，需要截至昨日 UTC 的连续 {need} 根日线，库内最新距今日 {age} 天；拒绝计划",
-        mapped.len());
-    Ok(mapped)
-}
-
-fn signal_description(txflow: bool, count: usize, markets: usize) -> String {
-    if txflow { format!("信号源: 币安（TxFlow 独立组合） · 可排名 {count} 币 / TxFlow 共 {markets} 市场（已验证映射 82 币）") }
-    else { "信号源: Hyperliquid".into() }
-}
-fn drop_unsupported(weights: &mut Vec<(String,f64)>, panel: &[crate::momentum::PanelEntry], markets: &HashMap<String,MarketInfo>) -> Vec<String> {
-    let universe: std::collections::HashSet<_> = panel.iter().map(|e| e.coin.as_str()).collect();
-    let mut dropped=Vec::new();
-    weights.retain(|(coin,_)| {
-        let keep=universe.contains(coin.as_str()) && markets.contains_key(coin);
-        if !keep { dropped.push(coin.clone()); } keep
-    });
-    dropped
-}
-
+/// Compute the target book and, when `live` is true and the config is armed,
+/// send the orders. Ranking is identical to the paper engine.
 pub async fn run(
     store: &crate::store::Store,
-    signal_store: Option<&crate::store::Store>,
     state: &LiveState,
     markets: &HashMap<String, MarketInfo>,
     live: bool,
@@ -810,31 +606,22 @@ pub async fn run(
         anyhow::ensure!(cfg.armed, "实盘未启用（需先打开「启用实盘」开关）");
     }
 
-    let exec = if cfg.txflow {
-        Exec::txflow(&cfg.account, if live { Some(std::path::Path::new(&cfg.key_path)) } else { None }).await?
-    } else if live {
+    let exec = if live {
         Exec::signer(&cfg.account, std::path::Path::new(&cfg.key_path)).await?
     } else {
         Exec::reader_for(Some(&cfg.account)).await?
     };
-    let mut tc = cfg.trade_config();
-    if cfg.txflow && state.pending_recovery.is_some() { tc.rebalance_slices=1; }
+    let tc = cfg.trade_config();
 
-    let panel = signal_panel(store, signal_store, &cfg, markets)?;
+    let panel = signal_panel(store)?;
     anyhow::ensure!(
         panel.len() >= 20,
         "K 线缓存不足（{} 币）—— 请确认对应信号源的日线缓存已就绪",
         panel.len()
     );
     let acct0 = exec.account().await?;
-    let (mut weights, liquid) = trader::target_weights(&panel, &tc, acct0.equity, crate::live::now_ms_pub() as i64);
-    let source = if cfg.txflow { "币安（TxFlow 独立组合）" } else { "Hyperliquid" };
-    ensure_candidates(&weights, &liquid, &cfg, panel.len(), source)?;
-
-    let dropped_unsupported = if cfg.txflow {
-        drop_unsupported(&mut weights, &panel, markets)
-    } else { Vec::new() };
-
+    let (weights, liquid) = trader::target_weights(&panel, &tc, acct0.equity, crate::live::now_ms_pub() as i64);
+    ensure_candidates(&weights)?;
     let acct = exec.account().await?;
     let mut coins: Vec<String> = weights.iter().map(|(c, _)| c.clone()).collect();
     coins.extend(acct.positions.keys().cloned());
@@ -842,30 +629,7 @@ pub async fn run(
     coins.dedup();
     let mids = trader::fetch_mids(&exec, &coins).await;
 
-    if cfg.txflow {
-        anyhow::ensure!(acct.positions.iter().all(|(c,p)| p.size.abs() <= 1e-12 || mids.contains_key(c)),
-            "TxFlow 存在缺价持仓，拒绝计划");
-        let before = weights.len();
-        weights.retain(|(c, _)| mids.contains_key(c));
-        let dropped = before - weights.len();
-        if dropped > 0 {
-            tracing::warn!(
-                "TxFlow: {dropped} 个目标市场没有盘口，已从目标中剔除（剩余 {}）",
-                weights.len()
-            );
-        }
-        ensure_candidates(&weights, &liquid, &cfg, panel.len(), source)?;
-        anyhow::ensure!(
-            weights.iter().all(|(c, _)| markets
-                .get(c)
-                .map(|m| cfg.effective_leverage() <= m.max_leverage as f64)
-                .unwrap_or(false)),
-            "TxFlow 所选市场杠杆上限低于组合杠杆，请降低杠杆"
-        );
-    }
-    let plan = if cfg.txflow {
-        trader::build_txflow_plan(&weights, &acct, &exec.open_order_details().await?, markets, &mids, &tc)?
-    } else { trader::build_plan(&weights, &acct, markets, &mids, &tc, None) };
+    let plan = trader::build_plan(&weights, &acct, markets, &mids, &tc, None);
 
     let mut plan_lines = vec![format!(
         "流动宇宙 {} 币 · 多头腿 {} · 空头腿 {} · 账户净值 ${:.2} · 每仓 ${:.2} · 杠杆 {:.0}x · 缓冲 {:.0}%",
@@ -877,13 +641,6 @@ pub async fn run(
         cfg.effective_leverage(),
         cfg.margin_buffer * 100.0
     )];
-    if !dropped_unsupported.is_empty() {
-        plan_lines.push(format!(
-            "注: 以下 {} 个币 TxFlow 不支持交易，已跳过（权重未重新归一化，总名义相应略低）: {}",
-            dropped_unsupported.len(),
-            dropped_unsupported.join(" ")
-        ));
-    }
     // 腿的名单**按权重强弱排序**并显示权重值。
     //
     // 原来直接用 Vec 的插入顺序 —— 那是三因子合并后的任意顺序，看不出谁强谁弱。
@@ -903,7 +660,7 @@ pub async fn run(
                 .collect::<Vec<_>>()
                 .join(" ")
         };
-    plan_lines.push(signal_description(cfg.txflow, panel.len(), markets.len()));
+    plan_lines.push("信号源: Hyperliquid".into());
     plan_lines.push(format!("多头腿（按权重降序）: {}", legs(&plan.long_leg)));
         plan_lines.push(format!("空头腿（按权重降序）: {}", legs(&plan.short_leg)));
     }
@@ -985,9 +742,7 @@ pub async fn run(
             continue;
         }
         if let Some(r) = records.get_mut(i) {
-            r.result = if cfg.txflow {
-                format!("{} [account={}]", line, alloy::primitives::keccak256(cfg.account.to_lowercase().as_bytes()))
-            } else { line.clone() };
+            r.result = line.clone();
         }
     }
     let aborted = outcome.aborted;
@@ -1040,14 +795,13 @@ pub fn now_ms_pub() -> i64 {
 /// 其余仓位始终保持对冲，任一时刻只有 1 个仓位处于裸奔状态。
 pub async fn rebuild_cross(
     store: &crate::store::Store,
-    signal_store: Option<&crate::store::Store>,
     state: &LiveState,
     markets: &HashMap<String, MarketInfo>,
 ) -> Result<Vec<String>> {
     let cfg = state.config.clone();
     anyhow::ensure!(cfg.armed, "实盘未启用（需先打开「启用实盘」开关）");
     anyhow::ensure!(cfg.can_sign(), "未配置 API 钱包密钥");
-    let exec = if cfg.txflow { Exec::txflow(&cfg.account, Some(std::path::Path::new(&cfg.key_path))).await? } else { Exec::signer(&cfg.account, std::path::Path::new(&cfg.key_path)).await? };
+    let exec = Exec::signer(&cfg.account, std::path::Path::new(&cfg.key_path)).await?;
     let tc = cfg.trade_config();
 
     // 先读账户：仓位数上限（cap）依赖净值，必须在算权重之前拿到。
@@ -1055,20 +809,14 @@ pub async fn rebuild_cross(
     if acct.positions.is_empty() {
         return Ok(vec!["账户没有持仓，无需转换".into()]);
     }
-    let panel = signal_panel(store, signal_store, &cfg, markets)?;
-    let (weights, liquid) = trader::target_weights(
+    let panel = signal_panel(store)?;
+    let (weights, _) = trader::target_weights(
         &panel,
         &tc,
         acct.equity,
         crate::live::now_ms_pub() as i64,
     );
-    ensure_candidates(
-        &weights,
-        &liquid,
-        &cfg,
-        panel.len(),
-        if cfg.txflow { "币安（TxFlow 独立组合）" } else { "Hyperliquid" },
-    )?;
+    ensure_candidates(&weights)?;
     let coins: Vec<String> = acct.positions.keys().cloned().collect();
     let mids = trader::fetch_mids(&exec, &coins).await;
     // 按各自权重还原仓位。之前用「净值×杠杆÷仓位数」等权重建，会把权重抹平，
@@ -1258,7 +1006,6 @@ pub async fn place_take_profits(
             // 这不是失败，但也不能报成「挂上」。
             Ok(0) => filled += 1,
             Ok(_) => placed += 1,
-            Err(e) if exec.is_txflow() => return Err(e.context("TxFlow 止盈挂单失败，已停止后续发单")),
             Err(e) => failed.push(format!("{coin}: {e}")),
         }
         tokio::time::sleep(std::time::Duration::from_millis(120)).await;
@@ -1736,111 +1483,55 @@ pub async fn record_equity_now(
 }
 
 #[cfg(test)]
-mod txflow_fix_tests {
+mod reconciliation_tests {
     use super::*;
     #[test]
-    fn txflow_nonempty_weights_still_require_factor_universe_and_two_legs() {
-        let cfg=LiveConfig { txflow:true, ..Default::default() };
-        let one=vec![("A".into(),1.)];
-        assert!(ensure_candidates(&one,&[],&cfg,20,"mock").is_err());
-        let longs:Vec<_>=(0..6).map(|i|(format!("C{i}"),1./6.)).collect();
-        let liquid:Vec<_>=(0..20).map(|i|format!("C{i}")).collect();
-        assert!(ensure_candidates(&longs,&liquid,&cfg,20,"mock").is_err());
-        let hl=LiveConfig::default();
-        assert!(ensure_candidates(&one,&[],&hl,20,"mock").is_ok());
-    }
-    #[test]
-    fn txflow_concentration_and_net_exposure_are_hard_limits() {
-        let cfg=LiveConfig { txflow:true, ..Default::default() };
-        let liquid:Vec<_>=(0..20).map(|i|format!("C{i}")).collect();
-        let concentrated=vec![("C0".into(),0.4),("C1".into(),0.05),("C2".into(),0.05),("C3".into(),-0.2),("C4".into(),-0.15),("C5".into(),-0.15)];
-        assert!(ensure_candidates(&concentrated,&liquid,&cfg,20,"mock").is_err());
-        let unbalanced=vec![("C0".into(),0.18),("C1".into(),0.18),("C2".into(),0.18),("C3".into(),-0.15),("C4".into(),-0.15),("C5".into(),-0.16)];
-        assert!(ensure_candidates(&unbalanced,&liquid,&cfg,20,"mock").is_err());
-    }
-    #[test]
-    fn txflow_atomic_save_preserves_previous_file_when_temp_write_fails() {
-        let root=std::env::temp_dir().join(format!("stars-save-{}",uuid::Uuid::new_v4()));std::fs::create_dir_all(&root).unwrap();
-        let path=root.join("live.json");let mut state=LiveState::default();state.config.txflow=true;
-        state.save(&path).unwrap();let original=std::fs::read(&path).unwrap();
-        std::fs::create_dir(path.with_extension("tmp")).unwrap();state.config.armed=true;
-        let result=state.save(&path);let after=std::fs::read(&path).unwrap();std::fs::remove_dir_all(root).unwrap();
-        assert!(result.is_err(),"failed temporary write must abort replacement");assert_eq!(after,original);
-    }
-    #[test]
-    fn txflow_reconciliation_preserves_concurrent_orders_and_deduplicates_fills() {
+    fn reconciliation_preserves_concurrent_orders_and_deduplicates_fills() {
         let record=|tid:u64| LiveRecord{ts:tid as i64,coin:"C".into(),side:"买".into(),action:"开".into(),size:1.,price:100.,notional:100.,result:"ok".into(),live:true,pnl:None,tid:Some(tid),entry_px:None,reduce_only:false};
         let mut current=LiveState::default();current.records.push(record(1));let mut snapshot=current.clone();
         current.records.push(record(2));snapshot.records.push(record(3));
-        merge_txflow_reconciliation(&mut current,&snapshot);
+        merge_reconciliation(&mut current,&snapshot);
         assert_eq!(current.records.len(),3,"stale snapshot must not erase a concurrent order");
-        merge_txflow_reconciliation(&mut current,&snapshot);assert_eq!(current.records.len(),3);
-    }
-    #[test]
-    fn txflow_signal_requires_binance_source_and_yesterdays_contiguous_bars() {
-        let root=std::env::temp_dir().join(format!("stars-signal-{}",uuid::Uuid::new_v4()));
-        let store=crate::store::Store::open(&root.join("tx")).unwrap();let hl=crate::store::Store::open(&root.join("hl")).unwrap();
-        let yesterday=now_ms_pub()/86_400_000*86_400_000-86_400_000;
-        let mut markets=HashMap::new();
-        for i in 0..24 {
-            let candles:Vec<_>=(0..40).map(|d|crate::hl::Candle{t:yesterday-(40-d)*86_400_000,o:100.,h:100.,l:100.,c:100.,v:6000000.}).collect();
-            hl.upsert_candles(&format!("C{i}"),&candles).unwrap();
-            markets.insert(format!("C{i}-USDC"),MarketInfo{sz_decimals:2,max_leverage:10});
-        }
-        let cfg=LiveConfig{txflow:true,..Default::default()};
-        let stale=signal_panel(&store,Some(&hl),&cfg,&markets);
-        let missing=signal_panel(&store,None,&cfg,&markets);
-        let hl_cfg=LiveConfig::default();let unchanged=signal_panel(&hl,None,&hl_cfg,&markets).unwrap().len();
-        drop(store);drop(hl);std::fs::remove_dir_all(root).unwrap();
-        assert!(stale.is_err(),"stale HL factor bars must not produce a TxFlow live signal");
-        assert!(missing.is_err(),"missing HL signal source must fail closed");assert_eq!(unchanged,24);
-    }
-    #[test]
-    fn binance_universe_differs_from_hl_and_markets_without_changing_weights() {
-        let root=std::env::temp_dir().join(uuid::Uuid::new_v4().to_string());
-        let bn=crate::store::Store::open(&root.join("bn")).unwrap();
-        let hl=crate::store::Store::open(&root.join("hl")).unwrap();
-        let yesterday=now_ms_pub()/86400000*86400000-86400000;
-        let candles:Vec<_>=(0..40).map(|d|crate::hl::Candle{t:yesterday-(39-d)*86400000,o:2.,h:2.,l:2.,c:2.,v:6000000.}).collect();
-        for i in 0..24 {bn.upsert_candles(&format!("BN{i}-USDC"),&candles).unwrap();}
-        hl.upsert_candles("HL_ONLY",&candles).unwrap();
-        let markets=HashMap::from([("BN0-USDC".into(),MarketInfo{sz_decimals:2,max_leverage:10})]);
-        let panel=signal_panel(&hl,Some(&bn),&LiveConfig{txflow:true,..Default::default()},&markets).unwrap();
-        assert_eq!(panel.len(),24);assert!(panel.iter().all(|e|e.coin.starts_with("BN")));
-        let unchanged=signal_panel(&hl,Some(&bn),&LiveConfig::default(),&markets).unwrap();assert_eq!(unchanged[0].coin,"HL_ONLY");
-        let mut weights=vec![("BN0-USDC".into(),0.2),("BN1-USDC".into(),-0.3),("HL_ONLY".into(),0.5)];
-        assert_eq!(drop_unsupported(&mut weights,&panel,&markets).len(),2);assert_eq!(weights,vec![("BN0-USDC".into(),0.2)]);
-        assert_eq!(signal_description(true,82,227),"信号源: 币安（TxFlow 独立组合） · 可排名 82 币 / TxFlow 共 227 市场（已验证映射 82 币）");
-        assert_eq!(signal_description(false,1,1),"信号源: Hyperliquid");
-        drop(bn);drop(hl);std::fs::remove_dir_all(root).unwrap();
-    }
-    #[test]
-    fn txflow_fractional_leverage_uses_actual_integer_budget() {
-        let cfg = LiveConfig { txflow: true, leverage: 3.49, ..Default::default() };
-        assert_eq!(cfg.trade_config().leverage, 3.0);
-        let hl = LiveConfig { txflow: false, leverage: 3.49, ..Default::default() };
-        assert_eq!(hl.trade_config().leverage, 3.49);
+        merge_reconciliation(&mut current,&snapshot);assert_eq!(current.records.len(),3);
     }
 }
 
 #[cfg(test)]
-mod report5_state_tests {
- use super::*;
- #[test] fn report5_corrupt_state_fails_closed() {
-  let root=std::env::temp_dir().join(format!("report5-{}",uuid::Uuid::new_v4()));std::fs::create_dir_all(&root).unwrap();let path=root.join("state.json");
-  let mut st=LiveState::default();st.config.txflow=true;st.config.account="mock".into();st.config.key_path="mock-key".into();st.begin_txflow_execution(&path).unwrap();
-  assert!(LiveState::load_txflow(&path).unwrap().pending_recovery.is_some());
-  std::fs::write(&path,"{truncated").unwrap();let result=LiveState::load_txflow(&path);std::fs::remove_dir_all(root).unwrap();
-  assert!(result.is_err(),"corrupt state must return explicit error instead of losing recovery");
- }
- #[test] fn report5_required_fields_and_unknown_fields() {
-  let root=std::env::temp_dir().join(format!("report5-{}",uuid::Uuid::new_v4()));std::fs::create_dir_all(&root).unwrap();let path=root.join("state.json");
-  let mut value=serde_json::to_value(LiveState::default()).unwrap();value["future_optional"]=serde_json::json!({"new":true});value["config"]["future_optional"]=serde_json::json!(true);
-  std::fs::write(&path,value.to_string()).unwrap();assert!(LiveState::load_txflow(&path).is_ok());
-  value["config"].as_object_mut().unwrap().remove("account");std::fs::write(&path,value.to_string()).unwrap();let result=LiveState::load_txflow(&path);std::fs::remove_dir_all(root).unwrap();assert!(result.is_err(),"missing required account must be explicit error");
- }
+mod hl_signal_tests {
+    use super::*;
+    #[test]
+    fn nonempty_weights_do_not_require_extra_candidate_limits() {
+        let one = vec![("A".into(), 1.)];
+        assert!(ensure_candidates(&one).is_ok());
+    }
+    #[test]
+    fn signal_panel_keeps_the_hl_store_bars() {
+        let root = std::env::temp_dir().join(uuid::Uuid::new_v4().to_string());
+        let hl = crate::store::Store::open(&root.join("hl")).unwrap();
+        let yesterday = now_ms_pub()/86_400_000*86_400_000-86_400_000;
+        for i in 0..24 {
+            let candles:Vec<_>=(0..40).map(|d|crate::hl::Candle{t:yesterday-(40-d)*86_400_000,o:100.,h:100.,l:100.,c:100.,v:6000000.}).collect();
+            hl.upsert_candles(&format!("C{i}"), &candles).unwrap();
+        }
+        assert_eq!(signal_panel(&hl).unwrap().len(), 24);
+        drop(hl); std::fs::remove_dir_all(root).unwrap();
+    }
+    #[test]
+    fn signal_panel_uses_the_hl_universe() {
+        let root = std::env::temp_dir().join(uuid::Uuid::new_v4().to_string());
+        let hl = crate::store::Store::open(&root.join("hl")).unwrap();
+        let yesterday=now_ms_pub()/86400000*86400000-86400000;
+        let candles:Vec<_>=(0..40).map(|d|crate::hl::Candle{t:yesterday-(39-d)*86400000,o:2.,h:2.,l:2.,c:2.,v:6000000.}).collect();
+        hl.upsert_candles("HL_ONLY", &candles).unwrap();
+        assert_eq!(signal_panel(&hl).unwrap()[0].coin, "HL_ONLY");
+        drop(hl); std::fs::remove_dir_all(root).unwrap();
+    }
+    #[test]
+    fn fractional_leverage_is_preserved() {
+        let hl = LiveConfig { leverage: 3.49, ..Default::default() };
+        assert_eq!(hl.trade_config().leverage, 3.49);
+    }
 }
-
 
 #[cfg(test)]
 mod min_order_pct_tests {
@@ -1932,27 +1623,7 @@ mod capital_regressions {
         assert!(s.baseline().is_none());
     }
 
-    #[test]
-    fn binance_rollover_and_gaps_are_rejected_and_open_bar_is_not_ranked() {
-        let dir = std::env::temp_dir().join(uuid::Uuid::new_v4().to_string());
-        let store = crate::store::Store::open(&dir.join("db")).unwrap();
-        let day = 86_400_000;
-        let now = 20000 * day;
-        let bars: Vec<_> = (0..41).map(|i| crate::hl::Candle {
-            t: now - (40-i)*day, o: 10., h: 10., l: 10., c: 10., v: 100.
-        }).collect();
-        for i in 0..19 { store.upsert_candles(&format!("C{i}-USDC"), &bars).unwrap(); }
-        let mut gapped = bars.clone(); gapped.remove(25);
-        store.upsert_candles("C19-USDC", &gapped).unwrap();
-        assert!(fresh_binance_panel(&store, 30, now).unwrap_err().to_string().contains("合格 19/20"));
-        store.upsert_candles("C19-USDC", &bars).unwrap();
-        let panel = fresh_binance_panel(&store, 30, now).unwrap();
-        assert_eq!(panel.len(), 20);
-        assert!(panel.iter().all(|e| e.candles.last().unwrap().t == now-day));
-        assert!(fresh_binance_panel(&store, 30, now+2*day).unwrap_err().to_string().contains("合格 0/20"));
-        assert!(fresh_binance_panel(&store, 120, now).is_err());
-        drop(store); std::fs::remove_dir_all(dir).unwrap();
-    }
+
 }
 
 #[cfg(test)]
@@ -1975,7 +1646,7 @@ mod monitor_receipt_tests {
     fn first_receipt_watermark_survives_merge_without_fills() {
         let mut current = LiveState::default(); let mut snapshot = current.clone();
         assert_eq!(reconcile_fill_rows(&[], &mut snapshot).unwrap(), 0);
-        merge_txflow_reconciliation(&mut current, &snapshot);
+        merge_reconciliation(&mut current, &snapshot);
         assert!(current.reconciled_to > 0);
     }
 }

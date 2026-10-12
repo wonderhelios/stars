@@ -1,0 +1,36 @@
+PASS: merge_reconciliation body is byte-for-byte unchanged
+PASS: first_receipt_watermark_survives_merge_without_fills retains all assertions
+PASS: reconciliation_preserves_concurrent_orders_and_deduplicates_fills retains all assertions
+PASS: signal_panel reads its own Store
+PASS: src/live.rs::markets_from_meta preserves body (approved branch/name substitutions only)
+PASS: src/live.rs::trade_config preserves body (approved branch/name substitutions only)
+PASS: src/live.rs::can_sign preserves body (approved branch/name substitutions only)
+PASS: src/live.rs::baseline preserves body (approved branch/name substitutions only)
+PASS: src/live.rs::reset_capital_for_account_change preserves body (approved branch/name substitutions only)
+PASS: src/live.rs::load preserves body (approved branch/name substitutions only)
+PASS: src/live.rs::record_equity_now preserves body (approved branch/name substitutions only)
+PASS: src/live.rs::refresh_take_profits preserves body (approved branch/name substitutions only)
+PASS: src/live.rs::reconcile_fills preserves body (approved branch/name substitutions only)
+PASS: src/live.rs::reconcile_fill_rows preserves body (approved branch/name substitutions only)
+PASS: src/live.rs::daily_execution preserves body (approved branch/name substitutions only)
+PASS: src/web.rs::router preserves body (approved branch/name substitutions only)
+PASS: src/web.rs::live_config preserves body (approved branch/name substitutions only)
+PASS: src/web.rs::live_status preserves body (approved branch/name substitutions only)
+PASS: src/web.rs::live_reset preserves body (approved branch/name substitutions only)
+PASS: src/web.rs::live_tp preserves body (approved branch/name substitutions only)
+PASS: src/web.rs::live_capital preserves body (approved branch/name substitutions only)
+PASS: src/web.rs::live_capital_time preserves body (approved branch/name substitutions only)
+PASS: src/web.rs::live_records_clear preserves body (approved branch/name substitutions only)
+PASS: src/web.rs::valid_flow_time preserves body (approved branch/name substitutions only)
+PASS: src/trader.rs::build_plan preserves body (approved branch/name substitutions only)
+PASS: src/trader.rs::target_weights preserves body (approved branch/name substitutions only)
+PASS: src/trader.rs::load_panel preserves body (approved branch/name substitutions only)
+PASS: account_meets_targets only loses venue-specific seed targets
+PASS: execute calls execute_inner without final account verification
+PASS: execute_inner matches original HL branches exactly
+PASS: all 9 HL routes and handlers are identical
+PASS: src/hl.rs byte-for-byte unchanged
+PASS: src/momentum.rs byte-for-byte unchanged
+PASS: src/paper.rs byte-for-byte unchanged
+PASS: main refresh/research/CLI trade functions unchanged
+PASS: Cargo.lock adds/upgrades no packages
