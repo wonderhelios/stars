@@ -1433,6 +1433,18 @@ fn reconcile_fill_rows(arr: &[serde_json::Value], state: &mut LiveState) -> Resu
     let watermark = state.reconciled_to;
     let mut added = 0usize;
     let mut max_ts = watermark;
+
+    // ★ 先按【交易所订单号 oid】把成交分组，再用【组总额】去比我们自己的汇总订单。
+    //
+    // 真实 bug：一笔 85 AERO 的调仓被交易所拆成 13/14/14/2/14… 共 7 笔成交。
+    // 我们自己的记录是【汇总的 85】，而原来的逐笔去重拿 13 去比 85，差 72，
+    // 远超 1% 容差，于是整组被判成"不是重复"全部导入 —— 实测名义被重复计算
+    // 约 9.4%（$2,156 / $22,875），换手与成本指标跟着虚高。
+    //
+    // 同一笔订单的所有成交共享 oid，所以按 oid 汇总出来的总额才和我们的汇总记录
+    // 可比。没有 oid 的成交用 tid 当键（每笔自成一组），行为与原来一致。
+    let mut groups: std::collections::BTreeMap<(String, u64), Vec<&serde_json::Value>> =
+        std::collections::BTreeMap::new();
     for f in arr {
         let ts = f["time"].as_i64().unwrap_or(0);
         if ts <= watermark {
@@ -1447,44 +1459,69 @@ fn reconcile_fill_rows(arr: &[serde_json::Value], state: &mut LiveState) -> Resu
         if coin.is_empty() || coin.contains(':') {
             continue;
         }
-        let sz: f64 = f["sz"].as_str().and_then(|x| x.parse().ok()).unwrap_or(0.0);
-        let px: f64 = f["px"].as_str().and_then(|x| x.parse().ok()).unwrap_or(0.0);
-        let dir = f["dir"].as_str().unwrap_or("");
-        let pnl: f64 = f["closedPnl"].as_str().and_then(|x| x.parse().ok()).unwrap_or(0.0);
-        // 只补「不是我们主动发单」的成交；我们自己发的单在执行时已经记过了。
-        // 判断依据：成交方向是平仓、且当前记录里没有同一时刻的这笔。
-        let is_close = dir.contains("Close");
-        if !is_close {
-            continue;
-        }
-        // 已经由我们自己记录过的成交，跳过（容差 1% 数量、±3 分钟）
-        let dupe = ours.iter().any(|(c, s, t)| {
-            c == &coin
-                && (s - sz.abs()).abs() <= 1e-9_f64.max(sz.abs() * 0.01)
-                && (t - ts).abs() <= 180_000
-        });
+        let key = f["oid"].as_u64().unwrap_or(tid);
+        groups.entry((coin, key)).or_default().push(f);
+    }
+
+    for ((coin, _oid), fills) in groups {
+        // 这一笔交易所订单【总共】成交了多少
+        let total: f64 = fills
+            .iter()
+            .map(|f| {
+                f["sz"]
+                    .as_str()
+                    .and_then(|x| x.parse::<f64>().ok())
+                    .unwrap_or(0.0)
+                    .abs()
+            })
+            .sum();
+        let group_ts = fills
+            .iter()
+            .map(|f| f["time"].as_i64().unwrap_or(0))
+            .max()
+            .unwrap_or(0);
+        // 我们自己发过的单（汇总一条）只要和这一【整组】对得上，整组跳过。
+        let dupe = ours
+            .iter()
+            .any(|(c, s, t)| {
+                c == &coin
+                    && (s - total).abs() <= 1e-9_f64.max(total * 0.01)
+                    && (t - group_ts).abs() <= 180_000
+            });
         if dupe {
             continue;
         }
-        state.records.push(LiveRecord {
-            ts,
-            coin: coin.clone(),
-            side: if f["side"].as_str() == Some("B") { "买".into() } else { "卖".into() },
-            action: "交易所成交补录".into(),
-            size: sz,
-            price: px,
-            notional: sz * px,
-            result: format!("交易所回执 · 已实现 {:+.2}", pnl),
-            live: true,
-            pnl: Some(pnl),
-            tid: Some(tid),
-            entry_px: None,
-            reduce_only: true,
-        });
-        known.insert(tid);
-        added += 1;
-        if ts > max_ts {
-            max_ts = ts;
+        for f in fills {
+            let ts = f["time"].as_i64().unwrap_or(0);
+            let Some(tid) = f["tid"].as_u64() else { continue };
+            let sz: f64 = f["sz"].as_str().and_then(|x| x.parse().ok()).unwrap_or(0.0);
+            let px: f64 = f["px"].as_str().and_then(|x| x.parse().ok()).unwrap_or(0.0);
+            let dir = f["dir"].as_str().unwrap_or("");
+            let pnl: f64 = f["closedPnl"].as_str().and_then(|x| x.parse().ok()).unwrap_or(0.0);
+            // 只补「不是我们主动发单」的成交；我们自己发的单在执行时已经记过了。
+            if !dir.contains("Close") {
+                continue;
+            }
+            state.records.push(LiveRecord {
+                ts,
+                coin: coin.clone(),
+                side: if f["side"].as_str() == Some("B") { "买".into() } else { "卖".into() },
+                action: "交易所成交补录".into(),
+                size: sz,
+                price: px,
+                notional: sz * px,
+                result: format!("交易所回执 · 已实现 {:+.2}", pnl),
+                live: true,
+                pnl: Some(pnl),
+                tid: Some(tid),
+                entry_px: None,
+                reduce_only: true,
+            });
+            known.insert(tid);
+            added += 1;
+            if ts > max_ts {
+                max_ts = ts;
+            }
         }
     }
     if added > 0 || max_ts > watermark {
@@ -1974,5 +2011,75 @@ mod capital_flow_tests {
         let trading_after = equity_after - st.net_deposit - st.start_equity.unwrap();
         assert!((trading_after - 100.0).abs() < 1e-9,
             "入金后策略赚出的部分变了：{trading_after}");
+    }
+}
+
+
+#[cfg(test)]
+mod fill_dedup_tests {
+    use super::*;
+    use serde_json::json;
+
+    fn recorded_order(ts: i64, coin: &str, size: f64) -> LiveRecord {
+        LiveRecord {
+            ts,
+            coin: coin.into(),
+            side: "卖".into(),
+            action: "减仓到目标".into(),
+            size,
+            price: 0.9455,
+            notional: size * 0.9455,
+            result: format!("卖 {coin} 只减仓 {size}"),
+            live: true,
+            pnl: None,
+            tid: None, // 我们自己发的单在回执里没有 tid
+            entry_px: None,
+            reduce_only: true,
+        }
+    }
+
+    fn close_fill(t: i64, tid: u64, oid: u64, sz: f64) -> serde_json::Value {
+        json!({
+            "time": t, "tid": tid, "oid": oid, "coin": "AERO",
+            "dir": "Close Long", "side": "A",
+            "sz": format!("{sz}"), "px": "0.9455", "closedPnl": "0.10"
+        })
+    }
+
+    /// ★ 真实事故回归：一笔 85 AERO 的调仓被交易所拆成 13/14/14/2/14… 多笔成交。
+    /// 我们的记录是【汇总的 85】。旧代码逐笔拿 13 去比 85，差太远，于是整组被当成
+    /// "不是重复"全部导入，名义重复计算约 9.4%。
+    /// 现在按 oid 分组，用组总额 85 去比 → 整组跳过。
+    #[test]
+    fn split_fills_matching_our_aggregate_order_are_not_imported() {
+        let t0 = 1_700_000_000_000i64;
+        let mut st = LiveState::default();
+        st.reconciled_to = t0 - 1_000;
+        st.records.push(recorded_order(t0, "AERO", 85.0));
+        // 同一笔订单（oid=999）被拆成 60 + 20 + 5 = 85
+        let arr = vec![
+            close_fill(t0, 1, 999, 60.0),
+            close_fill(t0, 2, 999, 20.0),
+            close_fill(t0, 3, 999, 5.0),
+        ];
+        let added = reconcile_fill_rows(&arr, &mut st).unwrap();
+        assert_eq!(added, 0, "整组 85 已被我们的汇总记录覆盖，不应再导入");
+        assert_eq!(st.records.len(), 1, "不应新增补录记录");
+    }
+
+    /// 反向：交易所上有一笔我们【没有】记录过的成交（比如被强平），
+    /// 必须仍然被导入 —— 否则已实现盈亏会漏。
+    #[test]
+    fn fills_with_no_matching_order_are_still_imported() {
+        let t0 = 1_700_000_000_000i64;
+        let mut st = LiveState::default();
+        st.reconciled_to = t0 - 1_000;
+        // 我们没有任何 AERO 记录
+        let arr = vec![
+            close_fill(t0, 11, 777, 30.0),
+            close_fill(t0, 12, 777, 10.0),
+        ];
+        let added = reconcile_fill_rows(&arr, &mut st).unwrap();
+        assert_eq!(added, 2, "没有对应下单记录的成交必须导入");
     }
 }
