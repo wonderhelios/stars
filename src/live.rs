@@ -1494,6 +1494,11 @@ fn reconcile_fill_rows(arr: &[serde_json::Value], state: &mut LiveState) -> Resu
         for f in fills {
             let ts = f["time"].as_i64().unwrap_or(0);
             let Some(tid) = f["tid"].as_u64() else { continue };
+            // 组内也要查 known：没有 oid 的成交用 tid 当分组键，同一 tid 的
+            // 重复行会落进同一组，必须在导入前再挡一次（旧代码是逐笔挡的）。
+            if known.contains(&tid) {
+                continue;
+            }
             let sz: f64 = f["sz"].as_str().and_then(|x| x.parse().ok()).unwrap_or(0.0);
             let px: f64 = f["px"].as_str().and_then(|x| x.parse().ok()).unwrap_or(0.0);
             let dir = f["dir"].as_str().unwrap_or("");
