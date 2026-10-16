@@ -388,7 +388,11 @@ pub struct LiveSnapshot {
     pub nearest_liq_pct: Option<f64>,
     /// 仍是逐仓的仓位数（Hyperliquid 不允许持仓时切换模式）
     pub isolated_count: usize,
-    /// 策略累计盈亏（已实现 + 未实现），与入金无关。
+    /// 当前持仓的未实现盈亏合计，与入金无关。
+    ///
+    /// 注意：这个字段**不含已实现盈亏**（历史保存点里也是同一口径，
+    /// 中途改成"已实现+未实现"会让新旧数据点不可比）。前端展示的
+    /// 「策略盈亏」是另一条路径：净值 − 记录起点 − 累计净入金。
     pub cumulative_pnl: f64,
     /// 用户手动记录的累计净入金。
     pub net_deposit: f64,
