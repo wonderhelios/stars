@@ -1054,27 +1054,37 @@ function renderFunding(d) {
   }
   const spikesEl = $("fd-spikes");
   if (spikesEl) {
-    const spikes = (d && d.spikes) || [];
-    if (!spikes.length) {
+    const all = (d && d.spikes) || [];
+    const hedge = all.filter((s) => s.hedgeable);
+    const other = all.filter((s) => !s.hedgeable);
+    if (!all.length) {
       spikesEl.innerHTML = '<div class="empty">当前没有 ≥40% 的尖峰</div>';
     } else {
-      const pos = spikes.filter((s) => s.ann > 0).length;
       const row = (s) => `<tr>
           <td>${escapeHTML(s.market)}</td>
           <td class="${s.ann >= 0 ? "pos" : "neg"}">${annSigned(s.ann)}</td>
+          <td class="muted">${(s.ann / 8760 * 100).toFixed(4)}%</td>
           <td>${usdM(s.vol)}</td>
           <td class="muted">${s.ann >= 0 ? "空头收钱" : "多头收钱"}</td>
         </tr>`;
-      const head = `<tr><th>市场</th><th>年化资金费</th><th>成交额</th><th>收钱方向</th></tr>`;
-      let html = `<p class="note">共 <b>${spikes.length}</b> 个尖峰 · 正资金费 <b>${pos}</b>（做空收钱）/ 负 <b>${spikes.length - pos}</b>（做多收钱）</p>`;
-      html += `<div class="table-scroll"><table><thead>${head}</thead><tbody>${spikes.slice(0, 5).map(row).join("")}</tbody></table></div>`;
-      if (spikes.length > 5) {
-        html += `<details class="setup-details"><summary>展开全部 ${spikes.length} 个</summary>
-          <div class="table-scroll"><table><thead>${head}</thead><tbody>${spikes.map(row).join("")}</tbody></table></div></details>`;
+      const head = `<tr><th>市场</th><th>年化</th><th>每小时</th><th>成交额</th><th>收钱方向</th></tr>`;
+      let html = `<p class="note">可对冲 <b>${hedge.length}</b>（币安有同名永续 ✓ 能做） · 不可对冲 <b>${other.length}</b>（HIP-3 / 股票永续，没有对冲腿 ✗ 只能看）</p>`;
+      if (hedge.length) {
+        html += `<div class="table-scroll"><table><thead>${head}</thead><tbody>${hedge.slice(0, 5).map(row).join("")}</tbody></table></div>`;
+        if (hedge.length > 5) {
+          html += `<details class="setup-details"><summary>展开全部 ${hedge.length} 个可对冲尖峰</summary><div class="table-scroll"><table><thead>${head}</thead><tbody>${hedge.map(row).join("")}</tbody></table></div></details>`;
+        }
+      } else {
+        html += '<div class="empty">没有可对冲的尖峰</div>';
+      }
+      if (other.length) {
+        html += `<details class="setup-details"><summary>不可对冲的 ${other.length} 个（看看就好）</summary><div class="table-scroll"><table><thead>${head}</thead><tbody>${other.map(row).join("")}</tbody></table></div></details>`;
       }
       spikesEl.innerHTML = html;
     }
   }
+  renderXVenue(d);
+
 }
 
 async function refreshFunding(force) {
@@ -1163,6 +1173,41 @@ setInterval(() => refreshFunding(false), 60000);
 // ---------- 纸面 carry 策略 ----------
 
 // 纸面 carry：摘要 + 权益曲线 + 两腿汇总，明细折叠。
+// 跨所价差（OKX vs 币安）。用户当年 G/USDT 那种机会。
+function renderXVenue(d) {
+  const el = $("xv-list");
+  if (!el) return;
+  const rows = (d && d.xvenue) || [];
+  const err = d && d.xvenue_error;
+  if (err) {
+    el.innerHTML = `<div class="note neg">⚠ ${escapeHTML(err)}（服务器连不上 OKX 时这一栏不可用）</div>`;
+    return;
+  }
+  if (!rows.length) {
+    el.innerHTML = '<div class="empty">当前没有 ≥0.3% 的合格价差 —— 这是常态；事件（新币上架 / 提币暂停）才会出现大价差。</div>';
+    return;
+  }
+  const px = (v) => (v < 1 ? v.toPrecision(6) : fmt(v, 2));
+  const row = (r) => `<tr>
+      <td>${escapeHTML(r.coin)}</td>
+      <td>${px(r.okx_px)}</td>
+      <td>${px(r.bn_px)}</td>
+      <td class="${r.diff_pct >= 0 ? "pos" : "neg"}">${r.diff_pct >= 0 ? "+" : ""}${r.diff_pct.toFixed(2)}%</td>
+      <td class="muted">${r.diff_pct >= 0 ? "OKX 贵 → 空 OKX / 多币安" : "币安贵 → 空币安 / 多 OKX"}</td>
+      <td class="muted">${usdM(r.okx_vol)} / ${usdM(r.bn_vol)}</td>
+    </tr>`;
+  const head = `<tr><th>币</th><th>OKX</th><th>币安</th><th>差</th><th>方向</th><th>成交额 OKX/币安</th></tr>`;
+  const big = rows.filter((r) => Math.abs(r.diff_pct) >= 2);
+  let html = `<p class="note">合格 <b>${rows.length}</b> 个 · 最大 <b>${escapeHTML(rows[0].coin)} ${rows[0].diff_pct >= 0 ? "+" : ""}${rows[0].diff_pct.toFixed(2)}%</b>`;
+  if (big.length) html += ` · <b class="neg">${big.length} 个差 ≥2%（多半是同名不同币 / 脏价，别当机会）</b>`;
+  html += `</p>`;
+  html += `<div class="table-scroll"><table><thead>${head}</thead><tbody>${rows.slice(0, 5).map(row).join("")}</tbody></table></div>`;
+  if (rows.length > 5) {
+    html += `<details class="setup-details"><summary>展开全部 ${rows.length} 个</summary><div class="table-scroll"><table><thead>${head}</thead><tbody>${rows.map(row).join("")}</tbody></table></div></details>`;
+  }
+  el.innerHTML = html;
+}
+
 function renderCarry(d) {
   d = d || {};
   const pairs = d.pairs || [];

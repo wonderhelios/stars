@@ -349,6 +349,12 @@
         </div>
 
         <div class="content-card">
+          <div class="panel-head monitor-section-head"><div><span class="section-eyebrow">CROSS-VENUE</span><h2>跨所价差 · OKX vs 币安</h2></div></div>
+          <p class="note">同一币在 OKX 和币安的现货价差（正 = OKX 更贵）。只保留两边 24h 成交额都 ≥ $1M 的币，且只显示 |差| ≥ 0.3%。平时这个量级很小（0.1% 上下），大价差多半是事件（新币上架 / 提币暂停）或同名不同币。</p>
+          <div id="xv-list"></div>
+        </div>
+
+        <div class="content-card">
           <div class="panel-head monitor-section-head"><div><span class="section-eyebrow">SPIKE MONITOR</span><h2>资金费尖峰</h2></div></div>
           <p class="note">年化 |资金费| ≥ 40% 且 24h 成交额 ≥ $1 万。正 = 多头付空头（做空收钱）；负 = 空头付多头（做多收钱）。尖峰通常几分钟内消失，容量极小。</p>
           <div id="fd-spikes"></div>

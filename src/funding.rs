@@ -52,6 +52,21 @@ pub struct FundingSpike {
     pub ann: f64,
     /// 24h 成交额（美元）。
     pub vol: f64,
+    /// 币安是否有同名永续（有 = 可以对冲，才是可执行的尖峰）。
+    #[serde(default)]
+    pub hedgeable: bool,
+}
+
+/// 跨所现货价差（OKX vs 币安）。用户当年 G/USDT 那种机会。
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct XVenue {
+    pub coin: String,
+    pub okx_px: f64,
+    pub bn_px: f64,
+    /// (OKX / 币安 − 1) × 100，正 = OKX 更贵。
+    pub diff_pct: f64,
+    pub okx_vol: f64,
+    pub bn_vol: f64,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize, Default)]
@@ -61,6 +76,11 @@ pub struct FundingState {
     pub spikes: Vec<FundingSpike>,
     /// 币安数据拿不到时的说明。
     pub bn_error: Option<String>,
+    /// 跨所现货价差（只保留两边成交额都达标、且 |差| 超过阈值的）。
+    #[serde(default)]
+    pub xvenue: Vec<XVenue>,
+    #[serde(default)]
+    pub xvenue_error: Option<String>,
 }
 
 async fn post_hl(http: &reqwest::Client, payload: Value) -> Option<Value> {
@@ -116,6 +136,7 @@ fn scan_universe(
                 market: name.to_string(),
                 ann,
                 vol,
+                hedgeable: false,
             });
         }
     }
@@ -225,7 +246,102 @@ pub async fn refresh(http: &reqwest::Client, binance_http: &reqwest::Client) -> 
     }
     st.pairs
         .sort_by(|a, b| b.diff_ann.abs().partial_cmp(&a.diff_ann.abs()).unwrap_or(std::cmp::Ordering::Equal));
+
+    // ---- ⑤ 尖峰是否可对冲（币安有同名永续才可执行）----
+    for sp in st.spikes.iter_mut() {
+        let base = sp.market.rsplit(':').next().unwrap_or(&sp.market);
+        sp.hedgeable = bn_lookup(&bn_fund, base).is_some();
+    }
+    st.spikes.sort_by(|a, b| {
+        b.hedgeable
+            .cmp(&a.hedgeable)
+            .then_with(|| b.ann.abs().partial_cmp(&a.ann.abs()).unwrap_or(std::cmp::Ordering::Equal))
+    });
+
+    // ---- ⑥ 跨所现货价差（OKX vs 币安）----
+    // 用户当年 G/USDT 那种"同一币在两个所价格不一样"的机会。只保留两边
+    // 成交额都 ≥ $1M 的币（否则扫出来全是同名不同币或僵尸价），并且只在
+    // |差| ≥ 0.3% 时才记录。
+    let mut okx_px: HashMap<String, (f64, f64)> = HashMap::new();
+    match fetch_okx_spot(binance_http).await {
+        Ok(list) => {
+            for (coin, px, vol) in list {
+                okx_px.insert(coin, (px, vol));
+            }
+        }
+        Err(e) => st.xvenue_error = Some(e),
+    }
+    if st.xvenue_error.is_none() {
+        let mut bn_spot: HashMap<String, (f64, f64)> = HashMap::new();
+        if let Some(v) = fetch_bn_json(binance_http, "https://api.binance.com/api/v3/ticker/24hr").await {
+            if let Some(arr) = v.as_array() {
+                for x in arr {
+                    let Some(sym) = x["symbol"].as_str() else { continue };
+                    if !sym.ends_with("USDT") || sym.len() <= 4 {
+                        continue;
+                    }
+                    let coin = &sym[..sym.len() - 4];
+                    let px = num(&x["lastPrice"]);
+                    let vol = num(&x["quoteVolume"]);
+                    if px > 0.0 {
+                        bn_spot.insert(coin.to_string(), (px, vol));
+                    }
+                }
+            }
+        }
+        for (coin, (opx, ovol)) in okx_px {
+            let Some(&(bpx, bvol)) = bn_spot.get(&coin) else { continue };
+            if opx <= 0.0 || bpx <= 0.0 || ovol < 1_000_000.0 || bvol < 1_000_000.0 {
+                continue;
+            }
+            let diff = (opx / bpx - 1.0) * 100.0;
+            if diff.abs() >= 0.3 {
+                st.xvenue.push(XVenue {
+                    coin,
+                    okx_px: opx,
+                    bn_px: bpx,
+                    diff_pct: diff,
+                    okx_vol: ovol,
+                    bn_vol: bvol,
+                });
+            }
+        }
+        st.xvenue
+            .sort_by(|a, b| b.diff_pct.abs().partial_cmp(&a.diff_pct.abs()).unwrap_or(std::cmp::Ordering::Equal));
+        st.xvenue.truncate(30);
+    }
+
     st
+}
+
+/// 拉 OKX 现货 ticker，返回 (币, 最新价, 24h 成交额)。
+async fn fetch_okx_spot(client: &reqwest::Client) -> Result<Vec<(String, f64, f64)>, String> {
+    let resp = client
+        .get("https://www.okx.com/api/v5/market/tickers?instType=SPOT")
+        .send()
+        .await
+        .map_err(|e| format!("OKX 不可达: {e}"))?;
+    if !resp.status().is_success() {
+        return Err(format!("OKX HTTP {}", resp.status()));
+    }
+    let v: Value = resp.json().await.map_err(|e| format!("OKX 响应异常: {e}"))?;
+    if v["code"].as_str() != Some("0") {
+        return Err(format!("OKX code={}", v["code"]));
+    }
+    let Some(arr) = v["data"].as_array() else {
+        return Err("OKX 数据为空".into());
+    };
+    let mut out = Vec::new();
+    for t in arr {
+        let Some(id) = t["instId"].as_str() else { continue };
+        let Some(coin) = id.strip_suffix("-USDT") else { continue };
+        let px = num(&t["last"]);
+        let vol = num(&t["volCcy24h"]);
+        if px > 0.0 {
+            out.push((coin.to_string(), px, vol));
+        }
+    }
+    Ok(out)
 }
 
 /// 币安对高供应 meme 币只挂 `1000PEPEUSDT` / `1000SHIBUSDT` 等合约，
