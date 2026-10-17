@@ -55,6 +55,15 @@ pub struct TradeConfig {
     /// Sharpe 1.62→1.79，弱势区间 0.37→0.73。信号是 14 日动量，滞后几天
     /// 对它的影响远小于省下的成本。
     pub rebalance_slices: u32,
+    /// 因子权重：动量占比（0~1），量能占 1 − 它。默认 0.5（两因子等权）。
+    ///
+    /// 证据（2026-10-17 复盘检验，真实样本 2024-07 起，2023 年币池中位数为 0 已排除）：
+    ///   量能对动量的【1 日】残差 IC ≈ +0.003（t=0.29，不显著），2 日 +0.019（t=1.92），
+    ///   5 日 +0.042（t=3.86）—— 量能的信息在更慢的期限上，日频用不到。
+    ///   组合层面：50/50 → 70/30，Sharpe 2.42→2.60（无止盈）/ 3.14→3.37（10% 止盈），
+    ///   换手 1.69→1.45，两个半段都改善（2.58/2.30 → 2.61/2.60）。
+    /// 诚实标注：样本内结论，尚未前向验证。默认保持 0.5，不静默改变实盘行为。
+    pub momentum_weight: f64,
 }
 
 impl TradeConfig {
@@ -87,6 +96,7 @@ impl Default for TradeConfig {
             margin_buffer: 0.90,
             min_position_usd: 15.0,
             rebalance_slices: 3,
+            momentum_weight: 0.5,
         }
     }
 }
@@ -338,7 +348,10 @@ impl FactorPanel {
         // 且换手 +10%（年成本 40.8%→44.9%）、波动变大（4.17%→4.80%）。
         // 这是一次方向正确但边际的改动，不是"验证过的改进"。
         // 要回退：把 low_vol 加回列表、并把下面的 /2.0 改回 /3.0。
-        for scores in [&mom_adj, &shock_v] {
+        for (scores, fw) in [(&mom_adj, cfg.momentum_weight.clamp(0.0, 1.0)), (&shock_v, 1.0 - cfg.momentum_weight.clamp(0.0, 1.0))] {
+            if fw <= 0.0 {
+                continue;
+            }
             let mut order: Vec<usize> = (0..n).collect();
             // 平局时按币名定序：分数来自 HashMap 迭代，顺序随进程哈希种子变化，
             // 只按分数排会让同一天的组合在不同进程里不一样。
@@ -356,13 +369,13 @@ impl FactorPanel {
                 .min((n / 2).max(1));
             for (pos, &j) in order.iter().enumerate() {
                 let w = if pos >= n - k {
-                    0.5 / k as f64
+                    fw / 2.0 / k as f64
                 } else if pos < k {
-                    -0.5 / k as f64
+                    -fw / 2.0 / k as f64
                 } else {
                     continue;
                 };
-                *acc.entry(coins[j].clone()).or_insert(0.0) += w / 2.0;
+                *acc.entry(coins[j].clone()).or_insert(0.0) += w;
             }
         }
         let mut out: Vec<(String, f64)> = acc

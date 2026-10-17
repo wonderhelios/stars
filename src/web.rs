@@ -366,6 +366,7 @@ struct LiveConfigBody {
     min_order_pct: Option<f64>,
     take_profit_pct: Option<f64>,
     rebalance_slices: Option<u32>,
+    momentum_weight: Option<f64>,
 
     armed: Option<bool>,
     auto_run: Option<bool>,
@@ -420,6 +421,10 @@ async fn live_config(
     }
     if let Some(v) = body.take_profit_pct {
         c.take_profit_pct = v.clamp(0.0, 0.5);
+    }
+    if let Some(v) = body.momentum_weight {
+        // 动量占比 0~1（量能占其余）。0.7 = 动量七成。
+        c.momentum_weight = v.clamp(0.0, 1.0);
     }
     if let Some(v) = body.armed {
         c.armed = v;

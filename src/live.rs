@@ -62,6 +62,10 @@ pub struct LiveConfig {
     /// 止盈幅度（相对调仓时的中间价）。0 = 不挂止盈单。
     #[serde(default = "default_tp")]
     pub take_profit_pct: f64,
+    /// 因子权重：动量占比（0~1，量能占其余）。默认 0.5 等权。
+    /// 0.7 = 动量七成/量能三成（复盘检验支持的方向，尚未前向验证）。
+    #[serde(default = "default_momentum_weight")]
+    pub momentum_weight: f64,
     /// allow sending real orders; off until the user arms it
     pub armed: bool,
     /// run one rebalance per day automatically
@@ -83,6 +87,7 @@ impl Default for LiveConfig {
             min_order_pct: 0.0,
             take_profit_pct: 0.0,
             rebalance_slices: 3,
+            momentum_weight: default_momentum_weight(),
             armed: false,
             auto_run: false,
         }
@@ -92,6 +97,11 @@ impl Default for LiveConfig {
 fn default_slices() -> u32 {
     // 实测最佳：换手 29%→13%，Sharpe 1.62→1.79，两个子区间均改善。
     3
+}
+
+fn default_momentum_weight() -> f64 {
+    // 默认等权：不改旧行为。复盘检验支持 0.7（动量七成），但仍属样本内结论。
+    0.5
 }
 
 fn default_tp() -> f64 {
@@ -118,6 +128,7 @@ impl LiveConfig {
             // 这里漏掉过 rebalance_slices：`..Default::default()` 会静默用默认值 3，
             // 界面上改成 1 也毫无作用。下面有 field_parity 测试守着。
             rebalance_slices: self.rebalance_slices,
+            momentum_weight: self.momentum_weight,
             ..Default::default()
         }
     }
@@ -1395,6 +1406,7 @@ mod config_parity_tests {
             slippage: 0.007,
             margin_buffer: 0.77,
             rebalance_slices: 4,
+            momentum_weight: 0.7,
             ..LiveConfig::default()
         };
         let tc = cfg.trade_config();
@@ -1406,6 +1418,7 @@ mod config_parity_tests {
         assert_eq!(tc.slippage, 0.007, "slippage 没传");
         assert_eq!(tc.margin_buffer, 0.77, "margin_buffer 没传");
         assert_eq!(tc.rebalance_slices, 4, "rebalance_slices 没传（UI 会失效）");
+        assert_eq!(tc.momentum_weight, 0.7, "momentum_weight 没传（UI 会失效）");
     }
 }
 
