@@ -985,6 +985,7 @@ setInterval(refreshMonitor, 20000);
 
 // ---------- 资金费套利面板 ----------
 let lastFundingData = null;
+let lastCarryData = null;
 
 const annPct = (v) => Number.isFinite(v) ? (v * 100).toFixed(1) + "%" : "—";
 const annSigned = (v) => Number.isFinite(v) ? (v >= 0 ? "+" : "−") + Math.abs(v * 100).toFixed(1) + "%" : "—";
@@ -1104,9 +1105,150 @@ if ($("fd-refresh")) {
 document.querySelectorAll('.nav button[data-view="funding"]').forEach((b) => {
   b.addEventListener("click", () => {
     refreshFunding();
+    refreshCarry();
   });
 });
 
 // 启动：首次拉取 + 每 60 秒轮询。
 refreshFunding();
+refreshCarry();
 setInterval(() => refreshFunding(false), 60000);
+
+// ---------- 纸面 carry 策略 ----------
+
+function renderCarry(d) {
+  const sum = $("cy-summary");
+  if (sum) {
+    const pairs = d.pairs || [];
+    const openPnl = pairs.reduce((s, p) => s + p.funding_accrued + p.basis_pnl - p.entry_fee, 0);
+    const total = (d.closed_pnl || 0) + openPnl;
+    const equity = (d.start_equity || 0) + total;
+    sum.textContent =
+      `预算 $${fmt(d.budget_usd || 0, 0)} · 期初 $${fmt(d.start_equity || 0, 0)} · ` +
+      `已实现 ${moneySigned(d.closed_pnl || 0)} · 未实现 ${moneySigned(openPnl)} · ` +
+      `权益 $${fmt(equity, 2)}`;
+  }
+  const posEl = $("cy-positions");
+  if (posEl) {
+    const pairs = d.pairs || [];
+    posEl.innerHTML = pairs.length
+      ? `<div class="table-scroll"><table><thead><tr><th>币</th><th>方向</th><th>每腿名义</th><th>进场价差</th><th>累计资金费</th><th>基差盈亏</th><th>净盈亏</th><th>已持</th></tr></thead><tbody>${
+          pairs.map((p) => {
+            const net = p.funding_accrued + p.basis_pnl - p.entry_fee;
+            const hours = Math.max(0, (Date.now() - p.entry_ts) / 3600000).toFixed(1);
+            return `<tr>
+              <td>${escapeHTML(p.coin)}</td>
+              <td>${p.direction > 0 ? "空HL·多币安" : "多HL·空币安"}</td>
+              <td>$${fmt(p.notional, 0)}</td>
+              <td>${(p.entry_diff * 100).toFixed(1)}%</td>
+              <td class="${p.funding_accrued >= 0 ? "pos" : "neg"}">${moneySigned(p.funding_accrued)}</td>
+              <td class="${p.basis_pnl >= 0 ? "pos" : "neg"}">${moneySigned(p.basis_pnl)}</td>
+              <td class="${net >= 0 ? "pos" : "neg"}">${moneySigned(net)}</td>
+              <td class="muted">${hours}h</td>
+            </tr>`;
+          }).join("")
+        }</tbody></table></div>`
+      : '<div class="empty">没有纸面持仓。预算 > 0 且某币 |价差| ≥ 开仓阈值时自动开。</div>';
+  }
+  const logEl = $("cy-log");
+  if (logEl) {
+    const logs = (d.log || []).slice(-40).reverse();
+    logEl.innerHTML = logs.length
+      ? logs.map((l) => `<div class="note">${ts2m(l.ts)} · ${escapeHTML(l.msg)}</div>`).join("")
+      : '<div class="note">还没有操作。</div>';
+  }
+  const histEl = $("cy-history");
+  if (histEl) {
+    const pts = (d.history || []).slice(-72);
+    histEl.textContent = pts.length
+      ? pts.map(([t, v]) => `${ts2m(t)} → $${fmt(v, 2)}`).join("\n")
+      : "还没有权益点（每小时记一个）。";
+  }
+}
+
+// 只在首次加载或保存后回填参数，避免 60 秒轮询覆盖正在编辑的输入。
+function renderCarryConfig(cfg) {
+  cfg = cfg || {};
+  const entry = $("cy-entry"), exit = $("cy-exit"), pairs = $("cy-pairs"), hours = $("cy-hours"), stop = $("cy-stop");
+  if (entry) entry.value = Math.round(cfg.entry_threshold * 1000) / 10;
+  if (exit) exit.value = Math.round(cfg.exit_threshold * 1000) / 10;
+  if (pairs) pairs.value = cfg.max_pairs;
+  if (hours) hours.value = cfg.max_holding_hours;
+  if (stop) stop.value = Math.round(cfg.stop_loss_pct * 1000) / 10;
+}
+
+async function refreshCarry() {
+  try {
+    const res = await fetch("/api/carry", { cache: "no-store" });
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    lastCarryData = await res.json();
+    renderCarry(lastCarryData);
+    if (!lastCarryData.__configRendered) {
+      renderCarryConfig(lastCarryData.config);
+      lastCarryData.__configRendered = true;
+    }
+  } catch (e) {}
+}
+
+if ($("cy-save")) {
+  $("cy-save").addEventListener("click", async () => {
+    const body = {
+      entry_threshold: (Number($("cy-entry").value) || 0) / 100,
+      exit_threshold: (Number($("cy-exit").value) || 0) / 100,
+      max_pairs: Number($("cy-pairs").value) || 0,
+      max_holding_hours: Number($("cy-hours").value) || 0,
+      stop_loss_pct: (Number($("cy-stop").value) || 0) / 100,
+    };
+    const st = $("cy-status");
+    try {
+      const res = await fetch("/api/carry/config", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      const out = await res.json();
+      if (!res.ok || !out.ok) {
+        st.textContent = "保存失败：" + (out.error || ("HTTP " + res.status));
+        return;
+      }
+      st.textContent = "参数已保存。";
+      lastCarryData = null;
+      refreshCarry();
+    } catch (e) {
+      st.textContent = "保存失败：" + e;
+    }
+  });
+}
+
+if ($("cy-step")) {
+  $("cy-step").addEventListener("click", async () => {
+    const st = $("cy-status");
+    try {
+      const res = await fetch("/api/carry/step", { method: "POST", cache: "no-store" });
+      if (!res.ok) throw new Error("HTTP " + res.status);
+      lastCarryData = await res.json();
+      renderCarry(lastCarryData);
+      st.textContent = "已推进。";
+    } catch (e) {
+      st.textContent = "推进失败：" + e;
+    }
+  });
+}
+
+if ($("cy-reset")) {
+  $("cy-reset").addEventListener("click", async () => {
+    if (!confirm("重置纸面 carry：清空全部持仓、已实现盈亏与曲线（保留参数）。继续？")) return;
+    const st = $("cy-status");
+    try {
+      const res = await fetch("/api/carry/reset", { method: "POST", cache: "no-store" });
+      if (!res.ok) throw new Error("HTTP " + res.status);
+      lastCarryData = await res.json();
+      renderCarry(lastCarryData);
+      st.textContent = "已重置。";
+    } catch (e) {
+      st.textContent = "重置失败：" + e;
+    }
+  });
+}
+
+setInterval(refreshCarry, 60000);

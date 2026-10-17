@@ -362,6 +362,24 @@
           <p id="fd-cap-status" class="note" role="status" aria-live="polite"></p>
           <p class="note" id="fd-cap-summary"></p>
         </div>
+
+        <div class="content-card">
+          <div class="panel-head monitor-section-head"><div><span class="section-eyebrow">PAPER CARRY</span><h2>纸面 carry 策略</h2></div><div class="segmented"><button class="btn ghost" id="cy-step" type="button">手动推进一步</button><button class="btn danger" id="cy-reset" type="button">重置纸面</button></div></div>
+          <p class="note">真实行情、模拟下单、完整核算（资金费 + 基差 + 手续费）。预算读资金矩阵的「② carry」，不动真实账户、不发任何真实订单。冷却期：基差止损 / 持有超时 / 价差翻负平仓后 24 小时不再开同名币。</p>
+          <div class="setup-fields" style="display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end">
+            <div class="field"><label for="cy-entry">开仓阈值 %（|年化价差| ≥ 此值开仓）</label><input id="cy-entry" type="number" min="1" max="50" step="0.5" /></div>
+            <div class="field"><label for="cy-exit">出场阈值 %（跌破平仓）</label><input id="cy-exit" type="number" min="0" max="20" step="0.5" /></div>
+            <div class="field"><label for="cy-pairs">最大对数</label><input id="cy-pairs" type="number" min="1" max="20" step="1" /></div>
+            <div class="field"><label for="cy-hours">最长持有小时</label><input id="cy-hours" type="number" min="1" max="8760" step="1" /></div>
+            <div class="field"><label for="cy-stop">基差止损 %（名义）</label><input id="cy-stop" type="number" min="0.1" max="20" step="0.5" /></div>
+            <div class="field"><button class="btn ghost" id="cy-save" type="button">保存参数</button></div>
+          </div>
+          <p id="cy-status" class="note" role="status" aria-live="polite"></p>
+          <p class="note" id="cy-summary"></p>
+          <div id="cy-positions"></div>
+          <details class="setup-details"><summary>操作日志</summary><div id="cy-log" style="max-height:240px;overflow:auto"></div></details>
+          <details class="setup-details"><summary>权益曲线（每小时一点）</summary><div id="cy-history" class="note" style="max-height:160px;overflow:auto"></div></details>
+        </div>
       </section>
 
 

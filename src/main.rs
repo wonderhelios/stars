@@ -1,3 +1,4 @@
+mod carry;
 mod exchange;
 mod funding;
 mod hl;
@@ -38,6 +39,8 @@ async fn main() -> anyhow::Result<()> {
         .unwrap_or_else(|_| "/var/lib/stars/paper.json".to_string());
     let live_path = std::env::var("STARS_LIVE")
         .unwrap_or_else(|_| "/var/lib/stars/live.json".to_string());
+    let carry_path = std::env::var("STARS_CARRY")
+        .unwrap_or_else(|_| "/var/lib/stars/carry.json".to_string());
 
     // ===== trade subcommand (live execution) =====
     let args: Vec<String> = std::env::args().collect();
@@ -50,6 +53,7 @@ async fn main() -> anyhow::Result<()> {
     let paper = Arc::new(Mutex::new(PaperState::load(std::path::Path::new(&paper_path))));
     let hl_live = live::LiveState::load(std::path::Path::new(&live_path));
     let live = Arc::new(Mutex::new(hl_live));
+    let carry = Arc::new(Mutex::new(crate::carry::CarryState::load(std::path::Path::new(&carry_path))));
     let meta = Arc::new(Mutex::new(MetaCache::default()));
     let refresh = Arc::new(Mutex::new(RefreshStatus::default()));
 
@@ -68,6 +72,8 @@ async fn main() -> anyhow::Result<()> {
         meta: meta.clone(),
         refresh: refresh.clone(),
         funding: std::sync::Arc::new(tokio::sync::Mutex::new(crate::funding::FundingState::default())),
+        carry: carry.clone(),
+        carry_path: Arc::new(std::path::PathBuf::from(&carry_path)),
         binance_http: {
             // 币安公开接口客户端：地区屏蔽时可用 BINANCE_PROXY 环境变量指到代理。
             let mut b = reqwest::Client::builder()
@@ -82,13 +88,21 @@ async fn main() -> anyhow::Result<()> {
         },
     };
 
-    // ===== 资金费套利面板：每 60 秒刷新一次（后台，与页面无关）=====
+    // ===== 资金费套利：每 60 秒刷行情 + 推进一步纸面 carry =====
     {
         let st = state.clone();
         tokio::spawn(async move {
             loop {
                 let fresh = crate::funding::refresh(&st.http, &st.binance_http).await;
-                *st.funding.lock().await = fresh;
+                *st.funding.lock().await = fresh.clone();
+                // 纸面 carry：预算读资金矩阵，行情用刚刷的资金费面板。
+                let budget = st.live.lock().await.capital_alloc.carry_usd;
+                let market = crate::carry::market_rows(&fresh);
+                let mut carry = st.carry.lock().await;
+                crate::carry::step(&mut carry, budget, &market);
+                if let Err(e) = carry.save(&st.carry_path) {
+                    warn!("纸面 carry 保存失败: {e}");
+                }
                 tokio::time::sleep(Duration::from_secs(60)).await;
             }
         });

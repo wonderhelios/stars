@@ -36,6 +36,9 @@ pub struct AppState {
     pub funding: Arc<Mutex<crate::funding::FundingState>>,
     /// 币安公开接口客户端（可选 BINANCE_PROXY 代理，地区屏蔽时优雅降级）。
     pub binance_http: reqwest::Client,
+    /// 纸面资金费 carry 策略状态。
+    pub carry: Arc<Mutex<crate::carry::CarryState>>,
+    pub carry_path: Arc<std::path::PathBuf>,
 }
 
 #[derive(Clone, Default)]
@@ -80,6 +83,10 @@ pub fn router(state: AppState) -> Router {
         .route("/api/funding", get(funding_status))
         .route("/api/funding/refresh", post(funding_refresh))
         .route("/api/capital", post(capital_alloc))
+        .route("/api/carry", get(carry_status))
+        .route("/api/carry/step", post(carry_step))
+        .route("/api/carry/config", post(carry_config))
+        .route("/api/carry/reset", post(carry_reset))
         .layer(CompressionLayer::new())
         .layer(CorsLayer::permissive())
         .with_state(state)
@@ -609,6 +616,90 @@ async fn capital_alloc(State(state): State<AppState>, Json(body): Json<CapitalAl
     Json(json!({"ok": true})).into_response()
 }
 
+// ---- 纸面资金费 carry 策略 ----
+
+async fn carry_status(State(state): State<AppState>) -> Json<crate::carry::CarryState> {
+    let st = state.carry.lock().await.clone();
+    Json(st)
+}
+
+/// 手动推进一步（用当前资金费面板里的行情）。
+async fn carry_step(State(state): State<AppState>) -> Response {
+    let fresh = state.funding.lock().await.clone();
+    let budget = state.live.lock().await.capital_alloc.carry_usd;
+    let market = crate::carry::market_rows(&fresh);
+    let mut st = state.carry.lock().await;
+    crate::carry::step(&mut st, budget, &market);
+    if let Err(e) = st.save(&state.carry_path) {
+        return (StatusCode::INTERNAL_SERVER_ERROR, Json(json!({"ok": false, "error": format!("保存失败: {e:#}")}))).into_response();
+    }
+    Json(st.clone()).into_response()
+}
+
+#[derive(serde::Deserialize)]
+struct CarryConfigBody {
+    entry_threshold: Option<f64>,
+    exit_threshold: Option<f64>,
+    max_pairs: Option<usize>,
+    max_holding_hours: Option<i64>,
+    stop_loss_pct: Option<f64>,
+}
+
+async fn carry_config(State(state): State<AppState>, Json(body): Json<CarryConfigBody>) -> Response {
+    let mut st = state.carry.lock().await;
+    let prev = st.clone();
+    let c = &mut st.config;
+    if let Some(v) = body.entry_threshold {
+        if !(v.is_finite() && v > 0.0 && v < 1.0) {
+            return (StatusCode::BAD_REQUEST, Json(json!({"ok": false, "error": "开仓阈值必须在 (0, 1) 之间"}))).into_response();
+        }
+        c.entry_threshold = v;
+    }
+    if let Some(v) = body.exit_threshold {
+        if !(v.is_finite() && v >= 0.0 && v < 1.0) {
+            return (StatusCode::BAD_REQUEST, Json(json!({"ok": false, "error": "出场阈值必须在 [0, 1) 之间"}))).into_response();
+        }
+        c.exit_threshold = v;
+    }
+    if c.exit_threshold >= c.entry_threshold {
+        *st = prev;
+        return (StatusCode::BAD_REQUEST, Json(json!({"ok": false, "error": "出场阈值必须小于开仓阈值"}))).into_response();
+    }
+    if let Some(v) = body.max_pairs {
+        if !(1..=20).contains(&v) {
+            return (StatusCode::BAD_REQUEST, Json(json!({"ok": false, "error": "最大对数必须在 1~20"}))).into_response();
+        }
+        c.max_pairs = v;
+    }
+    if let Some(v) = body.max_holding_hours {
+        if !(1..=24 * 365).contains(&v) {
+            return (StatusCode::BAD_REQUEST, Json(json!({"ok": false, "error": "最长持有小时数必须在 1~8760"}))).into_response();
+        }
+        c.max_holding_hours = v;
+    }
+    if let Some(v) = body.stop_loss_pct {
+        if !(v.is_finite() && v > 0.0 && v < 1.0) {
+            return (StatusCode::BAD_REQUEST, Json(json!({"ok": false, "error": "止损比例必须在 (0, 1) 之间"}))).into_response();
+        }
+        c.stop_loss_pct = v;
+    }
+    if let Err(e) = st.save(&state.carry_path) {
+        *st = prev;
+        return (StatusCode::INTERNAL_SERVER_ERROR, Json(json!({"ok": false, "error": format!("保存失败: {e:#}")}))).into_response();
+    }
+    Json(json!({"ok": true})).into_response()
+}
+
+async fn carry_reset(State(state): State<AppState>) -> Response {
+    let budget = state.live.lock().await.capital_alloc.carry_usd;
+    let mut st = state.carry.lock().await;
+    crate::carry::reset(&mut st, budget);
+    if let Err(e) = st.save(&state.carry_path) {
+        return (StatusCode::INTERNAL_SERVER_ERROR, Json(json!({"ok": false, "error": format!("保存失败: {e:#}")}))).into_response();
+    }
+    Json(st.clone()).into_response()
+}
+
 async fn live_reset(State(state): State<AppState>) -> Response {
     let mut st = state.live.lock().await;
     let cfg = st.config.clone();
@@ -746,6 +837,8 @@ mod live_routes_tests {
             run_gate: Arc::new(Mutex::new(())),
             funding: Arc::new(Mutex::new(crate::funding::FundingState::default())),
             binance_http: reqwest::Client::new(),
+            carry: Arc::new(Mutex::new(crate::carry::CarryState::default())),
+            carry_path: Arc::new(root.join("carry.json")),
         };
         let app = router(base.clone());
         let response = app.clone().oneshot(Request::builder().uri("/").body(Body::empty()).unwrap()).await.unwrap();
@@ -793,6 +886,8 @@ mod live_routes_tests {
             run_gate: Arc::new(Mutex::new(())),
             funding: Arc::new(Mutex::new(crate::funding::FundingState::default())),
             binance_http: reqwest::Client::new(),
+            carry: Arc::new(Mutex::new(crate::carry::CarryState::default())),
+            carry_path: Arc::new(root.join("carry.json")),
         };
         let app = router(base.clone());
         // 资金费面板（初始为空状态, 仍应 200）。

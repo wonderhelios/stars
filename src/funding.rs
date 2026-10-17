@@ -38,6 +38,10 @@ pub struct FundingPair {
     pub diff_ann: f64,
     pub hl_vol: f64,
     pub bn_vol: f64,
+    /// HL 标记价（纸面 carry 的标记用）。
+    pub hl_px: f64,
+    /// 币安标记价。
+    pub bn_px: f64,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -85,7 +89,7 @@ async fn fetch_bn_json(client: &reqwest::Client, url: &str) -> Option<Value> {
 fn scan_universe(
     v: &Value,
     spikes: &mut Vec<FundingSpike>,
-    hl_fund: &mut HashMap<String, (f64, f64)>,
+    hl_fund: &mut HashMap<String, (f64, f64, f64)>, // coin -> (ann, vol, markPx)
     is_main: bool,
 ) {
     let Some(uni) = v[0]["universe"].as_array() else {
@@ -103,8 +107,9 @@ fn scan_universe(
         };
         let ann = num(&ctx["funding"]) * 24.0 * 365.0;
         let vol = num(&ctx["dayNtlVlm"]);
+        let px = num(&ctx["markPx"]);
         if is_main && !name.contains(':') {
-            hl_fund.insert(name.to_string(), (ann, vol));
+            hl_fund.insert(name.to_string(), (ann, vol, px));
         }
         if ann.abs() >= SPIKE_ANN_MIN && vol >= SPIKE_VOL_MIN {
             spikes.push(FundingSpike {
@@ -124,7 +129,7 @@ pub async fn refresh(http: &reqwest::Client, binance_http: &reqwest::Client) -> 
     };
 
     // ---- ① HL 主盘 + ② HIP-3 各所 ----
-    let mut hl_fund: HashMap<String, (f64, f64)> = HashMap::new();
+    let mut hl_fund: HashMap<String, (f64, f64, f64)> = HashMap::new();
     if let Some(v) = post_hl(http, json!({"type": "metaAndAssetCtxs"})).await {
         scan_universe(&v, &mut st.spikes, &mut hl_fund, true);
     }
@@ -148,8 +153,9 @@ pub async fn refresh(http: &reqwest::Client, binance_http: &reqwest::Client) -> 
         .sort_by(|a, b| b.ann.abs().partial_cmp(&a.ann.abs()).unwrap_or(std::cmp::Ordering::Equal));
     st.spikes.truncate(SPIKE_MAX);
 
-    // ---- ③ 币安：资金费 + 24h 成交额 ----
+    // ---- ③ 币安：资金费 + 标记价 + 24h 成交额 ----
     let mut bn_fund: HashMap<String, f64> = HashMap::new();
+    let mut bn_px: HashMap<String, f64> = HashMap::new();
     let mut bn_vol: HashMap<String, f64> = HashMap::new();
     let mut bn_error: Option<String> = None;
 
@@ -165,6 +171,7 @@ pub async fn refresh(http: &reqwest::Client, binance_http: &reqwest::Client) -> 
                 let coin = &sym[..sym.len() - 4];
                 let rate = num(&x["lastFundingRate"]);
                 bn_fund.insert(coin.to_string(), rate * 3.0 * 365.0);
+                bn_px.insert(coin.to_string(), num(&x["markPrice"]));
             }
         } else {
             bn_error = Some("币安 premiumIndex 响应异常".into());
@@ -197,11 +204,12 @@ pub async fn refresh(http: &reqwest::Client, binance_http: &reqwest::Client) -> 
     st.bn_error = bn_error;
 
     // ---- ④ 合并成资金费差对 ----
-    for (coin, (hl_ann, hl_vol)) in hl_fund {
+    for (coin, (hl_ann, hl_vol, hl_px)) in hl_fund {
         let Some(&bn_ann) = bn_lookup(&bn_fund, &coin) else {
             continue;
         };
         let bv = bn_lookup(&bn_vol, &coin).copied().unwrap_or(0.0);
+        let bpx = bn_lookup(&bn_px, &coin).copied().unwrap_or(0.0);
         if hl_vol >= PAIR_VOL_MIN && bv >= PAIR_VOL_MIN {
             st.pairs.push(FundingPair {
                 coin,
@@ -210,6 +218,8 @@ pub async fn refresh(http: &reqwest::Client, binance_http: &reqwest::Client) -> 
                 diff_ann: hl_ann - bn_ann,
                 hl_vol,
                 bn_vol: bv,
+                hl_px,
+                bn_px: bpx,
             });
         }
     }
