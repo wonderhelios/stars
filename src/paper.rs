@@ -258,33 +258,6 @@ impl Panel {
 
 }
 
-/// 一天算「完整」的判定：当天有 K 线的币数 ≥ 最近 60 天最大覆盖数的 60%。
-///
-/// 为什么需要：直连接口只给部分币补了最近日线时，面板尾部会出现「只有几十个币
-/// 有数据」的残缺日。按残缺日调仓 = 拿陈旧价格交易，回测最后几天会完全失真，
-/// 而且会一路推过数据末尾（2026-10-17 的 −5.9% 误判就是这么来的）。
-const COMPLETE_RATIO: f64 = 0.6;
-
-fn complete_days(p: &Panel) -> Vec<bool> {
-    let idx: std::collections::HashMap<i64, usize> =
-        p.ts.iter().enumerate().map(|(i, &t)| (t, i)).collect();
-    let mut cov = vec![0usize; p.ts.len()];
-    for data in p.closes.values() {
-        for &t in data.keys() {
-            if let Some(&i) = idx.get(&t) {
-                cov[i] += 1;
-            }
-        }
-    }
-    let mut out = vec![false; p.ts.len()];
-    for i in 0..p.ts.len() {
-        let lo = i.saturating_sub(59);
-        let ref_n = cov[lo..=i].iter().copied().max().unwrap_or(0);
-        out[i] = ref_n > 0 && (cov[i] as f64) >= COMPLETE_RATIO * ref_n as f64;
-    }
-    out
-}
-
 /// Advance the paper trade. On a fresh start this replays `replay_days` of
 /// history; otherwise it processes every new daily close since the last run.
 pub fn step(state: &mut PaperState, panel: &[PanelEntry], max_lev: &HashMap<String, u32>) {
@@ -302,7 +275,7 @@ pub fn step(state: &mut PaperState, panel: &[PanelEntry], max_lev: &HashMap<Stri
     let fresh = state.last_ts.is_none();
     // 只在「数据完整」的交易日推进，并且绝不越过最后一个完整日：
     // 残缺日（只有部分币有 K 线）用陈旧价格调仓，会把回测尾部整个污染。
-    let complete = complete_days(&p);
+    let complete = crate::trader::complete_days(&p.ts, &p.closes);
     let Some(last_ok) = (0..p.ts.len()).rev().find(|&i| complete[i]) else {
         return;
     };
@@ -789,7 +762,7 @@ mod coverage_tests {
             entries.push(entry(&format!("C{j:02}"), &days));
         }
         let p = Panel::build(&entries);
-        let ok = complete_days(&p);
+        let ok = crate::trader::complete_days(&p.ts, &p.closes);
         assert_eq!(ok.len(), 40);
         assert!(ok[..37].iter().all(|&x| x), "完整日必须全部标记为完整");
         assert!(!ok[37] && !ok[38] && !ok[39], "残缺的尾部必须排除");
@@ -810,7 +783,7 @@ mod coverage_tests {
             entries.push(entry(&format!("C{j}"), &days));
         }
         let p = Panel::build(&entries);
-        let ok = complete_days(&p);
+        let ok = crate::trader::complete_days(&p.ts, &p.closes);
         assert!(ok.iter().all(|&x| x), "20% 的缺失不应把一天判成残缺");
     }
 }

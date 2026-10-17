@@ -168,6 +168,11 @@ impl FactorPanel {
         self.closes.get(coin).and_then(|m| m.get(&t)).copied()
     }
 
+    /// 每个交易日的数据是否完整（与 paper 回测同口径）。
+    pub fn complete_days(&self) -> Vec<bool> {
+        complete_days(&self.ts, &self.closes)
+    }
+
     #[allow(dead_code)]
     pub fn len(&self) -> usize {
         self.ts.len()
@@ -402,6 +407,29 @@ impl FactorPanel {
     }
 }
 
+/// 判定哪些交易日的数据是完整的：当天有数据的币数 ≥ 最近 60 天最大覆盖数的 60%。
+///
+/// 直连接口只给部分币补了最近日线时，面板尾部会出现「只有几十个币有数据」的
+/// 残缺日。任何按残缺日调仓的回测/影子曲线都会失真，所以两边共用这一个判定。
+pub fn complete_days(ts: &[i64], closes: &HashMap<String, BTreeMap<i64, f64>>) -> Vec<bool> {
+    let idx: HashMap<i64, usize> = ts.iter().enumerate().map(|(i, &t)| (t, i)).collect();
+    let mut cov = vec![0usize; ts.len()];
+    for data in closes.values() {
+        for &t in data.keys() {
+            if let Some(&i) = idx.get(&t) {
+                cov[i] += 1;
+            }
+        }
+    }
+    let mut out = vec![false; ts.len()];
+    for i in 0..ts.len() {
+        let lo = i.saturating_sub(59);
+        let ref_n = cov[lo..=i].iter().copied().max().unwrap_or(0);
+        out[i] = ref_n > 0 && (cov[i] as f64) >= 0.6 * ref_n as f64;
+    }
+    out
+}
+
 /// 目标权重（带符号，Σ|w| = 1）+ 当时的流动宇宙。
 /// 实盘与纸交易都调用这里，保证只有一份实现。
 pub fn target_weights(
@@ -474,6 +502,24 @@ pub fn build_plan(
         ..Default::default()
     };
 
+    // 总敞口硬上限：净值下跌时仓位不缩，杠杆会被动爬高（实测 2.7x → 3.0x），
+    // 把保证金缓冲吃光。超过目标 2% 就进入「强制减仓」模式：减仓不受错峰档位
+    // 和 2% 调仓带限制（否则 3 档错峰要拖 3 天，暴跌时敞口一直偏高）。
+    let target_gross = deployable * cfg.leverage;
+    let cur_gross: f64 = acct
+        .positions
+        .iter()
+        .filter_map(|(c, p)| mids.get(c).map(|mid| p.size.abs() * mid))
+        .sum();
+    let over_cap = target_gross > 0.0 && cur_gross > target_gross * 1.02;
+    if over_cap && equity > 0.0 {
+        plan.notes.push(format!(
+            "总敞口 {:.2}x 超过目标 {:.2}x，本次强制减仓（不受错峰限制）",
+            cur_gross / equity,
+            target_gross / equity
+        ));
+    }
+
     // 错峰调仓：今天只对属于本档的币下单，其余保持现状。
     //
     // 注意 wanted 里必须保留全部目标权重 —— 否则不在本档的持仓会被当成
@@ -515,9 +561,7 @@ pub fn build_plan(
         if cur.abs() < 1e-12 {
             continue;
         }
-        if !in_slot(coin) {
-            continue; // 不在今天的档位，保持现状
-        }
+        let in_today = in_slot(coin);
         let Some(mid) = mids.get(coin) else {
             plan.notes
                 .push(format!("{coin}: 缺价格，无法处理现有仓位 {cur:.6}"));
@@ -530,6 +574,9 @@ pub fn build_plan(
         let target = wanted.get(coin).map(|w| w.0).unwrap_or(0.0);
         let flip = cur * target < 0.0;
         if target == 0.0 || flip {
+            if !in_today {
+                continue; // 平仓仍按档位错峰
+            }
             let size = round_size(cur.abs(), m.sz_decimals);
             // **平仓只用绝对下限，不用按净值比例算的门槛。**
             //
@@ -557,12 +604,21 @@ pub fn build_plan(
             }
         } else {
             let delta = target - cur;
+            let reducing = cur * delta < 0.0;
+            if !in_today && !(over_cap && reducing) {
+                continue; // 不在今天档位：只有「超限 + 减仓」才破例
+            }
             let dsize = round_size(delta.abs(), m.sz_decimals);
             let dnotional = dsize * mid;
             // 复利门槛用「该仓自身的目标名义」算比例带，而不是全组合平均值：
             // 小仓位过去被平均值抬高门槛，长期跟不上净值增长。
             let pos_target = (cur + delta).abs() * mid;
-            let threshold = cfg.effective_min_order_usd(acct.equity).max(pos_target * cfg.rebalance_band);
+            let threshold = if over_cap && reducing {
+                // 超限减仓：只保留交易所绝对下限，不受比例门槛/调仓带限制。
+                cfg.min_order_usd
+            } else {
+                cfg.effective_min_order_usd(acct.equity).max(pos_target * cfg.rebalance_band)
+            };
             if dnotional >= threshold {
                 opens.push(Order {
                     coin: coin.clone(),
@@ -589,6 +645,9 @@ pub fn build_plan(
 
     // 2) open positions that are missing entirely
     for (coin, (target, is_long)) in wanted.iter() {
+        if over_cap {
+            continue; // 先减仓回到上限以内，再考虑新仓
+        }
         if !in_slot(coin) {
             continue; // 新仓位也等轮到它那一档再开
         }
@@ -1035,6 +1094,46 @@ mod slice_plan_tests {
         )
     }
 
+    /// 超限时（净值下跌、敞口被动爬到 3x+）必须能【越过错峰】立刻减仓，
+    /// 否则 3 档错峰要拖 3 天，暴跌中敞口一直偏高、保证金缓冲被吃光。
+    #[test]
+    fn over_cap_trims_even_non_slot_positions() {
+        let cfg = TradeConfig { rebalance_slices: 3, ..TradeConfig::default() };
+        let coins = ["BTC", "ETH", "SOL", "DOGE", "ARB", "HYPE"];
+        // 每个 10×100 = 1000，合计 6000 = 6x（远超 2.7x 上限）。
+        let weights: Vec<(String, f64)> = coins
+            .iter()
+            .map(|c| (c.to_string(), if c == &"ETH" || c == &"DOGE" { -0.1 } else { 0.1 }))
+            .collect();
+        let acct = Acct {
+            equity: 1000.0,
+            positions: coins.iter().map(|c| mk(c, 10.0)).collect(),
+        };
+        let markets: HashMap<String, MarketInfo> = coins.iter().map(|c| market(c)).collect();
+        let mids: HashMap<String, f64> = coins.iter().map(|c| (c.to_string(), 100.0)).collect();
+        let plan = build_plan(&weights, &acct, &markets, &mids, &cfg, None);
+        assert!(
+            plan.notes.iter().any(|n| n.contains("强制减仓")),
+            "超限时应有提示: {:?}",
+            plan.notes
+        );
+        assert!(
+            plan.orders.iter().any(|o| o.reduce_only),
+            "超限时应有减仓单"
+        );
+        // 减仓单必须覆盖到「不在今天档位」的币。
+        let day = (std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_millis() as i64
+            / 86_400_000) as u32;
+        let non_slot_with_order = plan
+            .orders
+            .iter()
+            .any(|o| (day + slice_of(&o.coin, 3)) % 3 != 0 && o.reduce_only);
+        assert!(non_slot_with_order, "超限减仓应越过错峰档位，实际订单: {:?}", plan.orders.iter().map(|o| (&o.coin, o.reduce_only)).collect::<Vec<_>>());
+    }
+
     /// 错峰最关键的性质：不在今天档位里的币，绝不能因为它「不在目标权重里」
     /// 就被平掉。否则那不是错峰，是随机清仓。
     #[test]
@@ -1051,7 +1150,8 @@ mod slice_plan_tests {
         ];
         let acct = Acct {
             equity: 1000.0,
-            positions: held.iter().map(|c| mk(c, 10.0)).collect(),
+            // 名义 6×300 = 1800 < 目标 2700（2.7x），不会触发超限强制减仓。
+            positions: held.iter().map(|c| mk(c, 3.0)).collect(),
         };
         let markets: HashMap<String, MarketInfo> = held.iter().map(|c| market(c)).collect();
         let mids: HashMap<String, f64> = held.iter().map(|c| (c.to_string(), 100.0)).collect();

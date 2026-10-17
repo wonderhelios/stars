@@ -1337,9 +1337,19 @@ pub fn shadow_curve(store: &crate::store::Store, from_ts: i64, cfg: &LiveConfig)
     let mut out: Vec<(i64, f64)> = Vec::new();
     let mut prev_w: Vec<(String, f64)> = Vec::new();
     let mut last_close: std::collections::HashMap<String, f64> = Default::default();
+    // 与纸面回测同一套完整性判定：残缺日（只有部分币有日线）不参与，
+    // 且绝不越过最后一个完整日。否则影子曲线尾部会被陈旧价格污染。
+    let complete = fp.complete_days();
+    let Some(last_ok) = (0..fp.len()).rev().find(|&i| complete[i]) else {
+        return Vec::new();
+    };
     let mut idx = 30usize;
-    while idx + 1 < fp.len() {
+    while idx + 1 <= last_ok {
         let t = fp.ts[idx];
+        if !complete[idx] {
+            idx += 1;
+            continue;
+        }
         if t < start {
             idx += 1;
             continue;
