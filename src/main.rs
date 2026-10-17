@@ -130,6 +130,65 @@ async fn main() -> anyhow::Result<()> {
         });
     }
 
+    // ===== 净敞口保护：每 5 分钟检查一次 =====
+    //
+    // 市场中性组合在【止盈成交 / 手动平仓 / 强平】之后会剩下单边敞口，
+    // 在下一次日调仓前一直带着方向性风险。这里只做减仓（reduce_only），
+    // 把偏多/偏空的那条腿按名义比例减掉，让净敞口回到 ≈0，不新增任何开仓。
+    {
+        let st = state.clone();
+        tokio::spawn(async move {
+            loop {
+                tokio::time::sleep(Duration::from_secs(300)).await;
+                let cfg = st.live.lock().await.config.clone();
+                if !(cfg.armed && cfg.auto_run && cfg.can_sign()) {
+                    continue;
+                }
+                // 与日调仓/手动调仓共用执行闸门，避免两边同时下单。
+                let _gate = match st.exec_gate.try_lock() {
+                    Ok(g) => g,
+                    Err(_) => continue,
+                };
+                let exec = match crate::exchange::Exec::signer_config(&cfg).await {
+                    Ok(e) => e,
+                    Err(_) => continue,
+                };
+                let acct = match exec.account().await {
+                    Ok(a) => a,
+                    Err(e) => {
+                        warn!("净敞口检查读账户失败: {e}");
+                        continue;
+                    }
+                };
+                if acct.positions.is_empty() {
+                    continue;
+                }
+                let coins: Vec<String> = acct.positions.keys().cloned().collect();
+                let mids = crate::trader::fetch_mids(&exec, &coins).await;
+                let markets = crate::live::markets_from_meta(&st.meta.lock().await.universe);
+                if markets.is_empty() {
+                    continue;
+                }
+                let orders = crate::trader::neutralize_orders(&acct, &markets, &mids, 0.02, 10.0);
+                for o in orders {
+                    match exec
+                        .ioc(&o.coin, o.buy, true, o.size, o.mid, cfg.slippage, o.sz_decimals)
+                        .await
+                    {
+                        Ok(_) => info!(
+                            "净敞口中性化：{} {} {:.6}（{}）",
+                            if o.buy { "买" } else { "卖" },
+                            o.coin,
+                            o.size,
+                            o.reason
+                        ),
+                        Err(e) => warn!("中性化下单失败 {}: {e}", o.coin),
+                    }
+                }
+            }
+        });
+    }
+
     // ===== daily live rebalance task =====
     {
         let st = state.clone();

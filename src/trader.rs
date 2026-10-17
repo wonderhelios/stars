@@ -55,6 +55,9 @@ pub struct TradeConfig {
     /// Sharpe 1.62→1.79，弱势区间 0.37→0.73。信号是 14 日动量，滞后几天
     /// 对它的影响远小于省下的成本。
     pub rebalance_slices: u32,
+    /// 止盈幅度（相对【持仓成本】）。0 = 不启用。调仓时会先把已经达到
+    /// 成本的 (1+tp) 的仓位按「止盈」平掉，未达到的由交易所的限价止盈单负责。
+    pub take_profit_pct: f64,
     /// 因子权重：动量占比（0~1），量能占 1 − 它。默认 0.5（两因子等权）。
     ///
     /// 证据（2026-10-17 复盘检验，真实样本 2024-07 起，2023 年币池中位数为 0 已排除）：
@@ -97,6 +100,7 @@ impl Default for TradeConfig {
             min_position_usd: 15.0,
             rebalance_slices: 3,
             momentum_weight: 0.5,
+            take_profit_pct: 0.0,
         }
     }
 }
@@ -407,6 +411,74 @@ impl FactorPanel {
     }
 }
 
+/// 净敞口保护：市场中性组合在止盈/手动平仓/强平之后会变成单边。
+///
+/// 只做【减仓】把净敞口拉回 ≈0（把偏多的那条腿按名义比例减掉），不新增任何
+/// 开仓，所以不会放大风险。返回的订单全部 `reduce_only`。
+pub fn neutralize_orders(
+    acct: &Acct,
+    markets: &std::collections::HashMap<String, MarketInfo>,
+    mids: &std::collections::HashMap<String, f64>,
+    tolerance: f64,
+    min_order_usd: f64,
+) -> Vec<Order> {
+    let mut long_n = 0.0;
+    let mut short_n = 0.0;
+    for (c, p) in acct.positions.iter() {
+        let Some(&mid) = mids.get(c) else { continue };
+        if !mid.is_finite() || mid <= 0.0 {
+            continue;
+        }
+        let n = p.size.abs() * mid;
+        if p.size > 0.0 {
+            long_n += n;
+        } else {
+            short_n += n;
+        }
+    }
+    let gross = long_n + short_n;
+    let net = long_n - short_n;
+    if gross <= 0.0 || net.abs() <= (tolerance * gross).max(min_order_usd) {
+        return Vec::new();
+    }
+    let reduce_longs = net > 0.0;
+    let mut budget = net.abs();
+    let mut out: Vec<Order> = Vec::new();
+    for (c, p) in acct.positions.iter() {
+        if budget < min_order_usd {
+            break;
+        }
+        if (p.size > 0.0) != reduce_longs {
+            continue;
+        }
+        let (Some(&mid), Some(m)) = (mids.get(c), markets.get(c)) else {
+            continue;
+        };
+        if !mid.is_finite() || mid <= 0.0 {
+            continue;
+        }
+        let take = (p.size.abs() * mid).min(budget);
+        let size = round_size(take / mid, m.sz_decimals);
+        if size * mid < min_order_usd {
+            continue;
+        }
+        let target = p.size - p.size.signum() * size;
+        out.push(Order {
+            coin: c.clone(),
+            buy: p.size < 0.0,
+            reduce_only: true,
+            target,
+            size,
+            mid,
+            sz_decimals: m.sz_decimals,
+            notional: size * mid,
+            reason: "净敞口中性化".into(),
+        });
+        budget -= size * mid;
+    }
+    out
+}
+
 /// 判定哪些交易日的数据是完整的：当天有数据的币数 ≥ 最近 60 天最大覆盖数的 60%。
 ///
 /// 直连接口只给部分币补了最近日线时，面板尾部会出现「只有几十个币有数据」的
@@ -571,7 +643,19 @@ pub fn build_plan(
             plan.notes.push(format!("{coin}: 缺市场元数据"));
             continue;
         };
-        let target = wanted.get(coin).map(|w| w.0).unwrap_or(0.0);
+        let tp_hit = cfg.take_profit_pct > 0.0
+            && pos.entry_px > 0.0
+            && pos.entry_px.is_finite()
+            && {
+                let ret = mid / pos.entry_px - 1.0;
+                let r = if cur > 0.0 { ret } else { -ret };
+                r >= cfg.take_profit_pct
+            };
+        let target = if tp_hit {
+            0.0 // 已到止盈线：本次直接平掉（次日调仓若仍在目标里会重新开）
+        } else {
+            wanted.get(coin).map(|w| w.0).unwrap_or(0.0)
+        };
         let flip = cur * target < 0.0;
         if target == 0.0 || flip {
             if !in_today {
@@ -596,7 +680,13 @@ pub fn build_plan(
                     mid: *mid,
                     sz_decimals: m.sz_decimals,
                     notional: size * mid,
-                    reason: if flip { "反手平仓".into() } else { "掉出名单平仓".into() },
+                    reason: if flip {
+                        "反手平仓".into()
+                    } else if tp_hit {
+                        "止盈平仓".into()
+                    } else {
+                        "掉出名单平仓".into()
+                    },
                 });
             } else {
                 plan.notes
@@ -978,6 +1068,74 @@ mod tests {
                 );
             }
         }
+    }
+
+    /// 止盈（选项 B）：相对【持仓成本】。已到成本的 (1+tp) 的仓位，
+    /// 调仓时就该平掉（而不是等交易所那张可能挂不上去的限价单）。
+    #[test]
+    fn take_profit_closes_a_winner_at_cost() {
+        let panel = synthetic();
+        let cfg = TradeConfig {
+            min_position_usd: 0.0,
+            take_profit_pct: 0.10,
+            rebalance_slices: 1,
+            ..Default::default()
+        };
+        let (w, _) = target_weights(&panel, &cfg, 1000.0, i64::MAX);
+        let coin = w.iter().find(|(_, x)| *x > 0.0).expect("要有多头").0.clone();
+        let mid = panel.iter().find(|e| e.coin == coin).unwrap().candles.last().unwrap().c;
+        let markets: HashMap<String, MarketInfo> =
+            panel.iter().map(|e| (e.coin.clone(), MarketInfo { sz_decimals: 2, max_leverage: 5 })).collect();
+        let mids: HashMap<String, f64> = panel.iter().map(|e| (e.coin.clone(), e.candles.last().unwrap().c)).collect();
+        let mut acct = Acct { equity: 1000.0, positions: Default::default() };
+        // 成本 = 现价/1.12 → 已赚 12% ≥ 10%
+        acct.positions.insert(coin.clone(), crate::exchange::Pos {
+            size: 10.0, entry_px: mid / 1.12, ..Default::default()
+        });
+        let plan = build_plan(&w, &acct, &markets, &mids, &cfg, None);
+        let tp: Vec<_> = plan.orders.iter().filter(|o| o.reason == "止盈平仓").collect();
+        assert!(!tp.is_empty(), "应有止盈平仓单: {:?}", plan.orders.iter().map(|o| (&o.coin, &o.reason)).collect::<Vec<_>>());
+        assert!(tp[0].reduce_only && !tp[0].buy, "平多头必须 reduce_only 卖出");
+
+        // 赚 5% < 10%: 不应止盈
+        let mut acct2 = Acct { equity: 1000.0, positions: Default::default() };
+        acct2.positions.insert(coin.clone(), crate::exchange::Pos {
+            size: 10.0, entry_px: mid / 1.05, ..Default::default()
+        });
+        let plan2 = build_plan(&w, &acct2, &markets, &mids, &cfg, None);
+        assert!(!plan2.orders.iter().any(|o| o.reason == "止盈平仓"), "未到阈值不该止盈");
+    }
+
+    /// 净敞口保护：只减偏多的那条腿，绝不开新仓。
+    #[test]
+    fn neutralize_reduces_only_the_overweight_side() {
+        let markets: HashMap<String, MarketInfo> =
+            ["A", "B"].iter().map(|c| (c.to_string(), MarketInfo { sz_decimals: 2, max_leverage: 5 })).collect();
+        let mids: HashMap<String, f64> = ["A", "B"].iter().map(|c| (c.to_string(), 100.0)).collect();
+        let mut acct = Acct { equity: 1000.0, positions: Default::default() };
+        acct.positions.insert("A".into(), crate::exchange::Pos { size: 10.0, entry_px: 100.0, ..Default::default() });
+        acct.positions.insert("B".into(), crate::exchange::Pos { size: -5.0, entry_px: 100.0, ..Default::default() });
+        let orders = neutralize_orders(&acct, &markets, &mids, 0.02, 10.0);
+        assert_eq!(orders.len(), 1, "只应有一笔");
+        assert_eq!(orders[0].coin, "A");
+        assert!(!orders[0].buy, "减多头必须是卖出");
+        assert!(orders[0].reduce_only);
+        assert!((orders[0].notional - 500.0).abs() < 1e-6, "应减掉 500 名义，实际 {}", orders[0].notional);
+
+        // 平衡 → 不动
+        let mut bal = Acct { equity: 1000.0, positions: Default::default() };
+        bal.positions.insert("A".into(), crate::exchange::Pos { size: 10.0, entry_px: 100.0, ..Default::default() });
+        bal.positions.insert("B".into(), crate::exchange::Pos { size: -10.0, entry_px: 100.0, ..Default::default() });
+        assert!(neutralize_orders(&bal, &markets, &mids, 0.02, 10.0).is_empty());
+
+        // 净空 → 买回空头
+        let mut sh = Acct { equity: 1000.0, positions: Default::default() };
+        sh.positions.insert("A".into(), crate::exchange::Pos { size: 2.0, entry_px: 100.0, ..Default::default() });
+        sh.positions.insert("B".into(), crate::exchange::Pos { size: -10.0, entry_px: 100.0, ..Default::default() });
+        let o = neutralize_orders(&sh, &markets, &mids, 0.02, 10.0);
+        assert_eq!(o.len(), 1);
+        assert_eq!(o[0].coin, "B");
+        assert!(o[0].buy, "减空头必须是买入");
     }
 
     #[test]

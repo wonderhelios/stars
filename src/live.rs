@@ -129,6 +129,7 @@ impl LiveConfig {
             // 界面上改成 1 也毫无作用。下面有 field_parity 测试守着。
             rebalance_slices: self.rebalance_slices,
             momentum_weight: self.momentum_weight,
+            take_profit_pct: self.take_profit_pct,
             ..Default::default()
         }
     }
@@ -1013,14 +1014,21 @@ pub async fn place_take_profits(
             continue;
         }
         let is_long = pos.size > 0.0;
-        // 基准价优先用调仓时记录的参考价
-        let mut base = reference.get(coin).copied().unwrap_or(mid);
-        // 参考价已被突破（行情反向走过头）时不能用它：挂出来会立刻成交。
-        if is_long && base * (1.0 + tp_pct) <= mid {
-            base = mid;
-        }
-        if !is_long && base * (1.0 - tp_pct) >= mid {
-            base = mid;
+        // 基准价 = 【持仓成本】（选项 B）。成本缺失才退回调仓参考价、再退回中间价。
+        //
+        // 为什么改成成本价：相对"上次调仓的中间价"挂止盈，止盈线会随行情每天搬家，
+        // 变成"每天从开盘价再涨 10% 才走"，而不是"这笔仓位赚到 10% 就走"。
+        // 实测（2026-10-17，234 币日线）：相对成本·日内触线 Sharpe 2.63、暴跌周 −11.2%，
+        // 相对开盘·日内触线 Sharpe 3.18 但暴跌周 −16.8%。选成本版（用户选项 B）。
+        let base = if pos.entry_px > 0.0 && pos.entry_px.is_finite() {
+            pos.entry_px
+        } else {
+            reference.get(coin).copied().unwrap_or(mid)
+        };
+        // 现价已经越过止盈线：不挂"一挂就成交"的单子，交给调仓计划按「止盈」平掉。
+        if (is_long && base * (1.0 + tp_pct) <= mid) || (!is_long && base * (1.0 - tp_pct) >= mid) {
+            log.push(format!("{coin}: 已越过止盈线，由调仓计划平仓"));
+            continue;
         }
         let (buy, px) = take_profit_order(is_long, base, tp_pct, m.sz_decimals);
         if px <= 0.0 {
@@ -1417,6 +1425,7 @@ mod config_parity_tests {
             margin_buffer: 0.77,
             rebalance_slices: 4,
             momentum_weight: 0.7,
+            take_profit_pct: 0.1,
             ..LiveConfig::default()
         };
         let tc = cfg.trade_config();
@@ -1429,6 +1438,7 @@ mod config_parity_tests {
         assert_eq!(tc.margin_buffer, 0.77, "margin_buffer 没传");
         assert_eq!(tc.rebalance_slices, 4, "rebalance_slices 没传（UI 会失效）");
         assert_eq!(tc.momentum_weight, 0.7, "momentum_weight 没传（UI 会失效）");
+        assert_eq!(tc.take_profit_pct, 0.1, "take_profit_pct 没传（止盈会失效）");
     }
 }
 
