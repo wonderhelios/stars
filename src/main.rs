@@ -98,10 +98,19 @@ async fn main() -> anyhow::Result<()> {
                 // 纸面 carry：预算读资金矩阵，行情用刚刷的资金费面板。
                 let budget = st.live.lock().await.capital_alloc.carry_usd;
                 let market = crate::carry::market_rows(&fresh);
-                let mut carry = st.carry.lock().await;
-                crate::carry::step(&mut carry, budget, &market);
-                if let Err(e) = carry.save(&st.carry_path) {
+                // 关键：锁内只做计算，写盘放到锁外。
+                // 之前 save 在锁内，磁盘一慢就把 /api/carry 阻塞 20~30 秒，
+                // 面板加载不出来（2026-10-17 现场问题）。
+                let snapshot = {
+                    let mut carry = st.carry.lock().await;
+                    crate::carry::step(&mut carry, budget, &market);
+                    carry.clone()
+                };
+                let t0 = std::time::Instant::now();
+                if let Err(e) = snapshot.save(&st.carry_path) {
                     warn!("纸面 carry 保存失败: {e}");
+                } else if t0.elapsed().as_secs() >= 2 {
+                    warn!("纸面 carry 保存耗时 {:?}（磁盘偏慢）", t0.elapsed());
                 }
                 tokio::time::sleep(Duration::from_secs(60)).await;
             }

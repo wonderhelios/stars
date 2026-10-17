@@ -986,6 +986,31 @@ refreshMonitor(true);
 setInterval(refreshMonitor, 20000);
 
 // ---------- 资金费套利面板 ----------
+// 带超时的 fetch：服务器偶尔会被后台写盘卡住 20~30 秒，不能把 UI 一起拖死。
+async function fetchJSON(url, opts = {}, timeoutMs = 8000) {
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), timeoutMs);
+  try {
+    const res = await fetch(url, { ...opts, cache: "no-store", signal: ctrl.signal });
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    return await res.json();
+  } finally {
+    clearTimeout(timer);
+  }
+}
+async function fetchJSONRetry(url, opts = {}, timeoutMs = 8000, tries = 2) {
+  let last;
+  for (let i = 0; i < tries; i++) {
+    try {
+      return await fetchJSON(url, opts, timeoutMs);
+    } catch (e) {
+      last = e;
+      if (i + 1 < tries) await new Promise((r) => setTimeout(r, 1200));
+    }
+  }
+  throw last;
+}
+
 let lastFundingData = null;
 let lastCarryData = null;
 
@@ -1041,12 +1066,9 @@ async function refreshFunding(force) {
   const viewActive = viewEl && viewEl.classList.contains("active");
   if (!force && !viewActive && lastFundingData) return; // 非激活视图不刷（省接口）
   try {
-    const res = await fetch(force ? "/api/funding/refresh" : "/api/funding", {
-      cache: "no-store",
+    lastFundingData = await fetchJSONRetry(force ? "/api/funding/refresh" : "/api/funding", {
       method: force ? "POST" : "GET",
-    });
-    if (!res.ok) throw new Error("HTTP " + res.status);
-    lastFundingData = await res.json();
+    }, force ? 45000 : 8000);
     renderFunding(lastFundingData);
   } catch (e) {
     // 静默失败，等下一轮
@@ -1104,10 +1126,16 @@ if ($("fd-refresh")) {
 }
 
 // 切到资金费套利视图时刷新（资金矩阵已并入 renderMonitor 的 20 秒轮询）。
-document.querySelectorAll('.nav button[data-view="funding"]').forEach((b) => {
+// 进入套利监控 / 套利设置时刷新对应数据
+document.querySelectorAll('.nav button[data-view="funding"], .nav button[data-view="funding-setup"]').forEach((b) => {
   b.addEventListener("click", () => {
     refreshFunding();
     refreshCarry();
+    if (b.dataset.view === "funding-setup") {
+      fetchJSONRetry("/api/live", {}, 8000)
+        .then((d) => renderCapitalAlloc(d.capital_alloc))
+        .catch(() => {});
+    }
   });
 });
 
@@ -1172,6 +1200,8 @@ function renderCarry(d) {
 function renderCarryConfig(cfg) {
   cfg = cfg || {};
   const entry = $("cy-entry"), exit = $("cy-exit"), pairs = $("cy-pairs"), hours = $("cy-hours"), stop = $("cy-stop");
+  // 60 秒轮询会重入：正在编辑的输入框不能被覆盖。
+  if ([entry, exit, pairs, hours, stop].some((el) => el && document.activeElement === el)) return;
   if (entry) entry.value = Math.round(cfg.entry_threshold * 1000) / 10;
   if (exit) exit.value = Math.round(cfg.exit_threshold * 1000) / 10;
   if (pairs) pairs.value = cfg.max_pairs;
@@ -1181,15 +1211,12 @@ function renderCarryConfig(cfg) {
 
 async function refreshCarry() {
   try {
-    const res = await fetch("/api/carry", { cache: "no-store" });
-    if (!res.ok) throw new Error("HTTP " + res.status);
-    lastCarryData = await res.json();
+    lastCarryData = await fetchJSONRetry("/api/carry", {}, 8000);
     renderCarry(lastCarryData);
-    if (!lastCarryData.__configRendered) {
-      renderCarryConfig(lastCarryData.config);
-      lastCarryData.__configRendered = true;
-    }
-  } catch (e) {}
+    renderCarryConfig(lastCarryData.config);
+  } catch (e) {
+    // 服务器偶尔被写盘卡住：8 秒超时 + 重试，避免参数框一直空白
+  }
 }
 
 if ($("cy-save")) {
