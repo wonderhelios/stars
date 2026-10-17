@@ -1018,6 +1018,7 @@ const annPct = (v) => Number.isFinite(v) ? (v * 100).toFixed(1) + "%" : "—";
 const annSigned = (v) => Number.isFinite(v) ? (v >= 0 ? "+" : "−") + Math.abs(v * 100).toFixed(1) + "%" : "—";
 const usdM = (v) => Number.isFinite(v) ? (v >= 1e6 ? "$" + (v / 1e6).toFixed(1) + "M" : "$" + (v / 1e3).toFixed(0) + "K") : "—";
 
+// 资金费差：只显示摘要 + 前 5 个机会，全表折叠。
 function renderFunding(d) {
   const up = $("fd-updated");
   if (up) {
@@ -1028,36 +1029,51 @@ function renderFunding(d) {
   const pairsEl = $("fd-pairs");
   if (pairsEl) {
     const pairs = (d && d.pairs) || [];
-    pairsEl.innerHTML = pairs.length
-      ? `<div class="table-scroll"><table><thead><tr><th>币</th><th>HL 年化</th><th>币安 年化</th><th>年化差</th><th>收钱方向</th><th>HL 成交额</th><th>币安 成交额</th></tr></thead><tbody>${
-          pairs.map((p) => {
-            const dir = p.diff_ann >= 0 ? "空 HL · 多币安" : "多 HL · 空币安";
-            return `<tr>
-              <td>${escapeHTML(p.coin)}</td>
-              <td>${annPct(p.hl_ann)}</td>
-              <td>${annPct(p.bn_ann)}</td>
-              <td class="${p.diff_ann >= 0 ? "pos" : "neg"}">${annSigned(p.diff_ann)}</td>
-              <td class="muted">${dir}</td>
-              <td>${usdM(p.hl_vol)}</td>
-              <td>${usdM(p.bn_vol)}</td>
-            </tr>`;
-          }).join("")
-        }</tbody></table></div>`
-      : '<div class="empty">还没有数据</div>';
+    if (!pairs.length) {
+      pairsEl.innerHTML = '<div class="empty">还没有数据（等后台刷新）</div>';
+    } else {
+      const avg = pairs.reduce((a, p) => a + Math.abs(p.diff_ann), 0) / pairs.length;
+      const row = (p) => `<tr>
+          <td>${escapeHTML(p.coin)}</td>
+          <td>${annPct(p.hl_ann)}</td>
+          <td>${annPct(p.bn_ann)}</td>
+          <td class="${p.diff_ann >= 0 ? "pos" : "neg"}">${annSigned(p.diff_ann)}</td>
+          <td class="muted">${p.diff_ann >= 0 ? "空 HL · 多币安" : "多 HL · 空币安"}</td>
+          <td class="muted">${usdM(p.hl_vol)} / ${usdM(p.bn_vol)}</td>
+        </tr>`;
+      const head = `<tr><th>币</th><th>HL</th><th>币安</th><th>差</th><th>方向</th><th>成交额 HL/币安</th></tr>`;
+      const top = pairs.slice(0, 5);
+      let html = `<p class="note">合格 <b>${pairs.length}</b> 个币 · 平均 |差| <b>${(avg * 100).toFixed(2)}%</b> · 最大 <b>${escapeHTML(pairs[0].coin)} ${annSigned(pairs[0].diff_ann)}</b></p>`;
+      html += `<div class="table-scroll"><table><thead>${head}</thead><tbody>${top.map(row).join("")}</tbody></table></div>`;
+      if (pairs.length > 5) {
+        html += `<details class="setup-details"><summary>展开全部 ${pairs.length} 个</summary>
+          <div class="table-scroll"><table><thead>${head}</thead><tbody>${pairs.map(row).join("")}</tbody></table></div></details>`;
+      }
+      pairsEl.innerHTML = html;
+    }
   }
   const spikesEl = $("fd-spikes");
   if (spikesEl) {
     const spikes = (d && d.spikes) || [];
-    spikesEl.innerHTML = spikes.length
-      ? `<div class="table-scroll"><table><thead><tr><th>市场</th><th>年化资金费</th><th>24h 成交额</th><th>收钱方向</th></tr></thead><tbody>${
-          spikes.map((s) => `<tr>
-              <td>${escapeHTML(s.market)}</td>
-              <td class="${s.ann >= 0 ? "pos" : "neg"}">${annSigned(s.ann)}</td>
-              <td>${usdM(s.vol)}</td>
-              <td class="muted">${s.ann >= 0 ? "空头收钱" : "多头收钱"}</td>
-            </tr>`).join("")
-        }</tbody></table></div>`
-      : '<div class="empty">当前没有 ≥40% 的尖峰</div>';
+    if (!spikes.length) {
+      spikesEl.innerHTML = '<div class="empty">当前没有 ≥40% 的尖峰</div>';
+    } else {
+      const pos = spikes.filter((s) => s.ann > 0).length;
+      const row = (s) => `<tr>
+          <td>${escapeHTML(s.market)}</td>
+          <td class="${s.ann >= 0 ? "pos" : "neg"}">${annSigned(s.ann)}</td>
+          <td>${usdM(s.vol)}</td>
+          <td class="muted">${s.ann >= 0 ? "空头收钱" : "多头收钱"}</td>
+        </tr>`;
+      const head = `<tr><th>市场</th><th>年化资金费</th><th>成交额</th><th>收钱方向</th></tr>`;
+      let html = `<p class="note">共 <b>${spikes.length}</b> 个尖峰 · 正资金费 <b>${pos}</b>（做空收钱）/ 负 <b>${spikes.length - pos}</b>（做多收钱）</p>`;
+      html += `<div class="table-scroll"><table><thead>${head}</thead><tbody>${spikes.slice(0, 5).map(row).join("")}</tbody></table></div>`;
+      if (spikes.length > 5) {
+        html += `<details class="setup-details"><summary>展开全部 ${spikes.length} 个</summary>
+          <div class="table-scroll"><table><thead>${head}</thead><tbody>${spikes.map(row).join("")}</tbody></table></div></details>`;
+      }
+      spikesEl.innerHTML = html;
+    }
   }
 }
 
@@ -1146,39 +1162,63 @@ setInterval(() => refreshFunding(false), 60000);
 
 // ---------- 纸面 carry 策略 ----------
 
+// 纸面 carry：摘要 + 权益曲线 + 两腿汇总，明细折叠。
 function renderCarry(d) {
+  d = d || {};
+  const pairs = d.pairs || [];
+  const open = pairs.reduce((a, p) => a + p.funding_accrued + p.basis_pnl - p.entry_fee, 0);
+  const closed = d.closed_pnl || 0;
+  const total = closed + open;
+  const base = d.start_equity || 0;
+  const eq = base + total;
   const sum = $("cy-summary");
   if (sum) {
-    const pairs = d.pairs || [];
-    const openPnl = pairs.reduce((s, p) => s + p.funding_accrued + p.basis_pnl - p.entry_fee, 0);
-    const total = (d.closed_pnl || 0) + openPnl;
-    const equity = (d.start_equity || 0) + total;
-    sum.textContent =
-      `预算 $${fmt(d.budget_usd || 0, 0)} · 期初 $${fmt(d.start_equity || 0, 0)} · ` +
-      `已实现 ${moneySigned(d.closed_pnl || 0)} · 未实现 ${moneySigned(openPnl)} · ` +
-      `权益 $${fmt(equity, 2)}`;
+    sum.innerHTML =
+      `<span>预算 <b>$${fmt(d.budget_usd || 0, 0)}</b></span> · ` +
+      `<span>权益 <b>$${fmt(eq, 2)}</b> ` +
+      `<b class="${total >= 0 ? "pos" : "neg"}">${base > 0 ? (total / base * 100).toFixed(2) + "%" : "—"}</b></span> · ` +
+      `<span>已实现 <b class="${closed >= 0 ? "pos" : "neg"}">${moneySigned(closed)}</b></span> · ` +
+      `<span>未实现 <b class="${open >= 0 ? "pos" : "neg"}">${moneySigned(open)}</b></span> · ` +
+      `<span>持仓 <b>${pairs.length}</b> 对</span>`;
+  }
+  renderCarryChart(d.history || []);
+  const legs = $("cy-legs");
+  if (legs) {
+    const agg = (dir) => {
+      const g = pairs.filter((p) => (dir > 0 ? p.direction > 0 : p.direction < 0));
+      return {
+        n: g.length,
+        notional: g.reduce((a, p) => a + p.notional, 0),
+        funding: g.reduce((a, p) => a + p.funding_accrued, 0),
+        basis: g.reduce((a, p) => a + p.basis_pnl, 0),
+        net: g.reduce((a, p) => a + p.funding_accrued + p.basis_pnl - p.entry_fee, 0),
+      };
+    };
+    const box = (title, a) => `<div class="content-card" style="padding:14px 16px">
+        <div class="panel-head" style="margin:0"><span class="section-eyebrow">${title}</span><b>${a.n} 对</b></div>
+        <p class="note" style="margin:6px 0 0">名义 $${fmt(a.notional, 0)} · 资金费 <b class="${a.funding >= 0 ? "pos" : "neg"}">${moneySigned(a.funding)}</b> · 基差 <b class="${a.basis >= 0 ? "pos" : "neg"}">${moneySigned(a.basis)}</b> · 净 <b class="${a.net >= 0 ? "pos" : "neg"}">${moneySigned(a.net)}</b></p></div>`;
+    legs.innerHTML = pairs.length
+      ? `<div class="grid-2">${box("空 HL · 多币安", agg(1))}${box("多 HL · 空币安", agg(-1))}</div>`
+      : "";
   }
   const posEl = $("cy-positions");
   if (posEl) {
-    const pairs = d.pairs || [];
     posEl.innerHTML = pairs.length
-      ? `<div class="table-scroll"><table><thead><tr><th>币</th><th>方向</th><th>每腿名义</th><th>进场价差</th><th>累计资金费</th><th>基差盈亏</th><th>净盈亏</th><th>已持</th></tr></thead><tbody>${
+      ? `<div class="table-scroll"><table><thead><tr><th>币</th><th>方向</th><th>每腿名义</th><th>进场差</th><th>资金费</th><th>基差</th><th>净</th><th>已持</th></tr></thead><tbody>${
           pairs.map((p) => {
             const net = p.funding_accrued + p.basis_pnl - p.entry_fee;
-            const hours = Math.max(0, (Date.now() - p.entry_ts) / 3600000).toFixed(1);
-            return `<tr>
-              <td>${escapeHTML(p.coin)}</td>
-              <td>${p.direction > 0 ? "空HL·多币安" : "多HL·空币安"}</td>
+            const h = Math.max(0, (Date.now() - p.entry_ts) / 3600000).toFixed(0);
+            return `<tr><td>${escapeHTML(p.coin)}</td>
+              <td class="muted">${p.direction > 0 ? "空HL·多BN" : "多HL·空BN"}</td>
               <td>$${fmt(p.notional, 0)}</td>
               <td>${(p.entry_diff * 100).toFixed(1)}%</td>
               <td class="${p.funding_accrued >= 0 ? "pos" : "neg"}">${moneySigned(p.funding_accrued)}</td>
               <td class="${p.basis_pnl >= 0 ? "pos" : "neg"}">${moneySigned(p.basis_pnl)}</td>
               <td class="${net >= 0 ? "pos" : "neg"}">${moneySigned(net)}</td>
-              <td class="muted">${hours}h</td>
-            </tr>`;
+              <td class="muted">${h}h</td></tr>`;
           }).join("")
         }</tbody></table></div>`
-      : '<div class="empty">没有纸面持仓。预算 > 0 且某币 |价差| ≥ 开仓阈值时自动开。</div>';
+      : '<div class="empty">没有纸面持仓。预算 &gt; 0 且某币 |价差| ≥ 开仓阈值时自动开。</div>';
   }
   const logEl = $("cy-log");
   if (logEl) {
@@ -1187,16 +1227,48 @@ function renderCarry(d) {
       ? logs.map((l) => `<div class="note">${ts2m(l.ts)} · ${escapeHTML(l.msg)}</div>`).join("")
       : '<div class="note">还没有操作。</div>';
   }
-  const histEl = $("cy-history");
-  if (histEl) {
-    const pts = (d.history || []).slice(-72);
-    histEl.textContent = pts.length
-      ? pts.map(([t, v]) => `${ts2m(t)} → $${fmt(v, 2)}`).join("\n")
-      : "还没有权益点（每小时记一个）。";
-  }
 }
 
-// 只在首次加载或保存后回填参数，避免 60 秒轮询覆盖正在编辑的输入。
+// 纸面 carry 权益曲线（每小时一个点）。
+function renderCarryChart(history) {
+  const el = $("cy-chart");
+  if (!el) return;
+  const pts = (history || [])
+    .filter((p) => Array.isArray(p) && Number.isFinite(p[0]) && Number.isFinite(p[1]))
+    .map((p) => ({ ts: p[0], eq: p[1] }));
+  if (pts.length < 2) {
+    el.innerHTML = '<div class="empty">还没有足够的权益点（每小时一个，跑两小时就能画线）</div>';
+    return;
+  }
+  const W = Math.max(340, el.clientWidth || 900), H = 240;
+  const padL = 64, padR = 20, padT = 20, padB = 30;
+  const first = pts[0], last = pts[pts.length - 1];
+  const change = last.eq - first.eq;
+  const vals = pts.map((p) => p.eq);
+  const ax = niceAxis(Math.min(...vals), Math.max(...vals), 4);
+  const span = ax.hi - ax.lo || 1;
+  const X = (ts) => padL + (last.ts === first.ts ? 0.5 : (ts - first.ts) / (last.ts - first.ts)) * (W - padL - padR);
+  const Y = (v) => padT + (1 - (v - ax.lo) / span) * (H - padT - padB);
+  const grid = ax.lines.map((v) => `<line x1="${padL}" y1="${Y(v)}" x2="${W - padR}" y2="${Y(v)}" stroke="#eaf0f0"/><text x="${padL - 10}" y="${Y(v) + 4}" text-anchor="end" font-size="11" fill="#86949d">$${v.toFixed(span < 10 ? 2 : 0)}</text>`).join("");
+  const line = pts.map((p) => `${X(p.ts)},${Y(p.eq)}`).join(" ");
+  const ticks = [first.ts, first.ts + (last.ts - first.ts) / 2, last.ts];
+  const xlabels = ticks.map((ts, i) => `<text x="${X(ts)}" y="${H - 8}" text-anchor="${i === 0 ? "start" : i === ticks.length - 1 ? "end" : "middle"}" font-size="11" fill="#86949d">${ts2m(ts)}</text>`).join("");
+  el.innerHTML = `<div class="chart-summary">
+      <div><span class="chart-eyebrow">纸面权益 · 最新</span><strong>$${fmt(last.eq, 2)}</strong></div>
+      <div><span class="chart-eyebrow">区间变化</span><strong class="${change >= 0 ? "pos" : "neg"}">${moneySigned(change)}</strong></div>
+      <div class="chart-coverage"><span class="chart-eyebrow">点数</span>${pts.length} · ${ts2m(first.ts)} — ${ts2m(last.ts)}</div>
+    </div>
+    <svg viewBox="0 0 ${W} ${H}" role="img" aria-label="纸面 carry 权益曲线">
+      <defs><linearGradient id="carry-area" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#168473" stop-opacity="0.14"/><stop offset="100%" stop-color="#168473" stop-opacity="0"/></linearGradient></defs>
+      ${grid}
+      <polygon points="${X(first.ts)},${H - padB} ${line} ${X(last.ts)},${H - padB}" fill="url(#carry-area)"/>
+      <line x1="${padL}" y1="${Y(first.eq)}" x2="${W - padR}" y2="${Y(first.eq)}" stroke="#bacac8" stroke-dasharray="4 5"/>
+      <polyline points="${line}" fill="none" stroke="#168473" stroke-width="2.5" stroke-linejoin="round"/>
+      <circle cx="${X(last.ts)}" cy="${Y(last.eq)}" r="4" fill="#168473" stroke="white" stroke-width="2"/>
+      ${xlabels}
+    </svg>`;
+}
+
 function renderCarryConfig(cfg) {
   cfg = cfg || {};
   const entry = $("cy-entry"), exit = $("cy-exit"), pairs = $("cy-pairs"), hours = $("cy-hours"), stop = $("cy-stop");
