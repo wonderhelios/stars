@@ -184,8 +184,11 @@ struct PaperStartReq {
     replay_days: usize,
     #[serde(default = "d_target_pos")]
     target_positions: usize,
+    #[serde(default = "d_mw")]
+    momentum_weight: f64,
 }
 
+fn d_mw() -> f64 { 0.5 }
 fn d_fee() -> f64 { 0.00045 }
 fn d_cap() -> f64 { 2_000.0 }
 fn d_lev() -> f64 { 3.0 }
@@ -217,6 +220,7 @@ async fn paper_start(
         leverage: req.leverage.clamp(1.0, 20.0),
         replay_days: req.replay_days.min(365),
         target_positions: req.target_positions.clamp(1, 30),
+        momentum_weight: req.momentum_weight.clamp(0.0, 1.0),
     });
     p.running = true;
     let capital = p.config.as_ref().unwrap().capital;

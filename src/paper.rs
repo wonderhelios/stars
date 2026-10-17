@@ -37,6 +37,8 @@ pub struct PaperConfig {
     /// Per-side fee (Hyperliquid taker by default).
     pub fee: f64,
     /// History replayed on start so the book is not empty.
+    #[serde(default = "d_mw")]
+    pub momentum_weight: f64,
     #[serde(default = "d_replay")]
     pub replay_days: usize,
     /// Target positions per leg; each gets gross_notional/2/target_positions.
@@ -49,6 +51,8 @@ pub struct PaperConfig {
 fn d_replay() -> usize {
     90
 }
+
+fn d_mw() -> f64 { 0.5 }
 fn d_target_pos() -> usize {
     8
 }
@@ -64,6 +68,7 @@ impl Default for PaperConfig {
             fee: 0.00045,
             replay_days: 90,
             target_positions: 8,
+            momentum_weight: 0.5,
         }
     }
 }
@@ -315,6 +320,7 @@ fn advance(
         top_frac: cfg.top_frac,
         min_vol_usd: cfg.min_vol_usd,
         target_positions: cfg.target_positions,
+        momentum_weight: cfg.momentum_weight,
         leverage: cfg.leverage,
         ..Default::default()
     };

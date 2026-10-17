@@ -874,6 +874,53 @@ mod tests {
             .collect()
     }
 
+    /// 因子权重必须只用一次线性组合 + 最终归一化，不能引入额外的缩放。
+    ///
+    /// 用三个点验证（不需要复刻因子数学）：
+    ///   w(1.0) = 纯动量（此时 Σ|w|=1，所以它就是未归一化的动量向量）
+    ///   w(0.0) = 纯量能（同理）
+    ///   w(0.7) 必须等于 normalize(0.7·w(1.0) + 0.3·w(0.0))
+    /// 这条关系一旦破坏（比如权重加在两个腿之外、或 50/50 的旧行为被改动），
+    /// 界面上的「动量权重 70%」就不再等于实际组合的 70%。
+    #[test]
+    fn factor_weight_is_a_linear_mix_of_the_two_books() {
+        let panel = synthetic();
+        let base = TradeConfig { min_position_usd: 0.0, ..Default::default() };
+        let weights = |mw: f64| {
+            let cfg = TradeConfig { momentum_weight: mw, ..base.clone() };
+            let (w, _) = target_weights(&panel, &cfg, 1000.0, i64::MAX);
+            let mut m: std::collections::HashMap<String, f64> = w.into_iter().collect();
+            let gross: f64 = m.values().map(|x| x.abs()).sum();
+            assert!((gross - 1.0).abs() < 1e-9, "mw={mw} 的 Σ|w| 必须是 1，实际 {gross}");
+            m
+        };
+        let mom = weights(1.0);
+        let vol = weights(0.0);
+        assert!(!mom.is_empty() && !vol.is_empty(), "两个纯因子组合都不该为空");
+        for mw in [0.5_f64, 0.7, 0.3] {
+            let got = weights(mw);
+            let mut coins: Vec<&String> = mom.keys().chain(vol.keys()).collect();
+            coins.sort();
+            coins.dedup();
+            let mut raw: Vec<(String, f64)> = Vec::new();
+            for c in coins {
+                let x = mw * mom.get(c).copied().unwrap_or(0.0)
+                    + (1.0 - mw) * vol.get(c).copied().unwrap_or(0.0);
+                raw.push((c.clone(), x));
+            }
+            let sum: f64 = raw.iter().map(|(_, x)| x.abs()).sum();
+            assert!(sum > 0.0);
+            for (c, x) in raw {
+                let want = x / sum;
+                let have = got.get(&c).copied().unwrap_or(0.0);
+                assert!(
+                    (want - have).abs() < 1e-9,
+                    "mw={mw} 时 {c} 的权重 {have} 不等于线性组合 {want}"
+                );
+            }
+        }
+    }
+
     #[test]
     fn weights_are_normalised_to_unit_gross() {
         // 跨因子会相互抵消，如果不重新归一化，Σ|w| 会小于 1，实际杠杆就会低于设置。
