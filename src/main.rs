@@ -1,4 +1,5 @@
 mod exchange;
+mod funding;
 mod hl;
 mod live;
 mod momentum;
@@ -66,7 +67,32 @@ async fn main() -> anyhow::Result<()> {
             .build()?,
         meta: meta.clone(),
         refresh: refresh.clone(),
+        funding: std::sync::Arc::new(tokio::sync::Mutex::new(crate::funding::FundingState::default())),
+        binance_http: {
+            // 币安公开接口客户端：地区屏蔽时可用 BINANCE_PROXY 环境变量指到代理。
+            let mut b = reqwest::Client::builder()
+                .timeout(Duration::from_secs(20))
+                .pool_max_idle_per_host(8);
+            if let Ok(proxy_url) = std::env::var("BINANCE_PROXY") {
+                if let Ok(proxy) = reqwest::Proxy::all(&proxy_url) {
+                    b = b.proxy(proxy);
+                }
+            }
+            b.build()?
+        },
     };
+
+    // ===== 资金费套利面板：每 60 秒刷新一次（后台，与页面无关）=====
+    {
+        let st = state.clone();
+        tokio::spawn(async move {
+            loop {
+                let fresh = crate::funding::refresh(&st.http, &st.binance_http).await;
+                *st.funding.lock().await = fresh;
+                tokio::time::sleep(Duration::from_secs(60)).await;
+            }
+        });
+    }
 
     // ===== 净值曲线记录器（Hyperliquid）=====
     //

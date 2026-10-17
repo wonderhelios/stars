@@ -191,6 +191,9 @@ pub struct LiveState {
     /// 每一笔入金/出金流水。
     #[serde(default)]
     pub capital_flows: Vec<CapitalFlow>,
+    /// 策略矩阵资金分配（动量 / carry / 尖峰狩猎），仅记录与展示。
+    #[serde(default)]
+    pub capital_alloc: CapitalAlloc,
 }
 
 #[derive(Clone, Serialize, Deserialize)]
@@ -298,6 +301,15 @@ pub struct CapitalFlow {
     pub note: String,
 }
 
+/// 策略矩阵的资金分配（用户自填，仅作记录与展示，不驱动任何自动执行）。
+/// 三种策略：① 横截面动量 ② 资金费 carry ③ 尖峰狩猎。
+#[derive(Clone, Serialize, Deserialize, Default)]
+pub struct CapitalAlloc {
+    pub momentum_usd: f64,
+    pub carry_usd: f64,
+    pub hunting_usd: f64,
+}
+
 pub fn merge_reconciliation(current: &mut LiveState, snapshot: &LiveState) {
     if !current.config.account.eq_ignore_ascii_case(&snapshot.config.account) { return; }
     let mut known:std::collections::HashSet<u64>=current.records.iter().filter_map(|r|r.tid).collect();
@@ -398,6 +410,8 @@ pub struct LiveSnapshot {
     pub net_deposit: f64,
     /// 入金/出金流水。
     pub capital_flows: Vec<CapitalFlow>,
+    /// 资金矩阵分配（动量 / carry / 尖峰狩猎），仅展示。
+    pub capital_alloc: CapitalAlloc,
     /// 每日执行指标（换手/笔数/滑点），用于月度执行质量复查。
     pub exec_daily: Vec<DailyExec>,
     /// 拿不到行情、只能用交易所市值反推估值的币。非空时要显眼提示 ——
@@ -446,6 +460,7 @@ pub async fn snapshot(
         unpriced: Vec::new(),
         net_deposit: 0.0,
         capital_flows: Vec::new(),
+        capital_alloc: state.capital_alloc.clone(),
         exec_daily: Vec::new(),
         tp_ref: HashMap::new(),
         config: cfg.clone(),

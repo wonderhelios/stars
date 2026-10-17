@@ -32,6 +32,10 @@ pub struct AppState {
     pub exec_gate: Arc<tokio::sync::Mutex<()>>,
     /// Prevent duplicate manual/automatic jobs while their public-data preparation runs.
     pub run_gate: Arc<tokio::sync::Mutex<()>>,
+    /// 资金费套利面板数据（每 60 秒后台刷新）。
+    pub funding: Arc<Mutex<crate::funding::FundingState>>,
+    /// 币安公开接口客户端（可选 BINANCE_PROXY 代理，地区屏蔽时优雅降级）。
+    pub binance_http: reqwest::Client,
 }
 
 #[derive(Clone, Default)]
@@ -73,6 +77,9 @@ pub fn router(state: AppState) -> Router {
         .route("/api/live/records/clear", post(live_records_clear))
         .route("/api/live/capital", post(live_capital))
         .route("/api/live/capital/time", post(live_capital_time))
+        .route("/api/funding", get(funding_status))
+        .route("/api/funding/refresh", post(funding_refresh))
+        .route("/api/capital", post(capital_alloc))
         .layer(CompressionLayer::new())
         .layer(CorsLayer::permissive())
         .with_state(state)
@@ -561,6 +568,47 @@ async fn live_capital_time(State(state): State<AppState>, Json(body): Json<Capit
     Json(json!({"ok":true})).into_response()
 }
 
+// ---- 资金费套利面板 ----
+
+async fn funding_status(State(state): State<AppState>) -> Json<crate::funding::FundingState> {
+    let st = state.funding.lock().await.clone();
+    Json(st)
+}
+
+async fn funding_refresh(State(state): State<AppState>) -> Response {
+    let fresh = crate::funding::refresh(&state.http, &state.binance_http).await;
+    let mut st = state.funding.lock().await;
+    *st = fresh;
+    Json(st.clone()).into_response()
+}
+
+/// 资金矩阵配置：三种策略的资金分配（仅记录与展示，不自动执行）。
+#[derive(serde::Deserialize)]
+struct CapitalAllocBody {
+    momentum_usd: f64,
+    carry_usd: f64,
+    hunting_usd: f64,
+}
+
+async fn capital_alloc(State(state): State<AppState>, Json(body): Json<CapitalAllocBody>) -> Response {
+    let vals = [body.momentum_usd, body.carry_usd, body.hunting_usd];
+    if !vals.iter().all(|v| v.is_finite() && *v >= 0.0) {
+        return (StatusCode::BAD_REQUEST, Json(json!({"ok": false, "error": "金额必须是非负有限数"}))).into_response();
+    }
+    let mut st = state.live.lock().await;
+    let prev = st.clone();
+    st.capital_alloc = crate::live::CapitalAlloc {
+        momentum_usd: body.momentum_usd,
+        carry_usd: body.carry_usd,
+        hunting_usd: body.hunting_usd,
+    };
+    if let Err(e) = st.save(&state.live_path) {
+        *st = prev;
+        return (StatusCode::INTERNAL_SERVER_ERROR, Json(json!({"ok": false, "error": format!("保存失败: {e:#}")}))).into_response();
+    }
+    Json(json!({"ok": true})).into_response()
+}
+
 async fn live_reset(State(state): State<AppState>) -> Response {
     let mut st = state.live.lock().await;
     let cfg = st.config.clone();
@@ -696,6 +744,8 @@ mod live_routes_tests {
             refresh: Arc::new(Mutex::new(RefreshStatus::default())),
             http: reqwest::Client::new(), exec_gate: Arc::new(Mutex::new(())),
             run_gate: Arc::new(Mutex::new(())),
+            funding: Arc::new(Mutex::new(crate::funding::FundingState::default())),
+            binance_http: reqwest::Client::new(),
         };
         let app = router(base.clone());
         let response = app.clone().oneshot(Request::builder().uri("/").body(Body::empty()).unwrap()).await.unwrap();
@@ -723,6 +773,60 @@ mod live_routes_tests {
         assert_eq!(app.clone().oneshot(request).await.unwrap().status(), StatusCode::CONFLICT);
         assert!(!base.live.lock().await.config.armed);
         drop(executing);
+        drop(app); drop(base);
+        std::fs::remove_dir_all(root).unwrap();
+    }
+
+    #[tokio::test]
+    async fn funding_and_capital_routes_round_trip() {
+        let root = std::env::temp_dir().join(format!("stars-funding-{}", uuid::Uuid::new_v4()));
+        std::fs::create_dir_all(&root).unwrap();
+        let base = AppState {
+            store: Arc::new(Store::open(&root.join("hl.sqlite")).unwrap()),
+            paper: Arc::new(Mutex::new(PaperState::default())),
+            paper_path: Arc::new(root.join("paper.json")),
+            live: Arc::new(Mutex::new(crate::live::LiveState::default())),
+            live_path: Arc::new(root.join("hl.json")),
+            meta: Arc::new(Mutex::new(MetaCache::default())),
+            refresh: Arc::new(Mutex::new(RefreshStatus::default())),
+            http: reqwest::Client::new(), exec_gate: Arc::new(Mutex::new(())),
+            run_gate: Arc::new(Mutex::new(())),
+            funding: Arc::new(Mutex::new(crate::funding::FundingState::default())),
+            binance_http: reqwest::Client::new(),
+        };
+        let app = router(base.clone());
+        // 资金费面板（初始为空状态, 仍应 200）。
+        let resp = app.clone().oneshot(Request::builder().uri("/api/funding").body(Body::empty()).unwrap()).await.unwrap();
+        assert_eq!(resp.status(), StatusCode::OK);
+        // 资金矩阵：保存 → 持久化 → 拒绝对负数。
+        let req = Request::builder().method("POST").uri("/api/capital")
+            .header("content-type", "application/json")
+            .body(Body::from(r#"{"momentum_usd":3500,"carry_usd":1000,"hunting_usd":500}"#)).unwrap();
+        let resp = app.clone().oneshot(req).await.unwrap();
+        assert_eq!(resp.status(), StatusCode::OK);
+        {
+            let st = base.live.lock().await;
+            assert_eq!(st.capital_alloc.momentum_usd, 3500.0);
+            assert_eq!(st.capital_alloc.carry_usd, 1000.0);
+            assert_eq!(st.capital_alloc.hunting_usd, 500.0);
+        }
+        assert!(base.live_path.exists());
+        // 负数被拒。
+        let req = Request::builder().method("POST").uri("/api/capital")
+            .header("content-type", "application/json")
+            .body(Body::from(r#"{"momentum_usd":-1,"carry_usd":0,"hunting_usd":0}"#)).unwrap();
+        assert_eq!(app.clone().oneshot(req).await.unwrap().status(), StatusCode::BAD_REQUEST);
+        // 落盘后重新加载：字段必须保留（serde 持久化回归）。
+        let reloaded = crate::live::LiveState::load(&root.join("hl.json"));
+        assert_eq!(reloaded.capital_alloc.momentum_usd, 3500.0);
+        // 经 /api/live 读回：快照必须包含 capital_alloc（漏掉会静默丢配置）。
+        let resp = app.clone().oneshot(Request::builder().uri("/api/live").body(Body::empty()).unwrap()).await.unwrap();
+        assert_eq!(resp.status(), StatusCode::OK);
+        let bytes = axum::body::to_bytes(resp.into_body(), 1024 * 1024).await.unwrap();
+        let v: serde_json::Value = serde_json::from_slice(&bytes).unwrap();
+        assert_eq!(v["capital_alloc"]["momentum_usd"], 3500.0);
+        assert_eq!(v["capital_alloc"]["carry_usd"], 1000.0);
+        assert_eq!(v["capital_alloc"]["hunting_usd"], 500.0);
         drop(app); drop(base);
         std::fs::remove_dir_all(root).unwrap();
     }

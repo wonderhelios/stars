@@ -228,6 +228,7 @@
       <nav class="nav">
         <button data-view="monitor" class="active"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg><span>实盘监控</span></button>
         <button data-view="live"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 7h16M4 17h16"/><circle cx="8" cy="7" r="3"/><circle cx="16" cy="17" r="3"/></svg><span>实盘设置</span></button>
+        <button data-view="funding"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg><span>资金费套利</span></button>
       </nav>
       <div class="status-pill">
         <span class="led" id="led"></span>
@@ -332,6 +333,34 @@
           <div class="content-card"><div class="panel-head monitor-section-head"><div><span class="section-eyebrow">EXECUTION JOURNAL</span><h2>订单与成交</h2></div><div class="segmented" id="mo-record-tabs" role="group" aria-label="记录来源"><button type="button" data-scope="all" aria-pressed="true">全部</button><button type="button" data-scope="system" aria-pressed="false">系统订单</button><button type="button" data-scope="exchange" aria-pressed="false">交易所补录</button></div></div>
           <p class="note">系统订单展示调仓意图；交易所补录展示成交回执，无法据此确认是调仓、手动平仓或止盈。盈亏为未扣费金额，“估算”与交易所回执分开标注。</p>
           <div id="mo-records"></div></div>
+        </div>
+      </section>
+
+      <section id="view-funding" class="view">
+        <div class="content-card">
+          <div class="panel-head monitor-section-head"><div><span class="section-eyebrow">FUNDING CARRY</span><h2>资金费差 · HL vs 币安</h2></div><button class="btn ghost" id="fd-refresh" type="button">立即刷新</button></div>
+          <p class="note">年化资金费差 = HL − 币安。差为正：空 HL、多币安可收资金费差；差为负则反向。只展示两边 24h 成交额均 ≥ $1M 的币种。数据每 60 秒自动刷新一次。</p>
+          <div id="fd-pairs"></div>
+          <p class="note" id="fd-updated"></p>
+        </div>
+
+        <div class="content-card">
+          <div class="panel-head monitor-section-head"><div><span class="section-eyebrow">SPIKE MONITOR</span><h2>资金费尖峰监控 · 主盘 + HIP-3</h2></div></div>
+          <p class="note">年化 |资金费| ≥ 40% 且 24h 成交额 ≥ $1 万的市场。正 = 多头付空头（做空收钱）；负 = 空头付多头（做多收钱）。尖峰通常几分钟内消失，容量极小，注意风险。</p>
+          <div id="fd-spikes"></div>
+        </div>
+
+        <div class="content-card">
+          <div class="panel-head monitor-section-head"><div><span class="section-eyebrow">CAPITAL MATRIX</span><h2>资金矩阵配置</h2></div></div>
+          <p class="note">三种策略的资金分配，仅记录与展示，不驱动任何自动执行。用于跟踪「资产（动量）/ 现金管理（carry）/ 娱乐（尖峰）」三块的比例。</p>
+          <div class="setup-fields" style="display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end">
+            <div class="field"><label for="fd-cap-momentum">① 横截面动量 (USD)</label><input id="fd-cap-momentum" type="number" min="0" step="1" /></div>
+            <div class="field"><label for="fd-cap-carry">② 资金费 carry (USD)</label><input id="fd-cap-carry" type="number" min="0" step="1" /></div>
+            <div class="field"><label for="fd-cap-hunting">③ 尖峰狩猎 (USD)</label><input id="fd-cap-hunting" type="number" min="0" step="1" /></div>
+            <div class="field"><button class="btn ghost" id="fd-cap-save" type="button">保存</button></div>
+          </div>
+          <p id="fd-cap-status" class="note" role="status" aria-live="polite"></p>
+          <p class="note" id="fd-cap-summary"></p>
         </div>
       </section>
 

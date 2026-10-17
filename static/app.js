@@ -563,6 +563,7 @@ function renderMonitor(d) {
   if (!d) return;
   lastLiveData = d;
   renderCapitalFlows(d);
+  renderCapitalAlloc(d.capital_alloc);
   const c = d.config || {};
   const pos = d.positions || [];
   const hist = d.history || [];
@@ -981,3 +982,131 @@ setInterval(() => {
 refreshLiveConfig();
 refreshMonitor(true);
 setInterval(refreshMonitor, 20000);
+
+// ---------- 资金费套利面板 ----------
+let lastFundingData = null;
+
+const annPct = (v) => Number.isFinite(v) ? (v * 100).toFixed(1) + "%" : "—";
+const annSigned = (v) => Number.isFinite(v) ? (v >= 0 ? "+" : "−") + Math.abs(v * 100).toFixed(1) + "%" : "—";
+const usdM = (v) => Number.isFinite(v) ? (v >= 1e6 ? "$" + (v / 1e6).toFixed(1) + "M" : "$" + (v / 1e3).toFixed(0) + "K") : "—";
+
+function renderFunding(d) {
+  const up = $("fd-updated");
+  if (up) {
+    up.textContent = d && d.updated
+      ? "数据更新于 " + ts2m(d.updated) + " UTC" + (d.bn_error ? " · ⚠ 币安：" + d.bn_error : "")
+      : "暂无数据";
+  }
+  const pairsEl = $("fd-pairs");
+  if (pairsEl) {
+    const pairs = (d && d.pairs) || [];
+    pairsEl.innerHTML = pairs.length
+      ? `<div class="table-scroll"><table><thead><tr><th>币</th><th>HL 年化</th><th>币安 年化</th><th>年化差</th><th>收钱方向</th><th>HL 成交额</th><th>币安 成交额</th></tr></thead><tbody>${
+          pairs.map((p) => {
+            const dir = p.diff_ann >= 0 ? "空 HL · 多币安" : "多 HL · 空币安";
+            return `<tr>
+              <td>${escapeHTML(p.coin)}</td>
+              <td>${annPct(p.hl_ann)}</td>
+              <td>${annPct(p.bn_ann)}</td>
+              <td class="${p.diff_ann >= 0 ? "pos" : "neg"}">${annSigned(p.diff_ann)}</td>
+              <td class="muted">${dir}</td>
+              <td>${usdM(p.hl_vol)}</td>
+              <td>${usdM(p.bn_vol)}</td>
+            </tr>`;
+          }).join("")
+        }</tbody></table></div>`
+      : '<div class="empty">还没有数据</div>';
+  }
+  const spikesEl = $("fd-spikes");
+  if (spikesEl) {
+    const spikes = (d && d.spikes) || [];
+    spikesEl.innerHTML = spikes.length
+      ? `<div class="table-scroll"><table><thead><tr><th>市场</th><th>年化资金费</th><th>24h 成交额</th><th>收钱方向</th></tr></thead><tbody>${
+          spikes.map((s) => `<tr>
+              <td>${escapeHTML(s.market)}</td>
+              <td class="${s.ann >= 0 ? "pos" : "neg"}">${annSigned(s.ann)}</td>
+              <td>${usdM(s.vol)}</td>
+              <td class="muted">${s.ann >= 0 ? "空头收钱" : "多头收钱"}</td>
+            </tr>`).join("")
+        }</tbody></table></div>`
+      : '<div class="empty">当前没有 ≥40% 的尖峰</div>';
+  }
+}
+
+async function refreshFunding(force) {
+  const viewEl = $("view-funding");
+  const viewActive = viewEl && viewEl.classList.contains("active");
+  if (!force && !viewActive && lastFundingData) return; // 非激活视图不刷（省接口）
+  try {
+    const res = await fetch(force ? "/api/funding/refresh" : "/api/funding", {
+      cache: "no-store",
+      method: force ? "POST" : "GET",
+    });
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    lastFundingData = await res.json();
+    renderFunding(lastFundingData);
+  } catch (e) {
+    // 静默失败，等下一轮
+  }
+}
+
+function renderCapitalAlloc(alloc) {
+  alloc = alloc || {};
+  const m = $("fd-cap-momentum"), c = $("fd-cap-carry"), h = $("fd-cap-hunting");
+  // 用户正在编辑时不覆盖输入（renderMonitor 每 20 秒会重入一次）。
+  const editing = [m, c, h].some((el) => el && document.activeElement === el);
+  if (!editing) {
+    if (m) m.value = Number.isFinite(alloc.momentum_usd) ? alloc.momentum_usd : 0;
+    if (c) c.value = Number.isFinite(alloc.carry_usd) ? alloc.carry_usd : 0;
+    if (h) h.value = Number.isFinite(alloc.hunting_usd) ? alloc.hunting_usd : 0;
+  }
+  const total = (alloc.momentum_usd || 0) + (alloc.carry_usd || 0) + (alloc.hunting_usd || 0);
+  const s = $("fd-cap-summary");
+  if (s) {
+    s.textContent = total > 0
+      ? `合计 $${fmt(total, 0)} · 动量 ${fmt((alloc.momentum_usd || 0) / total * 100, 0)}% · carry ${fmt((alloc.carry_usd || 0) / total * 100, 0)}% · 尖峰 ${fmt((alloc.hunting_usd || 0) / total * 100, 0)}%`
+      : "还没有配置资金矩阵";
+  }
+}
+
+if ($("fd-cap-save")) {
+  $("fd-cap-save").addEventListener("click", async () => {
+    const body = {
+      momentum_usd: Number($("fd-cap-momentum").value) || 0,
+      carry_usd: Number($("fd-cap-carry").value) || 0,
+      hunting_usd: Number($("fd-cap-hunting").value) || 0,
+    };
+    const st = $("fd-cap-status");
+    try {
+      const res = await fetch("/api/capital", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      const out = await res.json();
+      if (!res.ok || !out.ok) {
+        st.textContent = "保存失败：" + (out.error || ("HTTP " + res.status));
+        return;
+      }
+      st.textContent = "已保存。";
+      renderCapitalAlloc(body);
+    } catch (e) {
+      st.textContent = "保存失败：" + e;
+    }
+  });
+}
+
+if ($("fd-refresh")) {
+  $("fd-refresh").addEventListener("click", () => refreshFunding(true));
+}
+
+// 切到资金费套利视图时刷新（资金矩阵已并入 renderMonitor 的 20 秒轮询）。
+document.querySelectorAll('.nav button[data-view="funding"]').forEach((b) => {
+  b.addEventListener("click", () => {
+    refreshFunding();
+  });
+});
+
+// 启动：首次拉取 + 每 60 秒轮询。
+refreshFunding();
+setInterval(() => refreshFunding(false), 60000);
