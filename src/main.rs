@@ -8,6 +8,7 @@ mod paper;
 mod store;
 mod trader;
 mod web;
+mod xpaper;
 
 use anyhow::Context;
 use crate::hl::{CoinMeta, HlClient, MarketCtx};
@@ -41,6 +42,8 @@ async fn main() -> anyhow::Result<()> {
         .unwrap_or_else(|_| "/var/lib/stars/live.json".to_string());
     let carry_path = std::env::var("STARS_CARRY")
         .unwrap_or_else(|_| "/var/lib/stars/carry.json".to_string());
+    let xpaper_path = std::env::var("STARS_XPAPER")
+        .unwrap_or_else(|_| "/var/lib/stars/xpaper.json".to_string());
 
     // ===== trade subcommand (live execution) =====
     let args: Vec<String> = std::env::args().collect();
@@ -54,6 +57,7 @@ async fn main() -> anyhow::Result<()> {
     let hl_live = live::LiveState::load(std::path::Path::new(&live_path));
     let live = Arc::new(Mutex::new(hl_live));
     let carry = Arc::new(Mutex::new(crate::carry::CarryState::load(std::path::Path::new(&carry_path))));
+    let xpaper = Arc::new(Mutex::new(crate::xpaper::XPaperState::load(std::path::Path::new(&xpaper_path))));
     let meta = Arc::new(Mutex::new(MetaCache::default()));
     let refresh = Arc::new(Mutex::new(RefreshStatus::default()));
 
@@ -74,6 +78,8 @@ async fn main() -> anyhow::Result<()> {
         funding: std::sync::Arc::new(tokio::sync::Mutex::new(crate::funding::FundingState::default())),
         carry: carry.clone(),
         carry_path: Arc::new(std::path::PathBuf::from(&carry_path)),
+        xpaper: xpaper.clone(),
+        xpaper_path: Arc::new(std::path::PathBuf::from(&xpaper_path)),
         binance_http: {
             // 币安公开接口客户端：地区屏蔽时可用 BINANCE_PROXY 环境变量指到代理。
             let mut b = reqwest::Client::builder()
@@ -111,6 +117,21 @@ async fn main() -> anyhow::Result<()> {
                     warn!("纸面 carry 保存失败: {e}");
                 } else if t0.elapsed().as_secs() >= 2 {
                     warn!("纸面 carry 保存耗时 {:?}（磁盘偏慢）", t0.elapsed());
+                }
+                // 跨所价差纸面引擎：预算用资金矩阵的「③ 尖峰狩猎」（事件型 ✗）
+                let xbudget = st.live.lock().await.capital_alloc.hunting_usd;
+                let xmarket: std::collections::HashMap<String, crate::xpaper::XRow> = fresh
+                    .xvenue_px
+                    .iter()
+                    .map(|p| (p.coin.clone(), crate::xpaper::XRow { okx: p.okx, bn: p.bn }))
+                    .collect();
+                let xsnap = {
+                    let mut xp = st.xpaper.lock().await;
+                    crate::xpaper::step(&mut xp, xbudget, &xmarket);
+                    xp.clone()
+                };
+                if let Err(e) = xsnap.save(&st.xpaper_path) {
+                    warn!("跨所价差纸面保存失败: {e}");
                 }
                 tokio::time::sleep(Duration::from_secs(60)).await;
             }

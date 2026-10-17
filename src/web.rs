@@ -39,6 +39,9 @@ pub struct AppState {
     /// 纸面资金费 carry 策略状态。
     pub carry: Arc<Mutex<crate::carry::CarryState>>,
     pub carry_path: Arc<std::path::PathBuf>,
+    /// 跨所价差纸面引擎（OKX vs 币安现货）。
+    pub xpaper: Arc<Mutex<crate::xpaper::XPaperState>>,
+    pub xpaper_path: Arc<std::path::PathBuf>,
 }
 
 #[derive(Clone, Default)]
@@ -87,6 +90,10 @@ pub fn router(state: AppState) -> Router {
         .route("/api/carry/step", post(carry_step))
         .route("/api/carry/config", post(carry_config))
         .route("/api/carry/reset", post(carry_reset))
+        .route("/api/xpaper", get(xpaper_status))
+        .route("/api/xpaper/step", post(xpaper_step))
+        .route("/api/xpaper/config", post(xpaper_config))
+        .route("/api/xpaper/reset", post(xpaper_reset))
         .layer(CompressionLayer::new())
         .layer(CorsLayer::permissive())
         .with_state(state)
@@ -718,6 +725,101 @@ async fn carry_reset(State(state): State<AppState>) -> Response {
     Json(st.clone()).into_response()
 }
 
+// ---- 跨所价差纸面引擎 ----
+
+async fn xpaper_status(State(state): State<AppState>) -> Json<crate::xpaper::XPaperState> {
+    Json(state.xpaper.lock().await.clone())
+}
+
+async fn xpaper_step(State(state): State<AppState>) -> Response {
+    let fresh = state.funding.lock().await.clone();
+    let budget = state.live.lock().await.capital_alloc.hunting_usd;
+    let market: std::collections::HashMap<String, crate::xpaper::XRow> = fresh
+        .xvenue_px
+        .iter()
+        .map(|p| (p.coin.clone(), crate::xpaper::XRow { okx: p.okx, bn: p.bn }))
+        .collect();
+    let snap = {
+        let mut xp = state.xpaper.lock().await;
+        crate::xpaper::step(&mut xp, budget, &market);
+        xp.clone()
+    };
+    if let Err(e) = snap.save(&state.xpaper_path) {
+        return (StatusCode::INTERNAL_SERVER_ERROR, Json(json!({"ok": false, "error": format!("保存失败: {e:#}")}))).into_response();
+    }
+    Json(snap).into_response()
+}
+
+#[derive(serde::Deserialize)]
+struct XPaperConfigBody {
+    entry_pct: Option<f64>,
+    exit_pct: Option<f64>,
+    max_pairs: Option<usize>,
+    max_holding_hours: Option<i64>,
+    stop_pct: Option<f64>,
+    fee: Option<f64>,
+}
+
+async fn xpaper_config(State(state): State<AppState>, Json(body): Json<XPaperConfigBody>) -> Response {
+    let mut xp = state.xpaper.lock().await;
+    let prev = xp.clone();
+    let c = &mut xp.config;
+    if let Some(v) = body.entry_pct {
+        if !(v.is_finite() && v > 0.0 && v < 20.0) {
+            return (StatusCode::BAD_REQUEST, Json(json!({"ok": false, "error": "开仓阈值必须在 (0, 20)"}))).into_response();
+        }
+        c.entry_pct = v;
+    }
+    if let Some(v) = body.exit_pct {
+        if !(v.is_finite() && v >= 0.0 && v < c.entry_pct) {
+            return (StatusCode::BAD_REQUEST, Json(json!({"ok": false, "error": "出场阈值必须 ≥0 且小于开仓阈值"}))).into_response();
+        }
+        c.exit_pct = v;
+    }
+    if let Some(v) = body.max_pairs {
+        if !(1..=20).contains(&v) {
+            return (StatusCode::BAD_REQUEST, Json(json!({"ok": false, "error": "最大对数 1~20"}))).into_response();
+        }
+        c.max_pairs = v;
+    }
+    if let Some(v) = body.max_holding_hours {
+        if !(1..=24 * 90).contains(&v) {
+            return (StatusCode::BAD_REQUEST, Json(json!({"ok": false, "error": "最长持有 1~2160 小时"}))).into_response();
+        }
+        c.max_holding_hours = v;
+    }
+    if let Some(v) = body.stop_pct {
+        if !(v.is_finite() && v > 0.0 && v < 50.0) {
+            return (StatusCode::BAD_REQUEST, Json(json!({"ok": false, "error": "止损必须在 (0, 50)"}))).into_response();
+        }
+        c.stop_pct = v;
+    }
+    if let Some(v) = body.fee {
+        if !(v.is_finite() && v >= 0.0 && v < 0.02) {
+            return (StatusCode::BAD_REQUEST, Json(json!({"ok": false, "error": "手续费必须在 [0, 2%)"}))).into_response();
+        }
+        c.fee = v;
+    }
+    if let Err(e) = xp.save(&state.xpaper_path) {
+        *xp = prev;
+        return (StatusCode::INTERNAL_SERVER_ERROR, Json(json!({"ok": false, "error": format!("保存失败: {e:#}")}))).into_response();
+    }
+    Json(json!({"ok": true})).into_response()
+}
+
+async fn xpaper_reset(State(state): State<AppState>) -> Response {
+    let budget = state.live.lock().await.capital_alloc.hunting_usd;
+    let snap = {
+        let mut xp = state.xpaper.lock().await;
+        crate::xpaper::reset(&mut xp, budget);
+        xp.clone()
+    };
+    if let Err(e) = snap.save(&state.xpaper_path) {
+        return (StatusCode::INTERNAL_SERVER_ERROR, Json(json!({"ok": false, "error": format!("保存失败: {e:#}")}))).into_response();
+    }
+    Json(snap).into_response()
+}
+
 async fn live_reset(State(state): State<AppState>) -> Response {
     let mut st = state.live.lock().await;
     let cfg = st.config.clone();
@@ -857,6 +959,8 @@ mod live_routes_tests {
             binance_http: reqwest::Client::new(),
             carry: Arc::new(Mutex::new(crate::carry::CarryState::default())),
             carry_path: Arc::new(root.join("carry.json")),
+            xpaper: Arc::new(Mutex::new(crate::xpaper::XPaperState::default())),
+            xpaper_path: Arc::new(root.join("xpaper.json")),
         };
         let app = router(base.clone());
         let response = app.clone().oneshot(Request::builder().uri("/").body(Body::empty()).unwrap()).await.unwrap();
@@ -906,6 +1010,8 @@ mod live_routes_tests {
             binance_http: reqwest::Client::new(),
             carry: Arc::new(Mutex::new(crate::carry::CarryState::default())),
             carry_path: Arc::new(root.join("carry.json")),
+            xpaper: Arc::new(Mutex::new(crate::xpaper::XPaperState::default())),
+            xpaper_path: Arc::new(root.join("xpaper.json")),
         };
         let app = router(base.clone());
         // 资金费面板（初始为空状态, 仍应 200）。

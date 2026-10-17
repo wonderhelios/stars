@@ -1157,6 +1157,7 @@ document.querySelectorAll('.nav button[data-view="funding"], .nav button[data-vi
   b.addEventListener("click", () => {
     refreshFunding();
     refreshCarry();
+    refreshXPaper();
     if (b.dataset.view === "funding-setup") {
       fetchJSONRetry("/api/live", {}, 8000)
         .then((d) => renderCapitalAlloc(d.capital_alloc))
@@ -1168,11 +1169,126 @@ document.querySelectorAll('.nav button[data-view="funding"], .nav button[data-vi
 // 启动：首次拉取 + 每 60 秒轮询。
 refreshFunding();
 refreshCarry();
+refreshXPaper();
 setInterval(() => refreshFunding(false), 60000);
+setInterval(refreshXPaper, 60000);
 
 // ---------- 纸面 carry 策略 ----------
 
 // 纸面 carry：摘要 + 权益曲线 + 两腿汇总，明细折叠。
+// ---------- 跨所价差纸面策略 ----------
+let lastXData = null;
+
+function renderXPaper(d) {
+  d = d || {};
+  const pairs = d.pairs || [];
+  const open = pairs.reduce((a, p) => a + p.pnl, 0);
+  const closed = d.closed_pnl || 0;
+  const total = closed + open;
+  const base = d.start_equity || 0;
+  const sum = $("xp-summary");
+  if (sum) {
+    sum.innerHTML =
+      `<span>预算 <b>$${fmt(d.budget_usd || 0, 0)}</b></span> · ` +
+      `<span>权益 <b>$${fmt(base + total, 2)}</b> ` +
+      `<b class="${total >= 0 ? "pos" : "neg"}">${base > 0 ? (total / base * 100).toFixed(2) + "%" : "—"}</b></span> · ` +
+      `<span>已实现 <b class="${closed >= 0 ? "pos" : "neg"}">${moneySigned(closed)}</b></span> · ` +
+      `<span>未实现 <b class="${open >= 0 ? "pos" : "neg"}">${moneySigned(open)}</b></span> · ` +
+      `<span>持仓 <b>${pairs.length}</b> 对</span>`;
+  }
+  renderEquityChart("xp-chart", d.history || [], "跨所价差纸面权益曲线");
+  const posEl = $("xp-positions");
+  if (posEl) {
+    posEl.innerHTML = pairs.length
+      ? `<div class="table-scroll"><table><thead><tr><th>币</th><th>方向</th><th>每腿名义</th><th>进场差</th><th>浮动</th><th>已持</th></tr></thead><tbody>${
+          pairs.map((p) => {
+            const h = Math.max(0, (Date.now() - p.entry_ts) / 3600000).toFixed(0);
+            return `<tr><td>${escapeHTML(p.coin)}</td>
+              <td class="muted">${p.direction > 0 ? "空OKX·多BN" : "多OKX·空BN"}</td>
+              <td>$${fmt(p.notional, 0)}</td>
+              <td>${p.entry_diff >= 0 ? "+" : ""}${p.entry_diff.toFixed(2)}%</td>
+              <td class="${p.pnl >= 0 ? "pos" : "neg"}">${moneySigned(p.pnl)}</td>
+              <td class="muted">${h}h</td></tr>`;
+          }).join("")
+        }</tbody></table></div>`
+      : '<div class="empty">没有持仓。价差 ≥ 开仓阈值时自动开（平时很少 ✗）✗</div>';
+  }
+  const logEl = $("xp-log");
+  if (logEl) {
+    const logs = (d.log || []).slice(-40).reverse();
+    logEl.innerHTML = logs.length
+      ? logs.map((l) => `<div class="note">${ts2m(l.ts)} · ${escapeHTML(l.msg)}</div>`).join("")
+      : '<div class="note">还没有操作。</div>';
+  }
+}
+
+function renderXConfig(cfg) {
+  cfg = cfg || {};
+  const els = ["xp-entry", "xp-exit", "xp-pairs", "xp-hours", "xp-stop", "xp-fee"].map((i) => $(i));
+  if (els.some((el) => el && document.activeElement === el)) return;
+  const set = (id, v) => { const el = $(id); if (el) el.value = v; };
+  set("xp-entry", cfg.entry_pct);
+  set("xp-exit", cfg.exit_pct);
+  set("xp-pairs", cfg.max_pairs);
+  set("xp-hours", cfg.max_holding_hours);
+  set("xp-stop", cfg.stop_pct);
+  set("xp-fee", Math.round((cfg.fee || 0) * 10000) / 100);
+}
+
+async function refreshXPaper() {
+  try {
+    lastXData = await fetchJSONRetry("/api/xpaper", {}, 8000);
+    renderXPaper(lastXData);
+    renderXConfig(lastXData.config);
+  } catch (e) {}
+}
+
+if ($("xp-save")) {
+  $("xp-save").addEventListener("click", async () => {
+    const body = {
+      entry_pct: Number($("xp-entry").value) || 0,
+      exit_pct: Number($("xp-exit").value) || 0,
+      max_pairs: Number($("xp-pairs").value) || 0,
+      max_holding_hours: Number($("xp-hours").value) || 0,
+      stop_pct: Number($("xp-stop").value) || 0,
+      fee: (Number($("xp-fee").value) || 0) / 100,
+    };
+    const st = $("xp-status");
+    try {
+      const res = await fetch("/api/xpaper/config", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      const out = await res.json();
+      if (!res.ok || !out.ok) { st.textContent = "保存失败：" + (out.error || ("HTTP " + res.status)); return; }
+      st.textContent = "参数已保存。";
+      refreshXPaper();
+    } catch (e) { st.textContent = "保存失败：" + e; }
+  });
+}
+if ($("xp-step")) {
+  $("xp-step").addEventListener("click", async () => {
+    const st = $("xp-status");
+    try {
+      lastXData = await fetchJSONRetry("/api/xpaper/step", { method: "POST" }, 20000);
+      renderXPaper(lastXData);
+      if (st) st.textContent = "已推进。";
+    } catch (e) { if (st) st.textContent = "推进失败：" + e; }
+  });
+}
+if ($("xp-reset")) {
+  $("xp-reset").addEventListener("click", async () => {
+    if (!confirm("重置跨所纸面：清空持仓、已实现盈亏与曲线（保留参数）。继续？")) return;
+    const st = $("xp-status");
+    try {
+      lastXData = await fetchJSONRetry("/api/xpaper/reset", { method: "POST" }, 20000);
+      renderXPaper(lastXData);
+      if (st) st.textContent = "已重置。";
+    } catch (e) { if (st) st.textContent = "重置失败：" + e; }
+  });
+}
+
 // 跨所价差（OKX vs 币安）。用户当年 G/USDT 那种机会。
 function renderXVenue(d) {
   const el = $("xv-list");
@@ -1226,7 +1342,7 @@ function renderCarry(d) {
       `<span>未实现 <b class="${open >= 0 ? "pos" : "neg"}">${moneySigned(open)}</b></span> · ` +
       `<span>持仓 <b>${pairs.length}</b> 对</span>`;
   }
-  renderCarryChart(d.history || []);
+  renderEquityChart("cy-chart", d.history || [], "纸面 carry 权益曲线");
   const legs = $("cy-legs");
   if (legs) {
     const agg = (dir) => {
@@ -1274,9 +1390,9 @@ function renderCarry(d) {
   }
 }
 
-// 纸面 carry 权益曲线（每小时一个点）。
-function renderCarryChart(history) {
-  const el = $("cy-chart");
+// 通用权益曲线（每小时一个点）。
+function renderEquityChart(id, history, aria) {
+  const el = $(id);
   if (!el) return;
   const pts = (history || [])
     .filter((p) => Array.isArray(p) && Number.isFinite(p[0]) && Number.isFinite(p[1]))
@@ -1303,7 +1419,7 @@ function renderCarryChart(history) {
       <div><span class="chart-eyebrow">区间变化</span><strong class="${change >= 0 ? "pos" : "neg"}">${moneySigned(change)}</strong></div>
       <div class="chart-coverage"><span class="chart-eyebrow">点数</span>${pts.length} · ${ts2m(first.ts)} — ${ts2m(last.ts)}</div>
     </div>
-    <svg viewBox="0 0 ${W} ${H}" role="img" aria-label="纸面 carry 权益曲线">
+    <svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${aria}">
       <defs><linearGradient id="carry-area" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#168473" stop-opacity="0.14"/><stop offset="100%" stop-color="#168473" stop-opacity="0"/></linearGradient></defs>
       ${grid}
       <polygon points="${X(first.ts)},${H - padB} ${line} ${X(last.ts)},${H - padB}" fill="url(#carry-area)"/>

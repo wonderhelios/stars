@@ -57,6 +57,14 @@ pub struct FundingSpike {
     pub hedgeable: bool,
 }
 
+/// 跨所原始行情（所有两边达标的币 ✗ 不按价差过滤 ✗ 供纸面引擎盯市 ✗）。
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct XPrice {
+    pub coin: String,
+    pub okx: f64,
+    pub bn: f64,
+}
+
 /// 跨所现货价差（OKX vs 币安）。用户当年 G/USDT 那种机会。
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct XVenue {
@@ -79,6 +87,9 @@ pub struct FundingState {
     /// 跨所现货价差（只保留两边成交额都达标、且 |差| 超过阈值的）。
     #[serde(default)]
     pub xvenue: Vec<XVenue>,
+    /// 未过滤的原始价差行情（供纸面引擎盯市）。
+    #[serde(default)]
+    pub xvenue_px: Vec<XPrice>,
     #[serde(default)]
     pub xvenue_error: Option<String>,
 }
@@ -294,6 +305,7 @@ pub async fn refresh(http: &reqwest::Client, binance_http: &reqwest::Client) -> 
             if opx <= 0.0 || bpx <= 0.0 || ovol < 1_000_000.0 || bvol < 1_000_000.0 {
                 continue;
             }
+            st.xvenue_px.push(XPrice { coin: coin.clone(), okx: opx, bn: bpx });
             let diff = (opx / bpx - 1.0) * 100.0;
             if diff.abs() >= 0.3 {
                 st.xvenue.push(XVenue {
