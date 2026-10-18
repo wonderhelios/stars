@@ -725,6 +725,14 @@ function renderMonitor(d) {
       .map((p) => {
         const cls = p.unrealized >= 0 ? "pos" : "neg";
         const dist = p.dist_pct == null ? "—" : fmt(p.dist_pct, 1) + "%";
+        // 离止盈：止盈线 = 成本 × (1±tp) ✗ 显示还差多少【价格】✗
+        const tp = (d.config && d.config.take_profit_pct) || 0;
+        const long = p.side === "long";
+        const line = tp > 0 && p.entry_px > 0 ? p.entry_px * (long ? 1 + tp : 1 - tp) : null;
+        const toTp = line && p.mark_px > 0 ? (line / p.mark_px - 1) * (long ? 1 : -1) * 100 : null;
+        const toTpCell = toTp == null
+          ? "—"
+          : `<span class="${toTp <= 0 ? "pos" : "muted"}">${toTp <= 0 ? "已到线" : fmt(toTp, 1) + "%"}</span>`;
         return `<tr>
           <td>${p.coin}</td>
           <td>${sideLabel(p.side)}</td>
@@ -735,13 +743,14 @@ function renderMonitor(d) {
           <td class="${cls}">${moneySigned(p.unrealized)}</td>
           <td>${p.liq_px == null ? "—" : fmtCompact(p.liq_px)}</td>
           <td class="${p.dist_pct != null && p.dist_pct < 20 ? "neg" : "muted"}">${dist}</td>
+          <td>${toTpCell}</td>
           <td>${p.is_cross ? '<span class="badge-mini ok">全仓</span>' : '<span class="badge-mini err">逐仓</span>'}</td>
         </tr>`;
       })
       .join("");
     $("mo-positions").innerHTML = err + `<div class="table-scroll"><table><thead><tr>
       <th>币</th><th>方向</th><th>数量</th><th>入场价</th><th>当前价</th>
-      <th>名义</th><th>未实现盈亏</th><th>强平价</th><th>距强平</th><th>保证金模式</th>
+      <th>名义</th><th>未实现盈亏</th><th>强平价</th><th>距强平</th><th>离止盈</th><th>保证金模式</th>
     </tr></thead><tbody>${rows}</tbody></table></div>` + pager("pos", pos.length, posPage, LIVE_PAGE_SIZE);
   }
 

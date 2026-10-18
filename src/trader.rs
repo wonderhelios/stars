@@ -733,6 +733,42 @@ pub fn build_plan(
         }
     }
 
+    // 止盈摘要：止盈单不是"计划订单"，它在执行之后由 place_take_profits 单独挂 ✗
+    // 但不写出来用户会以为"没有止盈"✗ 所以这里给一行摘要 ✗
+    if cfg.take_profit_pct > 0.0 && !acct.positions.is_empty() {
+        let mut lines = 0usize;
+        let mut closest: Option<(String, f64)> = None;
+        for (coin, pos) in acct.positions.iter() {
+            let Some(&mid) = mids.get(coin) else { continue };
+            if pos.entry_px <= 0.0 || mid <= 0.0 {
+                continue;
+            }
+            let long = pos.size > 0.0;
+            let line = if long { pos.entry_px * (1.0 + cfg.take_profit_pct) } else { pos.entry_px * (1.0 - cfg.take_profit_pct) };
+            let need = (line / mid - 1.0) * if long { 1.0 } else { -1.0 } * 100.0;
+            if need > 0.0 {
+                lines += 1;
+                if closest.as_ref().map(|(_, d)| need < *d).unwrap_or(true) {
+                    closest = Some((coin.clone(), need));
+                }
+            }
+        }
+        let mut msg = format!(
+            "止盈：执行后为 {} 个仓位挂成本 ±{:.0}% 的限价单（= {:.0}% ROE @ {:.0}x）",
+            lines,
+            cfg.take_profit_pct * 100.0,
+            cfg.take_profit_pct * cfg.leverage * 100.0,
+            cfg.leverage
+        );
+        if let Some((coin, need)) = closest {
+            msg.push_str(&format!(
+                "；最近的是 {coin}，还差 {need:.1}% 价格（{:.1}% ROE）",
+                need * cfg.leverage
+            ));
+        }
+        plan.notes.push(msg);
+    }
+
     // 2) open positions that are missing entirely
     for (coin, (target, is_long)) in wanted.iter() {
         if over_cap {
