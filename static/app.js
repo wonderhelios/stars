@@ -662,9 +662,10 @@ function renderMonitor(d) {
       metric("净投入本金", valid ? "$" + fmt(capital.principal, 2) : "—") +
         metric("起点后净入金", valid ? moneySigned(capital.netDep) : "—") +
         metric("扣除出入金后净收益", valid ? moneySigned(pnl) : "—", valid && pnl >= 0 ? "pos" : "neg") +
+        metric("已实现盈亏 · 推算", valid ? moneySigned(pnl - unrealized) : "—", valid && pnl - unrealized >= 0 ? "pos" : "neg") +
         metric("净投入收益率", pnlPct != null ? pct(pnlPct) : "—", pnlPct != null ? (pnlPct >= 0 ? "pos" : "neg") : ""),
       "capital-account",
-      `<details class="metric-definition"><summary>原始起点 ${valid ? "$" + fmt(capital.base, 2) : "—"} · ${d.capital_baseline?.ts ? ts2m(d.capital_baseline.ts) + " UTC" : "时间未知"} · 查看口径</summary><p>净投入本金 = 记录起点资金 + 起点后净入金；净收益 = 当前净值 − 净投入本金；净投入收益率 = 净收益 ÷ 净投入本金。本金不大于零时不显示收益率。这是简单本金收益率，不是时间加权或年化收益率。已体现账户手续费与资金费，准确性依赖出入金记录完整。记录入金不修改历史起点；旧账户的记录起点可能晚于首次启动。</p></details>`
+      `<details class="metric-definition"><summary>原始起点 ${valid ? "$" + fmt(capital.base, 2) : "—"} · ${d.capital_baseline?.ts ? ts2m(d.capital_baseline.ts) + " UTC" : "时间未知"} · 查看口径</summary><p>净投入本金 = 记录起点资金 + 起点后净入金；净收益 = 当前净值 − 净投入本金；净投入收益率 = 净收益 ÷ 净投入本金。本金不大于零时不显示收益率。这是简单本金收益率，不是时间加权或年化收益率。已体现账户手续费与资金费，准确性依赖出入金记录完整。已实现盈亏·推算 = 扣除出入金后净收益 − 当前未实现盈亏，它才是与净值对得上的已实现数；下方「补录已实现·未扣费」只汇总交易所回执（不含计划调仓的平仓、也未扣手续费），两者不应相等。记录入金不修改历史起点；旧账户的记录起点可能晚于首次启动。</p></details>`
     ) +
     metricGroup(
       "风险与仓位",
