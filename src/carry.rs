@@ -266,16 +266,16 @@ pub fn step(state: &mut CarryState, budget_usd: f64, market: &std::collections::
         let exit_reason: Option<String> = {
             let p = &state.pairs[i];
             let held_hours = (now - p.entry_ts) / 3_600_000;
-            let flipped = diff * (p.direction as f64) < 0.0 && diff.abs() >= 0.05;
+            // 只有【实质性反转】才提前平仓（反向 ≥ 出场阈值，默认 10%）。
+            // 小幅翻负（比如 +40% → −2%）不平：那时的资金费≈0，持有几乎不花钱，
+            // 平了再开要再付 18bp —— 实测 SPX 就是这样 1 小时内被扫掉亏 10bp。
+            let flipped = diff * (p.direction as f64) < 0.0 && diff.abs() >= state.config.exit_threshold;
             if flipped {
-                // 价差实质性反转（≥5%）：carry 已经反向，不等了
                 Some("价差反转".into())
             } else if diff.abs() < state.config.exit_threshold
                 && held_hours >= state.config.min_hold_hours
             {
                 Some("价差收窄到出场线".into())
-            } else if diff * (p.direction as f64) < 0.0 {
-                Some("价差翻负".into())
             } else if now - p.entry_ts > state.config.max_holding_hours * 3_600_000 {
                 Some("持有超时".into())
             } else if p.basis_pnl < (-state.config.stop_loss_pct * p.notional) {
