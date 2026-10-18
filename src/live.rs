@@ -183,6 +183,9 @@ pub struct LiveState {
     /// 上次调仓时各币的中间价。止盈幅度必须相对它计算，而不是相对当前价 ——
     /// 否则手动刷新会把止盈线随行情搬走（100 建仓、现价 80 的多头会被挂到 88）。
     pub tp_ref: HashMap<String, f64>,
+    /// 我们挂出去的止盈单 oid ✗ 对账时据此把回执标成「止盈成交」✗
+    #[serde(default)]
+    pub tp_oids: Vec<u64>,
     /// 已对账到哪个成交时间戳，避免重复导入。
     pub reconciled_to: i64,
     /// 上次向交易所对账的时间，用于节流。
@@ -433,6 +436,10 @@ pub struct LiveSnapshot {
     pub shadow: Vec<(i64, f64)>,
     /// 盘口上挂着的止盈单
     pub tp_orders: Vec<crate::exchange::OpenOrder>,
+    /// 我们挂出去的止盈单 oid ✗ 对账时据此把成交标成「止盈成交」✗ 而不是
+    /// 「意图未确认」✓（否则用户看不出这笔试交易所回执到底是止盈还是手动平仓 ✗）
+    #[serde(default)]
+    pub tp_oids: Vec<u64>,
     pub config: LiveConfig,
     pub history: Vec<EquityPoint>,
     pub records: Vec<LiveRecord>,
@@ -466,6 +473,7 @@ pub async fn snapshot(
         nearest_liq_pct: None,
         isolated_count: 0,
         tp_orders: Vec::new(),
+        tp_oids: state.tp_oids.clone(),
         start_equity: 0.0,
         cumulative_pnl: 0.0,
         shadow: Vec::new(),
@@ -608,6 +616,8 @@ pub struct RunResult {
     pub tp_ref: Option<HashMap<String, f64>>,
     pub executed: Vec<String>,
     pub live: bool,
+    /// 本次挂出的止盈单 oid，供上层写入状态（对账时标记「止盈成交」）。
+    pub tp_oids: Vec<u64>,
 }
 
 fn ensure_candidates(weights: &[(String, f64)]) -> Result<()> {
@@ -779,6 +789,7 @@ pub async fn run(
     let aborted = outcome.aborted;
     let executed = outcome.orders;
     let mut tp_ref_out: HashMap<String, f64> = HashMap::new();
+    let mut tp_oids_out: Vec<u64> = Vec::new();
     if live && !aborted {
         // 基准价用本次调仓的目标币中间价，而不是挂单时的实时价 ——
         // 后者会让手动「刷新止盈单」把止盈线随行情一起搬走。
@@ -790,7 +801,10 @@ pub async fn run(
             .collect();
         tp_ref_out = tp_ref.clone();
         match place_take_profits(&exec, markets, cfg.take_profit_pct, &tp_ref).await {
-            Ok(log) => plan_lines.extend(log),
+            Ok((lines, oids)) => {
+                plan_lines.extend(lines);
+                tp_oids_out = oids;
+            }
             Err(e) => plan_lines.push(format!("止盈单挂单失败: {e}")),
         }
     }
@@ -803,6 +817,7 @@ pub async fn run(
             short_leg: plan.short_leg.clone(),
             per_coin: plan.per_coin,
             tp_ref: (!aborted).then_some(tp_ref_out),
+            tp_oids: tp_oids_out,
             plan_lines,
             executed,
             live,
@@ -982,17 +997,18 @@ pub async fn place_take_profits(
     markets: &HashMap<String, MarketInfo>,
     tp_pct: f64,
     reference: &HashMap<String, f64>,
-) -> Result<Vec<String>> {
+) -> Result<(Vec<String>, Vec<u64>)> {
     let mut log = Vec::new();
+    let mut oids: Vec<u64> = Vec::new();
     if tp_pct <= 0.0 {
         log.push("未启用止盈".into());
-        return Ok(log);
+        return Ok((log, oids));
     }
     anyhow::ensure!(!markets.is_empty(), "市场元数据为空，拒绝挂止盈单");
     let acct = exec.account().await?;
     if acct.positions.is_empty() {
         log.push("无持仓，不挂止盈".into());
-        return Ok(log);
+        return Ok((log, oids));
     }
     let coins: Vec<String> = acct.positions.keys().cloned().collect();
     let mids = trader::fetch_mids(exec, &coins).await;
@@ -1043,7 +1059,10 @@ pub async fn place_take_profits(
             // oid 为 0 表示挂出去的瞬间就成交了（价格已经越过止盈线）。
             // 这不是失败，但也不能报成「挂上」。
             Ok(0) => filled += 1,
-            Ok(_) => placed += 1,
+            Ok(oid) => {
+                oids.push(oid);
+                placed += 1;
+            }
             Err(e) => failed.push(format!("{coin}: {e}")),
         }
         tokio::time::sleep(std::time::Duration::from_millis(120)).await;
@@ -1062,7 +1081,7 @@ pub async fn place_take_profits(
             format!("，未挂 {}", failed.join("; "))
         }
     ));
-    Ok(log)
+    Ok((log, oids))
 }
 
 /// 供外部按钮调用：先撤自己的旧单，再按参考价重挂。
@@ -1071,8 +1090,9 @@ pub async fn refresh_take_profits(
     markets: &HashMap<String, MarketInfo>,
     tp_pct: f64,
     reference: &HashMap<String, f64>,
-) -> Result<Vec<String>> {
+) -> Result<(Vec<String>, Vec<u64>)> {
     let mut log = Vec::new();
+    let mut oids: Vec<u64> = Vec::new();
     // 先确认「一定挂得上」再去撤旧单：撤单成功而挂单失败（取不到价、缺元数据）
     // 会让账户在下次调仓前完全失去止盈保护，而且日志还会显示成功。
     if tp_pct > 0.0 {
@@ -1089,8 +1109,10 @@ pub async fn refresh_take_profits(
         Ok(_) => {}
         Err(e) => return Err(e.context("撤销旧止盈单失败")),
     }
-    log.extend(place_take_profits(exec, markets, tp_pct, reference).await?);
-    Ok(log)
+    let (lines, placed_oids) = place_take_profits(exec, markets, tp_pct, reference).await?;
+    oids.extend(placed_oids);
+    log.extend(lines);
+    Ok((log, oids))
 }
 
 /// 交易所允许的最小价位（和 `order_price` 的精度规则一致）。
@@ -1248,7 +1270,10 @@ fn reconcile_fill_rows(arr: &[serde_json::Value], state: &mut LiveState) -> Resu
         groups.entry((coin, key)).or_default().push(f);
     }
 
-    for ((coin, _oid), fills) in groups {
+    for ((coin, oid), fills) in groups {
+        // 这个 oid 是我们自己挂的止盈单吗？是 → 成交标成「止盈成交」✗
+        // 否则标「交易所成交补录」✗ 用户才分得清是止盈还是手动/被动平仓 ✗
+        let is_tp = oid != 0 && state.tp_oids.contains(&oid);
         // 这一笔交易所订单【总共】成交了多少
         let total: f64 = fills
             .iter()
@@ -1296,11 +1321,15 @@ fn reconcile_fill_rows(arr: &[serde_json::Value], state: &mut LiveState) -> Resu
                 ts,
                 coin: coin.clone(),
                 side: if f["side"].as_str() == Some("B") { "买".into() } else { "卖".into() },
-                action: "交易所成交补录".into(),
+                action: if is_tp { "止盈成交".into() } else { "交易所成交补录".into() },
                 size: sz,
                 price: px,
                 notional: sz * px,
-                result: format!("交易所回执 · 已实现 {:+.2}", pnl),
+                result: if is_tp {
+                    format!("止盈单成交 · 已实现 {:+.2}", pnl)
+                } else {
+                    format!("交易所回执 · 已实现 {:+.2}", pnl)
+                },
                 live: true,
                 pnl: Some(pnl),
                 tid: Some(tid),

@@ -297,6 +297,7 @@ async fn main() -> anyhow::Result<()> {
                         guard.last_plan = result.plan_lines.clone();
                         guard.last_live = true;
                         guard.records.extend(records);
+                        guard.tp_oids.extend(result.tp_oids.clone());
                         guard.history.push(live::EquityPoint {
                             pnl: 0.0,
                             ts: now_ms(),
@@ -715,7 +716,7 @@ async fn run_trade(args: &[String], db_path: &str) -> anyhow::Result<()> {
         .filter_map(|c| mids.get(c).map(|m| (c.clone(), *m)))
         .collect();
     match live::place_take_profits(&exec, &markets, tp_pct, &tp_ref).await {
-        Ok(log) => {
+        Ok((log, _oids)) => {
             for l in log {
                 println!("  {l}");
             }

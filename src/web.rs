@@ -913,7 +913,19 @@ async fn live_tp(State(state): State<AppState>) -> Response {
     };
     let markets = live_markets(&state).await;
     match crate::live::refresh_take_profits(&exec, &markets, st.config.take_profit_pct, &st.tp_ref).await {
-        Ok(log) => Json(json!({"ok": true, "log": log})).into_response(),
+        Ok((log, oids)) => {
+            // 写进真正的状态（不是上面那个 clone ✗）✗ 否则内存里没有 oid ✗
+            // 对账时就无法把成交标成「止盈成交」✗
+            let mut guard = state.live.lock().await;
+            guard.tp_oids.extend(oids);
+            if guard.tp_oids.len() > 4000 {
+                let cut = guard.tp_oids.len() - 4000;
+                guard.tp_oids.drain(0..cut);
+            }
+            let _ = guard.save(&state.live_path);
+            drop(guard);
+            Json(json!({"ok": true, "log": log})).into_response()
+        }
         Err(e) => Json(json!({"ok": false, "error": format!("{e}")})).into_response(),
     }
 }

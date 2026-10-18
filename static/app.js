@@ -801,7 +801,7 @@ function renderMonitor(d) {
               <td class="muted">${ts2m(r.ts)}</td>
               <td>${escapeHTML(r.coin)}</td>
               <td>${sideLabel(recordPositionSide(r), recordIsClosing(r))}</td>
-              <td class="muted">${escapeHTML(recordAction(r))}${r.tid != null ? '<span class="record-origin">成交回执 · 意图未确认</span>' : '<span class="record-origin">系统订单</span>'}</td>
+              <td class="muted">${escapeHTML(recordAction(r))}${r.tid != null ? `<span class="record-origin">${r.action === "止盈成交" ? "止盈单成交" : "成交回执 · 意图未确认"}</span>` : '<span class="record-origin">系统订单</span>'}</td>
               <td>${fmtCompact(r.size)}</td>
               <td class="muted">—</td>
               <td>${pxCell}</td>
@@ -836,7 +836,7 @@ function renderMonitor(d) {
             <td class="muted">${ts2m(r.ts)}</td>
             <td>${escapeHTML(r.coin)}</td>
             <td>${sideLabel(posLong ? "long" : "short", closing)}</td>
-            <td class="muted">${escapeHTML(recordAction(r))}${r.tid != null ? '<span class="record-origin">成交回执 · 意图未确认</span>' : '<span class="record-origin">系统订单</span>'}</td>
+            <td class="muted">${escapeHTML(recordAction(r))}${r.tid != null ? `<span class="record-origin">${r.action === "止盈成交" ? "止盈单成交" : "成交回执 · 意图未确认"}</span>` : '<span class="record-origin">系统订单</span>'}</td>
             <td>${fmtCompact(r.size)}</td>
             <td class="muted">${fmtCompact(r.price)}</td>
             <td>${pxCell}</td>
