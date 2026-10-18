@@ -1301,6 +1301,16 @@ fn reconcile_fill_rows(arr: &[serde_json::Value], state: &mut LiveState) -> Resu
         if dupe {
             continue;
         }
+        // 【按交易订单合并】✗ 交易所一笔订单会被拆成很多条成交 ✗
+        // 逐条记录会让页面出现 8 行 MON ✗ 和交易所开着 Aggregate 的视图对不上 ✗
+        // 这里把同一 oid 的成交合并成一条 ✗ 数量相加 ✗ 成交价按名义加权 ✗
+        let mut total_sz = 0.0f64;
+        let mut total_notional = 0.0f64;
+        let mut total_pnl = 0.0f64;
+        let mut last_ts = 0i64;
+        let mut first_tid: Option<u64> = None;
+        let mut side_buy = false;
+        let mut any = false;
         for f in fills {
             let ts = f["time"].as_i64().unwrap_or(0);
             let Some(tid) = f["tid"].as_u64() else { continue };
@@ -1309,7 +1319,7 @@ fn reconcile_fill_rows(arr: &[serde_json::Value], state: &mut LiveState) -> Resu
             if known.contains(&tid) {
                 continue;
             }
-            let sz: f64 = f["sz"].as_str().and_then(|x| x.parse().ok()).unwrap_or(0.0);
+            let sz: f64 = f["sz"].as_str().and_then(|x| x.parse::<f64>().ok()).unwrap_or(0.0).abs();
             let px: f64 = f["px"].as_str().and_then(|x| x.parse().ok()).unwrap_or(0.0);
             let dir = f["dir"].as_str().unwrap_or("");
             let pnl: f64 = f["closedPnl"].as_str().and_then(|x| x.parse().ok()).unwrap_or(0.0);
@@ -1317,29 +1327,41 @@ fn reconcile_fill_rows(arr: &[serde_json::Value], state: &mut LiveState) -> Resu
             if !dir.contains("Close") {
                 continue;
             }
+            total_sz += sz;
+            total_notional += sz * px;
+            total_pnl += pnl;
+            last_ts = last_ts.max(ts);
+            side_buy = f["side"].as_str() == Some("B");
+            if first_tid.is_none() {
+                first_tid = Some(tid);
+            }
+            known.insert(tid);
+            any = true;
+        }
+        if any && total_sz > 0.0 {
+            let avg_px = total_notional / total_sz;
             state.records.push(LiveRecord {
-                ts,
+                ts: last_ts,
                 coin: coin.clone(),
-                side: if f["side"].as_str() == Some("B") { "买".into() } else { "卖".into() },
+                side: if side_buy { "买".into() } else { "卖".into() },
                 action: if is_tp { "止盈成交".into() } else { "交易所成交补录".into() },
-                size: sz,
-                price: px,
-                notional: sz * px,
+                size: total_sz,
+                price: avg_px,
+                notional: total_notional,
                 result: if is_tp {
-                    format!("止盈单成交 · 已实现 {:+.2}", pnl)
+                    format!("止盈单成交 · 已实现 {:+.2}", total_pnl)
                 } else {
-                    format!("交易所回执 · 已实现 {:+.2}", pnl)
+                    format!("交易所回执 · 已实现 {:+.2}", total_pnl)
                 },
                 live: true,
-                pnl: Some(pnl),
-                tid: Some(tid),
+                pnl: Some(total_pnl),
+                tid: first_tid,
                 entry_px: None,
                 reduce_only: true,
             });
-            known.insert(tid);
             added += 1;
-            if ts > max_ts {
-                max_ts = ts;
+            if last_ts > max_ts {
+                max_ts = last_ts;
             }
         }
     }
@@ -1837,6 +1859,12 @@ mod fill_dedup_tests {
             close_fill(t0, 12, 777, 10.0),
         ];
         let added = reconcile_fill_rows(&arr, &mut st).unwrap();
-        assert_eq!(added, 2, "没有对应下单记录的成交必须导入");
+        // 同一 oid 的两条成交合并成一条记录（和交易所的 Aggregate 视图一致 ✗）
+        assert_eq!(added, 1, "同一笔订单的成交应合并为一条记录");
+        assert_eq!(st.records.len(), 1);
+        let r = &st.records[0];
+        assert!((r.size - 40.0).abs() < 1e-9, "数量应相加，实际 {}", r.size);
+        // 每条 fill 的 closedPnl 都是 0.10 → 两条合并应得 0.20
+        assert!((r.pnl.unwrap_or(0.0) - 0.2).abs() < 1e-9, "已实现应收拢，实际 {:?}", r.pnl);
     }
 }
