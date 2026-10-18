@@ -290,7 +290,23 @@
       pre { max-width:100%; overflow:auto; white-space:pre-wrap; overflow-wrap:anywhere; }
       summary { min-height:40px; padding:8px 0; cursor:pointer; }
       .empty { padding:28px 16px; }
-      @media(min-width:1500px) { #view-funding { display:none; } #view-funding.active { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:18px; align-items:start; } #view-funding>.workspace-heading { grid-column:1/-1; margin-bottom:6px; } #view-funding>.content-card { margin:0; } #view-funding>.content-card:last-child { grid-column:1/-1; } }
+      /* Unequal-height data modules must not share grid rows: short/empty
+         panels otherwise reserve the height of the neighbouring table. */
+      #view-funding.active { display:block; }
+      #view-funding>.workspace-heading { margin-bottom:16px; }
+      #view-funding>.content-card { padding:16px 20px; margin-bottom:12px; }
+      #view-funding .content-card>.panel-head { padding-bottom:10px; margin-bottom:10px; }
+      #view-funding .section-eyebrow { margin-bottom:3px; }
+      #view-funding .note { margin:8px 0; }
+      #view-funding .empty { padding:14px 16px; text-align:left; }
+      #view-funding .setup-details { margin-top:10px; padding-top:4px; }
+      #view-funding summary { min-height:34px; padding:6px 0; }
+      #view-funding th,#view-funding td { padding:9px 12px; }
+      #view-funding .chart-summary { margin:8px 0 10px; }
+      #view-funding .grid-2 { margin:10px 0; }
+      #view-funding .grid-2 .content-card { padding:14px 16px; }
+      #view-funding .grid-2 .panel-head { margin-bottom:8px; padding-bottom:8px; }
+      @media(max-width:760px) { #view-funding>.content-card { padding:14px; } }
       @media(max-width:1100px) { .setup-layout { grid-template-columns:1fr; } .setup-aside { grid-template-columns:repeat(2,minmax(0,1fr)); } #mo-metrics .live-overview .metrics,#mo-metrics .capital-account .metrics { grid-template-columns:repeat(2,minmax(0,1fr)); } #mo-metrics .metric:nth-child(2n) { border-right:0; } #view-funding-setup .setup-fields { grid-template-columns:repeat(2,minmax(0,1fr)); } }
       @media(max-width:760px) {
         html { scroll-padding-top:80px; }
