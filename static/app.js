@@ -18,10 +18,12 @@ const ts2m = (ms) => {
 // ---------- 导航 ----------
 document.querySelectorAll(".nav button").forEach((b) => {
   b.addEventListener("click", () => {
-    document.querySelectorAll(".nav button").forEach((x) => x.classList.remove("active"));
+    document.querySelectorAll(".nav button").forEach((x) => { x.classList.remove("active"); x.removeAttribute("aria-current"); });
     b.classList.add("active");
+    b.setAttribute("aria-current", "page");
     document.querySelectorAll(".view").forEach((v) => v.classList.remove("active"));
     $("view-" + b.dataset.view).classList.add("active");
+    window.scrollTo({ top: 0, behavior: "instant" });
   });
 });
 
@@ -900,7 +902,7 @@ function renderLiveChart(history, shadow) {
     return;
   }
   const first = raw[0], last = raw.at(-1), change = last.equity - first.equity;
-  const W = Math.max(360, el.clientWidth || 960), H = 280;
+  const W = Math.max(260, el.clientWidth || 960), H = 280;
   const padL = 64, padR = 22, padT = 24, padB = 36;
   const values = raw.map(p => p.equity);
   const ax = niceAxis(Math.min(...values), Math.max(...values), 4);
@@ -1410,7 +1412,7 @@ function renderEquityChart(id, history, aria) {
     el.innerHTML = '<div class="empty">还没有足够的权益点（每小时一个，跑两小时就能画线）</div>';
     return;
   }
-  const W = Math.max(340, el.clientWidth || 900), H = 240;
+  const W = Math.max(260, el.clientWidth || 900), H = 240;
   const padL = 64, padR = 20, padT = 20, padB = 30;
   const first = pts[0], last = pts[pts.length - 1];
   const change = last.eq - first.eq;
@@ -1525,3 +1527,20 @@ if ($("cy-reset")) {
 }
 
 setInterval(refreshCarry, 60000);
+
+// Rebuild chart coordinates when the visible container changes width (rotation,
+// split view or navigation). This only redraws cached data; never requests orders.
+if (typeof ResizeObserver !== "undefined") {
+  const chartWidths = new WeakMap();
+  const chartResize = new window.ResizeObserver(entries => {
+    for (const { target, contentRect } of entries) {
+      const width = Math.round(contentRect.width);
+      if (!width || chartWidths.get(target) === width) continue;
+      chartWidths.set(target, width);
+      if (target.id === "mo-chart" && lastLiveData) renderLiveChart(lastLiveData.history, lastLiveData.shadow);
+      if (target.id === "cy-chart" && lastCarryData) renderEquityChart("cy-chart", lastCarryData.history || [], "纸面 carry 权益曲线");
+      if (target.id === "xp-chart" && lastXData) renderEquityChart("xp-chart", lastXData.history || [], "跨所价差纸面权益曲线");
+    }
+  });
+  ["mo-chart", "cy-chart", "xp-chart"].forEach(id => chartResize.observe($(id)));
+}

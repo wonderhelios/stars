@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#ffffff" />
-    <title>stars · 动量 alpha 研究台</title>
+    <title>stars · 交易工作台</title>
     <style>
       :root { --blue:#137b70; --blue-ink:#0d6158; --blue-soft:#e7f4ef; --bg:#f3f5f7; --surface:#fff; --ink:#182b3a; --muted:#788592; --line:#e5eaee; --green:#138467; --green-soft:#eaf7f0; --red:#d35160; --red-soft:#fcedef; --amber:#a57721; --amber-soft:#fff6e6; --shadow:0 3px 16px #25364804; }
       * { box-sizing:border-box; }
@@ -223,13 +223,129 @@
       .daily-exec-definition summary { cursor:pointer; }
       .daily-exec-definition p { line-height:1.9; max-width:950px; }
       @media(max-width:760px) { .daily-exec-kpis { grid-template-columns:repeat(2,minmax(0,1fr)); } .daily-exec-kpis .v { font-size:22px; } .daily-exec-head .segmented { width:100%; } .daily-exec-head .segmented button { flex:1; } }
+          /* Shared workspace layout. Presentation only; no trading parameters. */
+      :root { --bg:#f5f7fa; --ink:#182b38; --muted:#677987; --line:#e2e8ee; --shadow:0 2px 5px #162b3803,0 12px 32px #162b3803; }
+      html { scroll-padding-top:24px; }
+      body { font-size:14px; }
+      .skip-link { position:fixed; top:-60px; left:16px; z-index:50; padding:10px 16px; background:white; border:2px solid var(--blue); border-radius:8px; }
+      .skip-link:focus { top:12px; }
+      .topbar { width:208px; padding:28px 16px 20px; gap:38px; background:#142d2b; }
+      .brand { font-size:25px; }
+      .brand small { letter-spacing:.8px; font-size:10px; }
+      .nav { gap:8px; }
+      .nav button { min-height:48px; padding:12px; border-radius:9px; }
+      .nav button.active { background:#275447; color:#d3f4e4; border-color:#386455; box-shadow:inset 3px 0 #90d6b6; }
+      .status-pill { overflow-wrap:anywhere; font-size:11px; }
+      main { margin-left:208px; max-width:1810px; padding:32px clamp(20px,3vw,48px) 56px; }
+      .workspace-heading { display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:24px; }
+      .workspace-heading h2,.setup-heading h2,.view>.panel:first-child>.panel-head:first-child h2 { font-size:28px; letter-spacing:-.8px; margin:4px 0 6px; }
+      .panel-kicker,.section-eyebrow { color:#547c75; font-size:10px; letter-spacing:1.3px; }
+      .panel,.content-card,.setup-card,.metric-group { border-radius:12px; box-shadow:var(--shadow); }
+      .content-card,.setup-card { padding:22px 24px; margin:0 0 18px; }
+      .setup-main .setup-card,.setup-aside .setup-card { margin:0; }
+      .view>.panel:first-child { margin:0; }
+      .panel-head,.monitor-section-head { gap:16px; }
+      .content-card>.panel-head { margin-bottom:16px; padding-bottom:16px; }
+      .panel-head h2,.monitor-section-head h2,.daily-exec-head h2 { font-size:17px; letter-spacing:-.3px; }
+      .sub,.note { font-size:12px; line-height:1.8; }
+      .note { overflow-wrap:anywhere; }
+      .btn { min-height:42px; padding:9px 15px; font-size:12px; }
+      .actions { max-width:none; }
+      #mo-clear { color:var(--red); border-color:#ecd7dc; }
+      #mo-metrics { gap:14px; margin:18px 0; }
+      #mo-metrics>.metric-group { padding:20px 22px; }
+      #mo-metrics .g-title { margin-bottom:18px; font-size:11px; letter-spacing:.6px; }
+      #mo-metrics .live-overview { border-top:1px solid var(--line); border-left:4px solid var(--blue); background:linear-gradient(100deg,#fff,#f1f8f5); }
+      #mo-metrics .live-overview .v { font-size:clamp(24px,2.3vw,36px); line-height:1.3; }
+      #mo-metrics .capital-account .v { font-size:24px; }
+      .metric .k { font-size:12px; margin-bottom:9px; }
+      .metric-footnote,.metric-definition { margin-top:16px; line-height:1.7; }
+      .metric-group .metric { padding-right:14px; }
+      .live-status { padding:12px 16px; margin:12px 0; line-height:1.8; }
+      .segmented { padding:3px; border-radius:9px; }
+      .segmented button { min-height:38px; padding:7px 15px; color:#526d66; }
+      .table-scroll { max-width:100%; overscroll-behavior-x:contain; scrollbar-width:thin; }
+      th,td { padding:12px 14px; }
+      th { color:#536b78; font-size:11px; }
+      tbody tr:nth-child(even) { background:#fafcfc; }
+      tbody tr:hover { background:#f0f7f4; }
+      .table-scroll th:first-child,.table-scroll td:first-child { position:sticky; left:0; z-index:1; background:#fff; box-shadow:1px 0 var(--line); }
+      .table-scroll th:first-child { background:#f8fafb; }
+      .setup-layout { gap:18px; grid-template-columns:minmax(0,1.6fr) minmax(280px,1fr); }
+      .setup-main,.setup-aside { gap:18px; }
+      .setup-fields { gap:18px; }
+      .setup-card header { margin-bottom:18px; }
+      .setup-card h3 { font-size:16px; }
+      .field input,.field select { min-height:44px; background:#fbfcfd; }
+      .setup-save { border:1px solid #d4e5dc; }
+      #view-funding-setup .setup-fields { display:grid!important; grid-template-columns:repeat(3,minmax(0,1fr)); gap:18px!important; }
+      .daily-exec-kpis { margin:18px 0; padding:18px 0; gap:16px; }
+      .daily-exec-kpis .v { font-size:24px; }
+      .daily-exec-chart-label,.daily-exec-pagination { flex-wrap:wrap; }
+      .chart-summary strong { font-size:25px; }
+      .chart-coverage { overflow-wrap:anywhere; }
+      .chart svg { min-width:0; }
+      .chart { margin:0; }
+      .flow-row { flex-wrap:wrap; }
+      pre { max-width:100%; overflow:auto; white-space:pre-wrap; overflow-wrap:anywhere; }
+      summary { min-height:40px; padding:8px 0; cursor:pointer; }
+      .empty { padding:28px 16px; }
+      @media(min-width:1500px) { #view-funding { display:none; } #view-funding.active { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:18px; align-items:start; } #view-funding>.workspace-heading { grid-column:1/-1; margin-bottom:6px; } #view-funding>.content-card { margin:0; } #view-funding>.content-card:last-child { grid-column:1/-1; } }
+      @media(max-width:1100px) { .setup-layout { grid-template-columns:1fr; } .setup-aside { grid-template-columns:repeat(2,minmax(0,1fr)); } #mo-metrics .live-overview .metrics,#mo-metrics .capital-account .metrics { grid-template-columns:repeat(2,minmax(0,1fr)); } #mo-metrics .metric:nth-child(2n) { border-right:0; } #view-funding-setup .setup-fields { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+      @media(max-width:760px) {
+        html { scroll-padding-top:80px; }
+        .topbar { width:100%; position:sticky; top:0; padding:12px 16px; grid-template-columns:auto minmax(0,1fr); gap:16px; min-height:64px; border:0; box-shadow:0 2px 12px #10251f16; }
+        .brand { font-size:21px; gap:9px; }
+        .brand small { display:none; }
+        .status-pill { max-width:none; min-width:0; justify-self:end; gap:7px; font-size:10px; }
+        #statusText { max-width:170px; }
+        .nav { position:fixed; inset:auto 0 0; padding:7px 8px calc(7px + env(safe-area-inset-bottom)); gap:4px; background:#fff; border-top:1px solid var(--line); box-shadow:0 -4px 20px #162b3808; display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); overflow:visible; }
+        .nav button { flex-direction:column; gap:4px; padding:7px 3px; min-height:54px; width:100%; color:#677987; font-size:11px; border:0; }
+        .nav button svg { width:19px; height:19px; }
+        .nav button.active { background:#eaf4ef; color:#126b59; border:0; box-shadow:none; }
+        .nav button:hover { background:#eff5f2; color:#126b59; }
+        main { margin:0; padding:22px 14px calc(96px + env(safe-area-inset-bottom)); }
+        .workspace-heading,.setup-heading { margin-bottom:20px; flex-wrap:wrap; }
+        .workspace-heading h2,.setup-heading h2,.view>.panel:first-child>.panel-head:first-child h2 { font-size:24px; }
+        .content-card,.setup-card { padding:18px 16px; margin-bottom:14px; }
+        #mo-metrics { grid-template-columns:1fr; gap:12px; }
+        #mo-metrics>.metric-group { padding:18px 16px; }
+        #mo-metrics .metrics { gap:20px 12px; }
+        #mo-metrics .live-overview .v { font-size:26px; }
+        #mo-metrics .capital-account .v { font-size:22px; }
+        #mo-metrics .metric-group:not(.live-overview):not(.capital-account) .v { font-size:20px; }
+        .metric .k { font-size:11px; }
+        .metric-footnote { align-items:flex-start; }
+        .metric-footnote .live-dot { margin-top:6px; }
+        .actions { gap:8px; }
+        .panel-head { flex-wrap:wrap; }
+        .segmented { max-width:100%; }
+        .segmented button { min-height:40px; padding:7px 12px; }
+        .monitor-section-head>.segmented { width:100%; }
+        .monitor-section-head>.segmented button { flex:1; padding:7px 5px; }
+        .chart-summary { gap:16px 22px; }
+        .chart-summary strong { font-size:23px; }
+        .chart-coverage { width:100%; line-height:1.7; }
+        .chart-caption { font-size:11px; }
+        .setup-layout,.setup-aside { grid-template-columns:1fr; }
+        .field input,.field select,#lv-account,#lv-key { font-size:16px; }
+        .field label { line-height:1.6; }
+        .setup-save { padding:16px; }
+        .setup-save .btn { width:100%; }
+        .daily-exec-kpis { grid-template-columns:repeat(2,minmax(0,1fr)); }
+        .daily-exec-kpis .v { font-size:22px; }
+        th,td { padding:12px; }
+        .table-scroll { border-radius:8px; }
+      }
+      @media(max-width:400px) { .setup-fields,#view-funding-setup .setup-fields { grid-template-columns:1fr; } #statusText { max-width:145px; } #mo-metrics .live-overview .v { font-size:24px; } .daily-exec-kpis .v { font-size:20px; } }
     </style>
   </head>
   <body>
+    <a class="skip-link" href="#workspace">跳转到主要内容</a>
     <header class="topbar">
-      <div class="brand"><span class="dot" aria-hidden="true"></span><span>stars<small>动量 alpha 研究台</small></span></div>
-      <nav class="nav">
-        <button data-view="monitor" class="active"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg><span>实盘监控</span></button>
+      <div class="brand"><span class="dot" aria-hidden="true"></span><span>stars<small>TRADING WORKSPACE</small></span></div>
+      <nav class="nav" aria-label="工作台导航">
+        <button data-view="monitor" class="active" aria-current="page"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg><span>实盘监控</span></button>
         <button data-view="live"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 7h16M4 17h16"/><circle cx="8" cy="7" r="3"/><circle cx="16" cy="17" r="3"/></svg><span>实盘设置</span></button>
         <button data-view="funding"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg><span>套利监控</span></button>
         <button data-view="funding-setup"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3"/></svg><span>套利设置</span></button>
@@ -240,7 +356,7 @@
       </div>
     </header>
 
-    <main>
+    <main id="workspace" tabindex="-1">
 
 
       <!-- ============ 实盘设置 ============ -->
@@ -329,11 +445,11 @@
           <div class="metrics" id="mo-metrics"></div>
           <div class="content-card equity-card"><div class="panel-head monitor-section-head"><div><span class="section-eyebrow">STRATEGY PNL</span><h2>策略盈亏曲线</h2></div><div class="segmented" id="mo-chart-tabs" role="group" aria-label="策略盈亏时间区间"><button type="button" data-range="day" aria-pressed="false">日</button><button type="button" data-range="week" aria-pressed="true">周</button><button type="button" data-range="month" aria-pressed="false">月</button><button type="button" data-range="all" aria-pressed="false">全部</button></div></div>
           <div class="chart" id="mo-chart"></div></div>
-          <section class="content-card" id="mo-exec-daily" aria-label="每日执行统计"></section>
           <div class="content-card"><div class="panel-head" style="margin-top:14px"><h2>当前持仓</h2></div>
           <div id="mo-positions"></div></div>
           <div class="content-card"><div class="panel-head" style="margin-top:14px"><h2>当前挂单</h2></div>
           <div id="mo-orders"></div></div>
+          <section class="content-card" id="mo-exec-daily" aria-label="每日执行统计"></section>
           <div class="content-card"><div class="panel-head monitor-section-head"><div><span class="section-eyebrow">EXECUTION JOURNAL</span><h2>订单与成交</h2></div><div class="segmented" id="mo-record-tabs" role="group" aria-label="记录来源"><button type="button" data-scope="all" aria-pressed="true">全部</button><button type="button" data-scope="system" aria-pressed="false">系统订单</button><button type="button" data-scope="exchange" aria-pressed="false">交易所补录</button></div></div>
           <p class="note">系统订单展示调仓意图；交易所补录展示成交回执，无法据此确认是调仓、手动平仓或止盈。盈亏为未扣费金额，“估算”与交易所回执分开标注。</p>
           <div id="mo-records"></div></div>
@@ -341,6 +457,7 @@
       </section>
 
       <section id="view-funding" class="view">
+        <div class="workspace-heading"><div><div class="panel-kicker">MARKET OBSERVATORY</div><h2>套利监控</h2><p class="sub">市场价差、资金费与纸面组合，集中观察。</p></div><span class="setup-chip">行情与纸面模拟</span></div>
         <div class="content-card">
           <div class="panel-head monitor-section-head"><div><span class="section-eyebrow">FUNDING CARRY</span><h2>资金费差 · HL vs 币安</h2></div><button class="btn ghost" id="fd-refresh" type="button">立即刷新</button></div>
           <p class="note">年化差 = HL − 币安。差为正：空 HL / 多币安收差。两边 24h 成交额均 ≥ $1M 才上榜，每 60 秒刷新。</p>
@@ -381,6 +498,7 @@
       </section>
 
       <section id="view-funding-setup" class="view">
+        <div class="workspace-heading"><div><div class="panel-kicker">PAPER WORKSPACE</div><h2>套利设置</h2><p class="sub">资金分配与模拟参数，按模块管理。</p></div><span class="setup-chip">行情与纸面模拟</span></div>
         <div class="content-card">
           <div class="panel-head monitor-section-head"><div><span class="section-eyebrow">CAPITAL MATRIX</span><h2>资金矩阵配置</h2></div></div>
           <p class="note">三种策略的资金分配，仅记录与展示，不驱动任何自动执行（唯一例外：② carry 的金额会作为纸面 carry 的预算）。用于跟踪「资产（动量）/ 现金管理（carry）/ 娱乐（尖峰）」三块的比例。</p>
