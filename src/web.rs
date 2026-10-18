@@ -667,6 +667,7 @@ struct CarryConfigBody {
     exit_threshold: Option<f64>,
     max_pairs: Option<usize>,
     max_holding_hours: Option<i64>,
+    min_hold_hours: Option<i64>,
     stop_loss_pct: Option<f64>,
 }
 
@@ -701,6 +702,12 @@ async fn carry_config(State(state): State<AppState>, Json(body): Json<CarryConfi
             return (StatusCode::BAD_REQUEST, Json(json!({"ok": false, "error": "最长持有小时数必须在 1~8760"}))).into_response();
         }
         c.max_holding_hours = v;
+    }
+    if let Some(v) = body.min_hold_hours {
+        if !(0..=24 * 60).contains(&v) {
+            return (StatusCode::BAD_REQUEST, Json(json!({"ok": false, "error": "最短持有 0~1440 小时"}))).into_response();
+        }
+        c.min_hold_hours = v;
     }
     if let Some(v) = body.stop_loss_pct {
         if !(v.is_finite() && v > 0.0 && v < 1.0) {

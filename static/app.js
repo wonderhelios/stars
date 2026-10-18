@@ -1432,13 +1432,14 @@ function renderEquityChart(id, history, aria) {
 
 function renderCarryConfig(cfg) {
   cfg = cfg || {};
-  const entry = $("cy-entry"), exit = $("cy-exit"), pairs = $("cy-pairs"), hours = $("cy-hours"), stop = $("cy-stop");
+  const entry = $("cy-entry"), exit = $("cy-exit"), pairs = $("cy-pairs"), hours = $("cy-hours"), stop = $("cy-stop"), minhold = $("cy-minhold");
   // 60 秒轮询会重入：正在编辑的输入框不能被覆盖。
-  if ([entry, exit, pairs, hours, stop].some((el) => el && document.activeElement === el)) return;
+  if ([entry, exit, pairs, hours, stop, minhold].some((el) => el && document.activeElement === el)) return;
   if (entry) entry.value = Math.round(cfg.entry_threshold * 1000) / 10;
   if (exit) exit.value = Math.round(cfg.exit_threshold * 1000) / 10;
   if (pairs) pairs.value = cfg.max_pairs;
   if (hours) hours.value = cfg.max_holding_hours;
+  if (minhold) minhold.value = cfg.min_hold_hours;
   if (stop) stop.value = Math.round(cfg.stop_loss_pct * 1000) / 10;
 }
 
@@ -1459,6 +1460,7 @@ if ($("cy-save")) {
       exit_threshold: (Number($("cy-exit").value) || 0) / 100,
       max_pairs: Number($("cy-pairs").value) || 0,
       max_holding_hours: Number($("cy-hours").value) || 0,
+      min_hold_hours: Number($("cy-minhold") ? $("cy-minhold").value : 72) || 0,
       stop_loss_pct: (Number($("cy-stop").value) || 0) / 100,
     };
     const st = $("cy-status");

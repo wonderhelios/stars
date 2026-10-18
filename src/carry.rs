@@ -38,17 +38,29 @@ pub struct CarryConfig {
     pub max_pairs: usize,
     /// 最长持有小时数（超时强制平仓）。
     pub max_holding_hours: i64,
+    /// 最短持有小时数：价差收窄的平仓要等至少持有这么久（否则资金费还没覆盖
+    /// 18bp 的来回手续费就平了，数学上必亏 ✗ 2026-10-18 实测：6% 年化需要
+    /// 263 小时才回本 ✗ 30% 需要 53 小时 ✗ 50% 需要 32 小时 ✗）。
+    #[serde(default = "default_min_hold")]
+    pub min_hold_hours: i64,
     /// 基差止损：单对基差亏损占名义的比例（0.02 = 2%）。
     pub stop_loss_pct: f64,
 }
 
+fn default_min_hold() -> i64 {
+    72
+}
+
 impl Default for CarryConfig {
     fn default() -> Self {
+        // 默认值必须能覆盖成本 ✗ 6%/2% 的旧默认会让策略每小时开平一次 ✗
+        // 18bp 来回成本下：40% 年化持有 72h ≈ 33bp 收入 ✗ 才有点肉 ✗
         CarryConfig {
-            entry_threshold: 0.06,
-            exit_threshold: 0.02,
+            entry_threshold: 0.40,
+            exit_threshold: 0.10,
             max_pairs: 5,
             max_holding_hours: 720,
+            min_hold_hours: 72,
             stop_loss_pct: 0.02,
         }
     }
@@ -121,10 +133,19 @@ impl Default for CarryState {
 
 impl CarryState {
     pub fn load(path: &Path) -> Self {
-        std::fs::read(path)
+        let mut st: CarryState = std::fs::read(path)
             .ok()
             .and_then(|b| serde_json::from_slice(&b).ok())
-            .unwrap_or_default()
+            .unwrap_or_default();
+        // 迁移：6%/2% 是旧默认值 ✗ 实测下 6% 年化要持有 263 小时才覆盖 18bp 成本 ✗
+        // 每小时开平一次 = 必亏 ✗ 这不是用户的选择 ✗ 自动升到能覆盖成本的默认 ✗
+        if (st.config.entry_threshold - 0.06).abs() < 1e-9
+            && (st.config.exit_threshold - 0.02).abs() < 1e-9
+        {
+            st.config.entry_threshold = 0.40;
+            st.config.exit_threshold = 0.10;
+        }
+        st
     }
 
     pub fn save(&self, path: &Path) -> Result<(), anyhow::Error> {
@@ -244,7 +265,14 @@ pub fn step(state: &mut CarryState, budget_usd: f64, market: &std::collections::
         let diff = row.hl_ann - row.bn_ann;
         let exit_reason: Option<String> = {
             let p = &state.pairs[i];
-            if diff.abs() < state.config.exit_threshold {
+            let held_hours = (now - p.entry_ts) / 3_600_000;
+            let flipped = diff * (p.direction as f64) < 0.0 && diff.abs() >= 0.05;
+            if flipped {
+                // 价差实质性反转（≥5%）：carry 已经反向，不等了
+                Some("价差反转".into())
+            } else if diff.abs() < state.config.exit_threshold
+                && held_hours >= state.config.min_hold_hours
+            {
                 Some("价差收窄到出场线".into())
             } else if diff * (p.direction as f64) < 0.0 {
                 Some("价差翻负".into())
@@ -381,9 +409,13 @@ mod tests {
         }
     }
 
+    fn test_cfg(entry: f64, exit: f64) -> CarryConfig {
+        CarryConfig { entry_threshold: entry, exit_threshold: exit, min_hold_hours: 0, ..CarryConfig::default() }
+    }
+
     #[test]
     fn opens_pair_when_diff_above_threshold() {
-        let mut st = CarryState::default();
+        let mut st = CarryState { config: test_cfg(0.06, 0.02), ..CarryState::default() };
         let mut m = HashMap::new();
         m.insert("SOL".into(), row(100.0, 100.0, 0.11, 0.02)); // diff 9% ≥ 6%
         step(&mut st, 1000.0, &m);
@@ -396,7 +428,7 @@ mod tests {
 
     #[test]
     fn opens_short_direction_for_negative_diff() {
-        let mut st = CarryState::default();
+        let mut st = CarryState { config: test_cfg(0.06, 0.02), ..CarryState::default() };
         let mut m = HashMap::new();
         m.insert("X".into(), row(10.0, 10.0, -0.04, 0.05)); // diff −9%
         step(&mut st, 1000.0, &m);
@@ -406,7 +438,7 @@ mod tests {
 
     #[test]
     fn does_not_open_below_threshold() {
-        let mut st = CarryState::default();
+        let mut st = CarryState { config: test_cfg(0.06, 0.02), ..CarryState::default() };
         let mut m = HashMap::new();
         m.insert("SOL".into(), row(100.0, 100.0, 0.05, 0.02)); // diff 3% < 6%
         step(&mut st, 1000.0, &m);
@@ -416,7 +448,7 @@ mod tests {
     #[test]
     fn accrues_funding_and_marks_basis() {
         let now = crate::live::now_ms_pub();
-        let mut st = CarryState::default();
+        let mut st = CarryState { config: test_cfg(0.06, 0.02), ..CarryState::default() };
         st.start_equity = 1000.0;
         st.pairs.push(mk_pair("SOL", 1, 100.0, 100.0, now - 3_600_000)); // 1 小时前
         let mut m = HashMap::new();
@@ -434,7 +466,7 @@ mod tests {
     #[test]
     fn exits_on_spread_collapse() {
         let now = crate::live::now_ms_pub();
-        let mut st = CarryState::default();
+        let mut st = CarryState { config: test_cfg(0.06, 0.02), ..CarryState::default() };
         st.start_equity = 1000.0;
         st.pairs.push(mk_pair("SOL", 1, 100.0, 100.0, now));
         let mut m = HashMap::new();
@@ -447,7 +479,7 @@ mod tests {
     #[test]
     fn exits_on_basis_stop() {
         let now = crate::live::now_ms_pub();
-        let mut st = CarryState::default();
+        let mut st = CarryState { config: test_cfg(0.06, 0.02), ..CarryState::default() };
         st.start_equity = 1000.0;
         st.pairs.push(mk_pair("SOL", 1, 100.0, 100.0, now));
         let mut m = HashMap::new();
@@ -477,7 +509,7 @@ mod tests {
     #[test]
     fn does_not_duplicate_held_coin() {
         let now = crate::live::now_ms_pub();
-        let mut st = CarryState::default();
+        let mut st = CarryState { config: test_cfg(0.06, 0.02), ..CarryState::default() };
         st.start_equity = 1000.0;
         st.pairs.push(mk_pair("SOL", 1, 100.0, 100.0, now));
         let mut m = HashMap::new();
@@ -492,7 +524,7 @@ mod tests {
     #[test]
     fn funding_resumes_after_48h_gap_without_huge_accrual() {
         let now = crate::live::now_ms_pub();
-        let mut st = CarryState::default();
+        let mut st = CarryState { config: test_cfg(0.06, 0.02), ..CarryState::default() };
         st.start_equity = 1000.0;
         st.pairs.push(mk_pair("SOL", 1, 100.0, 100.0, now - 50 * 3_600_000)); // 50h 断档
         let mut m = HashMap::new();
@@ -513,7 +545,7 @@ mod tests {
     #[test]
     fn negative_direction_accrues_positive_funding() {
         let now = crate::live::now_ms_pub();
-        let mut st = CarryState::default();
+        let mut st = CarryState { config: test_cfg(0.06, 0.02), ..CarryState::default() };
         st.start_equity = 1000.0;
         // direction=-1: 多HL/空币安, 而 bn_ann > hl_ann → 净收 = (bn-hl)。
         st.pairs.push(mk_pair("X", -1, 10.0, 10.0, now - 3_600_000));
@@ -526,7 +558,7 @@ mod tests {
 
     #[test]
     fn no_open_with_zero_budget() {
-        let mut st = CarryState::default();
+        let mut st = CarryState { config: test_cfg(0.06, 0.02), ..CarryState::default() };
         let mut m = HashMap::new();
         m.insert("SOL".into(), row(100.0, 100.0, 0.11, 0.02));
         step(&mut st, 0.0, &m);
@@ -536,7 +568,7 @@ mod tests {
     #[test]
     fn skips_marking_when_price_zero() {
         let now = crate::live::now_ms_pub();
-        let mut st = CarryState::default();
+        let mut st = CarryState { config: test_cfg(0.06, 0.02), ..CarryState::default() };
         st.start_equity = 1000.0;
         st.pairs.push(mk_pair("SOL", 1, 100.0, 100.0, now));
         let mut m = HashMap::new();
@@ -550,7 +582,7 @@ mod tests {
     #[test]
     fn timeout_exit_goes_to_cooldown() {
         let now = crate::live::now_ms_pub();
-        let mut st = CarryState::default();
+        let mut st = CarryState { config: test_cfg(0.06, 0.02), ..CarryState::default() };
         st.start_equity = 1000.0;
         let mut p = mk_pair("SOL", 1, 100.0, 100.0, now);
         p.entry_ts = now - 721 * 3_600_000; // 721 小时 > 720

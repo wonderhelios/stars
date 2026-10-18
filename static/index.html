@@ -396,12 +396,13 @@
 
         <div class="content-card">
           <div class="panel-head monitor-section-head"><div><span class="section-eyebrow">PAPER CARRY · PARAMS</span><h2>纸面 carry 参数</h2></div><button class="btn danger" id="cy-reset" type="button">重置纸面</button></div>
-          <p class="note">冷却期：基差止损 / 持有超时 / 价差翻负平仓后 24 小时不再开同名币。改完点「保存参数」。</p>
+          <p class="note">18bp 来回手续费下，年化差 6% 要持有 263 小时才回本 ✗ 40% 只要 53 小时 ✗ 所以默认「开仓 40% / 出场 10% / 最短持有 72h」✗ 冷却期：基差止损 / 持有超时 / 价差翻转后 24 小时不再开同名币 ✗</p>
           <div class="setup-fields" style="display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end">
             <div class="field"><label for="cy-entry">开仓阈值 %（|年化价差| ≥ 此值开仓）</label><input id="cy-entry" type="number" min="1" max="50" step="0.5" /></div>
             <div class="field"><label for="cy-exit">出场阈值 %（跌破平仓）</label><input id="cy-exit" type="number" min="0" max="20" step="0.5" /></div>
             <div class="field"><label for="cy-pairs">最大对数</label><input id="cy-pairs" type="number" min="1" max="20" step="1" /></div>
             <div class="field"><label for="cy-hours">最长持有小时</label><input id="cy-hours" type="number" min="1" max="8760" step="1" /></div>
+            <div class="field"><label for="cy-minhold">最短持有小时（覆盖手续费前不平）</label><input id="cy-minhold" type="number" min="0" max="1440" step="1" /></div>
             <div class="field"><label for="cy-stop">基差止损 %（名义）</label><input id="cy-stop" type="number" min="0.1" max="20" step="0.5" /></div>
             <div class="field"><button class="btn ghost" id="cy-save" type="button">保存参数</button></div>
           </div>
