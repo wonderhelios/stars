@@ -1208,7 +1208,7 @@ function renderXPaper(d) {
       `<span>未实现 <b class="${open >= 0 ? "pos" : "neg"}">${moneySigned(open)}</b></span> · ` +
       `<span>持仓 <b>${pairs.length}</b> 对</span>`;
   }
-  renderEquityChart("xp-chart", d.history || [], "跨所价差纸面权益曲线");
+  renderEquityChart("xp-chart", withNow(d.history, base + total), "跨所价差纸面权益曲线");
   const posEl = $("xp-positions");
   if (posEl) {
     posEl.innerHTML = pairs.length
@@ -1354,7 +1354,7 @@ function renderCarry(d) {
       `<span>未实现 <b class="${open >= 0 ? "pos" : "neg"}">${moneySigned(open)}</b></span> · ` +
       `<span>持仓 <b>${pairs.length}</b> 对</span>`;
   }
-  renderEquityChart("cy-chart", d.history || [], "纸面 carry 权益曲线");
+  renderEquityChart("cy-chart", withNow(d.history, eq), "纸面 carry 权益曲线");
   const legs = $("cy-legs");
   if (legs) {
     const agg = (dir) => {
@@ -1400,6 +1400,16 @@ function renderCarry(d) {
       ? logs.map((l) => `<div class="note">${ts2m(l.ts)} · ${escapeHTML(l.msg)}</div>`).join("")
       : '<div class="note">还没有操作。</div>';
   }
+}
+
+// 曲线是"每小时一个点"✗ 两次采样之间线会停在旧值上 ✗ 看起来像"卡住"✗
+// 这里把【当前权益】补成一个点 ✓ 线就永远画到"现在"✓
+function withNow(history, equityNow) {
+  const pts = (history || []).filter((p) => Array.isArray(p) && Number.isFinite(p[0]) && Number.isFinite(p[1]));
+  if (!Number.isFinite(equityNow)) return pts;
+  const now = Date.now();
+  if (pts.length && now - pts[pts.length - 1][0] < 60_000) return pts;
+  return [...pts, [now, equityNow]];
 }
 
 // 通用权益曲线（每小时一个点）。
