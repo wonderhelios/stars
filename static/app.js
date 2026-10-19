@@ -1207,6 +1207,7 @@ function renderShadow(d) {
   const lev = cap > 0 ? eq / cap : 0;
   const gross = d.gross_notional || 0, net = d.net_notional || 0;
   const nLong = ps.filter((p) => String(p.side).toLowerCase() === "long").length;
+  const ctl = lastControlData || {};
   const m = $("sh-metrics");
   if (m) {
     m.innerHTML =
@@ -1253,7 +1254,6 @@ function renderShadow(d) {
   const histObj = (d.history || []).filter((p) => Number.isFinite(p.ts) && Number.isFinite(p.equity));
   const win = equityWindow(histObj, shRange, Date.now());
   const arr = (win.points || []).map((p) => [p.ts, p.equity]);
-  const ctl = lastControlData || {};
   const chist = (ctl.history || []).filter((p) => Number.isFinite(p.ts) && Number.isFinite(p.equity));
   const cwin = equityWindow(chist, shRange, Date.now());
   const carr = (cwin.points || []).map((p) => [p.ts, p.equity]);
