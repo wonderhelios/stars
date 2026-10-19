@@ -1193,6 +1193,7 @@ setInterval(refreshShadow, 120000);
 // ---------- 影子组合（三因子 ✗ 动量+距高点+上涨占比 ✗） ----------
 let lastShadowData = null;
 let lastControlData = null;
+let lastLiveForShadow = null;
 let shRange = "week";
 let shPosPage = 0;
 let shTradePage = 0;
@@ -1208,6 +1209,22 @@ function renderShadow(d) {
   const gross = d.gross_notional || 0, net = d.net_notional || 0;
   const nLong = ps.filter((p) => String(p.side).toLowerCase() === "long").length;
   const ctl = lastControlData || {};
+  // 同窗口口径：以对照组合（同起点）的第一天为基准 ✗ 算实盘在同一窗口的变化 ✗
+  const ctlHist = (ctl.history || []).filter((p) => Number.isFinite(p.ts) && Number.isFinite(p.equity));
+  const ctlStart = ctlHist.length ? ctlHist[0].ts : null;
+  const ctlDays = ctl.days_elapsed || ctlHist.length || 0;
+  let liveWinPct = null;
+  let liveCumPct = null;
+  const lv = lastLiveForShadow;
+  if (lv && !lv.error && Number.isFinite(lv.equity)) {
+    const base = (lv.capital_baseline || {}).equity || 0;
+    const netd = lv.net_deposit || 0;
+    if (base + netd > 0) liveCumPct = (lv.equity / (base + netd) - 1) * 100;
+    if (ctlStart != null) {
+      const pts = (lv.history || []).filter((p) => Number.isFinite(p.ts) && Number.isFinite(p.equity) && p.ts <= ctlStart);
+      if (pts.length) liveWinPct = (lv.equity / pts[pts.length - 1].equity - 1) * 100;
+    }
+  }
   const m = $("sh-metrics");
   if (m) {
     m.innerHTML =
@@ -1235,12 +1252,18 @@ function renderShadow(d) {
         metric("净敞口 · 多减空", moneySigned(net), Math.abs(net) <= Math.max(eq * 0.05, 10) ? "" : "neg") +
         metric("强平缓冲", (d.liq_buffer_pct || 0).toFixed(1) + "%", (d.liq_buffer_pct || 0) < 40 ? "neg" : "pos")
       ) +
-      metricGroup("影子 vs 对照（同期 ✗ 同起点 ✗）",
-        metric("影子 三因子", (d.pnl_pct || 0).toFixed(1) + "%", (d.pnl_pct || 0) >= 0 ? "pos" : "neg") +
+      metricGroup("同起点对照（影子 / 对照 / 实盘同期 ✗）",
+        metric("影子 三因子（" + ctlDays + " 天 ✗）", (d.pnl_pct || 0).toFixed(1) + "%", (d.pnl_pct || 0) >= 0 ? "pos" : "neg") +
         metric("对照 现行70/30", (ctl.pnl_pct || 0).toFixed(1) + "%", (ctl.pnl_pct || 0) >= 0 ? "pos" : "neg") +
-        metric("差值", ((d.pnl_pct || 0) - (ctl.pnl_pct || 0)).toFixed(1) + '<span class="metric-unit"> pp</span>',
-          (d.pnl_pct || 0) >= (ctl.pnl_pct || 0) ? "pos" : "neg") +
-        metric("对照净值", "$" + fmt(ctl.equity || 0, 0))
+        metric("实盘同期", liveWinPct == null ? "—" : liveWinPct.toFixed(1) + "%",
+          liveWinPct == null ? "" : (liveWinPct >= 0 ? "pos" : "neg")) +
+        metric("影子 − 对照", ((d.pnl_pct || 0) - (ctl.pnl_pct || 0)).toFixed(1) + '<span class="metric-unit"> pp</span>',
+          (d.pnl_pct || 0) >= (ctl.pnl_pct || 0) ? "pos" : "neg"),
+        "live-overview",
+        '<div class="metric-footnote"><span class="live-dot"></span>' +
+          "三者都从这个窗口的第一天开始算 ✗ 实盘账户的累计盈亏含 10-06 起的旧账 ✗ 不可直接比 ✓" +
+          (liveCumPct == null ? "" : "（实盘累计 " + liveCumPct.toFixed(1) + "% ✗ 仅供参考 ✗）") +
+          "</div>"
       ) +
       metricGroup("因子配置",
         metric("动量", fmt(cfg.momentum_weight == null ? 0 : cfg.momentum_weight, 2)) +
@@ -1327,6 +1350,7 @@ async function refreshShadow() {
   try {
     lastShadowData = await fetchJSONRetry("/api/paper2", {}, 8000);
     try { lastControlData = await fetchJSONRetry("/api/paper", {}, 8000); } catch (e) {}
+    try { lastLiveForShadow = await fetchJSONRetry("/api/live", {}, 8000); } catch (e) {}
     renderShadow(lastShadowData);
     renderShadowConfig(lastShadowData.config);
   } catch (e) {}
