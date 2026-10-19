@@ -1216,8 +1216,8 @@ function renderShadow(d) {
         metric("运行天数", (d.days_elapsed || 0) + '<span class="metric-unit"> 天</span>'),
         "live-overview",
         '<div class="metric-footnote"><span class="live-dot"></span>' +
-          (d.running ? "影子组合运行中 · 独立纸面 ✗ 不碰实盘" : "影子组合已停止") +
-          (cfg.replay_days > 1 ? ` · 含 ${cfg.replay_days} 天回放（in-sample ✗）` : " · 纯样本外（无回放）") +
+          (d.running ? "影子组合运行中 · 独立纸面模拟" : "影子组合已停止") +
+          (cfg.replay_days > 1 ? ` · 含 ${cfg.replay_days} 天历史回放` : " · 纯样本外（无回放）") +
           "</div>"
       ) +
       metricGroup("盈亏构成",
@@ -1256,7 +1256,7 @@ function renderShadow(d) {
       ? `<div class="table-scroll"><table><thead><tr><th>币</th><th>方向</th><th>名义</th><th>入场价</th><th>现价</th><th>未实现</th></tr></thead><tbody>` +
         pageRows.map((p) => `<tr><td>${escapeHTML(p.coin)}</td><td class="${String(p.side).toLowerCase() === "long" ? "pos" : "neg"}">${shSide(p.side)}</td><td>$${fmt(p.notional, 0)}</td><td>${fmtCompact(p.entry_price)}</td><td>${fmtCompact(p.mark_price)}</td><td class="${(p.unrealized_pnl || 0) >= 0 ? "pos" : "neg"}">${moneySigned(p.unrealized_pnl || 0)}</td></tr>`).join("") +
         `</tbody></table></div>` + pager("shpos", ps.length, shPosPage, SH_PAGE_SIZE)
-      : '<div class="empty">暂无持仓（等下一次调仓 ✗）</div>';
+      : '<div class="empty">暂无持仓，等待下一次调仓</div>';
   }
   const trEl = $("sh-trades");
   if (trEl) {
@@ -1715,9 +1715,10 @@ if (typeof ResizeObserver !== "undefined") {
       if (!width || chartWidths.get(target) === width) continue;
       chartWidths.set(target, width);
       if (target.id === "mo-chart" && lastLiveData) renderLiveChart(lastLiveData.history, lastLiveData.shadow);
+      if (target.id === "sh-chart" && lastShadowData) renderShadow(lastShadowData);
       if (target.id === "cy-chart" && lastCarryData) renderEquityChart("cy-chart", lastCarryData.history || [], "纸面 carry 权益曲线");
       if (target.id === "xp-chart" && lastXData) renderEquityChart("xp-chart", lastXData.history || [], "跨所价差纸面权益曲线");
     }
   });
-  ["mo-chart", "cy-chart", "xp-chart"].forEach(id => chartResize.observe($(id)));
+  ["mo-chart", "cy-chart", "xp-chart", "sh-chart"].forEach(id => chartResize.observe($(id)));
 }

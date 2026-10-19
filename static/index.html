@@ -354,6 +354,54 @@
         .table-scroll { border-radius:8px; }
       }
       @media(max-width:400px) { .setup-fields,#view-funding-setup .setup-fields { grid-template-columns:1fr; } #statusText { max-width:145px; } #mo-metrics .live-overview .v { font-size:24px; } .daily-exec-kpis .v { font-size:20px; } }
+      /* Shadow workspace: full-width groups, with independently sized fields. */
+      #sh-metrics { display:flex; flex-direction:column; gap:12px; margin:16px 0; }
+      #sh-metrics>.metric-group { padding:16px 20px; }
+      #sh-metrics .g-title { margin-bottom:12px; letter-spacing:.5px; }
+      #sh-metrics .metrics { grid-template-columns:repeat(4,minmax(0,1fr)); gap:16px; }
+      #sh-metrics .metric-group:last-child .metrics { grid-template-columns:repeat(5,minmax(0,1fr)); }
+      #sh-metrics .metric { padding:0 14px 0 0; border:0; border-right:1px solid var(--line); }
+      #sh-metrics .metric:last-child { border-right:0; }
+      #sh-metrics .v { font-size:23px; line-height:1.35; }
+      #sh-metrics .live-overview { border-left:3px solid var(--blue); background:linear-gradient(100deg,#fff,#f1f8f5); }
+      #sh-metrics .live-overview .v { font-size:30px; }
+      #sh-metrics .metric-footnote { margin-top:12px; flex-wrap:wrap; }
+      #view-shadow .content-card,#view-shadow-setup .content-card { padding:18px 20px; margin-bottom:14px; }
+      #view-shadow .panel-head,#view-shadow-setup .panel-head { margin-bottom:12px; }
+      #view-shadow .content-card>.panel-head,#view-shadow-setup .content-card>.panel-head { padding-bottom:12px; }
+      #view-shadow .empty { padding:18px; }
+      #view-shadow .note,#view-shadow-setup .note { margin:10px 0; }
+      #view-shadow th,#view-shadow td { padding:10px 12px; }
+      #sh-trades { max-height:none; }
+      .shadow-fields { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:18px 24px; }
+      .shadow-fields .field { gap:6px; }
+      .shadow-fields label { min-height:20px; line-height:1.5; }
+      .shadow-param-group { border:0; border-top:1px solid var(--line); padding:16px 0 0; margin:18px 0 0; min-width:0; }
+      .shadow-param-group legend { padding:0 10px 0 0; font-size:12px; color:#526d66; font-weight:600; }
+      .shadow-param-group .shadow-fields { grid-template-columns:repeat(4,minmax(0,1fr)); }
+      .shadow-savebar { display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; margin-top:20px; padding-top:16px; border-top:1px solid var(--line); }
+      .shadow-savebar .actions { flex-wrap:wrap; }
+      .shadow-savebar #sh-save { background:var(--blue); color:white; border-color:var(--blue); }
+      #sh-status:empty,#sh-factor-status:empty { display:none; }
+      @media(max-width:1100px) {
+        .shadow-param-group .shadow-fields { grid-template-columns:repeat(2,minmax(0,1fr)); }
+        #sh-metrics .metrics,#sh-metrics .metric-group:last-child .metrics { grid-template-columns:repeat(2,minmax(0,1fr)); }
+        #sh-metrics .metric:nth-child(2n) { border-right:0; }
+      }
+      @media(max-width:760px) {
+        .nav { grid-template-columns:repeat(6,minmax(0,1fr)); gap:2px; padding-left:4px; padding-right:4px; }
+        .nav button { font-size:10px; padding-left:0; padding-right:0; }
+        #view-shadow .content-card,#view-shadow-setup .content-card,#sh-metrics>.metric-group { padding:16px 14px; }
+        #sh-metrics .metrics { gap:18px 12px; }
+        #sh-metrics .v { font-size:20px; }
+        #sh-metrics .live-overview .v { font-size:25px; }
+        .shadow-fields { grid-template-columns:1fr; gap:16px; }
+        .shadow-param-group .shadow-fields { gap:16px; }
+        .shadow-savebar { gap:10px; }
+        .shadow-savebar .actions { width:100%; }
+        .shadow-savebar .btn { flex:1; }
+      }
+      @media(max-width:380px) { .shadow-param-group .shadow-fields { grid-template-columns:1fr; } }
     </style>
   </head>
   <body>
@@ -567,7 +615,7 @@
             <div>
               <div class="panel-kicker">SHADOW COMBO</div>
               <h2>影子组合 · 三因子</h2>
-              <p class="sub">动量 + 距14日高点 + 上涨占比（等权 ✗ 去掉量能 ✗）。只读观测，<b>配置在「影子设置」</b>。</p>
+              <p class="sub">独立纸面组合 · 动量、距高点与上涨占比。<b>参数在「影子设置」调整。</b></p>
             </div>
             <div class="actions">
               <button class="btn ghost" id="sh-step" type="button">推进一步</button>
@@ -591,8 +639,8 @@
           </div>
           <div class="content-card">
             <div class="panel-head monitor-section-head"><div><span class="section-eyebrow">TRADES</span><h2>成交记录</h2></div></div>
-            <p class="note">只列最近 50 笔。成本 = 手续费 4.5bp + 滑点 3bp ✗ 资金费未建模（实测约 0.003%/天 ✗ 可忽略 ✗）。</p>
-            <div id="sh-trades" style="max-height:360px;overflow:auto"></div>
+            <p class="note">展示最近 50 笔成交。成交成本包含手续费与滑点；资金费未建模。</p>
+            <div id="sh-trades"></div>
           </div>
         </div>
       </section>
@@ -602,7 +650,7 @@
         <div class="content-card">
           <div class="panel-head monitor-section-head"><div><span class="section-eyebrow">FACTOR WEIGHTS</span><h2>因子权重</h2></div></div>
           <p class="note">默认「动量 1 / 量能 0 / 距高点 1 / 上涨占比 1」= 三因子等权。动量权重设为 1 会把量能因子归零。权重会自动归一化。</p>
-          <div class="setup-fields" style="display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end">
+          <div class="shadow-fields">
             <div class="field"><label for="sh-mw">动量权重（0~1）</label><input id="sh-mw" type="number" min="0" max="1" step="0.05" /></div>
             <div class="field"><label for="sh-dd">距14日高点权重</label><input id="sh-dd" type="number" min="0" max="2" step="0.1" /></div>
             <div class="field"><label for="sh-up">上涨天数占比权重</label><input id="sh-up" type="number" min="0" max="2" step="0.1" /></div>
@@ -610,18 +658,10 @@
           <p class="note" id="sh-factor-status"></p>
         </div>
         <div class="content-card">
-          <div class="panel-head monitor-section-head"><div><span class="section-eyebrow">BASE PARAMS</span><h2>基础参数</h2></div><div style="display:flex;gap:8px"><button class="btn ghost" id="sh-save" type="button">应用并重启</button><button class="btn ghost" id="sh-stop" type="button">停止</button><button class="btn danger" id="sh-reset" type="button">重置</button></div></div>
-          <div class="setup-fields" style="display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end">
-            <div class="field"><label for="sh-cap">本金 (USD)</label><input id="sh-cap" type="number" min="1" step="100" /></div>
-            <div class="field"><label for="sh-lev">杠杆</label><input id="sh-lev" type="number" min="1" max="20" step="0.5" /></div>
-            <div class="field"><label for="sh-lb">回看天数</label><input id="sh-lb" type="number" min="3" max="60" step="1" /></div>
-            <div class="field"><label for="sh-tf">每腿比例</label><input id="sh-tf" type="number" min="0.05" max="0.5" step="0.05" /></div>
-            <div class="field"><label for="sh-minv">最小成交额 (USD)</label><input id="sh-minv" type="number" min="0" step="500000" /></div>
-            <div class="field"><label for="sh-tp">每腿仓位数</label><input id="sh-tp" type="number" min="1" max="30" step="1" /></div>
-            <div class="field"><label for="sh-replay">回放天数</label><input id="sh-replay" type="number" min="1" max="365" step="1" /></div>
-            <div class="field"><label for="sh-slip">滑点 (bp ✗ 1bp=0.01%)</label><input id="sh-slip" type="number" min="0" max="100" step="0.5" /></div>
-          </div>
-          <p class="note">成本口径: 每笔成交扣【手续费 + 滑点】✗ 滑点默认 3bp（实盘实测 0.033% ✗）✗ 资金费未建模 ✗ 但实测只占约 0.003%/天 ✗ 相对手续费+滑点可忽略 ✓</p>
+          <div class="panel-head monitor-section-head"><div><span class="section-eyebrow">BASE PARAMS</span><h2>基础参数</h2></div></div>
+          <fieldset class="shadow-param-group"><legend>资金与回放</legend><div class="shadow-fields"><div class="field"><label for="sh-cap">本金 (USD)</label><input id="sh-cap" type="number" min="1" step="100" /></div><div class="field"><label for="sh-lev">杠杆</label><input id="sh-lev" type="number" min="1" max="20" step="0.5" /></div><div class="field"><label for="sh-replay">回放天数</label><input id="sh-replay" type="number" min="1" max="365" step="1" /></div><div class="field"><label for="sh-slip">滑点（bp，1bp = 0.01%）</label><input id="sh-slip" type="number" min="0" max="100" step="0.5" /></div></div></fieldset><fieldset class="shadow-param-group"><legend>选币与持仓</legend><div class="shadow-fields"><div class="field"><label for="sh-lb">回看天数</label><input id="sh-lb" type="number" min="3" max="60" step="1" /></div><div class="field"><label for="sh-tf">每腿比例</label><input id="sh-tf" type="number" min="0.05" max="0.5" step="0.05" /></div><div class="field"><label for="sh-minv">最小成交额 (USD)</label><input id="sh-minv" type="number" min="0" step="500000" /></div><div class="field"><label for="sh-tp">每腿仓位数</label><input id="sh-tp" type="number" min="1" max="30" step="1" /></div></div></fieldset>
+          <p class="note">每笔成交扣除手续费与滑点，滑点单位为 bp。资金费未建模，纸面结果不等同于实盘净收益。</p>
+          <div class="shadow-savebar"><span class="sub">修改参数后，应用并重启影子组合。</span><div class="actions"><button class="btn ghost" id="sh-save" type="button">应用并重启</button><button class="btn ghost" id="sh-stop" type="button">停止</button><button class="btn danger" id="sh-reset" type="button">重置</button></div></div>
           <p id="sh-status" class="note" role="status" aria-live="polite"></p>
         </div>
       </section>
