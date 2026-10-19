@@ -1193,6 +1193,9 @@ setInterval(refreshShadow, 120000);
 // ---------- 影子组合（三因子 ✗ 动量+距高点+上涨占比 ✗） ----------
 let lastShadowData = null;
 let shRange = "week";
+let shPosPage = 0;
+let shTradePage = 0;
+const SH_PAGE_SIZE = 8;
 function shSide(x) { const s = String(x).toLowerCase(); return s === "long" ? "多" : (s === "short" ? "空" : String(x)); }
 
 function renderShadow(d) {
@@ -1246,19 +1249,25 @@ function renderShadow(d) {
   // 持仓
   const posEl = $("sh-positions");
   if (posEl) {
+    const posPages = Math.max(1, Math.ceil(ps.length / SH_PAGE_SIZE));
+    if (shPosPage > posPages - 1) shPosPage = 0;
+    const pageRows = ps.slice(shPosPage * SH_PAGE_SIZE, (shPosPage + 1) * SH_PAGE_SIZE);
     posEl.innerHTML = ps.length
       ? `<div class="table-scroll"><table><thead><tr><th>币</th><th>方向</th><th>名义</th><th>入场价</th><th>现价</th><th>未实现</th></tr></thead><tbody>` +
-        ps.map((p) => `<tr><td>${escapeHTML(p.coin)}</td><td class="${String(p.side).toLowerCase() === "long" ? "pos" : "neg"}">${shSide(p.side)}</td><td>$${fmt(p.notional, 0)}</td><td>${fmtCompact(p.entry_price)}</td><td>${fmtCompact(p.mark_price)}</td><td class="${(p.unrealized_pnl || 0) >= 0 ? "pos" : "neg"}">${moneySigned(p.unrealized_pnl || 0)}</td></tr>`).join("") +
-        `</tbody></table></div>`
+        pageRows.map((p) => `<tr><td>${escapeHTML(p.coin)}</td><td class="${String(p.side).toLowerCase() === "long" ? "pos" : "neg"}">${shSide(p.side)}</td><td>$${fmt(p.notional, 0)}</td><td>${fmtCompact(p.entry_price)}</td><td>${fmtCompact(p.mark_price)}</td><td class="${(p.unrealized_pnl || 0) >= 0 ? "pos" : "neg"}">${moneySigned(p.unrealized_pnl || 0)}</td></tr>`).join("") +
+        `</tbody></table></div>` + pager("shpos", ps.length, shPosPage, SH_PAGE_SIZE)
       : '<div class="empty">暂无持仓（等下一次调仓 ✗）</div>';
   }
   const trEl = $("sh-trades");
   if (trEl) {
     const ts2 = (d.trades || []).slice(-50).reverse();
+    const trPages = Math.max(1, Math.ceil(ts2.length / SH_PAGE_SIZE));
+    if (shTradePage > trPages - 1) shTradePage = 0;
+    const trRows = ts2.slice(shTradePage * SH_PAGE_SIZE, (shTradePage + 1) * SH_PAGE_SIZE);
     trEl.innerHTML = ts2.length
       ? `<div class="table-scroll"><table><thead><tr><th>平仓时间</th><th>币</th><th>方向</th><th>平仓价</th><th>净盈亏</th><th>原因</th></tr></thead><tbody>` +
-        ts2.map((t) => `<tr><td class="muted">${ts2m(t.exit_ts)}</td><td>${escapeHTML(t.coin)}</td><td class="${String(t.side).toLowerCase() === "long" ? "pos" : "neg"}">${shSide(t.side)}</td><td>${fmtCompact(t.exit_price)}</td><td class="${(t.pnl_usd || 0) >= 0 ? "pos" : "neg"}">${moneySigned(t.pnl_usd || 0)}</td><td class="muted">${escapeHTML(t.reason || "")}</td></tr>`).join("") +
-        `</tbody></table></div>`
+        trRows.map((t) => `<tr><td class="muted">${ts2m(t.exit_ts)}</td><td>${escapeHTML(t.coin)}</td><td class="${String(t.side).toLowerCase() === "long" ? "pos" : "neg"}">${shSide(t.side)}</td><td>${fmtCompact(t.exit_price)}</td><td class="${(t.pnl_usd || 0) >= 0 ? "pos" : "neg"}">${moneySigned(t.pnl_usd || 0)}</td><td class="muted">${escapeHTML(t.reason || "")}</td></tr>`).join("") +
+        `</tbody></table></div>` + pager("shtr", ts2.length, shTradePage, SH_PAGE_SIZE)
       : '<div class="empty">暂无成交。</div>';
   }
 }
@@ -1320,6 +1329,15 @@ if ($("sh-reset")) $("sh-reset").addEventListener("click", async () => {
   if (!confirm("重置影子组合：清空持仓、记录与曲线。继续？")) return;
   await fetch("/api/paper2/reset", { method: "POST" });
   refreshShadow();
+});
+document.addEventListener("click", (e) => {
+  const b = e.target.closest("[data-pager^='sh']");
+  if (!b) return;
+  const to = Number(b.dataset.to);
+  if (!Number.isFinite(to)) return;
+  if (b.dataset.pager === "shpos") shPosPage = Math.max(0, to);
+  if (b.dataset.pager === "shtr") shTradePage = Math.max(0, to);
+  if (lastShadowData) renderShadow(lastShadowData);
 });
 if ($("sh-refresh")) $("sh-refresh").addEventListener("click", () => refreshShadow());
 document.querySelectorAll("#sh-chart-tabs button").forEach((b) => {
