@@ -1649,12 +1649,14 @@ function renderEquityChart(id, history, aria, compare) {
   const ticks = [first.ts, first.ts + (last.ts - first.ts) / 2, last.ts];
   const xlabels = ticks.map((ts, i) => `<text x="${X(ts)}" y="${H - 8}" text-anchor="${i === 0 ? "start" : i === ticks.length - 1 ? "end" : "middle"}" font-size="11" fill="#86949d">${ts2m(ts)}</text>`).join("");
   const cmpLine = cmp.length > 1 ? cmp.map((p) => `${X(p.ts)},${Y(p.eq)}`).join(" ") : "";
+  const sw = (color) => `<span style="display:inline-block;width:14px;height:3px;border-radius:2px;background:${color};margin-right:6px;vertical-align:middle"></span>`;
   const cmpLegend = cmp.length > 1
-    ? `<div class="chart-coverage"><span class="chart-eyebrow">对照（现行 70/30 ✗ 虚线）</span>$${fmt(cmp[cmp.length - 1].eq, 2)} · ${moneySigned(cmp[cmp.length - 1].eq - cmp[0].eq)}</div>`
-    : "";
+    ? `<div class="chart-coverage">${sw("#168473")}影子 三因子 · $${fmt(last.eq, 2)} · ${moneySigned(last.eq - first.eq)}</div>` +
+      `<div class="chart-coverage">${sw("#e0873a")}对照 现行70/30 · $${fmt(cmp[cmp.length - 1].eq, 2)} · ${moneySigned(cmp[cmp.length - 1].eq - cmp[0].eq)}</div>`
+    : `<div class="chart-coverage">${sw("#168473")}影子 三因子 · $${fmt(last.eq, 2)} · ${moneySigned(last.eq - first.eq)}</div>`;
   el.innerHTML = `<div class="chart-summary">
-      <div><span class="chart-eyebrow">纸面权益 · 最新</span><strong>$${fmt(last.eq, 2)}</strong></div>
-      <div><span class="chart-eyebrow">区间变化</span><strong class="${change >= 0 ? "pos" : "neg"}">${moneySigned(change)}</strong></div>
+      <div><span class="chart-eyebrow">影子权益 · 最新</span><strong>$${fmt(last.eq, 2)}</strong></div>
+      <div><span class="chart-eyebrow">影子区间变化</span><strong class="${change >= 0 ? "pos" : "neg"}">${moneySigned(change)}</strong></div>
       ${cmpLegend}
       <div class="chart-coverage"><span class="chart-eyebrow">点数</span>${pts.length} · ${ts2m(first.ts)} — ${ts2m(last.ts)}</div>
     </div>
@@ -1663,7 +1665,7 @@ function renderEquityChart(id, history, aria, compare) {
       ${grid}
       <polygon points="${X(first.ts)},${H - padB} ${line} ${X(last.ts)},${H - padB}" fill="url(#carry-area)"/>
       <line x1="${padL}" y1="${Y(first.eq)}" x2="${W - padR}" y2="${Y(first.eq)}" stroke="#bacac8" stroke-dasharray="4 5"/>
-      ${cmpLine ? `<polyline points="${cmpLine}" fill="none" stroke="#9aa7ad" stroke-width="2" stroke-dasharray="5 4" stroke-linejoin="round"/>` : ""}
+      ${cmpLine ? `<polyline points="${cmpLine}" fill="none" stroke="#e0873a" stroke-width="2.2" stroke-linejoin="round" opacity="0.95"/>` : ""}
       <polyline points="${line}" fill="none" stroke="#168473" stroke-width="2.5" stroke-linejoin="round"/>
       <circle cx="${X(last.ts)}" cy="${Y(last.eq)}" r="4" fill="#168473" stroke="white" stroke-width="2"/>
       ${xlabels}
