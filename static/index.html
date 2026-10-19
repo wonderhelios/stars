@@ -562,17 +562,42 @@
       </section>
 
       <section id="view-shadow" class="view">
-        <div class="workspace-heading"><div><div class="panel-kicker">SHADOW COMBO</div><h2>影子组合 · 三因子</h2><p class="sub">动量 + 距14日高点 + 上涨占比（等权 ✗ 去掉量能 ✗）。与实盘同数据、同成本，样本外对照。</p></div><span class="setup-chip">纸面实验</span></div>
-        <div class="content-card">
-          <div class="panel-head monitor-section-head"><div><span class="section-eyebrow">SUMMARY</span><h2>组合概览</h2></div><button class="btn ghost" id="sh-step" type="button">手动推进一步</button></div>
-          <p class="note" id="sh-summary"></p>
-          <div class="chart" id="sh-chart"></div>
-          <details class="setup-details"><summary>当前持仓</summary><div id="sh-positions"></div></details>
-          <details class="setup-details"><summary>成交记录（最近）</summary><div id="sh-trades" style="max-height:280px;overflow:auto"></div></details>
+        <div class="panel">
+          <div class="panel-head">
+            <div>
+              <div class="panel-kicker">SHADOW COMBO</div>
+              <h2>影子组合 · 三因子</h2>
+              <p class="sub">动量 + 距14日高点 + 上涨占比（等权 ✗ 去掉量能 ✗）。只读观测，<b>配置在「影子设置」</b>。</p>
+            </div>
+            <div class="actions">
+              <button class="btn ghost" id="sh-step" type="button">推进一步</button>
+              <button class="btn ghost" id="sh-refresh" type="button">刷新</button>
+            </div>
+          </div>
+          <div id="sh-warn"></div>
+          <div class="metrics" id="sh-metrics"></div>
+          <div class="content-card equity-card">
+            <div class="panel-head monitor-section-head">
+              <div><span class="section-eyebrow">SHADOW PNL</span><h2>影子盈亏曲线</h2></div>
+              <div class="segmented" id="sh-chart-tabs" role="group" aria-label="影子盈亏时间区间">
+                <button type="button" data-range="day" aria-pressed="false">日</button><button type="button" data-range="week" aria-pressed="true">周</button><button type="button" data-range="month" aria-pressed="false">月</button><button type="button" data-range="all" aria-pressed="false">全部</button>
+              </div>
+            </div>
+            <div class="chart" id="sh-chart"></div>
+          </div>
+          <div class="content-card">
+            <div class="panel-head"><h2>当前持仓</h2></div>
+            <div id="sh-positions"></div>
+          </div>
+          <div class="content-card">
+            <div class="panel-head monitor-section-head"><div><span class="section-eyebrow">TRADES</span><h2>成交记录</h2></div></div>
+            <p class="note">只列最近 50 笔。成本 = 手续费 4.5bp + 滑点 3bp ✗ 资金费未建模（实测约 0.003%/天 ✗ 可忽略 ✗）。</p>
+            <div id="sh-trades" style="max-height:360px;overflow:auto"></div>
+          </div>
         </div>
       </section>
 
-      <section id="view-shadow-setup" class="view">
+      <section id="view-shadow-setup" class="view">      <section id="view-shadow-setup" class="view">
         <div class="workspace-heading"><div><div class="panel-kicker">SHADOW COMBO · PARAMS</div><h2>影子组合参数</h2><p class="sub">三因子权重 + 基础参数。改完「应用并重启」才会生效。</p></div><span class="setup-chip">纸面实验</span></div>
         <div class="content-card">
           <div class="panel-head monitor-section-head"><div><span class="section-eyebrow">FACTOR WEIGHTS</span><h2>因子权重</h2></div></div>

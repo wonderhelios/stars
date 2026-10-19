@@ -1192,40 +1192,74 @@ setInterval(refreshShadow, 120000);
 
 // ---------- 影子组合（三因子 ✗ 动量+距高点+上涨占比 ✗） ----------
 let lastShadowData = null;
+let shRange = "week";
 function shSide(x) { const s = String(x).toLowerCase(); return s === "long" ? "多" : (s === "short" ? "空" : String(x)); }
 
 function renderShadow(d) {
   d = d || {};
   const eq = d.equity || 0, cap = d.capital || 0, pnl = d.pnl || 0;
-  const sum = $("sh-summary");
-  if (sum) {
-    sum.innerHTML =
-      `<span>${d.running ? '<span class="badge-mini ok">运行中</span>' : '<span class="badge-mini err">已停止</span>'}</span> · ` +
-      `<span>净值 <b>$${fmt(eq, 2)}</b>（本金 $${fmt(cap, 0)}）</span> · ` +
-      `<span>盈亏 <b class="${pnl >= 0 ? "pos" : "neg"}">${moneySigned(pnl)}（${(d.pnl_pct ?? 0).toFixed(1)}%）</b></span> · ` +
-      `<span>已实现 ${moneySigned(d.realized_pnl || 0)} · 未实现 ${moneySigned(d.unrealized_pnl || 0)}</span> · ` +
-      `<span>胜率 ${(d.win_rate || 0).toFixed(0)}%</span> · ` +
-      `<span>持仓 ${(d.positions || []).length} 个</span> · ` +
-      `<span>成本 ${moneySigned(-(d.total_cost || 0))}</span> · ` +
-      `<span>${d.days_elapsed || 0} 天</span>`;
+  const cfg = d.config || {};
+  const ps = d.positions || [];
+  const lev = cap > 0 ? eq / cap : 0;
+  const gross = d.gross_notional || 0, net = d.net_notional || 0;
+  const nLong = ps.filter((p) => String(p.side).toLowerCase() === "long").length;
+  const m = $("sh-metrics");
+  if (m) {
+    m.innerHTML =
+      metricGroup("实时概览 · 影子账户",
+        metric("影子净值", "$" + fmt(eq, 2)) +
+        metric("盈亏 · 相对本金", moneySigned(pnl), pnl >= 0 ? "pos" : "neg") +
+        metric("收益率", (d.pnl_pct || 0).toFixed(1) + "%", (d.pnl_pct || 0) >= 0 ? "pos" : "neg") +
+        metric("运行天数", (d.days_elapsed || 0) + '<span class="metric-unit"> 天</span>'),
+        "live-overview",
+        '<div class="metric-footnote"><span class="live-dot"></span>' +
+          (d.running ? "影子组合运行中 · 独立纸面 ✗ 不碰实盘" : "影子组合已停止") +
+          (cfg.replay_days > 1 ? ` · 含 ${cfg.replay_days} 天回放（in-sample ✗）` : " · 纯样本外（无回放）") +
+          "</div>"
+      ) +
+      metricGroup("盈亏构成",
+        metric("已实现", moneySigned(d.realized_pnl || 0), (d.realized_pnl || 0) >= 0 ? "pos" : "neg") +
+        metric("未实现", moneySigned(d.unrealized_pnl || 0), (d.unrealized_pnl || 0) >= 0 ? "pos" : "neg") +
+        metric("交易成本", moneySigned(-(d.total_cost || 0))) +
+        metric("胜率", (d.win_rate || 0).toFixed(0) + "%",
+          (d.win_rate || 0) >= 50 ? "pos" : "neg")
+      ) +
+      metricGroup("风险与仓位",
+        metric("实际 / 目标杠杆", fmt(gross / Math.max(eq, 1), 2) + "x / " + fmt(cfg.leverage || 0, 2) + "x") +
+        metric("毛敞口", "$" + fmt(gross, 0)) +
+        metric("净敞口 · 多减空", moneySigned(net), Math.abs(net) <= Math.max(eq * 0.05, 10) ? "" : "neg") +
+        metric("强平缓冲", (d.liq_buffer_pct || 0).toFixed(1) + "%", (d.liq_buffer_pct || 0) < 40 ? "neg" : "pos")
+      ) +
+      metricGroup("因子配置",
+        metric("动量", fmt(cfg.momentum_weight == null ? 0 : cfg.momentum_weight, 2)) +
+        metric("量能", fmt(1 - (cfg.momentum_weight == null ? 0 : cfg.momentum_weight), 2)) +
+        metric("距14日高点", fmt(cfg.dd_weight == null ? 0 : cfg.dd_weight, 2)) +
+        metric("上涨占比", fmt(cfg.upfrac_weight == null ? 0 : cfg.upfrac_weight, 2)) +
+        metric("持仓 / 多头", ps.length + " / " + nLong)
+      );
   }
-  const hist = (d.history || []).map((p) => [p.ts, p.equity]);
-  renderEquityChart("sh-chart", withNow(hist, eq), "影子组合权益曲线");
+  // 曲线：按日/周/月/全部切片
+  const histObj = (d.history || []).filter((p) => Number.isFinite(p.ts) && Number.isFinite(p.equity));
+  const win = equityWindow(histObj, shRange, Date.now());
+  const arr = (win.points || []).map((p) => [p.ts, p.equity]);
+  renderEquityChart("sh-chart", withNow(arr, eq), "影子组合盈亏曲线");
+  // 持仓
   const posEl = $("sh-positions");
   if (posEl) {
-    const ps = d.positions || [];
     posEl.innerHTML = ps.length
       ? `<div class="table-scroll"><table><thead><tr><th>币</th><th>方向</th><th>名义</th><th>入场价</th><th>现价</th><th>未实现</th></tr></thead><tbody>` +
         ps.map((p) => `<tr><td>${escapeHTML(p.coin)}</td><td class="${String(p.side).toLowerCase() === "long" ? "pos" : "neg"}">${shSide(p.side)}</td><td>$${fmt(p.notional, 0)}</td><td>${fmtCompact(p.entry_price)}</td><td>${fmtCompact(p.mark_price)}</td><td class="${(p.unrealized_pnl || 0) >= 0 ? "pos" : "neg"}">${moneySigned(p.unrealized_pnl || 0)}</td></tr>`).join("") +
         `</tbody></table></div>`
-      : '<div class="empty">暂无持仓（可能还在回放历史 ✗ 等 30 分钟自动推进 ✗）</div>';
+      : '<div class="empty">暂无持仓（等下一次调仓 ✗）</div>';
   }
   const trEl = $("sh-trades");
   if (trEl) {
-    const ts2 = (d.trades || []).slice(-40).reverse();
+    const ts2 = (d.trades || []).slice(-50).reverse();
     trEl.innerHTML = ts2.length
-      ? ts2.map((t) => `<div class="note">${ts2m(t.exit_ts)} · ${escapeHTML(t.coin)} ${shSide(t.side)} 平 @${fmtCompact(t.exit_price)} 净 ${moneySigned(t.pnl_usd)}</div>`).join("")
-      : '<div class="note">暂无成交。</div>';
+      ? `<div class="table-scroll"><table><thead><tr><th>平仓时间</th><th>币</th><th>方向</th><th>平仓价</th><th>净盈亏</th><th>原因</th></tr></thead><tbody>` +
+        ts2.map((t) => `<tr><td class="muted">${ts2m(t.exit_ts)}</td><td>${escapeHTML(t.coin)}</td><td class="${String(t.side).toLowerCase() === "long" ? "pos" : "neg"}">${shSide(t.side)}</td><td>${fmtCompact(t.exit_price)}</td><td class="${(t.pnl_usd || 0) >= 0 ? "pos" : "neg"}">${moneySigned(t.pnl_usd || 0)}</td><td class="muted">${escapeHTML(t.reason || "")}</td></tr>`).join("") +
+        `</tbody></table></div>`
+      : '<div class="empty">暂无成交。</div>';
   }
 }
 
@@ -1286,6 +1320,14 @@ if ($("sh-reset")) $("sh-reset").addEventListener("click", async () => {
   if (!confirm("重置影子组合：清空持仓、记录与曲线。继续？")) return;
   await fetch("/api/paper2/reset", { method: "POST" });
   refreshShadow();
+});
+if ($("sh-refresh")) $("sh-refresh").addEventListener("click", () => refreshShadow());
+document.querySelectorAll("#sh-chart-tabs button").forEach((b) => {
+  b.addEventListener("click", () => {
+    shRange = b.dataset.range || "week";
+    document.querySelectorAll("#sh-chart-tabs button").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+    if (lastShadowData) renderShadow(lastShadowData);
+  });
 });
 if ($("sh-step")) $("sh-step").addEventListener("click", async () => {
   try { lastShadowData = await fetchJSONRetry("/api/paper2/step", { method: "POST" }, 20000); renderShadow(lastShadowData); } catch (e) {}
