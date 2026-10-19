@@ -1243,6 +1243,7 @@ function renderShadowConfig(cfg) {
   set("sh-minv", cfg.min_vol_usd);
   set("sh-tp", cfg.target_positions);
   set("sh-replay", cfg.replay_days);
+  set("sh-slip", cfg.slippage != null ? cfg.slippage * 10000 : 3);
 }
 
 function shBody() {
@@ -1258,6 +1259,7 @@ function shBody() {
     momentum_weight: Number($("sh-mw").value) || 0,
     dd_weight: Number($("sh-dd").value) || 0,
     upfrac_weight: Number($("sh-up").value) || 0,
+    slippage: (Number($("sh-slip") && $("sh-slip").value) || 3) / 10000,
   };
 }
 

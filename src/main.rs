@@ -65,6 +65,8 @@ async fn main() -> anyhow::Result<()> {
             dd_weight: 1.0,
             upfrac_weight: 1.0,
             capital: base.capital,
+            // 与实盘同宇宙（$10M ✗）✗ 否则和实盘/回测都不可比 ✗
+            min_vol_usd: 10_000_000.0,
             ..base
         });
         paper2.equity = base.capital;

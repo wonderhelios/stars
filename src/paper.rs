@@ -36,6 +36,11 @@ pub struct PaperConfig {
     pub leverage: f64,
     /// Per-side fee (Hyperliquid taker by default).
     pub fee: f64,
+    /// 每笔成交的滑点（按成交额比例 ✗ 默认 3bp ✗ 取自实盘实测 0.033% ✗）。
+    /// 纸面原来只扣手续费 ✗ 不扣滑点 ✗ 会系统性高估所有策略的收益 ✗
+    /// 尤其高估换手高的那个版本 ✗
+    #[serde(default = "d_slip")]
+    pub slippage: f64,
     /// History replayed on start so the book is not empty.
     #[serde(default = "d_mw")]
     pub momentum_weight: f64,
@@ -58,6 +63,10 @@ fn d_replay() -> usize {
     90
 }
 
+fn d_slip() -> f64 {
+    0.0003
+}
+
 fn d_mw() -> f64 { 0.5 }
 fn d_target_pos() -> usize {
     8
@@ -72,6 +81,7 @@ impl Default for PaperConfig {
             capital: 2_000.0,
             leverage: 3.0,
             fee: 0.00045,
+            slippage: 0.0003,
             replay_days: 90,
             target_positions: 8,
             momentum_weight: 0.5,
@@ -392,7 +402,11 @@ fn advance(
                 state.positions.push(pos);
             }
         }
-        let cost = state.positions.iter().map(|x| x.notional * cfg.fee).sum::<f64>();
+        let cost = state
+            .positions
+            .iter()
+            .map(|x| x.notional * (cfg.fee + cfg.slippage.max(0.0)))
+            .sum::<f64>();
         state.total_cost += cost;
         state.equity -= cost;
         state.last_ts = Some(t);
@@ -627,8 +641,8 @@ fn advance(
         }
     }
 
-    // Fee on everything that moved this rebalance: resizes, closes and opens.
-    let cost = turnover * cfg.fee;
+    // Fee + slippage on everything that moved this rebalance: resizes, closes and opens.
+    let cost = turnover * (cfg.fee + cfg.slippage.max(0.0));
     state.total_cost += cost;
     state.equity -= cost;
 

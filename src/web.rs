@@ -205,6 +205,8 @@ struct PaperStartReq {
     dd_weight: f64,
     #[serde(default)]
     upfrac_weight: f64,
+    #[serde(default)]
+    slippage: Option<f64>,
 }
 
 fn d_mw() -> f64 { 0.5 }
@@ -235,6 +237,7 @@ async fn paper_start(
         top_frac: req.top_frac.clamp(0.05, 0.5),
         min_vol_usd: req.min_vol_usd.max(0.0),
         fee,
+        slippage: req.slippage.unwrap_or(0.0003).clamp(0.0, 0.01),
         capital: req.capital.max(1.0),
         leverage: req.leverage.clamp(1.0, 20.0),
         replay_days: req.replay_days.min(365),
@@ -344,6 +347,7 @@ async fn paper2_start(State(state): State<AppState>, Json(req): Json<PaperStartR
         top_frac: req.top_frac.clamp(0.05, 0.5),
         min_vol_usd: req.min_vol_usd.max(0.0),
         fee,
+        slippage: req.slippage.unwrap_or(0.0003).clamp(0.0, 0.01),
         capital: req.capital.max(1.0),
         leverage: req.leverage.clamp(1.0, 20.0),
         replay_days: req.replay_days.min(365),

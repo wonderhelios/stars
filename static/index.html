@@ -594,7 +594,9 @@
             <div class="field"><label for="sh-minv">最小成交额 (USD)</label><input id="sh-minv" type="number" min="0" step="500000" /></div>
             <div class="field"><label for="sh-tp">每腿仓位数</label><input id="sh-tp" type="number" min="1" max="30" step="1" /></div>
             <div class="field"><label for="sh-replay">回放天数</label><input id="sh-replay" type="number" min="1" max="365" step="1" /></div>
+            <div class="field"><label for="sh-slip">滑点 (bp ✗ 1bp=0.01%)</label><input id="sh-slip" type="number" min="0" max="100" step="0.5" /></div>
           </div>
+          <p class="note">成本口径: 每笔成交扣【手续费 + 滑点】✗ 滑点默认 3bp（实盘实测 0.033% ✗）✗ 资金费未建模 ✗ 但实测只占约 0.003%/天 ✗ 相对手续费+滑点可忽略 ✓</p>
           <p id="sh-status" class="note" role="status" aria-live="polite"></p>
         </div>
       </section>
