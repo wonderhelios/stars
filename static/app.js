@@ -1192,6 +1192,7 @@ setInterval(refreshShadow, 120000);
 
 // ---------- 影子组合（三因子 ✗ 动量+距高点+上涨占比 ✗） ----------
 let lastShadowData = null;
+let lastControlData = null;
 let shRange = "week";
 let shPosPage = 0;
 let shTradePage = 0;
@@ -1233,6 +1234,13 @@ function renderShadow(d) {
         metric("净敞口 · 多减空", moneySigned(net), Math.abs(net) <= Math.max(eq * 0.05, 10) ? "" : "neg") +
         metric("强平缓冲", (d.liq_buffer_pct || 0).toFixed(1) + "%", (d.liq_buffer_pct || 0) < 40 ? "neg" : "pos")
       ) +
+      metricGroup("影子 vs 对照（同期 ✗ 同起点 ✗）",
+        metric("影子 三因子", (d.pnl_pct || 0).toFixed(1) + "%", (d.pnl_pct || 0) >= 0 ? "pos" : "neg") +
+        metric("对照 现行70/30", (ctl.pnl_pct || 0).toFixed(1) + "%", (ctl.pnl_pct || 0) >= 0 ? "pos" : "neg") +
+        metric("差值", ((d.pnl_pct || 0) - (ctl.pnl_pct || 0)).toFixed(1) + '<span class="metric-unit"> pp</span>',
+          (d.pnl_pct || 0) >= (ctl.pnl_pct || 0) ? "pos" : "neg") +
+        metric("对照净值", "$" + fmt(ctl.equity || 0, 0))
+      ) +
       metricGroup("因子配置",
         metric("动量", fmt(cfg.momentum_weight == null ? 0 : cfg.momentum_weight, 2)) +
         metric("量能", fmt(1 - (cfg.momentum_weight == null ? 0 : cfg.momentum_weight), 2)) +
@@ -1245,7 +1253,16 @@ function renderShadow(d) {
   const histObj = (d.history || []).filter((p) => Number.isFinite(p.ts) && Number.isFinite(p.equity));
   const win = equityWindow(histObj, shRange, Date.now());
   const arr = (win.points || []).map((p) => [p.ts, p.equity]);
-  renderEquityChart("sh-chart", withNow(arr, eq), "影子组合盈亏曲线");
+  const ctl = lastControlData || {};
+  const chist = (ctl.history || []).filter((p) => Number.isFinite(p.ts) && Number.isFinite(p.equity));
+  const cwin = equityWindow(chist, shRange, Date.now());
+  const carr = (cwin.points || []).map((p) => [p.ts, p.equity]);
+  renderEquityChart(
+    "sh-chart",
+    withNow(arr, eq),
+    "影子组合盈亏曲线",
+    carr.length ? withNow(carr, ctl.equity || 0) : null
+  );
   // 持仓
   const posEl = $("sh-positions");
   if (posEl) {
@@ -1309,6 +1326,7 @@ function shBody() {
 async function refreshShadow() {
   try {
     lastShadowData = await fetchJSONRetry("/api/paper2", {}, 8000);
+    try { lastControlData = await fetchJSONRetry("/api/paper", {}, 8000); } catch (e) {}
     renderShadow(lastShadowData);
     renderShadowConfig(lastShadowData.config);
   } catch (e) {}
@@ -1579,7 +1597,7 @@ function withNow(history, equityNow) {
 }
 
 // 通用权益曲线（每小时一个点）。
-function renderEquityChart(id, history, aria) {
+function renderEquityChart(id, history, aria, compare) {
   const el = $(id);
   if (!el) return;
   const pts = (history || [])
@@ -1589,12 +1607,16 @@ function renderEquityChart(id, history, aria) {
     el.innerHTML = '<div class="empty">还没有足够的权益点（每小时一个，跑两小时就能画线）</div>';
     return;
   }
+  const cmp = (compare || [])
+    .filter((p) => Array.isArray(p) && Number.isFinite(p[0]) && Number.isFinite(p[1]))
+    .map((p) => ({ ts: p[0], eq: p[1] }));
   const W = Math.max(260, el.clientWidth || 900), H = 240;
   const padL = 64, padR = 20, padT = 20, padB = 30;
   const first = pts[0], last = pts[pts.length - 1];
   const change = last.eq - first.eq;
   const vals = pts.map((p) => p.eq);
-  const ax = niceAxis(Math.min(...vals), Math.max(...vals), 4);
+  const allVals = cmp.length > 1 ? vals.concat(cmp.map((p) => p.eq)) : vals;
+  const ax = niceAxis(Math.min(...allVals), Math.max(...allVals), 4);
   const span = ax.hi - ax.lo || 1;
   const X = (ts) => padL + (last.ts === first.ts ? 0.5 : (ts - first.ts) / (last.ts - first.ts)) * (W - padL - padR);
   const Y = (v) => padT + (1 - (v - ax.lo) / span) * (H - padT - padB);
@@ -1602,9 +1624,14 @@ function renderEquityChart(id, history, aria) {
   const line = pts.map((p) => `${X(p.ts)},${Y(p.eq)}`).join(" ");
   const ticks = [first.ts, first.ts + (last.ts - first.ts) / 2, last.ts];
   const xlabels = ticks.map((ts, i) => `<text x="${X(ts)}" y="${H - 8}" text-anchor="${i === 0 ? "start" : i === ticks.length - 1 ? "end" : "middle"}" font-size="11" fill="#86949d">${ts2m(ts)}</text>`).join("");
+  const cmpLine = cmp.length > 1 ? cmp.map((p) => `${X(p.ts)},${Y(p.eq)}`).join(" ") : "";
+  const cmpLegend = cmp.length > 1
+    ? `<div class="chart-coverage"><span class="chart-eyebrow">对照（现行 70/30 ✗ 虚线）</span>$${fmt(cmp[cmp.length - 1].eq, 2)} · ${moneySigned(cmp[cmp.length - 1].eq - cmp[0].eq)}</div>`
+    : "";
   el.innerHTML = `<div class="chart-summary">
       <div><span class="chart-eyebrow">纸面权益 · 最新</span><strong>$${fmt(last.eq, 2)}</strong></div>
       <div><span class="chart-eyebrow">区间变化</span><strong class="${change >= 0 ? "pos" : "neg"}">${moneySigned(change)}</strong></div>
+      ${cmpLegend}
       <div class="chart-coverage"><span class="chart-eyebrow">点数</span>${pts.length} · ${ts2m(first.ts)} — ${ts2m(last.ts)}</div>
     </div>
     <svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${aria}">
@@ -1612,6 +1639,7 @@ function renderEquityChart(id, history, aria) {
       ${grid}
       <polygon points="${X(first.ts)},${H - padB} ${line} ${X(last.ts)},${H - padB}" fill="url(#carry-area)"/>
       <line x1="${padL}" y1="${Y(first.eq)}" x2="${W - padR}" y2="${Y(first.eq)}" stroke="#bacac8" stroke-dasharray="4 5"/>
+      ${cmpLine ? `<polyline points="${cmpLine}" fill="none" stroke="#9aa7ad" stroke-width="2" stroke-dasharray="5 4" stroke-linejoin="round"/>` : ""}
       <polyline points="${line}" fill="none" stroke="#168473" stroke-width="2.5" stroke-linejoin="round"/>
       <circle cx="${X(last.ts)}" cy="${Y(last.eq)}" r="4" fill="#168473" stroke="white" stroke-width="2"/>
       ${xlabels}
