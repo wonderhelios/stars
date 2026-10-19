@@ -67,6 +67,9 @@ async fn main() -> anyhow::Result<()> {
             capital: base.capital,
             // 与实盘同宇宙（$10M ✗）✗ 否则和实盘/回测都不可比 ✗
             min_vol_usd: 10_000_000.0,
+            // 影子组合的默认【不回放】✗ 从启动当天开始记 ✗
+            // 回放 90 天是 in-sample 预览 ✗ 不是样本外验证 ✗
+            replay_days: 1,
             ..base
         });
         paper2.equity = base.capital;
