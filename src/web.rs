@@ -329,8 +329,9 @@ async fn paper2_status(State(state): State<AppState>) -> Json<serde_json::Value>
 
 async fn paper2_start(State(state): State<AppState>, Json(req): Json<PaperStartReq>) -> Response {
     let mut p = state.paper2.lock().await;
+    // 「应用并重启」：正在运行时直接重置重来，而不是返回 409 把用户挡在外面。
     if p.running {
-        return (StatusCode::CONFLICT, Json(json!({"error": "影子组合已在运行"}))).into_response();
+        p.running = false;
     }
     let fee = if req.fee > 0.0 {
         req.fee

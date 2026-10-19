@@ -1230,7 +1230,8 @@ function renderShadow(d) {
 }
 
 function renderShadowConfig(cfg) {
-  cfg = cfg || {};
+  // config 为 null（尚未启动/被重置）时用默认值填表，避免一片空白。
+  cfg = cfg || { momentum_weight: 1, dd_weight: 1, upfrac_weight: 1, capital: 2000, leverage: 3, lookback: 14, top_frac: 0.2, min_vol_usd: 5000000, target_positions: 8, replay_days: 90 };
   const set = (id, v) => { const el = $(id); if (el && document.activeElement !== el) el.value = v; };
   set("sh-mw", cfg.momentum_weight);
   set("sh-dd", cfg.dd_weight ?? 0);
