@@ -38,6 +38,8 @@ async fn main() -> anyhow::Result<()> {
         .unwrap_or_else(|_| "/var/lib/stars/candles.sqlite".to_string());
     let paper_path = std::env::var("STARS_PAPER")
         .unwrap_or_else(|_| "/var/lib/stars/paper.json".to_string());
+    let paper2_path = std::env::var("STARS_PAPER2")
+        .unwrap_or_else(|_| "/var/lib/stars/paper2.json".to_string());
     let live_path = std::env::var("STARS_LIVE")
         .unwrap_or_else(|_| "/var/lib/stars/live.json".to_string());
     let carry_path = std::env::var("STARS_CARRY")
@@ -54,6 +56,21 @@ async fn main() -> anyhow::Result<()> {
     let store = Arc::new(Store::open(std::path::Path::new(&db_path))?);
     let client = HlClient::new();
     let paper = Arc::new(Mutex::new(PaperState::load(std::path::Path::new(&paper_path))));
+    let mut paper2 = PaperState::load(std::path::Path::new(&paper2_path));
+    if paper2.config.is_none() {
+        // 影子组合：动量 + 距高点 + 上涨占比 三因子等权（动量权重置 1 使量能为 0）。
+        let base = paper.lock().await.config.clone().unwrap_or_default();
+        paper2.config = Some(crate::paper::PaperConfig {
+            momentum_weight: 1.0,
+            dd_weight: 1.0,
+            upfrac_weight: 1.0,
+            capital: base.capital,
+            ..base
+        });
+        paper2.equity = base.capital;
+        paper2.running = true;
+    }
+    let paper2 = Arc::new(Mutex::new(paper2));
     let hl_live = live::LiveState::load(std::path::Path::new(&live_path));
     let live = Arc::new(Mutex::new(hl_live));
     let carry = Arc::new(Mutex::new(crate::carry::CarryState::load(std::path::Path::new(&carry_path))));
@@ -67,6 +84,8 @@ async fn main() -> anyhow::Result<()> {
         store: store.clone(),
         paper: paper.clone(),
         paper_path: Arc::new(std::path::PathBuf::from(&paper_path)),
+        paper2: paper2.clone(),
+        paper2_path: Arc::new(std::path::PathBuf::from(&paper2_path)),
         live: live.clone(),
         live_path: Arc::new(std::path::PathBuf::from(&live_path)),
         http: reqwest::Client::builder()
@@ -340,8 +359,10 @@ async fn main() -> anyhow::Result<()> {
         let refresh = refresh.clone();
         let paper = paper.clone();
         let paper_path = paper_path.clone();
+        let paper2 = paper2.clone();
+        let paper2_path = paper2_path.clone();
         tokio::spawn(async move {
-            refresh_loop(store, client, meta, refresh, paper, paper_path).await;
+            refresh_loop(store, client, meta, refresh, paper, paper_path, paper2, paper2_path).await;
         });
     }
 
@@ -362,6 +383,8 @@ async fn refresh_loop(
     refresh: Arc<Mutex<RefreshStatus>>,
     paper: Arc<Mutex<PaperState>>,
     paper_path: String,
+    paper2: Arc<Mutex<PaperState>>,
+    paper2_path: String,
 ) {
     // Initial full backfill.
     if let Err(e) = backfill(&store, &client, &meta, &refresh).await {
@@ -395,6 +418,12 @@ async fn refresh_loop(
         if p.running {
             crate::paper::step(&mut p, &panel, &max_lev);
             let _ = p.save(std::path::Path::new(&paper_path));
+        }
+        drop(p);
+        let mut p2 = paper2.lock().await;
+        if p2.running {
+            crate::paper::step(&mut p2, &panel, &max_lev);
+            let _ = p2.save(std::path::Path::new(&paper2_path));
         }
     }
 }

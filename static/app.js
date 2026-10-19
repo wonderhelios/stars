@@ -1165,6 +1165,9 @@ if ($("fd-refresh")) {
 
 // 切到资金费套利视图时刷新（资金矩阵已并入 renderMonitor 的 20 秒轮询）。
 // 进入套利监控 / 套利设置时刷新对应数据
+document.querySelectorAll('.nav button[data-view="shadow"], .nav button[data-view="shadow-setup"]').forEach((b) => {
+  b.addEventListener("click", () => refreshShadow());
+});
 document.querySelectorAll('.nav button[data-view="funding"], .nav button[data-view="funding-setup"]').forEach((b) => {
   b.addEventListener("click", () => {
     refreshFunding();
@@ -1182,8 +1185,108 @@ document.querySelectorAll('.nav button[data-view="funding"], .nav button[data-vi
 refreshFunding();
 refreshCarry();
 refreshXPaper();
+refreshShadow();
 setInterval(() => refreshFunding(false), 60000);
 setInterval(refreshXPaper, 60000);
+setInterval(refreshShadow, 120000);
+
+// ---------- 影子组合（三因子 ✗ 动量+距高点+上涨占比 ✗） ----------
+let lastShadowData = null;
+function shSide(x) { return x === "Long" ? "多" : (x === "Short" ? "空" : String(x)); }
+
+function renderShadow(d) {
+  d = d || {};
+  const eq = d.equity || 0, cap = d.capital || 0, pnl = d.pnl || 0;
+  const sum = $("sh-summary");
+  if (sum) {
+    sum.innerHTML =
+      `<span>${d.running ? '<span class="badge-mini ok">运行中</span>' : '<span class="badge-mini err">已停止</span>'}</span> · ` +
+      `<span>净值 <b>$${fmt(eq, 2)}</b>（本金 $${fmt(cap, 0)}）</span> · ` +
+      `<span>盈亏 <b class="${pnl >= 0 ? "pos" : "neg"}">${moneySigned(pnl)}（${(d.pnl_pct ?? 0).toFixed(1)}%）</b></span> · ` +
+      `<span>已实现 ${moneySigned(d.realized_pnl || 0)} · 未实现 ${moneySigned(d.unrealized_pnl || 0)}</span> · ` +
+      `<span>胜率 ${((d.win_rate || 0) * 100).toFixed(0)}%</span> · ` +
+      `<span>持仓 ${(d.positions || []).length} 个</span> · ` +
+      `<span>成本 ${moneySigned(d.total_cost || 0)}</span> · ` +
+      `<span>${d.days_elapsed || 0} 天</span>`;
+  }
+  const hist = (d.history || []).map((p) => [p.ts, p.equity]);
+  renderEquityChart("sh-chart", withNow(hist, eq), "影子组合权益曲线");
+  const posEl = $("sh-positions");
+  if (posEl) {
+    const ps = d.positions || [];
+    posEl.innerHTML = ps.length
+      ? `<div class="table-scroll"><table><thead><tr><th>币</th><th>方向</th><th>名义</th><th>入场价</th><th>现价</th><th>未实现</th></tr></thead><tbody>` +
+        ps.map((p) => `<tr><td>${escapeHTML(p.coin)}</td><td class="${p.side === "Long" ? "pos" : "neg"}">${shSide(p.side)}</td><td>$${fmt(p.notional, 0)}</td><td>${fmtCompact(p.entry_price)}</td><td>${fmtCompact(p.mark_price)}</td><td class="${(p.unrealized_pnl || 0) >= 0 ? "pos" : "neg"}">${moneySigned(p.unrealized_pnl || 0)}</td></tr>`).join("") +
+        `</tbody></table></div>`
+      : '<div class="empty">暂无持仓（可能还在回放历史 ✗ 等 30 分钟自动推进 ✗）</div>';
+  }
+  const trEl = $("sh-trades");
+  if (trEl) {
+    const ts2 = (d.trades || []).slice(-40).reverse();
+    trEl.innerHTML = ts2.length
+      ? ts2.map((t) => `<div class="note">${ts2m(t.exit_ts)} · ${escapeHTML(t.coin)} ${shSide(t.side)} 平 @${fmtCompact(t.exit_price)} 净 ${moneySigned(t.pnl_usd)}</div>`).join("")
+      : '<div class="note">暂无成交。</div>';
+  }
+}
+
+function renderShadowConfig(cfg) {
+  cfg = cfg || {};
+  const set = (id, v) => { const el = $(id); if (el && document.activeElement !== el) el.value = v; };
+  set("sh-mw", cfg.momentum_weight);
+  set("sh-dd", cfg.dd_weight ?? 0);
+  set("sh-up", cfg.upfrac_weight ?? 0);
+  set("sh-cap", cfg.capital);
+  set("sh-lev", cfg.leverage);
+  set("sh-lb", cfg.lookback);
+  set("sh-tf", cfg.top_frac);
+  set("sh-minv", cfg.min_vol_usd);
+  set("sh-tp", cfg.target_positions);
+  set("sh-replay", cfg.replay_days);
+}
+
+function shBody() {
+  return {
+    lookback: Number($("sh-lb").value) || 14,
+    top_frac: Number($("sh-tf").value) || 0.2,
+    min_vol_usd: Number($("sh-minv").value) || 0,
+    capital: Number($("sh-cap").value) || 2000,
+    leverage: Number($("sh-lev").value) || 3,
+    fee: 0,
+    replay_days: Number($("sh-replay").value) || 90,
+    target_positions: Number($("sh-tp").value) || 8,
+    momentum_weight: Number($("sh-mw").value) || 0,
+    dd_weight: Number($("sh-dd").value) || 0,
+    upfrac_weight: Number($("sh-up").value) || 0,
+  };
+}
+
+async function refreshShadow() {
+  try {
+    lastShadowData = await fetchJSONRetry("/api/paper2", {}, 8000);
+    renderShadow(lastShadowData);
+    renderShadowConfig(lastShadowData.config);
+  } catch (e) {}
+}
+
+if ($("sh-save")) $("sh-save").addEventListener("click", async () => {
+  const st = $("sh-status");
+  try {
+    const res = await fetch("/api/paper2/start", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(shBody()) });
+    const out = await res.json();
+    if (!res.ok || out.error) { st.textContent = "启动失败：" + (out.error || ("HTTP " + res.status)); return; }
+    st.textContent = "已应用并重启。";
+    refreshShadow();
+  } catch (e) { st.textContent = "启动失败：" + e; }
+});
+if ($("sh-stop")) $("sh-stop").addEventListener("click", async () => { await fetch("/api/paper2/stop", { method: "POST" }); refreshShadow(); });
+if ($("sh-reset")) $("sh-reset").addEventListener("click", async () => {
+  if (!confirm("重置影子组合：清空持仓、记录与曲线。继续？")) return;
+  await fetch("/api/paper2/reset", { method: "POST" });
+  refreshShadow();
+});
+if ($("sh-step")) $("sh-step").addEventListener("click", async () => {
+  try { lastShadowData = await fetchJSONRetry("/api/paper2/step", { method: "POST" }, 20000); renderShadow(lastShadowData); } catch (e) {}
+});
 
 // ---------- 纸面 carry 策略 ----------
 

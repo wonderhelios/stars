@@ -58,6 +58,10 @@ pub struct TradeConfig {
     /// 止盈幅度（相对【持仓成本】）。0 = 不启用。调仓时会先把已经达到
     /// 成本的 (1+tp) 的仓位按「止盈」平掉，未达到的由交易所的限价止盈单负责。
     pub take_profit_pct: f64,
+    /// 「距 14 日高点」因子权重（0 = 不启用）。打低「涨完就阴跌」的币。
+    pub dd_weight: f64,
+    /// 「14 日上涨天数占比」因子权重（0 = 不启用）。打低「一根阳线拉起就阴跌」的币。
+    pub upfrac_weight: f64,
     /// 因子权重：动量占比（0~1），量能占 1 − 它。默认 0.5（两因子等权）。
     ///
     /// 证据（2026-10-17 复盘检验，真实样本 2024-07 起，2023 年币池中位数为 0 已排除）：
@@ -101,6 +105,8 @@ impl Default for TradeConfig {
             rebalance_slices: 3,
             momentum_weight: 0.5,
             take_profit_pct: 0.0,
+            dd_weight: 0.0,
+            upfrac_weight: 0.0,
         }
     }
 }
@@ -269,6 +275,8 @@ impl FactorPanel {
         let mut mom_adj: Vec<f64> = Vec::new();
         let mut low_vol: Vec<f64> = Vec::new();
         let mut shock_v: Vec<f64> = Vec::new();
+        let mut dd_v: Vec<f64> = Vec::new();
+        let mut upfrac_v: Vec<f64> = Vec::new();
 
         for (coin, cm) in self.closes.iter() {
             if coin.contains(':') {
@@ -331,10 +339,39 @@ impl FactorPanel {
             } else {
                 1.0
             };
+            // dd14：现价相对【过去 lookback 天（不含今天）最高价】的位置。0 = 创新高。
+            let mut hi = f64::NEG_INFINITY;
+            let mut ups = 0usize;
+            let mut win_n = 0usize;
+            for j in (i + 1 - cfg.lookback)..i {
+                if j == 0 {
+                    continue;
+                }
+                let (Some(a), Some(b)) = (cm.get(&self.ts[j]), cm.get(&self.ts[j - 1])) else {
+                    continue;
+                };
+                if *b <= 0.0 {
+                    continue;
+                }
+                if let Some(a) = cm.get(&self.ts[j]) {
+                    if *a > hi {
+                        hi = *a;
+                    }
+                }
+                if a > b {
+                    ups += 1;
+                }
+                win_n += 1;
+            }
+            let dd = if hi > 0.0 && hi.is_finite() { now / hi - 1.0 } else { 0.0 };
+            let upfrac = if win_n > 0 { ups as f64 / win_n as f64 } else { 0.5 };
+
             coins.push(coin.clone());
             mom_adj.push((now / past - 1.0) / vol);
             low_vol.push(-vol);
             shock_v.push(shock);
+            dd_v.push(dd);
+            upfrac_v.push(upfrac);
         }
         if coins.len() < 8 {
             return Vec::new();
@@ -357,7 +394,21 @@ impl FactorPanel {
         // 且换手 +10%（年成本 40.8%→44.9%）、波动变大（4.17%→4.80%）。
         // 这是一次方向正确但边际的改动，不是"验证过的改进"。
         // 要回退：把 low_vol 加回列表、并把下面的 /2.0 改回 /3.0。
-        for (scores, fw) in [(&mom_adj, cfg.momentum_weight.clamp(0.0, 1.0)), (&shock_v, 1.0 - cfg.momentum_weight.clamp(0.0, 1.0))] {
+        let mw = cfg.momentum_weight.clamp(0.0, 1.0);
+        // 四因子权重：动量 / 量能 / 距高点 / 上涨占比。dd/upfrac 默认 0，行为与旧版一致。
+        // 先按总权重归一化，再各自选等权组合、最后平均三本书（Σ|w| 会再归一化一次）。
+        let raw_weights: [(&Vec<f64>, f64); 4] = [
+            (&mom_adj, mw),
+            (&shock_v, 1.0 - mw),
+            (&dd_v, cfg.dd_weight.max(0.0)),
+            (&upfrac_v, cfg.upfrac_weight.max(0.0)),
+        ];
+        let wsum: f64 = raw_weights.iter().map(|(_, w)| *w).sum();
+        if wsum <= 0.0 {
+            return Vec::new();
+        }
+        for (scores, fw0) in raw_weights {
+            let fw = fw0 / wsum;
             if fw <= 0.0 {
                 continue;
             }

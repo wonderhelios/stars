@@ -46,6 +46,12 @@ pub struct PaperConfig {
     /// liquid coins.
     #[serde(default = "d_target_pos")]
     pub target_positions: usize,
+    /// 「距 14 日高点」因子权重（0 = 不启用）。
+    #[serde(default)]
+    pub dd_weight: f64,
+    /// 「14 日上涨天数占比」因子权重（0 = 不启用）。
+    #[serde(default)]
+    pub upfrac_weight: f64,
 }
 
 fn d_replay() -> usize {
@@ -69,6 +75,8 @@ impl Default for PaperConfig {
             replay_days: 90,
             target_positions: 8,
             momentum_weight: 0.5,
+            dd_weight: 0.0,
+            upfrac_weight: 0.0,
         }
     }
 }
@@ -326,6 +334,8 @@ fn advance(
         min_vol_usd: cfg.min_vol_usd,
         target_positions: cfg.target_positions,
         momentum_weight: cfg.momentum_weight,
+        dd_weight: cfg.dd_weight,
+        upfrac_weight: cfg.upfrac_weight,
         leverage: cfg.leverage,
         ..Default::default()
     };

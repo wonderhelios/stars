@@ -21,6 +21,9 @@ pub struct AppState {
     pub store: Arc<Store>,
     pub paper: Arc<Mutex<PaperState>>,
     pub paper_path: Arc<std::path::PathBuf>,
+    /// 影子组合（动量 + 距高点 + 上涨占比 三因子）纸面引擎。
+    pub paper2: Arc<Mutex<PaperState>>,
+    pub paper2_path: Arc<std::path::PathBuf>,
     pub live: Arc<Mutex<crate::live::LiveState>>,
     pub live_path: Arc<std::path::PathBuf>,
     pub meta: Arc<Mutex<MetaCache>>,
@@ -74,6 +77,11 @@ pub fn router(state: AppState) -> Router {
         .route("/api/paper/stop", post(paper_stop))
         .route("/api/paper/reset", post(paper_reset))
         .route("/api/paper/step", post(paper_step))
+        .route("/api/paper2", get(paper2_status))
+        .route("/api/paper2/start", post(paper2_start))
+        .route("/api/paper2/stop", post(paper2_stop))
+        .route("/api/paper2/reset", post(paper2_reset))
+        .route("/api/paper2/step", post(paper2_step))
         .route("/api/live", get(live_status))
         .route("/api/live/config", post(live_config))
         .route("/api/live/run", post(live_run))
@@ -193,6 +201,10 @@ struct PaperStartReq {
     target_positions: usize,
     #[serde(default = "d_mw")]
     momentum_weight: f64,
+    #[serde(default)]
+    dd_weight: f64,
+    #[serde(default)]
+    upfrac_weight: f64,
 }
 
 fn d_mw() -> f64 { 0.5 }
@@ -228,6 +240,8 @@ async fn paper_start(
         replay_days: req.replay_days.min(365),
         target_positions: req.target_positions.clamp(1, 30),
         momentum_weight: req.momentum_weight.clamp(0.0, 1.0),
+        dd_weight: req.dd_weight.max(0.0),
+        upfrac_weight: req.upfrac_weight.max(0.0),
     });
     p.running = true;
     let capital = p.config.as_ref().unwrap().capital;
@@ -254,6 +268,10 @@ async fn paper_start(
 
 /// Load the candle panel + per-coin max leverage and advance the paper trade.
 async fn run_paper_step(state: &AppState) -> Option<serde_json::Value> {
+    run_paper_step_which(state, false).await
+}
+
+async fn run_paper_step_which(state: &AppState, use2: bool) -> Option<serde_json::Value> {
     let panel: Vec<PanelEntry> = state
         .store
         .all_panels()
@@ -268,9 +286,14 @@ async fn run_paper_step(state: &AppState) -> Option<serde_json::Value> {
             .map(|c| (c.name.clone(), c.max_leverage))
             .collect()
     };
-    let mut p = state.paper.lock().await;
+    let (p, path) = if use2 {
+        (state.paper2.clone(), state.paper2_path.clone())
+    } else {
+        (state.paper.clone(), state.paper_path.clone())
+    };
+    let mut p = p.lock().await;
     paper::step(&mut p, &panel, &max_lev);
-    let _ = p.save(&state.paper_path);
+    let _ = p.save(&path);
     Some(json!(paper::snapshot(&*p)))
 }
 
@@ -293,6 +316,80 @@ async fn paper_step(State(state): State<AppState>) -> Response {
         return (StatusCode::CONFLICT, Json(json!({"error": "纸交易未启动"}))).into_response();
     }
     match run_paper_step(&state).await {
+        Some(v) => Json(v).into_response(),
+        None => (StatusCode::CONFLICT, Json(json!({"error": "数据不足"}))).into_response(),
+    }
+}
+
+// ==================== paper2 (影子组合) ====================
+
+async fn paper2_status(State(state): State<AppState>) -> Json<serde_json::Value> {
+    Json(json!(paper::snapshot(&*state.paper2.lock().await)))
+}
+
+async fn paper2_start(State(state): State<AppState>, Json(req): Json<PaperStartReq>) -> Response {
+    let mut p = state.paper2.lock().await;
+    if p.running {
+        return (StatusCode::CONFLICT, Json(json!({"error": "影子组合已在运行"}))).into_response();
+    }
+    let fee = if req.fee > 0.0 {
+        req.fee
+    } else {
+        let cached = state.meta.lock().await.fee_taker;
+        if cached > 0.0 { cached } else { d_fee() }
+    };
+    p.config = Some(PaperConfig {
+        lookback: req.lookback.max(1),
+        top_frac: req.top_frac.clamp(0.05, 0.5),
+        min_vol_usd: req.min_vol_usd.max(0.0),
+        fee,
+        capital: req.capital.max(1.0),
+        leverage: req.leverage.clamp(1.0, 20.0),
+        replay_days: req.replay_days.min(365),
+        target_positions: req.target_positions.clamp(1, 30),
+        momentum_weight: req.momentum_weight.clamp(0.0, 1.0),
+        dd_weight: req.dd_weight.max(0.0),
+        upfrac_weight: req.upfrac_weight.max(0.0),
+    });
+    p.running = true;
+    let capital = p.config.as_ref().unwrap().capital;
+    p.equity = capital;
+    p.market = 1.0;
+    p.positions.clear();
+    p.trades.clear();
+    p.history.clear();
+    p.last_ts = None;
+    p.days_elapsed = 0;
+    p.total_cost = 0.0;
+    p.started_at = None;
+    let _ = p.save(&state.paper2_path);
+    drop(p);
+    let snapshot = run_paper_step_which(&state, true).await;
+    match snapshot {
+        Some(v) => Json(json!({"ok": true, "config": v["config"], "paper": v})).into_response(),
+        None => Json(json!({"ok": true})).into_response(),
+    }
+}
+
+async fn paper2_stop(State(state): State<AppState>) -> Response {
+    let mut p = state.paper2.lock().await;
+    p.running = false;
+    let _ = p.save(&state.paper2_path);
+    Json(json!({"ok": true})).into_response()
+}
+
+async fn paper2_reset(State(state): State<AppState>) -> Response {
+    let mut p = state.paper2.lock().await;
+    *p = PaperState::default();
+    let _ = p.save(&state.paper2_path);
+    Json(json!({"ok": true})).into_response()
+}
+
+async fn paper2_step(State(state): State<AppState>) -> Response {
+    if !state.paper2.lock().await.running {
+        return (StatusCode::CONFLICT, Json(json!({"error": "影子组合未启动"}))).into_response();
+    }
+    match run_paper_step_which(&state, true).await {
         Some(v) => Json(v).into_response(),
         None => (StatusCode::CONFLICT, Json(json!({"error": "数据不足"}))).into_response(),
     }
