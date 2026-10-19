@@ -1077,6 +1077,8 @@ mod live_routes_tests {
             carry_path: Arc::new(root.join("carry.json")),
             xpaper: Arc::new(Mutex::new(crate::xpaper::XPaperState::default())),
             xpaper_path: Arc::new(root.join("xpaper.json")),
+            paper2: Arc::new(Mutex::new(crate::paper::PaperState::default())),
+            paper2_path: Arc::new(root.join("paper2.json")),
         };
         let app = router(base.clone());
         let response = app.clone().oneshot(Request::builder().uri("/").body(Body::empty()).unwrap()).await.unwrap();
@@ -1128,6 +1130,8 @@ mod live_routes_tests {
             carry_path: Arc::new(root.join("carry.json")),
             xpaper: Arc::new(Mutex::new(crate::xpaper::XPaperState::default())),
             xpaper_path: Arc::new(root.join("xpaper.json")),
+            paper2: Arc::new(Mutex::new(crate::paper::PaperState::default())),
+            paper2_path: Arc::new(root.join("paper2.json")),
         };
         let app = router(base.clone());
         // 资金费面板（初始为空状态, 仍应 200）。
