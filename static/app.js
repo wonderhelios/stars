@@ -1192,7 +1192,7 @@ setInterval(refreshShadow, 120000);
 
 // ---------- 影子组合（三因子 ✗ 动量+距高点+上涨占比 ✗） ----------
 let lastShadowData = null;
-function shSide(x) { return x === "Long" ? "多" : (x === "Short" ? "空" : String(x)); }
+function shSide(x) { const s = String(x).toLowerCase(); return s === "long" ? "多" : (s === "short" ? "空" : String(x)); }
 
 function renderShadow(d) {
   d = d || {};
@@ -1204,9 +1204,9 @@ function renderShadow(d) {
       `<span>净值 <b>$${fmt(eq, 2)}</b>（本金 $${fmt(cap, 0)}）</span> · ` +
       `<span>盈亏 <b class="${pnl >= 0 ? "pos" : "neg"}">${moneySigned(pnl)}（${(d.pnl_pct ?? 0).toFixed(1)}%）</b></span> · ` +
       `<span>已实现 ${moneySigned(d.realized_pnl || 0)} · 未实现 ${moneySigned(d.unrealized_pnl || 0)}</span> · ` +
-      `<span>胜率 ${((d.win_rate || 0) * 100).toFixed(0)}%</span> · ` +
+      `<span>胜率 ${(d.win_rate || 0).toFixed(0)}%</span> · ` +
       `<span>持仓 ${(d.positions || []).length} 个</span> · ` +
-      `<span>成本 ${moneySigned(d.total_cost || 0)}</span> · ` +
+      `<span>成本 ${moneySigned(-(d.total_cost || 0))}</span> · ` +
       `<span>${d.days_elapsed || 0} 天</span>`;
   }
   const hist = (d.history || []).map((p) => [p.ts, p.equity]);
@@ -1216,7 +1216,7 @@ function renderShadow(d) {
     const ps = d.positions || [];
     posEl.innerHTML = ps.length
       ? `<div class="table-scroll"><table><thead><tr><th>币</th><th>方向</th><th>名义</th><th>入场价</th><th>现价</th><th>未实现</th></tr></thead><tbody>` +
-        ps.map((p) => `<tr><td>${escapeHTML(p.coin)}</td><td class="${p.side === "Long" ? "pos" : "neg"}">${shSide(p.side)}</td><td>$${fmt(p.notional, 0)}</td><td>${fmtCompact(p.entry_price)}</td><td>${fmtCompact(p.mark_price)}</td><td class="${(p.unrealized_pnl || 0) >= 0 ? "pos" : "neg"}">${moneySigned(p.unrealized_pnl || 0)}</td></tr>`).join("") +
+        ps.map((p) => `<tr><td>${escapeHTML(p.coin)}</td><td class="${String(p.side).toLowerCase() === "long" ? "pos" : "neg"}">${shSide(p.side)}</td><td>$${fmt(p.notional, 0)}</td><td>${fmtCompact(p.entry_price)}</td><td>${fmtCompact(p.mark_price)}</td><td class="${(p.unrealized_pnl || 0) >= 0 ? "pos" : "neg"}">${moneySigned(p.unrealized_pnl || 0)}</td></tr>`).join("") +
         `</tbody></table></div>`
       : '<div class="empty">暂无持仓（可能还在回放历史 ✗ 等 30 分钟自动推进 ✗）</div>';
   }
