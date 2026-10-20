@@ -5,7 +5,7 @@ use crate::momentum::PanelEntry;
 use crate::paper::{self, PaperConfig, PaperState};
 use crate::store::Store;
 use axum::{
-    extract::State,
+    extract::{Query, State},
     http::{header, StatusCode},
     response::{IntoResponse, Response},
     routing::{get, post},
@@ -90,6 +90,7 @@ pub fn router(state: AppState) -> Router {
         .route("/api/live/tp", post(live_tp))
         .route("/api/live/records/clear", post(live_records_clear))
         .route("/api/live/capital", post(live_capital))
+        .route("/api/live/baseline", post(live_baseline))
         .route("/api/live/capital/time", post(live_capital_time))
         .route("/api/funding", get(funding_status))
         .route("/api/funding/refresh", post(funding_refresh))
@@ -672,6 +673,35 @@ async fn live_capital(State(state): State<AppState>, Json(body): Json<CapitalBod
     Json(json!({"ok": true, "net_deposit": st.net_deposit})).into_response()
 }
 
+#[derive(serde::Deserialize)]
+struct BaselineBody {
+    equity: f64,
+    /// 记录起点的毫秒时间戳（必须早于所有资金流水）
+    ts: i64,
+    #[serde(default)]
+    note: Option<String>,
+}
+
+/// 恢复/修正「记录起点」。只改基准，不动持仓、记录和配置。
+async fn live_baseline(State(state): State<AppState>, Json(body): Json<BaselineBody>) -> Response {
+    if !body.equity.is_finite() || body.equity <= 0.0 || body.ts <= 0 {
+        return (StatusCode::BAD_REQUEST, Json(json!({"ok": false, "error": "起点净值必须 > 0 且时间戳合法"}))).into_response();
+    }
+    let mut st = state.live.lock().await;
+    let previous = st.clone();
+    st.capital_baseline = Some(crate::live::CapitalBaseline {
+        account: st.config.account.clone(),
+        equity: body.equity,
+        ts: Some(body.ts),
+        source: body.note.unwrap_or_else(|| "手动恢复记录起点".into()),
+    });
+    if let Err(e) = st.save(&state.live_path) {
+        *st = previous;
+        return (StatusCode::INTERNAL_SERVER_ERROR, Json(json!({"ok": false, "error": format!("保存失败: {e:#}")}))).into_response();
+    }
+    Json(json!({"ok": true, "baseline": st.capital_baseline})).into_response()
+}
+
 fn valid_flow_time(st: &crate::live::LiveState, ts: i64) -> bool {
     ts > 0 && ts <= crate::live::now_ms_pub() && st.baseline().and_then(|b| b.ts).map_or(false, |start| ts > start)
 }
@@ -929,7 +959,11 @@ async fn xpaper_reset(State(state): State<AppState>) -> Response {
     Json(snap).into_response()
 }
 
-async fn live_reset(State(state): State<AppState>) -> Response {
+async fn live_reset(State(state): State<AppState>, Query(q): Query<std::collections::HashMap<String, String>>) -> Response {
+    // 破坏性操作：必须显式带 confirm=reset，避免误触/脚本误调清空全部历史。
+    if q.get("confirm").map(|v| v.as_str()) != Some("reset") {
+        return (StatusCode::BAD_REQUEST, Json(json!({"ok": false, "error": "重置实盘记录必须显式确认：/api/live/reset?confirm=reset"}))).into_response();
+    }
     let mut st = state.live.lock().await;
     let cfg = st.config.clone();
     *st = crate::live::LiveState {
