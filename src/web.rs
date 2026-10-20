@@ -92,6 +92,7 @@ pub fn router(state: AppState) -> Router {
         .route("/api/live/capital", post(live_capital))
         .route("/api/live/baseline", post(live_baseline))
         .route("/api/live/capital/time", post(live_capital_time))
+        .route("/api/live/capital/delete", post(live_capital_delete))
         .route("/api/funding", get(funding_status))
         .route("/api/funding/refresh", post(funding_refresh))
         .route("/api/capital", post(capital_alloc))
@@ -659,6 +660,17 @@ async fn live_capital(State(state): State<AppState>, Json(body): Json<CapitalBod
             return (StatusCode::BAD_REQUEST, Json(json!({"ok":false,"error":"到账时间必须在记录起点之后且不晚于现在"}))).into_response();
         }
     }
+    // 防重复提交：金额与到账时间完全相同的流水已存在时拒绝，避免把同一笔入金记两遍。
+    if st.capital_flows.iter().any(|f| {
+        (f.amount - amount).abs() < 0.01
+            && f.effective_ts.or(Some(f.ts)) == body.effective_ts.or(Some(f.ts))
+    }) {
+        return (
+            StatusCode::CONFLICT,
+            Json(json!({"ok": false, "error": "已存在金额与到账时间相同的流水，疑似重复提交"})),
+        )
+            .into_response();
+    }
     st.net_deposit += amount;
     st.capital_flows.push(crate::live::CapitalFlow {
         ts: crate::live::now_ms_pub(),
@@ -671,6 +683,27 @@ async fn live_capital(State(state): State<AppState>, Json(body): Json<CapitalBod
         return (StatusCode::INTERNAL_SERVER_ERROR, Json(json!({"ok": false, "error": format!("保存失败: {e:#}")}))).into_response();
     }
     Json(json!({"ok": true, "net_deposit": st.net_deposit})).into_response()
+}
+
+#[derive(serde::Deserialize)]
+struct FlowIndexBody {
+    index: usize,
+}
+
+/// 删除一条资金流水（用于清理重复提交）。会同步修正 net_deposit。
+async fn live_capital_delete(State(state): State<AppState>, Json(body): Json<FlowIndexBody>) -> Response {
+    let mut st = state.live.lock().await;
+    let previous = st.clone();
+    if body.index >= st.capital_flows.len() {
+        return (StatusCode::BAD_REQUEST, Json(json!({"ok": false, "error": "流水序号越界"}))).into_response();
+    }
+    let removed = st.capital_flows.remove(body.index);
+    st.net_deposit -= removed.amount;
+    if let Err(e) = st.save(&state.live_path) {
+        *st = previous;
+        return (StatusCode::INTERNAL_SERVER_ERROR, Json(json!({"ok": false, "error": format!("保存失败: {e:#}")}))).into_response();
+    }
+    Json(json!({"ok": true, "removed": removed.amount, "net_deposit": st.net_deposit})).into_response()
 }
 
 #[derive(serde::Deserialize)]
