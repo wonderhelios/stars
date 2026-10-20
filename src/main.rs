@@ -234,13 +234,34 @@ async fn main() -> anyhow::Result<()> {
                         .ioc(&o.coin, o.buy, true, o.size, o.mid, cfg.slippage, o.sz_decimals)
                         .await
                     {
-                        Ok(_) => info!(
-                            "净敞口中性化：{} {} {:.6}（{}）",
-                            if o.buy { "买" } else { "卖" },
-                            o.coin,
-                            o.size,
-                            o.reason
-                        ),
+                        Ok(_) => {
+                            info!(
+                                "净敞口中性化：{} {} {:.6}（{}）",
+                                if o.buy { "买" } else { "卖" },
+                                o.coin,
+                                o.size,
+                                o.reason
+                            );
+                            // 把中性化订单也写进记录 ✗ 否则对账时它们只会显示成
+                            // "交易所补录 · 意图未确认"✗ 用户看不懂这几笔是怎么来的 ✓
+                            let mut g = st.live.lock().await;
+                            g.records.push(crate::live::LiveRecord {
+                                ts: crate::live::now_ms_pub(),
+                                coin: o.coin.clone(),
+                                side: if o.buy { "买".into() } else { "卖".into() },
+                                action: "净敞口中性化".into(),
+                                size: o.size,
+                                price: o.mid,
+                                notional: o.size * o.mid,
+                                result: format!("按中间价 {:.6} 发送", o.mid),
+                                live: true,
+                                pnl: None,
+                                tid: None,
+                                entry_px: acct.positions.get(&o.coin).map(|p| p.entry_px),
+                                reduce_only: true,
+                            });
+                            let _ = g.save(&st.live_path);
+                        }
                         Err(e) => warn!("中性化下单失败 {}: {e}", o.coin),
                     }
                 }
