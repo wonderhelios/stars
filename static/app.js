@@ -1310,10 +1310,15 @@ function renderShadow(d) {
   }
   // 曲线：按日/周/月/全部切片
   const histObj = (d.history || []).filter((p) => Number.isFinite(p.ts) && Number.isFinite(p.equity));
-  const win = equityWindow(histObj, shRange, Date.now());
-  const arr = (win.points || []).map((p) => [p.ts, p.equity]);
+  let win = equityWindow(histObj, shRange, Date.now());
+  let arr = (win.points || []).map((p) => [p.ts, p.equity]);
+  // 日频采样下 "近 7 天" 可能只有 1~2 个点 ✗ 画出来是一条直线 ✗ 自动回退到全部 ✓
+  if (arr.length < 3 && shRange !== "all") {
+    win = equityWindow(histObj, "all", Date.now());
+    arr = (win.points || []).map((p) => [p.ts, p.equity]);
+  }
   const chist = (ctl.history || []).filter((p) => Number.isFinite(p.ts) && Number.isFinite(p.equity));
-  const cwin = equityWindow(chist, shRange, Date.now());
+  const cwin = equityWindow(chist, arr.length < 3 ? "all" : shRange, Date.now());
   const carr = (cwin.points || []).map((p) => [p.ts, p.equity]);
   renderEquityChart(
     "sh-chart",
