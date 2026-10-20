@@ -294,7 +294,10 @@ pub fn step(state: &mut PaperState, panel: &[PanelEntry], max_lev: &HashMap<Stri
     // 只在「数据完整」的交易日推进，并且绝不越过最后一个完整日：
     // 残缺日（只有部分币有 K 线）用陈旧价格调仓，会把回测尾部整个污染。
     let complete = crate::trader::complete_days(&p.ts, &p.closes);
-    let Some(last_ok) = (0..p.ts.len()).rev().find(|&i| complete[i]) else {
+    // 只推进到【已经收盘】的那一根：HL 的 candleSnapshot 会带上正在形成的当日 K 线 ✗
+    // 用它调仓等于拿「今天几小时」的量能和收盘价算因子 ✗ 和实盘/回测都不同口径 ✗
+    let closed = fp.last_closed_index(crate::live::now_ms_pub()).min(p.ts.len().saturating_sub(1));
+    let Some(last_ok) = (0..=closed).rev().find(|&i| complete[i]) else {
         return;
     };
     let days: Vec<usize> = if fresh {
