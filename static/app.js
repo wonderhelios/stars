@@ -15,6 +15,41 @@ const ts2m = (ms) => {
   return iso.slice(5, 10) + " " + iso.slice(11, 16);
 };
 
+// ---------- 鉴权（STARS_TOKEN ✗） ----------
+const AUTH_KEY = "stars_token";
+const authToken = () => { try { return localStorage.getItem(AUTH_KEY) || ""; } catch (_) { return ""; } };
+const setAuthToken = (t) => { try { localStorage.setItem(AUTH_KEY, t); } catch (_) {} };
+const rawFetch = window.fetch.bind(window);
+window.fetch = function (input, init) {
+  const url = typeof input === "string" ? input : (input && input.url) || "";
+  if (url.indexOf("/api/") !== -1) {
+    init = init || {};
+    const headers = new Headers(init.headers || (input && input.headers) || {});
+    if (!headers.has("Authorization") && authToken()) headers.set("Authorization", "Bearer " + authToken());
+    init.headers = headers;
+  }
+  return rawFetch(input, init).then((res) => {
+    if (res.status === 401) showAuth();
+    return res;
+  });
+};
+function showAuth(msg) {
+  const el = $("auth-overlay");
+  if (!el) return;
+  el.hidden = false;
+  const st = $("auth-status");
+  if (st) st.textContent = msg || "令牌无效或未登录";
+}
+document.addEventListener("DOMContentLoaded", () => {
+  const btn = $("auth-submit");
+  if (btn) btn.addEventListener("click", () => {
+    const v = (($("auth-token") || {}).value || "").trim();
+    if (!v) return;
+    setAuthToken(v);
+    location.reload();
+  });
+});
+
 // ---------- 导航 ----------
 document.querySelectorAll(".nav button").forEach((b) => {
   b.addEventListener("click", () => {

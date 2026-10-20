@@ -42,6 +42,8 @@ pub struct AppState {
     /// 纸面资金费 carry 策略状态。
     pub carry: Arc<Mutex<crate::carry::CarryState>>,
     pub carry_path: Arc<std::path::PathBuf>,
+    /// 访问令牌（STARS_TOKEN ✗）。配置后所有 /api/* 需要 Bearer 鉴权。
+    pub auth_token: Option<String>,
     /// 跨所价差纸面引擎（OKX vs 币安现货）。
     pub xpaper: Arc<Mutex<crate::xpaper::XPaperState>>,
     pub xpaper_path: Arc<std::path::PathBuf>,
@@ -104,9 +106,44 @@ pub fn router(state: AppState) -> Router {
         .route("/api/xpaper/step", post(xpaper_step))
         .route("/api/xpaper/config", post(xpaper_config))
         .route("/api/xpaper/reset", post(xpaper_reset))
+        .layer(axum::middleware::from_fn({
+            let token = state.auth_token.clone();
+            move |req: axum::http::Request<axum::body::Body>, next: axum::middleware::Next| {
+                let token = token.clone();
+                async move { require_auth(token, req, next).await }
+            }
+        }))
         .layer(CompressionLayer::new())
         .layer(CorsLayer::permissive())
         .with_state(state)
+}
+
+/// 鉴权中间件：配置了 STARS_TOKEN 时，所有 /api/*（除 health）都要 Bearer 令牌。
+async fn require_auth(
+    token: Option<String>,
+    req: axum::http::Request<axum::body::Body>,
+    next: axum::middleware::Next,
+) -> Response {
+    let path = req.uri().path().to_string();
+    let protected = path.starts_with("/api/") && path != "/api/health";
+    let Some(expected) = token else {
+        return next.run(req).await;
+    };
+    if !protected || expected.is_empty() {
+        return next.run(req).await;
+    }
+    let ok = req
+        .headers()
+        .get(header::AUTHORIZATION)
+        .and_then(|v| v.to_str().ok())
+        .and_then(|v| v.strip_prefix("Bearer "))
+        .map(|t| t.trim() == expected.trim())
+        .unwrap_or(false);
+    if ok {
+        next.run(req).await
+    } else {
+        (StatusCode::UNAUTHORIZED, Json(json!({"ok": false, "error": "未授权：请先登录（服务端 STARS_TOKEN）"}))).into_response()
+    }
 }
 
 const INDEX_HTML: &str = include_str!("../static/index.html");

@@ -17,7 +17,7 @@ class extends super this null true false undefined void yield static get set imp
 const GLOBALS = new Set(`Date String Number Math JSON Object Array Set Map WeakMap Promise Error RegExp Symbol Boolean BigInt
 parseFloat parseInt isFinite isNaN encodeURIComponent decodeURIComponent structuredClone
 setTimeout setInterval clearTimeout clearInterval queueMicrotask fetch alert confirm prompt console AbortController
-Uint8Array Int8Array Float64Array ArrayBuffer TextEncoder TextDecoder URL URLSearchParams`.split(/\s+/));
+Uint8Array Int8Array Float64Array ArrayBuffer TextEncoder TextDecoder URL URLSearchParams Headers Request`.split(/\s+/));
 
 // 调用：排除 obj.method( 与关键字
 const called = new Set(

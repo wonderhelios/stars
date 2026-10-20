@@ -70,6 +70,13 @@
       .metric .v.sm,.metric .v .sm { font-size:14px; letter-spacing:0; }
       .metric-group:nth-child(2) .v,.metric-group:nth-child(3) .v { font-size:clamp(15px,1.35vw,22px); }
       .metric .v.pos,.pos { color:var(--green); } .metric .v.neg,.neg { color:var(--red); }
+      .auth-overlay { position:fixed; inset:0; background:rgba(10,25,24,.55); backdrop-filter:blur(4px); display:flex; align-items:center; justify-content:center; z-index:9999; }
+      .auth-overlay[hidden] { display:none; }
+      .auth-box { width:min(380px,92vw); background:#fff; border-radius:16px; padding:26px 24px; box-shadow:0 30px 80px rgba(0,0,0,.28); }
+      .auth-box h3 { margin:0 0 6px; font-size:20px; }
+      .auth-box p { margin:0 0 14px; font-size:12px; color:var(--muted); line-height:1.6; }
+      .auth-box input { width:100%; padding:12px 14px; border:1px solid var(--line); border-radius:10px; font-size:14px; margin-bottom:12px; }
+      .auth-box .btn { width:100%; justify-content:center; }
       .content-card { padding:23px 25px; margin:18px 0; background:#fff; border:1px solid var(--line); border-radius:14px; min-width:0; }
       .content-card>.panel-head { margin-top:0!important; padding-bottom:14px; border-bottom:1px solid #edf1f3; }
       table { width:100%; border-collapse:collapse; font-size:12px; }
@@ -670,6 +677,15 @@
 
     </main>
 
+    <div id="auth-overlay" class="auth-overlay" hidden>
+      <div class="auth-box">
+        <h3>需要登录</h3>
+        <p>这个实例开启了访问令牌（服务器环境变量 <code>STARS_TOKEN</code>）。输入令牌后保存在本机浏览器，不会上传到别处。</p>
+        <input id="auth-token" type="password" placeholder="访问令牌" autocomplete="current-password" />
+        <button class="btn" id="auth-submit" type="button">登录</button>
+        <p id="auth-status" style="margin-top:12px"></p>
+      </div>
+    </div>
     <script src="/app.js"></script>
   </body>
 </html>

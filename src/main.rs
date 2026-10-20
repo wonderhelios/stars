@@ -38,6 +38,10 @@ async fn main() -> anyhow::Result<()> {
         .unwrap_or_else(|_| "/var/lib/stars/candles.sqlite".to_string());
     let paper_path = std::env::var("STARS_PAPER")
         .unwrap_or_else(|_| "/var/lib/stars/paper.json".to_string());
+    let auth_token = std::env::var("STARS_TOKEN").ok().filter(|v| !v.trim().is_empty());
+    if auth_token.is_none() {
+        warn!("未设置 STARS_TOKEN：HTTP 接口【没有任何鉴权】✗ 公网可访问时请务必设置");
+    }
     let paper2_path = std::env::var("STARS_PAPER2")
         .unwrap_or_else(|_| "/var/lib/stars/paper2.json".to_string());
     let live_path = std::env::var("STARS_LIVE")
@@ -89,6 +93,7 @@ async fn main() -> anyhow::Result<()> {
         store: store.clone(),
         paper: paper.clone(),
         paper_path: Arc::new(std::path::PathBuf::from(&paper_path)),
+        auth_token: auth_token.clone(),
         paper2: paper2.clone(),
         paper2_path: Arc::new(std::path::PathBuf::from(&paper2_path)),
         live: live.clone(),
