@@ -43,7 +43,8 @@ fn d_confirm() -> u32 {
 }
 
 fn d_minvol() -> f64 {
-    5_000_000.0
+    // OKX 侧的 24h 成交额普遍只有 1~4M ✗ 门槛设 5M 会把绝大多数真实价差排除掉 ✗
+    1_000_000.0
 }
 
 impl Default for XPaperConfig {
