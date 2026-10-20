@@ -152,7 +152,7 @@ async fn main() -> anyhow::Result<()> {
                 let xmarket: std::collections::HashMap<String, crate::xpaper::XRow> = fresh
                     .xvenue_px
                     .iter()
-                    .map(|p| (p.coin.clone(), crate::xpaper::XRow { okx: p.okx, bn: p.bn }))
+                    .map(|p| (p.coin.clone(), crate::xpaper::XRow { okx: p.okx, bn: p.bn, okx_vol: p.okx_vol, bn_vol: p.bn_vol }))
                     .collect();
                 let xsnap = {
                     let mut xp = st.xpaper.lock().await;

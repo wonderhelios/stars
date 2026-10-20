@@ -63,6 +63,10 @@ pub struct XPrice {
     pub coin: String,
     pub okx: f64,
     pub bn: f64,
+    /// OKX 24h 成交额（美元 ✗ 用于流动性过滤 ✗）
+    pub okx_vol: f64,
+    /// 币安 24h 成交额（美元 ✗）
+    pub bn_vol: f64,
 }
 
 /// 跨所现货价差（OKX vs 币安）。用户当年 G/USDT 那种机会。
@@ -305,7 +309,13 @@ pub async fn refresh(http: &reqwest::Client, binance_http: &reqwest::Client) -> 
             if opx <= 0.0 || bpx <= 0.0 || ovol < 1_000_000.0 || bvol < 1_000_000.0 {
                 continue;
             }
-            st.xvenue_px.push(XPrice { coin: coin.clone(), okx: opx, bn: bpx });
+            st.xvenue_px.push(XPrice {
+                coin: coin.clone(),
+                okx: opx,
+                bn: bpx,
+                okx_vol: ovol,
+                bn_vol: bvol,
+            });
             let diff = (opx / bpx - 1.0) * 100.0;
             if diff.abs() >= 0.3 {
                 st.xvenue.push(XVenue {

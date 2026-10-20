@@ -946,7 +946,7 @@ async fn xpaper_step(State(state): State<AppState>) -> Response {
     let market: std::collections::HashMap<String, crate::xpaper::XRow> = fresh
         .xvenue_px
         .iter()
-        .map(|p| (p.coin.clone(), crate::xpaper::XRow { okx: p.okx, bn: p.bn }))
+        .map(|p| (p.coin.clone(), crate::xpaper::XRow { okx: p.okx, bn: p.bn, okx_vol: p.okx_vol, bn_vol: p.bn_vol }))
         .collect();
     let snap = {
         let mut xp = state.xpaper.lock().await;
@@ -967,6 +967,8 @@ struct XPaperConfigBody {
     max_holding_hours: Option<i64>,
     stop_pct: Option<f64>,
     fee: Option<f64>,
+    confirm_steps: Option<u32>,
+    min_vol_usd: Option<f64>,
 }
 
 async fn xpaper_config(State(state): State<AppState>, Json(body): Json<XPaperConfigBody>) -> Response {
@@ -1008,6 +1010,18 @@ async fn xpaper_config(State(state): State<AppState>, Json(body): Json<XPaperCon
             return (StatusCode::BAD_REQUEST, Json(json!({"ok": false, "error": "手续费必须在 [0, 2%)"}))).into_response();
         }
         c.fee = v;
+    }
+    if let Some(v) = body.confirm_steps {
+        if !(1..=30).contains(&v) {
+            return (StatusCode::BAD_REQUEST, Json(json!({"ok": false, "error": "持续性次数 1~30"}))).into_response();
+        }
+        c.confirm_steps = v;
+    }
+    if let Some(v) = body.min_vol_usd {
+        if !(v.is_finite() && (0.0..=1e10).contains(&v)) {
+            return (StatusCode::BAD_REQUEST, Json(json!({"ok": false, "error": "成交额门槛不合法"}))).into_response();
+        }
+        c.min_vol_usd = v;
     }
     if let Err(e) = xp.save(&state.xpaper_path) {
         *xp = prev;
@@ -1186,6 +1200,7 @@ mod live_routes_tests {
             carry_path: Arc::new(root.join("carry.json")),
             xpaper: Arc::new(Mutex::new(crate::xpaper::XPaperState::default())),
             xpaper_path: Arc::new(root.join("xpaper.json")),
+            auth_token: None,
             paper2: Arc::new(Mutex::new(crate::paper::PaperState::default())),
             paper2_path: Arc::new(root.join("paper2.json")),
         };
@@ -1239,6 +1254,7 @@ mod live_routes_tests {
             carry_path: Arc::new(root.join("carry.json")),
             xpaper: Arc::new(Mutex::new(crate::xpaper::XPaperState::default())),
             xpaper_path: Arc::new(root.join("xpaper.json")),
+            auth_token: None,
             paper2: Arc::new(Mutex::new(crate::paper::PaperState::default())),
             paper2_path: Arc::new(root.join("paper2.json")),
         };

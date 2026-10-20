@@ -1479,7 +1479,7 @@ function renderXPaper(d) {
 
 function renderXConfig(cfg) {
   cfg = cfg || {};
-  const els = ["xp-entry", "xp-exit", "xp-pairs", "xp-hours", "xp-stop", "xp-fee"].map((i) => $(i));
+  const els = ["xp-entry", "xp-exit", "xp-pairs", "xp-hours", "xp-stop", "xp-fee", "xp-confirm", "xp-minvol"].map((i) => $(i));
   if (els.some((el) => el && document.activeElement === el)) return;
   const set = (id, v) => { const el = $(id); if (el) el.value = v; };
   set("xp-entry", cfg.entry_pct);
@@ -1488,6 +1488,8 @@ function renderXConfig(cfg) {
   set("xp-hours", cfg.max_holding_hours);
   set("xp-stop", cfg.stop_pct);
   set("xp-fee", Math.round((cfg.fee || 0) * 10000) / 100);
+  set("xp-confirm", cfg.confirm_steps ?? 2);
+  set("xp-minvol", cfg.min_vol_usd ?? 5000000);
 }
 
 async function refreshXPaper() {
@@ -1507,6 +1509,8 @@ if ($("xp-save")) {
       max_holding_hours: Number($("xp-hours").value) || 0,
       stop_pct: Number($("xp-stop").value) || 0,
       fee: (Number($("xp-fee").value) || 0) / 100,
+      confirm_steps: Number($("xp-confirm") && $("xp-confirm").value) || 2,
+      min_vol_usd: Number($("xp-minvol") && $("xp-minvol").value) || 0,
     };
     const st = $("xp-status");
     try {

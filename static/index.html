@@ -602,7 +602,7 @@
 
         <div class="content-card">
           <div class="panel-head monitor-section-head"><div><span class="section-eyebrow">CROSS-VENUE PAPER · PARAMS</span><h2>跨所纸面参数</h2></div><button class="btn danger" id="xp-reset" type="button">重置纸面</button></div>
-          <p class="note">手续费按现货 taker 算（默认 0.1%/腿/次 ✗）。止损后 12 小时内不再开同名币 ✗</p>
+          <p class="note">手续费按现货 taker 算（默认 0.1%/腿/次 ✗）。止损后 12 小时内不再开同名币 ✗ 价差要【连续 N 次刷新】都达标才开仓（过滤 1 分钟就消失的报价噪音 ✗）✗ 两边 24h 成交额都要过门槛（排除薄币的假价差 ✗）</p>
           <div class="setup-fields" style="display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end">
             <div class="field"><label for="xp-entry">开仓阈值 %（|价差| ≥ 此值）</label><input id="xp-entry" type="number" min="0.1" max="10" step="0.1" /></div>
             <div class="field"><label for="xp-exit">出场阈值 %（价差收敛到）</label><input id="xp-exit" type="number" min="0" max="5" step="0.05" /></div>
@@ -610,6 +610,8 @@
             <div class="field"><label for="xp-hours">最长持有小时</label><input id="xp-hours" type="number" min="1" max="2160" step="1" /></div>
             <div class="field"><label for="xp-stop">止损 %（名义）</label><input id="xp-stop" type="number" min="0.1" max="20" step="0.1" /></div>
             <div class="field"><label for="xp-fee">手续费 %（每腿每次）</label><input id="xp-fee" type="number" min="0" max="2" step="0.01" /></div>
+            <div class="field"><label for="xp-confirm">持续次数（连续 N 次刷新达标才开 ✗ 1 次=60 秒）</label><input id="xp-confirm" type="number" min="1" max="30" step="1" /></div>
+            <div class="field"><label for="xp-minvol">两边最小成交额（USD ✗ 排除薄币 ✗）</label><input id="xp-minvol" type="number" min="0" step="1000000" /></div>
             <div class="field"><button class="btn ghost" id="xp-save" type="button">保存参数</button></div>
           </div>
           <p id="xp-status" class="note" role="status" aria-live="polite"></p>

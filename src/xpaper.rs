@@ -29,6 +29,21 @@ pub struct XPaperConfig {
     pub stop_pct: f64,
     /// 每腿每次成交的手续费（0.001 = 0.1%）。
     pub fee: f64,
+    /// 价差必须【连续 N 次刷新】都 ≥ 开仓阈值才开仓（默认 2 ✗ 约 2 分钟 ✗）。
+    /// 1 分钟就消失的价差是报价噪音 ✗ 不是可成交的套利 ✗
+    #[serde(default = "d_confirm")]
+    pub confirm_steps: u32,
+    /// 两边 24h 成交额门槛（美元 ✗ 默认 $5M ✗ 排除薄币的假价差 ✗）。
+    #[serde(default = "d_minvol")]
+    pub min_vol_usd: f64,
+}
+
+fn d_confirm() -> u32 {
+    2
+}
+
+fn d_minvol() -> f64 {
+    5_000_000.0
 }
 
 impl Default for XPaperConfig {
@@ -40,6 +55,8 @@ impl Default for XPaperConfig {
             max_holding_hours: 72,
             stop_pct: 0.8,
             fee: 0.001,
+            confirm_steps: d_confirm(),
+            min_vol_usd: d_minvol(),
         }
     }
 }
@@ -81,6 +98,9 @@ pub struct XPaperState {
     /// 止损后的冷却（coin -> 平仓时间）✗ 防止"止损 → 立刻重开 → 再止损"✗
     #[serde(default)]
     pub cooldowns: std::collections::HashMap<String, i64>,
+    /// 价差连续达标的次数（coin -> 连续次数 ✗）
+    #[serde(default)]
+    pub streaks: std::collections::HashMap<String, u32>,
 }
 
 impl Default for XPaperState {
@@ -95,6 +115,7 @@ impl Default for XPaperState {
             budget_usd: 0.0,
             updated: None,
             cooldowns: std::collections::HashMap::new(),
+            streaks: std::collections::HashMap::new(),
         }
     }
 }
@@ -134,6 +155,9 @@ impl XPaperState {
 pub struct XRow {
     pub okx: f64,
     pub bn: f64,
+    /// 两边 24h 成交额（美元 ✗）
+    pub okx_vol: f64,
+    pub bn_vol: f64,
 }
 
 /// 一对的浮动盈亏（未扣出场费）。
@@ -154,6 +178,23 @@ pub fn step(state: &mut XPaperState, budget_usd: f64, market: &std::collections:
         state.start_equity = budget_usd;
     }
     let fee = state.config.fee.max(0.0);
+
+    // ---- 持续性计数：价差连续达标多少次（每次刷新 60 秒 ✗）----
+    // 1 分钟就消失的价差是报价噪音 ✗ 只在连续 N 次达标后才允许开仓 ✗
+    {
+        let mut next: std::collections::HashMap<String, u32> = std::collections::HashMap::new();
+        for (coin, row) in market.iter() {
+            if row.okx <= 0.0 || row.bn <= 0.0 {
+                continue;
+            }
+            let diff = (row.okx / row.bn - 1.0) * 100.0;
+            if diff.abs() >= state.config.entry_pct {
+                let n = state.streaks.get(coin).copied().unwrap_or(0) + 1;
+                next.insert(coin.clone(), n);
+            }
+        }
+        state.streaks = next;
+    }
 
     // ---- 盯市 + 平仓 ----
     let mut i = 0;
@@ -217,6 +258,14 @@ pub fn step(state: &mut XPaperState, budget_usd: f64, market: &std::collections:
             .filter(|(_, r)| r.okx > 0.0 && r.bn > 0.0)
             .map(|(c, r)| (c, r, (r.okx / r.bn - 1.0) * 100.0))
             .filter(|(_, _, d)| d.abs() >= state.config.entry_pct)
+            // 持续性：必须连续 N 次刷新都达标
+            .filter(|(c, _, _)| {
+                state.streaks.get(*c).copied().unwrap_or(0) >= state.config.confirm_steps.max(1)
+            })
+            // 流动性：两边 24h 成交额都要达标
+            .filter(|(_, r, _)| {
+                r.okx_vol >= state.config.min_vol_usd && r.bn_vol >= state.config.min_vol_usd
+            })
             .filter(|(c, _, _)| !state.pairs.iter().any(|p| &p.coin == *c))
             .filter(|(c, _, _)| !state.cooldowns.contains_key(*c))
             .collect();
@@ -279,12 +328,14 @@ mod tests {
     use std::collections::HashMap;
 
     fn row(okx: f64, bn: f64) -> XRow {
-        XRow { okx, bn }
+        XRow { okx, bn, okx_vol: 1e9, bn_vol: 1e9 }
     }
 
     #[test]
     fn opens_on_a_wide_gap_and_books_the_convergence() {
         let mut st = XPaperState::default();
+        // 持续性默认 2 次刷新；单次 step 的单元测试把它设为 1
+        st.config.confirm_steps = 1;
         let mut m = HashMap::new();
         // OKX 贵 1% → 空 OKX / 多币安
         m.insert("G".to_string(), row(101.0, 100.0));
@@ -307,6 +358,8 @@ mod tests {
     #[test]
     fn ignores_small_gaps() {
         let mut st = XPaperState::default();
+        // 持续性默认 2 次刷新；单次 step 的单元测试把它设为 1
+        st.config.confirm_steps = 1;
         let mut m = HashMap::new();
         m.insert("G".to_string(), row(100.3, 100.0)); // 0.3% < 0.5%
         step(&mut st, 1000.0, &m);
@@ -316,6 +369,8 @@ mod tests {
     #[test]
     fn stops_when_the_gap_widens() {
         let mut st = XPaperState::default();
+        // 持续性默认 2 次刷新；单次 step 的单元测试把它设为 1
+        st.config.confirm_steps = 1;
         let mut m = HashMap::new();
         m.insert("G".to_string(), row(101.0, 100.0));
         step(&mut st, 1000.0, &m);
