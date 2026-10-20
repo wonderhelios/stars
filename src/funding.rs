@@ -67,6 +67,11 @@ pub struct XPrice {
     pub okx_vol: f64,
     /// 币安 24h 成交额（美元 ✗）
     pub bn_vol: f64,
+    /// 盘口（✗ 用于计算【可执行】价差 ✗ 薄币的 last 价可能是几秒前的 ✗）
+    pub okx_bid: f64,
+    pub okx_ask: f64,
+    pub bn_bid: f64,
+    pub bn_ask: f64,
 }
 
 /// 跨所现货价差（OKX vs 币安）。用户当年 G/USDT 那种机会。
@@ -273,71 +278,73 @@ pub async fn refresh(http: &reqwest::Client, binance_http: &reqwest::Client) -> 
             .then_with(|| b.ann.abs().partial_cmp(&a.ann.abs()).unwrap_or(std::cmp::Ordering::Equal))
     });
 
-    // ---- ⑥ 跨所现货价差（OKX vs 币安）----
-    // 用户当年 G/USDT 那种"同一币在两个所价格不一样"的机会。只保留两边
-    // 成交额都 ≥ $1M 的币（否则扫出来全是同名不同币或僵尸价），并且只在
-    // |差| ≥ 0.3% 时才记录。
-    let mut okx_px: HashMap<String, (f64, f64)> = HashMap::new();
-    match fetch_okx_spot(binance_http).await {
-        Ok(list) => {
-            for (coin, px, vol) in list {
-                okx_px.insert(coin, (px, vol));
-            }
-        }
-        Err(e) => st.xvenue_error = Some(e),
-    }
-    if st.xvenue_error.is_none() {
-        let mut bn_spot: HashMap<String, (f64, f64)> = HashMap::new();
-        if let Some(v) = fetch_bn_json(binance_http, "https://api.binance.com/api/v3/ticker/24hr").await {
-            if let Some(arr) = v.as_array() {
-                for x in arr {
-                    let Some(sym) = x["symbol"].as_str() else { continue };
-                    if !sym.ends_with("USDT") || sym.len() <= 4 {
-                        continue;
-                    }
-                    let coin = &sym[..sym.len() - 4];
-                    let px = num(&x["lastPrice"]);
-                    let vol = num(&x["quoteVolume"]);
-                    if px > 0.0 {
-                        bn_spot.insert(coin.to_string(), (px, vol));
-                    }
-                }
-            }
-        }
-        for (coin, (opx, ovol)) in okx_px {
-            let Some(&(bpx, bvol)) = bn_spot.get(&coin) else { continue };
-            if opx <= 0.0 || bpx <= 0.0 || ovol < 1_000_000.0 || bvol < 1_000_000.0 {
-                continue;
-            }
-            st.xvenue_px.push(XPrice {
-                coin: coin.clone(),
-                okx: opx,
-                bn: bpx,
-                okx_vol: ovol,
-                bn_vol: bvol,
-            });
-            let diff = (opx / bpx - 1.0) * 100.0;
-            if diff.abs() >= 0.3 {
-                st.xvenue.push(XVenue {
-                    coin,
-                    okx_px: opx,
-                    bn_px: bpx,
-                    diff_pct: diff,
-                    okx_vol: ovol,
-                    bn_vol: bvol,
-                });
-            }
-        }
-        st.xvenue
-            .sort_by(|a, b| b.diff_pct.abs().partial_cmp(&a.diff_pct.abs()).unwrap_or(std::cmp::Ordering::Equal));
-        st.xvenue.truncate(30);
-    }
-
+    // ---- ⑥ 跨所现货价差：由 10 秒一次的 fast 循环负责（见 refresh_xvenue）----
+    // 60 秒的慢循环不再覆盖它 ✗ 否则刚拿到的盘口会被旧样本冲掉 ✓
     st
 }
 
-/// 拉 OKX 现货 ticker，返回 (币, 最新价, 24h 成交额)。
-async fn fetch_okx_spot(client: &reqwest::Client) -> Result<Vec<(String, f64, f64)>, String> {
+/// 把一批盘口样本聚成面板用的「跨所尖峰」列表（|可执行差| ≥ 0.3% ✗）。
+pub fn xvenue_view(px: &[XPrice]) -> Vec<XVenue> {
+    let mut out = Vec::new();
+    for p in px {
+        if p.okx <= 0.0 || p.bn <= 0.0 {
+            continue;
+        }
+        let diff = (p.okx / p.bn - 1.0) * 100.0;
+        if diff.abs() >= 0.3 {
+            out.push(XVenue {
+                coin: p.coin.clone(),
+                okx_px: p.okx,
+                bn_px: p.bn,
+                diff_pct: diff,
+                okx_vol: p.okx_vol,
+                bn_vol: p.bn_vol,
+            });
+        }
+    }
+    out.sort_by(|a, b| b.diff_pct.abs().partial_cmp(&a.diff_pct.abs()).unwrap_or(std::cmp::Ordering::Equal));
+    out
+}
+
+/// 只抓 OKX + 币安现货的盘口 ✗ 给 10 秒一次的快循环用（不碰 HL/HIP-3 ✗ 两次请求 ✗）
+pub async fn refresh_xvenue(binance_http: &reqwest::Client) -> Vec<XPrice> {
+    let mut okx: HashMap<String, (f64, f64, f64, f64)> = HashMap::new();
+    if let Ok(list) = fetch_okx_spot(binance_http).await {
+        for (coin, px, vol, bid, ask) in list {
+            okx.insert(coin, (px, vol, bid, ask));
+        }
+    }
+    let mut out = Vec::new();
+    if okx.is_empty() {
+        return out;
+    }
+    if let Some(v) = fetch_bn_json(binance_http, "https://api.binance.com/api/v3/ticker/24hr").await {
+        if let Some(arr) = v.as_array() {
+            for x in arr {
+                let Some(sym) = x["symbol"].as_str() else { continue };
+                if !sym.ends_with("USDT") || sym.len() <= 4 {
+                    continue;
+                }
+                let coin = &sym[..sym.len() - 4];
+                let Some(&(px, vol, bid, ask)) = okx.get(coin) else { continue };
+                out.push(XPrice {
+                    coin: coin.to_string(),
+                    okx: px,
+                    bn: num(&x["lastPrice"]),
+                    okx_vol: vol,
+                    bn_vol: num(&x["quoteVolume"]),
+                    okx_bid: bid,
+                    okx_ask: ask,
+                    bn_bid: num(&x["bidPrice"]),
+                    bn_ask: num(&x["askPrice"]),
+                });
+            }
+        }
+    }
+    out
+}
+
+async fn fetch_okx_spot(client: &reqwest::Client) -> Result<Vec<(String, f64, f64, f64, f64)>, String> {
     let resp = client
         .get("https://www.okx.com/api/v5/market/tickers?instType=SPOT")
         .send()
@@ -359,8 +366,10 @@ async fn fetch_okx_spot(client: &reqwest::Client) -> Result<Vec<(String, f64, f6
         let Some(coin) = id.strip_suffix("-USDT") else { continue };
         let px = num(&t["last"]);
         let vol = num(&t["volCcy24h"]);
+        let bid = num(&t["bidPx"]);
+        let ask = num(&t["askPx"]);
         if px > 0.0 {
-            out.push((coin.to_string(), px, vol));
+            out.push((coin.to_string(), px, vol, bid, ask));
         }
     }
     Ok(out)

@@ -946,7 +946,7 @@ async fn xpaper_step(State(state): State<AppState>) -> Response {
     let market: std::collections::HashMap<String, crate::xpaper::XRow> = fresh
         .xvenue_px
         .iter()
-        .map(|p| (p.coin.clone(), crate::xpaper::XRow { okx: p.okx, bn: p.bn, okx_vol: p.okx_vol, bn_vol: p.bn_vol }))
+        .map(|p| (p.coin.clone(), crate::xpaper::XRow { okx: p.okx, bn: p.bn, okx_vol: p.okx_vol, bn_vol: p.bn_vol, okx_bid: p.okx_bid, okx_ask: p.okx_ask, bn_bid: p.bn_bid, bn_ask: p.bn_ask }))
         .collect();
     let snap = {
         let mut xp = state.xpaper.lock().await;

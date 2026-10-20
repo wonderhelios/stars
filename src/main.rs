@@ -147,22 +147,56 @@ async fn main() -> anyhow::Result<()> {
                 } else if t0.elapsed().as_secs() >= 2 {
                     warn!("纸面 carry 保存耗时 {:?}（磁盘偏慢）", t0.elapsed());
                 }
-                // 跨所价差纸面引擎：预算用资金矩阵的「③ 尖峰狩猎」（事件型 ✗）
-                let xbudget = st.live.lock().await.capital_alloc.hunting_usd;
-                let xmarket: std::collections::HashMap<String, crate::xpaper::XRow> = fresh
-                    .xvenue_px
-                    .iter()
-                    .map(|p| (p.coin.clone(), crate::xpaper::XRow { okx: p.okx, bn: p.bn, okx_vol: p.okx_vol, bn_vol: p.bn_vol }))
-                    .collect();
-                let xsnap = {
-                    let mut xp = st.xpaper.lock().await;
-                    crate::xpaper::step(&mut xp, xbudget, &xmarket);
-                    xp.clone()
-                };
-                if let Err(e) = xsnap.save(&st.xpaper_path) {
-                    warn!("跨所价差纸面保存失败: {e}");
-                }
+                // 跨所价差已移到下面的 10 秒快循环 ✗ 这里不再推进 ✓
                 tokio::time::sleep(Duration::from_secs(60)).await;
+            }
+        });
+    }
+
+    // ===== 跨所价差：每 10 秒抓一次两边盘口 + 推进纸面引擎 =====
+    //
+    // 之前跨所行情跟资金费一起每 60 秒才刷一次 ✗ 1 分钟就收敛的价差
+    // 根本看不见 ✗ 现在单独 10 秒一次（只打 OKX/币安两个 ticker ✗ 很轻 ✗）
+    {
+        let st = state.clone();
+        tokio::spawn(async move {
+            loop {
+                let px = crate::funding::refresh_xvenue(&st.binance_http).await;
+                if !px.is_empty() {
+                    let mut fund = st.funding.lock().await;
+                    fund.xvenue_px = px.clone();
+                    fund.xvenue = crate::funding::xvenue_view(&px);
+                }
+                let xbudget = st.live.lock().await.capital_alloc.hunting_usd;
+                let xmarket: std::collections::HashMap<String, crate::xpaper::XRow> = px
+                    .iter()
+                    .map(|p| {
+                        (
+                            p.coin.clone(),
+                            crate::xpaper::XRow {
+                                okx: p.okx,
+                                bn: p.bn,
+                                okx_vol: p.okx_vol,
+                                bn_vol: p.bn_vol,
+                                okx_bid: p.okx_bid,
+                                okx_ask: p.okx_ask,
+                                bn_bid: p.bn_bid,
+                                bn_ask: p.bn_ask,
+                            },
+                        )
+                    })
+                    .collect();
+                if !xmarket.is_empty() {
+                    let xsnap = {
+                        let mut xp = st.xpaper.lock().await;
+                        crate::xpaper::step(&mut xp, xbudget, &xmarket);
+                        xp.clone()
+                    };
+                    if let Err(e) = xsnap.save(&st.xpaper_path) {
+                        warn!("跨所价差纸面保存失败: {e}");
+                    }
+                }
+                tokio::time::sleep(Duration::from_secs(10)).await;
             }
         });
     }

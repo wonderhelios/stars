@@ -29,8 +29,8 @@ pub struct XPaperConfig {
     pub stop_pct: f64,
     /// 每腿每次成交的手续费（0.001 = 0.1%）。
     pub fee: f64,
-    /// 价差必须【连续 N 次刷新】都 ≥ 开仓阈值才开仓（默认 2 ✗ 约 2 分钟 ✗）。
-    /// 1 分钟就消失的价差是报价噪音 ✗ 不是可成交的套利 ✗
+    /// 价差必须【连续 N 次刷新】都 ≥ 开仓阈值才开仓。
+    /// 刷新频率 10 秒 ✗ 所以 N=3 ≈ 30 秒 ✗ N=6 ≈ 1 分钟 ✓
     #[serde(default = "d_confirm")]
     pub confirm_steps: u32,
     /// 两边 24h 成交额门槛（美元 ✗ 默认 $5M ✗ 排除薄币的假价差 ✗）。
@@ -39,7 +39,8 @@ pub struct XPaperConfig {
 }
 
 fn d_confirm() -> u32 {
-    2
+    // 10 秒一次刷新 ✗ 3 次 ≈ 30 秒 ✓
+    3
 }
 
 fn d_minvol() -> f64 {
@@ -159,6 +160,26 @@ pub struct XRow {
     /// 两边 24h 成交额（美元 ✗）
     pub okx_vol: f64,
     pub bn_vol: f64,
+    /// 盘口 ✗ 可执行价差要按买一/卖一算 ✗ 薄币的 last 可能是几秒前的 ✓
+    pub okx_bid: f64,
+    pub okx_ask: f64,
+    pub bn_bid: f64,
+    pub bn_ask: f64,
+}
+
+impl XRow {
+    /// 可执行价差（%）✗ 取两个方向里更大的那个 ✓
+    /// 买 OKX 卖币安 = 用 OKX 的卖一买 ✗ 币安的买一卖 ✓
+    /// 买币安卖 OKX = 反过来 ✓
+    pub fn exec_edge(&self) -> f64 {
+        if self.okx_ask <= 0.0 || self.bn_bid <= 0.0 || self.bn_ask <= 0.0 || self.okx_bid <= 0.0 {
+            return 0.0;
+        }
+        let a = (self.bn_bid / self.okx_ask - 1.0) * 100.0;
+        let b = (self.okx_bid / self.bn_ask - 1.0) * 100.0;
+        let (best, signed) = if a >= b { (a, -1.0) } else { (b, 1.0) };
+        best.max(0.0) * signed
+    }
 }
 
 /// 一对的浮动盈亏（未扣出场费）。
@@ -188,8 +209,9 @@ pub fn step(state: &mut XPaperState, budget_usd: f64, market: &std::collections:
             if row.okx <= 0.0 || row.bn <= 0.0 {
                 continue;
             }
-            let diff = (row.okx / row.bn - 1.0) * 100.0;
-            if diff.abs() >= state.config.entry_pct {
+            // 用【可执行】价差（盘口）✗ 不是 last 价 ✗
+            let edge = row.exec_edge();
+            if edge.abs() >= state.config.entry_pct {
                 let n = state.streaks.get(coin).copied().unwrap_or(0) + 1;
                 next.insert(coin.clone(), n);
             }
@@ -209,7 +231,7 @@ pub fn step(state: &mut XPaperState, budget_usd: f64, market: &std::collections:
             i += 1;
             continue;
         }
-        let diff_now = (row.okx / row.bn - 1.0) * 100.0;
+        let diff_now = row.exec_edge();
         {
             let p = &mut state.pairs[i];
             p.pnl = pair_pnl(p, row.okx, row.bn);
@@ -257,7 +279,7 @@ pub fn step(state: &mut XPaperState, budget_usd: f64, market: &std::collections:
         let mut cands: Vec<(&String, &XRow, f64)> = market
             .iter()
             .filter(|(_, r)| r.okx > 0.0 && r.bn > 0.0)
-            .map(|(c, r)| (c, r, (r.okx / r.bn - 1.0) * 100.0))
+            .map(|(c, r)| (c, r, r.exec_edge()))
             .filter(|(_, _, d)| d.abs() >= state.config.entry_pct)
             // 持续性：必须连续 N 次刷新都达标
             .filter(|(c, _, _)| {
@@ -329,7 +351,12 @@ mod tests {
     use std::collections::HashMap;
 
     fn row(okx: f64, bn: f64) -> XRow {
-        XRow { okx, bn, okx_vol: 1e9, bn_vol: 1e9 }
+        // 盘口按中间价上下 0.05% 构造 ✗ 让"可执行价差"近似等于 last 差 ✓
+        XRow {
+            okx, bn, okx_vol: 1e9, bn_vol: 1e9,
+            okx_bid: okx * 0.9995, okx_ask: okx * 1.0005,
+            bn_bid: bn * 0.9995, bn_ask: bn * 1.0005,
+        }
     }
 
     #[test]
