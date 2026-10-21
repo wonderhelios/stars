@@ -702,7 +702,8 @@ pub async fn run(
     let now_ms = crate::live::now_ms_pub();
 
     // ① 冷却中的币：不许重新开仓 ✗ 已持有的维持原仓（不强制平 ✗）
-    {
+    // 止损关闭时冷却一并失效 ✗ 否则关掉止损后旧冷却还会冻住仓位 ✗
+    if cfg.position_stop_pct > 0.0 {
         // 权重口径: w=1 ⇔ 名义 = equity × margin_buffer × leverage
         // （build_plan 里 per_coin = deployable × leverage / n ✗ Σ|w|=1 ✗）
         let gross_unit = (acct.equity * cfg.margin_buffer * cfg.effective_leverage()).max(1.0);
