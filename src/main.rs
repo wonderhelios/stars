@@ -378,6 +378,9 @@ async fn main() -> anyhow::Result<()> {
                     Ok((result, records)) => {
                         let mut guard = st.live.lock().await;
                         guard.last_run_at = Some(now_ms());
+                        for (coin, until) in result.stopped.iter() {
+                            guard.stop_cooldowns.insert(coin.clone(), *until);
+                        }
                         guard.last_plan = result.plan_lines.clone();
                         guard.last_live = true;
                         guard.records.extend(records);

@@ -506,6 +506,8 @@ struct CapitalBody {
 
 #[derive(serde::Deserialize)]
 struct LiveConfigBody {
+    position_stop_pct: Option<f64>,
+    stop_cooldown_days: Option<i64>,
     account: Option<String>,
     key_path: Option<String>,
     target_positions: Option<usize>,
@@ -577,6 +579,18 @@ async fn live_config(
     if let Some(v) = body.momentum_weight {
         // 动量占比 0~1（量能占其余）。0.7 = 动量七成。
         c.momentum_weight = v.clamp(0.0, 1.0);
+    }
+    if let Some(v) = body.position_stop_pct {
+        if !(0.0..=0.9).contains(&v) {
+            return (StatusCode::BAD_REQUEST, Json(json!({"ok": false, "error": "单币止损必须在 0~90%（0 = 关闭）"}))).into_response();
+        }
+        c.position_stop_pct = v;
+    }
+    if let Some(v) = body.stop_cooldown_days {
+        if !(0..=60).contains(&v) {
+            return (StatusCode::BAD_REQUEST, Json(json!({"ok": false, "error": "冷却天数必须在 0~60"}))).into_response();
+        }
+        c.stop_cooldown_days = v;
     }
     if let Some(v) = body.armed {
         c.armed = v;
@@ -652,6 +666,9 @@ async fn live_run(State(state): State<AppState>, body: Option<Json<LiveRunBody>>
         match outcome {
             Ok((result, records)) => {
                 g.last_run_at = Some(crate::live::now_ms_pub());
+                for (coin, until) in result.stopped.iter() {
+                    g.stop_cooldowns.insert(coin.clone(), *until);
+                }
                 g.last_plan = result.plan_lines.clone();
                 if let Some(r) = result.tp_ref.clone() {
                     g.tp_ref = r;

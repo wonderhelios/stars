@@ -37,6 +37,12 @@ pub fn markets_from_meta(universe: &[crate::hl::CoinMeta]) -> HashMap<String, Ma
 #[serde(default)]
 pub struct LiveConfig {
     pub account: String,
+    /// 单币止损（0 = 关闭 ✗ 0.25 = 浮亏 25% 强制平 ✗）。
+    #[serde(default = "d_stop_pct")]
+    pub position_stop_pct: f64,
+    /// 止损后的冷却天数（冷却期内不许再开同向仓 ✗）。
+    #[serde(default = "d_stop_cool")]
+    pub stop_cooldown_days: i64,
     pub key_path: String,
     pub target_positions: usize,
     pub leverage: f64,
@@ -88,6 +94,8 @@ impl Default for LiveConfig {
             take_profit_pct: 0.0,
             rebalance_slices: 3,
             momentum_weight: default_momentum_weight(),
+            position_stop_pct: d_stop_pct(),
+            stop_cooldown_days: d_stop_cool(),
             armed: false,
             auto_run: false,
         }
@@ -171,8 +179,19 @@ pub struct LiveRecord {
     pub reduce_only: bool,
 }
 
+fn d_stop_pct() -> f64 {
+    0.25
+}
+
+fn d_stop_cool() -> i64 {
+    5
+}
+
 #[derive(Clone, Serialize, Deserialize, Default)]
 pub struct LiveState {
+    /// 止损冷却：币 -> 解禁时间（毫秒 ✗）
+    #[serde(default)]
+    pub stop_cooldowns: std::collections::HashMap<String, i64>,
     #[serde(default)]
     pub capital_baseline: Option<CapitalBaseline>,
     pub config: LiveConfig,
@@ -618,6 +637,8 @@ pub struct RunResult {
     pub live: bool,
     /// 本次挂出的止盈单 oid，供上层写入状态（对账时标记「止盈成交」）。
     pub tp_oids: Vec<u64>,
+    /// 本次触发止损的币，以及解禁时间（供上层写进冷却表 ✗）
+    pub stopped: Vec<(String, i64)>,
 }
 
 fn ensure_candidates(weights: &[(String, f64)]) -> Result<()> {
@@ -669,6 +690,77 @@ pub async fn run(
     coins.sort();
     coins.dedup();
     let mids = trader::fetch_mids(&exec, &coins).await;
+
+    // ---- 冷却过滤（先做 ✗ 后面的止损要能覆盖它）+ 单币止损 ----
+    //
+    // 回测（833 天 ✗ 日频中性 ✗ 14 日动量）: -25% 单币止损 + 5 天冷却
+    //   Sharpe 1.32 → 1.51 ✗ 最大回撤 60.6% → 42.4%
+    // 分区间看它是"分 regime"的：趋势期会砍掉会回来的票（2.51 → 2.06）✗
+    // 但单边下跌期救命（0.00 → 0.82）✓ 用一点上行换生存 ✓
+    let mut weights = weights;
+    let mut stop_lines: Vec<String> = Vec::new();
+    let now_ms = crate::live::now_ms_pub();
+
+    // ① 冷却中的币：不许重新开仓 ✗ 已持有的维持原仓（不强制平 ✗）
+    {
+        let eq0 = acct.equity.max(1.0);
+        let mut cooled: Vec<(String, f64)> = Vec::new();
+        for (coin, until) in state.stop_cooldowns.iter() {
+            if *until <= now_ms {
+                continue;
+            }
+            weights.retain(|(c, _)| c != coin);
+            if let Some(pos) = acct.positions.get(coin) {
+                if let Some(&mark) = mids.get(coin) {
+                    if mark > 0.0 {
+                        let cur = pos.size.abs() * mark / eq0 * pos.size.signum();
+                        cooled.push((coin.clone(), cur));
+                    }
+                }
+            }
+        }
+        for (c, w) in cooled {
+            weights.push((c, w));
+        }
+    }
+
+    // ② 单币止损：逆向浮亏超过阈值 → 目标清零（必须放在冷却之后 ✗ 让它覆盖 ✗）
+    if cfg.position_stop_pct > 0.0 {
+        for (coin, pos) in acct.positions.iter() {
+            let Some(&mark) = mids.get(coin) else { continue };
+            if mark <= 0.0 || pos.entry_px <= 0.0 {
+                continue;
+            }
+            let mv = (mark / pos.entry_px - 1.0) * pos.size.signum();
+            if mv < -cfg.position_stop_pct {
+                weights.retain(|(c, _)| c != coin);
+                weights.push((coin.clone(), 0.0));
+                stop_lines.push(format!(
+                    "{coin} {} 浮亏 {:.1}% < -{:.0}% → 平仓并冷却 {} 天",
+                    if pos.size > 0.0 { "多" } else { "空" },
+                    mv * 100.0,
+                    cfg.position_stop_pct * 100.0,
+                    cfg.stop_cooldown_days
+                ));
+            }
+        }
+    }
+
+    // ③ 触发止损的币 → 写入冷却（解禁时间 = 现在 + N 天）
+    let mut stopped_now: Vec<(String, i64)> = Vec::new();
+    if cfg.position_stop_pct > 0.0 && cfg.stop_cooldown_days > 0 {
+        let until = now_ms + cfg.stop_cooldown_days * 86_400_000;
+        for coin in acct.positions.keys() {
+            let Some(&mark) = mids.get(coin) else { continue };
+            let pos = &acct.positions[coin];
+            if pos.entry_px <= 0.0 || mark <= 0.0 {
+                continue;
+            }
+            if (mark / pos.entry_px - 1.0) * pos.size.signum() < -cfg.position_stop_pct {
+                stopped_now.push((coin.clone(), until));
+            }
+        }
+    }
 
     let plan = trader::build_plan(&weights, &acct, markets, &mids, &tc, None);
 
@@ -821,6 +913,7 @@ pub async fn run(
             plan_lines,
             executed,
             live,
+            stopped: stopped_now,
         },
         records,
     ))
