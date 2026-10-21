@@ -703,7 +703,9 @@ pub async fn run(
 
     // ① 冷却中的币：不许重新开仓 ✗ 已持有的维持原仓（不强制平 ✗）
     {
-        let eq0 = acct.equity.max(1.0);
+        // 权重口径: w=1 ⇔ 名义 = equity × margin_buffer × leverage
+        // （build_plan 里 per_coin = deployable × leverage / n ✗ Σ|w|=1 ✗）
+        let gross_unit = (acct.equity * cfg.margin_buffer * cfg.effective_leverage()).max(1.0);
         let mut cooled: Vec<(String, f64)> = Vec::new();
         for (coin, until) in state.stop_cooldowns.iter() {
             if *until <= now_ms {
@@ -713,7 +715,7 @@ pub async fn run(
             if let Some(pos) = acct.positions.get(coin) {
                 if let Some(&mark) = mids.get(coin) {
                     if mark > 0.0 {
-                        let cur = pos.size.abs() * mark / eq0 * pos.size.signum();
+                        let cur = pos.size.abs() * mark / gross_unit * pos.size.signum();
                         cooled.push((coin.clone(), cur));
                     }
                 }

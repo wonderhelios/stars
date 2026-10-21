@@ -666,8 +666,10 @@ async fn live_run(State(state): State<AppState>, body: Option<Json<LiveRunBody>>
         match outcome {
             Ok((result, records)) => {
                 g.last_run_at = Some(crate::live::now_ms_pub());
-                for (coin, until) in result.stopped.iter() {
-                    g.stop_cooldowns.insert(coin.clone(), *until);
+                if result.live {
+                    for (coin, until) in result.stopped.iter() {
+                        g.stop_cooldowns.insert(coin.clone(), *until);
+                    }
                 }
                 g.last_plan = result.plan_lines.clone();
                 if let Some(r) = result.tp_ref.clone() {
