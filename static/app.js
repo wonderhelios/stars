@@ -752,6 +752,8 @@ function renderMonitor(d) {
         '三者都不是预测，只是对已发生记录的不同切法；样本很小时波动极大。</p></details>'
     );
 
+  arrangeMonitorSummary("mo-metrics");
+
   // 检查清单按实测结果自动打勾
   const sl = slippageStats(d.records || []);
   const mark = (sid, bid, ok, okText, okDetail) => {
@@ -1330,6 +1332,7 @@ function renderShadow(d) {
         metric("持仓 / 多头", ps.length + " / " + nLong)
       );
   }
+  arrangeMonitorSummary("sh-metrics", true);
   // 曲线：按日/周/月/全部切片
   const histObj = (d.history || []).filter((p) => Number.isFinite(p.ts) && Number.isFinite(p.equity));
   let win = equityWindow(histObj, shRange, Date.now());
@@ -1841,4 +1844,58 @@ if (typeof ResizeObserver !== "undefined") {
     }
   });
   ["mo-chart", "cy-chart", "xp-chart", "sh-chart"].forEach(id => chartResize.observe($(id)));
+}
+
+// Keep accounting calculations in the existing renderers. This layer only selects
+// the first-read summary and moves all original metrics into inspectable details.
+function arrangeMonitorSummary(id, shadow = false) {
+  const root = $(id);
+  const groups = [...root.querySelectorAll(':scope > .metric-group')];
+  if (!groups.length) return;
+  const key = id + '-details';
+  let details = $(key);
+  const active = details?.dataset.active || '0';
+  if (!details) {
+    details = document.createElement('details');
+    details.id = key;
+    details.className = 'account-details content-card';
+    root.closest('.performance-panel').after(details);
+  }
+  const first = [...groups[0].querySelectorAll('.metric')];
+  const capital = groups.find(g => g.classList.contains('capital-account'));
+  const earnings = shadow ? first[1] : capital?.querySelectorAll('.metric')[2];
+  const floating = shadow ? groups[1]?.querySelectorAll('.metric')[1] : first[1];
+  root.replaceChildren();
+  root.className = 'account-summary';
+  for (const [source, label] of [[first[0], shadow ? '影子净值' : '账户净值'], [earnings, shadow ? '累计影子盈亏' : '净收益 · 已扣除出入金'], [floating, '当前持仓浮动盈亏']]) {
+    if (!source) continue;
+    const item = source.cloneNode(true);
+    item.querySelector('.k').textContent = label;
+    root.append(item);
+  }
+  details.replaceChildren();
+  const summary = document.createElement('summary');
+  summary.innerHTML = '<span>账户详情</span><span class="detail-hint">资金、风险、执行与统计</span>';
+  details.append(summary);
+  const nav = document.createElement('div');
+  nav.className = 'account-detail-tabs';
+  nav.setAttribute('role', 'group');
+  nav.setAttribute('aria-label', '账户详情分类');
+  details.append(nav);
+  const labels = shadow ? ['账户', '盈亏', '风险', '同期对照', '因子'] : ['账户', '资金', '风险', '执行', '胜率'];
+  function select(index) {
+    details.dataset.active = String(index);
+    groups.forEach((g, i) => { g.hidden = i !== index; nav.children[i].setAttribute('aria-pressed', String(i === index)); });
+  }
+  groups.forEach((group, index) => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.textContent = labels[index] || group.querySelector('.g-title').textContent;
+    button.setAttribute('aria-controls', key + '-' + index);
+    group.id = key + '-' + index;
+    button.addEventListener('click', () => select(index));
+    nav.append(button);
+    details.append(group);
+  });
+  select(Math.min(Number(active) || 0, groups.length - 1));
 }
