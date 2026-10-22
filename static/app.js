@@ -215,6 +215,7 @@ function lvConfigInto(d) {
   $("lv-slices").value = c.rebalance_slices ?? 3;
   $("lv-tp").value = Math.round((c.take_profit_pct ?? 0.1) * 100);
   if ($("lv-momw")) $("lv-momw").value = Math.round((c.momentum_weight ?? 0.5) * 100);
+  if ($("lv-voltarget")) $("lv-voltarget").value = Math.round((c.vol_target ?? 0) * 1000) / 10;
   if ($("lv-stop")) $("lv-stop").value = Math.round((c.position_stop_pct ?? 0.25) * 100);
   if ($("lv-cool")) $("lv-cool").value = c.stop_cooldown_days ?? 5;
   $("lv-lookback").value = c.lookback ?? 14;
@@ -242,6 +243,7 @@ $("lv-save").addEventListener("click", async () => {
     rebalance_slices: Number($("lv-slices").value),
     take_profit_pct: Number($("lv-tp").value) / 100,
     momentum_weight: ($("lv-momw") ? Number($("lv-momw").value) : 50) / 100,
+    vol_target: ($("lv-voltarget") ? Number($("lv-voltarget").value) : 0) / 100,
     position_stop_pct: ($("lv-stop") ? Number($("lv-stop").value) : 25) / 100,
     stop_cooldown_days: Number($("lv-cool") ? $("lv-cool").value : 5) || 0,
     lookback: Number($("lv-lookback").value),

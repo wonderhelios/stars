@@ -506,6 +506,7 @@ struct CapitalBody {
 
 #[derive(serde::Deserialize)]
 struct LiveConfigBody {
+    vol_target: Option<f64>,
     position_stop_pct: Option<f64>,
     stop_cooldown_days: Option<i64>,
     account: Option<String>,
@@ -579,6 +580,12 @@ async fn live_config(
     if let Some(v) = body.momentum_weight {
         // 动量占比 0~1（量能占其余）。0.7 = 动量七成。
         c.momentum_weight = v.clamp(0.0, 1.0);
+    }
+    if let Some(v) = body.vol_target {
+        if !(0.0..=0.10).contains(&v) {
+            return (StatusCode::BAD_REQUEST, Json(json!({"ok": false, "error": "目标日波动必须在 0~10%（0 = 关闭）"}))).into_response();
+        }
+        c.vol_target = v;
     }
     if let Some(v) = body.position_stop_pct {
         if !(0.0..=0.9).contains(&v) {
