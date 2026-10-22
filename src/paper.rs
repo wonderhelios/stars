@@ -147,6 +147,12 @@ pub struct EquityPoint {
 
 #[derive(Clone, Debug, Serialize, Deserialize, Default)]
 pub struct PaperState {
+    /// 诊断：面板最后一根日线的时间戳（step 时写入 ✗ 用来排查"卡住"✓）
+    #[serde(default)]
+    pub panel_last_ts: Option<i64>,
+    /// 诊断：最近 5 个交易日的覆盖币数
+    #[serde(default)]
+    pub coverage: Vec<usize>,
     pub running: bool,
     pub config: Option<PaperConfig>,
     pub equity: f64,
@@ -290,6 +296,19 @@ pub fn step(state: &mut PaperState, panel: &[PanelEntry], max_lev: &HashMap<Stri
         return;
     }
 
+    // 诊断：记录面板状态 ✗ 卡住时能看出是"没有新数据"还是"被 complete_days 挡住"✓
+    state.panel_last_ts = p.ts.last().copied();
+    state.coverage = {
+        let mut cov = vec![0usize; p.ts.len()];
+        for (_, cm) in p.closes.iter() {
+            for (i, t) in p.ts.iter().enumerate() {
+                if cm.contains_key(t) {
+                    cov[i] += 1;
+                }
+            }
+        }
+        cov.iter().rev().take(5).rev().copied().collect()
+    };
     let fresh = state.last_ts.is_none();
     // 只在「数据完整」的交易日推进，并且绝不越过最后一个完整日：
     // 残缺日（只有部分币有 K 线）用陈旧价格调仓，会把回测尾部整个污染。
@@ -297,8 +316,34 @@ pub fn step(state: &mut PaperState, panel: &[PanelEntry], max_lev: &HashMap<Stri
     // 只推进到【已经收盘】的那一根：HL 的 candleSnapshot 会带上正在形成的当日 K 线 ✗
     // 用它调仓等于拿「今天几小时」的量能和收盘价算因子 ✗ 和实盘/回测都不同口径 ✗
     let closed = fp.last_closed_index(crate::live::now_ms_pub()).min(p.ts.len().saturating_sub(1));
-    let Some(last_ok) = (0..=closed).rev().find(|&i| complete[i]) else {
-        return;
+    // 已经收盘的那一根只要【有一定覆盖】就推进 ✗ 不再要求 complete_days 的 60%。
+    //
+    // 原因：采集器只刷新"高流动"的那批币 ✗ 最后一天的覆盖数往往只有全量的
+    // 50~60% ✗ 会被 0.6 的阈值挡住 ✗ 纸面引擎就卡在前一天不动 ✓
+    // 而实盘调仓用的是 last_closed_index（不看覆盖率 ✗）✗ 两边因此不同步 ✓
+    // 这里保留一个很低的下限（30%）✗ 只挡住"几乎没有数据"的残缺日 ✓
+    let max_cov = {
+        let mut cov = vec![0usize; p.ts.len()];
+        for (_, cm) in p.closes.iter() {
+            for (i, t) in p.ts.iter().enumerate() {
+                if cm.contains_key(t) {
+                    cov[i] += 1;
+                }
+            }
+        }
+        let lo = closed.saturating_sub(59);
+        cov[lo..=closed].iter().copied().max().unwrap_or(0).max(1)
+    };
+    let cov_of = |i: usize| -> usize {
+        p.closes.values().filter(|cm| cm.contains_key(&p.ts[i])).count()
+    };
+    let last_ok = if cov_of(closed) * 10 >= max_cov * 3 {
+        closed
+    } else {
+        match (0..closed).rev().find(|&i| complete[i]) {
+            Some(i) => i,
+            None => return,
+        }
     };
     let days: Vec<usize> = if fresh {
         let start = last_ok
@@ -676,6 +721,12 @@ pub struct PaperSnapshot {
     pub liq_buffer_pct: f64,
     pub nearest_liq_pct: Option<f64>,
     pub days_elapsed: usize,
+    /// 诊断：上次处理到的日线时间戳
+    pub last_ts: Option<i64>,
+    /// 诊断：面板最后一根日线的时间戳
+    pub panel_last_ts: Option<i64>,
+    /// 诊断：最近 5 个交易日的覆盖币数
+    pub coverage: Vec<usize>,
     pub total_cost: f64,
     pub liquidations: usize,
     pub realized_pnl: f64,
@@ -742,6 +793,9 @@ pub fn snapshot(state: &PaperState) -> PaperSnapshot {
         },
         nearest_liq_pct: nearest,
         days_elapsed: state.days_elapsed,
+        last_ts: state.last_ts,
+        panel_last_ts: state.panel_last_ts,
+        coverage: state.coverage.clone(),
         total_cost: state.total_cost,
         liquidations: state.liquidations,
         realized_pnl: realized,
