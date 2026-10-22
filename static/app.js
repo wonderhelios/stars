@@ -1018,21 +1018,6 @@ async function refreshMonitor(force) {
 }
 
 $("mo-refresh").addEventListener("click", () => refreshMonitor(true));
-$("mo-clear").addEventListener("click", async () => {
-  if (!confirm("清空订单与成交记录？净值曲线、记录起点资金和配置均保留。")) return;
-  try {
-    const res = await fetch("/api/live/records/clear", { method: "POST" });
-    const d = await res.json();
-    if (d.ok) refreshMonitor(true);
-  } catch (e) {
-    alert("清空失败：" + e);
-  }
-});
-
-
-
-
-
 $("mo-chart-tabs").addEventListener("click", event => {
   const button = event.target.closest("button[data-range]");
   if (!button) return;
