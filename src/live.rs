@@ -838,6 +838,14 @@ pub async fn run(
     )];
     plan_lines.extend(vol_lines.clone());
     plan_lines.extend(stop_lines.clone());
+    // 被止损的币 ✗ build_plan 一律标成"掉出名单平仓"✗ 这里改写成本来的原因 ✓
+    for coin in stopped_now.iter().map(|(c, _)| c.as_str()) {
+        for line in plan_lines.iter_mut() {
+            if line.contains(&format!(" {coin} ")) && line.contains("掉出名单平仓") {
+                *line = line.replace("掉出名单平仓", "单币止损平仓");
+            }
+        }
+    }
     // 腿的名单**按权重强弱排序**并显示权重值。
     //
     // 原来直接用 Vec 的插入顺序 —— 那是三因子合并后的任意顺序，看不出谁强谁弱。
