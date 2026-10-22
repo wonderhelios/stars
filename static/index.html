@@ -378,6 +378,7 @@
       .account-summary .v { font-size:30px; font-weight:600; letter-spacing:-.9px; line-height:1.3; }
       .account-summary>.metric:first-child .v { font-size:36px; }
       .account-details { padding:0 20px; }
+      .account-return { display:block; font-size:12px; margin-top:6px; font-weight:500; letter-spacing:0; }
       .account-details>summary { display:flex; align-items:center; gap:12px; padding:16px 0; font-weight:600; font-size:13px; list-style:none; }
       .account-details>summary::before { content:'+'; color:var(--blue); font-size:20px; font-weight:400; }
       .account-details[open]>summary::before { content:'−'; }
@@ -502,7 +503,7 @@
               <p class="sub">只读观测。<b>配置与启停在「实盘设置」。</b></p>
             </div>
             <div class="actions">
-              <button class="btn ghost" id="mo-clear">清空记录</button>
+              <button class="btn ghost" data-open-view="analysis" type="button">分析与记录</button>
               <button class="btn ghost" id="mo-refresh">刷新</button>
             </div>
           </div>
@@ -515,12 +516,6 @@
           </div>
           <div class="content-card"><div class="panel-head" style="margin-top:14px"><h2>当前持仓</h2></div>
           <div id="mo-positions"></div></div>
-          <div class="content-card"><div class="panel-head" style="margin-top:14px"><h2>当前挂单</h2></div>
-          <div id="mo-orders"></div></div>
-          <section class="content-card" id="mo-exec-daily" aria-label="每日执行统计"></section>
-          <div class="content-card"><div class="panel-head monitor-section-head"><div><span class="section-eyebrow">EXECUTION JOURNAL</span><h2>订单与成交</h2></div><div class="segmented" id="mo-record-tabs" role="group" aria-label="记录来源"><button type="button" data-scope="all" aria-pressed="true">全部</button><button type="button" data-scope="system" aria-pressed="false">系统订单</button><button type="button" data-scope="exchange" aria-pressed="false">交易所补录</button></div></div>
-          <p class="note">系统订单展示调仓意图；交易所补录展示成交回执，无法据此确认是调仓、手动平仓或止盈。盈亏为未扣费金额，“估算”与交易所回执分开标注。</p>
-          <div id="mo-records"></div></div>
         </div>
       </section>
 
@@ -622,7 +617,7 @@
               <p class="sub">独立纸面组合 · 动量、距高点与上涨占比。<b>参数在「影子设置」调整。</b></p>
             </div>
             <div class="actions">
-              <button class="btn ghost" id="sh-step" type="button">推进一步</button>
+              <button class="btn ghost" data-open-view="shadow-analysis" type="button">分析与记录</button>
               <button class="btn ghost" id="sh-refresh" type="button">刷新</button>
             </div>
           </div>
@@ -642,11 +637,6 @@
           <div class="content-card">
             <div class="panel-head"><h2>当前持仓</h2></div>
             <div id="sh-positions"></div>
-          </div>
-          <div class="content-card">
-            <div class="panel-head monitor-section-head"><div><span class="section-eyebrow">TRADES</span><h2>成交记录</h2></div></div>
-            <p class="note">展示最近 50 笔成交。成交成本包含手续费与滑点；资金费未建模。</p>
-            <div id="sh-trades"></div>
           </div>
         </div>
       </section>
@@ -673,6 +663,29 @@
       </section>
 
 
+
+<section id="view-analysis" class="view">
+        <div class="workspace-heading"><div><div class="panel-kicker">ANALYSIS &amp; RECORDS · 实盘</div><h2>实盘分析与记录</h2><p class="sub">账务、风险与执行明细，按需查看。</p></div><div class="actions"><button class="btn ghost" id="mo-clear">清空记录</button><button class="btn ghost" data-open-view="monitor" type="button">返回实盘监控</button></div></div>
+        <div id="mo-analysis-metrics"></div>
+          <div class="content-card"><div class="panel-head" style="margin-top:14px"><h2>当前挂单</h2></div>
+          <div id="mo-orders"></div></div>
+          <section class="content-card" id="mo-exec-daily" aria-label="每日执行统计"></section>
+          <div class="content-card"><div class="panel-head monitor-section-head"><div><span class="section-eyebrow">EXECUTION JOURNAL</span><h2>订单与成交</h2></div><div class="segmented" id="mo-record-tabs" role="group" aria-label="记录来源"><button type="button" data-scope="all" aria-pressed="true">全部</button><button type="button" data-scope="system" aria-pressed="false">系统订单</button><button type="button" data-scope="exchange" aria-pressed="false">交易所补录</button></div></div>
+          <p class="note">系统订单展示调仓意图；交易所补录展示成交回执，无法据此确认是调仓、手动平仓或止盈。盈亏为未扣费金额，“估算”与交易所回执分开标注。</p>
+          <div id="mo-records"></div></div>
+
+      </section>
+
+<section id="view-shadow-analysis" class="view">
+        <div class="workspace-heading"><div><div class="panel-kicker">ANALYSIS &amp; RECORDS · 影子</div><h2>影子分析与记录</h2><p class="sub">账务、风险与执行明细，按需查看。</p></div><div class="actions"><button class="btn ghost" id="sh-step" type="button">推进一步</button><button class="btn ghost" data-open-view="shadow" type="button">返回影子监控</button></div></div>
+        <div id="sh-analysis-metrics"></div>
+          <div class="content-card">
+            <div class="panel-head monitor-section-head"><div><span class="section-eyebrow">TRADES</span><h2>成交记录</h2></div></div>
+            <p class="note">展示最近 50 笔成交。成交成本包含手续费与滑点；资金费未建模。</p>
+            <div id="sh-trades"></div>
+          </div>
+
+      </section>
 
     </main>
 

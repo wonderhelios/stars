@@ -36,11 +36,15 @@ const shadow = {running:true,config,equity:2100,capital:2000,pnl:100,pnl_pct:5,d
         await page.waitForSelector(`#${id} > .metric`);
         assert.equal(await page.locator(`#${id} > .metric`).count(),3);
         assert.equal(await page.locator(`#${id}`).evaluate(e=>e.parentElement.classList.contains('performance-panel') && !!e.parentElement.querySelector('.equity-card')),true);
-        assert.equal(await page.locator('#'+id+'-details').evaluate(e=>e.previousElementSibling.classList.contains('performance-panel')),true);
+        assert.equal(await page.locator(`#view-${view} .account-details`).count(),0);
+        assert.equal(await page.locator(`#${id} .account-return`).count(),1);
         assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
         const details=page.locator('#'+id+'-details');
-        assert.equal(await details.evaluate(e=>e.open),false);
-        await details.locator(':scope > summary').click();
+        const analysis=view==='monitor'?'analysis':'shadow-analysis';
+        await page.locator(`[data-open-view="${analysis}"]`).click();
+        assert.equal(await page.locator(`#view-${analysis}`).evaluate(e=>e.classList.contains('active')),true);
+        assert.equal(await page.locator(view==='monitor'?'#mo-exec-daily':'#sh-trades').isVisible(),true);
+        assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
         const buttons=details.locator('.account-detail-tabs button');
         for(let i=0;i<await buttons.count();i++) {
           await buttons.nth(i).click();
@@ -48,12 +52,13 @@ const shadow = {running:true,config,equity:2100,capital:2000,pnl:100,pnl_pct:5,d
           const clipped=await details.locator('.metric-group:not([hidden]) .v').evaluateAll(es=>es.some(e=>e.scrollWidth>e.clientWidth+1));
           assert.equal(clipped,false);
         }
-        // Polling rerenders must preserve the open state and selected category.
+        // Polling rerenders must preserve the analysis page and selected category.
         const selected=await details.getAttribute('data-active');
         await page.evaluate(view=>view==='monitor'?renderMonitor(lastLiveData):renderShadow(lastShadowData),view);
-        assert.equal(await details.evaluate(e=>e.open),true);
+        assert.equal(await page.locator(`#view-${analysis}`).evaluate(e=>e.classList.contains('active')),true);
         assert.equal(await details.getAttribute('data-active'),selected);
-        await details.locator(':scope > summary').click();
+        await page.locator(`[data-open-view="${view}"]`).click();
+        assert.equal(await page.locator('#'+id).isVisible(),true);
         await page.evaluate(()=>scrollTo(0,0));
         if(process.env.SCREENSHOT_DIR && [1440,390].includes(width)) {
           fs.mkdirSync(process.env.SCREENSHOT_DIR,{recursive:true});

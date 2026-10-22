@@ -51,16 +51,21 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // ---------- 导航 ----------
-document.querySelectorAll(".nav button").forEach((b) => {
-  b.addEventListener("click", () => {
-    document.querySelectorAll(".nav button").forEach((x) => { x.classList.remove("active"); x.removeAttribute("aria-current"); });
-    b.classList.add("active");
-    b.setAttribute("aria-current", "page");
-    document.querySelectorAll(".view").forEach((v) => v.classList.remove("active"));
-    $("view-" + b.dataset.view).classList.add("active");
-    window.scrollTo({ top: 0, behavior: "instant" });
+function openWorkspaceView(view) {
+  const destination = $("view-" + view);
+  if (!destination) return;
+  const parent = view === "analysis" ? "monitor" : view === "shadow-analysis" ? "shadow" : view;
+  document.querySelectorAll(".nav button").forEach(button => {
+    const selected = button.dataset.view === parent;
+    button.classList.toggle("active", selected);
+    if (selected) button.setAttribute("aria-current", "page");
+    else button.removeAttribute("aria-current");
   });
-});
+  document.querySelectorAll(".view").forEach(section => section.classList.toggle("active", section === destination));
+  window.scrollTo({top:0,behavior:"instant"});
+}
+document.querySelectorAll(".nav button").forEach(button => button.addEventListener("click", () => openWorkspaceView(button.dataset.view)));
+document.querySelectorAll("[data-open-view]").forEach(button => button.addEventListener("click", () => openWorkspaceView(button.dataset.openView)));
 
 // ---------- 状态轮询 ----------
 async function refreshStatus() {
@@ -1856,10 +1861,10 @@ function arrangeMonitorSummary(id, shadow = false) {
   let details = $(key);
   const active = details?.dataset.active || '0';
   if (!details) {
-    details = document.createElement('details');
+    details = document.createElement('section');
     details.id = key;
     details.className = 'account-details content-card';
-    root.closest('.performance-panel').after(details);
+    $(shadow ? 'sh-analysis-metrics' : 'mo-analysis-metrics').append(details);
   }
   const first = [...groups[0].querySelectorAll('.metric')];
   const capital = groups.find(g => g.classList.contains('capital-account'));
@@ -1871,12 +1876,19 @@ function arrangeMonitorSummary(id, shadow = false) {
     if (!source) continue;
     const item = source.cloneNode(true);
     item.querySelector('.k').textContent = label;
+    if (source === earnings) {
+      const rate = shadow ? first[2] : capital?.querySelectorAll('.metric')[4];
+      if (rate) {
+        const caption = document.createElement('span');
+        caption.className = 'account-return';
+        caption.textContent = (shadow ? '相对本金 ' : '净投入收益率 ') + rate.querySelector('.v').textContent;
+        item.append(caption);
+      }
+    }
     root.append(item);
   }
   details.replaceChildren();
-  const summary = document.createElement('summary');
-  summary.innerHTML = '<span>账户详情</span><span class="detail-hint">资金、风险、执行与统计</span>';
-  details.append(summary);
+
   const nav = document.createElement('div');
   nav.className = 'account-detail-tabs';
   nav.setAttribute('role', 'group');
