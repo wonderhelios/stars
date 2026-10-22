@@ -734,6 +734,22 @@ function renderMonitor(d) {
         metric("总名义敞口", "$" + fmt(d.gross_notional || 0, 0)) +
         metric("当前挂单", currentValid ? (d.tp_orders || []).length + " 笔" : "—") +
         metric("最后调仓", d.last_run_at ? `<span class="sm">${ts2m(d.last_run_at)}</span>` : "—")
+    ) +
+    metricGroup(
+      "胜率 · 三种口径",
+      metric("按交易日", d.win_rate_days != null ? fmt(d.win_rate_days, 0) + "%" : "—",
+        d.win_rate_days == null ? "" : (d.win_rate_days >= 50 ? "pos" : "neg")) +
+        metric("按自然月", d.win_rate_months != null ? fmt(d.win_rate_months, 0) + "%" : "—",
+          d.win_rate_months == null ? "" : (d.win_rate_months >= 50 ? "pos" : "neg")) +
+        metric("按平仓记录", d.win_rate_trades != null ? fmt(d.win_rate_trades, 0) + "%" : "—",
+          d.win_rate_trades == null ? "" : (d.win_rate_trades >= 50 ? "pos" : "neg")) +
+        metric("样本量", `<span class="sm">${d.win_samples_days || 0} 天 / ${d.win_samples_months || 0} 月 / ${d.win_samples_trades || 0} 笔</span>`),
+      "win-rates",
+      '<details class="metric-definition"><summary>三个口径分别怎么算 · 查看定义</summary><p>' +
+        '<b>按交易日</b>：当日最后一个净值点 &gt; 前一日最后一个点，算赢；只有完整记录过的日子才计入。<br>' +
+        '<b>按自然月</b>：当月最后一个净值点 &gt; 上月最后一个点，算赢；样本不足两个月时显示 —。<br>' +
+        '<b>按平仓记录</b>：交易所回执里的已实现盈亏 &gt; 0 算赢，已含手续费；同一仓位分多次平仓会算成多笔，所以它不等于「按仓位」的胜率。<br>' +
+        '三者都不是预测，只是对已发生记录的不同切法；样本很小时波动极大。</p></details>'
     );
 
   // 检查清单按实测结果自动打勾

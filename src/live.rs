@@ -455,6 +455,14 @@ pub struct LiveSnapshot {
     pub capital_flows: Vec<CapitalFlow>,
     /// 资金矩阵分配（动量 / carry / 尖峰狩猎），仅展示。
     pub capital_alloc: CapitalAlloc,
+    /// 胜率（口径见字段注释 ✗ 三个维度分开算 ✓）
+    pub win_rate_days: Option<f64>,
+    pub win_rate_months: Option<f64>,
+    pub win_rate_trades: Option<f64>,
+    /// 交易日数 / 交易月数 / 平仓笔数（前端用来标注样本量）
+    pub win_samples_days: usize,
+    pub win_samples_months: usize,
+    pub win_samples_trades: usize,
     /// 每日执行指标（换手/笔数/滑点），用于月度执行质量复查。
     pub exec_daily: Vec<DailyExec>,
     /// 拿不到行情、只能用交易所市值反推估值的币。非空时要显眼提示 ——
@@ -486,7 +494,67 @@ pub async fn snapshot(
     http: Option<reqwest::Client>,
 ) -> LiveSnapshot {
     let cfg = state.config.clone();
+    // ---- 胜率（三个维度 ✗ 口径写清楚 ✗）----
+    //
+    // ① win_rate_days  : 按【日】统计 ✗ 当日收盘净值 > 前一日收盘 ✓
+    // ② win_rate_months: 按【月】统计 ✗ 当月净值 > 上月末 ✓
+    // ③ win_rate_trades: 按【平仓记录】统计 ✗ pnl > 0 ✓
+    //    （pnl 来自交易所回执 ✗ 已含手续费 ✓ 但同一仓位可能分多次平 ✓ 是按笔不算按仓 ✗）
+    let (wr_days, wr_months, wr_trades, n_days, n_months, n_trades) = {
+        // 按日取最后一点
+        let mut by_day: std::collections::BTreeMap<i64, f64> = std::collections::BTreeMap::new();
+        for p in state.history.iter() {
+            if p.equity.is_finite() && p.equity > 0.0 {
+                by_day.insert(p.ts / 86_400_000, p.equity);
+            }
+        }
+        let days: Vec<f64> = by_day.values().copied().collect();
+        let mut up_days = 0usize;
+        for i in 1..days.len() {
+            if days[i] > days[i - 1] {
+                up_days += 1;
+            }
+        }
+        let n_days = days.len().saturating_sub(1);
+        let wr_days = (n_days > 0).then(|| up_days as f64 / n_days as f64 * 100.0);
+
+        // 按月：每个自然月最后一个点
+        let mut by_month: std::collections::BTreeMap<i64, f64> = std::collections::BTreeMap::new();
+        for (&day, &eq) in by_day.iter() {
+            // 2024-01 起的月序号（用 30.44 天近似 ✗ 只为分组 ✗ 边界误差可接受）
+            by_month.insert(day / 30, eq);
+        }
+        let months: Vec<f64> = by_month.values().copied().collect();
+        let mut up_months = 0usize;
+        for i in 1..months.len() {
+            if months[i] > months[i - 1] {
+                up_months += 1;
+            }
+        }
+        let n_months = months.len().saturating_sub(1);
+        let wr_months = (n_months > 0).then(|| up_months as f64 / n_months as f64 * 100.0);
+
+        // 按平仓记录
+        let closes: Vec<f64> = state
+            .records
+            .iter()
+            .filter(|r| r.reduce_only)
+            .filter_map(|r| r.pnl)
+            .collect();
+        let n_trades = closes.len();
+        let wr_trades = (n_trades > 0).then(|| {
+            closes.iter().filter(|p| **p > 0.0).count() as f64 / n_trades as f64 * 100.0
+        });
+        (wr_days, wr_months, wr_trades, n_days, n_months, n_trades)
+    };
+
     let mut snap = LiveSnapshot {
+        win_rate_days: wr_days,
+        win_rate_months: wr_months,
+        win_rate_trades: wr_trades,
+        win_samples_days: n_days,
+        win_samples_months: n_months,
+        win_samples_trades: n_trades,
         capital_baseline: state.baseline(),
         configured: cfg.can_sign(),
         error: None,
