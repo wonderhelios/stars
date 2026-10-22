@@ -784,15 +784,27 @@ pub async fn run(
         }
     }
 
-    // ②b 止损后重新归一化 ✗ 否则被平掉的那份权重会让组合变成净空/净多 ✓
+    // ②b 止损后重新归一化 ✗ 两个目标:
+    //   ① 总敞口回到止损前（否则少了一个仓位 ✗ 会整体缩水 ✓）
+    //   ② 多腿和空腿的名义【各自相等】（否则 6 多 vs 7 空 ✗ 变成净空头 ✗）
     if !stop_lines.is_empty() {
-        let gross_after: f64 = weights.iter().map(|(_, w)| w.abs()).sum();
-        if gross_after > 1e-12 && gross_before > 1e-12 {
-            let scale = gross_before / gross_after;
+        let long_gross: f64 = weights.iter().filter(|(_, w)| *w > 0.0).map(|(_, w)| w.abs()).sum();
+        let short_gross: f64 = weights.iter().filter(|(_, w)| *w < 0.0).map(|(_, w)| w.abs()).sum();
+        if long_gross > 1e-12 && short_gross > 1e-12 && gross_before > 1e-12 {
+            // 每条腿的目标毛额 = 总目标的一半
+            let leg_target = gross_before / 2.0;
+            let kl = leg_target / long_gross;
+            let ks = leg_target / short_gross;
             for (_, w) in weights.iter_mut() {
-                *w *= scale;
+                if *w > 0.0 {
+                    *w *= kl;
+                } else if *w < 0.0 {
+                    *w *= ks;
+                }
             }
-            stop_lines.push(format!("止损后重新归一化：剩余仓位 ×{scale:.3}（保持多空平衡）"));
+            stop_lines.push(format!(
+                "止损后重新归一化：多腿 ×{kl:.3} ✗ 空腿 ×{ks:.3}（两侧名义拉平 ✗ 保持中性）"
+            ));
         }
     }
 
