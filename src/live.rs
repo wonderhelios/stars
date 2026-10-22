@@ -762,6 +762,7 @@ pub async fn run(
     }
 
     // ② 单币止损：逆向浮亏超过阈值 → 目标清零（必须放在冷却之后 ✗ 让它覆盖 ✗）
+    let gross_before: f64 = weights.iter().map(|(_, w)| w.abs()).sum();
     if cfg.position_stop_pct > 0.0 {
         for (coin, pos) in acct.positions.iter() {
             let Some(&mark) = mids.get(coin) else { continue };
@@ -780,6 +781,18 @@ pub async fn run(
                     cfg.stop_cooldown_days
                 ));
             }
+        }
+    }
+
+    // ②b 止损后重新归一化 ✗ 否则被平掉的那份权重会让组合变成净空/净多 ✓
+    if !stop_lines.is_empty() {
+        let gross_after: f64 = weights.iter().map(|(_, w)| w.abs()).sum();
+        if gross_after > 1e-12 && gross_before > 1e-12 {
+            let scale = gross_before / gross_after;
+            for (_, w) in weights.iter_mut() {
+                *w *= scale;
+            }
+            stop_lines.push(format!("止损后重新归一化：剩余仓位 ×{scale:.3}（保持多空平衡）"));
         }
     }
 
@@ -812,6 +825,7 @@ pub async fn run(
         cfg.margin_buffer * 100.0
     )];
     plan_lines.extend(vol_lines.clone());
+    plan_lines.extend(stop_lines.clone());
     // 腿的名单**按权重强弱排序**并显示权重值。
     //
     // 原来直接用 Vec 的插入顺序 —— 那是三因子合并后的任意顺序，看不出谁强谁弱。
