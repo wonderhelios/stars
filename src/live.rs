@@ -775,11 +775,14 @@ pub async fn run(
                 *w *= k;
             }
             vol_lines.push(format!(
-                "波动目标 {:.1}%/天：预估组合日波动 {:.2}% → 仓位 ×{:.2}（有效杠杆 {:.2}x）",
+                "波动目标 {:.1}%/天：预估组合日波动 {:.2}% → 仓位 ×{:.2}（实际杠杆 {:.2}x = {}x × 缓冲 {} × {:.2}）",
                 cfg.vol_target * 100.0,
                 vol * 100.0,
                 k,
-                cfg.effective_leverage() * k
+                cfg.effective_leverage() * cfg.margin_buffer * k,
+                cfg.effective_leverage(),
+                cfg.margin_buffer,
+                k
             ));
         } else {
             vol_lines.push("波动目标：样本不足，按原杠杆执行".into());
