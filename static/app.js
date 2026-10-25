@@ -1909,15 +1909,17 @@ function arrangeMonitorSummary(id, shadow = false) {
     item.className = "metric health-item";
     const tone = lastHealth.status === "red" ? "neg" : lastHealth.status === "yellow" ? "" : "pos";
     const label = lastHealth.status === "red" ? "异常" : lastHealth.status === "yellow" ? "注意" : "正常";
-    const ic = lastHealth.ic90 != null ? `IC ${lastHealth.ic90.toFixed(3)}` : "样本不足";
     item.innerHTML =
       '<div class="k">策略健康度</div>' +
-      `<div class="v ${tone}"><span class="health-dot ${lastHealth.status}"></span>${label}` +
-      `<span class="metric-unit"> ${ic}</span></div>`;
-    if (lastHealth.reason) {
+      `<div class="v ${tone}"><span class="health-dot ${lastHealth.status}"></span>${label}</div>`;
+    // IC 和原因一起放到下面那行小字里 ✗ 上面只留状态 ✗ 免得挤在一起 ✓
+    const bits = [];
+    if (lastHealth.ic90 != null) bits.push(`因子 IC ${lastHealth.ic90.toFixed(3)}（90 日）`);
+    if (lastHealth.reason) bits.push(lastHealth.reason);
+    if (bits.length) {
       const cap = document.createElement("span");
       cap.className = "account-return";
-      cap.textContent = lastHealth.reason;
+      cap.textContent = bits.join(" · ");
       item.append(cap);
     }
     root.append(item);
