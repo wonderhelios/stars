@@ -1259,6 +1259,7 @@ function renderShadow(d) {
   const gross = d.gross_notional || 0, net = d.net_notional || 0;
   const nLong = ps.filter((p) => String(p.side).toLowerCase() === "long").length;
   const ctl = lastControlData || {};
+  const vt = lastVTData || {};
   // 同窗口口径：以对照组合（同起点）的第一天为基准 ✗ 算实盘在同一窗口的变化 ✗
   const ctlHist = (ctl.history || []).filter((p) => Number.isFinite(p.ts) && Number.isFinite(p.equity));
   const ctlStart = ctlHist.length ? ctlHist[0].ts : null;
@@ -1337,7 +1338,6 @@ function renderShadow(d) {
   const chist = (ctl.history || []).filter((p) => Number.isFinite(p.ts) && Number.isFinite(p.equity));
   const cwin = equityWindow(chist, arr.length < 3 ? "all" : shRange, Date.now());
   const carr = (cwin.points || []).map((p) => [p.ts, p.equity]);
-  const vt = lastVTData || {};
   const vhist = (vt.history || []).filter((p) => Number.isFinite(p.ts) && Number.isFinite(p.equity));
   const vwin = equityWindow(vhist, arr.length < 3 ? "all" : shRange, Date.now());
   const varr = (vwin.points || []).map((p) => [p.ts, p.equity]);
