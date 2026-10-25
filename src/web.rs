@@ -24,6 +24,9 @@ pub struct AppState {
     /// 影子组合（动量 + 距高点 + 上涨占比 三因子）纸面引擎。
     pub paper2: Arc<Mutex<PaperState>>,
     pub paper2_path: Arc<std::path::PathBuf>,
+    /// 第三个纸面组合：纯动量 + 波动目标（用来单独验证波动目标）
+    pub paper3: Arc<Mutex<PaperState>>,
+    pub paper3_path: Arc<std::path::PathBuf>,
     pub live: Arc<Mutex<crate::live::LiveState>>,
     pub live_path: Arc<std::path::PathBuf>,
     pub meta: Arc<Mutex<MetaCache>>,
@@ -84,6 +87,11 @@ pub fn router(state: AppState) -> Router {
         .route("/api/paper2/stop", post(paper2_stop))
         .route("/api/paper2/reset", post(paper2_reset))
         .route("/api/paper2/step", post(paper2_step))
+        .route("/api/paper3", get(paper3_status))
+        .route("/api/paper3/start", post(paper3_start))
+        .route("/api/paper3/stop", post(paper3_stop))
+        .route("/api/paper3/reset", post(paper3_reset))
+        .route("/api/paper3/step", post(paper3_step))
         .route("/api/live", get(live_status))
         .route("/api/live/config", post(live_config))
         .route("/api/live/run", post(live_run))
@@ -222,6 +230,8 @@ async fn paper_status(State(state): State<AppState>) -> Json<serde_json::Value> 
 
 #[derive(serde::Deserialize)]
 struct PaperStartReq {
+    #[serde(default)]
+    vol_target: Option<f64>,
     #[serde(default = "d14")]
     lookback: usize,
     #[serde(default = "d020")]
@@ -272,6 +282,7 @@ async fn paper_start(
         if cached > 0.0 { cached } else { d_fee() }
     };
     p.config = Some(PaperConfig {
+        vol_target: req.vol_target.unwrap_or(0.0).clamp(0.0, 0.10),
         lookback: req.lookback.max(1),
         top_frac: req.top_frac.clamp(0.05, 0.5),
         min_vol_usd: req.min_vol_usd.max(0.0),
@@ -382,6 +393,7 @@ async fn paper2_start(State(state): State<AppState>, Json(req): Json<PaperStartR
         if cached > 0.0 { cached } else { d_fee() }
     };
     p.config = Some(PaperConfig {
+        vol_target: req.vol_target.unwrap_or(0.0).clamp(0.0, 0.10),
         lookback: req.lookback.max(1),
         top_frac: req.top_frac.clamp(0.05, 0.5),
         min_vol_usd: req.min_vol_usd.max(0.0),
@@ -432,6 +444,82 @@ async fn paper2_reset(State(state): State<AppState>) -> Response {
 async fn paper2_step(State(state): State<AppState>) -> Response {
     if !state.paper2.lock().await.running {
         return (StatusCode::CONFLICT, Json(json!({"error": "影子组合未启动"}))).into_response();
+    }
+    match run_paper_step_which(&state, true).await {
+        Some(v) => Json(v).into_response(),
+        None => (StatusCode::CONFLICT, Json(json!({"error": "数据不足"}))).into_response(),
+    }
+}
+// ==================== paper3 (波动目标对照) ====================
+
+async fn paper3_status(State(state): State<AppState>) -> Json<serde_json::Value> {
+    Json(json!(paper::snapshot(&*state.paper3.lock().await)))
+}
+
+async fn paper3_start(State(state): State<AppState>, Json(req): Json<PaperStartReq>) -> Response {
+    let mut p = state.paper3.lock().await;
+    // 「应用并重启」：正在运行时直接重置重来，而不是返回 409 把用户挡在外面。
+    if p.running {
+        p.running = false;
+    }
+    let fee = if req.fee > 0.0 {
+        req.fee
+    } else {
+        let cached = state.meta.lock().await.fee_taker;
+        if cached > 0.0 { cached } else { d_fee() }
+    };
+    p.config = Some(PaperConfig {
+        vol_target: req.vol_target.unwrap_or(0.0).clamp(0.0, 0.10),
+        lookback: req.lookback.max(1),
+        top_frac: req.top_frac.clamp(0.05, 0.5),
+        min_vol_usd: req.min_vol_usd.max(0.0),
+        fee,
+        slippage: req.slippage.unwrap_or(0.0003).clamp(0.0, 0.01),
+        capital: req.capital.max(1.0),
+        leverage: req.leverage.clamp(1.0, 20.0),
+        replay_days: req.replay_days.min(365),
+        target_positions: req.target_positions.clamp(1, 30),
+        momentum_weight: req.momentum_weight.clamp(0.0, 1.0),
+        dd_weight: req.dd_weight.max(0.0),
+        upfrac_weight: req.upfrac_weight.max(0.0),
+    });
+    p.running = true;
+    let capital = p.config.as_ref().unwrap().capital;
+    p.equity = capital;
+    p.market = 1.0;
+    p.positions.clear();
+    p.trades.clear();
+    p.history.clear();
+    p.last_ts = None;
+    p.days_elapsed = 0;
+    p.total_cost = 0.0;
+    p.started_at = None;
+    let _ = p.save(&state.paper3_path);
+    drop(p);
+    let snapshot = run_paper_step_which(&state, true).await;
+    match snapshot {
+        Some(v) => Json(json!({"ok": true, "config": v["config"], "paper": v})).into_response(),
+        None => Json(json!({"ok": true})).into_response(),
+    }
+}
+
+async fn paper3_stop(State(state): State<AppState>) -> Response {
+    let mut p = state.paper3.lock().await;
+    p.running = false;
+    let _ = p.save(&state.paper3_path);
+    Json(json!({"ok": true})).into_response()
+}
+
+async fn paper3_reset(State(state): State<AppState>) -> Response {
+    let mut p = state.paper3.lock().await;
+    *p = PaperState::default();
+    let _ = p.save(&state.paper3_path);
+    Json(json!({"ok": true})).into_response()
+}
+
+async fn paper3_step(State(state): State<AppState>) -> Response {
+    if !state.paper3.lock().await.running {
+        return (StatusCode::CONFLICT, Json(json!({"error": "波动目标对照未启动"}))).into_response();
     }
     match run_paper_step_which(&state, true).await {
         Some(v) => Json(v).into_response(),
@@ -1229,6 +1317,8 @@ mod live_routes_tests {
             auth_token: None,
             paper2: Arc::new(Mutex::new(crate::paper::PaperState::default())),
             paper2_path: Arc::new(root.join("paper2.json")),
+            paper3: Arc::new(Mutex::new(crate::paper::PaperState::default())),
+            paper3_path: Arc::new(root.join("paper3.json")),
         };
         let app = router(base.clone());
         let response = app.clone().oneshot(Request::builder().uri("/").body(Body::empty()).unwrap()).await.unwrap();
@@ -1283,6 +1373,8 @@ mod live_routes_tests {
             auth_token: None,
             paper2: Arc::new(Mutex::new(crate::paper::PaperState::default())),
             paper2_path: Arc::new(root.join("paper2.json")),
+            paper3: Arc::new(Mutex::new(crate::paper::PaperState::default())),
+            paper3_path: Arc::new(root.join("paper3.json")),
         };
         let app = router(base.clone());
         // 资金费面板（初始为空状态, 仍应 200）。

@@ -29,6 +29,9 @@ pub enum Side {
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct PaperConfig {
+    /// 目标日波动（0 = 关闭 ✗ 0.02 = 用过去 20 日实现波动缩放仓位）
+    #[serde(default)]
+    pub vol_target: f64,
     pub lookback: usize,
     pub top_frac: f64,
     pub min_vol_usd: f64,
@@ -75,6 +78,7 @@ fn d_target_pos() -> usize {
 impl Default for PaperConfig {
     fn default() -> Self {
         Self {
+            vol_target: 0.0,
             lookback: 14,
             top_frac: 0.2,
             min_vol_usd: 5_000_000.0,
@@ -399,7 +403,31 @@ fn advance(
         leverage: cfg.leverage,
         ..Default::default()
     };
-    let weights = fp.weights_at(i, &tc, state.equity);
+    let mut weights = fp.weights_at(i, &tc, state.equity);
+    // ---- 波动目标：用【本策略过去 20 日实现波动】缩放仓位 ----
+    // 和实盘的 book_vol_estimate 思路一致（实盘用持仓币的历史 ✗ 纸面用自身净值 ✓）
+    if cfg.vol_target > 0.0 {
+        let rets: Vec<f64> = state
+            .history
+            .iter()
+            .rev()
+            .take(21)
+            .collect::<Vec<_>>()
+            .windows(2)
+            .map(|w| w[0].equity / w[1].equity.max(1e-9) - 1.0)
+            .collect();
+        let k = if rets.len() >= 10 {
+            let mean = rets.iter().sum::<f64>() / rets.len() as f64;
+            let var = rets.iter().map(|x| (x - mean).powi(2)).sum::<f64>() / (rets.len() - 1) as f64;
+            let sd = var.sqrt().max(1e-9);
+            (cfg.vol_target / sd).clamp(0.2, 3.0)
+        } else {
+            0.45
+        };
+        for (_, w) in weights.iter_mut() {
+            *w *= k;
+        }
+    }
     // 这里曾经写成 `weights.len() < 12`，但重构后它统计的是「实际持仓数」
     // （受 cap 限制，小账户只有几个），而不是「合格币数」。后果是：小账户下
     // 每天都被判定为样本不足直接 return，而 return 发生在更新 last_ts 之前，

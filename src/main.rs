@@ -44,6 +44,8 @@ async fn main() -> anyhow::Result<()> {
     }
     let paper2_path = std::env::var("STARS_PAPER2")
         .unwrap_or_else(|_| "/var/lib/stars/paper2.json".to_string());
+    let paper3_path = std::env::var("STARS_PAPER3")
+        .unwrap_or_else(|_| "/var/lib/stars/paper3.json".to_string());
     let live_path = std::env::var("STARS_LIVE")
         .unwrap_or_else(|_| "/var/lib/stars/live.json".to_string());
     let carry_path = std::env::var("STARS_CARRY")
@@ -60,10 +62,11 @@ async fn main() -> anyhow::Result<()> {
     let store = Arc::new(Store::open(std::path::Path::new(&db_path))?);
     let client = HlClient::new();
     let paper = Arc::new(Mutex::new(PaperState::load(std::path::Path::new(&paper_path))));
+    let base_cfg = paper.lock().await.config.clone().unwrap_or_default();
     let mut paper2 = PaperState::load(std::path::Path::new(&paper2_path));
     if paper2.config.is_none() {
         // 影子组合：动量 + 距高点 + 上涨占比 三因子等权（动量权重置 1 使量能为 0）。
-        let base = paper.lock().await.config.clone().unwrap_or_default();
+        let base = base_cfg.clone();
         paper2.config = Some(crate::paper::PaperConfig {
             momentum_weight: 1.0,
             dd_weight: 1.0,
@@ -80,6 +83,22 @@ async fn main() -> anyhow::Result<()> {
         paper2.running = true;
     }
     let paper2 = Arc::new(Mutex::new(paper2));
+    let mut paper3 = PaperState::load(std::path::Path::new(&paper3_path));
+    if paper3.config.is_none() {
+        paper3.config = Some(crate::paper::PaperConfig {
+            vol_target: 0.02,
+            momentum_weight: 1.0,
+            dd_weight: 0.0,
+            upfrac_weight: 0.0,
+            capital: base_cfg.capital,
+            min_vol_usd: 10_000_000.0,
+            replay_days: 1,
+            ..base_cfg.clone()
+        });
+        paper3.equity = base_cfg.capital;
+        paper3.running = true;
+    }
+    let paper3 = Arc::new(Mutex::new(paper3));
     let hl_live = live::LiveState::load(std::path::Path::new(&live_path));
     let live = Arc::new(Mutex::new(hl_live));
     let carry = Arc::new(Mutex::new(crate::carry::CarryState::load(std::path::Path::new(&carry_path))));
@@ -96,6 +115,8 @@ async fn main() -> anyhow::Result<()> {
         auth_token: auth_token.clone(),
         paper2: paper2.clone(),
         paper2_path: Arc::new(std::path::PathBuf::from(&paper2_path)),
+        paper3: paper3.clone(),
+        paper3_path: Arc::new(std::path::PathBuf::from(&paper3_path)),
         live: live.clone(),
         live_path: Arc::new(std::path::PathBuf::from(&live_path)),
         http: reqwest::Client::builder()
@@ -430,7 +451,11 @@ async fn main() -> anyhow::Result<()> {
         let paper2 = paper2.clone();
         let paper2_path = paper2_path.clone();
         tokio::spawn(async move {
-            refresh_loop(store, client, meta, refresh, paper, paper_path, paper2, paper2_path).await;
+            refresh_loop(
+                store, client, meta, refresh, paper, paper_path, paper2, paper2_path, paper3,
+                paper3_path,
+            )
+            .await;
         });
     }
 
@@ -453,6 +478,8 @@ async fn refresh_loop(
     paper_path: String,
     paper2: Arc<Mutex<PaperState>>,
     paper2_path: String,
+    paper3: Arc<Mutex<PaperState>>,
+    paper3_path: String,
 ) {
     // Initial full backfill.
     if let Err(e) = backfill(&store, &client, &meta, &refresh).await {
@@ -492,6 +519,12 @@ async fn refresh_loop(
         if p2.running {
             crate::paper::step(&mut p2, &panel, &max_lev);
             let _ = p2.save(std::path::Path::new(&paper2_path));
+        }
+        drop(p2);
+        let mut p3 = paper3.lock().await;
+        if p3.running {
+            crate::paper::step(&mut p3, &panel, &max_lev);
+            let _ = p3.save(std::path::Path::new(&paper3_path));
         }
     }
 }
