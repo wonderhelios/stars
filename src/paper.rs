@@ -345,14 +345,16 @@ pub fn step(state: &mut PaperState, panel: &[PanelEntry], max_lev: &HashMap<Stri
             None => return,
         }
     };
+    // 注意：last_ok 已经通过了覆盖率检查 ✗ 所以【最后一天】不能再被 complete 过滤掉 ✗
+    // 否则采集器只刷新高流动币时 ✗ 最近几天会被 60% 阈值挡住 ✗ 引擎永远停在原地 ✓
     let days: Vec<usize> = if fresh {
         let start = last_ok
             .saturating_sub(cfg.replay_days)
             .max(cfg.lookback + 30);
-        (start..=last_ok).filter(|&i| complete[i]).collect()
+        (start..=last_ok).filter(|&i| i == last_ok || complete[i]).collect()
     } else {
         match p.ts.binary_search(&state.last_ts.unwrap()) {
-            Ok(j) if j + 1 <= last_ok => (j + 1..=last_ok).filter(|&i| complete[i]).collect(),
+            Ok(j) if j + 1 <= last_ok => (j + 1..=last_ok).filter(|&i| i == last_ok || complete[i]).collect(),
             _ => Vec::new(),
         }
     };
