@@ -703,24 +703,9 @@ function renderMonitor(d) {
       metric("账户净值", currentValid ? "$" + fmt(eq, 2) : "—") +
       metric("未实现盈亏 · PNL", currentValid ? moneySigned(unrealized) : "—", currentValid ? (unrealized >= 0 ? "pos" : "neg") : "") +
       metric("持仓数量", currentValid ? nPos + '<span class="metric-unit"> 个</span>' : "—") +
-      metric("实际杠杆", currentValid ? fmt(actualLev, 2) + '<span class="metric-unit"> x</span>' : "—") +
-      metric(
-        "策略健康度",
-        lastHealth
-          ? (lastHealth.status === "red"
-              ? "🔴 异常"
-              : lastHealth.status === "yellow"
-                ? "🟡 注意"
-                : "🟢 正常") +
-            (lastHealth.ic90 != null
-              ? `<span class="metric-unit"> IC ${lastHealth.ic90.toFixed(3)}</span>`
-              : "")
-          : "—",
-        lastHealth ? (lastHealth.status === "red" ? "neg" : lastHealth.status === "yellow" ? "" : "pos") : ""
-      ),
+      metric("实际杠杆", currentValid ? fmt(actualLev, 2) + '<span class="metric-unit"> x</span>' : "—"),
       "live-overview",
       '<div class="metric-footnote"><span class="live-dot"></span>未实现盈亏为当前持仓浮盈浮亏，不与历史已实现盈亏相加。' +
-        (lastHealth && lastHealth.reason ? ` ｜ 健康度：${escapeHTML(lastHealth.reason)}` : "") +
         "</div>"
     ) +
     metricGroup(
@@ -1915,6 +1900,25 @@ function arrangeMonitorSummary(id, shadow = false) {
         caption.textContent = (shadow ? '相对本金 ' : '净投入收益率 ') + rate.querySelector('.v').textContent;
         item.append(caption);
       }
+    }
+    root.append(item);
+  }
+  // 策略健康度：直接放在摘要卡里（四项并排 ✗ 和净值/收益/浮盈同一排 ✓）
+  if (!shadow && lastHealth) {
+    const item = document.createElement("div");
+    item.className = "metric health-item";
+    const tone = lastHealth.status === "red" ? "neg" : lastHealth.status === "yellow" ? "" : "pos";
+    const label = lastHealth.status === "red" ? "异常" : lastHealth.status === "yellow" ? "注意" : "正常";
+    const ic = lastHealth.ic90 != null ? `IC ${lastHealth.ic90.toFixed(3)}` : "样本不足";
+    item.innerHTML =
+      '<div class="k">策略健康度</div>' +
+      `<div class="v ${tone}"><span class="health-dot ${lastHealth.status}"></span>${label}` +
+      `<span class="metric-unit"> ${ic}</span></div>`;
+    if (lastHealth.reason) {
+      const cap = document.createElement("span");
+      cap.className = "account-return";
+      cap.textContent = lastHealth.reason;
+      item.append(cap);
     }
     root.append(item);
   }

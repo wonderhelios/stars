@@ -371,7 +371,15 @@
       .performance-panel>.equity-card>.panel-head { border-bottom:0; padding-bottom:0; margin-bottom:16px; }
       @media(max-width:760px) { .performance-panel { padding:0 16px 16px; margin:12px 0 14px; } .performance-panel>.content-card.equity-card { padding:16px 0 0; } }
       /* Secondary metrics are opt-in. */
-      #mo-metrics,#sh-metrics { display:grid; grid-template-columns:1.2fr 1fr 1fr; gap:24px; padding:22px 0 24px; margin:0; }
+      #mo-metrics { display:grid; grid-template-columns:1.15fr 1fr 1fr 1fr; gap:24px; padding:22px 0 24px; margin:0; }
+      #sh-metrics { display:grid; grid-template-columns:1.2fr 1fr 1fr; gap:24px; padding:22px 0 24px; margin:0; }
+      /* 健康度：一个圆点 + 状态 + IC ✗ 比数字小一号 ✗ 免得抢戏 */
+      .health-item .v { font-size:20px !important; font-weight:600; display:flex; align-items:center; }
+      .health-dot { width:9px; height:9px; border-radius:50%; margin-right:8px; flex:0 0 auto; }
+      .health-dot.green { background:var(--green); box-shadow:0 0 0 3px rgba(22,132,115,.12); }
+      .health-dot.yellow { background:#c99a2e; box-shadow:0 0 0 3px rgba(201,154,46,.15); }
+      .health-dot.red { background:var(--red); box-shadow:0 0 0 3px rgba(192,57,43,.15); }
+      .health-item .account-return { color:var(--muted); }
       .account-summary>.metric { padding:0; border:0; border-radius:0; background:transparent; }
       .account-summary .k { font-size:12px; color:#687c86; margin-bottom:10px; }
       .account-summary .v { font-size:30px; font-weight:600; letter-spacing:-.9px; line-height:1.3; }
