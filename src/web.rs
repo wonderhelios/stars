@@ -321,10 +321,11 @@ async fn paper_start(
 
 /// Load the candle panel + per-coin max leverage and advance the paper trade.
 async fn run_paper_step(state: &AppState) -> Option<serde_json::Value> {
-    run_paper_step_which(state, false).await
+    run_paper_step_which(state, 0).await
 }
 
-async fn run_paper_step_which(state: &AppState, use2: bool) -> Option<serde_json::Value> {
+/// which: 0 = paper（对照）✗ 1 = paper2（影子）✗ 2 = paper3（波动目标）
+async fn run_paper_step_which(state: &AppState, which: u8) -> Option<serde_json::Value> {
     let panel: Vec<PanelEntry> = state
         .store
         .all_panels()
@@ -339,10 +340,10 @@ async fn run_paper_step_which(state: &AppState, use2: bool) -> Option<serde_json
             .map(|c| (c.name.clone(), c.max_leverage))
             .collect()
     };
-    let (p, path) = if use2 {
-        (state.paper2.clone(), state.paper2_path.clone())
-    } else {
-        (state.paper.clone(), state.paper_path.clone())
+    let (p, path) = match which {
+        1 => (state.paper2.clone(), state.paper2_path.clone()),
+        2 => (state.paper3.clone(), state.paper3_path.clone()),
+        _ => (state.paper.clone(), state.paper_path.clone()),
     };
     let mut p = p.lock().await;
     paper::step(&mut p, &panel, &max_lev);
@@ -420,7 +421,7 @@ async fn paper2_start(State(state): State<AppState>, Json(req): Json<PaperStartR
     p.started_at = None;
     let _ = p.save(&state.paper2_path);
     drop(p);
-    let snapshot = run_paper_step_which(&state, true).await;
+    let snapshot = run_paper_step_which(&state, 1).await;
     match snapshot {
         Some(v) => Json(json!({"ok": true, "config": v["config"], "paper": v})).into_response(),
         None => Json(json!({"ok": true})).into_response(),
@@ -445,7 +446,7 @@ async fn paper2_step(State(state): State<AppState>) -> Response {
     if !state.paper2.lock().await.running {
         return (StatusCode::CONFLICT, Json(json!({"error": "影子组合未启动"}))).into_response();
     }
-    match run_paper_step_which(&state, true).await {
+    match run_paper_step_which(&state, 1).await {
         Some(v) => Json(v).into_response(),
         None => (StatusCode::CONFLICT, Json(json!({"error": "数据不足"}))).into_response(),
     }
@@ -496,7 +497,7 @@ async fn paper3_start(State(state): State<AppState>, Json(req): Json<PaperStartR
     p.started_at = None;
     let _ = p.save(&state.paper3_path);
     drop(p);
-    let snapshot = run_paper_step_which(&state, true).await;
+    let snapshot = run_paper_step_which(&state, 2).await;
     match snapshot {
         Some(v) => Json(json!({"ok": true, "config": v["config"], "paper": v})).into_response(),
         None => Json(json!({"ok": true})).into_response(),
@@ -521,7 +522,7 @@ async fn paper3_step(State(state): State<AppState>) -> Response {
     if !state.paper3.lock().await.running {
         return (StatusCode::CONFLICT, Json(json!({"error": "波动目标对照未启动"}))).into_response();
     }
-    match run_paper_step_which(&state, true).await {
+    match run_paper_step_which(&state, 2).await {
         Some(v) => Json(v).into_response(),
         None => (StatusCode::CONFLICT, Json(json!({"error": "数据不足"}))).into_response(),
     }
