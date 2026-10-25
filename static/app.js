@@ -208,6 +208,14 @@ document.addEventListener("click", (e) => {
 // ==================== 实盘设置 ====================
 let liveLoaded = false;
 let liveBusy = false;
+// 这些缓存必须在这里声明 ✗ 之前放在文件后面时 ✗
+// 早期调用的 renderMonitor 会踩到 TDZ（Cannot access before initialization）✗
+let lastShadowData = null;
+let lastControlData = null;
+let lastLiveForShadow = null;
+let lastVTData = null;
+let lastHealth = null;
+let liveFetchedAt = 0;
 
 function lvConfigInto(d) {
   const c = d.config || {};
@@ -1270,11 +1278,6 @@ setInterval(refreshXPaper, 60000);
 setInterval(refreshShadow, 120000);
 
 // ---------- 影子组合（三因子 ✗ 动量+距高点+上涨占比 ✗） ----------
-let lastShadowData = null;
-let lastControlData = null;
-let lastLiveForShadow = null;
-let lastVTData = null;
-let lastHealth = null;
 let shRange = "week";
 let shPosPage = 0;
 let shTradePage = 0;
