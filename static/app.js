@@ -173,8 +173,6 @@ function orderSideLabel(s) {
 
 
 
-
-
 // ---------- 分页 ----------
 const LIVE_PAGE_SIZE = 5;
 
@@ -202,8 +200,6 @@ document.addEventListener("click", (e) => {
 // 持有期分析：赚的钱来自长仓还是短仓
 
 // 选一组好看的坐标轴刻度
-
-
 
 // ==================== 实盘设置 ====================
 let liveLoaded = false;
@@ -1017,8 +1013,6 @@ function renderLiveChart(history, shadow) {
     </svg><div class="chart-caption"><span><i></i>策略盈亏 <span class="muted">· 虚线为区间起点</span></span><span>${raw.length === 1 ? "仅一条记录，等待下一次采样" : "悬停查看采样值"} · 已扣登记出入金，含手续费与资金费</span></div>${adjusted.estimated ? '<p class="note">旧流水按登记时间估算；如为事后补记，请在资金流水中校正到账时间，避免历史曲线出现错位跳变。</p>' : ""}`;
 }
 
-
-let liveFetchedAt = 0;
 
 // 手机端省电：页面切到后台就停止轮询，切回来立刻拉一次
 document.addEventListener("visibilitychange", () => {
