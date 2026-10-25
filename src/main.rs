@@ -1,6 +1,7 @@
 mod carry;
 mod exchange;
 mod funding;
+mod health;
 mod hl;
 mod live;
 mod momentum;

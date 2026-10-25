@@ -699,9 +699,25 @@ function renderMonitor(d) {
       metric("账户净值", currentValid ? "$" + fmt(eq, 2) : "—") +
       metric("未实现盈亏 · PNL", currentValid ? moneySigned(unrealized) : "—", currentValid ? (unrealized >= 0 ? "pos" : "neg") : "") +
       metric("持仓数量", currentValid ? nPos + '<span class="metric-unit"> 个</span>' : "—") +
-      metric("实际杠杆", currentValid ? fmt(actualLev, 2) + '<span class="metric-unit"> x</span>' : "—"),
+      metric("实际杠杆", currentValid ? fmt(actualLev, 2) + '<span class="metric-unit"> x</span>' : "—") +
+      metric(
+        "策略健康度",
+        lastHealth
+          ? (lastHealth.status === "red"
+              ? "🔴 异常"
+              : lastHealth.status === "yellow"
+                ? "🟡 注意"
+                : "🟢 正常") +
+            (lastHealth.ic90 != null
+              ? `<span class="metric-unit"> IC ${lastHealth.ic90.toFixed(3)}</span>`
+              : "")
+          : "—",
+        lastHealth ? (lastHealth.status === "red" ? "neg" : lastHealth.status === "yellow" ? "" : "pos") : ""
+      ),
       "live-overview",
-      '<div class="metric-footnote"><span class="live-dot"></span>未实现盈亏为当前持仓浮盈浮亏，不与历史已实现盈亏相加。</div>'
+      '<div class="metric-footnote"><span class="live-dot"></span>未实现盈亏为当前持仓浮盈浮亏，不与历史已实现盈亏相加。' +
+        (lastHealth && lastHealth.reason ? ` ｜ 健康度：${escapeHTML(lastHealth.reason)}` : "") +
+        "</div>"
     ) +
     metricGroup(
       "资金表现 · 相对记录起点",
@@ -1001,10 +1017,24 @@ document.addEventListener("visibilitychange", () => {
   if (!document.hidden) refreshMonitor();
 });
 
+async function refreshHealth() {
+  try {
+    lastHealth = await fetchJSONRetry("/api/strategy-health", {}, 20000);
+  } catch (e) {}
+}
+
 async function refreshMonitor(force) {
   if (liveBusy) return;
   if (document.hidden && !force) return;
   try {
+    // 健康度是重计算（要跑 150 天 IC ✗ 后端缓存到 5 分钟一次即可）
+    if (!lastHealth || Date.now() - (lastHealth._at || 0) > 300000) {
+      const h = await fetchJSONRetry("/api/strategy-health", {}, 30000).catch(() => null);
+      if (h) {
+        h._at = Date.now();
+        lastHealth = h;
+      }
+    }
     const d = await fetchLive();
     liveFetchedAt = Date.now();
     if (!liveLoaded) {
@@ -1244,6 +1274,7 @@ let lastShadowData = null;
 let lastControlData = null;
 let lastLiveForShadow = null;
 let lastVTData = null;
+let lastHealth = null;
 let shRange = "week";
 let shPosPage = 0;
 let shTradePage = 0;

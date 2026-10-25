@@ -93,6 +93,7 @@ pub fn router(state: AppState) -> Router {
         .route("/api/paper3/reset", post(paper3_reset))
         .route("/api/paper3/step", post(paper3_step))
         .route("/api/live", get(live_status))
+        .route("/api/strategy-health", get(strategy_health))
         .route("/api/live/config", post(live_config))
         .route("/api/live/run", post(live_run))
         .route("/api/live/reset", post(live_reset))
@@ -533,6 +534,22 @@ async fn paper3_step(State(state): State<AppState>) -> Response {
 async fn live_markets(state: &AppState) -> std::collections::HashMap<String, crate::exchange::MarketInfo> {
     let meta = state.meta.lock().await;
     crate::live::markets_from_meta(&meta.universe)
+}
+
+async fn strategy_health(State(state): State<AppState>) -> Json<serde_json::Value> {
+    let panel: Vec<PanelEntry> = state
+        .store
+        .all_panels()
+        .unwrap_or_default()
+        .into_iter()
+        .map(|(coin, candles)| PanelEntry { coin, candles })
+        .collect();
+    let hist: Vec<(i64, f64)> = {
+        let st = state.live.lock().await;
+        st.history.iter().map(|p| (p.ts, p.equity)).collect()
+    };
+    let h = crate::health::compute(&panel, &hist);
+    Json(serde_json::json!(h))
 }
 
 async fn live_status(State(state): State<AppState>) -> Response {
