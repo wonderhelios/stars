@@ -167,7 +167,11 @@ pub fn compute(
         None
     };
     let mut status = "green".to_string();
-    let mut reason = "因子仍在有效区间".to_string();
+    let mut reason = if ic90.is_some() {
+        "因子仍在有效区间".to_string()
+    } else {
+        format!("样本不足（{} 天）✗ 暂按正常显示", ics.len())
+    };
     if let Some(ic) = ic90 {
         if ic < 0.0 {
             status = "red".into();
@@ -178,9 +182,9 @@ pub fn compute(
         }
     }
     if let Some(d) = dd {
-        if d > 45.0 {
+        if d > 44.4 {
             status = "red".into();
-            reason = format!("回撤 {d:.0}% 超过历史最大值（44%）");
+            reason = format!("回撤 {d:.0}% 超过回测最大回撤（44.4%）");
         } else if d > 30.0 && status == "green" {
             status = "yellow".into();
             reason = format!("回撤 {d:.0}% 已超过历史 80% 分位");
