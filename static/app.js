@@ -1536,6 +1536,11 @@ function renderHlCarry(d) {
   const fee = legs.reduce((a, l) => a + (Number(l.fee_paid) || 0), 0);
   const ann = d.annualized_pct;
   window.__hcBudget = Number.isFinite(s.budget_usd) ? s.budget_usd : 0;
+  // 回填预算输入框；用户正在编辑时不覆盖（renderMonitor 那种轮询会打架）
+  const budgetInput = $("hc-budget");
+  if (budgetInput && document.activeElement !== budgetInput) {
+    budgetInput.value = window.__hcBudget > 0 ? String(window.__hcBudget) : "";
+  }
 
   const m = $("hc-metrics");
   if (m) {
@@ -1622,14 +1627,30 @@ if (hcStepBtn)
     }
   });
 
+const HC_BUDGET_MAX = 10000000;
+
 const hcOpenBtn = $("hc-open");
 if (hcOpenBtn)
   hcOpenBtn.addEventListener("click", async () => {
-    const cur = (window.__hcBudget && window.__hcBudget > 0) ? window.__hcBudget : 1000;
-    const raw = prompt("影子预算（USD，只影响模拟，不涉及真钱）", String(cur));
-    if (raw === null) return;
+    const input = $("hc-budget");
+    const raw = input ? input.value : "";
     const budget = Number(raw);
-    if (!(budget > 0)) return;
+    if (!Number.isFinite(budget) || budget <= 0) {
+      alert("预算必须是正数（美元）。");
+      if (input) input.focus();
+      return;
+    }
+    if (budget > HC_BUDGET_MAX) {
+      alert("预算上限 $" + HC_BUDGET_MAX.toLocaleString("en-US") + "，请检查是否填错。");
+      if (input) input.focus();
+      return;
+    }
+    const cur = Number(window.__hcBudget) || 0;
+    const money = (v) => "$" + Number(v).toLocaleString("en-US", { maximumFractionDigits: 2 });
+    const warn = cur > 0
+      ? `重新开仓会清空当前影子持仓、累计盈亏和权益曲线，预算从 ${money(cur)} 改为 ${money(budget)}。\n\n只影响模拟，不涉及真钱。继续？`
+      : `按 ${money(budget)} 预算开始模拟建仓。\n\n只影响模拟，不涉及真钱。继续？`;
+    if (!confirm(warn)) return;
     hcOpenBtn.disabled = true;
     try {
       await fetchJSONRetry("/api/hlcarry/open", {

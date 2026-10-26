@@ -994,6 +994,11 @@ async fn hlcarry_open(State(state): State<AppState>, Json(body): Json<HlCarryOpe
         return (StatusCode::BAD_REQUEST,
                 Json(json!({"ok": false, "error": "budget_usd 必须是正数"}))).into_response();
     };
+    // 影子预算只影响模拟，但仍然拒绝明显手滑的量级。
+    if budget > 10_000_000.0 {
+        return (StatusCode::BAD_REQUEST,
+                Json(json!({"ok": false, "error": "budget_usd 上限 10,000,000"}))).into_response();
+    }
     let market = match crate::hlcarry::fetch_market(&state.http).await {
         Ok(m) => m,
         Err(e) => {

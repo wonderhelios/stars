@@ -520,12 +520,21 @@
             <div class="actions">
               <button class="btn ghost" id="hc-refresh" type="button">刷新</button>
               <button class="btn ghost" id="hc-step" type="button">手动推进一步</button>
-              <button class="btn danger" id="hc-open" type="button">按预算重新开仓</button>
             </div>
           </div>
           <div id="hc-warn"></div>
           <div class="content-card">
             <div class="panel-head"><h2>汇总</h2></div>
+            <div class="setup-fields">
+              <div class="field">
+                <label for="hc-budget">影子预算（USD，仅模拟，不涉及真钱）</label>
+                <input id="hc-budget" type="number" min="1" max="10000000" step="100" inputmode="decimal" />
+              </div>
+            </div>
+            <div class="setup-actions">
+              <button class="btn danger" id="hc-open" type="button">保存预算并重新开仓</button>
+            </div>
+            <p class="note" id="hc-budget-note">改预算会清空当前影子持仓、累计盈亏和权益曲线，按新预算重新建仓（只影响模拟）。</p>
             <div class="metrics" id="hc-metrics"></div>
           </div>
           <div class="content-card">

@@ -17,11 +17,20 @@ const block = src.slice(start);
 // ---- 最小 DOM 桩 ----
 const els = new Map();
 const listeners = [];
+const alerts = [];
+let confirmAnswer = true;
+const confirmMessages = [];
+const fetchCalls = [];
 function mkEl(id) {
   return {
     id,
     innerHTML: '',
+    value: '',
     disabled: false,
+    focused: 0,
+    focus() {
+      this.focused += 1;
+    },
     addEventListener(type, fn) {
       listeners.push({id, type, fn});
     },
@@ -41,15 +50,23 @@ const ctx = vm.createContext({
   moneySigned: (v) => (v >= 0 ? '+' : '−') + '$' + Math.abs(v).toFixed(2),
   escapeHTML: (s) =>
     String(s).replace(/[&<>"]/g, (c) => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[c])),
-  fetchJSONRetry: async () => {
-    throw new Error('fetchJSONRetry 不应在渲染路径被调用');
+  fetchJSONRetry: async (url, opts) => {
+    fetchCalls.push({url, opts});
+    if (String(url).includes('/api/hlcarry/open')) return {ok: true};
+    if (String(url).includes('/api/hlcarry')) return lastPayload;
+    return {};
   },
   document: {
     getElementById: el,
     querySelectorAll: () => [],
+    activeElement: null,
   },
   window: {},
-  alert: () => {},
+  alert: (m) => alerts.push(String(m)),
+  confirm: (m) => {
+    confirmMessages.push(String(m));
+    return confirmAnswer;
+  },
   prompt: () => null,
   console,
 });
@@ -58,6 +75,8 @@ const ctx = vm.createContext({
 vm.runInContext(block, ctx, {filename: 'app.js#hlcarry'});
 assert.equal(typeof ctx.renderHlCarry, 'function', 'renderHlCarry 必须导出到上下文');
 assert.equal(typeof ctx.refreshHlCarry, 'function', 'refreshHlCarry 必须导出到上下文');
+
+let lastPayload = null;
 
 // ---- 用例 1：正常持仓 ----
 const payload = {
@@ -81,6 +100,7 @@ const payload = {
   },
 };
 
+lastPayload = payload;
 ctx.renderHlCarry(payload);
 
 const metrics = el('hc-metrics').innerHTML;
@@ -145,4 +165,46 @@ assert.ok(wired.has('hc-refresh'), '#hc-refresh 未绑定事件');
 assert.ok(wired.has('hc-step'), '#hc-step 未绑定事件');
 assert.ok(wired.has('hc-open'), '#hc-open 未绑定事件');
 
-console.log('✓ hlcarry 影子 tab：无未定义引用；正常/空仓/缺字段/负数四种状态渲染正确；三个按钮已接线');
+// ---- 用例 6：预算可手动调整 ----
+// 先用「有预算」的载荷渲染，确认输入框被回填
+lastPayload = payload;
+ctx.renderHlCarry(payload);
+const budgetEl = el('hc-budget');
+assert.equal(budgetEl.value, '1000', '预算输入框应回填当前预算');
+
+const openBtn = listeners.find((l) => l.id === 'hc-open');
+assert.ok(openBtn, '#hc-open 未绑定');
+const callsBefore = fetchCalls.length;
+
+// 空 / 负数 / 超上限：都不许发请求，并聚焦输入框
+for (const bad of ['', '-5', '0', '99999999']) {
+  budgetEl.value = bad;
+  alerts.length = 0;
+  budgetEl.focused = 0;
+  await openBtn.fn();
+  assert.equal(fetchCalls.length, callsBefore, `预算 "${bad}" 不应发起请求`);
+  assert.ok(alerts.length > 0, `预算 "${bad}" 应有提示`);
+  assert.ok(budgetEl.focused > 0, `预算 "${bad}" 应聚焦输入框`);
+}
+
+// 合法预算：取消确认则不提交，确认后才提交，且金额正确
+budgetEl.value = '2500';
+confirmAnswer = false;
+confirmMessages.length = 0;
+await openBtn.fn();
+assert.equal(fetchCalls.length, callsBefore, '取消确认后不应提交');
+assert.match(confirmMessages[0] || '', /清空/, '确认文案必须说明会清空持仓与曲线');
+
+confirmAnswer = true;
+const beforeCalls = fetchCalls.length;
+await openBtn.fn();
+// 提交后会再刷一次 /api/hlcarry，所以要在新增的调用里找 open 那一条
+const openCall = fetchCalls.slice(beforeCalls).find((c) => String(c.url).includes('/api/hlcarry/open'));
+assert.ok(openCall, '应调用 /api/hlcarry/open');
+assert.equal(JSON.parse(openCall.opts.body).budget_usd, 2500, '提交的预算应为输入值');
+assert.ok(
+  fetchCalls.slice(beforeCalls).some((c) => String(c.url) === '/api/hlcarry'),
+  '提交后应重新拉取影子状态',
+);
+
+console.log('✓ hlcarry 影子 tab：无未定义引用；四种状态渲染正确；预算可手动调整（回填/校验/确认/提交）');
