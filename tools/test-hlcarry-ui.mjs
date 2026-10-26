@@ -62,6 +62,11 @@ const ctx = vm.createContext({
     activeElement: null,
   },
   window: {},
+  // 两步确认用了 setTimeout 做自动取消
+  setTimeout: (fn) => {
+    return 0;
+  },
+  clearTimeout: () => {},
   alert: (m) => alerts.push(String(m)),
   confirm: (m) => {
     confirmMessages.push(String(m));
@@ -192,28 +197,28 @@ const callsBefore = fetchCalls.length;
 // 空 / 负数 / 超上限：都不许发请求，并聚焦输入框
 for (const bad of ['', '-5', '0', '99999999']) {
   budgetEl.value = bad;
-  alerts.length = 0;
   budgetEl.focused = 0;
   await openBtn.fn();
   assert.equal(fetchCalls.length, callsBefore, `预算 "${bad}" 不应发起请求`);
-  assert.ok(alerts.length > 0, `预算 "${bad}" 应有提示`);
+  // 提示写在页内状态行，不依赖 alert()（浏览器会屏蔽弹窗）
+  assert.ok(
+    (el('hc-budget-status').textContent || '').length > 0,
+    `预算 "${bad}" 应有可见提示`,
+  );
   assert.ok(budgetEl.focused > 0, `预算 "${bad}" 应聚焦输入框`);
 }
 
-// 合法预算：取消确认则不提交，确认后才提交，且金额正确
+// 合法预算：两步确认，第一次不提交，第二次才提交
 budgetEl.value = '2500';
-confirmAnswer = false;
-confirmMessages.length = 0;
-await openBtn.fn();
-assert.equal(fetchCalls.length, callsBefore, '取消确认后不应提交');
-assert.match(confirmMessages[0] || '', /清空/, '确认文案必须说明会清空持仓与曲线');
-
-confirmAnswer = true;
 const beforeCalls = fetchCalls.length;
 await openBtn.fn();
-// 提交后会再刷一次 /api/hlcarry，所以要在新增的调用里找 open 那一条
+assert.equal(fetchCalls.length, beforeCalls, '第一次点击不应提交，必须先确认');
+assert.match(el('hc-budget-status').textContent, /再点一次/, '第一次点击要提示再点一次');
+assert.match(el('hc-budget-status').textContent, /清空/, '提示必须说明会清空持仓与曲线');
+
+await openBtn.fn();
 const openCall = fetchCalls.slice(beforeCalls).find((c) => String(c.url).includes('/api/hlcarry/open'));
-assert.ok(openCall, '应调用 /api/hlcarry/open');
+assert.ok(openCall, '确认后应调用 /api/hlcarry/open');
 assert.equal(JSON.parse(openCall.opts.body).budget_usd, 2500, '提交的预算应为输入值');
 assert.ok(
   fetchCalls.slice(beforeCalls).some((c) => String(c.url) === '/api/hlcarry'),

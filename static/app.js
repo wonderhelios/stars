@@ -1728,29 +1728,66 @@ if (hcParamsBtn)
 
 const HC_BUDGET_MAX = 10000000;
 
+// 不用 window.confirm：浏览器在多次弹窗后会静默屏蔽，返回 false，
+// 表现就是"点了没反应"。改成页内两步确认 + 明确的状态提示。
+let hcOpenArmed = false;
+let hcOpenArmTimer = 0;
+
 const hcOpenBtn = $("hc-open");
+function hcBudgetStatus(msg, cls) {
+  const el = $("hc-budget-status");
+  if (!el) return;
+  el.textContent = msg || "";
+  el.className = "note" + (cls ? " " + cls : "");
+}
+function hcOpenDisarm() {
+  hcOpenArmed = false;
+  if (hcOpenArmTimer) {
+    clearTimeout(hcOpenArmTimer);
+    hcOpenArmTimer = 0;
+  }
+  if (hcOpenBtn) hcOpenBtn.textContent = "保存预算并重新开仓";
+}
+
 if (hcOpenBtn)
   hcOpenBtn.addEventListener("click", async () => {
     const input = $("hc-budget");
-    const raw = input ? input.value : "";
-    const budget = Number(raw);
+    const budget = Number(input ? input.value : NaN);
+
+    // 第一步：校验
     if (!Number.isFinite(budget) || budget <= 0) {
-      alert("预算必须是正数（美元）。");
+      hcOpenDisarm();
+      hcBudgetStatus("预算必须是正数（美元）。", "neg");
       if (input) input.focus();
       return;
     }
     if (budget > HC_BUDGET_MAX) {
-      alert("预算上限 $" + HC_BUDGET_MAX.toLocaleString("en-US") + "，请检查是否填错。");
+      hcOpenDisarm();
+      hcBudgetStatus("预算上限 $" + HC_BUDGET_MAX.toLocaleString("en-US") + "，请检查是否填错。", "neg");
       if (input) input.focus();
       return;
     }
+
     const cur = Number(window.__hcBudget) || 0;
-    const money = (v) => "$" + Number(v).toLocaleString("en-US", { maximumFractionDigits: 2 });
-    const warn = cur > 0
-      ? `重新开仓会清空当前影子持仓、累计盈亏和权益曲线，预算从 ${money(cur)} 改为 ${money(budget)}。\n\n只影响模拟，不涉及真钱。继续？`
-      : `按 ${money(budget)} 预算开始模拟建仓。\n\n只影响模拟，不涉及真钱。继续？`;
-    if (!confirm(warn)) return;
+    const fmt2 = (v) => "$" + Number(v).toLocaleString("en-US", { maximumFractionDigits: 2 });
+
+    // 第二步：页内确认（再点一次同一个按钮）
+    if (!hcOpenArmed) {
+      hcOpenArmed = true;
+      hcOpenBtn.textContent = "再点一次确认";
+      hcBudgetStatus(
+        (cur > 0
+          ? `将清空当前持仓、累计盈亏与权益曲线，预算 ${fmt2(cur)} → ${fmt2(budget)}。`
+          : `将按 ${fmt2(budget)} 开始模拟建仓。`) + " 再点一次「再点一次确认」执行；5 秒后自动取消。",
+      );
+      hcOpenArmTimer = setTimeout(hcOpenDisarm, 5000);
+      return;
+    }
+
+    // 第三步：执行
+    hcOpenDisarm();
     hcOpenBtn.disabled = true;
+    hcBudgetStatus("正在建仓…");
     try {
       await fetchJSONRetry("/api/hlcarry/open", {
         method: "POST",
@@ -1758,8 +1795,9 @@ if (hcOpenBtn)
         body: JSON.stringify({ budget_usd: budget }),
       });
       await refreshHlCarry();
+      hcBudgetStatus("已按 " + fmt2(budget) + " 重新开仓。", "pos");
     } catch (e) {
-      alert("开仓失败：" + ((e && e.message) || e));
+      hcBudgetStatus("开仓失败：" + ((e && e.message) || e), "neg");
     } finally {
       hcOpenBtn.disabled = false;
     }

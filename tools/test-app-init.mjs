@@ -34,8 +34,25 @@ function stubEl(id = '') {
     children: [],
     childNodes: [],
     classList: {add() {}, remove() {}, toggle() {}, contains: () => false},
-    addEventListener() {},
+    __listeners: {},
+    addEventListener(type, fn) {
+      (this.__listeners[type] ||= []).push(fn);
+    },
     removeEventListener() {},
+    __fire(type, ev) {
+      const fns = this.__listeners[type] || [];
+      let threw = null;
+      for (const fn of fns) {
+        try {
+          const r = fn(ev || {type, preventDefault() {}, stopPropagation() {}, target: this});
+          if (r && typeof r.then === 'function') return r.catch((e) => { threw = e; });
+        } catch (e) {
+          threw = e;
+        }
+      }
+      if (threw) throw threw;
+      return Promise.resolve();
+    },
     appendChild: (c) => c,
     removeChild: (c) => c,
     append() {},
@@ -132,8 +149,10 @@ function makeResponse(body) {
   };
 }
 
-const fetchStub = async (url) => {
+const fetchLog = [];
+const fetchStub = async (url, opts) => {
   const u = String(url);
+  fetchLog.push({url: u, opts});
   if (u.includes('/api/hlcarry')) return makeResponse(hlcarryPayload);
   return makeResponse({});
 };
@@ -148,8 +167,25 @@ const ctx = vm.createContext({
     location: {href: 'http://127.0.0.1:3000/', search: '', hash: '', pathname: '/'},
     localStorage: {getItem: () => null, setItem() {}, removeItem() {}},
     navigator: {userAgent: 'node'},
-    addEventListener() {},
+    __listeners: {},
+    addEventListener(type, fn) {
+      (this.__listeners[type] ||= []).push(fn);
+    },
     removeEventListener() {},
+    __fire(type, ev) {
+      const fns = this.__listeners[type] || [];
+      let threw = null;
+      for (const fn of fns) {
+        try {
+          const r = fn(ev || {type, preventDefault() {}, stopPropagation() {}, target: this});
+          if (r && typeof r.then === 'function') return r.catch((e) => { threw = e; });
+        } catch (e) {
+          threw = e;
+        }
+      }
+      if (threw) throw threw;
+      return Promise.resolve();
+    },
     matchMedia: () => ({matches: false, addEventListener() {}, removeEventListener() {}}),
     getComputedStyle: () => ({getPropertyValue: () => ''}),
     requestAnimationFrame: () => 0,
@@ -216,4 +252,38 @@ assert.match(legs, /BTC/, '持仓表没有渲染出 BTC');
 assert.match(el('hc-daily').innerHTML || '', /2026-10-27/, '每日汇总没有渲染');
 assert.match(el('hc-rebalances').innerHTML || '', /还没有换过仓/, '换仓卡片没有渲染');
 
-console.log('✓ app.js 按真实顺序初始化：hlcarry 影子 tab 渲染正常，无 TDZ、无未定义引用');
+// ---------- 真点一次「保存预算并重新开仓」 ----------
+const budgetEl = el('hc-budget');
+const openBtn = el('hc-open');
+assert.ok(openBtn.__listeners.click && openBtn.__listeners.click.length > 0,
+  '#hc-open 上没有任何 click 监听器 —— 按钮点了当然没反应');
+
+// 已经在用页内两步确认，不依赖 window.confirm（浏览器会静默屏蔽）
+budgetEl.value = '5000';
+const before = fetchLog.length;
+
+// 第一次点击：只进入"待确认"，不发请求
+await openBtn.__fire('click');
+assert.equal(
+  fetchLog.length, before,
+  '第一次点击不应直接提交——必须先确认',
+);
+assert.match(el('hc-budget-status').textContent, /再点一次/, '第一次点击应提示再点一次确认');
+assert.match(el('hc-budget-status').textContent, /5,000/, '提示里应写明新预算');
+assert.match(openBtn.textContent, /确认/, '按钮文字应变成确认态');
+
+// 第二次点击：真正提交
+await openBtn.__fire('click');
+const openCall = fetchLog.slice(before).find((c) => c.url.includes('/api/hlcarry/open'));
+assert.ok(openCall, '确认后没有请求 /api/hlcarry/open');
+assert.equal(JSON.parse(openCall.opts.body).budget_usd, 5000, '提交的预算应为输入框里的 5000');
+assert.match(el('hc-budget-status').textContent, /已按/, '提交后应有成功提示');
+
+// 非法值：第一次点击就拦下，且提示可见
+budgetEl.value = '0';
+const before2 = fetchLog.length;
+await openBtn.__fire('click');
+assert.equal(fetchLog.length, before2, '非法预算不应发请求');
+assert.match(el('hc-budget-status').textContent, /正数/, '非法预算要有可见提示');
+
+console.log('✓ app.js 按真实顺序初始化：渲染正常、无 TDZ、预算按钮两步确认且提交成功');
