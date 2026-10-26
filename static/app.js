@@ -617,7 +617,6 @@ function renderMonitor(d) {
   if (!d) return;
   lastLiveData = d;
   renderCapitalFlows(d);
-  renderCapitalAlloc(d.capital_alloc);
   const c = d.config || {};
   const pos = d.positions || [];
   const hist = d.history || [];
@@ -1089,162 +1088,19 @@ async function fetchJSONRetry(url, opts = {}, timeoutMs = 8000, tries = 2) {
   throw last;
 }
 
-let lastFundingData = null;
-let lastCarryData = null;
 
-const annPct = (v) => Number.isFinite(v) ? (v * 100).toFixed(1) + "%" : "—";
-const annSigned = (v) => Number.isFinite(v) ? (v >= 0 ? "+" : "−") + Math.abs(v * 100).toFixed(1) + "%" : "—";
 const usdM = (v) => Number.isFinite(v) ? (v >= 1e6 ? "$" + (v / 1e6).toFixed(1) + "M" : "$" + (v / 1e3).toFixed(0) + "K") : "—";
 
 // 资金费差：只显示摘要 + 前 5 个机会，全表折叠。
-function renderFunding(d) {
-  const up = $("fd-updated");
-  if (up) {
-    up.textContent = d && d.updated
-      ? "数据更新于 " + ts2m(d.updated) + " UTC" + (d.bn_error ? " · ⚠ 币安：" + d.bn_error : "")
-      : "暂无数据";
-  }
-  const pairsEl = $("fd-pairs");
-  if (pairsEl) {
-    const pairs = (d && d.pairs) || [];
-    if (!pairs.length) {
-      pairsEl.innerHTML = '<div class="empty">还没有数据（等后台刷新）</div>';
-    } else {
-      const avg = pairs.reduce((a, p) => a + Math.abs(p.diff_ann), 0) / pairs.length;
-      const row = (p) => `<tr>
-          <td>${escapeHTML(p.coin)}</td>
-          <td>${annPct(p.hl_ann)}</td>
-          <td>${annPct(p.bn_ann)}</td>
-          <td class="${p.diff_ann >= 0 ? "pos" : "neg"}">${annSigned(p.diff_ann)}</td>
-          <td class="muted">${p.diff_ann >= 0 ? "空 HL · 多币安" : "多 HL · 空币安"}</td>
-          <td class="muted">${usdM(p.hl_vol)} / ${usdM(p.bn_vol)}</td>
-        </tr>`;
-      const head = `<tr><th>币</th><th>HL</th><th>币安</th><th>差</th><th>方向</th><th>成交额 HL/币安</th></tr>`;
-      const top = pairs.slice(0, 5);
-      let html = `<p class="note">合格 <b>${pairs.length}</b> 个币 · 平均 |差| <b>${(avg * 100).toFixed(2)}%</b> · 最大 <b>${escapeHTML(pairs[0].coin)} ${annSigned(pairs[0].diff_ann)}</b></p>`;
-      html += `<div class="table-scroll"><table><thead>${head}</thead><tbody>${top.map(row).join("")}</tbody></table></div>`;
-      if (pairs.length > 5) {
-        html += `<details class="setup-details"><summary>展开全部 ${pairs.length} 个</summary>
-          <div class="table-scroll"><table><thead>${head}</thead><tbody>${pairs.map(row).join("")}</tbody></table></div></details>`;
-      }
-      pairsEl.innerHTML = html;
-    }
-  }
-  const spikesEl = $("fd-spikes");
-  if (spikesEl) {
-    const all = (d && d.spikes) || [];
-    const hedge = all.filter((s) => s.hedgeable);
-    const other = all.filter((s) => !s.hedgeable);
-    if (!all.length) {
-      spikesEl.innerHTML = '<div class="empty">当前没有 ≥40% 的尖峰</div>';
-    } else {
-      const row = (s) => `<tr>
-          <td>${escapeHTML(s.market)}</td>
-          <td class="${s.ann >= 0 ? "pos" : "neg"}">${annSigned(s.ann)}</td>
-          <td class="muted">${(s.ann / 8760 * 100).toFixed(4)}%</td>
-          <td>${usdM(s.vol)}</td>
-          <td class="muted">${s.ann >= 0 ? "空头收钱" : "多头收钱"}</td>
-        </tr>`;
-      const head = `<tr><th>市场</th><th>年化</th><th>每小时</th><th>成交额</th><th>收钱方向</th></tr>`;
-      let html = `<p class="note">可对冲 <b>${hedge.length}</b>（币安有同名永续 ✓ 能做） · 不可对冲 <b>${other.length}</b>（HIP-3 / 股票永续，没有对冲腿 ✗ 只能看）</p>`;
-      if (hedge.length) {
-        html += `<div class="table-scroll"><table><thead>${head}</thead><tbody>${hedge.slice(0, 5).map(row).join("")}</tbody></table></div>`;
-        if (hedge.length > 5) {
-          html += `<details class="setup-details"><summary>展开全部 ${hedge.length} 个可对冲尖峰</summary><div class="table-scroll"><table><thead>${head}</thead><tbody>${hedge.map(row).join("")}</tbody></table></div></details>`;
-        }
-      } else {
-        html += '<div class="empty">没有可对冲的尖峰</div>';
-      }
-      if (other.length) {
-        html += `<details class="setup-details"><summary>不可对冲的 ${other.length} 个（看看就好）</summary><div class="table-scroll"><table><thead>${head}</thead><tbody>${other.map(row).join("")}</tbody></table></div></details>`;
-      }
-      spikesEl.innerHTML = html;
-    }
-  }
-  renderXVenue(d);
 
-}
 
-async function refreshFunding(force) {
-  const viewEl = $("view-funding");
-  const viewActive = viewEl && viewEl.classList.contains("active");
-  if (!force && !viewActive && lastFundingData) return; // 非激活视图不刷（省接口）
-  try {
-    lastFundingData = await fetchJSONRetry(force ? "/api/funding/refresh" : "/api/funding", {
-      method: force ? "POST" : "GET",
-    }, force ? 45000 : 8000);
-    renderFunding(lastFundingData);
-  } catch (e) {
-    // 静默失败，等下一轮
-  }
-}
 
-function renderCapitalAlloc(alloc) {
-  alloc = alloc || {};
-  const m = $("fd-cap-momentum"), c = $("fd-cap-carry"), h = $("fd-cap-hunting");
-  // 用户正在编辑时不覆盖输入（renderMonitor 每 20 秒会重入一次）。
-  const editing = [m, c, h].some((el) => el && document.activeElement === el);
-  if (!editing) {
-    if (m) m.value = Number.isFinite(alloc.momentum_usd) ? alloc.momentum_usd : 0;
-    if (c) c.value = Number.isFinite(alloc.carry_usd) ? alloc.carry_usd : 0;
-    if (h) h.value = Number.isFinite(alloc.hunting_usd) ? alloc.hunting_usd : 0;
-  }
-  const total = (alloc.momentum_usd || 0) + (alloc.carry_usd || 0) + (alloc.hunting_usd || 0);
-  const s = $("fd-cap-summary");
-  if (s) {
-    s.textContent = total > 0
-      ? `合计 $${fmt(total, 0)} · 动量 ${fmt((alloc.momentum_usd || 0) / total * 100, 0)}% · carry ${fmt((alloc.carry_usd || 0) / total * 100, 0)}% · 尖峰 ${fmt((alloc.hunting_usd || 0) / total * 100, 0)}%`
-      : "还没有配置资金矩阵";
-  }
-}
 
-if ($("fd-cap-save")) {
-  $("fd-cap-save").addEventListener("click", async () => {
-    const body = {
-      momentum_usd: Number($("fd-cap-momentum").value) || 0,
-      carry_usd: Number($("fd-cap-carry").value) || 0,
-      hunting_usd: Number($("fd-cap-hunting").value) || 0,
-    };
-    const st = $("fd-cap-status");
-    try {
-      const res = await fetch("/api/capital", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-      });
-      const out = await res.json();
-      if (!res.ok || !out.ok) {
-        st.textContent = "保存失败：" + (out.error || ("HTTP " + res.status));
-        return;
-      }
-      st.textContent = "已保存。";
-      renderCapitalAlloc(body);
-    } catch (e) {
-      st.textContent = "保存失败：" + e;
-    }
-  });
-}
-
-if ($("fd-refresh")) {
-  $("fd-refresh").addEventListener("click", () => refreshFunding(true));
-}
 
 // 切到资金费套利视图时刷新（资金矩阵已并入 renderMonitor 的 20 秒轮询）。
 // 进入套利监控 / 套利设置时刷新对应数据
 document.querySelectorAll('.nav button[data-view="shadow"], .nav button[data-view="shadow-setup"]').forEach((b) => {
   b.addEventListener("click", () => refreshShadow());
-});
-document.querySelectorAll('.nav button[data-view="funding"], .nav button[data-view="funding-setup"]').forEach((b) => {
-  b.addEventListener("click", () => {
-    refreshFunding();
-    refreshCarry();
-    refreshXPaper();
-    if (b.dataset.view === "funding-setup") {
-      fetchJSONRetry("/api/live", {}, 8000)
-        .then((d) => renderCapitalAlloc(d.capital_alloc))
-        .catch(() => {});
-    }
-  });
 });
 
 // 启动：首次拉取 + 周期轮询。
@@ -1472,220 +1328,12 @@ if ($("sh-step")) $("sh-step").addEventListener("click", async () => {
 // ---------- 跨所价差纸面策略 ----------
 let lastXData = null;
 
-function renderXPaper(d) {
-  d = d || {};
-  const pairs = d.pairs || [];
-  const open = pairs.reduce((a, p) => a + p.pnl, 0);
-  const closed = d.closed_pnl || 0;
-  const total = closed + open;
-  const base = d.start_equity || 0;
-  const sum = $("xp-summary");
-  if (sum) {
-    sum.innerHTML =
-      `<span>预算 <b>$${fmt(d.budget_usd || 0, 0)}</b></span> · ` +
-      `<span>权益 <b>$${fmt(base + total, 2)}</b> ` +
-      `<b class="${total >= 0 ? "pos" : "neg"}">${base > 0 ? (total / base * 100).toFixed(2) + "%" : "—"}</b></span> · ` +
-      `<span>已实现 <b class="${closed >= 0 ? "pos" : "neg"}">${moneySigned(closed)}</b></span> · ` +
-      `<span>未实现 <b class="${open >= 0 ? "pos" : "neg"}">${moneySigned(open)}</b></span> · ` +
-      `<span>持仓 <b>${pairs.length}</b> 对</span>`;
-  }
-  renderEquityChart("xp-chart", withNow(d.history, base + total), "跨所价差纸面权益曲线");
-  const posEl = $("xp-positions");
-  if (posEl) {
-    posEl.innerHTML = pairs.length
-      ? `<div class="table-scroll"><table><thead><tr><th>币</th><th>方向</th><th>每腿名义</th><th>进场差</th><th>浮动</th><th>已持</th></tr></thead><tbody>${
-          pairs.map((p) => {
-            const h = Math.max(0, (Date.now() - p.entry_ts) / 3600000).toFixed(0);
-            return `<tr><td>${escapeHTML(p.coin)}</td>
-              <td class="muted">${p.direction > 0 ? "空OKX·多BN" : "多OKX·空BN"}</td>
-              <td>$${fmt(p.notional, 0)}</td>
-              <td>${p.entry_diff >= 0 ? "+" : ""}${p.entry_diff.toFixed(2)}%</td>
-              <td class="${p.pnl >= 0 ? "pos" : "neg"}">${moneySigned(p.pnl)}</td>
-              <td class="muted">${h}h</td></tr>`;
-          }).join("")
-        }</tbody></table></div>`
-      : '<div class="empty">没有持仓。价差 ≥ 开仓阈值时自动开（平时很少 ✗）✗</div>';
-  }
-  const logEl = $("xp-log");
-  if (logEl) {
-    const logs = (d.log || []).slice(-40).reverse();
-    logEl.innerHTML = logs.length
-      ? logs.map((l) => `<div class="note">${ts2m(l.ts)} · ${escapeHTML(l.msg)}</div>`).join("")
-      : '<div class="note">还没有操作。</div>';
-  }
-}
 
-function renderXConfig(cfg) {
-  cfg = cfg || {};
-  const els = ["xp-entry", "xp-exit", "xp-pairs", "xp-hours", "xp-stop", "xp-fee", "xp-confirm", "xp-minvol"].map((i) => $(i));
-  if (els.some((el) => el && document.activeElement === el)) return;
-  const set = (id, v) => { const el = $(id); if (el) el.value = v; };
-  set("xp-entry", cfg.entry_pct);
-  set("xp-exit", cfg.exit_pct);
-  set("xp-pairs", cfg.max_pairs);
-  set("xp-hours", cfg.max_holding_hours);
-  set("xp-stop", cfg.stop_pct);
-  set("xp-fee", Math.round((cfg.fee || 0) * 10000) / 100);
-  set("xp-confirm", cfg.confirm_steps ?? 2);
-  set("xp-minvol", cfg.min_vol_usd ?? 5000000);
-}
 
-async function refreshXPaper() {
-  try {
-    lastXData = await fetchJSONRetry("/api/xpaper", {}, 8000);
-    renderXPaper(lastXData);
-    renderXConfig(lastXData.config);
-  } catch (e) {}
-}
 
-if ($("xp-save")) {
-  $("xp-save").addEventListener("click", async () => {
-    const body = {
-      entry_pct: Number($("xp-entry").value) || 0,
-      exit_pct: Number($("xp-exit").value) || 0,
-      max_pairs: Number($("xp-pairs").value) || 0,
-      max_holding_hours: Number($("xp-hours").value) || 0,
-      stop_pct: Number($("xp-stop").value) || 0,
-      fee: (Number($("xp-fee").value) || 0) / 100,
-      confirm_steps: Number($("xp-confirm") && $("xp-confirm").value) || 2,
-      min_vol_usd: Number($("xp-minvol") && $("xp-minvol").value) || 0,
-    };
-    const st = $("xp-status");
-    try {
-      const res = await fetch("/api/xpaper/config", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-      });
-      const out = await res.json();
-      if (!res.ok || !out.ok) { st.textContent = "保存失败：" + (out.error || ("HTTP " + res.status)); return; }
-      st.textContent = "参数已保存。";
-      refreshXPaper();
-    } catch (e) { st.textContent = "保存失败：" + e; }
-  });
-}
-if ($("xp-step")) {
-  $("xp-step").addEventListener("click", async () => {
-    const st = $("xp-status");
-    try {
-      lastXData = await fetchJSONRetry("/api/xpaper/step", { method: "POST" }, 20000);
-      renderXPaper(lastXData);
-      if (st) st.textContent = "已推进。";
-    } catch (e) { if (st) st.textContent = "推进失败：" + e; }
-  });
-}
-if ($("xp-reset")) {
-  $("xp-reset").addEventListener("click", async () => {
-    if (!confirm("重置跨所纸面：清空持仓、已实现盈亏与曲线（保留参数）。继续？")) return;
-    const st = $("xp-status");
-    try {
-      lastXData = await fetchJSONRetry("/api/xpaper/reset", { method: "POST" }, 20000);
-      renderXPaper(lastXData);
-      if (st) st.textContent = "已重置。";
-    } catch (e) { if (st) st.textContent = "重置失败：" + e; }
-  });
-}
 
 // 跨所价差（OKX vs 币安）。用户当年 G/USDT 那种机会。
-function renderXVenue(d) {
-  const el = $("xv-list");
-  if (!el) return;
-  const rows = (d && d.xvenue) || [];
-  const err = d && d.xvenue_error;
-  if (err) {
-    el.innerHTML = `<div class="note neg">⚠ ${escapeHTML(err)}（服务器连不上 OKX 时这一栏不可用）</div>`;
-    return;
-  }
-  if (!rows.length) {
-    el.innerHTML = '<div class="empty">当前没有 ≥0.3% 的合格价差 —— 这是常态；事件（新币上架 / 提币暂停）才会出现大价差。</div>';
-    return;
-  }
-  const px = (v) => (v < 1 ? v.toPrecision(6) : fmt(v, 2));
-  const row = (r) => `<tr>
-      <td>${escapeHTML(r.coin)}</td>
-      <td>${px(r.okx_px)}</td>
-      <td>${px(r.bn_px)}</td>
-      <td class="${r.diff_pct >= 0 ? "pos" : "neg"}">${r.diff_pct >= 0 ? "+" : ""}${r.diff_pct.toFixed(2)}%</td>
-      <td class="muted">${r.diff_pct >= 0 ? "OKX 贵 → 空 OKX / 多币安" : "币安贵 → 空币安 / 多 OKX"}</td>
-      <td class="muted">${usdM(r.okx_vol)} / ${usdM(r.bn_vol)}</td>
-    </tr>`;
-  const head = `<tr><th>币</th><th>OKX</th><th>币安</th><th>差</th><th>方向</th><th>成交额 OKX/币安</th></tr>`;
-  const big = rows.filter((r) => Math.abs(r.diff_pct) >= 2);
-  let html = `<p class="note">合格 <b>${rows.length}</b> 个 · 最大 <b>${escapeHTML(rows[0].coin)} ${rows[0].diff_pct >= 0 ? "+" : ""}${rows[0].diff_pct.toFixed(2)}%</b>`;
-  if (big.length) html += ` · <b class="neg">${big.length} 个差 ≥2%（多半是同名不同币 / 脏价，别当机会）</b>`;
-  html += `</p>`;
-  html += `<div class="table-scroll"><table><thead>${head}</thead><tbody>${rows.slice(0, 5).map(row).join("")}</tbody></table></div>`;
-  if (rows.length > 5) {
-    html += `<details class="setup-details"><summary>展开全部 ${rows.length} 个</summary><div class="table-scroll"><table><thead>${head}</thead><tbody>${rows.map(row).join("")}</tbody></table></div></details>`;
-  }
-  el.innerHTML = html;
-}
 
-function renderCarry(d) {
-  d = d || {};
-  const pairs = d.pairs || [];
-  const open = pairs.reduce((a, p) => a + p.funding_accrued + p.basis_pnl - p.entry_fee, 0);
-  const closed = d.closed_pnl || 0;
-  const total = closed + open;
-  const base = d.start_equity || 0;
-  const eq = base + total;
-  const sum = $("cy-summary");
-  if (sum) {
-    sum.innerHTML =
-      `<span>预算 <b>$${fmt(d.budget_usd || 0, 0)}</b></span> · ` +
-      `<span>权益 <b>$${fmt(eq, 2)}</b> ` +
-      `<b class="${total >= 0 ? "pos" : "neg"}">${base > 0 ? (total / base * 100).toFixed(2) + "%" : "—"}</b></span> · ` +
-      `<span>已实现 <b class="${closed >= 0 ? "pos" : "neg"}">${moneySigned(closed)}</b></span> · ` +
-      `<span>未实现 <b class="${open >= 0 ? "pos" : "neg"}">${moneySigned(open)}</b></span> · ` +
-      `<span>持仓 <b>${pairs.length}</b> 对</span>`;
-  }
-  renderEquityChart("cy-chart", withNow(d.history, eq), "纸面 carry 权益曲线");
-  const legs = $("cy-legs");
-  if (legs) {
-    const agg = (dir) => {
-      const g = pairs.filter((p) => (dir > 0 ? p.direction > 0 : p.direction < 0));
-      return {
-        n: g.length,
-        notional: g.reduce((a, p) => a + p.notional, 0),
-        funding: g.reduce((a, p) => a + p.funding_accrued, 0),
-        basis: g.reduce((a, p) => a + p.basis_pnl, 0),
-        net: g.reduce((a, p) => a + p.funding_accrued + p.basis_pnl - p.entry_fee, 0),
-      };
-    };
-    const box = (title, a) => `<div class="content-card" style="padding:14px 16px">
-        <div class="panel-head" style="margin:0"><span class="section-eyebrow">${title}</span><b>${a.n} 对</b></div>
-        <p class="note" style="margin:6px 0 0">名义 $${fmt(a.notional, 0)} · 资金费 <b class="${a.funding >= 0 ? "pos" : "neg"}">${moneySigned(a.funding)}</b> · 基差 <b class="${a.basis >= 0 ? "pos" : "neg"}">${moneySigned(a.basis)}</b> · 净 <b class="${a.net >= 0 ? "pos" : "neg"}">${moneySigned(a.net)}</b></p></div>`;
-    legs.innerHTML = pairs.length
-      ? `<div class="grid-2">${box("空 HL · 多币安", agg(1))}${box("多 HL · 空币安", agg(-1))}</div>`
-      : "";
-  }
-  const posEl = $("cy-positions");
-  if (posEl) {
-    posEl.innerHTML = pairs.length
-      ? `<div class="table-scroll"><table><thead><tr><th>币</th><th>方向</th><th>每腿名义</th><th>进场差</th><th>资金费</th><th>基差</th><th>净</th><th>已持</th></tr></thead><tbody>${
-          pairs.map((p) => {
-            const net = p.funding_accrued + p.basis_pnl - p.entry_fee;
-            const h = Math.max(0, (Date.now() - p.entry_ts) / 3600000).toFixed(0);
-            return `<tr><td>${escapeHTML(p.coin)}</td>
-              <td class="muted">${p.direction > 0 ? "空HL·多BN" : "多HL·空BN"}</td>
-              <td>$${fmt(p.notional, 0)}</td>
-              <td>${(p.entry_diff * 100).toFixed(1)}%</td>
-              <td class="${p.funding_accrued >= 0 ? "pos" : "neg"}">${moneySigned(p.funding_accrued)}</td>
-              <td class="${p.basis_pnl >= 0 ? "pos" : "neg"}">${moneySigned(p.basis_pnl)}</td>
-              <td class="${net >= 0 ? "pos" : "neg"}">${moneySigned(net)}</td>
-              <td class="muted">${h}h</td></tr>`;
-          }).join("")
-        }</tbody></table></div>`
-      : '<div class="empty">没有纸面持仓。预算 &gt; 0 且某币 |价差| ≥ 开仓阈值时自动开。</div>';
-  }
-  const logEl = $("cy-log");
-  if (logEl) {
-    const logs = (d.log || []).slice(-40).reverse();
-    logEl.innerHTML = logs.length
-      ? logs.map((l) => `<div class="note">${ts2m(l.ts)} · ${escapeHTML(l.msg)}</div>`).join("")
-      : '<div class="note">还没有操作。</div>';
-  }
-}
 
 // 曲线是"每小时一个点"✗ 两次采样之间线会停在旧值上 ✗ 看起来像"卡住"✗
 // 这里把【当前权益】补成一个点 ✓ 线就永远画到"现在"✓
@@ -1759,90 +1407,10 @@ function renderEquityChart(id, history, aria, compare, third) {
     </svg>`;
 }
 
-function renderCarryConfig(cfg) {
-  cfg = cfg || {};
-  const entry = $("cy-entry"), exit = $("cy-exit"), pairs = $("cy-pairs"), hours = $("cy-hours"), stop = $("cy-stop"), minhold = $("cy-minhold");
-  // 60 秒轮询会重入：正在编辑的输入框不能被覆盖。
-  if ([entry, exit, pairs, hours, stop, minhold].some((el) => el && document.activeElement === el)) return;
-  if (entry) entry.value = Math.round(cfg.entry_threshold * 1000) / 10;
-  if (exit) exit.value = Math.round(cfg.exit_threshold * 1000) / 10;
-  if (pairs) pairs.value = cfg.max_pairs;
-  if (hours) hours.value = cfg.max_holding_hours;
-  if (minhold) minhold.value = cfg.min_hold_hours;
-  if (stop) stop.value = Math.round(cfg.stop_loss_pct * 1000) / 10;
-}
 
-async function refreshCarry() {
-  try {
-    lastCarryData = await fetchJSONRetry("/api/carry", {}, 8000);
-    renderCarry(lastCarryData);
-    renderCarryConfig(lastCarryData.config);
-  } catch (e) {
-    // 服务器偶尔被写盘卡住：8 秒超时 + 重试，避免参数框一直空白
-  }
-}
 
-if ($("cy-save")) {
-  $("cy-save").addEventListener("click", async () => {
-    const body = {
-      entry_threshold: (Number($("cy-entry").value) || 0) / 100,
-      exit_threshold: (Number($("cy-exit").value) || 0) / 100,
-      max_pairs: Number($("cy-pairs").value) || 0,
-      max_holding_hours: Number($("cy-hours").value) || 0,
-      min_hold_hours: Number($("cy-minhold") ? $("cy-minhold").value : 72) || 0,
-      stop_loss_pct: (Number($("cy-stop").value) || 0) / 100,
-    };
-    const st = $("cy-status");
-    try {
-      const res = await fetch("/api/carry/config", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-      });
-      const out = await res.json();
-      if (!res.ok || !out.ok) {
-        st.textContent = "保存失败：" + (out.error || ("HTTP " + res.status));
-        return;
-      }
-      st.textContent = "参数已保存。";
-      lastCarryData = null;
-      refreshCarry();
-    } catch (e) {
-      st.textContent = "保存失败：" + e;
-    }
-  });
-}
 
-if ($("cy-step")) {
-  $("cy-step").addEventListener("click", async () => {
-    const st = $("cy-status");
-    try {
-      const res = await fetch("/api/carry/step", { method: "POST", cache: "no-store" });
-      if (!res.ok) throw new Error("HTTP " + res.status);
-      lastCarryData = await res.json();
-      renderCarry(lastCarryData);
-      st.textContent = "已推进。";
-    } catch (e) {
-      st.textContent = "推进失败：" + e;
-    }
-  });
-}
 
-if ($("cy-reset")) {
-  $("cy-reset").addEventListener("click", async () => {
-    if (!confirm("重置纸面 carry：清空全部持仓、已实现盈亏与曲线（保留参数）。继续？")) return;
-    const st = $("cy-status");
-    try {
-      const res = await fetch("/api/carry/reset", { method: "POST", cache: "no-store" });
-      if (!res.ok) throw new Error("HTTP " + res.status);
-      lastCarryData = await res.json();
-      renderCarry(lastCarryData);
-      st.textContent = "已重置。";
-    } catch (e) {
-      st.textContent = "重置失败：" + e;
-    }
-  });
-}
 
 setInterval(refreshCarry, 60000);
 
@@ -1947,7 +1515,14 @@ function arrangeMonitorSummary(id, shadow = false) {
 }
 
 
-// ---------- HL 单账户 carry 影子（买现货 + 等名义空永续，赚资金费） ----------
+// ---------- HL 单账户 carry 影子
+// 注意：app.js 里的 `money` 只是某些函数内的局部变量，不是全局；
+// 这里用一个本块的格式化器，避免 ReferenceError。
+const hcMoney = (v) =>
+  Number.isFinite(v)
+    ? "$" + Math.abs(v).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+    : "—";
+
 function renderHlCarry(d) {
   const s = (d && d.state) || {};
   const legs = Array.isArray(s.legs) ? s.legs : [];
@@ -1963,12 +1538,12 @@ function renderHlCarry(d) {
   if (m) {
     m.innerHTML = legs.length
       ? [
-          metric("影子权益", money(eq)),
+          metric("影子权益", hcMoney(eq)),
           metric("累计盈亏", moneySigned(eq - start), eq - start >= 0 ? "pos" : "neg"),
           metric("资金费", moneySigned(fund), fund >= 0 ? "pos" : "neg"),
           metric("基差", moneySigned(basis), basis >= 0 ? "pos" : "neg"),
-          metric("手续费", "−" + money(fee)),
-          metric("影子预算", money(start)),
+          metric("手续费", "−" + hcMoney(fee)),
+          metric("影子预算", hcMoney(start)),
           metric("年化", Number.isFinite(ann) ? (ann >= 0 ? "+" : "−") + Math.abs(ann).toFixed(1) + "%" : "—"),
         ].join("")
       : '<div class="empty">还没有影子持仓（预算未设置）。点右上角「按预算重新开仓」，填一个 USD 金额即可开始模拟——只影响模拟，不涉及真钱。</div>';
@@ -1988,7 +1563,7 @@ function renderHlCarry(d) {
       ? `<div class="table-scroll"><table><thead><tr><th>币</th><th>现货对</th><th>名义</th><th>资金费/年</th><th>当前基差</th><th>资金费累计</th><th>基差盈亏</th><th>腿盈亏</th></tr></thead><tbody>${legs
           .map(
             (l) =>
-              `<tr><td>${escapeHTML(l.coin || "")}</td><td>${escapeHTML(l.spot || "")}</td><td>${money(l.notional)}</td><td class="${Number(l.funding_ann) >= 0 ? "pos" : "neg"}">${fmt(l.funding_ann, 2)}%</td><td>${fmt(l.basis_bp, 1)} bp</td><td>${moneySigned(l.funding_accrued)}</td><td>${moneySigned(l.basis_pnl)}</td><td class="${Number(l.leg_pnl) >= 0 ? "pos" : "neg"}">${moneySigned(l.leg_pnl)}</td></tr>`
+              `<tr><td>${escapeHTML(l.coin || "")}</td><td>${escapeHTML(l.spot || "")}</td><td>${hcMoney(l.notional)}</td><td class="${Number(l.funding_ann) >= 0 ? "pos" : "neg"}">${fmt(l.funding_ann, 2)}%</td><td>${fmt(l.basis_bp, 1)} bp</td><td>${moneySigned(l.funding_accrued)}</td><td>${moneySigned(l.basis_pnl)}</td><td class="${Number(l.leg_pnl) >= 0 ? "pos" : "neg"}">${moneySigned(l.leg_pnl)}</td></tr>`
           )
           .join("")}</tbody></table></div>`
       : '<div class="empty">无持仓</div>';
