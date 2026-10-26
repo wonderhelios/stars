@@ -84,6 +84,7 @@ const payload = {
   annualized_pct: 21.5,
   warnings: ['XMR 资金费偏低（2.10%/年）'],
   state: {
+    params: { top_k: 5, min_funding_ann_pct: 3, min_spot_volume_usd: 1000000, max_leg_weight: 0.4, payback_days: 30 },
     start_equity: 1000,
     budget_usd: 1000,
     legs: [
@@ -207,4 +208,34 @@ assert.ok(
   '提交后应重新拉取影子状态',
 );
 
-console.log('✓ hlcarry 影子 tab：无未定义引用；四种状态渲染正确；预算可手动调整（回填/校验/确认/提交）');
+// ---- 用例 9：选币参数回填与保存 ----
+lastPayload = payload;
+ctx.renderHlCarry(payload);
+assert.equal(el('hc-p-topk').value, '5', 'top_k 应回填');
+assert.equal(el('hc-p-minfund').value, '3', '资金费门槛应回填');
+assert.equal(el('hc-p-maxw').value, '40', '单腿上限应按百分数回填');
+assert.equal(el('hc-p-payback').value, '30', '回本天数应回填');
+
+const paramsBtn = listeners.find((l) => l.id === 'hc-params-save');
+assert.ok(paramsBtn, '#hc-params-save 未绑定');
+el('hc-p-topk').value = '3';
+el('hc-p-minfund').value = '5';
+el('hc-p-minvol').value = '2000000';
+el('hc-p-maxw').value = '25';
+el('hc-p-payback').value = '14';
+const beforeParams = fetchCalls.length;
+await paramsBtn.fn();
+const saveCall = fetchCalls.slice(beforeParams).find((c) => String(c.url).includes('/api/hlcarry/params'));
+assert.ok(saveCall, '应调用 /api/hlcarry/params');
+const sent = JSON.parse(saveCall.opts.body);
+assert.equal(sent.top_k, 3);
+assert.equal(sent.min_funding_ann_pct, 5);
+assert.equal(sent.min_spot_volume_usd, 2000000);
+assert.equal(sent.max_leg_weight, 0.25, '百分比要换算成小数');
+assert.equal(sent.payback_days, 14);
+assert.match(el('hc-params-status').textContent, /已保存/, '保存后应有状态提示');
+
+// 资金利用率
+assert.match(el('hc-metrics').innerHTML, /资金利用率/, '汇总应显示资金利用率');
+
+console.log('✓ hlcarry 影子 tab：无未定义引用；渲染正确；预算与选币规则都可手动调整');

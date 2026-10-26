@@ -537,6 +537,42 @@
             <p class="note" id="hc-budget-note">改预算会清空当前影子持仓、累计盈亏和权益曲线，按新预算重新建仓（只影响模拟）。</p>
             <div class="metrics" id="hc-metrics"></div>
           </div>
+
+          <div class="content-card">
+            <div class="panel-head">
+              <div>
+                <span class="section-eyebrow">SELECTION</span>
+                <h2>选币与换仓规则</h2>
+              </div>
+              <div class="actions">
+                <button class="btn ghost" id="hc-params-save" type="button">保存规则</button>
+              </div>
+            </div>
+            <p class="note">篮子每次评估都按实时资金费重选；换仓要过「回本天数」这道闸门——一次性成本摊到这么多天后，目标篮子必须比现在高出这个数才动仓位。</p>
+            <div class="setup-fields">
+              <div class="field">
+                <label for="hc-p-topk">最多持有几腿</label>
+                <input id="hc-p-topk" type="number" min="1" max="12" step="1" />
+              </div>
+              <div class="field">
+                <label for="hc-p-minfund">资金费门槛（%/年）</label>
+                <input id="hc-p-minfund" type="number" min="-50" max="500" step="0.5" />
+              </div>
+              <div class="field">
+                <label for="hc-p-minvol">现货 24h 成交额门槛（USD）</label>
+                <input id="hc-p-minvol" type="number" min="0" step="100000" />
+              </div>
+              <div class="field">
+                <label for="hc-p-maxw">单腿权重上限（%）</label>
+                <input id="hc-p-maxw" type="number" min="5" max="100" step="5" />
+              </div>
+              <div class="field">
+                <label for="hc-p-payback">换仓回本天数</label>
+                <input id="hc-p-payback" type="number" min="1" max="365" step="1" />
+              </div>
+            </div>
+            <p class="note" id="hc-params-status"></p>
+          </div>
           <div class="content-card">
             <div class="panel-head"><h2>当前持仓</h2></div>
             <div id="hc-legs"></div>

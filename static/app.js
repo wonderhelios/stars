@@ -1535,6 +1535,21 @@ function renderHlCarry(d) {
   const basis = legs.reduce((a, l) => a + (Number(l.basis_pnl) || 0), 0);
   const fee = legs.reduce((a, l) => a + (Number(l.fee_paid) || 0), 0);
   const ann = d.annualized_pct;
+  const p = s.params || {};
+  // 参数回填（不覆盖正在编辑的输入框）
+  const pf = [
+    ["hc-p-topk", p.top_k, 0],
+    ["hc-p-minfund", p.min_funding_ann_pct, 2],
+    ["hc-p-minvol", p.min_spot_volume_usd, 0],
+    ["hc-p-maxw", Number.isFinite(p.max_leg_weight) ? p.max_leg_weight * 100 : null, 0],
+    ["hc-p-payback", p.payback_days, 0],
+  ];
+  for (const [id, val, digits] of pf) {
+    const inp = $(id);
+    if (inp && document.activeElement !== inp && val != null && Number.isFinite(Number(val))) {
+      inp.value = String(digits ? Number(val).toFixed(digits).replace(/\.00$/, "") : val);
+    }
+  }
   window.__hcBudget = Number.isFinite(s.budget_usd) ? s.budget_usd : 0;
   // 回填预算输入框；用户正在编辑时不覆盖（renderMonitor 那种轮询会打架）
   const budgetInput = $("hc-budget");
@@ -1552,6 +1567,10 @@ function renderHlCarry(d) {
           metric("基差", moneySigned(basis), basis >= 0 ? "pos" : "neg"),
           metric("手续费", "−" + hcMoney(fee)),
           metric("影子预算", hcMoney(start)),
+          metric(
+            "资金利用率",
+            start > 0 ? fmt((legs.reduce((a, l) => a + (Number(l.notional) || 0), 0) / start) * 100, 0) + "%" : "—",
+          ),
           metric("年化", Number.isFinite(ann) ? (ann >= 0 ? "+" : "−") + Math.abs(ann).toFixed(1) + "%" : "—"),
         ].join("")
       : '<div class="empty">还没有影子持仓（预算未设置）。点右上角「按预算重新开仓」，填一个 USD 金额即可开始模拟——只影响模拟，不涉及真钱。</div>';
@@ -1624,6 +1643,47 @@ if (hcStepBtn)
       alert("推进失败：" + ((e && e.message) || e));
     } finally {
       hcStepBtn.disabled = false;
+    }
+  });
+
+// ---- 选币规则：保存 ----
+const hcParamsBtn = $("hc-params-save");
+if (hcParamsBtn)
+  hcParamsBtn.addEventListener("click", async () => {
+    const num = (id) => {
+      const el = $(id);
+      const v = el ? Number(el.value) : NaN;
+      return Number.isFinite(v) ? v : null;
+    };
+    const maxw = num("hc-p-maxw");
+    const body = {
+      top_k: num("hc-p-topk"),
+      min_funding_ann_pct: num("hc-p-minfund"),
+      min_spot_volume_usd: num("hc-p-minvol"),
+      max_leg_weight: maxw == null ? null : maxw / 100,
+      payback_days: num("hc-p-payback"),
+    };
+    // null 表示"没填"，服务端会保留原值
+    for (const k of Object.keys(body)) if (body[k] == null) delete body[k];
+    if (Object.keys(body).length === 0) {
+      alert("没有可保存的参数。");
+      return;
+    }
+    const st = $("hc-params-status");
+    hcParamsBtn.disabled = true;
+    try {
+      const r = await fetchJSONRetry("/api/hlcarry/params", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      if (st) st.textContent = "已保存。规则在下一次评估时生效，当前持仓不动。";
+      await refreshHlCarry();
+      return r;
+    } catch (e) {
+      if (st) st.textContent = "保存失败：" + ((e && e.message) || e);
+    } finally {
+      hcParamsBtn.disabled = false;
     }
   });
 

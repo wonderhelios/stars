@@ -176,6 +176,8 @@ async fn main() -> anyhow::Result<()> {
                                 }
                             } else {
                                 hc.step(&market, now);
+                                // 先计提资金费与盯市（equity 依赖它们），再评估换仓。
+                                hc.maybe_rebalance(&market, now);
                             }
                             hc.clone()
                         };

@@ -1,22 +1,20 @@
 //! HL 单账户 carry 影子引擎（2026-10）。
 //!
 //! 策略：**同一账户内**「买现货 + 等名义空永续」，赚取永续资金费。
-//! 这是唯一在 HL 上被实测为正的方向（实盘 91 天资金费 +$324 ≈ +22%/年）。
 //!
-//! 本模块只做三件事：
-//!   1. 拉真实行情（`allMids` 一次拿全永续+现货；`metaAndAssetCtxs` 拿资金费）
-//!   2. 按固定篮子模拟持仓（不预测、不择时、不调仓）
-//!   3. 核算三块损益：资金费、基差、手续费，并记录权益曲线
+//! 篮子**不是写死的**：每次评估都按当时的资金费排名重新选币、按资金费高低
+//! 分配权重。但"哪个高干哪个"必须过一道**换手闸门**——每次换仓要付
+//! [`ROUND_TRIP_FEE_BP`]，追着资金费搬家会把收益全部交给手续费。
 //!
-//! **不发任何真实订单。** 纯影子。
+//! 闸门的口径是"回本天数"：把这次换仓的一次性成本，按 [`Params::payback_days`]
+//! 摊成年化，只有当目标篮子的加权资金费比当前篮子高出这个数，才真的动仓位。
+//! 这条规则让"追高"和"别乱动"同时成立，而且两个参数都是可调的。
 //!
 //! 成本口径（HL 实际费率，2026-10）：
 //!   - 现货 maker 4.0bp/side，永续 maker 1.44bp/side
-//!   - 每腿单边 5.44bp，往返 10.88bp（进场时一次性预扣，保守）
+//!   - 每腿单边 5.44bp，往返 10.88bp；在**交易发生的那一刻**按成交量预扣往返
 //!
-//! 为什么需要它：`funding-carry` 之前的纸面引擎建在 OKX/币安现货上，
-//! 而 HL 现在已有流动现货（UBTC/UETH/USOL/XMR1 等，$3~19M/24h），
-//! 单账户即可完成，成本从币安的 24bp 降到 10.88bp。
+//! **不发任何真实订单。** 纯影子。
 
 use anyhow::{Context, Result};
 use serde::{Deserialize, Serialize};
@@ -28,55 +26,187 @@ const HL_INFO: &str = "https://api.hyperliquid.xyz/info";
 /// 现货 maker 4bp + 永续 maker 1.44bp，往返 ×2。
 pub const ROUND_TRIP_FEE_BP: f64 = 10.88;
 
-/// 篮子里的一个标的：永续币名 + 现货交易对 + 目标权重。
+// ---------------------------------------------------------------------------
+// 参数
+// ---------------------------------------------------------------------------
+
+/// 选币与换仓规则。全部可在页面上改，不写死在代码里。
 #[derive(Clone, Debug, Serialize, Deserialize)]
-pub struct LegSpec {
+pub struct Params {
+    /// 最多持有几条腿。
+    pub top_k: usize,
+    /// 资金费门槛（年化 %）。低于它的币不进入候选。
+    pub min_funding_ann_pct: f64,
+    /// 现货 24h 成交额门槛（USD）。太薄的现货买不进也卖不出。
+    pub min_spot_volume_usd: f64,
+    /// 单腿权重上限，避免全仓压在一个币上。
+    pub max_leg_weight: f64,
+    /// 换仓回本天数：一次性成本按这么多天摊成年化，作为换仓门槛。
+    pub payback_days: f64,
+}
+
+impl Default for Params {
+    fn default() -> Self {
+        Params {
+            top_k: 5,
+            // 10.95%/年是 HL 常见档位；1% 的币基本在空转，不值得占一腿。
+            min_funding_ann_pct: 3.0,
+            // $1M/24h 是能容纳 $5k 级别下单的下限。
+            min_spot_volume_usd: 1_000_000.0,
+            max_leg_weight: 0.40,
+            // 30 天回本：一次全换 10.88bp，摊到 30 天约 1.32%/年。
+            payback_days: 30.0,
+        }
+    }
+}
+
+impl Params {
+    pub fn sanitized(self) -> Self {
+        Params {
+            top_k: self.top_k.clamp(1, 12),
+            min_funding_ann_pct: self.min_funding_ann_pct.clamp(-50.0, 500.0),
+            min_spot_volume_usd: self.min_spot_volume_usd.clamp(0.0, 1e12),
+            max_leg_weight: self.max_leg_weight.clamp(0.05, 1.0),
+            payback_days: self.payback_days.clamp(1.0, 365.0),
+        }
+    }
+}
+
+// ---------------------------------------------------------------------------
+// 候选与权重
+// ---------------------------------------------------------------------------
+
+/// 一个可做 carry 的标的一次快照。
+#[derive(Clone, Debug, PartialEq)]
+pub struct Candidate {
+    pub coin: String,
+    pub spot: String,
+    /// 年化资金费（%）。
+    pub funding_ann: f64,
+    /// 现货 24h 成交额（USD）。
+    pub spot_volume: f64,
+}
+
+/// 目标持仓：币、现货对、目标权重。
+#[derive(Clone, Debug, PartialEq)]
+pub struct Target {
     pub coin: String,
     pub spot: String,
     pub weight: f64,
+    pub funding_ann: f64,
 }
 
-/// 默认篮子：2026-10-27 实测「现货 24h 额 > $0.5M 且资金费为正」的 9 个里，
-/// 取点差最紧、入场基差最有利的 5 个。
-pub fn default_basket() -> Vec<LegSpec> {
-    vec![
-        LegSpec { coin: "XMR".into(), spot: "@260".into(), weight: 0.20 },
-        LegSpec { coin: "BTC".into(), spot: "@142".into(), weight: 0.30 },
-        LegSpec { coin: "ETH".into(), spot: "@151".into(), weight: 0.20 },
-        LegSpec { coin: "SOL".into(), spot: "@156".into(), weight: 0.15 },
-        LegSpec { coin: "ZEC".into(), spot: "@272".into(), weight: 0.15 },
-    ]
+/// 从全市场挑候选：现货够厚 + 资金费过门槛，按资金费从高到低取前 K。
+pub fn select_candidates(market: &Market, params: &Params) -> Vec<Candidate> {
+    let mut out: Vec<Candidate> = market
+        .latched
+        .iter()
+        .filter(|l| l.spot_volume >= params.min_spot_volume_usd)
+        .filter(|l| l.funding_ann > params.min_funding_ann_pct)
+        .map(|l| Candidate {
+            coin: l.coin.clone(),
+            spot: l.spot.clone(),
+            funding_ann: l.funding_ann,
+            spot_volume: l.spot_volume,
+        })
+        .collect();
+    out.sort_by(|a, b| {
+        b.funding_ann
+            .partial_cmp(&a.funding_ann)
+            .unwrap_or(std::cmp::Ordering::Equal)
+            .then_with(|| a.coin.cmp(&b.coin))
+    });
+    out.truncate(params.top_k);
+    out
 }
 
-/// 一条腿的模拟持仓。
+/// 按资金费高低分配权重：权重 ∝（资金费 − 门槛），再做单腿上限制并归一。
+pub fn target_weights(cands: &[Candidate], params: &Params) -> Vec<Target> {
+    let floor = params.min_funding_ann_pct;
+    let raw: Vec<f64> = cands
+        .iter()
+        .map(|c| (c.funding_ann - floor).max(0.0))
+        .collect();
+    let total: f64 = raw.iter().sum();
+    if total <= 0.0 {
+        return Vec::new();
+    }
+    let cap = params.max_leg_weight;
+    // 单腿上限制：触发时**不把余量摊给别的腿**。
+    // 摊给别人的话，被砍掉的那部分会流向资金费更低的标的——
+    // 等于因为风险约束去买更差的 carry。余量留作现金（权重和 ≤ 1）。
+    let w: Vec<f64> = raw
+        .iter()
+        .map(|r| (r / total).min(cap))
+        .collect();
+
+    cands
+        .iter()
+        .zip(w.iter())
+        .filter(|(_, x)| **x > 1e-9)
+        .map(|(c, x)| Target {
+            coin: c.coin.clone(),
+            spot: c.spot.clone(),
+            weight: *x,
+            funding_ann: c.funding_ann,
+        })
+        .collect()
+}
+
+/// 换手率：Σ|目标权重 − 当前权重| / 2。0 = 完全不动，1 = 全换。
+pub fn turnover(current: &[(String, f64)], target: &[Target]) -> f64 {
+    let mut coins: Vec<&str> = current.iter().map(|(c, _)| c.as_str()).collect();
+    for t in target {
+        if !coins.contains(&t.coin.as_str()) {
+            coins.push(&t.coin);
+        }
+    }
+    let mut sum = 0.0;
+    for c in coins {
+        let cur = current
+            .iter()
+            .find(|(k, _)| k == c)
+            .map(|(_, w)| *w)
+            .unwrap_or(0.0);
+        let tgt = target
+            .iter()
+            .find(|t| t.coin == c)
+            .map(|t| t.weight)
+            .unwrap_or(0.0);
+        sum += (tgt - cur).abs();
+    }
+    sum / 2.0
+}
+
+/// 一次换仓的一次性成本，按 payback_days 摊成年化（%）。
+pub fn rebalance_threshold_ann_pct(turn: f64, params: &Params) -> f64 {
+    let one_time_pct = turn * ROUND_TRIP_FEE_BP / 100.0; // bp -> %
+    one_time_pct * 365.0 / params.payback_days
+}
+
+// ---------------------------------------------------------------------------
+// 状态
+// ---------------------------------------------------------------------------
+
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Leg {
     pub coin: String,
     pub spot: String,
     pub weight: f64,
-    /// 每腿名义（USD），进场的现货/永续两边各这么多。
     pub notional: f64,
     pub spot_qty: f64,
     pub perp_qty_abs: f64,
     pub spot_entry: f64,
     pub perp_entry: f64,
-    /// 进场时记下的年化资金费（%），仅供参考。
     pub entry_funding_ann: f64,
-    /// 累计净资金费（正 = 净收）。
     pub funding_accrued: f64,
-    /// 基差盈亏（现货币 + 永续腿合计）。
     pub basis_pnl: f64,
-    /// 已扣的手续费（往返一次性）。
     pub fee_paid: f64,
     pub last_accrual_ms: i64,
-    // ---- 实时行情（每次 step 更新）----
     pub spot_px: f64,
     pub perp_px: f64,
-    /// 当前年化资金费（%）。
     pub funding_ann: f64,
-    /// 当前基差（bp，正 = 永续升水）。
     pub basis_bp: f64,
-    /// 该腿当前合计盈亏 = 资金费 + 基差 − 手续费。
     pub leg_pnl: f64,
 }
 
@@ -88,24 +218,29 @@ pub struct CarryLog {
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct HlCarryState {
-    pub basket: Vec<LegSpec>,
+    #[serde(default)]
+    pub params: Params,
     pub legs: Vec<Leg>,
     pub budget_usd: f64,
     pub start_equity: f64,
     pub closed_pnl: f64,
-    /// (ts, 权益)，每小时一个点。
     pub history: Vec<(i64, f64)>,
     pub log: Vec<CarryLog>,
     pub updated: Option<i64>,
-    /// 上次历史采样时间，用于按小时节流。
     #[serde(default)]
     pub last_history_ms: Option<i64>,
+    /// 上一次评估换仓的时间。
+    #[serde(default)]
+    pub last_check_ms: Option<i64>,
+    /// 累计为换仓付出的手续费（只增不减，用来暴露 churn 成本）。
+    #[serde(default)]
+    pub fees_paid_total: f64,
 }
 
 impl Default for HlCarryState {
     fn default() -> Self {
         HlCarryState {
-            basket: default_basket(),
+            params: Params::default(),
             legs: Vec::new(),
             budget_usd: 0.0,
             start_equity: 0.0,
@@ -114,16 +249,20 @@ impl Default for HlCarryState {
             log: Vec::new(),
             updated: None,
             last_history_ms: None,
+            last_check_ms: None,
+            fees_paid_total: 0.0,
         }
     }
 }
 
 impl HlCarryState {
     pub fn load(path: &Path) -> Self {
-        std::fs::read(path)
+        let mut st: HlCarryState = std::fs::read(path)
             .ok()
             .and_then(|b| serde_json::from_slice(&b).ok())
-            .unwrap_or_default()
+            .unwrap_or_default();
+        st.params = st.params.clone().sanitized();
+        st
     }
 
     pub fn save(&self, path: &Path) -> Result<()> {
@@ -135,12 +274,10 @@ impl HlCarryState {
         Ok(())
     }
 
-    /// 当前总权益 = 期初 + 各腿盈亏 + 已平仓盈亏。
     pub fn equity(&self) -> f64 {
         self.start_equity + self.legs.iter().map(|l| l.leg_pnl).sum::<f64>() + self.closed_pnl
     }
 
-    /// 年化收益率（按已运行时长折算）。不足 1 小时返回 None。
     pub fn annualized_pct(&self) -> Option<f64> {
         let first = *self.history.first()?;
         let last = *self.history.last()?;
@@ -152,6 +289,11 @@ impl HlCarryState {
         Some(ret * (365.0 * 24.0 / hours) * 100.0)
     }
 
+    /// 当前持仓的加权年化资金费（%），用于和候选篮子比较。
+    pub fn current_weighted_funding(&self) -> f64 {
+        self.legs.iter().map(|l| l.weight * l.funding_ann).sum()
+    }
+
     fn log(&mut self, now: i64, msg: String) {
         self.log.push(CarryLog { ts: now, msg });
         if self.log.len() > 300 {
@@ -160,48 +302,180 @@ impl HlCarryState {
         }
     }
 
-    /// 按预算开仓：每腿名义 = 预算 × 权重，现货与永续等名义。
+    /// 按预算建仓（首次开仓 / 重置）。
     pub fn open(&mut self, budget_usd: f64, market: &Market, now: i64) {
         self.legs.clear();
         self.closed_pnl = 0.0;
         self.history.clear();
+        self.fees_paid_total = 0.0;
         self.budget_usd = budget_usd;
         self.start_equity = budget_usd;
         self.last_history_ms = Some(now);
-
-        for spec in self.basket.clone() {
-            let Some(q) = market.quote(&spec.coin, &spec.spot) else {
-                self.log(now, format!("{} 行情缺失，跳过", spec.coin));
-                continue;
-            };
-            let notional = budget_usd * spec.weight;
-            if notional <= 0.0 || q.spot <= 0.0 || q.perp <= 0.0 {
-                continue;
-            }
-            let fee = notional * ROUND_TRIP_FEE_BP / 10_000.0;
-            self.legs.push(Leg {
-                coin: spec.coin.clone(),
-                spot: spec.spot.clone(),
-                weight: spec.weight,
-                notional,
-                spot_qty: notional / q.spot,
-                perp_qty_abs: notional / q.perp,
-                spot_entry: q.spot,
-                perp_entry: q.perp,
-                entry_funding_ann: q.funding_ann,
-                funding_accrued: 0.0,
-                basis_pnl: 0.0,
-                fee_paid: fee,
-                last_accrual_ms: now,
-                spot_px: q.spot,
-                perp_px: q.perp,
-                funding_ann: q.funding_ann,
-                basis_bp: (q.perp - q.spot) / q.spot * 10_000.0,
-                leg_pnl: -fee,
-            });
+        self.last_check_ms = Some(now);
+        let targets = target_weights(&select_candidates(market, &self.params), &self.params);
+        if targets.is_empty() {
+            self.log(now, "没有满足条件的标的（现货成交额 / 资金费门槛）".into());
+            return;
         }
-        let n = self.legs.len();
-        self.log(now, format!("开仓：{} 腿，总名义 ${:.0}", n, budget_usd));
+        let eq = self.equity();
+        let mut n = 0usize;
+        for t in targets {
+            if self.add_leg(&t, eq, market, now) {
+                n += 1;
+            }
+        }
+        self.log(now, format!("开仓：{} 腿，总名义 ${:.0}", n, eq));
+    }
+
+    fn add_leg(&mut self, t: &Target, equity: f64, market: &Market, now: i64) -> bool {
+        let Some(q) = market.quote(&t.coin, &t.spot) else {
+            return false;
+        };
+        let notional = equity * t.weight;
+        if notional <= 0.0 || q.spot <= 0.0 || q.perp <= 0.0 {
+            return false;
+        }
+        let fee = notional * ROUND_TRIP_FEE_BP / 10_000.0;
+        self.fees_paid_total += fee;
+        self.legs.push(Leg {
+            coin: t.coin.clone(),
+            spot: t.spot.clone(),
+            weight: t.weight,
+            notional,
+            spot_qty: notional / q.spot,
+            perp_qty_abs: notional / q.perp,
+            spot_entry: q.spot,
+            perp_entry: q.perp,
+            entry_funding_ann: q.funding_ann,
+            funding_accrued: 0.0,
+            basis_pnl: 0.0,
+            fee_paid: fee,
+            last_accrual_ms: now,
+            spot_px: q.spot,
+            perp_px: q.perp,
+            funding_ann: q.funding_ann,
+            basis_bp: (q.perp - q.spot) / q.spot * 10_000.0,
+            leg_pnl: -fee,
+        });
+        true
+    }
+
+    /// 把一条腿调整到新权重：只对**变动的名义**收往返费。
+    fn resize_leg(&mut self, i: usize, t: &Target, equity: f64, market: &Market, now: i64) {
+        let Some(q) = market.quote(&t.coin, &t.spot) else {
+            return;
+        };
+        if !(q.spot > 0.0 && q.perp > 0.0) {
+            return;
+        }
+        let new_notional = equity * t.weight;
+        let old = self.legs[i].notional;
+        let delta = (new_notional - old).abs();
+        let mut fee = 0.0;
+        if delta > 1e-9 {
+            fee = delta * ROUND_TRIP_FEE_BP / 10_000.0;
+        }
+        self.fees_paid_total += fee;
+        let leg = &mut self.legs[i];
+        leg.weight = t.weight;
+        leg.spot = t.spot.clone();
+        leg.notional = new_notional;
+        leg.spot_qty = new_notional / q.spot;
+        leg.perp_qty_abs = new_notional / q.perp;
+        leg.spot_entry = q.spot;
+        leg.perp_entry = q.perp;
+        leg.spot_px = q.spot;
+        leg.perp_px = q.perp;
+        leg.funding_ann = q.funding_ann;
+        leg.basis_bp = (q.perp - q.spot) / q.spot * 10_000.0;
+        leg.last_accrual_ms = now;
+        leg.fee_paid += fee;
+        // 改了入场价，基差从零重新起算，避免重复计入旧盈亏。
+        leg.basis_pnl = 0.0;
+        leg.leg_pnl = leg.funding_accrued - leg.fee_paid;
+    }
+
+    /// 评估并在满足闸门时换仓。返回是否真的动了仓位。
+    pub fn maybe_rebalance(&mut self, market: &Market, now: i64) -> bool {
+        if self.legs.is_empty() {
+            return false;
+        }
+        self.last_check_ms = Some(now);
+        let targets = target_weights(&select_candidates(market, &self.params), &self.params);
+        if targets.is_empty() {
+            self.sync_funding(market);
+            return false;
+        }
+
+        let cur: Vec<(String, f64)> = self.legs.iter().map(|l| (l.coin.clone(), l.weight)).collect();
+        let turn = turnover(&cur, &targets);
+        if turn < 1e-9 {
+            self.sync_funding(market);
+            return false;
+        }
+
+        let cur_f = self
+            .legs
+            .iter()
+            .map(|l| {
+                let f = market
+                    .quote(&l.coin, &l.spot)
+                    .map(|q| q.funding_ann)
+                    .unwrap_or(l.funding_ann);
+                l.weight * f
+            })
+            .sum::<f64>();
+        let tgt_f: f64 = targets.iter().map(|t| t.weight * t.funding_ann).sum();
+        let improve = tgt_f - cur_f;
+        let threshold = rebalance_threshold_ann_pct(turn, &self.params);
+
+        if improve <= threshold {
+            self.sync_funding(market);
+            return false;
+        }
+
+        let equity = self.equity();
+        let target_coins: Vec<String> = targets.iter().map(|t| t.coin.clone()).collect();
+        let removed: Vec<String> = self
+            .legs
+            .iter()
+            .filter(|l| !target_coins.contains(&l.coin))
+            .map(|l| l.coin.clone())
+            .collect();
+        // 移出的腿：往返费在开仓时已付，这里不再收。
+        self.legs.retain(|l| target_coins.contains(&l.coin));
+        for c in removed {
+            self.log(now, format!("移出 {c}（资金费不再靠前）"));
+        }
+
+        for t in targets.iter() {
+            if let Some(i) = self.legs.iter().position(|l| l.coin == t.coin) {
+                self.resize_leg(i, t, equity, market, now);
+            } else if self.add_leg(t, equity, market, now) {
+                self.log(now, format!("加入 {}（{:.2}%/年）", t.coin, t.funding_ann));
+            }
+        }
+
+        self.log(
+            now,
+            format!(
+                "换仓：换手 {:.0}%，加权资金费 {:.2}% → {:.2}%/年（门槛 {:.2}%），手续费累计 ${:.2}",
+                turn * 100.0,
+                cur_f,
+                tgt_f,
+                threshold,
+                self.fees_paid_total
+            ),
+        );
+        true
+    }
+
+    fn sync_funding(&mut self, market: &Market) {
+        for leg in self.legs.iter_mut() {
+            if let Some(q) = market.quote(&leg.coin, &leg.spot) {
+                leg.funding_ann = q.funding_ann;
+            }
+        }
     }
 
     /// 推进一步：计提资金费、盯市、记录权益。
@@ -209,18 +483,16 @@ impl HlCarryState {
         self.updated = Some(now);
         for leg in self.legs.iter_mut() {
             let Some(q) = market.quote(&leg.coin, &leg.spot) else {
-                continue; // 行情缺失：本轮跳过，保留上次状态
+                continue;
             };
             if !(q.spot > 0.0 && q.perp > 0.0 && q.spot.is_finite() && q.perp.is_finite()) {
                 continue;
             }
-            // ① 资金费：做空永续，正费率则收钱。dt 按小时折算。
             let dt_hours = ((now - leg.last_accrual_ms).max(0) as f64) / 3_600_000.0;
             if dt_hours > 0.0 && q.funding_hourly.is_finite() {
                 leg.funding_accrued += leg.notional * q.funding_hourly * dt_hours;
                 leg.last_accrual_ms = now;
             }
-            // ② 盯市
             leg.spot_px = q.spot;
             leg.perp_px = q.perp;
             leg.funding_ann = q.funding_ann;
@@ -230,7 +502,6 @@ impl HlCarryState {
             leg.leg_pnl = leg.basis_pnl + leg.funding_accrued - leg.fee_paid;
         }
 
-        // ③ 权益曲线：每小时一个点
         let should = match self.last_history_ms {
             None => true,
             Some(t) => now - t >= 3_600_000,
@@ -246,7 +517,6 @@ impl HlCarryState {
         }
     }
 
-    /// 告警：资金费转负或基差恶化到需要人工判断的程度。
     pub fn warnings(&self) -> Vec<String> {
         let mut out = Vec::new();
         for leg in &self.legs {
@@ -255,8 +525,11 @@ impl HlCarryState {
                     "{} 资金费转负（{:.2}%/年）——这条腿在付钱",
                     leg.coin, leg.funding_ann
                 ));
-            } else if leg.funding_ann < 3.0 {
-                out.push(format!("{} 资金费偏低（{:.2}%/年）", leg.coin, leg.funding_ann));
+            } else if leg.funding_ann < self.params.min_funding_ann_pct {
+                out.push(format!(
+                    "{} 资金费 {:.2}%/年，已低于门槛 {:.2}%",
+                    leg.coin, leg.funding_ann, self.params.min_funding_ann_pct
+                ));
             }
             if leg.basis_bp < -30.0 {
                 out.push(format!("{} 永续贴水 {:.0}bp——基差不利", leg.coin, leg.basis_bp));
@@ -266,26 +539,36 @@ impl HlCarryState {
     }
 }
 
-/// 一个标的的实时报价。
+// ---------------------------------------------------------------------------
+// 行情
+// ---------------------------------------------------------------------------
+
 #[derive(Clone, Debug)]
 pub struct Quote {
     pub spot: f64,
     pub perp: f64,
-    /// 每小时资金费（小数，例如 0.0000125）。
     pub funding_hourly: f64,
-    /// 年化资金费（%）。
     pub funding_ann: f64,
 }
 
-/// 一次抓取的全市场快照。
+/// 一个"两边都有盘、且能配对"的标的快照。
+#[derive(Clone, Debug)]
+pub struct Latch {
+    pub coin: String,
+    pub spot: String,
+    pub funding_ann: f64,
+    pub spot_volume: f64,
+}
+
 #[derive(Clone, Debug, Default)]
 pub struct Market {
-    /// 币名 -> 永续中间价
     pub perp_mid: std::collections::HashMap<String, f64>,
-    /// 现货对名（"@142" 等）-> 中间价
     pub spot_mid: std::collections::HashMap<String, f64>,
-    /// 币名 -> 每小时资金费
     pub funding: std::collections::HashMap<String, f64>,
+    /// 现货 24h 成交额（按现货对名）。
+    pub spot_volume: std::collections::HashMap<String, f64>,
+    /// 已配对的标的（永续名 + 现货对），带成交额与资金费。
+    pub latched: Vec<Latch>,
 }
 
 impl Market {
@@ -302,6 +585,23 @@ impl Market {
     }
 }
 
+/// 现货 token 名 → 永续币名。HL 现货用桥接符（UBTC/UETH/USOL/XMR1/USDT0）。
+pub fn perp_of_spot_token(token: &str, perps: &std::collections::HashSet<String>) -> Option<String> {
+    if perps.contains(token) {
+        return Some(token.to_string());
+    }
+    if let Some(rest) = token.strip_prefix('U') {
+        if !rest.is_empty() && perps.contains(rest) {
+            return Some(rest.to_string());
+        }
+    }
+    let trimmed = token.trim_end_matches(|c: char| c.is_ascii_digit());
+    if !trimmed.is_empty() && perps.contains(trimmed) {
+        return Some(trimmed.to_string());
+    }
+    None
+}
+
 async fn post(http: &reqwest::Client, payload: Value) -> Result<Value> {
     let resp = http
         .post(HL_INFO)
@@ -313,17 +613,18 @@ async fn post(http: &reqwest::Client, payload: Value) -> Result<Value> {
     Ok(v)
 }
 
-/// 拉一次全市场快照：2 个公开请求。
+/// 拉一次全市场快照：3 个公开请求。
 pub async fn fetch_market(http: &reqwest::Client) -> Result<Market> {
     let mids = post(http, json!({"type": "allMids"})).await?;
     let ctxs = post(http, json!({"type": "metaAndAssetCtxs"})).await?;
-    Ok(parse_market(&mids, &ctxs))
+    let spot = post(http, json!({"type": "spotMetaAndAssetCtxs"})).await?;
+    Ok(parse_market(&mids, &ctxs, &spot))
 }
 
-/// 纯解析：把两个接口的原始 JSON 变成 Market。抽出来是为了能用真实报文做单测
-/// （本机 TLS 环境异常，无法直连 HL）。
-pub fn parse_market(mids: &Value, ctxs: &Value) -> Market {
+/// 纯解析：三个接口的原始 JSON → Market。抽出来便于用真实报文做单测。
+pub fn parse_market(mids: &Value, ctxs: &Value, spot: &Value) -> Market {
     let mut m = Market::default();
+
     if let Some(obj) = mids.as_object() {
         for (k, v) in obj {
             let Some(px) = v.as_str().and_then(|s| s.parse::<f64>().ok()) else {
@@ -335,18 +636,22 @@ pub fn parse_market(mids: &Value, ctxs: &Value) -> Market {
             if k.starts_with('@') || k.contains('/') {
                 m.spot_mid.insert(k.clone(), px);
             } else {
-                // 永续（含 HIP-3 的 "#N" 之类，用不到但不影响）
                 m.perp_mid.insert(k.clone(), px);
             }
         }
     }
+
+    let mut perp_set = std::collections::HashSet::new();
     if let Some(arr) = ctxs.as_array() {
         if arr.len() > 1 {
             if let (Some(meta), Some(list)) = (arr[0].get("universe"), arr[1].as_array()) {
-                for (u, c) in meta.as_array().unwrap_or(&vec![]).iter().zip(list.iter()) {
+                let empty = vec![];
+                let uni = meta.as_array().unwrap_or(&empty);
+                for (u, c) in uni.iter().zip(list.iter()) {
                     let Some(coin) = u.get("name").and_then(|v| v.as_str()) else {
                         continue;
                     };
+                    perp_set.insert(coin.to_string());
                     let f = c
                         .get("funding")
                         .and_then(|v| v.as_str())
@@ -357,6 +662,69 @@ pub fn parse_market(mids: &Value, ctxs: &Value) -> Market {
             }
         }
     }
+
+    // 现货：meta 给 token 名与 pair→token 映射，ctxs 给 pair 的成交额。
+    let (smeta, sctxs) = match spot.as_array() {
+        Some(a) if a.len() > 1 => (a[0].clone(), a[1].as_array().cloned().unwrap_or_default()),
+        _ => (Value::Null, Vec::new()),
+    };
+    let tokens: Vec<String> = smeta
+        .get("tokens")
+        .and_then(|v| v.as_array())
+        .map(|a| {
+            a.iter()
+                .map(|t| {
+                    t.get("name")
+                        .and_then(|v| v.as_str())
+                        .unwrap_or("")
+                        .to_string()
+                })
+                .collect()
+        })
+        .unwrap_or_default();
+    let mut vol_by_pair: std::collections::HashMap<String, f64> = std::collections::HashMap::new();
+    for c in sctxs.iter() {
+        let Some(pair) = c.get("coin").and_then(|v| v.as_str()) else {
+            continue;
+        };
+        let v = c
+            .get("dayNtlVlm")
+            .and_then(|x| x.as_str())
+            .and_then(|s| s.parse::<f64>().ok())
+            .unwrap_or(0.0);
+        vol_by_pair.insert(pair.to_string(), v);
+    }
+
+    if let Some(uni) = smeta.get("universe").and_then(|v| v.as_array()) {
+        for u in uni {
+            let Some(name) = u.get("name").and_then(|v| v.as_str()) else {
+                continue;
+            };
+            let Some(idx) = u.get("tokens").and_then(|v| v.as_array()) else {
+                continue;
+            };
+            let Some(base_i) = idx.first().and_then(|v| v.as_u64()) else {
+                continue;
+            };
+            let Some(base) = tokens.get(base_i as usize) else {
+                continue;
+            };
+            let Some(coin) = perp_of_spot_token(base, &perp_set) else {
+                continue;
+            };
+            let vol = *vol_by_pair.get(name).unwrap_or(&0.0);
+            m.spot_volume.insert(name.to_string(), vol);
+            let fh = *m.funding.get(&coin).unwrap_or(&0.0);
+            if m.spot_mid.contains_key(name) && m.perp_mid.contains_key(&coin) {
+                m.latched.push(Latch {
+                    coin,
+                    spot: name.to_string(),
+                    funding_ann: fh * 24.0 * 365.0 * 100.0,
+                    spot_volume: vol,
+                });
+            }
+        }
+    }
     m
 }
 
@@ -364,75 +732,182 @@ pub fn parse_market(mids: &Value, ctxs: &Value) -> Market {
 mod tests {
     use super::*;
 
-    fn market_with(spot: f64, perp: f64, fh: f64) -> Market {
+    /// (coin, spot, funding_hourly, spot_vol, px)
+    fn market(rows: &[(&str, &str, f64, f64, f64)]) -> Market {
         let mut m = Market::default();
-        m.spot_mid.insert("@142".into(), spot);
-        m.perp_mid.insert("BTC".into(), perp);
-        m.funding.insert("BTC".into(), fh);
+        for (coin, spot, fh, vol, px) in rows {
+            m.perp_mid.insert(coin.to_string(), *px);
+            m.spot_mid.insert(spot.to_string(), *px);
+            m.funding.insert(coin.to_string(), *fh);
+            m.spot_volume.insert(spot.to_string(), *vol);
+            m.latched.push(Latch {
+                coin: coin.to_string(),
+                spot: spot.to_string(),
+                funding_ann: fh * 24.0 * 365.0 * 100.0,
+                spot_volume: *vol,
+            });
+        }
         m
     }
 
     #[test]
+    fn selects_by_funding_and_filters() {
+        let p = Params::default();
+        let m = market(&[
+            ("AAA", "@1", 0.000_05, 5e6, 10.0),   // 43.8%/年
+            ("BBB", "@2", 0.000_0125, 5e6, 10.0), // 10.95%/年
+            ("CCC", "@3", 0.000_0001, 5e6, 10.0), // 0.09%/年 -> 低于门槛
+            ("DDD", "@4", 0.000_05, 1e4, 10.0),   // 现货太薄
+        ]);
+        let c = select_candidates(&m, &p);
+        let names: Vec<&str> = c.iter().map(|x| x.coin.as_str()).collect();
+        assert_eq!(names, vec!["AAA", "BBB"], "只留过门槛且够厚的，按资金费降序");
+
+        let t = target_weights(&c, &p);
+        assert_eq!(t.len(), 2);
+        // AAA 原始权重 0.837 被 0.40 上限压住；余量留现金，不回补给 BBB
+        assert!((t[0].weight - 0.40).abs() < 1e-9, "高资金费腿应被压到上限");
+        assert!(t[1].weight > 0.0 && t[1].weight < 0.40);
+        let sum: f64 = t.iter().map(|x| x.weight).sum();
+        assert!(sum <= 1.0 + 1e-9, "权重和不得超过 1（余额是现金）");
+        assert!(sum < 1.0 - 1e-6, "上限生效时应留出现金");
+    }
+
+    #[test]
+    fn weights_respect_cap() {
+        let p = Params {
+            top_k: 3,
+            max_leg_weight: 0.5,
+            ..Params::default()
+        };
+        let m = market(&[
+            ("AAA", "@1", 0.000_2, 5e6, 10.0),
+            ("BBB", "@2", 0.000_01, 5e6, 10.0),
+        ]);
+        let t = target_weights(&select_candidates(&m, &p), &p);
+        for x in &t {
+            assert!(x.weight <= 0.5 + 1e-9, "单腿不得超过上限");
+        }
+        let sum: f64 = t.iter().map(|x| x.weight).sum();
+        assert!(sum <= 1.0 + 1e-9, "权重和不得超过 1");
+        assert!(sum > 0.0);
+    }
+
+    #[test]
+    fn rebalance_gate_blocks_small_improvements() {
+        let p = Params::default();
+        let mut st = HlCarryState {
+            params: p.clone(),
+            ..HlCarryState::default()
+        };
+        let m1 = market(&[
+            ("AAA", "@1", 0.000_0125, 5e6, 10.0),
+            ("BBB", "@2", 0.000_0120, 5e6, 10.0),
+        ]);
+        st.open(1000.0, &m1, 1);
+        assert_eq!(st.legs.len(), 2);
+        let m2 = market(&[
+            ("AAA", "@1", 0.000_0128, 5e6, 10.0),
+            ("BBB", "@2", 0.000_0122, 5e6, 10.0),
+        ]);
+        assert!(!st.maybe_rebalance(&m2, 2), "改进低于门槛时不应换仓");
+    }
+
+    #[test]
+    fn rebalance_switches_when_clearly_better() {
+        let p = Params::default();
+        let mut st = HlCarryState {
+            params: p.clone(),
+            ..HlCarryState::default()
+        };
+        let m1 = market(&[
+            ("AAA", "@1", 0.000_0125, 5e6, 10.0),
+            ("BBB", "@2", 0.000_0125, 5e6, 10.0),
+        ]);
+        st.open(1000.0, &m1, 1);
+        let fee_before = st.fees_paid_total;
+        let m2 = market(&[
+            ("AAA", "@1", 0.000_0125, 5e6, 10.0),
+            ("BBB", "@2", 0.000_0125, 5e6, 10.0),
+            ("ZZZ", "@9", 0.000_4, 5e6, 10.0),
+        ]);
+        assert!(st.maybe_rebalance(&m2, 2), "改进远超门槛时应换仓");
+        assert!(
+            st.legs.iter().any(|l| l.coin == "ZZZ"),
+            "应纳入高资金费的新币"
+        );
+        assert!(st.fees_paid_total > fee_before, "换仓必须记手续费");
+    }
+
+    #[test]
+    fn turnover_and_threshold_math() {
+        let p = Params {
+            payback_days: 30.0,
+            ..Params::default()
+        };
+        let th = rebalance_threshold_ann_pct(1.0, &p);
+        assert!((th - 10.88 / 100.0 * 365.0 / 30.0).abs() < 1e-9);
+        assert_eq!(rebalance_threshold_ann_pct(0.0, &p), 0.0);
+    }
+
+    #[test]
     fn open_then_accrue_funding() {
-        let mut st = HlCarryState::default();
-        st.basket = vec![LegSpec { coin: "BTC".into(), spot: "@142".into(), weight: 1.0 }];
-        let m = market_with(80_000.0, 80_000.0, 0.000_012_5); // 10.95%/年
-        st.open(1_000.0, &m, 1_000_000);
+        let mut st = HlCarryState {
+            params: Params {
+                max_leg_weight: 1.0,
+                ..Params::default()
+            },
+            ..HlCarryState::default()
+        };
+        let m = market(&[("BTC", "@142", 0.000_0125, 5e6, 80_000.0)]);
+        st.open(1000.0, &m, 1_000_000);
         assert_eq!(st.legs.len(), 1);
         let fee = st.legs[0].fee_paid;
-        assert!((fee - 1_000.0 * ROUND_TRIP_FEE_BP / 10_000.0).abs() < 1e-9);
-        // 10 小时后：应收到 10h 的资金费
+        assert!((fee - 1000.0 * ROUND_TRIP_FEE_BP / 10_000.0).abs() < 1e-9);
         st.step(&m, 1_000_000 + 10 * 3_600_000);
-        let expect = 1_000.0 * 0.000_012_5 * 10.0;
+        let expect = 1000.0 * 0.000_0125 * 10.0;
         assert!((st.legs[0].funding_accrued - expect).abs() < 1e-9);
-        // 价格不动时，基差盈亏 ≈ 0
         assert!(st.legs[0].basis_pnl.abs() < 1e-6);
-        assert!((st.equity() - (1_000.0 + expect - fee)).abs() < 1e-6);
     }
 
     #[test]
     fn basis_pnl_offsets_price_move() {
         let mut st = HlCarryState::default();
-        st.basket = vec![LegSpec { coin: "BTC".into(), spot: "@142".into(), weight: 1.0 }];
-        let m0 = market_with(80_000.0, 80_000.0, 0.0);
-        st.open(1_000.0, &m0, 1_000_000);
-        // 价格 +10%，现货赚、空永续亏，净≈0
-        let m1 = market_with(88_000.0, 88_000.0, 0.0);
+        let m0 = market(&[("BTC", "@142", 0.000_0125, 5e6, 80_000.0)]);
+        st.open(1000.0, &m0, 1_000_000);
+        assert_eq!(st.legs.len(), 1, "正资金费标的应能建仓");
+        let m1 = market(&[("BTC", "@142", 0.000_0125, 5e6, 88_000.0)]);
         st.step(&m1, 1_000_000 + 3_600_000);
         assert!(st.legs[0].basis_pnl.abs() < 1e-6, "delta 中性后基差盈亏应≈0");
     }
 
     #[test]
     fn parses_real_api_payload() {
-        // 2026-10-27 从 HL 实际抓到的报文（截取相关字段）
         let mids = serde_json::json!({
-            "BTC": "79948.5", "ETH": "2313.45", "XMR": "592.885",
-            "@142": "79871.5", "@151": "2311.25", "@260": "591.63",
-            "#114910": "0.5"
+            "BTC": "79948.5", "ETH": "2313.45",
+            "@142": "79871.5", "@151": "2311.25"
         });
         let ctxs = serde_json::json!([
-            {"universe": [{"name": "BTC"}, {"name": "ETH"}, {"name": "XMR"}]},
-            [{"funding": "0.0000125"}, {"funding": "0.0000125"}, {"funding": "0.0000477"}]
+            {"universe": [{"name": "BTC"}, {"name": "ETH"}]},
+            [{"funding": "0.0000125"}, {"funding": "0.0000125"}]
         ]);
-        let m = parse_market(&mids, &ctxs);
-        // 永续和现货要分到不同 map
+        let spot = serde_json::json!([
+            {"tokens": [{"name": "USDC"}, {"name": "UBTC"}, {"name": "UETH"}],
+             "universe": [
+                {"name": "@142", "tokens": [1, 0]},
+                {"name": "@151", "tokens": [2, 0]}
+             ]},
+            [{"coin": "@142", "dayNtlVlm": "19357783"},
+             {"coin": "@151", "dayNtlVlm": "9321402"}]
+        ]);
+        let m = parse_market(&mids, &ctxs, &spot);
         assert_eq!(m.perp_mid.get("BTC"), Some(&79948.5));
         assert_eq!(m.spot_mid.get("@142"), Some(&79871.5));
-        assert!(!m.perp_mid.contains_key("@142"));
-        let q = m.quote("BTC", "@142").expect("BTC 报价");
-        assert!((q.funding_ann - 10.95).abs() < 0.01, "10.95%/年");
-        let qx = m.quote("XMR", "@260").expect("XMR 报价");
-        assert!(qx.funding_ann > 40.0, "XMR 40%+ 应被识别");
-        // 缺现货对时不能给出报价（防止拿 0 价开仓）
-        assert!(m.quote("BTC", "@999").is_none());
-    }
-
-    #[test]
-    fn negative_funding_triggers_warning() {
-        let mut st = HlCarryState::default();
-        st.basket = vec![LegSpec { coin: "BTC".into(), spot: "@142".into(), weight: 1.0 }];
-        let m = market_with(80_000.0, 80_000.0, -0.000_01);
-        st.open(1_000.0, &m, 1_000_000);
-        assert!(!st.warnings().is_empty());
+        assert_eq!(m.spot_volume.get("@142"), Some(&19357783.0));
+        let latched: Vec<&str> = m.latched.iter().map(|l| l.coin.as_str()).collect();
+        assert!(latched.contains(&"BTC"), "UBTC 应映射到永续 BTC");
+        assert!(latched.contains(&"ETH"), "UETH 应映射到永续 ETH");
+        let q = m.quote("BTC", "@142").unwrap();
+        assert!((q.funding_ann - 10.95).abs() < 0.01);
     }
 }

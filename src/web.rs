@@ -111,6 +111,7 @@ pub fn router(state: AppState) -> Router {
         .route("/api/hlcarry", get(hlcarry_status))
         .route("/api/hlcarry/open", post(hlcarry_open))
         .route("/api/hlcarry/step", post(hlcarry_step))
+        .route("/api/hlcarry/params", post(hlcarry_params))
         .layer(axum::middleware::from_fn({
             let token = state.auth_token.clone();
             move |req: axum::http::Request<axum::body::Body>, next: axum::middleware::Next| {
@@ -982,6 +983,45 @@ async fn hlcarry_status(State(state): State<AppState>) -> Json<serde_json::Value
         "annualized_pct": st.annualized_pct(),
         "warnings": st.warnings(),
     }))
+}
+
+
+#[derive(serde::Deserialize)]
+struct HlCarryParamsBody {
+    top_k: Option<usize>,
+    min_funding_ann_pct: Option<f64>,
+    min_spot_volume_usd: Option<f64>,
+    max_leg_weight: Option<f64>,
+    payback_days: Option<f64>,
+}
+
+/// 改选币/换仓参数。只改规则，不动当前持仓——下一次评估才生效。
+async fn hlcarry_params(
+    State(state): State<AppState>,
+    Json(body): Json<HlCarryParamsBody>,
+) -> Response {
+    let mut st = state.hlcarry.lock().await;
+    if let Some(v) = body.top_k {
+        st.params.top_k = v;
+    }
+    if let Some(v) = body.min_funding_ann_pct {
+        st.params.min_funding_ann_pct = v;
+    }
+    if let Some(v) = body.min_spot_volume_usd {
+        st.params.min_spot_volume_usd = v;
+    }
+    if let Some(v) = body.max_leg_weight {
+        st.params.max_leg_weight = v;
+    }
+    if let Some(v) = body.payback_days {
+        st.params.payback_days = v;
+    }
+    st.params = st.params.clone().sanitized();
+    if let Err(e) = st.save(&state.hlcarry_path) {
+        return (StatusCode::INTERNAL_SERVER_ERROR,
+                Json(json!({"ok": false, "error": format!("保存失败: {e:#}")}))).into_response();
+    }
+    Json(json!({"ok": true, "params": st.params})).into_response()
 }
 
 #[derive(serde::Deserialize)]
