@@ -1948,10 +1948,7 @@ function arrangeMonitorSummary(id, shadow = false) {
 
 
 // ---------- HL 单账户 carry 影子（买现货 + 等名义空永续，赚资金费） ----------
-let lastHlCarry = null;
-
 function renderHlCarry(d) {
-  lastHlCarry = d;
   const s = (d && d.state) || {};
   const legs = Array.isArray(s.legs) ? s.legs : [];
   const eq = Number.isFinite(d.equity) ? d.equity : 0;
@@ -1960,6 +1957,7 @@ function renderHlCarry(d) {
   const basis = legs.reduce((a, l) => a + (Number(l.basis_pnl) || 0), 0);
   const fee = legs.reduce((a, l) => a + (Number(l.fee_paid) || 0), 0);
   const ann = d.annualized_pct;
+  window.__hcBudget = Number.isFinite(s.budget_usd) ? s.budget_usd : 0;
 
   const m = $("hc-metrics");
   if (m) {
@@ -1970,9 +1968,10 @@ function renderHlCarry(d) {
           metric("资金费", moneySigned(fund), fund >= 0 ? "pos" : "neg"),
           metric("基差", moneySigned(basis), basis >= 0 ? "pos" : "neg"),
           metric("手续费", "−" + money(fee)),
+          metric("影子预算", money(start)),
           metric("年化", Number.isFinite(ann) ? (ann >= 0 ? "+" : "−") + Math.abs(ann).toFixed(1) + "%" : "—"),
         ].join("")
-      : '<div class="empty">还没有影子持仓。点右上角「按预算重新开仓」开始模拟（只影响模拟，不涉及真钱）。</div>';
+      : '<div class="empty">还没有影子持仓（预算未设置）。点右上角「按预算重新开仓」，填一个 USD 金额即可开始模拟——只影响模拟，不涉及真钱。</div>';
   }
 
   const w = $("hc-warn");
@@ -2007,7 +2006,13 @@ function renderHlCarry(d) {
 async function refreshHlCarry() {
   try {
     const d = await fetchJSONRetry("/api/hlcarry", { cache: "no-store" });
-    renderHlCarry(d);
+    try {
+      renderHlCarry(d);
+    } catch (err) {
+      const m = $("hc-metrics");
+      if (m) m.innerHTML = `<div class="empty neg">渲染失败：${escapeHTML(String((err && err.message) || err))}</div>`;
+      console.error("renderHlCarry", err, d);
+    }
   } catch (e) {
     const m = $("hc-metrics");
     if (m) m.innerHTML = `<div class="empty neg">读取失败：${escapeHTML(String((e && e.message) || e))}</div>`;
@@ -2042,7 +2047,8 @@ if (hcStepBtn)
 const hcOpenBtn = $("hc-open");
 if (hcOpenBtn)
   hcOpenBtn.addEventListener("click", async () => {
-    const raw = prompt("影子预算（USD，只影响模拟，不涉及真钱）", "1000");
+    const cur = (window.__hcBudget && window.__hcBudget > 0) ? window.__hcBudget : 1000;
+    const raw = prompt("影子预算（USD，只影响模拟，不涉及真钱）", String(cur));
     if (raw === null) return;
     const budget = Number(raw);
     if (!(budget > 0)) return;

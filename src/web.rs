@@ -990,7 +990,10 @@ struct HlCarryOpenBody {
 }
 
 async fn hlcarry_open(State(state): State<AppState>, Json(body): Json<HlCarryOpenBody>) -> Response {
-    let budget = body.budget_usd.filter(|b| *b > 0.0).unwrap_or(1_000.0);
+    let Some(budget) = body.budget_usd.filter(|b| *b > 0.0) else {
+        return (StatusCode::BAD_REQUEST,
+                Json(json!({"ok": false, "error": "budget_usd 必须是正数"}))).into_response();
+    };
     let market = match crate::hlcarry::fetch_market(&state.http).await {
         Ok(m) => m,
         Err(e) => {
@@ -1009,6 +1012,12 @@ async fn hlcarry_open(State(state): State<AppState>, Json(body): Json<HlCarryOpe
 }
 
 async fn hlcarry_step(State(state): State<AppState>) -> Response {
+    // 先看有没有持仓，再决定要不要打网络：空仓时没必要拉行情。
+    if state.hlcarry.lock().await.legs.is_empty() {
+        return (StatusCode::BAD_REQUEST,
+                Json(json!({"ok": false, "error": "还没有影子持仓，请先用「按预算重新开仓」设置预算"})))
+            .into_response();
+    }
     let market = match crate::hlcarry::fetch_market(&state.http).await {
         Ok(m) => m,
         Err(e) => {
@@ -1018,11 +1027,7 @@ async fn hlcarry_step(State(state): State<AppState>) -> Response {
     };
     let now = crate::live::now_ms_pub();
     let mut st = state.hlcarry.lock().await;
-    if st.legs.is_empty() {
-        st.open(1_000.0, &market, now);
-    } else {
-        st.step(&market, now);
-    }
+    st.step(&market, now);
     if let Err(e) = st.save(&state.hlcarry_path) {
         return (StatusCode::INTERNAL_SERVER_ERROR,
                 Json(json!({"ok": false, "error": format!("保存失败: {e:#}")}))).into_response();

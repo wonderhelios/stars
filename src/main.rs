@@ -164,13 +164,16 @@ async fn main() -> anyhow::Result<()> {
                     Ok(market) => {
                         let now = crate::live::now_ms_pub();
                         let budget = {
-                            let alloc = st.live.lock().await.capital_alloc.carry_usd;
-                            if alloc > 0.0 { alloc } else { 1_000.0 }
+                            st.live.lock().await.capital_alloc.carry_usd
                         };
                         let snapshot = {
                             let mut hc = st.hlcarry.lock().await;
                             if hc.legs.is_empty() {
-                                hc.open(budget, &market, now);
+                                // 预算为 0 时不自动开仓：宁可空着，也不要用一个
+                                // 没人设定过的默认金额开始模拟。
+                                if budget > 0.0 {
+                                    hc.open(budget, &market, now);
+                                }
                             } else {
                                 hc.step(&market, now);
                             }
