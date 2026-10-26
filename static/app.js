@@ -1412,7 +1412,6 @@ function renderEquityChart(id, history, aria, compare, third) {
 
 
 
-setInterval(refreshCarry, 60000);
 
 // Rebuild chart coordinates when the visible container changes width (rotation,
 // split view or navigation). This only redraws cached data; never requests orders.
@@ -1518,10 +1517,14 @@ function arrangeMonitorSummary(id, shadow = false) {
 // ---------- HL 单账户 carry 影子
 // 注意：app.js 里的 `money` 只是某些函数内的局部变量，不是全局；
 // 这里用一个本块的格式化器，避免 ReferenceError。
-const hcMoney = (v) =>
-  Number.isFinite(v)
+// 必须用函数声明（会提升），不能用 const 箭头函数。
+// 启动块里的 refreshHlCarry() 在第 1107 行就跑，而这段代码在 1521 行；
+// 用 const 会让渲染撞上 TDZ：Cannot access 'hcMoney' before initialization。
+function hcMoney(v) {
+  return Number.isFinite(v)
     ? "$" + Math.abs(v).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })
     : "—";
+}
 
 function renderHlCarry(d) {
   const s = (d && d.state) || {};

@@ -59,7 +59,26 @@ const BUILTINS = new Set([
 // 只放确实出现过的；新增误报就再加，别一次性放宽。
 const IGNORE = new Set(['repeat', 'minmax']);
 
+// 除了 foo(...) 这种直接调用，还有一种更隐蔽的写法：把函数**当值传出去**，
+//   setInterval(refreshCarry, 60000);
+// 它不会匹配上面的 `name(` 规则，但运行时一样是 ReferenceError。
+// 只盯有限的几个高阶入口，避免把参数名当成未声明函数。
+const HIGHER_ORDER = [
+  /\b(?:setInterval|setTimeout|requestAnimationFrame|queueMicrotask|Promise\.resolve)\(\s*([A-Za-z_$][\w$]*)/g,
+  /\.(?:then|catch|finally)\(\s*([A-Za-z_$][\w$]*)\s*[,)]/g,
+];
+
 const suspicious = new Map();
+for (const rx of HIGHER_ORDER) {
+  for (const m of stripped.matchAll(rx)) {
+    const name = m[1];
+    if (declared.has(name) || BUILTINS.has(name)) continue;
+    const line = stripped.slice(0, m.index).split('\n').length;
+    if (!suspicious.has(name)) suspicious.set(name, []);
+    suspicious.get(name).push(line);
+  }
+}
+
 for (const m of stripped.matchAll(/(^|[^\w$.])([A-Za-z_$][\w$]*)\s*\(/g)) {
   const name = m[2];
   if (KEYWORDS.has(name) || BUILTINS.has(name) || declared.has(name) || IGNORE.has(name)) continue;
