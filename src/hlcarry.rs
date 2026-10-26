@@ -337,11 +337,25 @@ impl HlCarryState {
     }
 
     pub fn save(&self, path: &Path) -> Result<()> {
-        if let Some(dir) = path.parent() {
-            let _ = std::fs::create_dir_all(dir);
+        use std::ffi::OsString;
+
+        let parent = path.parent().filter(|p| !p.as_os_str().is_empty()).unwrap_or(Path::new("."));
+        std::fs::create_dir_all(parent)
+            .with_context(|| format!("创建目录 {}", parent.display()))?;
+        let file_name = path.file_name().context("状态文件路径缺少文件名")?;
+        let mut tmp_name = OsString::from(".");
+        tmp_name.push(file_name);
+        tmp_name.push(".tmp");
+        let tmp = parent.join(tmp_name);
+        let bytes = serde_json::to_vec_pretty(self)?;
+        if let Err(e) = std::fs::write(&tmp, bytes) {
+            let _ = std::fs::remove_file(&tmp);
+            return Err(e).with_context(|| format!("写入临时文件 {}", tmp.display()));
         }
-        std::fs::write(path, serde_json::to_vec_pretty(self)?)
-            .with_context(|| format!("写入 {}", path.display()))?;
+        if let Err(e) = std::fs::rename(&tmp, path) {
+            let _ = std::fs::remove_file(&tmp);
+            return Err(e).with_context(|| format!("替换状态文件 {}", path.display()));
+        }
         Ok(())
     }
 
@@ -522,7 +536,14 @@ impl HlCarryState {
             .filter(|l| !target_coins.contains(&l.coin))
             .map(|l| l.coin.clone())
             .collect();
-        // 移出的腿：往返费在开仓时已付，这里不再收。
+        // 移仓后不再保留旧腿，因此把该腿全部已计入的损益结转到已实现盈亏。
+        // 开仓时预扣的手续费已包含在 leg_pnl 中；这里不重复收，只避免删腿时抹账。
+        self.closed_pnl += self
+            .legs
+            .iter()
+            .filter(|l| !target_coins.contains(&l.coin))
+            .map(|l| l.leg_pnl)
+            .sum::<f64>();
         self.legs.retain(|l| target_coins.contains(&l.coin));
         for c in &removed {
             self.log(now, format!("移出 {c}（资金费不再靠前）"));
@@ -1140,6 +1161,69 @@ mod tests {
             "目标篮子应包含新币"
         );
         assert_eq!(st.daily.last().unwrap().rebalances, 1, "当日换仓次数应 +1");
+    }
+
+    #[test]
+    fn removed_leg_pnl_is_carried_into_closed_pnl() {
+        let mut st = HlCarryState {
+            params: Params {
+                top_k: 1,
+                max_leg_weight: 1.0,
+                ..Params::default()
+            },
+            ..HlCarryState::default()
+        };
+        let t0 = 1_793_059_200_000i64;
+        let m1 = market(&[("AAA", "@1", 0.000_0125, 5e6, 100.0)]);
+        st.open(1000.0, &m1, t0);
+        st.step(&m1, t0 + 3_600_000);
+        let equity_before = st.equity();
+        let fees_before = st.fees_paid_total;
+
+        let m2 = market(&[
+            ("AAA", "@1", 0.000_0125, 5e6, 100.0),
+            ("ZZZ", "@9", 0.000_4, 5e6, 100.0),
+        ]);
+        assert!(st.maybe_rebalance(&m2, t0 + 3_600_000));
+        let fee_delta = st.fees_paid_total - fees_before;
+        assert_eq!(st.legs.len(), 1);
+        assert_eq!(st.legs[0].coin, "ZZZ");
+        assert!(st.closed_pnl < 0.0, "旧腿的净损益（含已付手续费）要结转");
+        assert!(
+            (st.equity() - (equity_before - fee_delta)).abs() < 1e-7,
+            "换仓权益应只减少新产生的手续费：{} -> {}，新费 {}",
+            equity_before,
+            st.equity(),
+            fee_delta
+        );
+    }
+
+    #[test]
+    fn save_is_atomic_and_load_roundtrips() {
+        let root = std::env::temp_dir().join(format!(
+            "stars-hlcarry-{}-{}",
+            std::process::id(),
+            crate::live::now_ms_pub()
+        ));
+        std::fs::create_dir_all(&root).unwrap();
+        let path = root.join("state.json");
+        let blocked = root.join("blocked.json");
+        let state = HlCarryState {
+            budget_usd: 1234.5,
+            start_equity: 1234.5,
+            ..HlCarryState::default()
+        };
+
+        state.save(&path).unwrap();
+        let loaded = HlCarryState::load(&path);
+        assert_eq!(loaded.budget_usd, 1234.5);
+        assert_eq!(loaded.start_equity, 1234.5);
+
+        std::fs::create_dir(&blocked).unwrap();
+        assert!(state.save(&blocked).is_err(), "写入失败必须返回错误");
+        assert!(blocked.is_dir(), "原目标应保持完整，不能被部分写入覆盖");
+        assert!(!root.join(".blocked.json.tmp").exists(), "失败的临时文件应清理");
+        std::fs::remove_dir_all(root).unwrap();
     }
 
     #[test]

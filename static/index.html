@@ -317,7 +317,39 @@
         .table-scroll { border-radius:8px; }
       }
       @media(max-width:400px) { .setup-fields #statusText { max-width:145px; } .daily-exec-kpis .v { font-size:20px; } }
-      /* Shadow workspace fields and controls. */
+      /* HL carry shadow: compact controls and a clear balance hierarchy. */
+      #view-hlcarry .hc-overview { padding:20px 22px 18px; }
+      #view-hlcarry .hc-overview-head { display:flex; align-items:flex-start; justify-content:space-between; gap:18px; margin-bottom:14px; }
+      #view-hlcarry .hc-overview-head h2 { margin:0 0 3px; font-size:17px; }
+      #view-hlcarry .hc-overview-head p { margin:0; color:var(--muted); font-size:11px; }
+      #view-hlcarry .hc-budget-control { display:grid; grid-template-columns:minmax(220px,1fr) auto; align-items:end; gap:14px; padding:14px 0; border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
+      #view-hlcarry .hc-budget-control .field { max-width:360px; gap:5px; }
+      #view-hlcarry .hc-budget-control input { height:40px; }
+      #view-hlcarry .hc-budget-action { display:flex; justify-content:flex-end; }
+      #view-hlcarry #hc-open { min-width:210px; background:#fff; color:#855a26; border-color:#ead9bd; }
+      #view-hlcarry #hc-open:hover { background:#fff8ed; border-color:#d8bb8c; }
+      #view-hlcarry #hc-open.is-armed { background:var(--red); color:#fff; border-color:var(--red); }
+      #view-hlcarry .hc-budget-help { margin:8px 0 0; font-size:11px; }
+      #view-hlcarry #hc-budget-status { min-height:0; margin:4px 0 0; font-size:11px; }
+      #view-hlcarry #hc-budget-status:empty { display:none; }
+      #view-hlcarry #hc-metrics { margin:17px 0 0; display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:0; }
+      #view-hlcarry .hc-primary-metrics { grid-column:1/-1; display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:18px; padding:0 0 16px; border-bottom:1px solid var(--line); }
+      #view-hlcarry .hc-secondary-metrics { grid-column:1/-1; display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:18px; padding:14px 0 0; }
+      #view-hlcarry .hc-primary-metrics .metric,#view-hlcarry .hc-secondary-metrics .metric { padding:0; border:0; border-radius:0; background:transparent; box-shadow:none; }
+      #view-hlcarry .hc-primary-metrics .metric .k { font-size:11px; margin-bottom:3px; }
+      #view-hlcarry .hc-primary-metrics .metric .v { font-size:clamp(20px,2vw,28px); }
+      #view-hlcarry .hc-secondary-metrics .metric .v { font-size:17px; }
+      #view-hlcarry .hc-metric-label { color:#80908f; font-size:9px; letter-spacing:1.2px; text-transform:uppercase; grid-column:1/-1; margin-bottom:-7px; }
+      @media(max-width:760px) {
+        #view-hlcarry .hc-overview { padding:16px; }
+        #view-hlcarry .hc-overview-head { flex-wrap:wrap; }
+        #view-hlcarry .hc-budget-control { grid-template-columns:1fr; gap:9px; }
+        #view-hlcarry .hc-budget-control .field { max-width:none; }
+        #view-hlcarry .hc-budget-action,#view-hlcarry #hc-open { width:100%; }
+        #view-hlcarry .hc-primary-metrics,#view-hlcarry .hc-secondary-metrics { grid-template-columns:repeat(2,minmax(0,1fr)); gap:15px 12px; }
+        #view-hlcarry .hc-primary-metrics .metric .v { font-size:22px; }
+        #view-hlcarry .hc-secondary-metrics .metric .v { font-size:16px; }
+      }
       #view-shadow .content-card,#view-shadow-setup .content-card { padding:18px 20px; margin-bottom:14px; }
       #view-shadow .panel-head,#view-shadow-setup .panel-head { margin-bottom:12px; }
       #view-shadow .content-card>.panel-head,#view-shadow-setup .content-card>.panel-head { padding-bottom:12px; }
@@ -523,18 +555,19 @@
             </div>
           </div>
           <div id="hc-warn"></div>
-          <div class="content-card">
-            <div class="panel-head"><h2>汇总</h2></div>
-            <div class="setup-fields">
+          <div class="content-card hc-overview">
+            <div class="hc-overview-head">
+              <div><h2>模拟账户</h2><p>余额与收益拆分 · 所有数据仅来自影子模拟</p></div>
+              <span class="badge todo">不发送真实订单</span>
+            </div>
+            <div class="hc-budget-control">
               <div class="field">
-                <label for="hc-budget">影子预算（USD，仅模拟，不涉及真钱）</label>
-                <input id="hc-budget" type="number" min="1" max="10000000" step="100" inputmode="decimal" />
+                <label for="hc-budget">模拟预算 · USD</label>
+                <input id="hc-budget" type="number" min="1" max="10000000" step="100" inputmode="decimal" aria-describedby="hc-budget-note hc-budget-status" />
               </div>
+              <div class="hc-budget-action"><button class="btn" id="hc-open" type="button" aria-describedby="hc-budget-note hc-budget-status">按预算重置模拟</button></div>
             </div>
-            <div class="setup-actions">
-              <button class="btn danger" id="hc-open" type="button">保存预算并重新开仓</button>
-            </div>
-            <p class="note" id="hc-budget-note">改预算会清空当前影子持仓、累计盈亏和权益曲线，按新预算重新建仓（只影响模拟）。</p>
+            <p class="note hc-budget-help" id="hc-budget-note">重置会清空现有模拟持仓、累计盈亏和曲线，再按此金额建仓。只想更新数据请用页面上方「刷新」。</p>
             <p class="note" id="hc-budget-status" role="status" aria-live="polite"></p>
             <div class="metrics" id="hc-metrics"></div>
           </div>

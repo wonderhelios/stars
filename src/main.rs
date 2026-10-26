@@ -155,7 +155,8 @@ async fn main() -> anyhow::Result<()> {
     // ===== HL 单账户 carry 影子：每 5 分钟推进一步 =====
     //
     // 只读公开行情 + 模拟持仓，不发任何真实订单。
-    // 空仓时按预算自动开仓（预算读资金分配里的 carry 金额，缺省 1000 USD）。
+    // 尚未初始化时按资金分配里的 carry 金额自动开仓；影子账户一旦初始化，
+    // 就保留页面设置的预算与空仓状态，不再每轮用实盘预算覆盖或重置历史。
     {
         let st = state.clone();
         tokio::spawn(async move {
@@ -166,23 +167,24 @@ async fn main() -> anyhow::Result<()> {
                         let budget = {
                             st.live.lock().await.capital_alloc.carry_usd
                         };
-                        let snapshot = {
+                        {
                             let mut hc = st.hlcarry.lock().await;
-                            if hc.legs.is_empty() {
-                                // 预算为 0 时不自动开仓：宁可空着，也不要用一个
-                                // 没人设定过的默认金额开始模拟。
+                            let previous = hc.clone();
+                            if hc.start_equity <= 0.0 {
+                                // 尚未设置影子预算时，才从实盘资金分配读取初始金额。
                                 if budget > 0.0 {
                                     hc.open(budget, &market, now);
                                 }
-                            } else {
+                            } else if !hc.legs.is_empty() {
                                 hc.step(&market, now);
                                 // 先计提资金费与盯市（equity 依赖它们），再评估换仓。
                                 hc.maybe_rebalance(&market, now);
                             }
-                            hc.clone()
-                        };
-                        if let Err(e) = snapshot.save(&st.hlcarry_path) {
-                            warn!("HL carry 影子保存失败: {e}");
+                            // 状态锁持有到落盘完成，避免慢的旧快照覆盖刚提交的新预算。
+                            if let Err(e) = hc.save(&st.hlcarry_path) {
+                                *hc = previous;
+                                warn!("HL carry 影子保存失败: {e}");
+                            }
                         }
                     }
                     Err(e) => warn!("HL carry 影子行情失败: {e}"),

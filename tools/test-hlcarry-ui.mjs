@@ -56,6 +56,12 @@ const ctx = vm.createContext({
     if (String(url).includes('/api/hlcarry')) return lastPayload;
     return {};
   },
+  fetchJSON: async (url, opts) => {
+    fetchCalls.push({url, opts});
+    if (String(url).includes('/api/hlcarry/open')) return {ok: true, legs: 1};
+    if (String(url).includes('/api/hlcarry')) return lastPayload;
+    return {};
+  },
   document: {
     getElementById: el,
     querySelectorAll: () => [],
@@ -152,7 +158,7 @@ els.clear();
 ctx.renderHlCarry({equity: 0, annualized_pct: null, warnings: [], state: {legs: [], log: []}});
 const empty = el('hc-metrics').innerHTML;
 assert.match(empty, /还没有影子持仓/, '空仓时缺少引导文案');
-assert.match(empty, /按预算重新开仓/, '空仓时应提示如何开仓，而不是自动用默认金额');
+assert.match(empty, /按预算重置模拟/, '空仓时应提示如何开仓，而不是自动用默认金额');
 assert.equal(el('hc-warn').innerHTML, '', '无告警时不应渲染告警卡片');
 
 // ---- 用例 3：字段缺失不能抛 ----

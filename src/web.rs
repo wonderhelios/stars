@@ -1001,6 +1001,7 @@ async fn hlcarry_params(
     Json(body): Json<HlCarryParamsBody>,
 ) -> Response {
     let mut st = state.hlcarry.lock().await;
+    let previous = st.clone();
     if let Some(v) = body.top_k {
         st.params.top_k = v;
     }
@@ -1018,6 +1019,7 @@ async fn hlcarry_params(
     }
     st.params = st.params.clone().sanitized();
     if let Err(e) = st.save(&state.hlcarry_path) {
+        *st = previous;
         return (StatusCode::INTERNAL_SERVER_ERROR,
                 Json(json!({"ok": false, "error": format!("保存失败: {e:#}")}))).into_response();
     }
@@ -1030,7 +1032,7 @@ struct HlCarryOpenBody {
 }
 
 async fn hlcarry_open(State(state): State<AppState>, Json(body): Json<HlCarryOpenBody>) -> Response {
-    let Some(budget) = body.budget_usd.filter(|b| *b > 0.0) else {
+    let Some(budget) = body.budget_usd.filter(|b| b.is_finite() && *b > 0.0) else {
         return (StatusCode::BAD_REQUEST,
                 Json(json!({"ok": false, "error": "budget_usd 必须是正数"}))).into_response();
     };
@@ -1048,8 +1050,10 @@ async fn hlcarry_open(State(state): State<AppState>, Json(body): Json<HlCarryOpe
     };
     let now = crate::live::now_ms_pub();
     let mut st = state.hlcarry.lock().await;
+    let previous = st.clone();
     st.open(budget, &market, now);
     if let Err(e) = st.save(&state.hlcarry_path) {
+        *st = previous;
         return (StatusCode::INTERNAL_SERVER_ERROR,
                 Json(json!({"ok": false, "error": format!("保存失败: {e:#}")}))).into_response();
     }
@@ -1060,7 +1064,7 @@ async fn hlcarry_step(State(state): State<AppState>) -> Response {
     // 先看有没有持仓，再决定要不要打网络：空仓时没必要拉行情。
     if state.hlcarry.lock().await.legs.is_empty() {
         return (StatusCode::BAD_REQUEST,
-                Json(json!({"ok": false, "error": "还没有影子持仓，请先用「按预算重新开仓」设置预算"})))
+                Json(json!({"ok": false, "error": "还没有影子持仓，请先用「按预算重置模拟」设置预算"})))
             .into_response();
     }
     let market = match crate::hlcarry::fetch_market(&state.http).await {
@@ -1072,8 +1076,15 @@ async fn hlcarry_step(State(state): State<AppState>) -> Response {
     };
     let now = crate::live::now_ms_pub();
     let mut st = state.hlcarry.lock().await;
+    if st.legs.is_empty() {
+        return (StatusCode::BAD_REQUEST,
+                Json(json!({"ok": false, "error": "影子持仓已清空，请先用「按预算重置模拟」设置预算"})))
+            .into_response();
+    }
+    let previous = st.clone();
     st.step(&market, now);
     if let Err(e) = st.save(&state.hlcarry_path) {
+        *st = previous;
         return (StatusCode::INTERNAL_SERVER_ERROR,
                 Json(json!({"ok": false, "error": format!("保存失败: {e:#}")}))).into_response();
     }

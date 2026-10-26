@@ -1069,8 +1069,13 @@ async function fetchJSON(url, opts = {}, timeoutMs = 8000) {
   const timer = setTimeout(() => ctrl.abort(), timeoutMs);
   try {
     const res = await fetch(url, { ...opts, cache: "no-store", signal: ctrl.signal });
-    if (!res.ok) throw new Error("HTTP " + res.status);
-    return await res.json();
+    let body = null;
+    try { body = await res.json(); } catch {}
+    if (!res.ok) {
+      const detail = body && typeof body.error === "string" ? body.error : "HTTP " + res.status;
+      throw new Error(detail);
+    }
+    return body;
   } finally {
     clearTimeout(timer);
   }
@@ -1428,7 +1433,10 @@ if (typeof ResizeObserver !== "undefined") {
       if (target.id === "xp-chart" && lastXData) renderEquityChart("xp-chart", lastXData.history || [], "跨所价差纸面权益曲线");
     }
   });
-  ["mo-chart", "cy-chart", "xp-chart", "sh-chart"].forEach(id => chartResize.observe($(id)));
+  ["mo-chart", "cy-chart", "xp-chart", "sh-chart"].forEach(id => {
+    const chart = $(id);
+    if (chart) chartResize.observe(chart);
+  });
 }
 
 // Keep accounting calculations in the existing renderers. This layer only selects
@@ -1560,11 +1568,12 @@ function renderHlCarry(d) {
   const m = $("hc-metrics");
   if (m) {
     m.innerHTML = legs.length
-      ? [
+      ? `<div class="hc-primary-metrics"><div class="hc-metric-label">账户表现</div>${[
           metric("影子权益", hcMoney(eq)),
           metric("累计盈亏", moneySigned(eq - start), eq - start >= 0 ? "pos" : "neg"),
-          metric("资金费", moneySigned(fund), fund >= 0 ? "pos" : "neg"),
-          metric("基差", moneySigned(basis), basis >= 0 ? "pos" : "neg"),
+          metric("资金费收入", moneySigned(fund), fund >= 0 ? "pos" : "neg"),
+          metric("基差盈亏", moneySigned(basis), basis >= 0 ? "pos" : "neg"),
+        ].join("")}</div><div class="hc-secondary-metrics"><div class="hc-metric-label">资金与成本</div>${[
           metric("手续费", "−" + hcMoney(fee)),
           metric("影子预算", hcMoney(start)),
           metric(
@@ -1572,8 +1581,8 @@ function renderHlCarry(d) {
             start > 0 ? fmt((legs.reduce((a, l) => a + (Number(l.notional) || 0), 0) / start) * 100, 0) + "%" : "—",
           ),
           metric("年化", Number.isFinite(ann) ? (ann >= 0 ? "+" : "−") + Math.abs(ann).toFixed(1) + "%" : "—"),
-        ].join("")
-      : '<div class="empty">还没有影子持仓（预算未设置）。点右上角「按预算重新开仓」，填一个 USD 金额即可开始模拟——只影响模拟，不涉及真钱。</div>';
+        ].join("")}</div>`
+      : '<div class="empty">还没有影子持仓。填写 USD 预算并点击「按预算重置模拟」即可开始；如果规则暂时筛不出标的，预算会保留，账户显示为空仓。</div>';
   }
 
   const w = $("hc-warn");
@@ -1746,7 +1755,10 @@ function hcOpenDisarm() {
     clearTimeout(hcOpenArmTimer);
     hcOpenArmTimer = 0;
   }
-  if (hcOpenBtn) hcOpenBtn.textContent = "保存预算并重新开仓";
+  if (hcOpenBtn) {
+    hcOpenBtn.textContent = "按预算重置模拟";
+    if (hcOpenBtn.classList) hcOpenBtn.classList.remove("is-armed");
+  }
 }
 
 if (hcOpenBtn)
@@ -1774,13 +1786,17 @@ if (hcOpenBtn)
     // 第二步：页内确认（再点一次同一个按钮）
     if (!hcOpenArmed) {
       hcOpenArmed = true;
-      hcOpenBtn.textContent = "再点一次确认";
+      hcOpenBtn.textContent = "确认重置并建仓";
+      if (hcOpenBtn.classList) hcOpenBtn.classList.add("is-armed");
       hcBudgetStatus(
         (cur > 0
           ? `将清空当前持仓、累计盈亏与权益曲线，预算 ${fmt2(cur)} → ${fmt2(budget)}。`
-          : `将按 ${fmt2(budget)} 开始模拟建仓。`) + " 再点一次「再点一次确认」执行；5 秒后自动取消。",
+          : `将按 ${fmt2(budget)} 开始模拟建仓。`) + " 请再点一次确认执行；5 秒后自动取消。",
       );
-      hcOpenArmTimer = setTimeout(hcOpenDisarm, 5000);
+      hcOpenArmTimer = setTimeout(() => {
+        hcOpenDisarm();
+        hcBudgetStatus("确认已过期，未执行。需要重置时请再次点击按钮。", "");
+      }, 5000);
       return;
     }
 
@@ -1789,16 +1805,35 @@ if (hcOpenBtn)
     hcOpenBtn.disabled = true;
     hcBudgetStatus("正在建仓…");
     try {
-      await fetchJSONRetry("/api/hlcarry/open", {
+      // 重置会清空影子历史，POST 不做自动重试，避免超时后重复重置账本。
+      const result = await fetchJSON("/api/hlcarry/open", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ budget_usd: budget }),
-      });
+      }, 20000);
       await refreshHlCarry();
-      hcBudgetStatus("已按 " + fmt2(budget) + " 重新开仓。", "pos");
+      if (Number(result.legs) > 0) {
+        hcBudgetStatus(`预算已重置为 ${fmt2(budget)}，模拟建仓 ${result.legs} 条腿。`, "pos");
+      } else if (result.legs === 0) {
+        hcBudgetStatus(`预算已保存为 ${fmt2(budget)}，但当前没有符合规则的标的，模拟账户暂时空仓。`, "");
+      } else {
+        hcBudgetStatus(`已按 ${fmt2(budget)} 完成模拟账户重置。`, "pos");
+      }
     } catch (e) {
-      hcBudgetStatus("开仓失败：" + ((e && e.message) || e), "neg");
+      const reason = e && e.name === "AbortError"
+        ? "请求超时，服务器可能仍在处理"
+        : ((e && e.message) || String(e));
+      await refreshHlCarry();
+      hcBudgetStatus("重置未获确认：" + reason + "。已刷新状态，请核对当前预算与持仓后再操作。", "neg");
     } finally {
       hcOpenBtn.disabled = false;
     }
+  });
+
+const hcBudgetInput = $("hc-budget");
+if (hcBudgetInput)
+  hcBudgetInput.addEventListener("input", () => {
+    if (!hcOpenArmed) return;
+    hcOpenDisarm();
+    hcBudgetStatus("预算已修改，请重新确认后才会执行。", "");
   });
