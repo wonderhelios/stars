@@ -1247,13 +1247,10 @@ document.querySelectorAll('.nav button[data-view="funding"], .nav button[data-vi
   });
 });
 
-// 启动：首次拉取 + 每 60 秒轮询。
-refreshFunding();
-refreshCarry();
-refreshXPaper();
+// 启动：首次拉取 + 周期轮询。
+refreshHlCarry();
 refreshShadow();
-setInterval(() => refreshFunding(false), 60000);
-setInterval(refreshXPaper, 60000);
+setInterval(refreshHlCarry, 120000);
 setInterval(refreshShadow, 120000);
 
 // ---------- 影子组合（三因子 ✗ 动量+距高点+上涨占比 ✗） ----------
@@ -1948,3 +1945,118 @@ function arrangeMonitorSummary(id, shadow = false) {
   });
   select(Math.min(Number(active) || 0, groups.length - 1));
 }
+
+
+// ---------- HL 单账户 carry 影子（买现货 + 等名义空永续，赚资金费） ----------
+let lastHlCarry = null;
+
+function renderHlCarry(d) {
+  lastHlCarry = d;
+  const s = (d && d.state) || {};
+  const legs = Array.isArray(s.legs) ? s.legs : [];
+  const eq = Number.isFinite(d.equity) ? d.equity : 0;
+  const start = Number.isFinite(s.start_equity) && s.start_equity > 0 ? s.start_equity : 0;
+  const fund = legs.reduce((a, l) => a + (Number(l.funding_accrued) || 0), 0);
+  const basis = legs.reduce((a, l) => a + (Number(l.basis_pnl) || 0), 0);
+  const fee = legs.reduce((a, l) => a + (Number(l.fee_paid) || 0), 0);
+  const ann = d.annualized_pct;
+
+  const m = $("hc-metrics");
+  if (m) {
+    m.innerHTML = legs.length
+      ? [
+          metric("影子权益", money(eq)),
+          metric("累计盈亏", moneySigned(eq - start), eq - start >= 0 ? "pos" : "neg"),
+          metric("资金费", moneySigned(fund), fund >= 0 ? "pos" : "neg"),
+          metric("基差", moneySigned(basis), basis >= 0 ? "pos" : "neg"),
+          metric("手续费", "−" + money(fee)),
+          metric("年化", Number.isFinite(ann) ? (ann >= 0 ? "+" : "−") + Math.abs(ann).toFixed(1) + "%" : "—"),
+        ].join("")
+      : '<div class="empty">还没有影子持仓。点右上角「按预算重新开仓」开始模拟（只影响模拟，不涉及真钱）。</div>';
+  }
+
+  const w = $("hc-warn");
+  if (w) {
+    const ws = Array.isArray(d.warnings) ? d.warnings : [];
+    w.innerHTML = ws.length
+      ? `<div class="content-card"><div class="panel-head"><h2>告警</h2></div>${ws.map((x) => `<p class="note neg">${escapeHTML(x)}</p>`).join("")}</div>`
+      : "";
+  }
+
+  const tb = $("hc-legs");
+  if (tb) {
+    tb.innerHTML = legs.length
+      ? `<div class="table-scroll"><table><thead><tr><th>币</th><th>现货对</th><th>名义</th><th>资金费/年</th><th>当前基差</th><th>资金费累计</th><th>基差盈亏</th><th>腿盈亏</th></tr></thead><tbody>${legs
+          .map(
+            (l) =>
+              `<tr><td>${escapeHTML(l.coin || "")}</td><td>${escapeHTML(l.spot || "")}</td><td>${money(l.notional)}</td><td class="${Number(l.funding_ann) >= 0 ? "pos" : "neg"}">${fmt(l.funding_ann, 2)}%</td><td>${fmt(l.basis_bp, 1)} bp</td><td>${moneySigned(l.funding_accrued)}</td><td>${moneySigned(l.basis_pnl)}</td><td class="${Number(l.leg_pnl) >= 0 ? "pos" : "neg"}">${moneySigned(l.leg_pnl)}</td></tr>`
+          )
+          .join("")}</tbody></table></div>`
+      : '<div class="empty">无持仓</div>';
+  }
+
+  const lg = $("hc-log");
+  if (lg) {
+    const rows = (s.log || []).slice(-12).reverse();
+    lg.innerHTML = rows.length
+      ? `<ul class="note">${rows.map((r) => `<li>${new Date(r.ts).toLocaleString("zh-CN", { hour12: false })} · ${escapeHTML(r.msg)}</li>`).join("")}</ul>`
+      : '<div class="empty">暂无事件</div>';
+  }
+}
+
+async function refreshHlCarry() {
+  try {
+    const d = await fetchJSONRetry("/api/hlcarry", { cache: "no-store" });
+    renderHlCarry(d);
+  } catch (e) {
+    const m = $("hc-metrics");
+    if (m) m.innerHTML = `<div class="empty neg">读取失败：${escapeHTML(String((e && e.message) || e))}</div>`;
+  }
+}
+
+document.querySelectorAll('.nav button[data-view="hlcarry"]').forEach((b) => {
+  b.addEventListener("click", () => refreshHlCarry());
+});
+
+const hcRefreshBtn = $("hc-refresh");
+if (hcRefreshBtn) hcRefreshBtn.addEventListener("click", () => refreshHlCarry());
+
+const hcStepBtn = $("hc-step");
+if (hcStepBtn)
+  hcStepBtn.addEventListener("click", async () => {
+    hcStepBtn.disabled = true;
+    try {
+      await fetchJSONRetry("/api/hlcarry/step", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: "{}",
+      });
+      await refreshHlCarry();
+    } catch (e) {
+      alert("推进失败：" + ((e && e.message) || e));
+    } finally {
+      hcStepBtn.disabled = false;
+    }
+  });
+
+const hcOpenBtn = $("hc-open");
+if (hcOpenBtn)
+  hcOpenBtn.addEventListener("click", async () => {
+    const raw = prompt("影子预算（USD，只影响模拟，不涉及真钱）", "1000");
+    if (raw === null) return;
+    const budget = Number(raw);
+    if (!(budget > 0)) return;
+    hcOpenBtn.disabled = true;
+    try {
+      await fetchJSONRetry("/api/hlcarry/open", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ budget_usd: budget }),
+      });
+      await refreshHlCarry();
+    } catch (e) {
+      alert("开仓失败：" + ((e && e.message) || e));
+    } finally {
+      hcOpenBtn.disabled = false;
+    }
+  });

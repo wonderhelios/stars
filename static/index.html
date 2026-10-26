@@ -263,7 +263,6 @@
       .setup-card h3 { font-size:16px; }
       .field input,.field select { min-height:44px; background:#fbfcfd; }
       .setup-save { border:1px solid #d4e5dc; }
-      #view-funding-setup .setup-fields { display:grid!important; grid-template-columns:repeat(3,minmax(0,1fr)); gap:18px!important; }
       .daily-exec-kpis { margin:18px 0; padding:18px 0; gap:16px; }
       .daily-exec-kpis .v { font-size:24px; }
       .daily-exec-chart-label,.daily-exec-pagination { flex-wrap:wrap; }
@@ -277,22 +276,7 @@
       .empty { padding:28px 16px; }
       /* Unequal-height data modules must not share grid rows: short/empty
          panels otherwise reserve the height of the neighbouring table. */
-      #view-funding.active { display:block; }
-      #view-funding>.workspace-heading { margin-bottom:16px; }
-      #view-funding>.content-card { padding:16px 20px; margin-bottom:12px; }
-      #view-funding .content-card>.panel-head { padding-bottom:10px; margin-bottom:10px; }
-      #view-funding .section-eyebrow { margin-bottom:3px; }
-      #view-funding .note { margin:8px 0; }
-      #view-funding .empty { padding:14px 16px; text-align:left; }
-      #view-funding .setup-details { margin-top:10px; padding-top:4px; }
-      #view-funding summary { min-height:34px; padding:6px 0; }
-      #view-funding th,#view-funding td { padding:9px 12px; }
-      #view-funding .chart-summary { margin:8px 0 10px; }
-      #view-funding .grid-2 { margin:10px 0; }
-      #view-funding .grid-2 .content-card { padding:14px 16px; }
-      #view-funding .grid-2 .panel-head { margin-bottom:8px; padding-bottom:8px; }
-      @media(max-width:760px) { #view-funding>.content-card { padding:14px; } }
-      @media(max-width:1100px) { .setup-layout { grid-template-columns:1fr; } .setup-aside { grid-template-columns:repeat(2,minmax(0,1fr)); } #view-funding-setup .setup-fields { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+      @media(max-width:1100px) { .setup-layout { grid-template-columns:1fr; } .setup-aside { grid-template-columns:repeat(2,minmax(0,1fr)); } }
       @media(max-width:760px) {
         html { scroll-padding-top:80px; }
         .topbar { width:100%; position:sticky; top:0; padding:12px 16px; grid-template-columns:auto minmax(0,1fr); gap:16px; min-height:64px; border:0; box-shadow:0 2px 12px #10251f16; }
@@ -332,7 +316,7 @@
         th,td { padding:12px; }
         .table-scroll { border-radius:8px; }
       }
-      @media(max-width:400px) { .setup-fields,#view-funding-setup .setup-fields { grid-template-columns:1fr; } #statusText { max-width:145px; } .daily-exec-kpis .v { font-size:20px; } }
+      @media(max-width:400px) { .setup-fields #statusText { max-width:145px; } .daily-exec-kpis .v { font-size:20px; } }
       /* Shadow workspace fields and controls. */
       #view-shadow .content-card,#view-shadow-setup .content-card { padding:18px 20px; margin-bottom:14px; }
       #view-shadow .panel-head,#view-shadow-setup .panel-head { margin-bottom:12px; }
@@ -419,8 +403,7 @@
       <nav class="nav" aria-label="工作台导航">
         <button data-view="monitor" class="active" aria-current="page"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg><span>实盘监控</span></button>
         <button data-view="live"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 7h16M4 17h16"/><circle cx="8" cy="7" r="3"/><circle cx="16" cy="17" r="3"/></svg><span>实盘设置</span></button>
-        <button data-view="funding"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg><span>套利监控</span></button>
-        <button data-view="funding-setup"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3"/></svg><span>套利设置</span></button>
+        <button data-view="hlcarry"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg><span>套利影子</span></button>
         <button data-view="shadow"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 20h18M5 20V10M11 20V4M17 20v-6"/></svg><span>影子监控</span></button>
         <button data-view="shadow-setup"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg><span>影子设置</span></button>
       </nav>
@@ -526,92 +509,33 @@
         </div>
       </section>
 
-      <section id="view-funding" class="view">
-        <div class="workspace-heading"><div><div class="panel-kicker">MARKET OBSERVATORY</div><h2>套利监控</h2><p class="sub">市场价差、资金费与纸面组合，集中观察。</p></div><span class="setup-chip">行情与纸面模拟</span></div>
-        <div class="content-card">
-          <div class="panel-head monitor-section-head"><div><span class="section-eyebrow">FUNDING CARRY</span><h2>资金费差 · HL vs 币安</h2></div><button class="btn ghost" id="fd-refresh" type="button">立即刷新</button></div>
-          <p class="note">年化差 = HL − 币安。差为正：空 HL / 多币安收差。两边 24h 成交额均 ≥ $1M 才上榜，每 60 秒刷新。</p>
-          <div id="fd-pairs"></div>
-          <p class="note" id="fd-updated"></p>
-        </div>
-
-        <div class="content-card">
-          <div class="panel-head monitor-section-head"><div><span class="section-eyebrow">CROSS-VENUE</span><h2>跨所价差 · OKX vs 币安</h2></div></div>
-          <p class="note">同一币在 OKX 和币安的现货价差（正 = OKX 更贵）。只保留两边 24h 成交额都 ≥ $1M 的币，且只显示 |差| ≥ 0.3%。平时这个量级很小（0.1% 上下），大价差多半是事件（新币上架 / 提币暂停）或同名不同币。</p>
-          <div id="xv-list"></div>
-        </div>
-
-        <div class="content-card">
-          <div class="panel-head monitor-section-head"><div><span class="section-eyebrow">SPIKE MONITOR</span><h2>资金费尖峰</h2></div></div>
-          <p class="note">年化 |资金费| ≥ 40% 且 24h 成交额 ≥ $1 万。正 = 多头付空头（做空收钱）；负 = 空头付多头（做多收钱）。尖峰通常几分钟内消失，容量极小。</p>
-          <div id="fd-spikes"></div>
-        </div>
-
-        <div class="content-card">
-          <div class="panel-head monitor-section-head"><div><span class="section-eyebrow">PAPER CARRY</span><h2>纸面 carry 策略</h2></div><button class="btn ghost" id="cy-step" type="button">手动推进一步</button></div>
-          <p class="note">真实行情、模拟下单、完整核算（资金费 + 基差 + 手续费）。预算读「套利设置」里的 carry 金额，不动真实账户、不发任何真实订单。</p>
-          <p class="note" id="cy-summary"></p>
-          <div class="chart" id="cy-chart"></div>
-          <div id="cy-legs"></div>
-          <details class="setup-details"><summary>持仓明细</summary><div id="cy-positions"></div></details>
-          <details class="setup-details"><summary>操作日志</summary><div id="cy-log" style="max-height:240px;overflow:auto"></div></details>
-        </div>
-
-        <div class="content-card">
-          <div class="panel-head monitor-section-head"><div><span class="section-eyebrow">CROSS-VENUE PAPER</span><h2>跨所价差 · 纸面策略</h2></div><button class="btn ghost" id="xp-step" type="button">手动推进一步</button></div>
-          <p class="note">真实行情（OKX/币安现货 ✗）、模拟双腿、核算手续费（默认 0.1%/腿/次 ✗ 来回 4 腿 = 0.4% ✗ 所以价差要 &gt; 0.4% 才可能赚 ✗）。预算读「套利设置」里的 ③ 尖峰狩猎金额 ✗ 不动真实账户 ✗</p>
-          <p class="note" id="xp-summary"></p>
-          <div class="chart" id="xp-chart"></div>
-          <details class="setup-details"><summary>持仓明细</summary><div id="xp-positions"></div></details>
-          <details class="setup-details"><summary>操作日志</summary><div id="xp-log" style="max-height:240px;overflow:auto"></div></details>
-        </div>
-      </section>
-
-      <section id="view-funding-setup" class="view">
-        <div class="workspace-heading"><div><div class="panel-kicker">PAPER WORKSPACE</div><h2>套利设置</h2><p class="sub">资金分配与模拟参数，按模块管理。</p></div><span class="setup-chip">行情与纸面模拟</span></div>
-        <div class="content-card">
-          <div class="panel-head monitor-section-head"><div><span class="section-eyebrow">CAPITAL MATRIX</span><h2>资金矩阵配置</h2></div></div>
-          <p class="note">三种策略的资金分配，仅记录与展示，不驱动任何自动执行（唯一例外：② carry 的金额会作为纸面 carry 的预算）。用于跟踪「资产（动量）/ 现金管理（carry）/ 娱乐（尖峰）」三块的比例。</p>
-          <div class="setup-fields" style="display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end">
-            <div class="field"><label for="fd-cap-momentum">① 横截面动量 (USD)</label><input id="fd-cap-momentum" type="number" min="0" step="1" /></div>
-            <div class="field"><label for="fd-cap-carry">② 资金费 carry (USD)</label><input id="fd-cap-carry" type="number" min="0" step="1" /></div>
-            <div class="field"><label for="fd-cap-hunting">③ 尖峰狩猎 (USD)</label><input id="fd-cap-hunting" type="number" min="0" step="1" /></div>
-            <div class="field"><button class="btn ghost" id="fd-cap-save" type="button">保存</button></div>
+      <section id="view-hlcarry" class="view">
+        <div class="panel">
+          <div class="panel-head">
+            <div>
+              <div class="panel-kicker">HL CARRY SHADOW</div>
+              <h2>套利影子 · 买现货 + 等名义空永续</h2>
+              <p class="sub">赚永续资金费。真实行情、模拟持仓、<b>不发任何真实订单</b>。成本按 HL 实际费率一次性预扣 10.88bp（现货 maker 4bp + 永续 maker 1.44bp，往返）。</p>
+            </div>
+            <div class="actions">
+              <button class="btn ghost" id="hc-refresh" type="button">刷新</button>
+              <button class="btn ghost" id="hc-step" type="button">手动推进一步</button>
+              <button class="btn danger" id="hc-open" type="button">按预算重新开仓</button>
+            </div>
           </div>
-          <p id="fd-cap-status" class="note" role="status" aria-live="polite"></p>
-          <p class="note" id="fd-cap-summary"></p>
-        </div>
-
-        <div class="content-card">
-          <div class="panel-head monitor-section-head"><div><span class="section-eyebrow">PAPER CARRY · PARAMS</span><h2>纸面 carry 参数</h2></div><button class="btn danger" id="cy-reset" type="button">重置纸面</button></div>
-          <p class="note">18bp 来回手续费下，年化差 6% 要持有 263 小时才回本 ✗ 40% 只要 53 小时 ✗ 所以默认「开仓 40% / 出场 10% / 最短持有 72h」✗ 冷却期：基差止损 / 持有超时 / 价差翻转后 24 小时不再开同名币 ✗</p>
-          <div class="setup-fields" style="display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end">
-            <div class="field"><label for="cy-entry">开仓阈值 %（|年化价差| ≥ 此值开仓）</label><input id="cy-entry" type="number" min="1" max="50" step="0.5" /></div>
-            <div class="field"><label for="cy-exit">出场阈值 %（跌破平仓）</label><input id="cy-exit" type="number" min="0" max="20" step="0.5" /></div>
-            <div class="field"><label for="cy-pairs">最大对数</label><input id="cy-pairs" type="number" min="1" max="20" step="1" /></div>
-            <div class="field"><label for="cy-hours">最长持有小时</label><input id="cy-hours" type="number" min="1" max="8760" step="1" /></div>
-            <div class="field"><label for="cy-minhold">最短持有小时（覆盖手续费前不平）</label><input id="cy-minhold" type="number" min="0" max="1440" step="1" /></div>
-            <div class="field"><label for="cy-stop">基差止损 %（名义）</label><input id="cy-stop" type="number" min="0.1" max="20" step="0.5" /></div>
-            <div class="field"><button class="btn ghost" id="cy-save" type="button">保存参数</button></div>
+          <div id="hc-warn"></div>
+          <div class="content-card">
+            <div class="panel-head"><h2>汇总</h2></div>
+            <div class="metrics" id="hc-metrics"></div>
           </div>
-          <p id="cy-status" class="note" role="status" aria-live="polite"></p>
-        </div>
-
-        <div class="content-card">
-          <div class="panel-head monitor-section-head"><div><span class="section-eyebrow">CROSS-VENUE PAPER · PARAMS</span><h2>跨所纸面参数</h2></div><button class="btn danger" id="xp-reset" type="button">重置纸面</button></div>
-          <p class="note">手续费按现货 taker 算（默认 0.1%/腿/次 ✗）。止损后 12 小时内不再开同名币 ✗ 价差要【连续 N 次刷新】都达标才开仓（过滤 1 分钟就消失的报价噪音 ✗）✗ 两边 24h 成交额都要过门槛（排除薄币的假价差 ✗）</p>
-          <div class="setup-fields" style="display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end">
-            <div class="field"><label for="xp-entry">开仓阈值 %（|价差| ≥ 此值）</label><input id="xp-entry" type="number" min="0.1" max="10" step="0.1" /></div>
-            <div class="field"><label for="xp-exit">出场阈值 %（价差收敛到）</label><input id="xp-exit" type="number" min="0" max="5" step="0.05" /></div>
-            <div class="field"><label for="xp-pairs">最大对数</label><input id="xp-pairs" type="number" min="1" max="20" step="1" /></div>
-            <div class="field"><label for="xp-hours">最长持有小时</label><input id="xp-hours" type="number" min="1" max="2160" step="1" /></div>
-            <div class="field"><label for="xp-stop">止损 %（名义）</label><input id="xp-stop" type="number" min="0.1" max="20" step="0.1" /></div>
-            <div class="field"><label for="xp-fee">手续费 %（每腿每次）</label><input id="xp-fee" type="number" min="0" max="2" step="0.01" /></div>
-            <div class="field"><label for="xp-confirm">持续次数（连续 N 次刷新达标才开 ✗ 1 次=10 秒 ✗ 3 次≈30 秒）</label><input id="xp-confirm" type="number" min="1" max="30" step="1" /></div>
-            <div class="field"><label for="xp-minvol">两边最小成交额（USD ✗ 排除薄币 ✗）</label><input id="xp-minvol" type="number" min="0" step="1000000" /></div>
-            <div class="field"><button class="btn ghost" id="xp-save" type="button">保存参数</button></div>
+          <div class="content-card">
+            <div class="panel-head"><h2>当前持仓</h2></div>
+            <div id="hc-legs"></div>
           </div>
-          <p id="xp-status" class="note" role="status" aria-live="polite"></p>
+          <div class="content-card">
+            <div class="panel-head"><h2>最近事件</h2></div>
+            <div id="hc-log"></div>
+          </div>
         </div>
       </section>
 

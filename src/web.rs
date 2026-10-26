@@ -50,6 +50,9 @@ pub struct AppState {
     /// 跨所价差纸面引擎（OKX vs 币安现货）。
     pub xpaper: Arc<Mutex<crate::xpaper::XPaperState>>,
     pub xpaper_path: Arc<std::path::PathBuf>,
+    /// HL 单账户 carry 影子（现货 + 空永续）。
+    pub hlcarry: Arc<Mutex<crate::hlcarry::HlCarryState>>,
+    pub hlcarry_path: Arc<std::path::PathBuf>,
 }
 
 #[derive(Clone, Default)]
@@ -104,17 +107,10 @@ pub fn router(state: AppState) -> Router {
         .route("/api/live/baseline", post(live_baseline))
         .route("/api/live/capital/time", post(live_capital_time))
         .route("/api/live/capital/delete", post(live_capital_delete))
-        .route("/api/funding", get(funding_status))
-        .route("/api/funding/refresh", post(funding_refresh))
         .route("/api/capital", post(capital_alloc))
-        .route("/api/carry", get(carry_status))
-        .route("/api/carry/step", post(carry_step))
-        .route("/api/carry/config", post(carry_config))
-        .route("/api/carry/reset", post(carry_reset))
-        .route("/api/xpaper", get(xpaper_status))
-        .route("/api/xpaper/step", post(xpaper_step))
-        .route("/api/xpaper/config", post(xpaper_config))
-        .route("/api/xpaper/reset", post(xpaper_reset))
+        .route("/api/hlcarry", get(hlcarry_status))
+        .route("/api/hlcarry/open", post(hlcarry_open))
+        .route("/api/hlcarry/step", post(hlcarry_step))
         .layer(axum::middleware::from_fn({
             let token = state.auth_token.clone();
             move |req: axum::http::Request<axum::body::Body>, next: axum::middleware::Next| {
@@ -975,6 +971,65 @@ async fn capital_alloc(State(state): State<AppState>, Json(body): Json<CapitalAl
     Json(json!({"ok": true})).into_response()
 }
 
+
+// ---- HL 单账户 carry 影子 ----
+
+async fn hlcarry_status(State(state): State<AppState>) -> Json<serde_json::Value> {
+    let st = state.hlcarry.lock().await.clone();
+    Json(json!({
+        "state": st,
+        "equity": st.equity(),
+        "annualized_pct": st.annualized_pct(),
+        "warnings": st.warnings(),
+    }))
+}
+
+#[derive(serde::Deserialize)]
+struct HlCarryOpenBody {
+    budget_usd: Option<f64>,
+}
+
+async fn hlcarry_open(State(state): State<AppState>, Json(body): Json<HlCarryOpenBody>) -> Response {
+    let budget = body.budget_usd.filter(|b| *b > 0.0).unwrap_or(1_000.0);
+    let market = match crate::hlcarry::fetch_market(&state.http).await {
+        Ok(m) => m,
+        Err(e) => {
+            return (StatusCode::BAD_GATEWAY,
+                    Json(json!({"ok": false, "error": format!("行情失败: {e:#}")}))).into_response()
+        }
+    };
+    let now = crate::live::now_ms_pub();
+    let mut st = state.hlcarry.lock().await;
+    st.open(budget, &market, now);
+    if let Err(e) = st.save(&state.hlcarry_path) {
+        return (StatusCode::INTERNAL_SERVER_ERROR,
+                Json(json!({"ok": false, "error": format!("保存失败: {e:#}")}))).into_response();
+    }
+    Json(json!({"ok": true, "legs": st.legs.len()})).into_response()
+}
+
+async fn hlcarry_step(State(state): State<AppState>) -> Response {
+    let market = match crate::hlcarry::fetch_market(&state.http).await {
+        Ok(m) => m,
+        Err(e) => {
+            return (StatusCode::BAD_GATEWAY,
+                    Json(json!({"ok": false, "error": format!("行情失败: {e:#}")}))).into_response()
+        }
+    };
+    let now = crate::live::now_ms_pub();
+    let mut st = state.hlcarry.lock().await;
+    if st.legs.is_empty() {
+        st.open(1_000.0, &market, now);
+    } else {
+        st.step(&market, now);
+    }
+    if let Err(e) = st.save(&state.hlcarry_path) {
+        return (StatusCode::INTERNAL_SERVER_ERROR,
+                Json(json!({"ok": false, "error": format!("保存失败: {e:#}")}))).into_response();
+    }
+    Json(json!({"ok": true})).into_response()
+}
+
 // ---- 纸面资金费 carry 策略 ----
 
 async fn carry_status(State(state): State<AppState>) -> Json<crate::carry::CarryState> {
@@ -1332,6 +1387,8 @@ mod live_routes_tests {
             carry_path: Arc::new(root.join("carry.json")),
             xpaper: Arc::new(Mutex::new(crate::xpaper::XPaperState::default())),
             xpaper_path: Arc::new(root.join("xpaper.json")),
+            hlcarry: Arc::new(Mutex::new(crate::hlcarry::HlCarryState::default())),
+            hlcarry_path: Arc::new(root.join("hlcarry.json")),
             auth_token: None,
             paper2: Arc::new(Mutex::new(crate::paper::PaperState::default())),
             paper2_path: Arc::new(root.join("paper2.json")),
@@ -1369,7 +1426,7 @@ mod live_routes_tests {
     }
 
     #[tokio::test]
-    async fn funding_and_capital_routes_round_trip() {
+    async fn capital_routes_round_trip() {
         let root = std::env::temp_dir().join(format!("stars-funding-{}", uuid::Uuid::new_v4()));
         std::fs::create_dir_all(&root).unwrap();
         let base = AppState {
@@ -1388,6 +1445,8 @@ mod live_routes_tests {
             carry_path: Arc::new(root.join("carry.json")),
             xpaper: Arc::new(Mutex::new(crate::xpaper::XPaperState::default())),
             xpaper_path: Arc::new(root.join("xpaper.json")),
+            hlcarry: Arc::new(Mutex::new(crate::hlcarry::HlCarryState::default())),
+            hlcarry_path: Arc::new(root.join("hlcarry.json")),
             auth_token: None,
             paper2: Arc::new(Mutex::new(crate::paper::PaperState::default())),
             paper2_path: Arc::new(root.join("paper2.json")),
@@ -1395,9 +1454,6 @@ mod live_routes_tests {
             paper3_path: Arc::new(root.join("paper3.json")),
         };
         let app = router(base.clone());
-        // 资金费面板（初始为空状态, 仍应 200）。
-        let resp = app.clone().oneshot(Request::builder().uri("/api/funding").body(Body::empty()).unwrap()).await.unwrap();
-        assert_eq!(resp.status(), StatusCode::OK);
         // 资金矩阵：保存 → 持久化 → 拒绝对负数。
         let req = Request::builder().method("POST").uri("/api/capital")
             .header("content-type", "application/json")

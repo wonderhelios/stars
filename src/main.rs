@@ -1,6 +1,7 @@
 mod carry;
 mod exchange;
 mod funding;
+mod hlcarry;
 mod health;
 mod hl;
 mod live;
@@ -53,6 +54,9 @@ async fn main() -> anyhow::Result<()> {
         .unwrap_or_else(|_| "/var/lib/stars/carry.json".to_string());
     let xpaper_path = std::env::var("STARS_XPAPER")
         .unwrap_or_else(|_| "/var/lib/stars/xpaper.json".to_string());
+    // HL 单账户 carry 影子（现货 + 空永续，赚资金费）。默认预算是影子规模，不涉真钱。
+    let hlcarry_path = std::env::var("STARS_HLCARRY")
+        .unwrap_or_else(|_| "/var/lib/stars/hlcarry.json".to_string());
 
     // ===== trade subcommand (live execution) =====
     let args: Vec<String> = std::env::args().collect();
@@ -104,6 +108,7 @@ async fn main() -> anyhow::Result<()> {
     let live = Arc::new(Mutex::new(hl_live));
     let carry = Arc::new(Mutex::new(crate::carry::CarryState::load(std::path::Path::new(&carry_path))));
     let xpaper = Arc::new(Mutex::new(crate::xpaper::XPaperState::load(std::path::Path::new(&xpaper_path))));
+    let hlcarry = Arc::new(Mutex::new(crate::hlcarry::HlCarryState::load(std::path::Path::new(&hlcarry_path))));
     let meta = Arc::new(Mutex::new(MetaCache::default()));
     let refresh = Arc::new(Mutex::new(RefreshStatus::default()));
 
@@ -131,6 +136,8 @@ async fn main() -> anyhow::Result<()> {
         carry_path: Arc::new(std::path::PathBuf::from(&carry_path)),
         xpaper: xpaper.clone(),
         xpaper_path: Arc::new(std::path::PathBuf::from(&xpaper_path)),
+        hlcarry: hlcarry.clone(),
+        hlcarry_path: Arc::new(std::path::PathBuf::from(&hlcarry_path)),
         binance_http: {
             // 币安公开接口客户端：地区屏蔽时可用 BINANCE_PROXY 环境变量指到代理。
             let mut b = reqwest::Client::builder()
@@ -145,80 +152,37 @@ async fn main() -> anyhow::Result<()> {
         },
     };
 
-    // ===== 资金费套利：每 60 秒刷行情 + 推进一步纸面 carry =====
-    {
-        let st = state.clone();
-        tokio::spawn(async move {
-            loop {
-                let fresh = crate::funding::refresh(&st.http, &st.binance_http).await;
-                *st.funding.lock().await = fresh.clone();
-                // 纸面 carry：预算读资金矩阵，行情用刚刷的资金费面板。
-                let budget = st.live.lock().await.capital_alloc.carry_usd;
-                let market = crate::carry::market_rows(&fresh);
-                // 关键：锁内只做计算，写盘放到锁外。
-                // 之前 save 在锁内，磁盘一慢就把 /api/carry 阻塞 20~30 秒，
-                // 面板加载不出来（2026-10-17 现场问题）。
-                let snapshot = {
-                    let mut carry = st.carry.lock().await;
-                    crate::carry::step(&mut carry, budget, &market);
-                    carry.clone()
-                };
-                let t0 = std::time::Instant::now();
-                if let Err(e) = snapshot.save(&st.carry_path) {
-                    warn!("纸面 carry 保存失败: {e}");
-                } else if t0.elapsed().as_secs() >= 2 {
-                    warn!("纸面 carry 保存耗时 {:?}（磁盘偏慢）", t0.elapsed());
-                }
-                // 跨所价差已移到下面的 10 秒快循环 ✗ 这里不再推进 ✓
-                tokio::time::sleep(Duration::from_secs(60)).await;
-            }
-        });
-    }
-
-    // ===== 跨所价差：每 10 秒抓一次两边盘口 + 推进纸面引擎 =====
+    // ===== HL 单账户 carry 影子：每 5 分钟推进一步 =====
     //
-    // 之前跨所行情跟资金费一起每 60 秒才刷一次 ✗ 1 分钟就收敛的价差
-    // 根本看不见 ✗ 现在单独 10 秒一次（只打 OKX/币安两个 ticker ✗ 很轻 ✗）
+    // 只读公开行情 + 模拟持仓，不发任何真实订单。
+    // 空仓时按预算自动开仓（预算读资金分配里的 carry 金额，缺省 1000 USD）。
     {
         let st = state.clone();
         tokio::spawn(async move {
             loop {
-                let px = crate::funding::refresh_xvenue(&st.binance_http).await;
-                if !px.is_empty() {
-                    let mut fund = st.funding.lock().await;
-                    fund.xvenue_px = px.clone();
-                    fund.xvenue = crate::funding::xvenue_view(&px);
-                }
-                let xbudget = st.live.lock().await.capital_alloc.hunting_usd;
-                let xmarket: std::collections::HashMap<String, crate::xpaper::XRow> = px
-                    .iter()
-                    .map(|p| {
-                        (
-                            p.coin.clone(),
-                            crate::xpaper::XRow {
-                                okx: p.okx,
-                                bn: p.bn,
-                                okx_vol: p.okx_vol,
-                                bn_vol: p.bn_vol,
-                                okx_bid: p.okx_bid,
-                                okx_ask: p.okx_ask,
-                                bn_bid: p.bn_bid,
-                                bn_ask: p.bn_ask,
-                            },
-                        )
-                    })
-                    .collect();
-                if !xmarket.is_empty() {
-                    let xsnap = {
-                        let mut xp = st.xpaper.lock().await;
-                        crate::xpaper::step(&mut xp, xbudget, &xmarket);
-                        xp.clone()
-                    };
-                    if let Err(e) = xsnap.save(&st.xpaper_path) {
-                        warn!("跨所价差纸面保存失败: {e}");
+                match crate::hlcarry::fetch_market(&st.http).await {
+                    Ok(market) => {
+                        let now = crate::live::now_ms_pub();
+                        let budget = {
+                            let alloc = st.live.lock().await.capital_alloc.carry_usd;
+                            if alloc > 0.0 { alloc } else { 1_000.0 }
+                        };
+                        let snapshot = {
+                            let mut hc = st.hlcarry.lock().await;
+                            if hc.legs.is_empty() {
+                                hc.open(budget, &market, now);
+                            } else {
+                                hc.step(&market, now);
+                            }
+                            hc.clone()
+                        };
+                        if let Err(e) = snapshot.save(&st.hlcarry_path) {
+                            warn!("HL carry 影子保存失败: {e}");
+                        }
                     }
+                    Err(e) => warn!("HL carry 影子行情失败: {e}"),
                 }
-                tokio::time::sleep(Duration::from_secs(10)).await;
+                tokio::time::sleep(Duration::from_secs(300)).await;
             }
         });
     }
