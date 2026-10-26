@@ -116,6 +116,9 @@ const hlcarryPayload = {
     ],
     log: [{ts: 1761520000000, msg: '开仓：1 腿，总名义 $1000'}],
     history: [],
+    params: {top_k: 5, min_funding_ann_pct: 3, min_spot_volume_usd: 1000000, max_leg_weight: 0.4, payback_days: 30},
+    rebalances: [],
+    daily: [{date: '2026-10-27', equity_start: 1000, equity_end: 1012.34, funding: 13.5, basis: 0, fees: 1.09, rebalances: 0}],
   },
 };
 
@@ -209,5 +212,8 @@ assert.match(metrics, /1,012\.34/, '权益金额未渲染');
 
 const legs = el('hc-legs').innerHTML || '';
 assert.match(legs, /BTC/, '持仓表没有渲染出 BTC');
+
+assert.match(el('hc-daily').innerHTML || '', /2026-10-27/, '每日汇总没有渲染');
+assert.match(el('hc-rebalances').innerHTML || '', /还没有换过仓/, '换仓卡片没有渲染');
 
 console.log('✓ app.js 按真实顺序初始化：hlcarry 影子 tab 渲染正常，无 TDZ、无未定义引用');

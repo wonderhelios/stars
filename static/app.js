@@ -1596,6 +1596,45 @@ function renderHlCarry(d) {
       : '<div class="empty">无持仓</div>';
   }
 
+  // ---- 换仓记录 ----
+  const rb = $("hc-rebalances");
+  if (rb) {
+    const rows = (s.rebalances || []).slice(-20).reverse();
+    rb.innerHTML = rows.length
+      ? `<div class="table-scroll"><table><thead><tr><th>时间</th><th>换手</th><th>加权资金费</th><th>门槛</th><th>手续费</th><th>变动</th></tr></thead><tbody>${rows
+          .map((r) => {
+            const dt = new Date(r.ts).toLocaleString("zh-CN", { hour12: false });
+            const up = Number(r.funding_after) >= Number(r.funding_before);
+            const change = []
+              .concat((r.added || []).map((c) => `<span class="pos">+${escapeHTML(c)}</span>`))
+              .concat((r.removed || []).map((c) => `<span class="neg">−${escapeHTML(c)}</span>`))
+              .concat(
+                (r.resized || []).map(
+                  ([c, a, b]) =>
+                    `${escapeHTML(c)} ${fmt(a * 100, 0)}%→${fmt(b * 100, 0)}%`,
+                ),
+              )
+              .join(" · ");
+            return `<tr><td class="muted">${dt}</td><td>${fmt(r.turnover * 100, 0)}%</td><td class="${up ? "pos" : "neg"}">${fmt(r.funding_before, 2)}% → ${fmt(r.funding_after, 2)}%</td><td class="muted">${fmt(r.threshold, 2)}%</td><td>−${hcMoney(r.fee_usd)}</td><td>${change || "—"}</td></tr>`;
+          })
+          .join("")}</tbody></table></div>`
+      : '<div class="empty">还没有换过仓——说明任何一次评估都没达到「回本」门槛。这本身是好事：频繁换仓只会把收益交给手续费。</div>';
+  }
+
+  // ---- 每日汇总 ----
+  const dl = $("hc-daily");
+  if (dl) {
+    const rows = (s.daily || []).slice(-30).reverse();
+    dl.innerHTML = rows.length
+      ? `<div class="table-scroll"><table><thead><tr><th>日期</th><th>权益</th><th>资金费</th><th>基差</th><th>手续费</th><th>换仓</th></tr></thead><tbody>${rows
+          .map(
+            (d) =>
+              `<tr><td>${escapeHTML(d.date)}</td><td>${hcMoney(d.equity_start)} → ${hcMoney(d.equity_end)}</td><td class="${Number(d.funding) >= 0 ? "pos" : "neg"}">${moneySigned(d.funding)}</td><td class="${Number(d.basis) >= 0 ? "pos" : "neg"}">${moneySigned(d.basis)}</td><td>−${hcMoney(d.fees)}</td><td>${d.rebalances || 0}</td></tr>`,
+          )
+          .join("")}</tbody></table></div>`
+      : '<div class="empty">还没有满一小时的记录。</div>';
+  }
+
   const lg = $("hc-log");
   if (lg) {
     const rows = (s.log || []).slice(-12).reverse();

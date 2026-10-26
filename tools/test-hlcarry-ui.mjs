@@ -98,6 +98,18 @@ const payload = {
       },
     ],
     log: [{ts: 1761520000000, msg: '开仓：2 腿，总名义 $1000'}],
+    rebalances: [
+      {
+        ts: 1761523600000, turnover: 0.4, funding_before: 10.95, funding_after: 21.3,
+        threshold: 1.32, fee_usd: 0.44, added: ['ZEC'], removed: ['ETH'],
+        resized: [['BTC', 0.3, 0.35]],
+        target: [['ZEC', 0.4, 41.8], ['BTC', 0.35, 10.95]],
+      },
+    ],
+    daily: [
+      {date: '2026-10-26', equity_start: 1000, equity_end: 998.9, funding: 0, basis: 0, fees: 1.09, rebalances: 0},
+      {date: '2026-10-27', equity_start: 998.9, equity_end: 1012.34, funding: 13.8, basis: -0.36, fees: 0, rebalances: 1},
+    ],
   },
 };
 
@@ -238,4 +250,24 @@ assert.match(el('hc-params-status').textContent, /已保存/, '保存后应有�
 // 资金利用率
 assert.match(el('hc-metrics').innerHTML, /资金利用率/, '汇总应显示资金利用率');
 
-console.log('✓ hlcarry 影子 tab：无未定义引用；渲染正确；预算与选币规则都可手动调整');
+// ---- 用例 10：换仓记录 ----
+const rbHtml = el('hc-rebalances').innerHTML;
+assert.match(rbHtml, /ZEC/, '换仓记录应显示加入的币');
+assert.match(rbHtml, /−ETH/, '换仓记录应显示移出的币');
+assert.match(rbHtml, /10\.95% → 21\.3/, '应显示加权资金费前后');
+assert.match(rbHtml, /1\.32%/, '应显示触发门槛');
+assert.match(rbHtml, /40%/, '应显示换手率');
+
+// ---- 用例 11：每日汇总 ----
+const dlHtml = el('hc-daily').innerHTML;
+assert.match(dlHtml, /2026-10-26/, '每日汇总应有第一天');
+assert.match(dlHtml, /2026-10-27/, '每日汇总应有第二天');
+assert.match(dlHtml, /\+\$13\.80/, '资金费应显示当日增量');
+assert.match(dlHtml, /−\$0\.36/, '基差为负应带负号');
+
+// 空状态的引导
+ctx.renderHlCarry({equity: 0, annualized_pct: null, warnings: [], state: {legs: [], log: [], rebalances: [], daily: []}});
+assert.match(el('hc-rebalances').innerHTML, /还没有换过仓/, '无换仓时应有说明');
+assert.match(el('hc-daily').innerHTML, /还没有满一小时/, '无日报时应有说明');
+
+console.log('✓ hlcarry 影子 tab：渲染正确；预算与选币规则可调；换仓记录与每日汇总都有');
