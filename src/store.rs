@@ -130,7 +130,8 @@ impl Store {
     /// 只保留最近 max_days 天的快照 ✗ 磁盘上限保险 ✓
     pub fn prune_snapshots(&self, ts: i64, max_days: i64) -> Result<()> {
         let conn = self.conn.lock().unwrap();
-        let cutoff = ts / 86_400_000 * 86_400_000 - max_days * 86_400_000;
+        // 保留 today-399 .. today 共 400 个日桶 ✗ 所以阈值是 today-(max_days-1) 天
+        let cutoff = ts / 86_400_000 * 86_400_000 - (max_days - 1) * 86_400_000;
         conn.execute("DELETE FROM oi_snapshots WHERE ts < ?1", [cutoff])?;
         conn.execute("DELETE FROM depth_daily WHERE day < ?1", [cutoff])?;
         Ok(())
