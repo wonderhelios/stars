@@ -993,6 +993,7 @@ struct HlCarryParamsBody {
     min_spot_volume_usd: Option<f64>,
     max_leg_weight: Option<f64>,
     payback_days: Option<f64>,
+    min_hold_hours: Option<f64>,
 }
 
 /// 改选币/换仓参数。只改规则，不动当前持仓——下一次评估才生效。
@@ -1013,6 +1014,9 @@ async fn hlcarry_params(
     }
     if let Some(v) = body.max_leg_weight {
         st.params.max_leg_weight = v;
+    }
+    if let Some(v) = body.min_hold_hours {
+        st.params.min_hold_hours = v;
     }
     if let Some(v) = body.payback_days {
         st.params.payback_days = v;

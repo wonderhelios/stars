@@ -43,6 +43,16 @@ pub struct Params {
     pub max_leg_weight: f64,
     /// 换仓回本天数：一次性成本按这么多天摊成年化，作为换仓门槛。
     pub payback_days: f64,
+    /// 最短持有小时数 ✗ 这段时间内无论资金费怎么变都不换仓 ✓
+    /// （资金费每小时都在变 ✗ 不设下限会每天换十几次 ✗ 手续费吃掉一切）
+    #[serde(default = "d_min_hold")]
+    pub min_hold_hours: f64,
+}
+
+fn d_min_hold() -> f64 {
+    // 48 小时：$5k 预算下资金费约 $1.5/天 ✗ 一次部分换仓约 $1.9 ✓
+    // 所以最多两天换一次才能不亏 ✗ 24 小时都嫌频繁 ✓
+    48.0
 }
 
 impl Default for Params {
@@ -54,8 +64,9 @@ impl Default for Params {
             // $1M/24h 是能容纳 $5k 级别下单的下限。
             min_spot_volume_usd: 1_000_000.0,
             max_leg_weight: 0.40,
-            // 30 天回本：一次全换 10.88bp，摊到 30 天约 1.32%/年。
-            payback_days: 30.0,
+            // 90 天回本：换仓门槛提高 3 倍 ✗ 只有明显更好的机会才动 ✓
+            payback_days: 90.0,
+            min_hold_hours: 48.0,
         }
     }
 }
@@ -68,6 +79,7 @@ impl Params {
             min_spot_volume_usd: self.min_spot_volume_usd.clamp(0.0, 1e12),
             max_leg_weight: self.max_leg_weight.clamp(0.05, 1.0),
             payback_days: self.payback_days.clamp(1.0, 365.0),
+            min_hold_hours: self.min_hold_hours.clamp(0.0, 720.0),
         }
     }
 }
@@ -495,6 +507,15 @@ impl HlCarryState {
             return false;
         }
         self.last_check_ms = Some(now);
+        // 最短持有期：刚换过仓就不动 ✗ 否则每 5 分钟一次评估会让资金费的小波动
+        // 反复触发换仓 ✗ 实测 2 天换了 21 次 ✗ 手续费 $39 vs 资金费 $2 ✓
+        if let Some(last) = self.rebalances.last().map(|r| r.ts) {
+            let hold_h = ((now - last).max(0) as f64) / 3_600_000.0;
+            if hold_h < self.params.min_hold_hours {
+                self.sync_funding(market);
+                return false;
+            }
+        }
         let targets = target_weights(&select_candidates(market, &self.params), &self.params);
         if targets.is_empty() {
             self.sync_funding(market);
