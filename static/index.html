@@ -319,6 +319,13 @@
       @media(max-width:400px) { .setup-fields #statusText { max-width:145px; } .daily-exec-kpis .v { font-size:20px; } }
       /* HL carry shadow: compact controls and a clear balance hierarchy. */
       #view-hlcarry .hc-overview { padding:20px 22px 18px; }
+      /* 最近事件：紧凑两列（时间 + 内容）✗ 比原来一行行 note 更整齐 ✓ */
+      .hc-event-list { display:flex; flex-direction:column; }
+      .hc-event { display:grid; grid-template-columns:74px minmax(0,1fr); gap:14px; align-items:baseline; padding:9px 0; border-bottom:1px solid #f2f5f6; font-size:12px; }
+      .hc-event:last-child { border-bottom:0; }
+      .hc-event-time { color:var(--muted); font-variant-numeric:tabular-nums; display:flex; gap:5px; }
+      .hc-event-time b { font-weight:600; }
+      .hc-event-msg { line-height:1.5; overflow-wrap:anywhere; }
       #view-hlcarry .hc-overview-head { display:flex; align-items:flex-start; justify-content:space-between; gap:18px; margin-bottom:14px; }
       #view-hlcarry .hc-overview-head h2 { margin:0 0 3px; font-size:17px; }
       #view-hlcarry .hc-overview-head p { margin:0; color:var(--muted); font-size:11px; }

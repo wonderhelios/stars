@@ -1528,6 +1528,12 @@ function arrangeMonitorSummary(id, shadow = false) {
 // 必须用函数声明（会提升），不能用 const 箭头函数。
 // 启动块里的 refreshHlCarry() 在第 1107 行就跑，而这段代码在 1521 行；
 // 用 const 会让渲染撞上 TDZ：Cannot access 'hcMoney' before initialization。
+const HC_PAGE = 10;
+const HC_PAGE_2 = 15;
+let hcRbPage = 0;
+let hcLogPage = 0;
+let lastHlCarryData = null;
+
 function hcMoney(v) {
   return Number.isFinite(v)
     ? "$" + Math.abs(v).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })
@@ -1541,7 +1547,12 @@ function renderHlCarry(d) {
   const start = Number.isFinite(s.start_equity) && s.start_equity > 0 ? s.start_equity : 0;
   const fund = legs.reduce((a, l) => a + (Number(l.funding_accrued) || 0), 0);
   const basis = legs.reduce((a, l) => a + (Number(l.basis_pnl) || 0), 0);
-  const fee = legs.reduce((a, l) => a + (Number(l.fee_paid) || 0), 0);
+  // 注意：腿上的 fee_paid 只统计【当前还持有的腿】✗ 换掉的腿的费用已经进 closed_pnl
+  // 所以这里要分开显示：今日（来自 daily）和累计（来自 fees_paid_total）
+  const feeToday = (Array.isArray(s.daily) && s.daily.length)
+    ? Number(s.daily[s.daily.length - 1].fees) || 0
+    : 0;
+  const feeTotal = Number.isFinite(s.fees_paid_total) ? s.fees_paid_total : 0;
   const ann = d.annualized_pct;
   const p = s.params || {};
   // 参数回填（不覆盖正在编辑的输入框）
@@ -1574,8 +1585,9 @@ function renderHlCarry(d) {
           metric("累计盈亏", moneySigned(eq - start), eq - start >= 0 ? "pos" : "neg"),
           metric("资金费收入", moneySigned(fund), fund >= 0 ? "pos" : "neg"),
           metric("基差盈亏", moneySigned(basis), basis >= 0 ? "pos" : "neg"),
-        ].join("")}</div><div class="hc-secondary-metrics"><div class="hc-metric-label">资金与成本</div>${[
-          metric("手续费", "−" + hcMoney(fee)),
+        ].join("")}</div><div class="hc-secondary-metrics"><div class="hc-metric-label">资金与成本 · 累计口径</div>${[
+          metric("累计手续费", "−" + hcMoney(feeTotal)),
+          metric("今日手续费", "−" + hcMoney(feeToday)),
           metric("影子预算", hcMoney(start)),
           metric(
             "资金利用率",
@@ -1606,10 +1618,13 @@ function renderHlCarry(d) {
       : '<div class="empty">无持仓</div>';
   }
 
-  // ---- 换仓记录 ----
+  // ---- 换仓记录（分页 ✗ 全部记录 ✗ 不截断）----
   const rb = $("hc-rebalances");
   if (rb) {
-    const rows = (s.rebalances || []).slice(-20).reverse();
+    const all = (s.rebalances || []).slice().reverse();
+    const pages = Math.max(1, Math.ceil(all.length / HC_PAGE));
+    if (hcRbPage > pages - 1) hcRbPage = 0;
+    const rows = all.slice(hcRbPage * HC_PAGE, (hcRbPage + 1) * HC_PAGE);
     rb.innerHTML = rows.length
       ? `<div class="table-scroll"><table><thead><tr><th>时间</th><th>换手</th><th>加权资金费</th><th>门槛</th><th>手续费</th><th>变动</th></tr></thead><tbody>${rows
           .map((r) => {
@@ -1629,6 +1644,9 @@ function renderHlCarry(d) {
           })
           .join("")}</tbody></table></div>`
       : '<div class="empty">还没有换过仓——说明任何一次评估都没达到「回本」门槛。这本身是好事：频繁换仓只会把收益交给手续费。</div>';
+    if (rows.length) {
+      rb.innerHTML += pager("hcrb", all.length, hcRbPage, HC_PAGE);
+    }
   }
 
   // ---- 每日汇总 ----
@@ -1647,9 +1665,23 @@ function renderHlCarry(d) {
 
   const lg = $("hc-log");
   if (lg) {
-    const rows = (s.log || []).slice(-12).reverse();
+    const all = (s.log || []).slice().reverse();
+    const pages = Math.max(1, Math.ceil(all.length / HC_PAGE_2));
+    if (hcLogPage > pages - 1) hcLogPage = 0;
+    const rows = all.slice(hcLogPage * HC_PAGE_2, (hcLogPage + 1) * HC_PAGE_2);
     lg.innerHTML = rows.length
-      ? `<ul class="note">${rows.map((r) => `<li>${new Date(r.ts).toLocaleString("zh-CN", { hour12: false })} · ${escapeHTML(r.msg)}</li>`).join("")}</ul>`
+      ? '<div class="hc-event-list">' +
+        rows
+          .map((r) => {
+            const dt = new Date(r.ts);
+            const day = dt.toLocaleDateString("zh-CN", { month: "2-digit", day: "2-digit" });
+            const hm = dt.toLocaleTimeString("zh-CN", { hour: "2-digit", minute: "2-digit", hour12: false });
+            const neg = /止损|移出|不足|失败|负/.test(r.msg || "");
+            return `<div class="hc-event"><span class="hc-event-time"><b>${day}</b>${hm}</span><span class="hc-event-msg ${neg ? "neg" : ""}">${escapeHTML(r.msg || "")}</span></div>`;
+          })
+          .join("") +
+        "</div>" +
+        pager("hclog", all.length, hcLogPage, HC_PAGE_2)
       : '<div class="empty">暂无事件</div>';
   }
 }
@@ -1657,6 +1689,7 @@ function renderHlCarry(d) {
 async function refreshHlCarry() {
   try {
     const d = await fetchJSONRetry("/api/hlcarry", { cache: "no-store" });
+    lastHlCarryData = d;
     try {
       renderHlCarry(d);
     } catch (err) {
@@ -1670,6 +1703,15 @@ async function refreshHlCarry() {
   }
 }
 
+document.addEventListener("click", (e) => {
+  const b = e.target.closest("[data-pager^='hc']");
+  if (!b) return;
+  const to = Number(b.dataset.to);
+  if (!Number.isFinite(to)) return;
+  if (b.dataset.pager === "hcrb") hcRbPage = Math.max(0, to);
+  if (b.dataset.pager === "hclog") hcLogPage = Math.max(0, to);
+  if (lastHlCarryData) renderHlCarry(lastHlCarryData);
+});
 document.querySelectorAll('.nav button[data-view="hlcarry"]').forEach((b) => {
   b.addEventListener("click", () => refreshHlCarry());
 });
