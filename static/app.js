@@ -1551,6 +1551,7 @@ function renderHlCarry(d) {
     ["hc-p-minvol", p.min_spot_volume_usd, 0],
     ["hc-p-maxw", Number.isFinite(p.max_leg_weight) ? p.max_leg_weight * 100 : null, 0],
     ["hc-p-payback", p.payback_days, 0],
+    ["hc-p-minhold", p.min_hold_hours, 0],
   ];
   for (const [id, val, digits] of pf) {
     const inp = $(id);
@@ -1710,6 +1711,7 @@ if (hcParamsBtn)
       min_spot_volume_usd: num("hc-p-minvol"),
       max_leg_weight: maxw == null ? null : maxw / 100,
       payback_days: num("hc-p-payback"),
+      min_hold_hours: num("hc-p-minhold"),
     };
     // null 表示"没填"，服务端会保留原值
     for (const k of Object.keys(body)) if (body[k] == null) delete body[k];
