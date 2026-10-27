@@ -39,17 +39,11 @@ pub struct AppState {
     /// Prevent duplicate manual/automatic jobs while their public-data preparation runs.
     pub run_gate: Arc<tokio::sync::Mutex<()>>,
     /// 资金费套利面板数据（每 60 秒后台刷新）。
-    pub funding: Arc<Mutex<crate::funding::FundingState>>,
     /// 币安公开接口客户端（可选 BINANCE_PROXY 代理，地区屏蔽时优雅降级）。
-    pub binance_http: reqwest::Client,
     /// 纸面资金费 carry 策略状态。
-    pub carry: Arc<Mutex<crate::carry::CarryState>>,
-    pub carry_path: Arc<std::path::PathBuf>,
     /// 访问令牌（STARS_TOKEN ✗）。配置后所有 /api/* 需要 Bearer 鉴权。
     pub auth_token: Option<String>,
     /// 跨所价差纸面引擎（OKX vs 币安现货）。
-    pub xpaper: Arc<Mutex<crate::xpaper::XPaperState>>,
-    pub xpaper_path: Arc<std::path::PathBuf>,
     /// HL 单账户 carry 影子（现货 + 空永续）。
     pub hlcarry: Arc<Mutex<crate::hlcarry::HlCarryState>>,
     pub hlcarry_path: Arc<std::path::PathBuf>,
@@ -933,18 +927,6 @@ async fn live_capital_time(State(state): State<AppState>, Json(body): Json<Capit
 
 // ---- 资金费套利面板 ----
 
-async fn funding_status(State(state): State<AppState>) -> Json<crate::funding::FundingState> {
-    let st = state.funding.lock().await.clone();
-    Json(st)
-}
-
-async fn funding_refresh(State(state): State<AppState>) -> Response {
-    let fresh = crate::funding::refresh(&state.http, &state.binance_http).await;
-    let mut st = state.funding.lock().await;
-    *st = fresh;
-    Json(st.clone()).into_response()
-}
-
 /// 资金矩阵配置：三种策略的资金分配（仅记录与展示，不自动执行）。
 #[derive(serde::Deserialize)]
 struct CapitalAllocBody {
@@ -1097,203 +1079,7 @@ async fn hlcarry_step(State(state): State<AppState>) -> Response {
 
 // ---- 纸面资金费 carry 策略 ----
 
-async fn carry_status(State(state): State<AppState>) -> Json<crate::carry::CarryState> {
-    let st = state.carry.lock().await.clone();
-    Json(st)
-}
-
-/// 手动推进一步（用当前资金费面板里的行情）。
-async fn carry_step(State(state): State<AppState>) -> Response {
-    let fresh = state.funding.lock().await.clone();
-    let budget = state.live.lock().await.capital_alloc.carry_usd;
-    let market = crate::carry::market_rows(&fresh);
-    let mut st = state.carry.lock().await;
-    crate::carry::step(&mut st, budget, &market);
-    if let Err(e) = st.save(&state.carry_path) {
-        return (StatusCode::INTERNAL_SERVER_ERROR, Json(json!({"ok": false, "error": format!("保存失败: {e:#}")}))).into_response();
-    }
-    Json(st.clone()).into_response()
-}
-
-#[derive(serde::Deserialize)]
-struct CarryConfigBody {
-    entry_threshold: Option<f64>,
-    exit_threshold: Option<f64>,
-    max_pairs: Option<usize>,
-    max_holding_hours: Option<i64>,
-    min_hold_hours: Option<i64>,
-    stop_loss_pct: Option<f64>,
-}
-
-async fn carry_config(State(state): State<AppState>, Json(body): Json<CarryConfigBody>) -> Response {
-    let mut st = state.carry.lock().await;
-    let prev = st.clone();
-    let c = &mut st.config;
-    if let Some(v) = body.entry_threshold {
-        if !(v.is_finite() && v > 0.0 && v < 1.0) {
-            return (StatusCode::BAD_REQUEST, Json(json!({"ok": false, "error": "开仓阈值必须在 (0, 1) 之间"}))).into_response();
-        }
-        c.entry_threshold = v;
-    }
-    if let Some(v) = body.exit_threshold {
-        if !(v.is_finite() && v >= 0.0 && v < 1.0) {
-            return (StatusCode::BAD_REQUEST, Json(json!({"ok": false, "error": "出场阈值必须在 [0, 1) 之间"}))).into_response();
-        }
-        c.exit_threshold = v;
-    }
-    if c.exit_threshold >= c.entry_threshold {
-        *st = prev;
-        return (StatusCode::BAD_REQUEST, Json(json!({"ok": false, "error": "出场阈值必须小于开仓阈值"}))).into_response();
-    }
-    if let Some(v) = body.max_pairs {
-        if !(1..=20).contains(&v) {
-            return (StatusCode::BAD_REQUEST, Json(json!({"ok": false, "error": "最大对数必须在 1~20"}))).into_response();
-        }
-        c.max_pairs = v;
-    }
-    if let Some(v) = body.max_holding_hours {
-        if !(1..=24 * 365).contains(&v) {
-            return (StatusCode::BAD_REQUEST, Json(json!({"ok": false, "error": "最长持有小时数必须在 1~8760"}))).into_response();
-        }
-        c.max_holding_hours = v;
-    }
-    if let Some(v) = body.min_hold_hours {
-        if !(0..=24 * 60).contains(&v) {
-            return (StatusCode::BAD_REQUEST, Json(json!({"ok": false, "error": "最短持有 0~1440 小时"}))).into_response();
-        }
-        c.min_hold_hours = v;
-    }
-    if let Some(v) = body.stop_loss_pct {
-        if !(v.is_finite() && v > 0.0 && v < 1.0) {
-            return (StatusCode::BAD_REQUEST, Json(json!({"ok": false, "error": "止损比例必须在 (0, 1) 之间"}))).into_response();
-        }
-        c.stop_loss_pct = v;
-    }
-    if let Err(e) = st.save(&state.carry_path) {
-        *st = prev;
-        return (StatusCode::INTERNAL_SERVER_ERROR, Json(json!({"ok": false, "error": format!("保存失败: {e:#}")}))).into_response();
-    }
-    Json(json!({"ok": true})).into_response()
-}
-
-async fn carry_reset(State(state): State<AppState>) -> Response {
-    let budget = state.live.lock().await.capital_alloc.carry_usd;
-    let mut st = state.carry.lock().await;
-    crate::carry::reset(&mut st, budget);
-    if let Err(e) = st.save(&state.carry_path) {
-        return (StatusCode::INTERNAL_SERVER_ERROR, Json(json!({"ok": false, "error": format!("保存失败: {e:#}")}))).into_response();
-    }
-    Json(st.clone()).into_response()
-}
-
 // ---- 跨所价差纸面引擎 ----
-
-async fn xpaper_status(State(state): State<AppState>) -> Json<crate::xpaper::XPaperState> {
-    Json(state.xpaper.lock().await.clone())
-}
-
-async fn xpaper_step(State(state): State<AppState>) -> Response {
-    let fresh = state.funding.lock().await.clone();
-    let budget = state.live.lock().await.capital_alloc.hunting_usd;
-    let market: std::collections::HashMap<String, crate::xpaper::XRow> = fresh
-        .xvenue_px
-        .iter()
-        .map(|p| (p.coin.clone(), crate::xpaper::XRow { okx: p.okx, bn: p.bn, okx_vol: p.okx_vol, bn_vol: p.bn_vol, okx_bid: p.okx_bid, okx_ask: p.okx_ask, bn_bid: p.bn_bid, bn_ask: p.bn_ask }))
-        .collect();
-    let snap = {
-        let mut xp = state.xpaper.lock().await;
-        crate::xpaper::step(&mut xp, budget, &market);
-        xp.clone()
-    };
-    if let Err(e) = snap.save(&state.xpaper_path) {
-        return (StatusCode::INTERNAL_SERVER_ERROR, Json(json!({"ok": false, "error": format!("保存失败: {e:#}")}))).into_response();
-    }
-    Json(snap).into_response()
-}
-
-#[derive(serde::Deserialize)]
-struct XPaperConfigBody {
-    entry_pct: Option<f64>,
-    exit_pct: Option<f64>,
-    max_pairs: Option<usize>,
-    max_holding_hours: Option<i64>,
-    stop_pct: Option<f64>,
-    fee: Option<f64>,
-    confirm_steps: Option<u32>,
-    min_vol_usd: Option<f64>,
-}
-
-async fn xpaper_config(State(state): State<AppState>, Json(body): Json<XPaperConfigBody>) -> Response {
-    let mut xp = state.xpaper.lock().await;
-    let prev = xp.clone();
-    let c = &mut xp.config;
-    if let Some(v) = body.entry_pct {
-        if !(v.is_finite() && v > 0.0 && v < 20.0) {
-            return (StatusCode::BAD_REQUEST, Json(json!({"ok": false, "error": "开仓阈值必须在 (0, 20)"}))).into_response();
-        }
-        c.entry_pct = v;
-    }
-    if let Some(v) = body.exit_pct {
-        if !(v.is_finite() && v >= 0.0 && v < c.entry_pct) {
-            return (StatusCode::BAD_REQUEST, Json(json!({"ok": false, "error": "出场阈值必须 ≥0 且小于开仓阈值"}))).into_response();
-        }
-        c.exit_pct = v;
-    }
-    if let Some(v) = body.max_pairs {
-        if !(1..=20).contains(&v) {
-            return (StatusCode::BAD_REQUEST, Json(json!({"ok": false, "error": "最大对数 1~20"}))).into_response();
-        }
-        c.max_pairs = v;
-    }
-    if let Some(v) = body.max_holding_hours {
-        if !(1..=24 * 90).contains(&v) {
-            return (StatusCode::BAD_REQUEST, Json(json!({"ok": false, "error": "最长持有 1~2160 小时"}))).into_response();
-        }
-        c.max_holding_hours = v;
-    }
-    if let Some(v) = body.stop_pct {
-        if !(v.is_finite() && v > 0.0 && v < 50.0) {
-            return (StatusCode::BAD_REQUEST, Json(json!({"ok": false, "error": "止损必须在 (0, 50)"}))).into_response();
-        }
-        c.stop_pct = v;
-    }
-    if let Some(v) = body.fee {
-        if !(v.is_finite() && v >= 0.0 && v < 0.02) {
-            return (StatusCode::BAD_REQUEST, Json(json!({"ok": false, "error": "手续费必须在 [0, 2%)"}))).into_response();
-        }
-        c.fee = v;
-    }
-    if let Some(v) = body.confirm_steps {
-        if !(1..=30).contains(&v) {
-            return (StatusCode::BAD_REQUEST, Json(json!({"ok": false, "error": "持续性次数 1~30"}))).into_response();
-        }
-        c.confirm_steps = v;
-    }
-    if let Some(v) = body.min_vol_usd {
-        if !(v.is_finite() && (0.0..=1e10).contains(&v)) {
-            return (StatusCode::BAD_REQUEST, Json(json!({"ok": false, "error": "成交额门槛不合法"}))).into_response();
-        }
-        c.min_vol_usd = v;
-    }
-    if let Err(e) = xp.save(&state.xpaper_path) {
-        *xp = prev;
-        return (StatusCode::INTERNAL_SERVER_ERROR, Json(json!({"ok": false, "error": format!("保存失败: {e:#}")}))).into_response();
-    }
-    Json(json!({"ok": true})).into_response()
-}
-
-async fn xpaper_reset(State(state): State<AppState>) -> Response {
-    let budget = state.live.lock().await.capital_alloc.hunting_usd;
-    let snap = {
-        let mut xp = state.xpaper.lock().await;
-        crate::xpaper::reset(&mut xp, budget);
-        xp.clone()
-    };
-    if let Err(e) = snap.save(&state.xpaper_path) {
-        return (StatusCode::INTERNAL_SERVER_ERROR, Json(json!({"ok": false, "error": format!("保存失败: {e:#}")}))).into_response();
-    }
-    Json(snap).into_response()
-}
 
 async fn live_reset(State(state): State<AppState>, Query(q): Query<std::collections::HashMap<String, String>>) -> Response {
     // 破坏性操作：必须显式带 confirm=reset，避免误触/脚本误调清空全部历史。
@@ -1446,12 +1232,6 @@ mod live_routes_tests {
             refresh: Arc::new(Mutex::new(RefreshStatus::default())),
             http: reqwest::Client::new(), exec_gate: Arc::new(Mutex::new(())),
             run_gate: Arc::new(Mutex::new(())),
-            funding: Arc::new(Mutex::new(crate::funding::FundingState::default())),
-            binance_http: reqwest::Client::new(),
-            carry: Arc::new(Mutex::new(crate::carry::CarryState::default())),
-            carry_path: Arc::new(root.join("carry.json")),
-            xpaper: Arc::new(Mutex::new(crate::xpaper::XPaperState::default())),
-            xpaper_path: Arc::new(root.join("xpaper.json")),
             hlcarry: Arc::new(Mutex::new(crate::hlcarry::HlCarryState::default())),
             hlcarry_path: Arc::new(root.join("hlcarry.json")),
             auth_token: None,
@@ -1504,12 +1284,6 @@ mod live_routes_tests {
             refresh: Arc::new(Mutex::new(RefreshStatus::default())),
             http: reqwest::Client::new(), exec_gate: Arc::new(Mutex::new(())),
             run_gate: Arc::new(Mutex::new(())),
-            funding: Arc::new(Mutex::new(crate::funding::FundingState::default())),
-            binance_http: reqwest::Client::new(),
-            carry: Arc::new(Mutex::new(crate::carry::CarryState::default())),
-            carry_path: Arc::new(root.join("carry.json")),
-            xpaper: Arc::new(Mutex::new(crate::xpaper::XPaperState::default())),
-            xpaper_path: Arc::new(root.join("xpaper.json")),
             hlcarry: Arc::new(Mutex::new(crate::hlcarry::HlCarryState::default())),
             hlcarry_path: Arc::new(root.join("hlcarry.json")),
             auth_token: None,

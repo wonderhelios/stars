@@ -1,6 +1,4 @@
-mod carry;
 mod exchange;
-mod funding;
 mod hlcarry;
 mod health;
 mod hl;
@@ -10,7 +8,6 @@ mod paper;
 mod store;
 mod trader;
 mod web;
-mod xpaper;
 
 use anyhow::Context;
 use crate::hl::{CoinMeta, HlClient, MarketCtx};
@@ -50,10 +47,6 @@ async fn main() -> anyhow::Result<()> {
         .unwrap_or_else(|_| "/var/lib/stars/paper3.json".to_string());
     let live_path = std::env::var("STARS_LIVE")
         .unwrap_or_else(|_| "/var/lib/stars/live.json".to_string());
-    let carry_path = std::env::var("STARS_CARRY")
-        .unwrap_or_else(|_| "/var/lib/stars/carry.json".to_string());
-    let xpaper_path = std::env::var("STARS_XPAPER")
-        .unwrap_or_else(|_| "/var/lib/stars/xpaper.json".to_string());
     // HL 单账户 carry 影子（现货 + 空永续，赚资金费）。默认预算是影子规模，不涉真钱。
     let hlcarry_path = std::env::var("STARS_HLCARRY")
         .unwrap_or_else(|_| "/var/lib/stars/hlcarry.json".to_string());
@@ -106,8 +99,6 @@ async fn main() -> anyhow::Result<()> {
     let paper3 = Arc::new(Mutex::new(paper3));
     let hl_live = live::LiveState::load(std::path::Path::new(&live_path));
     let live = Arc::new(Mutex::new(hl_live));
-    let carry = Arc::new(Mutex::new(crate::carry::CarryState::load(std::path::Path::new(&carry_path))));
-    let xpaper = Arc::new(Mutex::new(crate::xpaper::XPaperState::load(std::path::Path::new(&xpaper_path))));
     let hlcarry = Arc::new(Mutex::new(crate::hlcarry::HlCarryState::load(std::path::Path::new(&hlcarry_path))));
     let meta = Arc::new(Mutex::new(MetaCache::default()));
     let refresh = Arc::new(Mutex::new(RefreshStatus::default()));
@@ -131,25 +122,8 @@ async fn main() -> anyhow::Result<()> {
             .build()?,
         meta: meta.clone(),
         refresh: refresh.clone(),
-        funding: std::sync::Arc::new(tokio::sync::Mutex::new(crate::funding::FundingState::default())),
-        carry: carry.clone(),
-        carry_path: Arc::new(std::path::PathBuf::from(&carry_path)),
-        xpaper: xpaper.clone(),
-        xpaper_path: Arc::new(std::path::PathBuf::from(&xpaper_path)),
         hlcarry: hlcarry.clone(),
         hlcarry_path: Arc::new(std::path::PathBuf::from(&hlcarry_path)),
-        binance_http: {
-            // 币安公开接口客户端：地区屏蔽时可用 BINANCE_PROXY 环境变量指到代理。
-            let mut b = reqwest::Client::builder()
-                .timeout(Duration::from_secs(20))
-                .pool_max_idle_per_host(8);
-            if let Ok(proxy_url) = std::env::var("BINANCE_PROXY") {
-                if let Ok(proxy) = reqwest::Proxy::all(&proxy_url) {
-                    b = b.proxy(proxy);
-                }
-            }
-            b.build()?
-        },
     };
 
     // ===== HL 单账户 carry 影子：每 5 分钟推进一步 =====

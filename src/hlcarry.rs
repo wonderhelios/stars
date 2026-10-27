@@ -386,11 +386,6 @@ impl HlCarryState {
         Some(ret * (365.0 * 24.0 / hours) * 100.0)
     }
 
-    /// 当前持仓的加权年化资金费（%），用于和候选篮子比较。
-    pub fn current_weighted_funding(&self) -> f64 {
-        self.legs.iter().map(|l| l.weight * l.funding_ann).sum()
-    }
-
     fn log(&mut self, now: i64, msg: String) {
         self.log.push(CarryLog { ts: now, msg });
         if self.log.len() > 300 {
