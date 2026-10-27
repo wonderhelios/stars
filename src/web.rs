@@ -91,6 +91,7 @@ pub fn router(state: AppState) -> Router {
         .route("/api/paper3/step", post(paper3_step))
         .route("/api/live", get(live_status))
         .route("/api/strategy-health", get(strategy_health))
+        .route("/api/snapshots", get(snapshots_view))
         .route("/api/live/config", post(live_config))
         .route("/api/live/run", post(live_run))
         .route("/api/live/reset", post(live_reset))
@@ -525,6 +526,24 @@ async fn paper3_step(State(state): State<AppState>) -> Response {
 async fn live_markets(state: &AppState) -> std::collections::HashMap<String, crate::exchange::MarketInfo> {
     let meta = state.meta.lock().await;
     crate::live::markets_from_meta(&meta.universe)
+}
+
+async fn snapshots_view(State(state): State<AppState>) -> Json<serde_json::Value> {
+    let store = &state.store;
+    let oi = store.oi_coverage().unwrap_or((0, 0, None, None));
+    let dep = store.depth_coverage().unwrap_or((0, 0, None, None));
+    let now = std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .map(|d| d.as_millis() as i64)
+        .unwrap_or(0);
+    let today = now / 86_400_000 * 86_400_000;
+    let today_rows = store.oi_day(today).unwrap_or_default();
+    Json(json!({
+        "oi": {"days": oi.0, "coins": oi.1, "first": oi.2, "last": oi.3},
+        "depth": {"days": dep.0, "coins": dep.1, "first": dep.2, "last": dep.3},
+        "today": today_rows.iter().take(12).map(|(c, oi, px, f)| json!({"coin": c, "oi_usd": oi, "mark_px": px, "funding": f})).collect::<Vec<_>>(),
+        "today_count": today_rows.len(),
+    }))
 }
 
 async fn strategy_health(State(state): State<AppState>) -> Json<serde_json::Value> {

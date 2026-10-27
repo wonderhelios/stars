@@ -812,6 +812,9 @@ async fn run_trade(args: &[String], db_path: &str) -> anyhow::Result<()> {
 
 
 /// 抓一次全市场的当前持仓量快照并落库。只看公开行情，不涉及账户、不下任何单。
+/// 额外记两样：
+///   · 每个币的当前资金费率（funding ✗ 元数据里就有 ✗ 零额外请求）
+///   · 30 个流动性最好的币的盘口汇总（点差 + 前 5 档深度 ✗ 30 次 l2Book 请求）
 async fn snapshot_open_interest(
     store: &Arc<Store>,
     http: &reqwest::Client,
@@ -825,7 +828,8 @@ async fn snapshot_open_interest(
         .await?;
     let universe = v[0]["universe"].as_array().cloned().unwrap_or_default();
     let ctxs = v[1].as_array().cloned().unwrap_or_default();
-    let mut rows: Vec<(String, f64, f64)> = Vec::new();
+    let mut rows: Vec<(String, f64, f64, f64)> = Vec::new();
+    let mut ranked: Vec<(f64, String)> = Vec::new(); // (OI 美元 ✗ 币名) 用来挑盘口样本
     for (u, c) in universe.iter().zip(ctxs.iter()) {
         if u["isDelisted"].as_bool().unwrap_or(false) {
             continue;
@@ -836,11 +840,59 @@ async fn snapshot_open_interest(
         }
         let oi = c["openInterest"].as_str().and_then(|s| s.parse::<f64>().ok()).unwrap_or(0.0);
         let px = c["markPx"].as_str().and_then(|s| s.parse::<f64>().ok()).unwrap_or(0.0);
+        let fund = c["funding"].as_str().and_then(|s| s.parse::<f64>().ok()).unwrap_or(0.0);
         if oi <= 0.0 || px <= 0.0 {
             continue;
         }
-        rows.push((coin.to_string(), oi * px, px)); // 统一存 USD 名义
+        let oi_usd = oi * px;
+        rows.push((coin.to_string(), oi_usd, px, fund));
+        ranked.push((oi_usd, coin.to_string()));
     }
     anyhow::ensure!(!rows.is_empty(), "快照为空，可能是接口异常");
-    store.upsert_oi_snapshot(now_ms(), &rows)
+    let n = store.upsert_oi_snapshot(now_ms(), &rows)?;
+
+    // 盘口汇总：只取 OI 最大的 30 个币 ✗ 一天一次 ✗ 不存原始盘口 ✓
+    ranked.sort_by(|a, b| b.0.partial_cmp(&a.0).unwrap_or(std::cmp::Ordering::Equal));
+    let mut depth_rows: Vec<(String, f64, f64, f64, f64)> = Vec::new();
+    for (_, coin) in ranked.iter().take(30) {
+        let book: serde_json::Value = match http
+            .post("https://api.hyperliquid.xyz/info")
+            .json(&serde_json::json!({"type": "l2Book", "coin": coin}))
+            .send()
+            .await
+        {
+            Ok(r) => match r.json().await {
+                Ok(v) => v,
+                Err(_) => continue,
+            },
+            Err(_) => continue,
+        };
+        let Some(levels) = book.get("levels").and_then(|x| x.as_array()) else {
+            continue;
+        };
+        let bids = levels[0].as_array().cloned().unwrap_or_default();
+        let asks = levels[1].as_array().cloned().unwrap_or_default();
+        let px = |o: &serde_json::Value| o["px"].as_str().and_then(|s| s.parse::<f64>().ok());
+        let sz = |o: &serde_json::Value| o["sz"].as_str().and_then(|s| s.parse::<f64>().ok());
+        let (Some(best_bid), Some(best_ask)) = (
+            bids.first().and_then(|o| px(o)),
+            asks.first().and_then(|o| px(o)),
+        ) else {
+            continue;
+        };
+        let bid5: f64 = bids.iter().take(5).filter_map(|o| sz(o).zip(px(o)).map(|(s, p)| s * p)).sum();
+        let ask5: f64 = asks.iter().take(5).filter_map(|o| sz(o).zip(px(o)).map(|(s, p)| s * p)).sum();
+        if !(best_bid > 0.0 && best_ask > 0.0 && best_ask > best_bid) {
+            continue;
+        }
+        let mid = (best_bid + best_ask) / 2.0;
+        let spread = (best_ask - best_bid) / mid * 10_000.0;
+        depth_rows.push((coin.clone(), spread, bid5, ask5, mid));
+    }
+    if !depth_rows.is_empty() {
+        store.upsert_depth(now_ms(), &depth_rows)?;
+    }
+    // 磁盘保险：只留最近 400 天 ✗ 一年约 5MB 的量级 ✗ 永远不会撑爆 ✓
+    store.prune_snapshots(now_ms(), 400)?;
+    Ok(n)
 }
