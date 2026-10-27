@@ -761,7 +761,11 @@ function renderMonitor(d) {
         '三者都不是预测，只是对已发生记录的不同切法；样本很小时波动极大。</p></details>'
     );
 
-  arrangeMonitorSummary("mo-metrics");
+  try {
+    arrangeMonitorSummary("mo-metrics");
+  } catch (e) {
+    console.error("arrangeMonitorSummary failed:", e);
+  }
 
   // 检查清单按实测结果自动打勾
   const sl = slippageStats(d.records || []);
@@ -1443,8 +1447,12 @@ if (typeof ResizeObserver !== "undefined") {
 // the first-read summary and moves all original metrics into inspectable details.
 function arrangeMonitorSummary(id, shadow = false) {
   const root = $(id);
+  if (!root) return;
   const groups = [...root.querySelectorAll(':scope > .metric-group')];
   if (!groups.length) return;
+  const detailsHost = $(shadow ? 'sh-analysis-metrics' : 'mo-analysis-metrics');
+  // 容器不存在就直接放弃整理 ✗ 让指标留在原地显示 ✗ 总比整页空白好 ✓
+  if (!detailsHost) return;
   const key = id + '-details';
   let details = $(key);
   const active = details?.dataset.active || '0';
@@ -1452,7 +1460,7 @@ function arrangeMonitorSummary(id, shadow = false) {
     details = document.createElement('section');
     details.id = key;
     details.className = 'account-details content-card';
-    $(shadow ? 'sh-analysis-metrics' : 'mo-analysis-metrics').append(details);
+    detailsHost.append(details);
   }
   const first = [...groups[0].querySelectorAll('.metric')];
   const capital = groups.find(g => g.classList.contains('capital-account'));
@@ -1495,6 +1503,13 @@ function arrangeMonitorSummary(id, shadow = false) {
       item.append(cap);
     }
     root.append(item);
+  }
+  // 兜底：如果整理后根节点什么都没有（比如 structure 变了 ✗）
+  // 就把原来的分组放回去 ✗ 宁可丑也不能空白 ✓
+  if (!root.children.length) {
+    groups.forEach((g) => root.append(g));
+    console.warn("arrangeMonitorSummary: 摘要为空，已回退到原始分组");
+    return;
   }
   details.replaceChildren();
 
