@@ -212,6 +212,12 @@ impl CombineState {
                 if st.config.is_none() {
                     st.config = Some(CombineConfig { capital, ..CombineConfig::default() });
                 }
+                // 自愈：净值必须等于曲线末点 ✗ 否则是历史遗留的脏状态（旧 bug 造成 ✓）
+                if let Some((_, eq)) = st.history.last().copied() {
+                    if (st.equity - eq).abs() > 1e-6 && st.equity > 0.0 {
+                        st.equity = eq;
+                    }
+                }
                 return st;
             }
         }
