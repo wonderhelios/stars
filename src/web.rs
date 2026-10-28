@@ -554,6 +554,30 @@ async fn snapshots_view(State(state): State<AppState>) -> Json<serde_json::Value
 }
 
 async fn paper4_status(State(state): State<AppState>) -> Json<serde_json::Value> {
+    {
+        // 首次打开（还没历史 ✗ 也没仓位）✗ 现场算一次当前仓位给出页面看 ✓
+        let mut c = state.combine.lock().await;
+        if c.history.len() < 2 && c.a_pos.is_empty() && c.b_pos.is_empty() {
+            let d: Vec<PanelEntry> = state
+                .store
+                .all_panels()
+                .unwrap_or_default()
+                .into_iter()
+                .map(|(coin, candles)| PanelEntry { coin, candles })
+                .collect();
+            let h: Vec<PanelEntry> = state
+                .store
+                .all_panels_1h()
+                .unwrap_or_default()
+                .into_iter()
+                .map(|(coin, candles)| PanelEntry { coin, candles })
+                .collect();
+            if !d.is_empty() {
+                crate::combine::preview(&mut c, &d, &h);
+                c.save(state.combine_path.as_ref());
+            }
+        }
+    }
     let snap = state.combine.lock().await.snapshot();
     Json(json!({
         "equity": snap.equity,
