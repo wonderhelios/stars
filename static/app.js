@@ -212,6 +212,7 @@ let lastLiveForShadow = null;
 let lastVTData = null;
 let lastCombineData = null;
 let cbRange = "all";
+let cbLeg = "mom";
 let lastHealth = null;
 let liveFetchedAt = 0;
 
@@ -1117,6 +1118,16 @@ document.querySelectorAll('.nav button[data-view="shadow"], .nav button[data-vie
 document.querySelectorAll('.nav button[data-view="combine"]').forEach((b) => {
   b.addEventListener("click", () => refreshCombine());
 });
+const cbLegTabs = $("cb-leg-tabs");
+if (cbLegTabs) {
+  cbLegTabs.addEventListener("click", (event) => {
+    const btn = event.target.closest("button[data-leg]");
+    if (!btn) return;
+    cbLeg = btn.dataset.leg;
+    cbLegTabs.querySelectorAll("button").forEach((b) => b.setAttribute("aria-pressed", String(b === btn)));
+    if (lastCombineData) renderCombine(lastCombineData);
+  });
+}
 const cbTabs = $("cb-chart-tabs");
 if (cbTabs) {
   cbTabs.addEventListener("click", (event) => {
@@ -1447,7 +1458,9 @@ function renderCombine(d) {
       `<article class="combine-leg"><div class="combine-leg-head"><span class="combine-leg-title">${title}</span><span class="combine-leg-cadence">${cadence}</span></div>` +
       `<div class="combine-sides"><div><div class="combine-side-label">做多 · ${arr.filter((x) => x[1] > 0).length}</div><div class="combine-coins">${coins(arr, false)}</div></div>` +
       `<div><div class="combine-side-label short">做空 · ${arr.filter((x) => x[1] < 0).length}</div><div class="combine-coins">${coins(arr, true)}</div></div></div></article>`;
-    lg.innerHTML = leg("日线动量", "每日调整", a) + leg("12 小时区间位置", "每 12 小时调整", b);
+    lg.innerHTML = cbLeg === "range"
+      ? leg("12 小时区间位置", "每 12 小时调整 · 24h 区间位置因子", b)
+      : leg("日线动量", "每日调整 · 14 日动量 ÷ 20 日波动", a);
   }
   const posCount = $("cb-position-count");
   if (posCount) posCount.textContent = `${legs.length} 个合并后币种 · 多 ${legs.filter((x) => x[1] > 0).length} / 空 ${legs.filter((x) => x[1] < 0).length}`;
