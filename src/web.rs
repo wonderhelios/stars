@@ -564,6 +564,16 @@ async fn paper4_status(State(state): State<AppState>) -> Json<serde_json::Value>
         "running": snap.running,
         "last_a": snap.last_a,
         "last_b": snap.last_b,
+        "a_pos": snap.a_pos.iter().map(|p| json!({
+            "coin": p.coin, "side": p.side, "entry_px": p.entry_px,
+            "notional": p.notional, "mark_px": p.mark_px, "unrealized": p.unrealized(),
+            "entry_ts": p.entry_ts,
+        })).collect::<Vec<_>>(),
+        "b_pos": snap.b_pos.iter().map(|p| json!({
+            "coin": p.coin, "side": p.side, "entry_px": p.entry_px,
+            "notional": p.notional, "mark_px": p.mark_px, "unrealized": p.unrealized(),
+            "entry_ts": p.entry_ts,
+        })).collect::<Vec<_>>(),
         "config": snap.config,
     }))
 }

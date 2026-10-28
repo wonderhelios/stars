@@ -13,6 +13,15 @@ use crate::momentum::PanelEntry;
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 
+/// 取 ≤ ts 的最后一根收盘价 ✗ 容忍日线缺口 ✓
+fn close_at_or_before(candles: &[crate::hl::Candle], ts: i64) -> Option<f64> {
+    candles
+        .iter()
+        .rev()
+        .find(|k| k.t <= ts && k.c > 0.0)
+        .map(|k| k.c)
+}
+
 /// 区间位置因子：对每个币算（现价 − 24h 最低）/（24h 最高 − 24h 最低）。
 /// 只取【收盘价快照】✗ 用 1h bar 的 h/l 构造过去 24h 的高低。
 /// 返回 (币, 因子值) ✗ 0=贴 24h 低点 ✗ 1=贴 24h 高点。
@@ -137,6 +146,28 @@ impl Default for CombineConfig {
     }
 }
 
+/// 一个纸面仓位（开仓价 / 名义 / 现价 / 浮盈 ✗ 供前端表格）。
+#[derive(Clone, Debug, Serialize, Deserialize, Default)]
+pub struct CombinePosition {
+    pub coin: String,
+    /// +1 多 ✗ −1 空
+    pub side: i32,
+    pub entry_px: f64,
+    pub notional: f64,
+    pub mark_px: f64,
+    pub entry_ts: i64,
+}
+
+impl CombinePosition {
+    pub fn unrealized(&self) -> f64 {
+        if self.entry_px <= 0.0 {
+            return 0.0;
+        }
+        let qty = self.notional / self.entry_px;
+        (self.mark_px - self.entry_px) * qty * self.side as f64
+    }
+}
+
 #[derive(Clone, Debug, Serialize, Deserialize, Default)]
 pub struct CombineSnapshot {
     pub equity: f64,
@@ -148,6 +179,8 @@ pub struct CombineSnapshot {
     pub config: Option<CombineConfig>,
     pub last_a: Vec<(String, f64)>,
     pub last_b: Vec<(String, f64)>,
+    pub a_pos: Vec<CombinePosition>,
+    pub b_pos: Vec<CombinePosition>,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -158,6 +191,10 @@ pub struct CombineState {
     pub last_ts: Option<i64>,
     pub last_a: Vec<(String, f64)>,
     pub last_b: Vec<(String, f64)>,
+    #[serde(default)]
+    pub a_pos: Vec<CombinePosition>,
+    #[serde(default)]
+    pub b_pos: Vec<CombinePosition>,
     pub running: bool,
     pub total_fee: f64,
     /// 回放起点（毫秒）✗ 早于它的日线不处理 ✓
@@ -176,6 +213,8 @@ impl CombineState {
             last_ts: None,
             last_a: Vec::new(),
             last_b: Vec::new(),
+            a_pos: Vec::new(),
+            b_pos: Vec::new(),
             running: true,
             total_fee: 0.0,
             start_ts: Some(start),
@@ -194,6 +233,8 @@ impl CombineState {
             config: self.config.clone(),
             last_a: self.last_a.clone(),
             last_b: self.last_b.clone(),
+            a_pos: self.a_pos.clone(),
+            b_pos: self.b_pos.clone(),
         }
     }
 }
@@ -286,6 +327,7 @@ pub fn step(
         // ---- B 腿：两个 12h 子段 ----
         let mut b_ret = 0.0;
         let mut b_w_final: Vec<(String, f64)> = Vec::new();
+        let mut b_pos_now: Vec<CombinePosition> = Vec::new();
         for (s0, s1) in [(day_start, day_start + 12 * 3_600_000), (day_start + 12 * 3_600_000, day_start + 24 * 3_600_000)] {
             // 信号：s0 时刻的区间位置（用 ≤ s0 的 1h bar）
             let mut vols: BTreeMap<String, f64> = BTreeMap::new();
@@ -309,6 +351,26 @@ pub fn step(
                 .collect();
             let b_w = range_position_weights(&positions, cfg.range_k);
             b_w_final = b_w.clone();
+            // 记录这一段的仓位明细（开仓价 = 段起点收盘 ✗ 现价 = 段末收盘 ✓）
+            b_pos_now.clear();
+            for (c, w) in b_w.iter() {
+                if let Some(cm) = hclose.get(c) {
+                    let p0 = cm.range(..=s0).next_back().map(|(_, v)| *v);
+                    let p1 = cm.range(..=s1).next_back().map(|(_, v)| *v);
+                    if let (Some(a), Some(b)) = (p0, p1) {
+                        if a > 0.0 && b > 0.0 {
+                            b_pos_now.push(CombinePosition {
+                                coin: c.clone(),
+                                side: if *w > 0.0 { 1 } else { -1 },
+                                entry_px: a,
+                                notional: w.abs() * state.equity * cfg.leverage,
+                                mark_px: b,
+                                entry_ts: s0,
+                            });
+                        }
+                    }
+                }
+            }
             // 12h 收益：s0 的收盘价 → s1 的收盘价
             let mut sub = 0.0;
             for (c, w) in b_w.iter() {
@@ -325,16 +387,27 @@ pub fn step(
             b_ret += sub;
         }
         // ---- A 腿收益：day_start 的开盘 → day_end 的开盘（open-to-open ✗ 与纸面同口径）----
+        let mut a_pos_now: Vec<CombinePosition> = Vec::new();
         let a_ret = {
             let mut r = 0.0;
             for (c, w) in a_w.iter() {
-                let o0 = panel_1d.iter().find(|p| p.coin == *c).and_then(|p| p.candles.iter().find(|k| k.t == day_start).map(|k| k.o));
-                let o1 = panel_1d.iter().find(|p| p.coin == *c).and_then(|p| p.candles.iter().find(|k| k.t == day_end).map(|k| k.o));
-                if let (Some(a), Some(b)) = (o0, o1) {
-                    if a > 0.0 {
-                        r += w * (b / a - 1.0);
-                    }
+                let Some(pn) = panel_1d.iter().find(|p| p.coin == *c) else { continue };
+                // 用"≤ 该日最后一根收盘"取价 ✗ 很多币在 day_start 那天没有 K 线 ✓
+                let o0 = close_at_or_before(&pn.candles, day_start);
+                let o1 = close_at_or_before(&pn.candles, day_end);
+                let (Some(a), Some(b)) = (o0, o1) else { continue };
+                if a <= 0.0 {
+                    continue;
                 }
+                r += w * (b / a - 1.0);
+                a_pos_now.push(CombinePosition {
+                    coin: c.clone(),
+                    side: if *w > 0.0 { 1 } else { -1 },
+                    entry_px: a,
+                    notional: w.abs() * state.equity * cfg.leverage,
+                    mark_px: b,
+                    entry_ts: day_start,
+                });
             }
             r
         };
@@ -352,6 +425,8 @@ pub fn step(
         state.last_ts = Some(day_start);
         state.last_a = a_w;
         state.last_b = b_w_final;
+        state.a_pos = a_pos_now;
+        state.b_pos = b_pos_now;
         state.history.push((day_start, state.equity));
         advanced += 1;
     }

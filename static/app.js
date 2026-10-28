@@ -1450,17 +1450,35 @@ function renderCombine(d) {
   }
   const lg = $("cb-legs");
   if (lg) {
-    const coins = (arr, isShort) => {
-      const names = arr.filter((x) => (x[1] < 0) === isShort).map((x) => escapeHTML(x[0]));
-      return names.length ? names.map((name) => `<span class="combine-coin ${isShort ? "short" : ""}">${name}</span>`).join("") : '<span class="muted">—</span>';
+    const posTable = (arr) => {
+      if (!arr.length) return '<div class="empty">这条腿当前没有持仓</div>';
+      const rows = arr.slice().sort((x, y) => (y.side - x.side) || String(x.coin).localeCompare(String(y.coin)));
+      const sum = rows.reduce((acc, p) => acc + (Number(p.unrealized) || 0), 0);
+      return '<div class="table-scroll"><table><thead><tr>' +
+        '<th>币</th><th>方向</th><th>开仓价</th><th>名义</th><th>现价</th><th>浮盈</th>' +
+        '</tr></thead><tbody>' +
+        rows.map((p) => {
+          const long = Number(p.side) > 0;
+          const u = Number(p.unrealized) || 0;
+          return `<tr><td><b>${escapeHTML(p.coin)}</b></td>` +
+            `<td class="${long ? "pos" : "neg"}">${long ? "多" : "空"}</td>` +
+            `<td>${fmtCompact(p.entry_px)}</td>` +
+            `<td>$${fmt(p.notional, 0)}</td>` +
+            `<td>${fmtCompact(p.mark_px)}</td>` +
+            `<td class="${u >= 0 ? "pos" : "neg"}">${moneySigned(u)}</td></tr>`;
+        }).join("") +
+        '</tbody></table></div>' +
+        `<div class="combine-leg-total">这条腿合计浮盈 <b class="${sum >= 0 ? "pos" : "neg"}">${moneySigned(sum)}</b></div>`;
     };
-    const leg = (title, cadence, arr) =>
-      `<article class="combine-leg"><div class="combine-leg-head"><span class="combine-leg-title">${title}</span><span class="combine-leg-cadence">${cadence}</span></div>` +
-      `<div class="combine-sides"><div><div class="combine-side-label">做多 · ${arr.filter((x) => x[1] > 0).length}</div><div class="combine-coins">${coins(arr, false)}</div></div>` +
-      `<div><div class="combine-side-label short">做空 · ${arr.filter((x) => x[1] < 0).length}</div><div class="combine-coins">${coins(arr, true)}</div></div></div></article>`;
-    lg.innerHTML = cbLeg === "range"
-      ? leg("12 小时区间位置", "每 12 小时调整 · 24h 区间位置因子", b)
-      : leg("日线动量", "每日调整 · 14 日动量 ÷ 20 日波动", a);
+    const head = (title, cadence, n) =>
+      `<div class="combine-leg-head"><span class="combine-leg-title">${title}</span>` +
+      `<span class="combine-leg-cadence">${cadence} · ${n} 个仓位</span></div>`;
+    lg.innerHTML =
+      '<article class="combine-leg">' +
+      (cbLeg === "range"
+        ? head("12 小时区间位置", "每 12 小时调整", (d.b_pos || []).length) + posTable(d.b_pos || [])
+        : head("日线动量", "每日调整", (d.a_pos || []).length) + posTable(d.a_pos || [])) +
+      "</article>";
   }
   const posCount = $("cb-position-count");
   if (posCount) posCount.textContent = `${legs.length} 个合并后币种 · 多 ${legs.filter((x) => x[1] > 0).length} / 空 ${legs.filter((x) => x[1] < 0).length}`;
