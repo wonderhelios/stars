@@ -105,7 +105,13 @@ pub struct CombineConfig {
     pub momentum_weight: f64,
     pub dd_weight: f64,
     pub upfrac_weight: f64,
+    /// 启动时回放多少天（0 = 纯样本外 ✗ 曲线从今天开始）
+    #[serde(default = "d_replay")]
     pub replay_days: usize,
+}
+
+fn d_replay() -> usize {
+    60
 }
 
 fn d_wb() -> f64 {
@@ -126,7 +132,7 @@ impl Default for CombineConfig {
             momentum_weight: 1.0,
             dd_weight: 0.0,
             upfrac_weight: 0.0,
-            replay_days: 1,
+            replay_days: 60,
         }
     }
 }
@@ -154,22 +160,26 @@ pub struct CombineState {
     pub last_b: Vec<(String, f64)>,
     pub running: bool,
     pub total_fee: f64,
+    /// 回放起点（毫秒）✗ 早于它的日线不处理 ✓
+    #[serde(default)]
+    pub start_ts: Option<i64>,
 }
 
 impl CombineState {
     pub fn load_or_init(capital: f64) -> Self {
-        let mut s = CombineState {
-            config: Some(CombineConfig { capital, ..CombineConfig::default() }),
+        let cfg = CombineConfig { capital, ..CombineConfig::default() };
+        let start = now_ms() - (cfg.replay_days as i64) * 86_400_000;
+        CombineState {
+            config: Some(cfg),
             equity: capital,
-            history: Vec::new(),
+            history: vec![(start, capital)],
             last_ts: None,
             last_a: Vec::new(),
             last_b: Vec::new(),
             running: true,
             total_fee: 0.0,
-        };
-        s.history.push((now_ms(), capital));
-        s
+            start_ts: Some(start),
+        }
     }
 
     pub fn snapshot(&self) -> CombineSnapshot {
@@ -222,11 +232,16 @@ pub fn step(
     }
     // 只处理到"最后一个完整日"的前一根 ✗ 因为需要该日的 o/h/l/c 完整
     let last_closed = ts_all[n - 1];
-    // 找到上次推进到哪
+    // 起点：回放起点和 61 天窗口取大 ✗ 避免从 2023 年一路复利上来
+    let start_ts = state.start_ts.unwrap_or(0);
     let mut i0 = 61usize;
+    match ts_all.binary_search(&start_ts) {
+        Ok(j) => i0 = i0.max(j),
+        Err(j) => i0 = i0.max(j),
+    }
     if let Some(last) = state.last_ts {
         if let Ok(j) = ts_all.binary_search(&last) {
-            i0 = (j + 1).max(61);
+            i0 = (j + 1).max(i0);
         }
     }
     // 1h 收盘价索引
@@ -259,8 +274,13 @@ pub fn step(
         if ts_all[i] >= last_closed {
             break; // 最后一天还没收盘 ✗ 下一轮再处理
         }
-        let day_start = ts_all[i];
-        let day_end = ts_all[i + 1];
+        // 关键：信号用第 i 根（收盘已知 ✗）✗ 但成交在【第 i+1 根的开盘】✗
+        // 否则就是"用当天收盘的信号在当天开盘成交"✗ 一天的未来函数 ✗
+        if i + 2 >= n {
+            break;
+        }
+        let day_start = ts_all[i + 1];
+        let day_end = ts_all[i + 2];
         // ---- A 腿：动量权重（信号用 ≤ day_start 的数据 ✗ 已由 weights_at 保证）----
         let a_w = fp.weights_at(i, &tcfg, state.equity);
         // ---- B 腿：两个 12h 子段 ----
@@ -277,7 +297,8 @@ pub fn step(
                     cnt += 1;
                 }
                 if cnt >= 6 {
-                    vols.insert(c.clone(), sum / cnt as f64);
+                    // 窗口只有 24h ✗ 直接把总和年化到 24h 口径 ✗ 与日线的 min_vol_usd 对齐
+                    vols.insert(c.clone(), sum * 24.0 / cnt as f64);
                 }
             }
             // 用纯函数 range_positions（正确的 h/l 口径）✗ 再按流动性过滤
@@ -319,7 +340,9 @@ pub fn step(
         };
         // 组合日收益 = (1-wb)*A + wb*B ✗ 扣换手成本（近似按全量重平衡 ✗ 保守）
         let wb = cfg.b_weight;
-        let daily = (1.0 - wb) * a_ret + wb * b_ret;
+        // 权重是"净敞口=1"的口径 ✗ 要乘杠杆才和其它纸面组合（2.7x）可比 ✓
+        // 钳制：单日组合收益不可能超过 ±45%（2.7x 下的极端）✗ 超了说明数据/权重异常
+        let daily = (cfg.leverage * ((1.0 - wb) * a_ret + wb * b_ret)).clamp(-0.45, 0.45);
         // 成本：A 每日换手 ~0.3 ✗ B 每 12h 全换 ✗ 近似
         let cost_a = 0.3 * (cfg.fee + cfg.slippage);
         let cost_b = 2.0 * (cfg.fee + cfg.slippage);
