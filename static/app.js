@@ -211,6 +211,7 @@ let lastControlData = null;
 let lastLiveForShadow = null;
 let lastVTData = null;
 let lastCombineData = null;
+let cbRange = "all";
 let lastHealth = null;
 let liveFetchedAt = 0;
 
@@ -1116,6 +1117,16 @@ document.querySelectorAll('.nav button[data-view="shadow"], .nav button[data-vie
 document.querySelectorAll('.nav button[data-view="combine"]').forEach((b) => {
   b.addEventListener("click", () => refreshCombine());
 });
+const cbTabs = $("cb-chart-tabs");
+if (cbTabs) {
+  cbTabs.addEventListener("click", (event) => {
+    const btn = event.target.closest("button[data-range]");
+    if (!btn) return;
+    cbRange = btn.dataset.range;
+    cbTabs.querySelectorAll("button").forEach((b) => b.setAttribute("aria-pressed", String(b === btn)));
+    if (lastCombineData) renderCombine(lastCombineData);
+  });
+}
 const combineRefreshButton = $("cb-refresh");
 if (combineRefreshButton) combineRefreshButton.addEventListener("click", () => refreshCombine());
 setInterval(() => {
@@ -1411,7 +1422,15 @@ function renderCombine(d) {
     }
   }
   if (h.length > 1) {
-    renderEquityChart("cb-chart", h, "组合策略权益曲线", undefined, undefined, undefined, {
+    // 与实盘同一套区间口径（日/周/月/全部 ✗ equityWindow 要 {ts,equity} 对象 ✓）
+    const obs = h.map((p) => ({ ts: p[0], equity: p[1] }));
+    let win = equityWindow(obs, cbRange, Date.now());
+    let pts = win.points.map((p) => [p.ts, p.equity]);
+    // 日频数据下"近 1 天/近 7 天"可能点太少 ✗ 回退到【最近一段】而不是全部 ✓
+    if (pts.length < 3 && cbRange !== "all") {
+      pts = h.slice(-3);
+    }
+    renderEquityChart("cb-chart", pts, "组合策略权益曲线", undefined, undefined, undefined, {
       equityLabel: "组合净值 · 最新", changeLabel: "记录区间变化", legendName: "组合策略"
     });
   } else {
