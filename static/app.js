@@ -1483,6 +1483,32 @@ function arrangeMonitorSummary(id, shadow = false) {
     }
     root.append(item);
   }
+  // 已落袋（已实现盈亏 ✗ 从记录开始累计 ✗ 这部分不会再变 ✓）
+  if (!shadow && lastLiveData) {
+    const recs = Array.isArray(lastLiveData.records) ? lastLiveData.records : [];
+    const closed = recs.filter((r) => r && typeof r.pnl === "number" && Number.isFinite(r.pnl));
+    if (closed.length) {
+      const total = closed.reduce((a, r) => a + r.pnl, 0);
+      const firstTs = closed.reduce((m, r) => (r.ts && (!m || r.ts < m) ? r.ts : m), 0);
+      const day = firstTs
+        ? new Date(firstTs).toLocaleDateString("zh-CN", { month: "2-digit", day: "2-digit" })
+        : "";
+      const item = document.createElement("div");
+      item.className = "metric";
+      const money =
+        (total >= 0 ? "+" : "−") +
+        "$" +
+        Math.abs(total).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      item.innerHTML =
+        '<div class="k">已落袋 · 已实现盈亏</div>' +
+        `<div class="v ${total >= 0 ? "pos" : "neg"}">${money}</div>`;
+      const cap = document.createElement("span");
+      cap.className = "account-return";
+      cap.textContent = `${day ? "自 " + day + " 记录起 · " : ""}${closed.length} 笔平仓`;
+      item.append(cap);
+      root.append(item);
+    }
+  }
   // 策略健康度：直接放在摘要卡里（四项并排 ✗ 和净值/收益/浮盈同一排 ✓）
   if (!shadow && lastHealth) {
     const item = document.createElement("div");
