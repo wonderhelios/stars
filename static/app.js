@@ -1501,11 +1501,11 @@ function arrangeMonitorSummary(id, shadow = false) {
         "$" +
         Math.abs(realized).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
       item.innerHTML =
-        '<div class="k">已落袋 · 已实现盈亏</div>' +
+        '<div class="k">已实现盈亏 · 含费用</div>' +
         `<div class="v ${realized >= 0 ? "pos" : "neg"}">${money}</div>`;
       const cap = document.createElement("span");
       cap.className = "account-return";
-      cap.textContent = "含手续费 · 资金费 · 手动成交";
+      cap.textContent = "净值 = 本金 + 已实现 + 浮动";
       item.append(cap);
       root.append(item);
     }
