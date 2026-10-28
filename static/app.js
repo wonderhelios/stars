@@ -1112,6 +1112,14 @@ const usdM = (v) => Number.isFinite(v) ? (v >= 1e6 ? "$" + (v / 1e6).toFixed(1) 
 document.querySelectorAll('.nav button[data-view="shadow"], .nav button[data-view="shadow-setup"]').forEach((b) => {
   b.addEventListener("click", () => refreshShadow());
 });
+// 组合策略 tab：进入时拉一次 ✗ 停留时每 60 秒刷新
+document.querySelectorAll('.nav button[data-view="combine"]').forEach((b) => {
+  b.addEventListener("click", () => refreshCombine());
+});
+setInterval(() => {
+  const v = $("view-combine");
+  if (v && v.classList.contains("active")) refreshCombine();
+}, 60000);
 
 // 启动：首次拉取 + 周期轮询。
 refreshHlCarry();
@@ -1363,6 +1371,85 @@ function withNow(history, equityNow) {
 }
 
 // 通用权益曲线（每小时一个点）。
+// ---------- 组合策略（paper4 ✗ 日线动量 + 12h 区间位置）----------
+function renderCombine(d) {
+  d = d || {};
+  const h = (d.history || []).filter((p) => Number.isFinite(p[0]) && Number.isFinite(p[1]));
+  const cfg = d.config || {};
+  const eq = Number.isFinite(d.equity) ? d.equity : 0;
+  const pnl = Number.isFinite(d.pnl_pct) ? d.pnl_pct : 0;
+  const days = d.days_elapsed || Math.max(0, h.length - 1);
+  const legs = d.positions || [];
+  const a = d.last_a || [];
+  const b = d.last_b || [];
+  const m = $("cb-metrics");
+  if (m) {
+    const money = (v) => (v >= 0 ? "+" : "−") + "$" + Math.abs(v).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    m.innerHTML =
+      metricGroup("组合账户",
+        metric("组合净值", "$" + fmt(eq, 2)) +
+        metric("收益率", pnl.toFixed(2) + "%", pnl >= 0 ? "pos" : "neg") +
+        metric("运行天数", days + '<span class="metric-unit"> 天</span>') +
+        metric("两腿合计", legs.length + '<span class="metric-unit"> 个币</span>'),
+        "live-overview",
+        '<div class="metric-footnote"><span class="live-dot"></span>' +
+          (d.running ? "纸面运行中 · 不涉及真实下单" : "已停止") +
+          (cfg.replay_days ? ` · 含 ${cfg.replay_days} 天回放` : "") +
+          "</div>"
+      ) +
+      metricGroup("两腿配置",
+        metric("A 腿 · 日线动量", (cfg.momentum_weight == null ? 1 : cfg.momentum_weight).toFixed(2) + " ✗ 每天") +
+        metric("B 腿 · 12h 区间", (cfg.b_weight == null ? 0.5 : cfg.b_weight).toFixed(2) + " ✗ 每 12h") +
+        metric("B 腿每边币数", (cfg.range_k || 3) + '<span class="metric-unit"> 个</span>') +
+        metric("杠杆 / 门槛", fmt(cfg.leverage || 2.7, 2) + "x / $" + fmt((cfg.min_vol_usd || 0) / 1e6, 0) + "M")
+      ) +
+      metricGroup("今日两条腿",
+        metric("A 腿多/空", a.filter((x) => x[1] > 0).length + " / " + a.filter((x) => x[1] < 0).length) +
+        metric("B 腿多/空", b.filter((x) => x[1] > 0).length + " / " + b.filter((x) => x[1] < 0).length) +
+        metric("合并后持仓", legs.length + '<span class="metric-unit"> 个</span>') +
+        metric("区间变化", h.length > 1 ? money(h[h.length - 1][1] - h[0][1]) : "—",
+          h.length > 1 && h[h.length - 1][1] >= h[0][1] ? "pos" : "neg")
+      );
+  }
+  const st = $("cb-status");
+  if (st) {
+    if (!b.length) {
+      st.textContent = "注：B 腿暂时为空 ✗ 说明 1h 数据还没采够（服务启动后约 5~10 分钟开始采集 40 个币）✗ 此时组合曲线等于纯动量。";
+    } else {
+      st.textContent = "";
+    }
+  }
+  if (h.length > 1) {
+    renderEquityChart("cb-chart", h, "组合策略权益曲线");
+  } else {
+    const el = $("cb-chart");
+    if (el) el.innerHTML = '<div class="empty">还没有数据 ✗ 等下一轮步进</div>';
+  }
+  const lg = $("cb-legs");
+  if (lg) {
+    const row = (name, arr) =>
+      `<tr><td>${name}</td><td class="pos">${arr.filter((x) => x[1] > 0).map((x) => escapeHTML(x[0])).join(" ") || "—"}</td>` +
+      `<td class="neg">${arr.filter((x) => x[1] < 0).map((x) => escapeHTML(x[0])).join(" ") || "—"}</td></tr>`;
+    lg.innerHTML =
+      '<div class="table-scroll"><table><thead><tr><th>腿</th><th>多头</th><th>空头</th></tr></thead><tbody>' +
+      row("A · 日线动量", a) +
+      row("B · 12h 区间位置", b) +
+      row("合并后（净额）", legs) +
+      "</tbody></table></div>";
+  }
+}
+
+async function refreshCombine() {
+  try {
+    const d = await fetchJSONRetry("/api/paper4", {}, 15000);
+    lastCombineData = d;
+    renderCombine(d);
+  } catch (e) {
+    const st = $("cb-status");
+    if (st) st.textContent = "读取组合策略失败：" + ((e && e.message) || e);
+  }
+}
+
 function renderEquityChart(id, history, aria, compare, third, fourth) {
   const el = $(id);
   if (!el) return;
