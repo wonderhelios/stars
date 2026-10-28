@@ -103,8 +103,12 @@ pub fn blend(a: &[(String, f64)], b: &[(String, f64)], wb: f64) -> Vec<(String, 
 pub struct CombineConfig {
     pub capital: f64,
     pub leverage: f64,
+    /// A 腿的宇宙门槛 ✗ 必须和实盘一致（否则开的币和实盘对不上 ✓）
     pub min_vol_usd: f64,
     pub target_positions: usize,
+    /// B 腿的月度成交额门槛（1h 数据 ✗ 单独设 ✗ 否则小币全被过滤掉 ✓）
+    #[serde(default = "d_b_minvol")]
+    pub b_min_vol_usd: f64,
     pub range_k: usize,
     /// B 腿在组合里的权重（0.5 = 各一半）。
     #[serde(default = "d_wb")]
@@ -127,13 +131,18 @@ fn d_wb() -> f64 {
     0.5
 }
 
+fn d_b_minvol() -> f64 {
+    1_000_000.0
+}
+
 impl Default for CombineConfig {
     fn default() -> Self {
         CombineConfig {
             capital: 5000.0,
             leverage: 2.7,
-            min_vol_usd: 1_000_000.0,
-            target_positions: 8,
+            min_vol_usd: 10_000_000.0,
+            target_positions: 10,
+            b_min_vol_usd: 1_000_000.0,
             range_k: 3,
             b_weight: 0.5,
             fee: 0.00045,
@@ -481,7 +490,7 @@ pub fn step(
             let all_pos = range_positions(panel_1h, s0);
             let positions: Vec<(String, f64)> = all_pos
                 .into_iter()
-                .filter(|(c, _)| vols.get(c).map(|v| *v >= cfg.min_vol_usd).unwrap_or(false))
+                .filter(|(c, _)| vols.get(c).map(|v| *v >= cfg.b_min_vol_usd).unwrap_or(false))
                 .collect();
             let b_w = range_position_weights(&positions, cfg.range_k);
             b_w_final = b_w.clone();
