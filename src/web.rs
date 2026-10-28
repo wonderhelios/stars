@@ -595,7 +595,9 @@ async fn paper4_stop(State(state): State<AppState>) -> Response {
 async fn paper4_reset(State(state): State<AppState>) -> Response {
     let cap = state.combine.lock().await.config.as_ref().map(|c| c.capital).unwrap_or(5000.0);
     let mut c = state.combine.lock().await;
-    *c = crate::combine::CombineState::load_or_init(cap);
+    // 重置：先删文件 ✗ 再用固定起点重建 ✓
+    let _ = std::fs::remove_file(state.combine_path.as_ref());
+    *c = crate::combine::CombineState::load_or_init(state.combine_path.as_ref(), cap);
     let _ = std::fs::write(state.combine_path.as_ref(), serde_json::to_vec(&*c).unwrap_or_default());
     Json(json!({"ok": true})).into_response()
 }
@@ -1307,7 +1309,10 @@ mod live_routes_tests {
             run_gate: Arc::new(Mutex::new(())),
             hlcarry: Arc::new(Mutex::new(crate::hlcarry::HlCarryState::default())),
             hlcarry_path: Arc::new(root.join("hlcarry.json")),
-            combine: Arc::new(Mutex::new(crate::combine::CombineState::load_or_init(5000.0))),
+            combine: Arc::new(Mutex::new(crate::combine::CombineState::load_or_init(
+                &root.join("combine.json"),
+                5000.0,
+            ))),
             combine_path: Arc::new(root.join("combine.json")),
             auth_token: None,
             paper2: Arc::new(Mutex::new(crate::paper::PaperState::default())),
@@ -1361,7 +1366,10 @@ mod live_routes_tests {
             run_gate: Arc::new(Mutex::new(())),
             hlcarry: Arc::new(Mutex::new(crate::hlcarry::HlCarryState::default())),
             hlcarry_path: Arc::new(root.join("hlcarry.json")),
-            combine: Arc::new(Mutex::new(crate::combine::CombineState::load_or_init(5000.0))),
+            combine: Arc::new(Mutex::new(crate::combine::CombineState::load_or_init(
+                &root.join("combine.json"),
+                5000.0,
+            ))),
             combine_path: Arc::new(root.join("combine.json")),
             auth_token: None,
             paper2: Arc::new(Mutex::new(crate::paper::PaperState::default())),

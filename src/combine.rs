@@ -203,7 +203,18 @@ pub struct CombineState {
 }
 
 impl CombineState {
-    pub fn load_or_init(capital: f64) -> Self {
+    /// 读已有状态；没有就从【固定的起点】初始化。
+    /// 关键：起点只定一次并落盘 ✗ 之后每次重启都接着跑 ✗
+    /// 否则回放窗口每天滑动 ✗ 净值天天变 ✗ 数字没有可比性 ✓
+    pub fn load_or_init(path: &std::path::Path, capital: f64) -> Self {
+        if let Ok(bytes) = std::fs::read(path) {
+            if let Ok(mut st) = serde_json::from_slice::<CombineState>(&bytes) {
+                if st.config.is_none() {
+                    st.config = Some(CombineConfig { capital, ..CombineConfig::default() });
+                }
+                return st;
+            }
+        }
         let cfg = CombineConfig { capital, ..CombineConfig::default() };
         let start = now_ms() - (cfg.replay_days as i64) * 86_400_000;
         CombineState {
@@ -218,6 +229,16 @@ impl CombineState {
             running: true,
             total_fee: 0.0,
             start_ts: Some(start),
+        }
+    }
+
+    /// 落盘（每步一次 ✗ 文件很小 ✓）
+    pub fn save(&self, path: &std::path::Path) {
+        if let Some(dir) = path.parent() {
+            let _ = std::fs::create_dir_all(dir);
+        }
+        if let Ok(bytes) = serde_json::to_vec(self) {
+            let _ = std::fs::write(path, bytes);
         }
     }
 

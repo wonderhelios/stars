@@ -100,7 +100,10 @@ async fn main() -> anyhow::Result<()> {
     let paper3 = Arc::new(Mutex::new(paper3));
     let combine_path = std::env::var("STARS_COMBINE")
         .unwrap_or_else(|_| "/var/lib/stars/combine.json".to_string());
-    let combine = Arc::new(Mutex::new(crate::combine::CombineState::load_or_init(5000.0)));
+    let combine = Arc::new(Mutex::new(crate::combine::CombineState::load_or_init(
+        std::path::Path::new(&combine_path),
+        5000.0,
+    )));
     let hl_live = live::LiveState::load(std::path::Path::new(&live_path));
     let live = Arc::new(Mutex::new(hl_live));
     let hlcarry = Arc::new(Mutex::new(crate::hlcarry::HlCarryState::load(std::path::Path::new(&hlcarry_path))));
@@ -457,7 +460,11 @@ async fn main() -> anyhow::Result<()> {
                         .collect();
                     let mut st = combine.lock().await;
                     if st.running {
+                        let before = st.history.len();
                         crate::combine::step(&mut st, &d, &h);
+                        if st.history.len() != before {
+                            st.save(combine_path.as_ref());
+                        }
                     }
                 }
                 tokio::time::sleep(Duration::from_secs(600)).await;
