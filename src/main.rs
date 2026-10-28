@@ -409,7 +409,19 @@ async fn main() -> anyhow::Result<()> {
         let meta = meta.clone();
         tokio::spawn(async move {
             loop {
-                let coins: Vec<String> = meta.lock().await.liquid.iter().take(40).cloned().collect();
+                // 启动时 meta 可能还没刷新 ✗ liquid 是空的 ✗ 先刷一次 ✓
+                let mut coins: Vec<String> = meta.lock().await.liquid.iter().take(40).cloned().collect();
+                if coins.is_empty() {
+                    if let Err(e) = refresh_meta(&client, &meta).await {
+                        warn!("1h 采集前刷新 meta 失败: {e}");
+                    }
+                    coins = meta.lock().await.liquid.iter().take(40).cloned().collect();
+                }
+                if coins.is_empty() {
+                    // 还是拿不到 ✗ 一分钟后再试 ✗ 不要睡 6 小时 ✓
+                    tokio::time::sleep(Duration::from_secs(60)).await;
+                    continue;
+                }
                 let now = now_ms();
                 let from = now - 200 * 86_400_000;
                 for coin in &coins {

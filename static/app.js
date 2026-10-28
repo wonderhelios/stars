@@ -1389,7 +1389,12 @@ function renderCombine(d) {
       metricGroup("组合账户",
         metric("组合净值", "$" + fmt(eq, 2)) +
         metric("收益率", pnl.toFixed(2) + "%", pnl >= 0 ? "pos" : "neg") +
-        metric("运行天数", days + '<span class="metric-unit"> 天</span>') +
+        metric(
+          (cfg.replay_days || 0) > 0
+            ? "回放 " + cfg.replay_days + " 天 ✗ 样本外 " + Math.max(0, days - (cfg.replay_days || 0)) + " 天"
+            : "样本外天数",
+          days + '<span class="metric-unit"> 天</span>'
+        ) +
         metric("两腿合计", legs.length + '<span class="metric-unit"> 个币</span>'),
         "live-overview",
         '<div class="metric-footnote"><span class="live-dot"></span>' +
