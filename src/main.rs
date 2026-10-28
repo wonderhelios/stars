@@ -447,6 +447,7 @@ async fn main() -> anyhow::Result<()> {
     {
         let store = store.clone();
         let combine = combine.clone();
+        let meta = meta.clone();
         tokio::spawn(async move {
             loop {
                 if let (Ok(panel_1d), Ok(panel_1h)) = (store.all_panels(), store.all_panels_1h()) {
@@ -463,8 +464,19 @@ async fn main() -> anyhow::Result<()> {
                         let before = st.history.len();
                         crate::combine::step(&mut st, &d, &h);
                         // 还没有历史（刚部署）时 ✗ 至少把当前仓位算出来给页面看 ✓
+                        // 只在拿到实时标记价后才建仓 ✗ 否则会用过期 K 线价建出假浮盈 ✓
                         if st.history.len() < 2 {
-                            crate::combine::preview(&mut st, &d, &h);
+                            let marks: std::collections::HashMap<String, f64> = {
+                                let m = meta.lock().await;
+                                m.ctxs
+                                    .iter()
+                                    .filter(|x| x.mark_px > 0.0)
+                                    .map(|x| (x.coin.clone(), x.mark_px))
+                                    .collect()
+                            };
+                            if !marks.is_empty() {
+                                crate::combine::preview(&mut st, &d, &h, &marks);
+                            }
                         }
                         if st.history.len() != before {
                             st.save(combine_path.as_ref());

@@ -573,26 +573,41 @@ async fn paper4_status(State(state): State<AppState>) -> Json<serde_json::Value>
                 .map(|(coin, candles)| PanelEntry { coin, candles })
                 .collect();
             if !d.is_empty() {
-                crate::combine::preview(&mut c, &d, &h);
-                c.save(state.combine_path.as_ref());
+                let mut marks: std::collections::HashMap<String, f64> = {
+                    let m = state.meta.lock().await;
+                    m.ctxs
+                        .iter()
+                        .filter(|x| x.mark_px > 0.0)
+                        .map(|x| (x.coin.clone(), x.mark_px))
+                        .collect()
+                };
+                // meta 还没刷新（启动时 backfill 会拖住它 ✗）✗ 自己拉一次现价 ✓
+                if marks.is_empty() {
+                    if let Ok(ctxs) = crate::hl::HlClient::new().market_ctxs().await {
+                        marks = ctxs
+                            .into_iter()
+                            .filter(|x| x.mark_px > 0.0)
+                            .map(|x| (x.coin, x.mark_px))
+                            .collect();
+                    }
+                }
+                // 拿不到实时价就【先不建仓】✗ 免得用过期价建出一个假浮盈 ✓
+                if !marks.is_empty() {
+                    crate::combine::preview(&mut c, &d, &h, &marks);
+                    c.save(state.combine_path.as_ref());
+                }
             }
         } else {
-            // 已有仓位 ✗ 每次读取刷新现价（浮盈跟着行情动 ✓）
-            let d: Vec<PanelEntry> = state
-                .store
-                .all_panels()
-                .unwrap_or_default()
-                .into_iter()
-                .map(|(coin, candles)| PanelEntry { coin, candles })
-                .collect();
-            let h: Vec<PanelEntry> = state
-                .store
-                .all_panels_1h()
-                .unwrap_or_default()
-                .into_iter()
-                .map(|(coin, candles)| PanelEntry { coin, candles })
-                .collect();
-            crate::combine::mark(&mut c, &d, &h);
+            // 已有仓位：优先用【实时标记价】刷浮盈（meta 每 ~60 秒刷新 ✓）
+            let marks: std::collections::HashMap<String, f64> = {
+                let m = state.meta.lock().await;
+                m.ctxs
+                    .iter()
+                    .filter(|x| x.mark_px > 0.0)
+                    .map(|x| (x.coin.clone(), x.mark_px))
+                    .collect()
+            };
+            crate::combine::mark_with_prices(&mut c, &marks);
         }
     }
     let snap = state.combine.lock().await.snapshot();

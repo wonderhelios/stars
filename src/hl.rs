@@ -39,6 +39,8 @@ pub struct MarketCtx {
     pub coin: String,
     pub funding: f64,       // hourly funding rate (fraction)
     pub oracle_px: f64,
+    /// 标记价（最新成交参考价 ✗ 实盘用它估值 ✗ 纸面也用它刷浮盈 ✓）
+    pub mark_px: f64,
     pub prev_day_px: f64,
     pub day_ntl_vlm: f64,   // 24h notional volume, USD
     pub is_delisted: bool,
@@ -146,6 +148,7 @@ impl HlClient {
                 coin: m.name,
                 funding: c["funding"].as_str().and_then(|s| s.parse().ok()).unwrap_or(0.0),
                 oracle_px: c["oraclePx"].as_str().and_then(|s| s.parse().ok()).unwrap_or(0.0),
+                mark_px: c["markPx"].as_str().and_then(|s| s.parse().ok()).unwrap_or(0.0),
                 prev_day_px: c["prevDayPx"].as_str().and_then(|s| s.parse().ok()).unwrap_or(0.0),
                 day_ntl_vlm: c["dayNtlVlm"].as_str().and_then(|s| s.parse().ok()).unwrap_or(0.0),
                 is_delisted: m.is_delisted,

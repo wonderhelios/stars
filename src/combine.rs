@@ -279,7 +279,12 @@ pub fn now_ms() -> i64 {
 // ---------------------------------------------------------------------------
 // 当前持仓预览（不产生收益 ✗ 只让页面在第一天就能看到仓位 ✓）
 // ---------------------------------------------------------------------------
-pub fn preview(state: &mut CombineState, panel_1d: &[PanelEntry], panel_1h: &[PanelEntry]) {
+pub fn preview(
+    state: &mut CombineState,
+    panel_1d: &[PanelEntry],
+    panel_1h: &[PanelEntry],
+    marks: &std::collections::HashMap<String, f64>,
+) {
     let Some(cfg) = state.config.clone() else { return };
     // 日线最后一根（已收盘）✗ A 腿
     let mut ts_all: Vec<i64> = Vec::new();
@@ -306,10 +311,16 @@ pub fn preview(state: &mut CombineState, panel_1d: &[PanelEntry], panel_1h: &[Pa
         let w = fp.weights_at(i, &tcfg, state.equity);
         state.a_pos.clear();
         for (c, wt) in &w {
-            let px = panel_1d
-                .iter()
-                .find(|p| p.coin == *c)
-                .and_then(|p| close_at_or_before(&p.candles, ts_all[i]))
+            let px = marks
+                .get(c)
+                .copied()
+                .filter(|v| *v > 0.0)
+                .or_else(|| {
+                    panel_1d
+                        .iter()
+                        .find(|p| p.coin == *c)
+                        .and_then(|p| close_at_or_before(&p.candles, ts_all[i]))
+                })
                 .unwrap_or(0.0);
             if px <= 0.0 {
                 continue;
@@ -332,10 +343,16 @@ pub fn preview(state: &mut CombineState, panel_1d: &[PanelEntry], panel_1h: &[Pa
         let b = range_position_weights(&pos, cfg.range_k);
         state.b_pos.clear();
         for (c, wt) in &b {
-            let px = panel_1h
-                .iter()
-                .find(|p| p.coin == *c)
-                .and_then(|p| p.candles.last().map(|k| k.c))
+            let px = marks
+                .get(c)
+                .copied()
+                .filter(|v| *v > 0.0)
+                .or_else(|| {
+                    panel_1h
+                        .iter()
+                        .find(|p| p.coin == *c)
+                        .and_then(|p| p.candles.last().map(|k| k.c))
+                })
                 .unwrap_or(0.0);
             if px <= 0.0 {
                 continue;
@@ -352,32 +369,12 @@ pub fn preview(state: &mut CombineState, panel_1d: &[PanelEntry], panel_1h: &[Pa
         state.last_b = b;
     }
 }
-
-// ---------------------------------------------------------------------------
-// 刷新现价（每次读取都更新 ✗ 让浮盈跟着行情动 ✓）
-// ---------------------------------------------------------------------------
-pub fn mark(state: &mut CombineState, panel_1d: &[PanelEntry], panel_1h: &[PanelEntry]) {
-    for p in state.a_pos.iter_mut() {
-        if let Some(px) = panel_1d
-            .iter()
-            .find(|x| x.coin == p.coin)
-            .and_then(|x| x.candles.last())
-            .map(|k| k.c)
-        {
-            if px > 0.0 {
-                p.mark_px = px;
-            }
-        }
-    }
-    for p in state.b_pos.iter_mut() {
-        if let Some(px) = panel_1h
-            .iter()
-            .find(|x| x.coin == p.coin)
-            .and_then(|x| x.candles.last())
-            .map(|k| k.c)
-        {
-            if px > 0.0 {
-                p.mark_px = px;
+/// 用【外部价格表】（实盘标记价 ✗ 每 ~60 秒刷新 ✓）刷新现价 ✗ 找得到的用它 ✓
+pub fn mark_with_prices(state: &mut CombineState, marks: &std::collections::HashMap<String, f64>) {
+    for p in state.a_pos.iter_mut().chain(state.b_pos.iter_mut()) {
+        if let Some(px) = marks.get(&p.coin) {
+            if *px > 0.0 {
+                p.mark_px = *px;
             }
         }
     }
