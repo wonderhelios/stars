@@ -1483,28 +1483,29 @@ function arrangeMonitorSummary(id, shadow = false) {
     }
     root.append(item);
   }
-  // 已落袋（已实现盈亏 ✗ 从记录开始累计 ✗ 这部分不会再变 ✓）
+  // 已落袋 · 已实现 = 净收益 − 浮动盈亏（会计恒等式 ✗ 与左边三格自动对账 ✓）
+  // 注意：不能用日志里的平仓 pnl 相加 ✗ 那不含手续费/资金费/手动成交 ✗ 会对不上 ✓
   if (!shadow && lastLiveData) {
-    const recs = Array.isArray(lastLiveData.records) ? lastLiveData.records : [];
-    const closed = recs.filter((r) => r && typeof r.pnl === "number" && Number.isFinite(r.pnl));
-    if (closed.length) {
-      const total = closed.reduce((a, r) => a + r.pnl, 0);
-      const firstTs = closed.reduce((m, r) => (r.ts && (!m || r.ts < m) ? r.ts : m), 0);
-      const day = firstTs
-        ? new Date(firstTs).toLocaleDateString("zh-CN", { month: "2-digit", day: "2-digit" })
-        : "";
+    const ld = lastLiveData;
+    const base = (ld.capital_baseline || {}).equity || 0;
+    const dep = ld.net_deposit || 0;
+    const eq = Number.isFinite(ld.equity) ? ld.equity : null;
+    const unrl = Number.isFinite(ld.cumulative_pnl) ? ld.cumulative_pnl : null;
+    if (eq != null && unrl != null && base + dep > 0) {
+      const net = eq - (base + dep);
+      const realized = net - unrl;
       const item = document.createElement("div");
       item.className = "metric";
       const money =
-        (total >= 0 ? "+" : "−") +
+        (realized >= 0 ? "+" : "−") +
         "$" +
-        Math.abs(total).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        Math.abs(realized).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
       item.innerHTML =
         '<div class="k">已落袋 · 已实现盈亏</div>' +
-        `<div class="v ${total >= 0 ? "pos" : "neg"}">${money}</div>`;
+        `<div class="v ${realized >= 0 ? "pos" : "neg"}">${money}</div>`;
       const cap = document.createElement("span");
       cap.className = "account-return";
-      cap.textContent = `${day ? "自 " + day + " 记录起 · " : ""}${closed.length} 笔平仓`;
+      cap.textContent = "含手续费 · 资金费 · 手动成交";
       item.append(cap);
       root.append(item);
     }
