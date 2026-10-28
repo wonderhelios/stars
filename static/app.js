@@ -1415,7 +1415,11 @@ function renderCombine(d) {
       kpi("组合净值", "$" + fmt(eq, 2), "纸面账户当前权益") +
       kpi("累计收益", (pnl >= 0 ? "+" : "−") + Math.abs(pnl).toFixed(2) + "%", "自组合起点", pnl >= 0 ? "pos" : "neg") +
       kpi("运行天数", `${days}<span class="metric-unit"> 天</span>`, cfg.replay_days ? `回放 ${cfg.replay_days} 天 · 样本外 ${sampleDays} 天` : "按已记录区间统计") +
-      kpi("当前持仓", `${legs.length}<span class="metric-unit"> 币</span>`, `动量 ${a.length} 币 · 区间 ${b.length} 币`);
+      kpi(
+        "当前持仓",
+        `${legs.length}<span class="metric-unit"> 币</span>`,
+        `动量 ${a.length} 币 · 区间 ${b.length} 币 · 浮动 ${moneySigned(Number(d.unrealized) || 0)}`
+      );
   }
   const runState = $("cb-run-state");
   if (runState) {

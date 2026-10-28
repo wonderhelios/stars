@@ -181,6 +181,8 @@ pub struct CombineSnapshot {
     pub last_b: Vec<(String, f64)>,
     pub a_pos: Vec<CombinePosition>,
     pub b_pos: Vec<CombinePosition>,
+    /// 两腿浮动盈亏合计（现价 − 开仓价 ✗ 每次读取实时算 ✓）
+    pub unrealized: f64,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -262,6 +264,7 @@ impl CombineState {
             last_b: self.last_b.clone(),
             a_pos: self.a_pos.clone(),
             b_pos: self.b_pos.clone(),
+            unrealized: self.a_pos.iter().chain(self.b_pos.iter()).map(|p| p.unrealized()).sum(),
         }
     }
 }
@@ -347,6 +350,36 @@ pub fn preview(state: &mut CombineState, panel_1d: &[PanelEntry], panel_1h: &[Pa
             });
         }
         state.last_b = b;
+    }
+}
+
+// ---------------------------------------------------------------------------
+// 刷新现价（每次读取都更新 ✗ 让浮盈跟着行情动 ✓）
+// ---------------------------------------------------------------------------
+pub fn mark(state: &mut CombineState, panel_1d: &[PanelEntry], panel_1h: &[PanelEntry]) {
+    for p in state.a_pos.iter_mut() {
+        if let Some(px) = panel_1d
+            .iter()
+            .find(|x| x.coin == p.coin)
+            .and_then(|x| x.candles.last())
+            .map(|k| k.c)
+        {
+            if px > 0.0 {
+                p.mark_px = px;
+            }
+        }
+    }
+    for p in state.b_pos.iter_mut() {
+        if let Some(px) = panel_1h
+            .iter()
+            .find(|x| x.coin == p.coin)
+            .and_then(|x| x.candles.last())
+            .map(|k| k.c)
+        {
+            if px > 0.0 {
+                p.mark_px = px;
+            }
+        }
     }
 }
 

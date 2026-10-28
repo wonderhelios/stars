@@ -576,6 +576,23 @@ async fn paper4_status(State(state): State<AppState>) -> Json<serde_json::Value>
                 crate::combine::preview(&mut c, &d, &h);
                 c.save(state.combine_path.as_ref());
             }
+        } else {
+            // 已有仓位 ✗ 每次读取刷新现价（浮盈跟着行情动 ✓）
+            let d: Vec<PanelEntry> = state
+                .store
+                .all_panels()
+                .unwrap_or_default()
+                .into_iter()
+                .map(|(coin, candles)| PanelEntry { coin, candles })
+                .collect();
+            let h: Vec<PanelEntry> = state
+                .store
+                .all_panels_1h()
+                .unwrap_or_default()
+                .into_iter()
+                .map(|(coin, candles)| PanelEntry { coin, candles })
+                .collect();
+            crate::combine::mark(&mut c, &d, &h);
         }
     }
     let snap = state.combine.lock().await.snapshot();
@@ -588,6 +605,7 @@ async fn paper4_status(State(state): State<AppState>) -> Json<serde_json::Value>
         "running": snap.running,
         "last_a": snap.last_a,
         "last_b": snap.last_b,
+        "unrealized": snap.unrealized,
         "a_pos": snap.a_pos.iter().map(|p| json!({
             "coin": p.coin, "side": p.side, "entry_px": p.entry_px,
             "notional": p.notional, "mark_px": p.mark_px, "unrealized": p.unrealized(),
