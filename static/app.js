@@ -1464,53 +1464,52 @@ function arrangeMonitorSummary(id, shadow = false) {
   }
   const first = [...groups[0].querySelectorAll('.metric')];
   const capital = groups.find(g => g.classList.contains('capital-account'));
-  const earnings = shadow ? first[1] : capital?.querySelectorAll('.metric')[2];
-  const floating = shadow ? groups[1]?.querySelectorAll('.metric')[1] : first[1];
   root.replaceChildren();
   root.className = 'account-summary';
-  for (const [source, label] of [[first[0], shadow ? '影子净值' : '账户净值'], [earnings, shadow ? '累计影子盈亏' : '净收益 · 已扣除出入金'], [floating, '当前持仓浮动盈亏']]) {
-    if (!source) continue;
-    const item = source.cloneNode(true);
-    item.querySelector('.k').textContent = label;
-    if (source === earnings) {
-      const rate = shadow ? first[2] : capital?.querySelectorAll('.metric')[4];
-      if (rate) {
-        const caption = document.createElement('span');
-        caption.className = 'account-return';
-        caption.textContent = (shadow ? '相对本金 ' : '净投入收益率 ') + rate.querySelector('.v').textContent;
-        item.append(caption);
-      }
-    }
-    root.append(item);
-  }
-  // 已落袋 · 已实现 = 净收益 − 浮动盈亏（会计恒等式 ✗ 与左边三格自动对账 ✓）
-  // 注意：不能用日志里的平仓 pnl 相加 ✗ 那不含手续费/资金费/手动成交 ✗ 会对不上 ✓
-  if (!shadow && lastLiveData) {
-    const ld = lastLiveData;
-    const base = (ld.capital_baseline || {}).equity || 0;
-    const dep = ld.net_deposit || 0;
-    const eq = Number.isFinite(ld.equity) ? ld.equity : null;
-    const unrl = Number.isFinite(ld.cumulative_pnl) ? ld.cumulative_pnl : null;
-    if (eq != null && unrl != null && base + dep > 0) {
-      const net = eq - (base + dep);
-      const realized = net - unrl;
-      const item = document.createElement("div");
-      item.className = "metric";
-      const money =
-        (realized >= 0 ? "+" : "−") +
-        "$" +
-        Math.abs(realized).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-      item.innerHTML =
-        '<div class="k">已实现盈亏 · 含费用</div>' +
-        `<div class="v ${realized >= 0 ? "pos" : "neg"}">${money}</div>`;
-      const cap = document.createElement("span");
-      cap.className = "account-return";
-      cap.textContent = "净值 = 本金 + 已实现 + 浮动";
-      item.append(cap);
+  if (shadow) {
+    // 影子页沿用原来的三格（净值 ✗ 累计盈亏 ✗ 浮动 ✓）
+    const earnings = first[1];
+    const floating = groups[1]?.querySelectorAll('.metric')[1];
+    for (const [source, label] of [[first[0], '影子净值'], [earnings, '累计影子盈亏'], [floating, '当前持仓浮动盈亏']]) {
+      if (!source) continue;
+      const item = source.cloneNode(true);
+      item.querySelector('.k').textContent = label;
       root.append(item);
     }
+  } else if (lastLiveData) {
+    // 实盘：把四个数按【净值 = 本金 + 已实现 + 浮动】的顺序排 ✗ 一眼能对账 ✓
+    const ld = lastLiveData;
+    const base = (ld.capital_baseline || {}).equity || 0;
+    const dep = Number(ld.net_deposit) || 0;
+    const principal = base + dep;
+    const eq = Number.isFinite(ld.equity) ? ld.equity : 0;
+    const unrl = Number.isFinite(ld.cumulative_pnl) ? ld.cumulative_pnl : 0;
+    const realized = eq - principal - unrl;
+    const money = (v) =>
+      (v >= 0 ? "+" : "−") + "$" + Math.abs(v).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const usd = (v) => "$" + Math.abs(v).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const cell = (label, value, tone, caption) => {
+      const item = document.createElement("div");
+      item.className = "metric";
+      item.innerHTML =
+        `<div class="k">${label}</div><div class="v ${tone}">${value}</div>`;
+      if (caption) {
+        const cap = document.createElement("span");
+        cap.className = "account-return";
+        cap.textContent = caption;
+        item.append(cap);
+      }
+      return item;
+    };
+    const pct = principal > 0 ? ((eq / principal - 1) * 100).toFixed(2) + "%" : "";
+    root.append(
+      cell("账户净值", usd(eq), "", pct ? `净投入收益率 ${Number(pct) >= 0 ? "+" : ""}${pct}` : "")
+    );
+    root.append(cell("本金（起点+入金）", usd(principal), "", `起点 ${usd(base)} · 入金 ${usd(dep)}`));
+    root.append(cell("已实现盈亏", money(realized), realized >= 0 ? "pos" : "neg", "含手续费 · 资金费"));
+    root.append(cell("当前浮盈", money(unrl), unrl >= 0 ? "pos" : "neg", "还在场上 · 会变"));
   }
-  // 策略健康度：直接放在摘要卡里（四项并排 ✗ 和净值/收益/浮盈同一排 ✓）
+  // 策略健康度
   if (!shadow && lastHealth) {
     const item = document.createElement("div");
     item.className = "metric health-item";
@@ -1519,10 +1518,8 @@ function arrangeMonitorSummary(id, shadow = false) {
     item.innerHTML =
       '<div class="k">策略健康度</div>' +
       `<div class="v ${tone}"><span class="health-dot ${lastHealth.status}"></span>${label}</div>`;
-    // IC 和原因一起放到下面那行小字里 ✗ 上面只留状态 ✗ 免得挤在一起 ✓
     const bits = [];
-    if (lastHealth.ic90 != null) bits.push(`因子 IC ${lastHealth.ic90.toFixed(3)}（90 日）`);
-    if (lastHealth.reason) bits.push(lastHealth.reason);
+    if (lastHealth.ic90 != null) bits.push(`IC ${lastHealth.ic90.toFixed(3)}（90 日）`);
     if (bits.length) {
       const cap = document.createElement("span");
       cap.className = "account-return";
