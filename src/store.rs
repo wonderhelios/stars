@@ -33,6 +33,13 @@ impl Store {
                 PRIMARY KEY (ts, coin)
             );
             CREATE INDEX IF NOT EXISTS idx_oi_ts ON oi_snapshots(ts);
+            CREATE TABLE IF NOT EXISTS candles_1h (
+                coin TEXT NOT NULL,
+                t INTEGER NOT NULL,
+                o REAL, h REAL, l REAL, c REAL, v REAL,
+                PRIMARY KEY (coin, t)
+            );
+            CREATE INDEX IF NOT EXISTS idx_candles_1h_t ON candles_1h(t);
             CREATE TABLE IF NOT EXISTS depth_daily (
                 day INTEGER NOT NULL,
                 coin TEXT NOT NULL,
@@ -84,6 +91,54 @@ impl Store {
         }
         tx.commit()?;
         Ok(n)
+    }
+
+    pub fn upsert_candles_1h(&self, coin: &str, candles: &[Candle]) -> Result<usize> {
+        let conn = self.conn.lock().unwrap();
+        let mut n = 0;
+        let tx = conn.unchecked_transaction()?;
+        {
+            let mut stmt = tx.prepare(
+                "INSERT INTO candles_1h (coin, t, o, h, l, c, v)
+                 VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)
+                 ON CONFLICT(coin, t) DO UPDATE SET
+                   o=excluded.o, h=excluded.h, l=excluded.l, c=excluded.c, v=excluded.v",
+            )?;
+            for c in candles {
+                stmt.execute(rusqlite::params![coin, c.t, c.o, c.h, c.l, c.c, c.v])?;
+                n += 1;
+            }
+        }
+        tx.commit()?;
+        Ok(n)
+    }
+
+    /// 全部 1h 面板（coin → 该币最近的 1h K 线 ✗ 用于区间位置因子）。
+    pub fn all_panels_1h(&self) -> Result<Vec<(String, Vec<Candle>)>> {
+        let conn = self.conn.lock().unwrap();
+        let mut stmt = conn.prepare(
+            "SELECT coin, t, o, h, l, c, v FROM candles_1h ORDER BY coin, t",
+        )?;
+        let rows = stmt.query_map([], |r| {
+            Ok((
+                r.get::<_, String>(0)?,
+                Candle {
+                    t: r.get::<_, i64>(1)?,
+                    o: r.get::<_, f64>(2)?,
+                    h: r.get::<_, f64>(3)?,
+                    l: r.get::<_, f64>(4)?,
+                    c: r.get::<_, f64>(5)?,
+                    v: r.get::<_, f64>(6)?,
+                },
+            ))
+        })?;
+        let mut out: std::collections::BTreeMap<String, Vec<Candle>> = std::collections::BTreeMap::new();
+        for r in rows {
+            if let Ok((coin, c)) = r {
+                out.entry(coin).or_default().push(c);
+            }
+        }
+        Ok(out.into_iter().collect())
     }
 
     /// 记录一次持仓量快照（按 UTC 日对齐，同日重复写入会覆盖）。funding 是当日资金费率。

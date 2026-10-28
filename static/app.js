@@ -210,6 +210,7 @@ let lastShadowData = null;
 let lastControlData = null;
 let lastLiveForShadow = null;
 let lastVTData = null;
+let lastCombineData = null;
 let lastHealth = null;
 let liveFetchedAt = 0;
 
@@ -1135,6 +1136,7 @@ function renderShadow(d) {
   const nLong = ps.filter((p) => String(p.side).toLowerCase() === "long").length;
   const ctl = lastControlData || {};
   const vt = lastVTData || {};
+  const cb = lastCombineData || {};
   // 同窗口口径：以对照组合（同起点）的第一天为基准 ✗ 算实盘在同一窗口的变化 ✗
   const ctlHist = (ctl.history || []).filter((p) => Number.isFinite(p.ts) && Number.isFinite(p.equity));
   const ctlStart = ctlHist.length ? ctlHist[0].ts : null;
@@ -1182,6 +1184,7 @@ function renderShadow(d) {
         metric("影子 三因子（" + ctlDays + " 天 ✗）", (d.pnl_pct || 0).toFixed(1) + "%", (d.pnl_pct || 0) >= 0 ? "pos" : "neg") +
         metric("对照 现行70/30", (ctl.pnl_pct || 0).toFixed(1) + "%", (ctl.pnl_pct || 0) >= 0 ? "pos" : "neg") +
         metric("波动目标组合", (vt.pnl_pct || 0).toFixed(1) + "%", (vt.pnl_pct || 0) >= 0 ? "pos" : "neg") +
+        metric("组合策略（动量+波段）", (cb.pnl_pct || 0).toFixed(1) + "%", (cb.pnl_pct || 0) >= 0 ? "pos" : "neg") +
         metric("实盘同期", liveWinPct == null ? "—" : liveWinPct.toFixed(1) + "%",
           liveWinPct == null ? "" : (liveWinPct >= 0 ? "pos" : "neg")) +
         metric("影子 − 对照", ((d.pnl_pct || 0) - (ctl.pnl_pct || 0)).toFixed(1) + '<span class="metric-unit"> pp</span>',
@@ -1216,12 +1219,16 @@ function renderShadow(d) {
   const vhist = (vt.history || []).filter((p) => Number.isFinite(p.ts) && Number.isFinite(p.equity));
   const vwin = equityWindow(vhist, arr.length < 3 ? "all" : shRange, Date.now());
   const varr = (vwin.points || []).map((p) => [p.ts, p.equity]);
+  const cbhist = (cb.history || []).filter((p) => Number.isFinite(p.ts) && Number.isFinite(p.equity));
+  const cbwin = equityWindow(cbhist, arr.length < 3 ? "all" : shRange, Date.now());
+  const cbarr = (cbwin.points || []).map((p) => [p.ts, p.equity]);
   renderEquityChart(
     "sh-chart",
     withNow(arr, eq),
     "影子组合盈亏曲线",
     carr.length ? withNow(carr, ctl.equity || 0) : null,
-    varr.length ? withNow(varr, vt.equity || 0) : null
+    varr.length ? withNow(varr, vt.equity || 0) : null,
+    cbarr.length ? withNow(cbarr, cb.equity || 0) : null
   );
   // 持仓
   const posEl = $("sh-positions");
@@ -1289,6 +1296,7 @@ async function refreshShadow() {
     try { lastControlData = await fetchJSONRetry("/api/paper", {}, 8000); } catch (e) {}
     try { lastLiveForShadow = await fetchJSONRetry("/api/live", {}, 8000); } catch (e) {}
     try { lastVTData = await fetchJSONRetry("/api/paper3", {}, 8000); } catch (e) {}
+    try { lastCombineData = await fetchJSONRetry("/api/paper4", {}, 8000); } catch (e) {}
     renderShadow(lastShadowData);
     renderShadowConfig(lastShadowData.config);
   } catch (e) {}
@@ -1355,7 +1363,7 @@ function withNow(history, equityNow) {
 }
 
 // 通用权益曲线（每小时一个点）。
-function renderEquityChart(id, history, aria, compare, third) {
+function renderEquityChart(id, history, aria, compare, third, fourth) {
   const el = $(id);
   if (!el) return;
   const pts = (history || [])
@@ -1371,6 +1379,9 @@ function renderEquityChart(id, history, aria, compare, third) {
   const thd = (third || [])
     .filter((p) => Array.isArray(p) && Number.isFinite(p[0]) && Number.isFinite(p[1]))
     .map((p) => ({ ts: p[0], eq: p[1] }));
+  const fth = (fourth || [])
+    .filter((p) => Array.isArray(p) && Number.isFinite(p[0]) && Number.isFinite(p[1]))
+    .map((p) => ({ ts: p[0], eq: p[1] }));
   const W = Math.max(260, el.clientWidth || 900), H = 240;
   const padL = 64, padR = 20, padT = 20, padB = 30;
   const first = pts[0], last = pts[pts.length - 1];
@@ -1378,7 +1389,8 @@ function renderEquityChart(id, history, aria, compare, third) {
   const vals = pts.map((p) => p.eq);
   const allVals = vals
     .concat(cmp.length > 1 ? cmp.map((p) => p.eq) : [])
-    .concat(thd.length > 1 ? thd.map((p) => p.eq) : []);
+    .concat(thd.length > 1 ? thd.map((p) => p.eq) : [])
+    .concat(fth.length > 1 ? fth.map((p) => p.eq) : []);
   const ax = niceAxis(Math.min(...allVals), Math.max(...allVals), 4);
   const span = ax.hi - ax.lo || 1;
   const X = (ts) => padL + (last.ts === first.ts ? 0.5 : (ts - first.ts) / (last.ts - first.ts)) * (W - padL - padR);
@@ -1389,12 +1401,16 @@ function renderEquityChart(id, history, aria, compare, third) {
   const xlabels = ticks.map((ts, i) => `<text x="${X(ts)}" y="${H - 8}" text-anchor="${i === 0 ? "start" : i === ticks.length - 1 ? "end" : "middle"}" font-size="11" fill="#86949d">${ts2m(ts)}</text>`).join("");
   const cmpLine = cmp.length > 1 ? cmp.map((p) => `${X(p.ts)},${Y(p.eq)}`).join(" ") : "";
   const thdLine = thd.length > 1 ? thd.map((p) => `${X(p.ts)},${Y(p.eq)}`).join(" ") : "";
+  const fthLine = fth.length > 1 ? fth.map((p) => `${X(p.ts)},${Y(p.eq)}`).join(" ") : "";
   const sw = (color) => `<span style="display:inline-block;width:14px;height:3px;border-radius:2px;background:${color};margin-right:6px;vertical-align:middle"></span>`;
   const cmpLegend = cmp.length > 1
     ? `<div class="chart-coverage">${sw("#168473")}影子 三因子 · $${fmt(last.eq, 2)} · ${moneySigned(last.eq - first.eq)}</div>` +
       `<div class="chart-coverage">${sw("#e0873a")}对照 纯动量 · $${fmt(cmp[cmp.length - 1].eq, 2)} · ${moneySigned(cmp[cmp.length - 1].eq - cmp[0].eq)}</div>` +
       (thd.length > 1
         ? `<div class="chart-coverage">${sw("#4a7fd4")}波动目标 · $${fmt(thd[thd.length - 1].eq, 2)} · ${moneySigned(thd[thd.length - 1].eq - thd[0].eq)}</div>`
+        : "") +
+      (fth.length > 1
+        ? `<div class="chart-coverage">${sw("#7c4dff")}组合策略（动量+12h波段） · $${fmt(fth[fth.length - 1].eq, 2)} · ${moneySigned(fth[fth.length - 1].eq - fth[0].eq)}</div>`
         : "")
     : `<div class="chart-coverage">${sw("#168473")}影子 三因子 · $${fmt(last.eq, 2)} · ${moneySigned(last.eq - first.eq)}</div>`;
   el.innerHTML = `<div class="chart-summary">
@@ -1410,6 +1426,7 @@ function renderEquityChart(id, history, aria, compare, third) {
       <line x1="${padL}" y1="${Y(first.eq)}" x2="${W - padR}" y2="${Y(first.eq)}" stroke="#bacac8" stroke-dasharray="4 5"/>
       ${cmpLine ? `<polyline points="${cmpLine}" fill="none" stroke="#e0873a" stroke-width="2.2" stroke-linejoin="round" opacity="0.95"/>` : ""}
       ${thdLine ? `<polyline points="${thdLine}" fill="none" stroke="#4a7fd4" stroke-width="2.2" stroke-linejoin="round" opacity="0.95"/>` : ""}
+      ${fthLine ? `<polyline points="${fthLine}" fill="none" stroke="#7c4dff" stroke-width="2.2" stroke-linejoin="round" opacity="0.95"/>` : ""}
       <polyline points="${line}" fill="none" stroke="#168473" stroke-width="2.5" stroke-linejoin="round"/>
       <circle cx="${X(last.ts)}" cy="${Y(last.eq)}" r="4" fill="#168473" stroke="white" stroke-width="2"/>
       ${xlabels}

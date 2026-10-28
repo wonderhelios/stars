@@ -47,6 +47,9 @@ pub struct AppState {
     /// HL 单账户 carry 影子（现货 + 空永续）。
     pub hlcarry: Arc<Mutex<crate::hlcarry::HlCarryState>>,
     pub hlcarry_path: Arc<std::path::PathBuf>,
+    /// 组合策略纸面（日线动量 + 12h 区间位置）。
+    pub combine: Arc<Mutex<crate::combine::CombineState>>,
+    pub combine_path: Arc<std::path::PathBuf>,
 }
 
 #[derive(Clone, Default)]
@@ -91,6 +94,10 @@ pub fn router(state: AppState) -> Router {
         .route("/api/paper3/step", post(paper3_step))
         .route("/api/live", get(live_status))
         .route("/api/strategy-health", get(strategy_health))
+        .route("/api/paper4", get(paper4_status))
+        .route("/api/paper4/start", post(paper4_start))
+        .route("/api/paper4/stop", post(paper4_stop))
+        .route("/api/paper4/reset", post(paper4_reset))
         .route("/api/snapshots", get(snapshots_view))
         .route("/api/live/config", post(live_config))
         .route("/api/live/run", post(live_run))
@@ -544,6 +551,43 @@ async fn snapshots_view(State(state): State<AppState>) -> Json<serde_json::Value
         "today": today_rows.iter().take(12).map(|(c, oi, px, f)| json!({"coin": c, "oi_usd": oi, "mark_px": px, "funding": f})).collect::<Vec<_>>(),
         "today_count": today_rows.len(),
     }))
+}
+
+async fn paper4_status(State(state): State<AppState>) -> Json<serde_json::Value> {
+    let snap = state.combine.lock().await.snapshot();
+    Json(json!({
+        "equity": snap.equity,
+        "pnl_pct": snap.pnl_pct,
+        "days_elapsed": snap.days_elapsed,
+        "history": snap.history,
+        "positions": snap.positions,
+        "running": snap.running,
+        "last_a": snap.last_a,
+        "last_b": snap.last_b,
+        "config": snap.config,
+    }))
+}
+
+async fn paper4_start(State(state): State<AppState>) -> Response {
+    let mut c = state.combine.lock().await;
+    c.running = true;
+    let _ = std::fs::write(state.combine_path.as_ref(), serde_json::to_vec(&*c).unwrap_or_default());
+    Json(json!({"ok": true})).into_response()
+}
+
+async fn paper4_stop(State(state): State<AppState>) -> Response {
+    let mut c = state.combine.lock().await;
+    c.running = false;
+    let _ = std::fs::write(state.combine_path.as_ref(), serde_json::to_vec(&*c).unwrap_or_default());
+    Json(json!({"ok": true})).into_response()
+}
+
+async fn paper4_reset(State(state): State<AppState>) -> Response {
+    let cap = state.combine.lock().await.config.as_ref().map(|c| c.capital).unwrap_or(5000.0);
+    let mut c = state.combine.lock().await;
+    *c = crate::combine::CombineState::load_or_init(cap);
+    let _ = std::fs::write(state.combine_path.as_ref(), serde_json::to_vec(&*c).unwrap_or_default());
+    Json(json!({"ok": true})).into_response()
 }
 
 async fn strategy_health(State(state): State<AppState>) -> Json<serde_json::Value> {
@@ -1253,6 +1297,8 @@ mod live_routes_tests {
             run_gate: Arc::new(Mutex::new(())),
             hlcarry: Arc::new(Mutex::new(crate::hlcarry::HlCarryState::default())),
             hlcarry_path: Arc::new(root.join("hlcarry.json")),
+            combine: Arc::new(Mutex::new(crate::combine::CombineState::load_or_init(5000.0))),
+            combine_path: Arc::new(root.join("combine.json")),
             auth_token: None,
             paper2: Arc::new(Mutex::new(crate::paper::PaperState::default())),
             paper2_path: Arc::new(root.join("paper2.json")),
@@ -1305,6 +1351,8 @@ mod live_routes_tests {
             run_gate: Arc::new(Mutex::new(())),
             hlcarry: Arc::new(Mutex::new(crate::hlcarry::HlCarryState::default())),
             hlcarry_path: Arc::new(root.join("hlcarry.json")),
+            combine: Arc::new(Mutex::new(crate::combine::CombineState::load_or_init(5000.0))),
+            combine_path: Arc::new(root.join("combine.json")),
             auth_token: None,
             paper2: Arc::new(Mutex::new(crate::paper::PaperState::default())),
             paper2_path: Arc::new(root.join("paper2.json")),
