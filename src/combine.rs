@@ -120,7 +120,7 @@ pub struct CombineConfig {
 }
 
 fn d_replay() -> usize {
-    60
+    0
 }
 
 fn d_wb() -> f64 {
@@ -141,7 +141,7 @@ impl Default for CombineConfig {
             momentum_weight: 1.0,
             dd_weight: 0.0,
             upfrac_weight: 0.0,
-            replay_days: 60,
+            replay_days: 0,
         }
     }
 }
@@ -274,6 +274,83 @@ pub fn now_ms() -> i64 {
 }
 
 // ---------------------------------------------------------------------------
+// 当前持仓预览（不产生收益 ✗ 只让页面在第一天就能看到仓位 ✓）
+// ---------------------------------------------------------------------------
+pub fn preview(state: &mut CombineState, panel_1d: &[PanelEntry], panel_1h: &[PanelEntry]) {
+    let Some(cfg) = state.config.clone() else { return };
+    // 日线最后一根（已收盘）✗ A 腿
+    let mut ts_all: Vec<i64> = Vec::new();
+    for p in panel_1d {
+        for k in p.candles.iter() {
+            ts_all.push(k.t);
+        }
+    }
+    ts_all.sort_unstable();
+    ts_all.dedup();
+    let n = ts_all.len();
+    if n >= 62 {
+        let fp = crate::trader::FactorPanel::build(panel_1d);
+        let tcfg = crate::trader::TradeConfig {
+            momentum_weight: cfg.momentum_weight,
+            dd_weight: cfg.dd_weight,
+            upfrac_weight: cfg.upfrac_weight,
+            min_vol_usd: cfg.min_vol_usd,
+            target_positions: cfg.target_positions,
+            leverage: cfg.leverage,
+            ..crate::trader::TradeConfig::default()
+        };
+        let i = n - 1;
+        let w = fp.weights_at(i, &tcfg, state.equity);
+        state.a_pos.clear();
+        for (c, wt) in &w {
+            let px = panel_1d
+                .iter()
+                .find(|p| p.coin == *c)
+                .and_then(|p| close_at_or_before(&p.candles, ts_all[i]))
+                .unwrap_or(0.0);
+            if px <= 0.0 {
+                continue;
+            }
+            state.a_pos.push(CombinePosition {
+                coin: c.clone(),
+                side: if *wt > 0.0 { 1 } else { -1 },
+                entry_px: px,
+                notional: wt.abs() * state.equity * cfg.leverage,
+                mark_px: px,
+                entry_ts: ts_all[i],
+            });
+        }
+        state.last_a = w;
+    }
+    // B 腿：用最近 24h 的区间位置
+    let now = now_ms();
+    let pos = range_positions(panel_1h, now);
+    if !pos.is_empty() {
+        let b = range_position_weights(&pos, cfg.range_k);
+        state.b_pos.clear();
+        for (c, wt) in &b {
+            let px = panel_1h
+                .iter()
+                .find(|p| p.coin == *c)
+                .and_then(|p| p.candles.last().map(|k| k.c))
+                .unwrap_or(0.0);
+            if px <= 0.0 {
+                continue;
+            }
+            state.b_pos.push(CombinePosition {
+                coin: c.clone(),
+                side: if *wt > 0.0 { 1 } else { -1 },
+                entry_px: px,
+                notional: wt.abs() * state.equity * cfg.leverage,
+                mark_px: px,
+                entry_ts: now,
+            });
+        }
+        state.last_b = b;
+    }
+}
+
+// ---------------------------------------------------------------------------
 // 纸面步进：日线 A + 12h B
 // ---------------------------------------------------------------------------
 
@@ -342,13 +419,13 @@ pub fn step(
         if ts_all[i] >= last_closed {
             break; // 最后一天还没收盘 ✗ 下一轮再处理
         }
-        // 关键：信号用第 i 根（收盘已知 ✗）✗ 但成交在【第 i+1 根的开盘】✗
-        // 否则就是"用当天收盘的信号在当天开盘成交"✗ 一天的未来函数 ✗
-        if i + 2 >= n {
+        // 口径：第 i 根收盘算信号 ✗ 也在该收盘成交（MOC）✗ 次日收盘结算 ✓
+        // 只滞后 1 天 ✗ 且无未来函数 ✓
+        if i + 1 >= n {
             break;
         }
-        let day_start = ts_all[i + 1];
-        let day_end = ts_all[i + 2];
+        let day_start = ts_all[i];
+        let day_end = ts_all[i + 1];
         // ---- A 腿：动量权重（信号用 ≤ day_start 的数据 ✗ 已由 weights_at 保证）----
         let a_w = fp.weights_at(i, &tcfg, state.equity);
         // ---- B 腿：两个 12h 子段 ----

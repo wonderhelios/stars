@@ -462,6 +462,10 @@ async fn main() -> anyhow::Result<()> {
                     if st.running {
                         let before = st.history.len();
                         crate::combine::step(&mut st, &d, &h);
+                        // 还没有历史（刚部署）时 ✗ 至少把当前仓位算出来给页面看 ✓
+                        if st.history.len() < 2 {
+                            crate::combine::preview(&mut st, &d, &h);
+                        }
                         if st.history.len() != before {
                             st.save(combine_path.as_ref());
                         }
