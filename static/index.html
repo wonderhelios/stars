@@ -441,6 +441,66 @@
         .detail-hint { font-size:10px; }
         .account-detail-tabs { gap:16px; }
       }
+      /* Combined strategy: a compact dashboard with one clear reading order. */
+      #view-combine { --combine-accent:#147f70; }
+      #view-combine #cb-metrics { grid-template-columns:1.25fr 1fr 1fr 1fr; gap:0; margin:0; padding:20px 22px; }
+      .combine-heading { display:flex; justify-content:space-between; align-items:flex-end; gap:24px; margin:2px 0 22px; }
+      .combine-heading h1 { margin:5px 0 5px; font-size:clamp(26px,3vw,34px); line-height:1.2; letter-spacing:-1px; }
+      .combine-heading p { color:var(--muted); font-size:13px; margin:0; }
+      .combine-heading-actions { display:flex; align-items:center; gap:12px; }
+      .combine-state { display:inline-flex; align-items:center; gap:8px; padding:7px 11px; border-radius:99px; background:#eef3f2; color:#647a76; font-size:11px; white-space:nowrap; }
+      .combine-state i { width:7px; height:7px; border-radius:50%; background:#91a49e; }
+      .combine-state.is-running { background:#eaf6ef; color:#287650; }
+      .combine-state.is-running i { background:#27a36f; box-shadow:0 0 0 3px #27a36f20; }
+      .combine-state.is-stopped i { background:#c99a2e; }
+      .combine-alert { margin:0 0 16px; padding:11px 14px; color:#806326; background:#fff8e9; border:1px solid #f0e2bf; border-radius:9px; font-size:12px; }
+      .combine-alert[hidden] { display:none; }
+      .combine-overview { display:grid; grid-template-columns:1.25fr 1fr 1fr 1fr; align-items:center; gap:0; padding:20px 22px; background:#fff; border:1px solid var(--line); border-radius:13px; box-shadow:var(--shadow); }
+      .combine-kpi { min-width:0; padding:1px 22px; border-left:1px solid var(--line); }
+      .combine-kpi:first-child { padding-left:0; border-left:0; }
+      .combine-kpi:last-child { padding-right:0; }
+      .combine-kpi-label { color:var(--muted); font-size:11px; margin-bottom:7px; }
+      .combine-kpi-value { font-size:clamp(19px,2vw,27px); font-weight:650; letter-spacing:-.65px; line-height:1.25; overflow-wrap:anywhere; }
+      .combine-kpi:first-child .combine-kpi-value { font-size:clamp(24px,2.5vw,32px); }
+      .combine-kpi-value.pos { color:var(--green); } .combine-kpi-value.neg { color:var(--red); }
+      .combine-kpi-detail { margin-top:5px; color:#91a0a5; font-size:10px; }
+      .combine-section { margin-top:16px; padding:21px 22px; background:#fff; border:1px solid var(--line); border-radius:13px; box-shadow:var(--shadow); min-width:0; }
+      .combine-section-head { display:flex; align-items:flex-end; justify-content:space-between; gap:16px; padding-bottom:14px; border-bottom:1px solid #edf1f3; }
+      .combine-section-head h2 { font-size:16px; margin:3px 0 0; letter-spacing:-.25px; }
+      .combine-section-meta { color:#8b999f; font-size:11px; }
+      .combine-chart-section .chart { padding-top:14px; }
+      .combine-chart-section .chart-summary { margin-top:0; gap:26px; }
+      .combine-chart-section .chart-coverage { line-height:1.7; }
+      .combine-chart-section .chart-summary strong { font-size:22px; }
+      .combine-legs { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; padding-top:14px; }
+      .combine-leg { min-width:0; padding:15px 16px; background:#f8faf9; border:1px solid #e9efed; border-radius:10px; }
+      .combine-leg-head { display:flex; align-items:baseline; justify-content:space-between; gap:12px; margin-bottom:12px; }
+      .combine-leg-title { font-size:13px; font-weight:650; }
+      .combine-leg-cadence { font-size:10px; color:#879690; white-space:nowrap; }
+      .combine-sides { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+      .combine-side-label { margin-bottom:7px; color:#89969b; font-size:10px; }
+      .combine-side-label.short { color:#b16a75; }
+      .combine-coins { display:flex; flex-wrap:wrap; gap:5px; min-height:22px; }
+      .combine-coin { display:inline-flex; padding:3px 7px; border-radius:5px; background:#e9f5ef; color:#39765d; font-size:10px; line-height:1.4; }
+      .combine-coin.short { background:#fbebed; color:#b25865; }
+      .combine-config { display:flex; flex-wrap:wrap; gap:7px; padding-top:13px; }
+      .combine-config span { padding:5px 9px; border-radius:6px; background:#f1f4f4; color:#6f7e82; font-size:10px; }
+      @media(max-width:1000px) { #view-combine #cb-metrics { grid-template-columns:repeat(2,minmax(0,1fr)); row-gap:18px; } .combine-kpi:nth-child(3) { border-left:0; padding-left:0; } }
+      @media(max-width:760px) {
+        .combine-heading { align-items:flex-start; flex-direction:column; gap:14px; margin-bottom:16px; }
+        .combine-heading-actions { width:100%; justify-content:space-between; }
+        #view-combine #cb-metrics { padding:17px 16px; gap:16px 0; }
+        .combine-kpi { padding:0 12px; }
+        .combine-kpi:nth-child(odd) { border-left:0; padding-left:0; }
+        .combine-kpi:nth-child(even) { padding-right:0; }
+        .combine-kpi-value { font-size:20px; }
+        .combine-kpi:first-child .combine-kpi-value { font-size:25px; }
+        .combine-section { margin-top:12px; padding:17px 15px; }
+        .combine-legs { grid-template-columns:1fr; gap:9px; }
+        .combine-chart-section .chart-summary { gap:12px 20px; }
+        .combine-chart-section .chart-summary>div { min-width:calc(50% - 12px); }
+        .combine-chart-section .chart-coverage { width:auto; margin-left:0; }
+      }
 </style>
   </head>
   <body>
@@ -729,31 +789,35 @@
 
       </section>
 
-      <section id="view-combine" class="view">
-        <div class="panel">
-          <div class="panel-head">
-            <div>
-              <div class="panel-kicker">COMBINED STRATEGY</div>
-              <h2>组合策略 · 日线动量 + 12h 波段</h2>
-              <p class="sub">两本账各 50% ✗ 动量腿每天调 ✗ 波段腿每 12 小时调（24h 区间位置）✗ 独立纸面 ✗ 不碰实盘。</p>
-            </div>
-            <div class="actions">
-              <button class="btn ghost" id="cb-refresh" type="button">刷新</button>
-            </div>
+      <section id="view-combine" class="view combine-view">
+        <header class="combine-heading">
+          <div>
+            <div class="panel-kicker">COMBINED STRATEGY</div>
+            <h1>组合策略</h1>
+            <p>日线动量 + 12 小时区间位置 · 独立纸面模拟，不会发送真实订单</p>
           </div>
-          <div id="cb-status" class="note"></div>
-          <div class="content-card">
-            <div class="metrics" id="cb-metrics"></div>
-            <div class="content-card equity-card" style="margin-top:14px">
-              <div class="panel-head monitor-section-head"><div><span class="section-eyebrow">COMBINED PNL</span><h2>组合权益曲线</h2></div></div>
-              <div class="chart" id="cb-chart"></div>
-            </div>
+          <div class="combine-heading-actions">
+            <span id="cb-run-state" class="combine-state"><i></i>读取中</span>
+            <button class="btn ghost" id="cb-refresh" type="button">刷新数据</button>
           </div>
-          <div class="content-card">
-            <div class="panel-head" style="margin-top:14px"><h2>两腿持仓</h2></div>
-            <div id="cb-legs"></div>
+        </header>
+        <div id="cb-status" class="combine-alert" hidden></div>
+        <section class="combine-overview" id="cb-metrics" aria-label="组合表现"></section>
+        <section class="combine-section combine-chart-section">
+          <div class="combine-section-head">
+            <div><span class="section-eyebrow">PERFORMANCE</span><h2>权益表现</h2></div>
+            <span class="combine-section-meta">按小时记录 · USD</span>
           </div>
-        </div>
+          <div class="chart" id="cb-chart"></div>
+        </section>
+        <section class="combine-section combine-positions-section">
+          <div class="combine-section-head">
+            <div><span class="section-eyebrow">CURRENT ALLOCATION</span><h2>当前组合</h2></div>
+            <span id="cb-position-count" class="combine-section-meta"></span>
+          </div>
+          <div id="cb-legs" class="combine-legs"></div>
+          <div id="cb-config" class="combine-config"></div>
+        </section>
       </section>
 
     </main>

@@ -1116,6 +1116,8 @@ document.querySelectorAll('.nav button[data-view="shadow"], .nav button[data-vie
 document.querySelectorAll('.nav button[data-view="combine"]').forEach((b) => {
   b.addEventListener("click", () => refreshCombine());
 });
+const combineRefreshButton = $("cb-refresh");
+if (combineRefreshButton) combineRefreshButton.addEventListener("click", () => refreshCombine());
 setInterval(() => {
   const v = $("view-combine");
   if (v && v.classList.contains("active")) refreshCombine();
@@ -1384,63 +1386,63 @@ function renderCombine(d) {
   const b = d.last_b || [];
   const m = $("cb-metrics");
   if (m) {
-    const money = (v) => (v >= 0 ? "+" : "−") + "$" + Math.abs(v).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const sampleDays = Math.max(0, days - (cfg.replay_days || 0));
+    const kpi = (label, value, detail, cls) =>
+      `<div class="combine-kpi"><div class="combine-kpi-label">${label}</div><div class="combine-kpi-value ${cls || ""}">${value}</div>${detail ? `<div class="combine-kpi-detail">${detail}</div>` : ""}</div>`;
     m.innerHTML =
-      metricGroup("组合账户",
-        metric("组合净值", "$" + fmt(eq, 2)) +
-        metric("收益率", pnl.toFixed(2) + "%", pnl >= 0 ? "pos" : "neg") +
-        metric(
-          (cfg.replay_days || 0) > 0
-            ? "回放 " + cfg.replay_days + " 天 ✗ 样本外 " + Math.max(0, days - (cfg.replay_days || 0)) + " 天"
-            : "样本外天数",
-          days + '<span class="metric-unit"> 天</span>'
-        ) +
-        metric("两腿合计", legs.length + '<span class="metric-unit"> 个币</span>'),
-        "live-overview",
-        '<div class="metric-footnote"><span class="live-dot"></span>' +
-          (d.running ? "纸面运行中 · 不涉及真实下单" : "已停止") +
-          (cfg.replay_days ? ` · 含 ${cfg.replay_days} 天回放` : "") +
-          "</div>"
-      ) +
-      metricGroup("两腿配置",
-        metric("A 腿 · 日线动量", (cfg.momentum_weight == null ? 1 : cfg.momentum_weight).toFixed(2) + " ✗ 每天") +
-        metric("B 腿 · 12h 区间", (cfg.b_weight == null ? 0.5 : cfg.b_weight).toFixed(2) + " ✗ 每 12h") +
-        metric("B 腿每边币数", (cfg.range_k || 3) + '<span class="metric-unit"> 个</span>') +
-        metric("杠杆 / 门槛", fmt(cfg.leverage || 2.7, 2) + "x / $" + fmt((cfg.min_vol_usd || 0) / 1e6, 0) + "M")
-      ) +
-      metricGroup("今日两条腿",
-        metric("A 腿多/空", a.filter((x) => x[1] > 0).length + " / " + a.filter((x) => x[1] < 0).length) +
-        metric("B 腿多/空", b.filter((x) => x[1] > 0).length + " / " + b.filter((x) => x[1] < 0).length) +
-        metric("合并后持仓", legs.length + '<span class="metric-unit"> 个</span>') +
-        metric("区间变化", h.length > 1 ? money(h[h.length - 1][1] - h[0][1]) : "—",
-          h.length > 1 && h[h.length - 1][1] >= h[0][1] ? "pos" : "neg")
-      );
+      kpi("组合净值", "$" + fmt(eq, 2), "纸面账户当前权益") +
+      kpi("累计收益", (pnl >= 0 ? "+" : "−") + Math.abs(pnl).toFixed(2) + "%", "自组合起点", pnl >= 0 ? "pos" : "neg") +
+      kpi("运行天数", `${days}<span class="metric-unit"> 天</span>`, cfg.replay_days ? `回放 ${cfg.replay_days} 天 · 样本外 ${sampleDays} 天` : "按已记录区间统计") +
+      kpi("当前持仓", `${legs.length}<span class="metric-unit"> 币</span>`, `动量 ${a.length} 币 · 区间 ${b.length} 币`);
+  }
+  const runState = $("cb-run-state");
+  if (runState) {
+    runState.className = "combine-state " + (d.running ? "is-running" : "is-stopped");
+    runState.innerHTML = `<i></i>${d.running ? "纸面运行中" : "已停止"}`;
   }
   const st = $("cb-status");
   if (st) {
     if (!b.length) {
-      st.textContent = "注：B 腿暂时为空 ✗ 说明 1h 数据还没采够（服务启动后约 5~10 分钟开始采集 40 个币）✗ 此时组合曲线等于纯动量。";
+      st.textContent = "区间位置腿当前没有信号，当前持仓仅反映日线动量腿。";
+      st.hidden = false;
     } else {
       st.textContent = "";
+      st.hidden = true;
     }
   }
   if (h.length > 1) {
-    renderEquityChart("cb-chart", h, "组合策略权益曲线");
+    renderEquityChart("cb-chart", h, "组合策略权益曲线", undefined, undefined, undefined, {
+      equityLabel: "组合净值 · 最新", changeLabel: "记录区间变化", legendName: "组合策略"
+    });
   } else {
     const el = $("cb-chart");
     if (el) el.innerHTML = '<div class="empty">还没有数据 ✗ 等下一轮步进</div>';
   }
   const lg = $("cb-legs");
   if (lg) {
-    const row = (name, arr) =>
-      `<tr><td>${name}</td><td class="pos">${arr.filter((x) => x[1] > 0).map((x) => escapeHTML(x[0])).join(" ") || "—"}</td>` +
-      `<td class="neg">${arr.filter((x) => x[1] < 0).map((x) => escapeHTML(x[0])).join(" ") || "—"}</td></tr>`;
-    lg.innerHTML =
-      '<div class="table-scroll"><table><thead><tr><th>腿</th><th>多头</th><th>空头</th></tr></thead><tbody>' +
-      row("A · 日线动量", a) +
-      row("B · 12h 区间位置", b) +
-      row("合并后（净额）", legs) +
-      "</tbody></table></div>";
+    const coins = (arr, isShort) => {
+      const names = arr.filter((x) => (x[1] < 0) === isShort).map((x) => escapeHTML(x[0]));
+      return names.length ? names.map((name) => `<span class="combine-coin ${isShort ? "short" : ""}">${name}</span>`).join("") : '<span class="muted">—</span>';
+    };
+    const leg = (title, cadence, arr) =>
+      `<article class="combine-leg"><div class="combine-leg-head"><span class="combine-leg-title">${title}</span><span class="combine-leg-cadence">${cadence}</span></div>` +
+      `<div class="combine-sides"><div><div class="combine-side-label">做多 · ${arr.filter((x) => x[1] > 0).length}</div><div class="combine-coins">${coins(arr, false)}</div></div>` +
+      `<div><div class="combine-side-label short">做空 · ${arr.filter((x) => x[1] < 0).length}</div><div class="combine-coins">${coins(arr, true)}</div></div></div></article>`;
+    lg.innerHTML = leg("日线动量", "每日调整", a) + leg("12 小时区间位置", "每 12 小时调整", b);
+  }
+  const posCount = $("cb-position-count");
+  if (posCount) posCount.textContent = `${legs.length} 个合并后币种 · 多 ${legs.filter((x) => x[1] > 0).length} / 空 ${legs.filter((x) => x[1] < 0).length}`;
+  const config = $("cb-config");
+  if (config) {
+    const momentumWeight = cfg.momentum_weight == null ? 1 : cfg.momentum_weight;
+    const bWeight = cfg.b_weight == null ? 0.5 : cfg.b_weight;
+    config.innerHTML = [
+      `动量权重 ${momentumWeight.toFixed(2)}`,
+      `区间权重 ${bWeight.toFixed(2)}`,
+      `区间每边 ${cfg.range_k || 3} 币`,
+      `杠杆 ${fmt(cfg.leverage || 2.7, 2)}×`,
+      `最低成交额 $${fmt((cfg.min_vol_usd || 0) / 1e6, 0)}M`
+    ].map((item) => `<span>${item}</span>`).join("");
   }
 }
 
@@ -1451,11 +1453,14 @@ async function refreshCombine() {
     renderCombine(d);
   } catch (e) {
     const st = $("cb-status");
-    if (st) st.textContent = "读取组合策略失败：" + ((e && e.message) || e);
+    if (st) {
+      st.textContent = "读取组合策略失败：" + ((e && e.message) || e);
+      st.hidden = false;
+    }
   }
 }
 
-function renderEquityChart(id, history, aria, compare, third, fourth) {
+function renderEquityChart(id, history, aria, compare, third, fourth, summaryLabels) {
   const el = $(id);
   if (!el) return;
   const pts = (history || [])
@@ -1495,6 +1500,7 @@ function renderEquityChart(id, history, aria, compare, third, fourth) {
   const thdLine = thd.length > 1 ? thd.map((p) => `${X(p.ts)},${Y(p.eq)}`).join(" ") : "";
   const fthLine = fth.length > 1 ? fth.map((p) => `${X(p.ts)},${Y(p.eq)}`).join(" ") : "";
   const sw = (color) => `<span style="display:inline-block;width:14px;height:3px;border-radius:2px;background:${color};margin-right:6px;vertical-align:middle"></span>`;
+  const legendName = summaryLabels && summaryLabels.legendName ? summaryLabels.legendName : "影子 三因子";
   const cmpLegend = cmp.length > 1
     ? `<div class="chart-coverage">${sw("#168473")}影子 三因子 · $${fmt(last.eq, 2)} · ${moneySigned(last.eq - first.eq)}</div>` +
       `<div class="chart-coverage">${sw("#e0873a")}对照 纯动量 · $${fmt(cmp[cmp.length - 1].eq, 2)} · ${moneySigned(cmp[cmp.length - 1].eq - cmp[0].eq)}</div>` +
@@ -1504,10 +1510,10 @@ function renderEquityChart(id, history, aria, compare, third, fourth) {
       (fth.length > 1
         ? `<div class="chart-coverage">${sw("#7c4dff")}组合策略（动量+12h波段） · $${fmt(fth[fth.length - 1].eq, 2)} · ${moneySigned(fth[fth.length - 1].eq - fth[0].eq)}</div>`
         : "")
-    : `<div class="chart-coverage">${sw("#168473")}影子 三因子 · $${fmt(last.eq, 2)} · ${moneySigned(last.eq - first.eq)}</div>`;
+    : `<div class="chart-coverage">${sw("#168473")}${legendName} · $${fmt(last.eq, 2)} · ${moneySigned(last.eq - first.eq)}</div>`;
   el.innerHTML = `<div class="chart-summary">
-      <div><span class="chart-eyebrow">影子权益 · 最新</span><strong>$${fmt(last.eq, 2)}</strong></div>
-      <div><span class="chart-eyebrow">影子区间变化</span><strong class="${change >= 0 ? "pos" : "neg"}">${moneySigned(change)}</strong></div>
+      <div><span class="chart-eyebrow">${summaryLabels && summaryLabels.equityLabel ? summaryLabels.equityLabel : "影子权益 · 最新"}</span><strong>$${fmt(last.eq, 2)}</strong></div>
+      <div><span class="chart-eyebrow">${summaryLabels && summaryLabels.changeLabel ? summaryLabels.changeLabel : "影子区间变化"}</span><strong class="${change >= 0 ? "pos" : "neg"}">${moneySigned(change)}</strong></div>
       ${cmpLegend}
       <div class="chart-coverage"><span class="chart-eyebrow">点数</span>${pts.length} · ${ts2m(first.ts)} — ${ts2m(last.ts)}</div>
     </div>
