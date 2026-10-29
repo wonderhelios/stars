@@ -544,7 +544,15 @@ pub fn scorecard(state: &LiveState, health: &crate::health::Health) -> Vec<serde
     let now = now_ms_pub();
     let thirty = 30 * 86_400_000i64;
     let cut = now - thirty;
-    let start = hist.iter().filter(|(ts, _)| *ts <= cut).last().copied();
+    // 不足 30 天就用【全部可用区间】✗ 并标注天数 ✗ 而不是显示样本不足 ✓
+    let mut window_days = 30i64;
+    let mut start = hist.iter().filter(|(ts, _)| *ts <= cut).last().copied();
+    if start.is_none() {
+        start = hist.first().copied();
+        if let (Some((a, _)), Some((b, _))) = (start, hist.last()) {
+            window_days = ((b - a) / 86_400_000).max(1);
+        }
+    }
     let end = hist.last().copied();
 
     // ① 近 30 日收益（回测月分布: 中位 +8~12% ✗ 最差 -8.7%）
@@ -584,18 +592,29 @@ pub fn scorecard(state: &LiveState, health: &crate::health::Health) -> Vec<serde
         None => (None, "unknown"),
     };
 
-    // ④ 回撤（回测最大 34% ✗ 超过就说明尾部更肥）
-    let (dd, s_dd) = match health.dd_pct {
-        Some(v) => {
-            let s = if v < 20.0 { "green" } else if v < 34.0 { "yellow" } else { "red" };
-            (Some(v), s)
+    // ④ 回撤（直接用调整后净值算 ✗ 不依赖 health 的样本门槛 ✓）
+    let (dd, s_dd) = {
+        let mut peak = f64::NEG_INFINITY;
+        let mut worst = 0.0f64;
+        for (_, eq) in hist.iter() {
+            let eq = *eq;
+            if eq > peak { peak = eq; }
+            if peak > 0.0 {
+                let cur = (peak - eq) / peak * 100.0;
+                if cur > worst { worst = cur; }
+            }
         }
-        None => (None, "unknown"),
+        if hist.len() < 2 {
+            (None, "unknown")
+        } else {
+            let s = if worst < 20.0 { "green" } else if worst < 34.0 { "yellow" } else { "red" };
+            (Some(worst), s)
+        }
     };
 
     vec![
-        serde_json::json!({"key":"ret30","name":"近 30 日收益","value":ret30,"unit":"%","status":s_ret,
-            "good":"≥ −9%（回测最差月 −8.7%）","bad":"< −20%"}),
+        serde_json::json!({"key":"ret30","name":"区间收益","value":ret30,"unit":"%","status":s_ret,
+            "good":format!("近 {} 天 · ≥ −9%（回测最差月 −8.7%）", window_days),"bad":"< −20%"}),
         serde_json::json!({"key":"gross","name":"毛收益 / 手续费","value":gross30,"unit":"%","status":s_gross,
             "fee":fee30,"good":"毛收益 ≥ 手续费 2 倍","bad":"毛收益 < 手续费"}),
         serde_json::json!({"key":"ic90","name":"90 日因子 IC","value":ic,"unit":"","status":s_ic,
