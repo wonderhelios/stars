@@ -500,6 +500,40 @@ pub struct LiveSnapshot {
     pub last_live: bool,
 }
 
+
+/// 把净值历史换算成【策略盈亏】（扣除基准本金与出入金 ✗）。
+///
+/// 服务端的按日/按月胜率原先直接比较原始净值 ✗ 一旦入金 ✗ 当天就会被算成
+/// 大赚日（实测入金 991 出现 +22% 的假上涨）✓ 这里统一扣掉 ✓
+/// 与前端 strategyHistory 的口径完全一致 ✓
+pub fn adjusted_history(state: &LiveState) -> Vec<(i64, f64)> {
+    let mut flows: Vec<(i64, f64)> = state
+        .capital_flows
+        .iter()
+        .filter(|f| f.amount.is_finite())
+        .map(|f| (f.effective_ts.unwrap_or(f.ts), f.amount))
+        .collect();
+    flows.sort_by_key(|(ts, _)| *ts);
+    let baseline = state.capital_baseline.as_ref().map(|b| b.equity).unwrap_or(0.0);
+    let mut out = Vec::with_capacity(state.history.len());
+    let mut i = 0usize;
+    let mut cash = 0.0f64;
+    let mut pts: Vec<_> = state
+        .history
+        .iter()
+        .filter(|p| p.equity.is_finite() && p.equity > 0.0)
+        .collect();
+    pts.sort_by_key(|p| p.ts);
+    for p in pts {
+        while i < flows.len() && flows[i].0 <= p.ts {
+            cash += flows[i].1;
+            i += 1;
+        }
+        out.push((p.ts, p.equity - baseline - cash));
+    }
+    out
+}
+
 /// Read-only view of the live account: positions, exposure and liquidation risk.
 pub async fn snapshot(
     state: &LiveState,
@@ -515,11 +549,10 @@ pub async fn snapshot(
     //    （pnl 来自交易所回执 ✗ 已含手续费 ✓ 但同一仓位可能分多次平 ✓ 是按笔不算按仓 ✗）
     let (wr_days, wr_months, wr_trades, n_days, n_months, n_trades) = {
         // 按日取最后一点
+        let adjusted = adjusted_history(state);
         let mut by_day: std::collections::BTreeMap<i64, f64> = std::collections::BTreeMap::new();
-        for p in state.history.iter() {
-            if p.equity.is_finite() && p.equity > 0.0 {
-                by_day.insert(p.ts / 86_400_000, p.equity);
-            }
+        for (ts, eq) in adjusted.iter() {
+            by_day.insert(ts / 86_400_000, *eq);
         }
         let days: Vec<f64> = by_day.values().copied().collect();
         let mut up_days = 0usize;
