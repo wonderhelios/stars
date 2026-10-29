@@ -577,7 +577,6 @@ pub fn index_history(state: &LiveState) -> Vec<(i64, f64)> {
 /// 每项都带 status: green / yellow / red / unknown（样本不足）。
 /// 阈值是在回测分布上定的 ✗ 不是拍脑袋 ✓
 pub fn scorecard(state: &LiveState, health: &crate::health::Health) -> Vec<serde_json::Value> {
-    let hist = adjusted_history(state);
     let idx = index_history(state);
     let now = now_ms_pub();
     let thirty = 30 * 86_400_000i64;
@@ -609,9 +608,20 @@ pub fn scorecard(state: &LiveState, health: &crate::health::Health) -> Vec<serde
         .filter(|r| r.live && r.ts >= (now - window_days * 86_400_000))
         .map(|r| r.notional.abs() * 0.00045)
         .sum();
+    // 手续费换算成"占本金的比例"：分母用【窗口内的平均净值】✗ 不能用指数 ✓
+    let avg_equity: f64 = {
+        let lo = now - window_days * 86_400_000;
+        let vals: Vec<f64> = state
+            .history
+            .iter()
+            .filter(|p| p.ts >= lo && p.equity.is_finite() && p.equity > 0.0)
+            .map(|p| p.equity)
+            .collect();
+        if vals.is_empty() { 0.0 } else { vals.iter().sum::<f64>() / vals.len() as f64 }
+    };
     let (gross30, s_gross) = match (ret30, end) {
-        (Some(net), Some((_, b))) if b > 1e-9 => {
-            let fee_pct = fee30 / b / hist.last().map(|x| x.1.abs().max(1.0)).unwrap_or(1.0) * 100.0;
+        (Some(net), Some(_)) if avg_equity > 1.0 => {
+            let fee_pct = fee30 / avg_equity * 100.0;
             let fee_pct = if fee_pct.is_finite() && fee_pct > 0.0 { fee_pct } else { 0.0 };
             let gross = net + fee_pct;
             let s = if gross >= fee_pct * 2.0 && gross > 0.0 {
