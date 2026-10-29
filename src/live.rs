@@ -770,7 +770,25 @@ pub async fn run(
     let mut vol_lines: Vec<String> = Vec::new();
     if cfg.vol_target > 0.0 {
         if let Some(vol) = book_vol_estimate(&panel, &weights, cfg.effective_leverage()) {
-            let k = (cfg.vol_target / vol).clamp(0.2, 3.0);
+            let mut k = (cfg.vol_target / vol).clamp(0.2, 3.0);
+            // 死区：与当前实际杠杆偏离不足 12% 就不动 ✗ 避免每天微调仓位付手续费 ✓
+            // （实盘 7 天成交额 37k ✗ 约 1.1 倍净值/天 ✗ 手续费漏损约 1.4%/月 ✓）
+            let current_lev = if acct0.equity > 0.0 {
+                acct0.positions.values().map(|p| p.position_value.abs()).sum::<f64>() / acct0.equity
+            } else {
+                0.0
+            };
+            if current_lev > 0.05 {
+                let target_lev = cfg.effective_leverage() * cfg.margin_buffer * k;
+                if (target_lev / current_lev - 1.0).abs() < 0.12 {
+                    let keep = current_lev / (cfg.effective_leverage() * cfg.margin_buffer);
+                    vol_lines.push(format!(
+                        "波动目标：目标杠杆 {:.2}x 与当前 {:.2}x 相差 <12% → 仓位不变（死区 ✗ 省手续费）",
+                        target_lev, current_lev
+                    ));
+                    k = keep.clamp(0.2, 3.0);
+                }
+            }
             for (_, w) in weights.iter_mut() {
                 *w *= k;
             }
