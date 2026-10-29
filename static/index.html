@@ -130,6 +130,12 @@
       .metric-unit { font-size:15px; font-weight:450; color:#82938f; }
       
       /* 五项健康指标 */
+      .score-metric { grid-column: 1 / -1; }
+      .score-body { display:flex; flex-direction:column; gap:2px; margin-top:6px; }
+      .score-row { display:grid; grid-template-columns:22px 1.4fr .9fr 1.5fr; align-items:center; gap:10px; padding:6px 0; border-top:1px solid var(--line); font-size:13px; }
+      .score-row:first-child { border-top:none; }
+      .score-val { font-weight:600; font-variant-numeric:tabular-nums; }
+      .score-hint { color:var(--muted); font-size:12px; }
       .score-card { border:1px solid var(--line); border-radius:14px; padding:14px 16px; margin-bottom:12px; background:#fff; }
       .score-title { font-size:12px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); margin-bottom:10px; }
       .score-row { display:grid; grid-template-columns:22px 1.3fr .9fr 1.6fr; align-items:center; gap:10px; padding:7px 0; border-top:1px solid var(--line); font-size:13px; }
