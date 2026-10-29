@@ -1705,12 +1705,17 @@ function arrangeMonitorSummary(id, shadow = false) {
       const dot = row.status === "green" ? "🟢" : row.status === "yellow" ? "🟡" : row.status === "red" ? "🔴" : "⚪";
       const tone = row.status === "green" ? "pos" : row.status === "yellow" ? "warn" : row.status === "red" ? "neg" : "";
       let val = "样本不足";
+      let hint = row.good || "";
       if (Number.isFinite(row.value)) {
         if (row.key === "ic90") val = row.value.toFixed(4);
-        else if (row.key === "gross") val = `${row.value >= 0 ? "+" : ""}${row.value.toFixed(2)}% / 费 ${Number(row.fee || 0).toFixed(0)}`;
         else val = `${row.value >= 0 ? "+" : ""}${row.value.toFixed(2)}%`;
+        if (row.key === "gross" && Number.isFinite(row.fee)) {
+          const fp = Number.isFinite(row.fee_pct) ? row.fee_pct.toFixed(2) + "%" : "—";
+          const net = Number.isFinite(row.net) ? `${row.net >= 0 ? "+" : ""}${row.net.toFixed(2)}%` : "—";
+          hint = `毛 ${val} = 净 ${net} + 手续费 ${fp}（$${row.fee.toFixed(0)}）`;
+        }
       }
-      return `<div class="score-row"><span>${dot}</span><span class="score-name">${escapeHTML(row.name || "")}</span><span class="score-val ${tone}">${escapeHTML(val)}</span><span class="score-hint">${escapeHTML(row.good || "")}</span></div>`;
+      return `<div class="score-row"><span>${dot}</span><span class="score-name">${escapeHTML(row.name || "")}</span><span class="score-val ${tone}">${escapeHTML(val)}</span><span class="score-hint">${escapeHTML(hint)}</span></div>`;
     }).join("");
     card.innerHTML = `<div class="k">策略健康度 · 五项指标</div><div class="score-body">${rows}</div>`;
     root.append(card);

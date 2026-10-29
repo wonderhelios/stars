@@ -619,7 +619,7 @@ pub fn scorecard(state: &LiveState, health: &crate::health::Health) -> Vec<serde
             .collect();
         if vals.is_empty() { 0.0 } else { vals.iter().sum::<f64>() / vals.len() as f64 }
     };
-    let (gross30, s_gross) = match (ret30, end) {
+    let (gross30, s_gross, fee_pct_out) = match (ret30, end) {
         (Some(net), Some(_)) if avg_equity > 1.0 => {
             let fee_pct = fee30 / avg_equity * 100.0;
             let fee_pct = if fee_pct.is_finite() && fee_pct > 0.0 { fee_pct } else { 0.0 };
@@ -631,9 +631,9 @@ pub fn scorecard(state: &LiveState, health: &crate::health::Health) -> Vec<serde
             } else {
                 "red"
             };
-            (Some(gross), s)
+            (Some(gross), s, Some(fee_pct))
         }
-        _ => (None, "unknown"),
+        _ => (None, "unknown", None),
     };
 
     // ③ 90 日 IC
@@ -668,7 +668,8 @@ pub fn scorecard(state: &LiveState, health: &crate::health::Health) -> Vec<serde
         serde_json::json!({"key":"ret30","name":"区间收益","value":ret30,"unit":"%","status":s_ret,
             "good":format!("近 {} 天 · ≥ −9%（回测最差月 −8.7%）", window_days),"bad":"< −20%"}),
         serde_json::json!({"key":"gross","name":"毛收益 / 手续费","value":gross30,"unit":"%","status":s_gross,
-            "fee":fee30,"good":"毛收益 ≥ 手续费 2 倍","bad":"毛收益 < 手续费"}),
+            "fee":fee30,"fee_pct":fee_pct_out,"net":ret30,
+            "good":"毛收益 ≥ 手续费 2 倍","bad":"毛收益 < 手续费"}),
         serde_json::json!({"key":"ic90","name":"90 日因子 IC","value":ic,"unit":"","status":s_ic,
             "good":"> 0.02","bad":"< 0.009"}),
         serde_json::json!({"key":"dd","name":"当前回撤","value":dd,"unit":"%","status":s_dd,
