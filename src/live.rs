@@ -535,29 +535,66 @@ pub fn adjusted_history(state: &LiveState) -> Vec<(i64, f64)> {
 }
 
 
+
+/// 净值指数序列（净值 ÷ 当时的净投入本金 ✗ 起点=1 ✓）。
+///
+/// 为什么不用"扣除出入金后的盈亏"直接算收益率：那个数可能是负的
+/// （现在就是 −$900）✗ 拿负数当分母算涨幅会得到 −23% 这种假数字 ✓
+/// 用指数就没有这个问题 ✓
+pub fn index_history(state: &LiveState) -> Vec<(i64, f64)> {
+    let mut flows: Vec<(i64, f64)> = state
+        .capital_flows
+        .iter()
+        .filter(|f| f.amount.is_finite())
+        .map(|f| (f.effective_ts.unwrap_or(f.ts), f.amount))
+        .collect();
+    flows.sort_by_key(|(ts, _)| *ts);
+    let base = state.capital_baseline.as_ref().map(|b| b.equity).unwrap_or(0.0);
+    let mut out = Vec::with_capacity(state.history.len());
+    let mut i = 0usize;
+    let mut cash = 0.0f64;
+    let mut pts: Vec<_> = state
+        .history
+        .iter()
+        .filter(|p| p.equity.is_finite() && p.equity > 0.0)
+        .collect();
+    pts.sort_by_key(|p| p.ts);
+    for p in pts {
+        while i < flows.len() && flows[i].0 <= p.ts {
+            cash += flows[i].1;
+            i += 1;
+        }
+        let principal = base + cash;
+        if principal > 1e-9 {
+            out.push((p.ts, p.equity / principal));
+        }
+    }
+    out
+}
+
 /// 五项健康指标（供前端红黄绿显示）。
 ///
 /// 每项都带 status: green / yellow / red / unknown（样本不足）。
 /// 阈值是在回测分布上定的 ✗ 不是拍脑袋 ✓
 pub fn scorecard(state: &LiveState, health: &crate::health::Health) -> Vec<serde_json::Value> {
     let hist = adjusted_history(state);
+    let idx = index_history(state);
     let now = now_ms_pub();
     let thirty = 30 * 86_400_000i64;
     let cut = now - thirty;
-    // 不足 30 天就用【全部可用区间】✗ 并标注天数 ✗ 而不是显示样本不足 ✓
     let mut window_days = 30i64;
-    let mut start = hist.iter().filter(|(ts, _)| *ts <= cut).last().copied();
+    let mut start = idx.iter().filter(|(ts, _)| *ts <= cut).last().copied();
     if start.is_none() {
-        start = hist.first().copied();
-        if let (Some((a, _)), Some((b, _))) = (start, hist.last()) {
+        start = idx.first().copied();
+        if let (Some((a, _)), Some((b, _))) = (start, idx.last()) {
             window_days = ((b - a) / 86_400_000).max(1);
         }
     }
-    let end = hist.last().copied();
+    let end = idx.last().copied();
 
-    // ① 近 30 日收益（回测月分布: 中位 +8~12% ✗ 最差 -8.7%）
+    // ① 区间收益 = 指数比值（指数=净值/本金 ✗ 起点为 1 ✓）
     let (ret30, s_ret) = match (start, end) {
-        (Some((_, a)), Some((_, b))) if a.abs() > 1e-9 => {
+        (Some((_, a)), Some((_, b))) if a > 1e-9 => {
             let r = (b / a - 1.0) * 100.0;
             let s = if r >= -9.0 { "green" } else if r >= -20.0 { "yellow" } else { "red" };
             (Some(r), s)
@@ -565,19 +602,25 @@ pub fn scorecard(state: &LiveState, health: &crate::health::Health) -> Vec<serde
         _ => (None, "unknown"),
     };
 
-    // ② 近 30 日毛收益 vs 手续费（手续费从成交回执累加 ✗ 毛 = 净 + 费）
+    // ② 毛收益 vs 手续费（同一区间 ✗ 毛 = 净 + 费）
     let fee30: f64 = state
         .records
         .iter()
-        .filter(|r| r.live && r.ts >= cut)
+        .filter(|r| r.live && r.ts >= (now - window_days * 86_400_000))
         .map(|r| r.notional.abs() * 0.00045)
         .sum();
-    let (gross30, s_gross) = match (start, end) {
-        (Some((_, a)), Some((_, b))) if a.abs() > 1e-9 => {
-            let net = (b - a) / a * 100.0;
-            let fee_pct = fee30 / a.abs() * 100.0;
+    let (gross30, s_gross) = match (ret30, end) {
+        (Some(net), Some((_, b))) if b > 1e-9 => {
+            let fee_pct = fee30 / b / hist.last().map(|x| x.1.abs().max(1.0)).unwrap_or(1.0) * 100.0;
+            let fee_pct = if fee_pct.is_finite() && fee_pct > 0.0 { fee_pct } else { 0.0 };
             let gross = net + fee_pct;
-            let s = if gross >= fee_pct * 2.0 { "green" } else if gross >= fee_pct { "yellow" } else { "red" };
+            let s = if gross >= fee_pct * 2.0 && gross > 0.0 {
+                "green"
+            } else if gross >= fee_pct || gross >= 0.0 {
+                "yellow"
+            } else {
+                "red"
+            };
             (Some(gross), s)
         }
         _ => (None, "unknown"),
@@ -592,19 +635,18 @@ pub fn scorecard(state: &LiveState, health: &crate::health::Health) -> Vec<serde
         None => (None, "unknown"),
     };
 
-    // ④ 回撤（直接用调整后净值算 ✗ 不依赖 health 的样本门槛 ✓）
+    // ④ 回撤（在【指数】上算 ✗ 指数永远为正 ✓）
     let (dd, s_dd) = {
         let mut peak = f64::NEG_INFINITY;
         let mut worst = 0.0f64;
-        for (_, eq) in hist.iter() {
-            let eq = *eq;
-            if eq > peak { peak = eq; }
+        for (_, v) in idx.iter() {
+            if *v > peak { peak = *v; }
             if peak > 0.0 {
-                let cur = (peak - eq) / peak * 100.0;
+                let cur = (peak - *v) / peak * 100.0;
                 if cur > worst { worst = cur; }
             }
         }
-        if hist.len() < 2 {
+        if idx.len() < 2 {
             (None, "unknown")
         } else {
             let s = if worst < 20.0 { "green" } else if worst < 34.0 { "yellow" } else { "red" };
