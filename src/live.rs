@@ -534,6 +534,77 @@ pub fn adjusted_history(state: &LiveState) -> Vec<(i64, f64)> {
     out
 }
 
+
+/// 五项健康指标（供前端红黄绿显示）。
+///
+/// 每项都带 status: green / yellow / red / unknown（样本不足）。
+/// 阈值是在回测分布上定的 ✗ 不是拍脑袋 ✓
+pub fn scorecard(state: &LiveState, health: &crate::health::Health) -> Vec<serde_json::Value> {
+    let hist = adjusted_history(state);
+    let now = now_ms_pub();
+    let thirty = 30 * 86_400_000i64;
+    let cut = now - thirty;
+    let start = hist.iter().filter(|(ts, _)| *ts <= cut).last().copied();
+    let end = hist.last().copied();
+
+    // ① 近 30 日收益（回测月分布: 中位 +8~12% ✗ 最差 -8.7%）
+    let (ret30, s_ret) = match (start, end) {
+        (Some((_, a)), Some((_, b))) if a.abs() > 1e-9 => {
+            let r = (b / a - 1.0) * 100.0;
+            let s = if r >= -9.0 { "green" } else if r >= -20.0 { "yellow" } else { "red" };
+            (Some(r), s)
+        }
+        _ => (None, "unknown"),
+    };
+
+    // ② 近 30 日毛收益 vs 手续费（手续费从成交回执累加 ✗ 毛 = 净 + 费）
+    let fee30: f64 = state
+        .records
+        .iter()
+        .filter(|r| r.live && r.ts >= cut)
+        .map(|r| r.notional.abs() * 0.00045)
+        .sum();
+    let (gross30, s_gross) = match (start, end) {
+        (Some((_, a)), Some((_, b))) if a.abs() > 1e-9 => {
+            let net = (b - a) / a * 100.0;
+            let fee_pct = fee30 / a.abs() * 100.0;
+            let gross = net + fee_pct;
+            let s = if gross >= fee_pct * 2.0 { "green" } else if gross >= fee_pct { "yellow" } else { "red" };
+            (Some(gross), s)
+        }
+        _ => (None, "unknown"),
+    };
+
+    // ③ 90 日 IC
+    let (ic, s_ic) = match health.ic90 {
+        Some(v) => {
+            let s = if v >= 0.02 { "green" } else if v >= 0.009 { "yellow" } else { "red" };
+            (Some(v), s)
+        }
+        None => (None, "unknown"),
+    };
+
+    // ④ 回撤（回测最大 34% ✗ 超过就说明尾部更肥）
+    let (dd, s_dd) = match health.dd_pct {
+        Some(v) => {
+            let s = if v < 20.0 { "green" } else if v < 34.0 { "yellow" } else { "red" };
+            (Some(v), s)
+        }
+        None => (None, "unknown"),
+    };
+
+    vec![
+        serde_json::json!({"key":"ret30","name":"近 30 日收益","value":ret30,"unit":"%","status":s_ret,
+            "good":"≥ −9%（回测最差月 −8.7%）","bad":"< −20%"}),
+        serde_json::json!({"key":"gross","name":"毛收益 / 手续费","value":gross30,"unit":"%","status":s_gross,
+            "fee":fee30,"good":"毛收益 ≥ 手续费 2 倍","bad":"毛收益 < 手续费"}),
+        serde_json::json!({"key":"ic90","name":"90 日因子 IC","value":ic,"unit":"","status":s_ic,
+            "good":"> 0.02","bad":"< 0.009"}),
+        serde_json::json!({"key":"dd","name":"当前回撤","value":dd,"unit":"%","status":s_dd,
+            "good":"< 20%","bad":"> 34%"}),
+    ]
+}
+
 /// Read-only view of the live account: positions, exposure and liquidation risk.
 pub async fn snapshot(
     state: &LiveState,

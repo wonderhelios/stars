@@ -669,7 +669,8 @@ async fn strategy_health(State(state): State<AppState>) -> Json<serde_json::Valu
         .collect();
     let hist: Vec<(i64, f64)> = {
         let st = state.live.lock().await;
-        st.history.iter().map(|p| (p.ts, p.equity)).collect()
+        // 用扣除出入金后的序列 ✗ 否则入金会被当成一段上涨 ✓
+        crate::live::adjusted_history(&st)
     };
     let h = crate::health::compute(&panel, &hist);
     Json(serde_json::json!(h))
@@ -723,7 +724,29 @@ async fn live_status(State(state): State<AppState>) -> Response {
         }
     }
     snap.shadow = shadow;
-    Json(json!(snap)).into_response()
+    // 五项健康指标（红黄绿）✗ 需要 IC/回撤 ✗ 从同一份面板和调整后净值算 ✓
+    let scorecard = {
+        let panel: Vec<PanelEntry> = state
+            .store
+            .all_panels()
+            .unwrap_or_default()
+            .into_iter()
+            .map(|(coin, candles)| PanelEntry { coin, candles })
+            .collect();
+        if panel.is_empty() {
+            Vec::new()
+        } else {
+            let st2 = state.live.lock().await;
+            let hist = crate::live::adjusted_history(&st2);
+            let h = crate::health::compute(&panel, &hist);
+            crate::live::scorecard(&st2, &h)
+        }
+    };
+    let mut v = json!(snap);
+    if let Some(obj) = v.as_object_mut() {
+        obj.insert("scorecard".into(), serde_json::Value::Array(scorecard));
+    }
+    Json(v).into_response()
 }
 
 #[derive(serde::Deserialize)]

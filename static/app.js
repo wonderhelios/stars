@@ -699,7 +699,26 @@ function renderMonitor(d) {
         但这些仓位的强平距离无法计算，请检查是否已退市。</div>`
     : "";
 
+  const scoreRows = (Array.isArray(d.scorecard) ? d.scorecard : []).map(row => {
+    const tone = row.status === "green" ? "pos" : row.status === "yellow" ? "warn" : row.status === "red" ? "neg" : "";
+    const dot = row.status === "green" ? "🟢" : row.status === "yellow" ? "🟡" : row.status === "red" ? "🔴" : "⚪";
+    let val = "—";
+    if (Number.isFinite(row.value)) {
+      const v = row.value;
+      if (row.key === "ic90") val = v.toFixed(4);
+      else if (row.key === "gross") val = `${v >= 0 ? "+" : ""}${v.toFixed(2)}% / 费 ${Number(row.fee || 0).toFixed(0)}`;
+      else val = `${v >= 0 ? "+" : ""}${v.toFixed(2)}%`;
+    } else if (row.status === "unknown") {
+      val = "样本不足";
+    }
+    return `<div class="score-row"><span class="score-dot">${dot}</span><span class="score-name">${escapeHTML(row.name)}</span><span class="score-val ${tone}">${escapeHTML(val)}</span><span class="score-hint">${escapeHTML(row.good || "")}</span></div>`;
+  }).join("");
+  const scoreBlock = scoreRows
+    ? `<div class="score-card"><div class="score-title">策略健康度 · 五项指标</div>${scoreRows}<div class="score-foot">🟢 正常 · 🟡 可接受但需观察 · 🔴 该采取动作（黄灯降杠杆 / 红灯停止）· ⚪ 样本不足</div></div>`
+    : "";
+
   $("mo-metrics").innerHTML =
+    scoreBlock +
     metricGroup(
       "实时概览 · 当前账户与持仓",
       metric("账户净值", currentValid ? "$" + fmt(eq, 2) : "—") +

@@ -128,6 +128,18 @@
 
       /* Monitor: positions, account history and execution use distinct scopes. */
       .metric-unit { font-size:15px; font-weight:450; color:#82938f; }
+      
+      /* 五项健康指标 */
+      .score-card { border:1px solid var(--line); border-radius:14px; padding:14px 16px; margin-bottom:12px; background:#fff; }
+      .score-title { font-size:12px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); margin-bottom:10px; }
+      .score-row { display:grid; grid-template-columns:22px 1.3fr .9fr 1.6fr; align-items:center; gap:10px; padding:7px 0; border-top:1px solid var(--line); font-size:13px; }
+      .score-row:first-of-type { border-top:none; }
+      .score-dot { font-size:12px; }
+      .score-val { font-weight:600; font-variant-numeric:tabular-nums; }
+      .score-hint { color:var(--muted); font-size:12px; }
+      .score-foot { margin-top:10px; color:var(--muted); font-size:11.5px; }
+      .pos { color:var(--pos); } .neg { color:var(--neg); } .warn { color:#b07d18; }
+
       .metric-footnote { font-size:11px; color:#728780; margin-top:20px; display:flex; align-items:center; gap:7px; }
       .live-dot { width:6px; height:6px; border-radius:50%; background:#168473; display:inline-block; flex-shrink:0; }
       .metric-definition { color:#7c8c96; font-size:11px; margin-top:20px; line-height:1.8; }
