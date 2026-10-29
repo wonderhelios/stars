@@ -736,6 +736,7 @@ struct CapitalBody {
 #[derive(serde::Deserialize)]
 struct LiveConfigBody {
     vol_target: Option<f64>,
+    vol_band: Option<f64>,
     position_stop_pct: Option<f64>,
     stop_cooldown_days: Option<i64>,
     account: Option<String>,
@@ -809,6 +810,9 @@ async fn live_config(
     if let Some(v) = body.momentum_weight {
         // 动量占比 0~1（量能占其余）。0.7 = 动量七成。
         c.momentum_weight = v.clamp(0.0, 1.0);
+    }
+    if let Some(v) = body.vol_band {
+        c.vol_band = v.clamp(0.0, 0.6);
     }
     if let Some(v) = body.vol_target {
         if !(0.0..=0.10).contains(&v) {

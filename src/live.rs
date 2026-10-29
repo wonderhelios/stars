@@ -41,6 +41,9 @@ pub struct LiveConfig {
     /// 每天按 目标/实际 缩放仓位 ✗ 波动大时减仓 ✗ 小时加仓 ✓
     #[serde(default = "d_vol_target")]
     pub vol_target: f64,
+    /// 波动目标的死区 ✗ 目标杠杆与当前杠杆偏离小于这个比例就不调仓 ✓（省手续费）
+    #[serde(default = "d_vol_band")]
+    pub vol_band: f64,
     /// 单币止损（0 = 关闭 ✗ 0.25 = 浮亏 25% 强制平 ✗）。
     #[serde(default = "d_stop_pct")]
     pub position_stop_pct: f64,
@@ -99,6 +102,7 @@ impl Default for LiveConfig {
             rebalance_slices: 3,
             momentum_weight: default_momentum_weight(),
             vol_target: d_vol_target(),
+            vol_band: d_vol_band(),
             position_stop_pct: d_stop_pct(),
             stop_cooldown_days: d_stop_cool(),
             armed: false,
@@ -182,6 +186,10 @@ pub struct LiveRecord {
     /// True when the order shrinks/closes a position (so the UI can label the
     /// row with the *position* direction rather than the order direction).
     pub reduce_only: bool,
+}
+
+fn d_vol_band() -> f64 {
+    0.20
 }
 
 fn d_vol_target() -> f64 {
@@ -778,13 +786,13 @@ pub async fn run(
             } else {
                 0.0
             };
-            if current_lev > 0.05 {
+            if current_lev > 0.05 && cfg.vol_band > 0.0 {
                 let target_lev = cfg.effective_leverage() * cfg.margin_buffer * k;
-                if (target_lev / current_lev - 1.0).abs() < 0.12 {
+                if (target_lev / current_lev - 1.0).abs() < cfg.vol_band {
                     let keep = current_lev / (cfg.effective_leverage() * cfg.margin_buffer);
                     vol_lines.push(format!(
-                        "波动目标：目标杠杆 {:.2}x 与当前 {:.2}x 相差 <12% → 仓位不变（死区 ✗ 省手续费）",
-                        target_lev, current_lev
+                        "波动目标：目标杠杆 {:.2}x 与当前 {:.2}x 相差 <{:.0}% → 仓位不变（死区 ✗ 省手续费）",
+                        target_lev, current_lev, cfg.vol_band * 100.0
                     ));
                     k = keep.clamp(0.2, 3.0);
                 }
