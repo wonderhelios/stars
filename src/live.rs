@@ -209,6 +209,11 @@ pub struct LiveState {
     /// 止损冷却：币 -> 解禁时间（毫秒 ✗）
     #[serde(default)]
     pub stop_cooldowns: std::collections::HashMap<String, i64>,
+    /// 上次调仓实际使用的波动目标缩放系数（0 = 还没用过 ✓）
+    /// 死区要跟它比 ✗ 不能跟"当前杠杆"比 —— 入金会让当前杠杆被动变小 ✗
+    /// 那样死区就会把新入金一直挡在门外 ✓
+    #[serde(default)]
+    pub vol_k: f64,
     #[serde(default)]
     pub capital_baseline: Option<CapitalBaseline>,
     pub config: LiveConfig,
@@ -718,6 +723,8 @@ pub struct RunResult {
     pub plan_lines: Vec<String>,
     /// 本次调仓使用的参考价，供上层持久化（止盈幅度相对它计算）。
     pub tp_ref: Option<HashMap<String, f64>>,
+    /// 本次实际使用的波动目标缩放系数（供上层持久化 ✗ 下次死区要用 ✓）
+    pub vol_k: Option<f64>,
     pub executed: Vec<String>,
     pub live: bool,
     /// 本次挂出的止盈单 oid，供上层写入状态（对账时标记「止盈成交」）。
@@ -776,27 +783,21 @@ pub async fn run(
     //   平均有效杠杆约 1.8x（波动大时自动减到 0.2x ✗ 小时加到 3x ✗）
     let mut weights = weights;
     let mut vol_lines: Vec<String> = Vec::new();
+    let mut applied_k: Option<f64> = None;
     if cfg.vol_target > 0.0 {
         if let Some(vol) = book_vol_estimate(&panel, &weights, cfg.effective_leverage()) {
             let mut k = (cfg.vol_target / vol).clamp(0.2, 3.0);
-            // 死区：与当前实际杠杆偏离不足 12% 就不动 ✗ 避免每天微调仓位付手续费 ✓
-            // （实盘 7 天成交额 37k ✗ 约 1.1 倍净值/天 ✗ 手续费漏损约 1.4%/月 ✓）
-            let current_lev = if acct0.equity > 0.0 {
-                acct0.positions.values().map(|p| p.position_value.abs()).sum::<f64>() / acct0.equity
-            } else {
-                0.0
-            };
-            if current_lev > 0.05 && cfg.vol_band > 0.0 {
-                let target_lev = cfg.effective_leverage() * cfg.margin_buffer * k;
-                if (target_lev / current_lev - 1.0).abs() < cfg.vol_band {
-                    let keep = current_lev / (cfg.effective_leverage() * cfg.margin_buffer);
-                    vol_lines.push(format!(
-                        "波动目标：目标杠杆 {:.2}x 与当前 {:.2}x 相差 <{:.0}% → 仓位不变（死区 ✗ 省手续费）",
-                        target_lev, current_lev, cfg.vol_band * 100.0
-                    ));
-                    k = keep.clamp(0.2, 3.0);
-                }
+            let prev_k = state.vol_k;
+            // 死区：跟【上次实际用的缩放系数】比 ✗ 不跟"当前杠杆"比 ✓
+            // 因为入金会让当前杠杆被动变小 ✗ 拿它做基准会一直挡住新资金 ✓
+            if prev_k > 0.0 && cfg.vol_band > 0.0 && (k / prev_k - 1.0).abs() < cfg.vol_band {
+                vol_lines.push(format!(
+                    "波动目标：新系数 {:.2} 与上次 {:.2} 相差 <{:.0}% → 沿用上次系数（死区 ✗ 省手续费）",
+                    k, prev_k, cfg.vol_band * 100.0
+                ));
+                k = prev_k;
             }
+            applied_k = Some(k);
             for (_, w) in weights.iter_mut() {
                 *w *= k;
             }
@@ -1073,6 +1074,7 @@ pub async fn run(
     Ok((
         RunResult {
             aborted,
+            vol_k: applied_k,
             equity: plan.equity,
             long_leg: plan.long_leg.clone(),
             short_leg: plan.short_leg.clone(),

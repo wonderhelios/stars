@@ -915,6 +915,12 @@ async fn live_run(State(state): State<AppState>, body: Option<Json<LiveRunBody>>
                 if let Some(r) = result.tp_ref.clone() {
                     g.tp_ref = r;
                 }
+                // 只有真实调仓才记录这次用的波动缩放系数（干跑不写 ✓）
+                if live {
+                    if let Some(k) = result.vol_k {
+                        g.vol_k = k;
+                    }
+                }
                 g.last_live = live;
                 if live {
                     g.records.extend(records);
