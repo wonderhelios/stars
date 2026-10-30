@@ -361,6 +361,10 @@ async fn main() -> anyhow::Result<()> {
                         guard.last_live = true;
                         guard.records.extend(records);
                         guard.tp_oids.extend(result.tp_oids.clone());
+                        // 记录本次实际用的波动缩放系数 ✗ 死区下次要用它做基准 ✓
+                        if let Some(k) = result.vol_k {
+                            guard.vol_k = k;
+                        }
                         guard.history.push(live::EquityPoint {
                             pnl: 0.0,
                             ts: now_ms(),
