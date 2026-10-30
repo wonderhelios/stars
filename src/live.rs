@@ -1266,6 +1266,27 @@ pub async fn run(
     ))
 }
 
+
+/// 用【当前持仓】算组合预估日波动（已含杠杆）✗ 供前端实时显示 ✓
+pub fn current_book_vol(
+    panel: &[crate::momentum::PanelEntry],
+    positions: &[(String, f64)], // (coin, 带符号名义占净值比例)
+) -> Option<f64> {
+    if positions.len() < 4 {
+        return None;
+    }
+    let total: f64 = positions.iter().map(|(_, w)| w.abs()).sum();
+    if total <= 1e-9 {
+        return None;
+    }
+    let scaled: Vec<(String, f64)> = positions
+        .iter()
+        .map(|(c, w)| (c.clone(), w / total))
+        .collect();
+    // Σ|w|=1 的组合波动 ✗ 再乘回总名义（因为 total 就是实际杠杆 ✓）
+    book_vol_estimate(panel, &scaled, total)
+}
+
 /// 用最近 20 个交易日的日收益估算「当前权重下」组合的日波动（已乘杠杆）。
 ///
 /// 不是用净值曲线（样本太短）✗ 而是直接用持仓币的历史日收益按权重加总 ✓

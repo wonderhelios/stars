@@ -742,9 +742,36 @@ async fn live_status(State(state): State<AppState>) -> Response {
             crate::live::scorecard(&st2, &h)
         }
     };
+    // 当前组合预估日波动（已含杠杆）✗ 就是波动目标看的那个数 ✓
+    let vol_now = {
+        let panel: Vec<PanelEntry> = state
+            .store
+            .all_panels()
+            .unwrap_or_default()
+            .into_iter()
+            .map(|(coin, candles)| PanelEntry { coin, candles })
+            .collect();
+        let positions: Vec<(String, f64)> = snap
+            .positions
+            .iter()
+            .filter(|p| p.notional.abs() > 0.0)
+            .map(|p| {
+                let w = if p.side == "long" { p.notional } else { -p.notional };
+                (p.coin.clone(), w / snap.equity.max(1e-9))
+            })
+            .collect();
+        crate::live::current_book_vol(&panel, &positions)
+    };
     let mut v = json!(snap);
     if let Some(obj) = v.as_object_mut() {
         obj.insert("scorecard".into(), serde_json::Value::Array(scorecard));
+        obj.insert(
+            "vol_now".into(),
+            serde_json::json!({
+                "pct": vol_now.map(|v| v * 100.0),
+                "target_pct": snap.config.vol_target * 100.0,
+            }),
+        );
     }
     Json(v).into_response()
 }
