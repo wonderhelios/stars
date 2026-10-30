@@ -1675,7 +1675,6 @@ function arrangeMonitorSummary(id, shadow = false) {
       cell("账户净值", usd(eq), "", pct ? `净投入收益率 ${Number(pct) >= 0 ? "+" : ""}${pct}` : "")
     );
     root.append(cell("本金（起点+入金）", usd(principal), "", `起点 ${usd(base)} · 入金 ${usd(dep)}`));
-    root.append(cell("已实现盈亏", money(realized), realized >= 0 ? "pos" : "neg", "含手续费 · 资金费"));
     root.append(cell("当前浮盈", money(unrl), unrl >= 0 ? "pos" : "neg", "还在场上 · 会变"));
     // 组合预估日波动（波动目标看的数 ✗ 高波动时会自动减仓 ✓）
     const vn = lastLiveData && lastLiveData.vol_now;
