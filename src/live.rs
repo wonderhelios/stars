@@ -542,35 +542,45 @@ pub fn adjusted_history(state: &LiveState) -> Vec<(i64, f64)> {
 /// （现在就是 −$900）✗ 拿负数当分母算涨幅会得到 −23% 这种假数字 ✓
 /// 用指数就没有这个问题 ✓
 pub fn index_history(state: &LiveState) -> Vec<(i64, f64)> {
-    let mut flows: Vec<(i64, f64)> = state
+    // 时间加权收益指数（TWR）✗ 起点 1.0 ✓
+    //
+    // 关键: 出入金那一步【跳过】✗ 不参与收益计算 ✓
+    // 之前用"净值÷本金"✗ 在亏损状态下会被入金虚增
+    //   （0.85 亏着的时候入 2,000 ✗ 比值会跳到 0.89 ✗ 假的 +4% ✓）
+    let mut flows: Vec<i64> = state
         .capital_flows
         .iter()
-        .filter(|f| f.amount.is_finite())
-        .map(|f| (f.effective_ts.unwrap_or(f.ts), f.amount))
+        .filter(|f| f.amount.is_finite() && f.amount != 0.0)
+        .map(|f| f.effective_ts.unwrap_or(f.ts))
         .collect();
-    flows.sort_by_key(|(ts, _)| *ts);
-    let base = state.capital_baseline.as_ref().map(|b| b.equity).unwrap_or(0.0);
-    let mut out = Vec::with_capacity(state.history.len());
-    let mut i = 0usize;
-    let mut cash = 0.0f64;
+    flows.sort_unstable();
     let mut pts: Vec<_> = state
         .history
         .iter()
         .filter(|p| p.equity.is_finite() && p.equity > 0.0)
         .collect();
     pts.sort_by_key(|p| p.ts);
+    let mut out = Vec::with_capacity(pts.len());
+    let mut idx = 1.0f64;
+    let mut prev: Option<f64> = None;
+    let mut fi = 0usize;
     for p in pts {
-        while i < flows.len() && flows[i].0 <= p.ts {
-            cash += flows[i].1;
-            i += 1;
+        let mut had_flow = false;
+        while fi < flows.len() && flows[fi] <= p.ts {
+            had_flow = true;
+            fi += 1;
         }
-        let principal = base + cash;
-        if principal > 1e-9 {
-            out.push((p.ts, p.equity / principal));
+        if let Some(pe) = prev {
+            if !had_flow && pe > 0.0 {
+                idx *= p.equity / pe;
+            }
         }
+        prev = Some(p.equity);
+        out.push((p.ts, idx));
     }
     out
 }
+
 
 /// 五项健康指标（供前端红黄绿显示）。
 ///
