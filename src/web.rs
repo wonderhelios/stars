@@ -107,6 +107,7 @@ pub fn router(state: AppState) -> Router {
         .route("/api/live/records/clear", post(live_records_clear))
         .route("/api/live/capital", post(live_capital))
         .route("/api/live/baseline", post(live_baseline))
+        .route("/api/live/reset-start", post(live_reset_start))
         .route("/api/live/capital/time", post(live_capital_time))
         .route("/api/live/capital/delete", post(live_capital_delete))
         .route("/api/capital", post(capital_alloc))
@@ -1068,6 +1069,57 @@ struct BaselineBody {
 }
 
 /// 恢复/修正「记录起点」。只改基准，不动持仓、记录和配置。
+/// 把记录起点重置到「现在」：归档旧状态 ✗ 清空历史/流水/成交回执 ✗
+/// 本金改为当前净值（所以战绩从 0 开始 ✓）
+///
+/// 注意: 这只是【记账口径】的重置 ✗ 账户里真实的钱一分没变 ✓
+/// 旧状态会先备份到 live-backup-<时间戳>.json ✓ 可恢复 ✓
+async fn live_reset_start(State(state): State<AppState>) -> Response {
+    let _gate = match state.exec_gate.try_lock() {
+        Ok(g) => g,
+        Err(_) => return (StatusCode::CONFLICT, Json(json!({"ok":false,"error":"订单操作正在执行，请稍后重试"}))).into_response(),
+    };
+    let mut st = state.live.lock().await;
+    let previous = st.clone();
+    // 当前净值：优先用最新记录点 ✗ 没有就用基准 ✓
+    let equity = st
+        .history
+        .last()
+        .map(|p| p.equity)
+        .or_else(|| st.capital_baseline.as_ref().map(|b| b.equity))
+        .unwrap_or(0.0);
+    if !(equity > 0.0) {
+        return (StatusCode::BAD_REQUEST, Json(json!({"ok":false,"error":"取不到当前净值，无法重置"}))).into_response();
+    }
+    // 归档
+    let stamp = crate::live::now_ms_pub();
+    let live_path: &std::path::Path = state.live_path.as_ref();
+    if let Ok(bytes) = std::fs::read(live_path) {
+        let dir = live_path.parent().unwrap_or(std::path::Path::new("."));
+        let _ = std::fs::write(dir.join(format!("live-backup-{stamp}.json")), bytes);
+    }
+    let now = crate::live::now_ms_pub();
+    st.capital_baseline = Some(crate::live::CapitalBaseline {
+        account: st.config.account.clone(),
+        equity,
+        ts: Some(now),
+        source: "重置记录起点（旧记录已归档）".into(),
+    });
+    st.history = vec![crate::live::EquityPoint { ts: now, equity, pnl: 0.0 }];
+    st.capital_flows.clear();
+    st.records.clear();
+    st.tp_oids.clear();
+    st.tp_ref.clear();
+    st.last_plan.clear();
+    st.vol_k = 0.0;
+    st.net_deposit = 0.0;
+    if let Err(e) = st.save(live_path) {
+        *st = previous;
+        return (StatusCode::INTERNAL_SERVER_ERROR, Json(json!({"ok":false,"error":format!("保存失败: {e:#}")}))).into_response();
+    }
+    Json(json!({"ok": true, "baseline_equity": equity, "ts": now})).into_response()
+}
+
 async fn live_baseline(State(state): State<AppState>, Json(body): Json<BaselineBody>) -> Response {
     if !body.equity.is_finite() || body.equity <= 0.0 || body.ts <= 0 {
         return (StatusCode::BAD_REQUEST, Json(json!({"ok": false, "error": "起点净值必须 > 0 且时间戳合法"}))).into_response();
