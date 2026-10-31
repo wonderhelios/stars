@@ -1674,7 +1674,7 @@ function arrangeMonitorSummary(id, shadow = false) {
     root.append(
       cell("账户净值", usd(eq), "", pct ? `净投入收益率 ${Number(pct) >= 0 ? "+" : ""}${pct}` : "")
     );
-    root.append(cell("本金（起点+入金）", usd(principal), "", `起点 ${usd(base)} · 入金 ${usd(dep)}`));
+    root.append(cell("本金", usd(principal)));
     root.append(cell("当前浮盈", money(unrl), unrl >= 0 ? "pos" : "neg"));
     // 组合预估日波动（波动目标看的数 ✗ 高波动时会自动减仓 ✓）
     const vn = lastLiveData && lastLiveData.vol_now;
@@ -1682,34 +1682,8 @@ function arrangeMonitorSummary(id, shadow = false) {
       const pct = vn.pct;
       const target = Number(vn.target_pct) || 2;
       const tone = pct > target * 1.5 ? "neg" : pct > target * 1.1 ? "warn" : "pos";
-      root.append(
-        cell(
-          "组合预估日波动",
-          pct.toFixed(2) + "%",
-          tone,
-          `目标 ${target.toFixed(1)}% · ${pct > target ? "偏高 ✗ 下次调仓会减仓" : "正常 ✓"}`
-        )
-      );
+      root.append(cell("组合预估日波动", pct.toFixed(2) + "%", tone));
     }
-  }
-  // 策略健康度
-  if (!shadow && lastHealth) {
-    const item = document.createElement("div");
-    item.className = "metric health-item";
-    const tone = lastHealth.status === "red" ? "neg" : lastHealth.status === "yellow" ? "" : "pos";
-    const label = lastHealth.status === "red" ? "异常" : lastHealth.status === "yellow" ? "注意" : "正常";
-    item.innerHTML =
-      '<div class="k">策略健康度</div>' +
-      `<div class="v ${tone}"><span class="health-dot ${lastHealth.status}"></span>${label}</div>`;
-    const bits = [];
-    if (lastHealth.ic90 != null) bits.push(`IC ${lastHealth.ic90.toFixed(3)}（90 日）`);
-    if (bits.length) {
-      const cap = document.createElement("span");
-      cap.className = "account-return";
-      cap.textContent = bits.join(" · ");
-      item.append(cap);
-    }
-    root.append(item);
   }
   // 五项健康指标（整个块占满一行 ✗ 红黄绿一眼可见 ✓）
   if (!shadow && lastLiveData && Array.isArray(lastLiveData.scorecard) && lastLiveData.scorecard.length) {
