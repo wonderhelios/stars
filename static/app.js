@@ -1675,7 +1675,7 @@ function arrangeMonitorSummary(id, shadow = false) {
       cell("账户净值", usd(eq), "", pct ? `净投入收益率 ${Number(pct) >= 0 ? "+" : ""}${pct}` : "")
     );
     root.append(cell("本金（起点+入金）", usd(principal), "", `起点 ${usd(base)} · 入金 ${usd(dep)}`));
-    root.append(cell("当前浮盈", money(unrl), unrl >= 0 ? "pos" : "neg", "还在场上 · 会变"));
+    root.append(cell("当前浮盈", money(unrl), unrl >= 0 ? "pos" : "neg"));
     // 组合预估日波动（波动目标看的数 ✗ 高波动时会自动减仓 ✓）
     const vn = lastLiveData && lastLiveData.vol_now;
     if (vn && Number.isFinite(vn.pct)) {
@@ -1722,6 +1722,7 @@ function arrangeMonitorSummary(id, shadow = false) {
       let hint = row.good || "";
       if (Number.isFinite(row.value)) {
         if (row.key === "ic90") val = row.value.toFixed(4);
+        else if (row.key === "dd") val = `${row.value.toFixed(2)}%`;
         else val = `${row.value >= 0 ? "+" : ""}${row.value.toFixed(2)}%`;
         if (row.key === "gross" && Number.isFinite(row.fee)) {
           const fp = Number.isFinite(row.fee_pct) ? row.fee_pct.toFixed(2) + "%" : "—";
@@ -1731,7 +1732,7 @@ function arrangeMonitorSummary(id, shadow = false) {
       }
       return `<div class="score-row"><span>${dot}</span><span class="score-name">${escapeHTML(row.name || "")}</span><span class="score-val ${tone}">${escapeHTML(val)}</span><span class="score-hint">${escapeHTML(hint)}</span></div>`;
     }).join("");
-    card.innerHTML = `<div class="k">策略健康度 · 五项指标</div><div class="score-body">${rows}</div>`;
+    card.innerHTML = `<div class="k">策略健康度</div><div class="score-body">${rows}</div>`;
     root.append(card);
   }
   // 兜底：如果整理后根节点什么都没有（比如 structure 变了 ✗）

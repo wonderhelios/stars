@@ -684,7 +684,7 @@ pub fn scorecard(state: &LiveState, health: &crate::health::Health) -> Vec<serde
         serde_json::json!({"key":"ic90","name":"90 日因子 IC","value":ic,"unit":"","status":s_ic,
             "good":"> 0.02","bad":"< 0.009"}),
         serde_json::json!({"key":"dd","name":"当前回撤","value":dd,"unit":"%","status":s_dd,
-            "good":"< 20%","bad":"> 34%"}),
+            "good":"越小越好 · < 20% 为健康","bad":"> 34%"}),
     ]
 }
 
