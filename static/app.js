@@ -1689,8 +1689,12 @@ function arrangeMonitorSummary(id, shadow = false) {
   if (!shadow && lastLiveData && Array.isArray(lastLiveData.scorecard) && lastLiveData.scorecard.length) {
     const card = document.createElement("div");
     card.className = "metric score-metric";
-    const rows = lastLiveData.scorecard.map((row) => {
-      const dot = row.status === "green" ? "🟢" : row.status === "yellow" ? "🟡" : row.status === "red" ? "🔴" : "⚪";
+    const scorecard = lastLiveData.scorecard;
+    const grossRow = scorecard.find((row) => row.key === "gross");
+    const rows = scorecard.filter((row) => row.key !== "gross").map((row) => {
+      const status = row.status || "unknown";
+      const stateLabel = status === "green" ? "正常" : status === "yellow" ? "关注" : status === "red" ? "异常" : "样本不足";
+      const dot = '<span class="score-dot ' + escapeHTML(status) + '" role="img" aria-label="' + stateLabel + '"></span>';
       const tone = row.status === "green" ? "pos" : row.status === "yellow" ? "warn" : row.status === "red" ? "neg" : "";
       let val = "样本不足";
       let hint = row.good || "";
@@ -1698,11 +1702,16 @@ function arrangeMonitorSummary(id, shadow = false) {
         if (row.key === "ic90") val = row.value.toFixed(4);
         else if (row.key === "dd") val = `${row.value.toFixed(2)}%`;
         else val = `${row.value >= 0 ? "+" : ""}${row.value.toFixed(2)}%`;
-        if (row.key === "gross" && Number.isFinite(row.fee)) {
-          const fp = Number.isFinite(row.fee_pct) ? row.fee_pct.toFixed(2) + "%" : "—";
-          const net = Number.isFinite(row.net) ? `${row.net >= 0 ? "+" : ""}${row.net.toFixed(2)}%` : "—";
-          hint = `毛 ${val} = 净 ${net} + 手续费 ${fp}（$${row.fee.toFixed(0)}）`;
-        }
+      }
+      // 毛收益只是净收益加回手续费，合并进区间收益说明，避免被误读成第二个收益指标。
+      if (row.key === "ret30" && grossRow && Number.isFinite(grossRow.value)) {
+        const gross = (grossRow.value >= 0 ? "+" : "−") + Math.abs(grossRow.value).toFixed(2) + "%";
+        const net = Number.isFinite(grossRow.net)
+          ? (grossRow.net >= 0 ? "+" : "−") + Math.abs(grossRow.net).toFixed(2) + "%"
+          : val;
+        const feePct = Number.isFinite(grossRow.fee_pct) ? grossRow.fee_pct.toFixed(2) + "%" : "—";
+        const feeUsd = Number.isFinite(grossRow.fee) ? "（$" + grossRow.fee.toFixed(0) + "）" : "";
+        hint = hint + " · 毛 " + gross + " = 净 " + net + " + 费用 " + feePct + feeUsd;
       }
       return `<div class="score-row"><span>${dot}</span><span class="score-name">${escapeHTML(row.name || "")}</span><span class="score-val ${tone}">${escapeHTML(val)}</span><span class="score-hint">${escapeHTML(hint)}</span></div>`;
     }).join("");
