@@ -430,6 +430,8 @@
       .health-dot.yellow { background:#c99a2e; box-shadow:0 0 0 3px rgba(201,154,46,.15); }
       .health-dot.red { background:var(--red); box-shadow:0 0 0 3px rgba(192,57,43,.15); }
       .health-item .account-return { color:var(--muted); margin-top:8px; line-height:1.5; max-width:22em; }
+      /* 账户概览容器本身没有网格定义 ✗ 导致 4 格挤在左边 ✓ 这里补上 ✓ */
+      .account-summary { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:8px 24px; }
       .account-summary>.metric { padding:0; border:0; border-radius:0; background:transparent; }
       .account-summary .k { font-size:12px; color:#687c86; margin-bottom:10px; }
       .account-summary .v { font-size:30px; font-weight:600; letter-spacing:-.9px; line-height:1.3; }
