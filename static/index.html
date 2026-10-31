@@ -434,6 +434,8 @@
       .health-item .account-return { color:var(--muted); margin-top:8px; line-height:1.5; max-width:22em; }
       /* 账户概览容器本身没有网格定义 ✗ 导致 4 格挤在左边 ✓ 这里补上 ✓ */
       .account-summary { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:8px 24px; }
+      /* The monitor summary renders four primary KPIs; don't reserve the old fifth slot. */
+      #mo-metrics.account-summary { grid-template-columns:repeat(4,minmax(0,1fr)); }
       .account-summary>.metric { padding:0; border:0; border-radius:0; background:transparent; }
       .account-summary .k { font-size:12px; color:#687c86; margin-bottom:10px; }
       .account-summary .v { font-size:30px; font-weight:600; letter-spacing:-.9px; line-height:1.3; }
@@ -459,6 +461,7 @@
         #mo-metrics,#sh-metrics { grid-template-columns:1fr 1fr; gap:18px; padding:16px 0 20px; }
         .account-summary>.metric:first-child { grid-column:1/-1; }
         #mo-metrics { grid-template-columns:1fr 1fr; }
+        #mo-metrics.account-summary { grid-template-columns:1fr 1fr; }
         .account-summary .v { font-size:24px; }
         .account-summary>.metric:first-child .v { font-size:36px; }
         .account-details { padding:0 14px; }
