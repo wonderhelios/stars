@@ -602,8 +602,9 @@ pub fn scorecard(state: &LiveState, health: &crate::health::Health) -> Vec<serde
     let end = idx.last().copied();
 
     // ① 区间收益 = 指数比值（指数=净值/本金 ✗ 起点为 1 ✓）
+    let enough = idx.len() >= 2;
     let (ret30, s_ret) = match (start, end) {
-        (Some((_, a)), Some((_, b))) if a > 1e-9 => {
+        (Some((_, a)), Some((_, b))) if enough && a > 1e-9 => {
             let r = (b / a - 1.0) * 100.0;
             let s = if r >= -9.0 { "green" } else if r >= -20.0 { "yellow" } else { "red" };
             (Some(r), s)
@@ -630,7 +631,7 @@ pub fn scorecard(state: &LiveState, health: &crate::health::Health) -> Vec<serde
         if vals.is_empty() { 0.0 } else { vals.iter().sum::<f64>() / vals.len() as f64 }
     };
     let (gross30, s_gross, fee_pct_out) = match (ret30, end) {
-        (Some(net), Some(_)) if avg_equity > 1.0 => {
+        (Some(net), Some(_)) if enough && avg_equity > 1.0 => {
             let fee_pct = fee30 / avg_equity * 100.0;
             let fee_pct = if fee_pct.is_finite() && fee_pct > 0.0 { fee_pct } else { 0.0 };
             let gross = net + fee_pct;
