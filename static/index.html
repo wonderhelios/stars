@@ -60,6 +60,8 @@
       .metric-group .metrics { grid-template-columns:repeat(4,minmax(0,1fr)); gap:20px; margin:0; }
       .metric-group:last-child .metrics { grid-template-columns:repeat(5,minmax(0,1fr)); }
       .metric { min-width:0; padding:18px 20px; border:1px solid var(--line); border-radius:12px; background:#fff; }
+      /* 账户概览只有 4 格 ✗ 用 auto-fit 让它们铺满整行（原来按 5 列留了空格 ✓） */
+      .metric-group.live-overview .metrics { grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:20px; }
       .metric-group .metric { border:none; border-radius:0; background:transparent; padding:0 20px 0 0; border-right:1px solid var(--line); }
       .metric-group .metric:last-child { border:none; padding-right:0; }
       .metric .k { color:var(--muted); font-size:11px; margin-bottom:6px; }
