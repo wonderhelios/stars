@@ -670,8 +670,9 @@ async fn strategy_health(State(state): State<AppState>) -> Json<serde_json::Valu
         .collect();
     let hist: Vec<(i64, f64)> = {
         let st = state.live.lock().await;
-        // 用扣除出入金后的序列 ✗ 否则入金会被当成一段上涨 ✓
-        crate::live::adjusted_history(&st)
+        // 用【时间加权指数】（起点 1.0 ✗ 跳过出入金那一步 ✓）
+        // 不能用"扣除出入金后的盈亏"✗ 那个是负数 ✗ 回撤会算出 122% 这种假数字 ✓
+        crate::live::index_history(&st)
     };
     let h = crate::health::compute(&panel, &hist);
     Json(serde_json::json!(h))
