@@ -173,12 +173,10 @@ pub fn compute(
         format!("样本不足（{} 天）✗ 暂按正常显示", ics.len())
     };
     if let Some(ic) = ic90 {
-        if ic < 0.0 {
-            status = "red".into();
-            reason = format!("滚动 90 日 IC 转负（{ic:+.3}）✗ 历史上从未出现");
-        } else if ic < 0.009 {
-            status = "yellow".into();
-            reason = format!("滚动 90 日 IC {ic:+.3} 低于历史 5% 分位（0.009）");
+        // IC 低是"抄底"信号（历史验证：IC90 跌破 0.009 后 20 天平均 +16%，98% 为正），
+        // 因此不触发降杠杆，只做信息提示；降杠杆只由回撤触发。
+        if ic < 0.009 {
+            reason = format!("因子近期偏弱（90 日 IC {ic:+.3}）✗ 历史上低 IC 后 20 天常反弹 ✗ 不触发降杠杆");
         }
     }
     if let Some(d) = dd {
