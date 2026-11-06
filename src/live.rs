@@ -534,7 +534,21 @@ pub fn adjusted_history(state: &LiveState) -> Vec<(i64, f64)> {
     out
 }
 
-
+/// 天序号（自 1970-01-01 起 ✗）→ 自然月序号（year*12 + month-1 ✓）。
+/// 用于"按自然月"胜率分组 ✗ 不能拿 day/30 近似（月边界会错到 4 号 ✗）。
+fn month_ordinal(day: i64) -> i64 {
+    // Howard Hinnant 的 civil_from_days ✗ 与 hlcarry::ymd_from_ms 同一套算法 ✓
+    let z = day + 719_468;
+    let era = if z >= 0 { z } else { z - 146_096 } / 146_097;
+    let doe = z - era * 146_097;
+    let yoe = (doe - doe / 1460 + doe / 36_524 - doe / 146_096) / 365;
+    let y = yoe + era * 400;
+    let doy = doe - (365 * yoe + yoe / 4 - yoe / 100);
+    let mp = (5 * doy + 2) / 153;
+    let m = if mp < 10 { mp + 3 } else { mp - 9 };
+    let y = if m <= 2 { y + 1 } else { y };
+    y * 12 + (m - 1)
+}
 
 /// 净值指数序列（净值 ÷ 当时的净投入本金 ✗ 起点=1 ✓）。
 ///
@@ -718,11 +732,10 @@ pub async fn snapshot(
         let n_days = days.len().saturating_sub(1);
         let wr_days = (n_days > 0).then(|| up_days as f64 / n_days as f64 * 100.0);
 
-        // 按月：每个自然月最后一个点
+        // 按月：每个自然月最后一个点（真实年月分组 ✗ 不用 30 天近似 ✓）
         let mut by_month: std::collections::BTreeMap<i64, f64> = std::collections::BTreeMap::new();
         for (&day, &eq) in by_day.iter() {
-            // 2024-01 起的月序号（用 30.44 天近似 ✗ 只为分组 ✗ 边界误差可接受）
-            by_month.insert(day / 30, eq);
+            by_month.insert(month_ordinal(day), eq);
         }
         let months: Vec<f64> = by_month.values().copied().collect();
         let mut up_months = 0usize;
@@ -2387,5 +2400,35 @@ mod fill_dedup_tests {
         assert!((r.size - 40.0).abs() < 1e-9, "数量应相加，实际 {}", r.size);
         // 每条 fill 的 closedPnl 都是 0.10 → 两条合并应得 0.20
         assert!((r.pnl.unwrap_or(0.0) - 0.2).abs() < 1e-9, "已实现应收拢，实际 {:?}", r.pnl);
+    }
+}
+
+#[cfg(test)]
+mod month_ordinal_tests {
+    use super::month_ordinal;
+
+    /// 1970-01-01 = day 0 → 月序号 1970*12 + 0
+    #[test]
+    fn epoch_is_month_zero() {
+        assert_eq!(month_ordinal(0), 1970 * 12);
+    }
+
+    /// 2026-10-31 与 2026-11-01 必须落在【相邻但不同】的两个月
+    /// （day/30 会把 11-01、11-02 错分到 10 月的桶里 ✗ 这就是要修的 bug）
+    #[test]
+    fn month_boundary_is_calendar_month() {
+        // 2026-10-31 00:00 UTC 的天序号（与 Python 独立核对：20757）
+        let d_oct31: i64 = 20_757;
+        assert_eq!(month_ordinal(d_oct31), 2026 * 12 + 9, "2026-10 应为 2026*12+9");
+        assert_eq!(month_ordinal(d_oct31 + 1), 2026 * 12 + 10, "2026-11-01 应进入 11 月");
+        assert_eq!(month_ordinal(d_oct31 + 2), 2026 * 12 + 10, "2026-11-02 仍在 11 月");
+    }
+
+    /// 跨年：2026-12-31 → 2027-01-01 月序号 +1 且年份进位
+    #[test]
+    fn year_rollover() {
+        let d = 20_818; // 2026-12-31（Python 核对：20818）
+        assert_eq!(month_ordinal(d), 2026 * 12 + 11);
+        assert_eq!(month_ordinal(d + 1), 2027 * 12 + 0);
     }
 }
