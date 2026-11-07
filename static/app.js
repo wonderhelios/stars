@@ -816,7 +816,9 @@ function renderMonitor(d) {
   const realized = parsed.realized;
   const slip = parsed.slip;
   const targetLev = (c.leverage || 0) * (c.margin_buffer || 1);
-  const actualLev = eq > 0 ? (d.gross_notional || 0) / eq : 0;
+  // ML tab 用 ML 子账户自己的总名义（d.gross_notional 是动量的）
+  const grossNow = isMl ? pos.reduce((sum, p) => sum + (Number.isFinite(p.notional) ? p.notional : 0), 0) : (d.gross_notional || 0);
+  const actualLev = eq > 0 ? grossNow / eq : 0;
   const nPos = pos.length;
   const nCross = nPos - (d.isolated_count || 0);
   const currentValid = !d.error && Number.isFinite(d.equity) && pos.every(p => Number.isFinite(p.unrealized));
@@ -896,6 +898,11 @@ function renderMonitor(d) {
         '三者都不是预测，只是对已发生记录的不同切法；样本很小时波动极大。</p></details>'
     );
 
+  // ML tab 只保留「实时概览」（其余组是动量的指标 ✗ 会误导）
+  if (isMl) {
+    const mgs = $("mo-metrics").querySelectorAll(".metric-group");
+    mgs.forEach((g, i) => { if (i > 0) g.remove(); });
+  }
   try {
     arrangeMonitorSummary("mo-metrics");
   } catch (e) {
@@ -965,7 +972,12 @@ function renderMonitor(d) {
   }
 
   renderExecDaily(d);
-  renderLiveChart(hist, d.shadow);
+  if (isMl) {
+    const chartEl = $("mo-chart");
+    if (chartEl) chartEl.innerHTML = '<div class="empty">ML 子账户历史不足（每天记录一个点 ✗ 跑几天后出现曲线）</div>';
+  } else {
+    renderLiveChart(hist, d.shadow);
+  }
 
   const chron = d.records || [];
   const hints = entryHints(chron);
