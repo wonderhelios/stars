@@ -638,16 +638,18 @@ function renderTotal(d) {
     return;
   }
   const total = mom + ml;
-  // 合计变化：用两个子账户合并历史的首尾算
-  const merged = mergeHistory(d.history || [], d.ml_history || []);
+  // 合计变化基准 = 两个子账户【各自的起始净值】之和（不能用合并首尾 ✗
+  // ML 的初始资金会被当成收益 ✗ 之前 +2962 就是这个 bug）
+  const aBase = (d.capital_baseline && Number.isFinite(d.capital_baseline.equity) && d.capital_baseline.equity > 0)
+    ? d.capital_baseline.equity : mom;
+  const mlH = d.ml_history || [];
+  const bBase = mlH.length && Number.isFinite(mlH[0].equity) ? mlH[0].equity : ml;
+  const baseTotal = aBase + bBase;
   let changeHtml = "";
-  if (merged.length >= 2) {
-    const first = merged[0].equity, last = merged[merged.length - 1].equity;
-    if (Number.isFinite(first) && Number.isFinite(last) && first > 0) {
-      const diff = last - first, pct = (diff / first) * 100;
-      const cls = diff >= 0 ? "pos" : "neg";
-      changeHtml = `<span class="total-change ${cls}">${moneySigned(diff)}（${pct >= 0 ? "+" : ""}${fmt(pct, 1)}%）</span>`;
-    }
+  if (baseTotal > 0) {
+    const diff = total - baseTotal, pct = (diff / baseTotal) * 100;
+    const cls = diff >= 0 ? "pos" : "neg";
+    changeHtml = `<span class="total-change ${cls}">${moneySigned(diff)}（${pct >= 0 ? "+" : ""}${fmt(pct, 1)}%）</span>`;
   }
   el.innerHTML = `
     <div class="total-card">
@@ -1832,7 +1834,7 @@ function arrangeMonitorSummary(id, shadow = false) {
     }
   }
   // 五项健康指标（整个块占满一行 ✗ 红黄绿一眼可见 ✓）
-  if (!shadow && lastLiveData && Array.isArray(lastLiveData.scorecard) && lastLiveData.scorecard.length) {
+  if (!shadow && currentStrategy !== 'ml' && lastLiveData && Array.isArray(lastLiveData.scorecard) && lastLiveData.scorecard.length) {
     const card = document.createElement("div");
     card.className = "metric score-metric";
     const scorecard = lastLiveData.scorecard;
