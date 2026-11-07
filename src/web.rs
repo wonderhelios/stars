@@ -571,14 +571,39 @@ async fn strategy_health(State(state): State<AppState>) -> Json<serde_json::Valu
 
 /// 调 ML 服务里的 Python 脚本，返回 stdout。脚本用绝对路径（ml/ 里的 BASE），
 /// 所以当前目录不重要，但 ml/ 目录必须在当前工作目录下（或脚本路径可解析）。
+/// 解析 ML 脚本路径：绝对路径直接用；相对路径先试 cwd，再试可执行文件往上几级目录。
+fn resolve_ml_script(cfg: &crate::live::LiveConfig, script: &str) -> String {
+    let dir = cfg.ml_dir.trim_end_matches('/');
+    if dir.is_empty() {
+        return script.to_string();
+    }
+    if dir.starts_with('/') {
+        return format!("{dir}/{script}");
+    }
+    let cwd_path = format!("{dir}/{script}");
+    if std::path::Path::new(&cwd_path).exists() {
+        return cwd_path;
+    }
+    if let Ok(exe) = std::env::current_exe() {
+        let mut cur = exe.parent().map(|p| p.to_path_buf());
+        for _ in 0..4 {
+            let Some(p) = cur else { break };
+            let cand = p.join(dir).join(script);
+            if cand.exists() {
+                return cand.to_string_lossy().to_string();
+            }
+            cur = p.parent().map(|x| x.to_path_buf());
+        }
+    }
+    cwd_path
+}
+
 async fn run_ml_python(
     cfg: &crate::live::LiveConfig,
     script: &str,
     extra: &[&str],
 ) -> anyhow::Result<String> {
-    // ml_dir 是绝对路径直接用；相对路径按工作目录解析。
-    let dir = cfg.ml_dir.trim_end_matches('/');
-    let path = if dir.is_empty() { script.to_string() } else { format!("{dir}/{script}") };
+    let path = resolve_ml_script(cfg, script);
     let cwd = std::env::current_dir().unwrap_or_default();
     let out = tokio::process::Command::new(&cfg.ml_python)
         .arg(&path)
@@ -843,11 +868,15 @@ async fn live_config(
         c.account = v.trim().to_string();
     }
     if let Some(v) = body.vault_address {
-        // 空串 = 清空子账户（回到主账户）
-        c.vault_address = if v.trim().is_empty() { None } else { Some(v.trim().to_string()) };
+        // 空串 = 清空子账户（回到主账户）。自动去 HL: 前缀（HL 网页复制常带）
+        let t = v.trim();
+        let t = t.strip_prefix("HL:").or_else(|| t.strip_prefix("hl:")).unwrap_or(t);
+        c.vault_address = if t.is_empty() { None } else { Some(t.to_string()) };
     }
     if let Some(v) = body.ml_vault_address {
-        c.ml_vault_address = if v.trim().is_empty() { None } else { Some(v.trim().to_string()) };
+        let t = v.trim();
+        let t = t.strip_prefix("HL:").or_else(|| t.strip_prefix("hl:")).unwrap_or(t);
+        c.ml_vault_address = if t.is_empty() { None } else { Some(t.to_string()) };
     }
     if let Some(v) = body.ml_python {
         if !v.trim().is_empty() {

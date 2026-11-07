@@ -82,6 +82,13 @@ pub struct Exec {
     account: Option<Address>,
 }
 
+/// 解析地址：容忍 "HL:0x..." 前缀（HL 网页复制常带 ✗ 直接 from_str 会失败）。
+fn parse_addr(s: &str) -> Result<Address> {
+    let t = s.trim();
+    let t = t.strip_prefix("HL:").or_else(|| t.strip_prefix("hl:")).unwrap_or(t);
+    Address::from_str(t).context("invalid HL_ACCOUNT_ADDRESS")
+}
+
 impl Exec {
     pub async fn signer_config(cfg: &crate::live::LiveConfig) -> Result<Self> {
         Self::signer(
@@ -133,7 +140,7 @@ impl Exec {
     /// Build with a shared client so connections are reused across requests.
     pub async fn reader_shared(http: reqwest::Client, account: Option<&str>) -> Result<Self> {
         let account = match account {
-            Some(a) => Some(Address::from_str(a).context("invalid HL_ACCOUNT_ADDRESS")?),
+            Some(a) => Some(parse_addr(a)?),
             None => None,
         };
         Ok(Self {
@@ -154,7 +161,7 @@ impl Exec {
             .timeout(Duration::from_secs(20))
             .build()?;
         let account = match account {
-            Some(a) => Some(Address::from_str(a).context("invalid HL_ACCOUNT_ADDRESS")?),
+            Some(a) => Some(parse_addr(a)?),
             None => None,
         };
         Ok(Self {
@@ -170,7 +177,7 @@ impl Exec {
         let http = reqwest::Client::builder()
             .timeout(Duration::from_secs(20))
             .build()?;
-        let address = Address::from_str(account).context("invalid account address")?;
+        let address = parse_addr(account).context("invalid account address")?;
         let key = std::fs::read_to_string(key_path)
             .with_context(|| format!("read {}", key_path.display()))?
             .trim()
@@ -182,7 +189,7 @@ impl Exec {
         );
         // 子账户地址（None = 主账户）
         let vault = vault_address
-            .map(|v| Address::from_str(v).context("invalid vault_address"))
+            .map(|v| parse_addr(v).context("invalid vault_address"))
             .transpose()?;
         let trading = tokio::time::timeout(
             Duration::from_secs(40),
