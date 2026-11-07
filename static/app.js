@@ -668,9 +668,6 @@ function bindStrategyTabs() {
     if (!btn) return;
     currentStrategy = btn.dataset.strategy;
     root.querySelectorAll('[data-strategy]').forEach(b => b.setAttribute('aria-pressed', b === btn ? 'true' : 'false'));
-    // ML tab 才显示「ML 计划调仓」栏
-    const bar = $('ml-plan-bar');
-    if (bar) bar.hidden = currentStrategy !== 'ml';
     if (lastLiveData) renderMonitor(lastLiveData);
   };
 }
@@ -705,8 +702,6 @@ function renderMlPlan(view, d) {
       <p class="sub" style="margin:0 0 10px">目标持仓：做多 <b>${(pred.long || []).join(', ')}</b> · 做空 <b>${(pred.short || []).join(', ')}</b></p>
       ${orders.length ? `<div class="table-scroll"><table><thead><tr><th>币</th><th>方向</th><th>数量</th><th>价格</th></tr></thead><tbody>${rows}</tbody></table></div>` : '<div class="empty">当前已符合目标，无需调仓</div>'}
     </div>`;
-  const btn = $('ml-execute-btn');
-  if (btn) btn.hidden = orders.length === 0;
 }
 
 async function mlExecute() {
@@ -1126,10 +1121,22 @@ function renderLiveChart(history, shadow) {
   const el = $("mo-chart");
   const now = Date.now();
   const observations = [...(history || [])];
+  // 「全部账户」曲线：当前点用 A+B 合计，基准也用 A+B 合计（否则 ML 的初始资金会被当收益）
+  const isAll = currentStrategy === 'all';
+  const mlAccC = lastLiveData && lastLiveData.ml_account && !lastLiveData.ml_account.error ? lastLiveData.ml_account : null;
   if (lastLiveData && !lastLiveData.error && Number.isFinite(lastLiveData.equity) && liveFetchedAt > 0) {
-    observations.push({ ts: liveFetchedAt, equity: lastLiveData.equity });
+    const curEq = (isAll && mlAccC && Number.isFinite(mlAccC.equity))
+      ? lastLiveData.equity + mlAccC.equity
+      : lastLiveData.equity;
+    observations.push({ ts: liveFetchedAt, equity: curEq });
   }
-  const adjusted = strategyHistory(observations, lastLiveData || {});
+  let ldForBaseline = lastLiveData || {};
+  if (isAll && mlAccC) {
+    const aBase = (lastLiveData.capital_baseline || {}).equity || 0;
+    const bBase = ((lastLiveData.ml_history || [])[0] || {}).equity || 0;
+    ldForBaseline = { ...lastLiveData, capital_baseline: { ...(lastLiveData.capital_baseline || {}), equity: aBase + bBase } };
+  }
+  const adjusted = strategyHistory(observations, ldForBaseline);
   if (adjusted.error) { el.innerHTML = `<div class="empty">${escapeHTML(adjusted.error)}</div>`; return; }
   const { raw, points } = equityWindow(adjusted.history, chartRange, now);
   const names = { day: "最近 24 小时", week: "最近 7 天", month: "最近 30 天", all: "全部留存记录" };
@@ -1831,8 +1838,21 @@ function arrangeMonitorSummary(id, shadow = false) {
       return item;
     };
     const pct = principal > 0 ? ((eq / principal - 1) * 100).toFixed(2) + "%" : "";
-    // ML tab：显示 ML 子账户自己的净值/浮盈/持仓（不能显示动量的 $4,500）
     const mlAcc2 = ld.ml_account && !ld.ml_account.error ? ld.ml_account : null;
+    // 「全部账户」：显示 A + B 合计（本金 = A 的基准 + B 的起始）
+    if (currentStrategy === 'all' && mlAcc2) {
+      const mlEq = Number.isFinite(mlAcc2.equity) ? mlAcc2.equity : 0;
+      const mlBase = ((ld.ml_history || [])[0] || {}).equity || 0;
+      const eqAll = eq + mlEq;
+      const principalAll = base + mlBase;
+      const unrlAll = unrl + (mlAcc2.positions || []).reduce((s2, p2) => s2 + (Number.isFinite(p2.unrealized) ? p2.unrealized : 0), 0);
+      const pctAll = principalAll > 0 ? ((eqAll / principalAll - 1) * 100).toFixed(2) + "%" : "";
+      root.append(cell("全部账户净值", usd(eqAll), "", pctAll ? `合计收益率 ${Number(pctAll) >= 0 ? "+" : ""}${pctAll}` : ""));
+      root.append(cell("合计本金", usd(principalAll)));
+      root.append(cell("当前浮盈", money(unrlAll), unrlAll >= 0 ? "pos" : "neg"));
+      return;
+    }
+    // ML tab：显示 ML 子账户自己的净值/浮盈/持仓（不能显示动量的 $4,500）
     if (currentStrategy === 'ml' && mlAcc2) {
       const eqMl = Number.isFinite(mlAcc2.equity) ? mlAcc2.equity : 0;
       const unrlMl = (mlAcc2.positions || []).reduce((s2, p2) => s2 + (Number.isFinite(p2.unrealized) ? p2.unrealized : 0), 0);
