@@ -16,6 +16,7 @@ BASE = Path(__file__).resolve().parent
 import json
 import math
 import urllib.request
+import urllib.error
 import time
 import datetime
 import sys
@@ -31,10 +32,27 @@ INFO_URL = "https://api.hyperliquid.xyz/info"
 EXCHANGE_URL = "https://api.hyperliquid.xyz/exchange"
 
 
-def info_post(body):
+def info_post(body, retries=6):
+    """HL info 接口（官方限流 ~1200 次/分钟/IP ✗ 429 时指数退避重试）。"""
     req = urllib.request.Request(INFO_URL, data=json.dumps(body).encode(),
                                  headers={"Content-Type": "application/json"})
-    return json.load(urllib.request.urlopen(req, timeout=30))
+    last = None
+    for attempt in range(retries):
+        try:
+            return json.load(urllib.request.urlopen(req, timeout=30))
+        except urllib.error.HTTPError as e:
+            last = e
+            if e.code == 429:
+                wait = min(60, 5 * (2 ** attempt))  # 5, 10, 20, 40, 60, 60 秒
+                print(f"[place] info 限流 429 ✗ 等 {wait}s 重试（{attempt+1}/{retries}）",
+                      file=sys.stderr, flush=True)
+                time.sleep(wait)
+                continue
+            raise
+        except Exception as e:
+            last = e
+            time.sleep(2)
+    raise last
 
 
 def meta_index():
@@ -87,22 +105,36 @@ def sign_l1_action(wallet_priv: str, action: dict, nonce: int, vault_address: st
     }
 
 
-def exchange_post(wallet_priv: str, action: dict, vault_address: str | None):
-    nonce = int(time.time() * 1000)
-    signature = sign_l1_action(wallet_priv, action, nonce, vault_address)
-    payload = {
-        "action": action,
-        "nonce": nonce,
-        "signature": signature,
-    }
-    if vault_address:
-        payload["vaultAddress"] = vault_address
-    req = urllib.request.Request(
-        EXCHANGE_URL,
-        data=json.dumps(payload).encode(),
-        headers={"Content-Type": "application/json"},
-    )
-    return json.load(urllib.request.urlopen(req, timeout=30))
+def exchange_post(wallet_priv: str, action: dict, vault_address: str | None, retries=4):
+    """下单接口（429 时重新签名 + 新 nonce 重试 ✗ nonce 必须单调递增）。"""
+    last = None
+    for attempt in range(retries):
+        nonce = int(time.time() * 1000)
+        signature = sign_l1_action(wallet_priv, action, nonce, vault_address)
+        payload = {
+            "action": action,
+            "nonce": nonce,
+            "signature": signature,
+        }
+        if vault_address:
+            payload["vaultAddress"] = vault_address
+        req = urllib.request.Request(
+            EXCHANGE_URL,
+            data=json.dumps(payload).encode(),
+            headers={"Content-Type": "application/json"},
+        )
+        try:
+            return json.load(urllib.request.urlopen(req, timeout=30))
+        except urllib.error.HTTPError as e:
+            last = e
+            if e.code == 429:
+                wait = min(60, 5 * (2 ** attempt))
+                print(f"[place] 下单限流 429 ✗ 等 {wait}s 重试（{attempt+1}/{retries}）",
+                      file=sys.stderr, flush=True)
+                time.sleep(wait)
+                continue
+            raise
+    raise last
 
 
 def current_positions(vault_address: str):
