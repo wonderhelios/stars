@@ -1,7 +1,9 @@
-"""拉 Hyperliquid 日线 OHLCV（2023-04 起）→ ml/data/hl2/。"""
+"""拉 Hyperliquid 日线 OHLCV（2023-04 起）→ ml/data/hl2/。
+并发版：235 币 16 线程并发拉，比串行快很多。"""
 from pathlib import Path
 BASE = Path(__file__).resolve().parent
 import json, urllib.request, time, datetime, os
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 def post(url, body):
     req = urllib.request.Request(url, data=json.dumps(body).encode(),
@@ -18,24 +20,31 @@ meta = post("https://api.hyperliquid.xyz/info", {"type": "metaAndAssetCtxs"})
 universe = [m['name'] for m in meta[0]['universe'] if ':' not in m['name']]
 print(f"宇宙 {len(universe)} 币", flush=True)
 
-end = int(datetime.datetime.utcnow().timestamp() * 1000)
+end = int(datetime.datetime.now(datetime.UTC).timestamp() * 1000)
 start = int(datetime.datetime(2023, 4, 1).timestamp() * 1000)
 out_dir = BASE / 'data' / 'hl2'
 os.makedirs(out_dir, exist_ok=True)
 
-cnt = 0
-for c in universe:
-    p = str(out_dir / f'{c}.json')
+def fetch_one(c):
     try:
         cs = post("https://api.hyperliquid.xyz/info",
                   {"type": "candleSnapshot", "req": {"coin": c, "interval": "1d",
                                                      "startTime": start, "endTime": end}})
         if cs:
-            json.dump(cs, open(p, 'w'))
-            cnt += 1
+            json.dump(cs, open(str(out_dir / f'{c}.json'), 'w'))
+            return True
     except Exception:
         pass
-    if cnt % 30 == 0:
-        print(f"  {cnt}/{len(universe)}", flush=True)
-    time.sleep(0.04)
+    return False
+
+cnt = 0
+with ThreadPoolExecutor(max_workers=16) as ex:
+    futs = {ex.submit(fetch_one, c): c for c in universe}
+    done = 0
+    for f in as_completed(futs):
+        done += 1
+        if f.result():
+            cnt += 1
+        if done % 20 == 0:
+            print(f"  {done}/{len(universe)}（成功 {cnt}）", flush=True)
 print(f"完成 {cnt} 币", flush=True)
