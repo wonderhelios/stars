@@ -967,12 +967,7 @@ function renderMonitor(d) {
   }
 
   renderExecDaily(d);
-  if (isMl) {
-    const chartEl = $("mo-chart");
-    if (chartEl) chartEl.innerHTML = '<div class="empty">ML 子账户历史不足（每天记录一个点 ✗ 跑几天后出现曲线）</div>';
-  } else {
-    renderLiveChart(hist, d.shadow);
-  }
+  renderMonitorChart(d);
 
   const chron = d.records || [];
   const hints = entryHints(chron);
@@ -1119,6 +1114,28 @@ function mergeHistory(a, b) {
   });
 }
 
+// 根据当前策略 tab 取曲线数据：all = A+B 合并，ml = ML，momentum = 动量
+function liveHist(d) {
+  if (!d) return [];
+  const mlHist = d.ml_history || [];
+  const isMl = currentStrategy === 'ml' && d.ml_account && !d.ml_account.error;
+  if (currentStrategy === 'all') return mergeHistory(d.history || [], mlHist);
+  if (isMl) return mlHist;
+  return d.history || [];
+}
+
+// 统一渲染监控曲线（切换周期 / 数据刷新都走这里 ✗ 避免用错 hist）
+function renderMonitorChart(d) {
+  if (!d) return;
+  const isMl = currentStrategy === 'ml' && d.ml_account && !d.ml_account.error;
+  if (isMl) {
+    const chartEl = $("mo-chart");
+    if (chartEl) chartEl.innerHTML = '<div class="empty">ML 子账户历史不足（每天记录一个点 ✗ 跑几天后出现曲线）</div>';
+    return;
+  }
+  renderLiveChart(liveHist(d), d.shadow);
+}
+
 function renderLiveChart(history, shadow) {
   const el = $("mo-chart");
   const now = Date.now();
@@ -1215,7 +1232,7 @@ $("mo-chart-tabs").addEventListener("click", event => {
   if (!button) return;
   chartRange = button.dataset.range;
   $("mo-chart-tabs").querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", String(b === button)));
-  if (lastLiveData) renderLiveChart(lastLiveData.history, lastLiveData.shadow);
+  if (lastLiveData) renderMonitorChart(lastLiveData);
 });
 $("mo-record-tabs").addEventListener("click", event => {
   const button = event.target.closest("button[data-scope]");
@@ -1769,7 +1786,7 @@ if (typeof ResizeObserver !== "undefined") {
       const width = Math.round(contentRect.width);
       if (!width || chartWidths.get(target) === width) continue;
       chartWidths.set(target, width);
-      if (target.id === "mo-chart" && lastLiveData) renderLiveChart(lastLiveData.history, lastLiveData.shadow);
+      if (target.id === "mo-chart" && lastLiveData) renderMonitorChart(lastLiveData);
       if (target.id === "sh-chart" && lastShadowData) renderShadow(lastShadowData);
       if (target.id === "cy-chart" && lastCarryData) renderEquityChart("cy-chart", lastCarryData.history || [], "纸面 carry 权益曲线");
       if (target.id === "xp-chart" && lastXData) renderEquityChart("xp-chart", lastXData.history || [], "跨所价差纸面权益曲线");
