@@ -677,13 +677,33 @@ function bindStrategyTabs() {
 }
 
 // ML 计划调仓：拉取 predict 的目标持仓 + place 的下单指令（dry-run）
+// 安全的 JSON 请求：空响应/非 JSON 给出可读错误，而不是 "Unexpected end of JSON input"
+async function fetchJsonSafe(url, opts = {}, timeoutMs = 300000) {
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), timeoutMs);
+  try {
+    const res = await fetch(url, { ...opts, signal: ctrl.signal });
+    const text = await res.text();
+    if (!text) throw new Error(`空响应（HTTP ${res.status}）✗ 可能后端超时或中断`);
+    try {
+      return JSON.parse(text);
+    } catch {
+      throw new Error(`非 JSON 响应（HTTP ${res.status}）: ${text.slice(0, 200)}`);
+    }
+  } catch (e) {
+    if (e.name === 'AbortError') throw new Error(`请求超时（${Math.round(timeoutMs/1000)}s）`);
+    throw e;
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 async function mlPlan() {
   const view = $('ml-plan-view');
   if (!view) return;
   view.innerHTML = '<div class="empty">正在计算 ML 计划调仓…</div>';
   try {
-    const res = await fetch("/api/ml/plan", { cache: "no-store" });
-    const d = await res.json();
+    const d = await fetchJsonSafe("/api/ml/plan", { cache: "no-store" }, 120000);
     if (!d.ok) { view.innerHTML = `<div class="note neg">${escapeHTML(d.error || '失败')}</div>`; return; }
     renderMlPlan(view, d);
   } catch (e) {
@@ -713,8 +733,7 @@ async function mlExecute() {
   const btn = $('ml-execute-btn');
   if (btn) { btn.disabled = true; btn.textContent = '执行中…'; }
   try {
-    const res = await fetch("/api/ml/execute", { method: "POST" });
-    const d = await res.json();
+    const d = await fetchJsonSafe("/api/ml/execute", { method: "POST" }, 300000);
     if (view) view.innerHTML = d.ok
       ? `<div class="note ok">✅ ML 调仓已提交：${escapeHTML(JSON.stringify(d.result))}</div>`
       : `<div class="note neg">${escapeHTML(d.error || '失败')}</div>`;

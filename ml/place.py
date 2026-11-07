@@ -32,7 +32,7 @@ INFO_URL = "https://api.hyperliquid.xyz/info"
 EXCHANGE_URL = "https://api.hyperliquid.xyz/exchange"
 
 
-def info_post(body, retries=6):
+def info_post(body, retries=3):
     """HL info 接口（官方限流 ~1200 次/分钟/IP ✗ 429 时指数退避重试）。"""
     req = urllib.request.Request(INFO_URL, data=json.dumps(body).encode(),
                                  headers={"Content-Type": "application/json"})
@@ -43,7 +43,7 @@ def info_post(body, retries=6):
         except urllib.error.HTTPError as e:
             last = e
             if e.code == 429:
-                wait = min(60, 5 * (2 ** attempt))  # 5, 10, 20, 40, 60, 60 秒
+                wait = min(30, 5 * (2 ** attempt))  # 5, 10, 20 秒
                 print(f"[place] info 限流 429 ✗ 等 {wait}s 重试（{attempt+1}/{retries}）",
                       file=sys.stderr, flush=True)
                 time.sleep(wait)
@@ -106,7 +106,7 @@ def sign_l1_action(wallet_priv: str, action: dict, nonce: int, vault_address: st
     }
 
 
-def exchange_post(wallet_priv: str, action: dict, vault_address: str | None, retries=4):
+def exchange_post(wallet_priv: str, action: dict, vault_address: str | None, retries=3):
     """下单接口（429 时重新签名 + 新 nonce 重试 ✗ nonce 必须单调递增）。"""
     last = None
     for attempt in range(retries):
@@ -129,7 +129,7 @@ def exchange_post(wallet_priv: str, action: dict, vault_address: str | None, ret
         except urllib.error.HTTPError as e:
             last = e
             if e.code == 429:
-                wait = min(60, 5 * (2 ** attempt))
+                wait = min(30, 5 * (2 ** attempt))
                 print(f"[place] 下单限流 429 ✗ 等 {wait}s 重试（{attempt+1}/{retries}）",
                       file=sys.stderr, flush=True)
                 time.sleep(wait)
