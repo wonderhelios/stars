@@ -1,8 +1,8 @@
-"""下载 OI 月度 parquet（2023-04 ~ 2026-11）→ ml/data/hl_oi/。
-并发版：8 线程并发下载。"""
+"""下载 OI 月度 parquet → ml/data/hl_oi/。
+增量：跳过已存在的月（除了当前月要重拉，因为可能还没写完）。"""
 from pathlib import Path
 BASE = Path(__file__).resolve().parent
-import urllib.request, os
+import urllib.request, os, datetime
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 out_dir = BASE / 'data' / 'hl_oi'
@@ -17,9 +17,14 @@ for y in (2023, 2024, 2025, 2026):
             continue
         months.append(f"{y}-{m:02d}")
 
+# 当前月（数据可能不完整，重拉）
+now = datetime.datetime.now(datetime.UTC)
+current_month = f"{now.year}-{now.month:02d}"
+
 def fetch(mm):
     fp = str(out_dir / f'{mm}.parquet')
-    if os.path.exists(fp) and os.path.getsize(fp) > 10000:
+    # 已存在的月跳过（当前月除外）
+    if mm != current_month and os.path.exists(fp) and os.path.getsize(fp) > 10000:
         return mm, "已存在"
     url = f'https://www.getopendata.io/v1/hyperliquid/perps/oi/1h/{mm}.parquet'
     try:

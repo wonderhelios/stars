@@ -1,5 +1,5 @@
-"""拉 Hyperliquid 日线 OHLCV（2023-04 起）→ ml/data/hl2/。
-并发版：235 币 16 线程并发拉，比串行快很多。"""
+"""拉 Hyperliquid 日线 OHLCV → ml/data/hl2/。
+增量：已有数据只拉最后日期之后的新数据，合并去重；无数据才全量。"""
 from pathlib import Path
 BASE = Path(__file__).resolve().parent
 import json, urllib.request, time, datetime, os
@@ -21,21 +21,34 @@ universe = [m['name'] for m in meta[0]['universe'] if ':' not in m['name']]
 print(f"宇宙 {len(universe)} 币", flush=True)
 
 end = int(datetime.datetime.now(datetime.UTC).timestamp() * 1000)
-start = int(datetime.datetime(2023, 4, 1).timestamp() * 1000)
+full_start = int(datetime.datetime(2023, 4, 1).timestamp() * 1000)
 out_dir = BASE / 'data' / 'hl2'
 os.makedirs(out_dir, exist_ok=True)
 
 def fetch_one(c):
-    try:
-        cs = post("https://api.hyperliquid.xyz/info",
-                  {"type": "candleSnapshot", "req": {"coin": c, "interval": "1d",
-                                                     "startTime": start, "endTime": end}})
-        if cs:
-            json.dump(cs, open(str(out_dir / f'{c}.json'), 'w'))
-            return True
-    except Exception:
-        pass
-    return False
+    p = str(out_dir / f'{c}.json')
+    existing = []
+    if os.path.exists(p):
+        try:
+            existing = json.load(open(p))
+        except Exception:
+            existing = []
+    last_t = max((int(x['t']) for x in existing), default=0)
+    # 增量：从最后一天之后拉；保留 2 天重叠（防漏）
+    req_start = max(full_start, last_t - 2 * 86400000) if existing else full_start
+    if existing and req_start >= end:
+        return c, 0
+    cs = post("https://api.hyperliquid.xyz/info",
+              {"type": "candleSnapshot", "req": {"coin": c, "interval": "1d",
+                                                 "startTime": req_start, "endTime": end}})
+    if not cs:
+        return c, 0
+    by_t = {int(x['t']): x for x in existing}
+    for x in cs:
+        by_t[int(x['t'])] = x
+    merged = sorted(by_t.values(), key=lambda x: int(x['t']))
+    json.dump(merged, open(p, 'w'))
+    return c, len(cs)
 
 cnt = 0
 with ThreadPoolExecutor(max_workers=16) as ex:
@@ -43,8 +56,8 @@ with ThreadPoolExecutor(max_workers=16) as ex:
     done = 0
     for f in as_completed(futs):
         done += 1
-        if f.result():
+        if f.result()[1] > 0:
             cnt += 1
         if done % 20 == 0:
-            print(f"  {done}/{len(universe)}（成功 {cnt}）", flush=True)
+            print(f"  {done}/{len(universe)}（更新 {cnt}）", flush=True)
 print(f"完成 {cnt} 币", flush=True)
