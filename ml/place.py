@@ -160,6 +160,9 @@ def main():
 
     wallet = args.wallet.strip()
     vault = args.vault.strip()
+    # 容忍 "HL:0x..." 前缀（HL 网页复制出来常带 ✗ 纯地址才能查）
+    if vault.upper().startswith("HL:"):
+        vault = vault[3:].strip()
     if not wallet.startswith("0x") or len(wallet) != 66:
         print("错误：--wallet 应是 0x 开头的 64 位 hex 私钥", file=sys.stderr)
         sys.exit(1)
@@ -169,8 +172,20 @@ def main():
         print(f"目标持仓（{target['date']}）：做多 {target['long']} 做空 {target['short']}")
 
     if args.equity <= 0:
-        st = info_post({"type": "clearinghouseState", "user": vault})
-        equity = float(st["marginSummary"]["accountValue"])
+        perp = info_post({"type": "clearinghouseState", "user": vault})
+        equity = float(perp.get("marginSummary", {}).get("accountValue", 0) or 0)
+        # 统一账户（unified）的抵押品在现货账户里 ✗ 取 max（否则现货有 $3000 也读成 0）
+        try:
+            spot = info_post({"type": "spotClearinghouseState", "user": vault})
+            usdc = sum(
+                float(b.get("total", 0) or 0)
+                for b in spot.get("balances", [])
+                if b.get("coin") == "USDC"
+            )
+            if usdc > equity:
+                equity = usdc
+        except Exception:
+            pass
     else:
         equity = args.equity
     if not getattr(args, 'json_out', False):
