@@ -98,9 +98,10 @@ def sign_l1_action(wallet_priv: str, action: dict, nonce: int, vault_address: st
     message = {"source": "a", "connectionId": "0x" + connection_id.hex()}
     signable = encode_typed_data(domain, types, message)
     signed = Account.sign_message(signable, wallet_priv)
+    # r/s 必须 "0x" 开头的 66 字符 hex（HL 按 B256 解析 ✗ 裸 hex 会恢复出错误地址）
     return {
-        "r": signed.r.to_bytes(32, "big").hex(),
-        "s": signed.s.to_bytes(32, "big").hex(),
+        "r": "0x" + signed.r.to_bytes(32, "big").hex(),
+        "s": "0x" + signed.s.to_bytes(32, "big").hex(),
         "v": signed.v,  # eth_account 的 v 已是 27/28，无需再加
     }
 
