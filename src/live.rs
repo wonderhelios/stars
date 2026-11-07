@@ -45,6 +45,9 @@ pub struct LiveConfig {
     /// 子账户的净值/仓位，与动量子账户并排展示 + 合计总资金。
     #[serde(default)]
     pub ml_vault_address: Option<String>,
+    /// ML 服务用的 Python 可执行文件（conda ml 环境）。默认 "python"。
+    #[serde(default = "d_ml_python")]
+    pub ml_python: String,
     /// 目标日波动（0 = 关闭 ✗ 0.02 = 把组合日波动控制在约 2%）。
     /// 每天按 目标/实际 缩放仓位 ✗ 波动大时减仓 ✗ 小时加仓 ✓
     #[serde(default = "d_vol_target")]
@@ -99,6 +102,7 @@ impl Default for LiveConfig {
             account: String::new(),
             vault_address: None,
             ml_vault_address: None,
+            ml_python: d_ml_python(),
             key_path: String::new(),
             target_positions: 8,
             leverage: 3.0,
@@ -129,6 +133,11 @@ fn default_slices() -> u32 {
 fn default_momentum_weight() -> f64 {
     // 默认等权：不改旧行为。复盘检验支持 0.7（动量七成），但仍属样本内结论。
     0.5
+}
+
+fn d_ml_python() -> String {
+    // ML 服务默认用 PATH 里的 python（部署时可在配置里改成 conda 环境的绝对路径）。
+    "python".to_string()
 }
 
 fn default_tp() -> f64 {

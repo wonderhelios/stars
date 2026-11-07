@@ -1,5 +1,6 @@
 //! HTTP API + shared state.
 
+use anyhow::Context;
 use crate::hl::{CoinMeta, MarketCtx};
 use crate::momentum::PanelEntry;
 use crate::paper::{self, PaperConfig, PaperState};
@@ -91,6 +92,8 @@ pub fn router(state: AppState) -> Router {
         .route("/api/paper3/step", post(paper3_step))
         .route("/api/live", get(live_status))
         .route("/api/strategy-health", get(strategy_health))
+        .route("/api/ml/plan", get(ml_plan))
+        .route("/api/ml/execute", post(ml_execute))
         .route("/api/snapshots", get(snapshots_view))
         .route("/api/live/config", post(live_config))
         .route("/api/live/run", post(live_run))
@@ -564,6 +567,111 @@ async fn strategy_health(State(state): State<AppState>) -> Json<serde_json::Valu
     };
     let h = crate::health::compute(&panel, &hist);
     Json(serde_json::json!(h))
+}
+
+/// 调 ML 服务里的 Python 脚本，返回 stdout。脚本用绝对路径（ml/ 里的 BASE），
+/// 所以当前目录不重要，但 ml/ 目录必须在当前工作目录下（或脚本路径可解析）。
+async fn run_ml_python(
+    cfg: &crate::live::LiveConfig,
+    script: &str,
+    extra: &[&str],
+) -> anyhow::Result<String> {
+    let cwd = std::env::current_dir().unwrap_or_default();
+    let out = tokio::process::Command::new(&cfg.ml_python)
+        .arg(script)
+        .args(extra)
+        .current_dir(&cwd)
+        .output()
+        .await
+        .context("启动 ML Python 脚本失败")?;
+    if !out.status.success() {
+        let stderr = String::from_utf8_lossy(&out.stderr).to_string();
+        return Err(anyhow::anyhow!("{stderr}"));
+    }
+    Ok(String::from_utf8_lossy(&out.stdout).to_string())
+}
+
+/// ML 策略的「计划调仓」：预测目标持仓 + 计算需要下的单（dry-run，不下单）。
+async fn ml_plan(State(state): State<AppState>) -> Response {
+    let cfg = state.live.lock().await.config.clone();
+    let ml_addr = match cfg.ml_vault_address.as_deref() {
+        Some(a) if !a.is_empty() => a.to_string(),
+        _ => {
+            return (StatusCode::BAD_REQUEST,
+                Json(json!({"ok": false, "error": "未配置 ML 子账户地址（ml_vault_address）"})))
+                .into_response();
+        }
+    };
+    let key = match std::fs::read_to_string(&cfg.key_path) {
+        Ok(k) => k.trim().to_string(),
+        Err(e) => {
+            return (StatusCode::BAD_REQUEST,
+                Json(json!({"ok": false, "error": format!("读 API 钱包密钥失败: {e}")})))
+                .into_response();
+        }
+    };
+    let predict = match run_ml_python(&cfg, "ml/predict.py", &["--json"]).await {
+        Ok(s) => s,
+        Err(e) => {
+            return (StatusCode::INTERNAL_SERVER_ERROR,
+                Json(json!({"ok": false, "error": format!("预测失败: {e}")})))
+                .into_response();
+        }
+    };
+    let plan = match run_ml_python(
+        &cfg,
+        "ml/place.py",
+        &["--wallet", &key, "--vault", &ml_addr, "--dry-run", "--json"],
+    )
+    .await
+    {
+        Ok(s) => s,
+        Err(e) => {
+            return (StatusCode::INTERNAL_SERVER_ERROR,
+                Json(json!({"ok": false, "error": format!("计算调仓失败: {e}")})))
+                .into_response();
+        }
+    };
+    Json(json!({
+        "ok": true,
+        "predict": serde_json::from_str::<serde_json::Value>(&predict).unwrap_or(json!({})),
+        "plan": serde_json::from_str::<serde_json::Value>(&plan).unwrap_or(json!({})),
+    }))
+    .into_response()
+}
+
+/// ML 策略的「执行调仓」：真下单到 ML 子账户。
+async fn ml_execute(State(state): State<AppState>) -> Response {
+    let _gate = match state.exec_gate.try_lock() {
+        Ok(g) => g,
+        Err(_) => {
+            return (StatusCode::CONFLICT,
+                Json(json!({"ok": false, "error": "订单操作正在执行，请稍后"})))
+                .into_response();
+        }
+    };
+    let cfg = state.live.lock().await.config.clone();
+    let ml_addr = match cfg.ml_vault_address.as_deref() {
+        Some(a) if !a.is_empty() => a.to_string(),
+        _ => {
+            return (StatusCode::BAD_REQUEST,
+                Json(json!({"ok": false, "error": "未配置 ML 子账户地址"})))
+                .into_response();
+        }
+    };
+    let key = match std::fs::read_to_string(&cfg.key_path) {
+        Ok(k) => k.trim().to_string(),
+        Err(e) => {
+            return (StatusCode::BAD_REQUEST,
+                Json(json!({"ok": false, "error": format!("读 API 钱包密钥失败: {e}")})))
+                .into_response();
+        }
+    };
+    match run_ml_python(&cfg, "ml/place.py", &["--wallet", &key, "--vault", &ml_addr, "--json"]).await {
+        Ok(s) => Json(json!({"ok": true, "result": s})).into_response(),
+        Err(e) => (StatusCode::INTERNAL_SERVER_ERROR,
+            Json(json!({"ok": false, "error": format!("下单失败: {e}")}))).into_response(),
+    }
 }
 
 async fn live_status(State(state): State<AppState>) -> Response {

@@ -554,6 +554,7 @@
       .total-item.total-sum .total-value { color:#fff; }
       .mo-strategy-tabs { margin:14px 0; }
       .mo-strategy-tabs button[aria-pressed="true"] { background:var(--accent); color:#fff; border-color:var(--accent); }
+      .ml-plan-bar { display:flex; gap:10px; margin:0 0 4px; }
       @media(max-width:760px) { .total-card { grid-template-columns:1fr; } }
 </style>
   </head>
@@ -667,6 +668,11 @@
             <button type="button" data-strategy="momentum" aria-pressed="false">动量策略</button>
             <button type="button" data-strategy="ml" aria-pressed="false">ML 策略</button>
           </div>
+          <div id="ml-plan-bar" class="ml-plan-bar" hidden>
+            <button class="btn ghost" id="ml-plan-btn" type="button">ML 计划调仓</button>
+            <button class="btn" id="ml-execute-btn" type="button" hidden>执行调仓</button>
+          </div>
+          <div id="ml-plan-view"></div>
           <div class="performance-panel">
           <div class="metrics" id="mo-metrics"></div>
           <div class="content-card equity-card"><div class="panel-head monitor-section-head"><div><span class="section-eyebrow">STRATEGY PNL</span><h2>策略盈亏曲线</h2></div><div class="segmented" id="mo-chart-tabs" role="group" aria-label="策略盈亏时间区间"><button type="button" data-range="day" aria-pressed="false">日</button><button type="button" data-range="week" aria-pressed="true">周</button><button type="button" data-range="month" aria-pressed="false">月</button><button type="button" data-range="all" aria-pressed="false">全部</button></div></div>

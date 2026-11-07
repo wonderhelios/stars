@@ -155,6 +155,7 @@ def main():
     ap.add_argument("--vault", required=True, help="ML 子账户 B 地址（vaultAddress）")
     ap.add_argument("--equity", type=float, default=0.0, help="子账户净值（不传则自动读）")
     ap.add_argument("--dry-run", action="store_true", help="只打印下单指令，不真下单")
+    ap.add_argument("--json", dest="json_out", action="store_true", help="输出 JSON（给前端/监控解析）")
     args = ap.parse_args()
 
     wallet = args.wallet.strip()
@@ -164,14 +165,16 @@ def main():
         sys.exit(1)
 
     target = latest_positions()
-    print(f"目标持仓（{target['date']}）：做多 {target['long']} 做空 {target['short']}")
+    if not getattr(args, 'json_out', False):
+        print(f"目标持仓（{target['date']}）：做多 {target['long']} 做空 {target['short']}")
 
     if args.equity <= 0:
         st = info_post({"type": "clearinghouseState", "user": vault})
         equity = float(st["marginSummary"]["accountValue"])
     else:
         equity = args.equity
-    print(f"子账户净值 ${equity:,.2f}")
+    if not getattr(args, 'json_out', False):
+        print(f"子账户净值 ${equity:,.2f}")
 
     idx, decimals = meta_index()
     # 目标：多头正名义、空头负名义
@@ -183,6 +186,25 @@ def main():
 
     current = current_positions(vault)
     orders = build_orders(target_map, current, idx, decimals, equity)
+
+    # 把 asset 序号换回币名（给前端/监控看）
+    coin_of = {v: k for k, v in idx.items()}
+    order_views = []
+    for o in orders:
+        order_views.append({
+            "coin": coin_of.get(o["a"], str(o["a"])),
+            "buy": o["b"],
+            "price": o["p"],
+            "size": o["s"],
+        })
+
+    if getattr(args, 'json_out', False):
+        print(json.dumps({"target": target, "orders": order_views}, ensure_ascii=False))
+        if not (args.dry_run or not orders):
+            action = {"type": "order", "orders": orders, "grouping": "na"}
+            resp = exchange_post(wallet, action, vault)
+            print(json.dumps({"result": resp}, ensure_ascii=False))
+        return
 
     print(f"\n需下单 {len(orders)} 笔：")
     for o in orders:

@@ -647,8 +647,75 @@ function bindStrategyTabs() {
     if (!btn) return;
     currentStrategy = btn.dataset.strategy;
     root.querySelectorAll('[data-strategy]').forEach(b => b.setAttribute('aria-pressed', b === btn ? 'true' : 'false'));
+    // ML tab 才显示「ML 计划调仓」栏
+    const bar = $('ml-plan-bar');
+    if (bar) bar.hidden = currentStrategy !== 'ml';
     if (lastLiveData) renderMonitor(lastLiveData);
   };
+}
+
+// ML 计划调仓：拉取 predict 的目标持仓 + place 的下单指令（dry-run）
+async function mlPlan() {
+  const view = $('ml-plan-view');
+  if (!view) return;
+  view.innerHTML = '<div class="empty">正在计算 ML 计划调仓…</div>';
+  try {
+    const res = await fetch("/api/ml/plan", { cache: "no-store" });
+    const d = await res.json();
+    if (!d.ok) { view.innerHTML = `<div class="note neg">${escapeHTML(d.error || '失败')}</div>`; return; }
+    renderMlPlan(view, d);
+  } catch (e) {
+    view.innerHTML = `<div class="note neg">读取 ML 计划失败：${escapeHTML(String(e))}</div>`;
+  }
+}
+
+function renderMlPlan(view, d) {
+  const pred = d.predict || {};
+  const plan = d.plan || {};
+  const orders = plan.orders || [];
+  const rows = orders.map(o => {
+    const side = o.buy ? '买入' : '卖出';
+    const cls = o.buy ? 'pos' : 'neg';
+    return `<tr><td>${escapeHTML(o.coin)}</td><td class="${cls}">${side}</td><td>${o.size}</td><td>$${fmt(Number(o.price), 4)}</td></tr>`;
+  }).join("");
+  view.innerHTML = `
+    <div class="content-card" style="margin-top:14px">
+      <div class="panel-head" style="margin-top:0"><h2>ML 计划调仓</h2></div>
+      <p class="sub" style="margin:0 0 10px">目标持仓：做多 <b>${(pred.long || []).join(', ')}</b> · 做空 <b>${(pred.short || []).join(', ')}</b></p>
+      ${orders.length ? `<div class="table-scroll"><table><thead><tr><th>币</th><th>方向</th><th>数量</th><th>价格</th></tr></thead><tbody>${rows}</tbody></table></div>` : '<div class="empty">当前已符合目标，无需调仓</div>'}
+    </div>`;
+  const btn = $('ml-execute-btn');
+  if (btn) btn.hidden = orders.length === 0;
+}
+
+async function mlExecute() {
+  const view = $('ml-plan-view');
+  const btn = $('ml-execute-btn');
+  if (btn) { btn.disabled = true; btn.textContent = '执行中…'; }
+  try {
+    const res = await fetch("/api/ml/execute", { method: "POST" });
+    const d = await res.json();
+    if (view) view.innerHTML = d.ok
+      ? `<div class="note ok">✅ ML 调仓已提交：${escapeHTML(JSON.stringify(d.result))}</div>`
+      : `<div class="note neg">${escapeHTML(d.error || '失败')}</div>`;
+  } catch (e) {
+    if (view) view.innerHTML = `<div class="note neg">执行失败：${escapeHTML(String(e))}</div>`;
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = '执行调仓'; }
+  }
+}
+
+function bindMlPlanButtons() {
+  const planBtn = $('ml-plan-btn');
+  const execBtn = $('ml-execute-btn');
+  if (planBtn && !planBtn.dataset.bound) {
+    planBtn.dataset.bound = '1';
+    planBtn.onclick = mlPlan;
+  }
+  if (execBtn && !execBtn.dataset.bound) {
+    execBtn.dataset.bound = '1';
+    execBtn.onclick = mlExecute;
+  }
 }
 
 function renderMonitor(d) {
@@ -656,6 +723,7 @@ function renderMonitor(d) {
   lastLiveData = d;
   renderTotal(d);
   bindStrategyTabs();
+  bindMlPlanButtons();
   renderCapitalFlows(d);
   const c = d.config || {};
   // 策略切换：ML 时看 ML 子账户的持仓/净值，否则看动量子账户。
