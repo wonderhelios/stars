@@ -233,8 +233,14 @@ def main():
     if vault.upper().startswith("HL:"):
         vault = vault[3:].strip()
     if not wallet.startswith("0x") or len(wallet) != 66:
-        print("错误：--wallet 应是 0x 开头的 64 位 hex 私钥", file=sys.stderr)
+        print(f"错误：--wallet 应是 0x 开头的 64 位 hex 私钥（实际长度 {len(wallet)}）", file=sys.stderr)
         sys.exit(1)
+    # 诊断：打印实际用的 API wallet 地址 + vault（排查 "does not exist"）
+    try:
+        print(f"[place] API wallet 地址: {Account.from_key(wallet).address}", file=sys.stderr, flush=True)
+        print(f"[place] vault(子账户) 地址: {vault}", file=sys.stderr, flush=True)
+    except Exception as e:
+        print(f"[place] 推导 API wallet 地址失败: {e}", file=sys.stderr, flush=True)
 
     target = latest_positions()
     if not getattr(args, 'json_out', False):
