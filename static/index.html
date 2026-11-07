@@ -545,7 +545,7 @@
       }
 
       /* ===== 实盘监控：全部账户总额 + 策略切换 ===== */
-      .total-card { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin:14px 0; }
+      .total-card { display:grid; grid-template-columns:minmax(1.35fr,1.6fr) repeat(2,minmax(0,1fr)); gap:10px; margin:12px 0; }
       .total-item { padding:14px 16px; background:#fff; border:1px solid var(--line); border-radius:12px; box-shadow:var(--shadow); }
       .total-item .total-label { display:block; color:var(--muted); font-size:11px; margin-bottom:7px; }
       .total-item .total-value { font-size:clamp(18px,2vw,24px); font-weight:650; letter-spacing:-.5px; }
@@ -556,9 +556,104 @@
       .total-item.total-sum .total-change.pos { color:#4ade80; }
       .total-item.total-sum .total-change.neg { color:#f87171; }
       .mo-strategy-tabs { margin:14px 0; }
-      .mo-strategy-tabs button[aria-pressed="true"] { background:var(--accent); color:#fff; border-color:var(--accent); }
+      .mo-strategy-tabs button[aria-pressed="true"] { background:var(--blue); color:#fff; border-color:var(--blue); }
       .ml-plan-bar { display:flex; gap:10px; margin:0 0 4px; }
       @media(max-width:760px) { .total-card { grid-template-columns:1fr; } }
+
+      /* Live workspace: one clear hierarchy, compact account summaries, consistent cards. */
+      #view-monitor > .monitor-shell { padding:0; border:0; border-radius:0; background:transparent; box-shadow:none; }
+      #view-monitor .panel-head:first-child { margin-bottom:14px; }
+      #view-monitor .panel-head:first-child h2 { margin:3px 0 4px; font-size:26px; }
+      #view-monitor .sub { line-height:1.6; }
+      #view-monitor .live-status { padding:10px 14px; margin:10px 0; border-radius:10px; }
+      #view-monitor .total-card { margin:10px 0; }
+      #view-monitor .total-item { min-height:74px; padding:12px 15px; border-radius:10px; box-shadow:none; display:flex; flex-direction:column; justify-content:center; }
+      #view-monitor .total-item .total-label { margin-bottom:2px; }
+      #view-monitor .total-item .total-value { font-size:20px; }
+      #view-monitor .total-item.total-sum { background:#173d36; border-color:#173d36; }
+      #view-monitor .total-item.total-sum .total-value { font-size:24px; }
+      #view-monitor .total-item .total-change { margin-top:3px; font-size:11px; }
+      #view-monitor .mo-strategy-tabs { margin:10px 0 12px; }
+      #view-monitor .mo-strategy-tabs button { padding-inline:15px; }
+      #view-monitor .performance-panel { padding:0 20px 16px; margin:12px 0; border-radius:12px; }
+      #view-monitor #mo-metrics.account-summary { grid-template-columns:repeat(4,minmax(0,1fr)); gap:0; padding:16px 0 18px; }
+      #view-monitor #mo-metrics.account-summary.account-summary-all { grid-template-columns:repeat(3,minmax(0,1fr)); }
+      #view-monitor .account-summary>.metric:not(.score-metric):not(:last-child) { padding:2px 14px; border-right:1px solid var(--line); }
+      #view-monitor .account-summary>.metric:not(.score-metric):last-child { border-right:0; }
+      #view-monitor .account-summary>.metric:not(.score-metric):first-child { padding-left:0; }
+      #view-monitor .account-summary .k { margin-bottom:5px; font-size:11px; }
+      #view-monitor .account-summary .v { font-size:22px; line-height:1.25; }
+      #view-monitor .account-summary>.metric:first-child .v { font-size:27px; }
+      #view-monitor .account-summary .account-return { margin-top:4px; font-size:10px; }
+      #view-monitor .score-metric { padding:13px 0 0!important; margin-top:13px; }
+      #view-monitor .score-row { min-height:40px; padding:6px 0; }
+      #view-monitor .performance-panel>.equity-card { padding-top:15px; }
+      #view-monitor .content-card { border-radius:11px; }
+      #view-monitor .content-card>.panel-head { margin-top:0!important; margin-bottom:12px; padding-bottom:11px; }
+      #view-monitor #mo-positions table { min-width:980px; }
+
+      /* Settings: align fields to a small grid and keep controls easy to scan. */
+      #view-live .setup-heading { margin-bottom:16px; }
+      #view-live .setup-layout { grid-template-columns:minmax(0,1.55fr) minmax(300px,.9fr); gap:14px; }
+      #view-live .setup-main,#view-live .setup-aside { gap:12px; }
+      #view-live .setup-card { padding:18px 19px; border-radius:12px; box-shadow:var(--shadow); }
+      #view-live .setup-card header { gap:10px; margin-bottom:13px; }
+      #view-live .setup-card h3 { font-size:15px; }
+      #view-live .setup-card p { margin-top:3px; font-size:11px; line-height:1.55; }
+      #view-live .setup-fields { grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px 11px; }
+      #view-live .setup-fields .field:has(#lv-account),
+      #view-live .setup-fields .field:has(#lv-key) { grid-column:auto; }
+      #view-live .setup-card .field { gap:5px; }
+      #view-live .setup-card .field label { min-height:2.6em; font-size:11px; line-height:1.35; }
+      #view-live .setup-card input,#view-live .setup-card select { height:40px; padding:8px 10px; font-size:12px; }
+      #view-live .setup-aside .setup-fields { grid-template-columns:repeat(2,minmax(0,1fr)); }
+      #view-live .setup-actions { grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; }
+      #view-live .setup-actions .btn { min-width:0; min-height:40px; padding:8px 10px; white-space:normal; line-height:1.35; }
+      #view-live .setup-save { margin-top:0; padding:12px 15px; gap:9px; border-radius:10px; }
+      #view-live .setup-save>span { font-size:11px; }
+      #view-live .setup-save .btn { min-height:38px; }
+      #view-live .setup-details { margin-top:13px; padding-top:10px; }
+      #view-live .setup-details summary { min-height:34px; padding:5px 0; }
+      #view-live .setup-result { margin-top:14px; }
+      #view-live .setup-result header { margin-bottom:8px; }
+      #view-live .setup-reference { margin-top:10px; border-top:1px solid var(--line); }
+      #view-live .setup-reference>summary { min-height:36px; padding:7px 0; }
+      @media(max-width:1150px) {
+        #view-monitor #mo-metrics.account-summary { grid-template-columns:repeat(2,minmax(0,1fr)); row-gap:13px; }
+        #view-monitor #mo-metrics.account-summary.account-summary-all { grid-template-columns:repeat(2,minmax(0,1fr)); }
+        #view-monitor .account-summary>.metric:not(.score-metric):nth-child(even) { border-right:0; }
+        #view-monitor .account-summary>.metric:not(.score-metric):last-child { border-right:0; }
+        #view-live .setup-layout { grid-template-columns:minmax(0,1fr) 300px; }
+        #view-live .setup-fields { grid-template-columns:repeat(2,minmax(0,1fr)); }
+      }
+      @media(max-width:900px) {
+        #view-live .setup-layout { grid-template-columns:1fr; }
+        #view-live .setup-aside { grid-template-columns:repeat(2,minmax(0,1fr)); }
+        #view-live .setup-aside>.setup-card:last-child { grid-column:1/-1; }
+      }
+      @media(max-width:760px) {
+        #view-monitor .panel-head:first-child h2 { font-size:23px; }
+        #view-monitor .performance-panel { padding:0 14px 13px; }
+        #view-monitor .total-card { grid-template-columns:1fr 1fr; gap:8px; }
+        #view-monitor .total-item.total-sum { grid-column:1/-1; }
+        #view-monitor .total-item { min-height:62px; padding:10px 12px; }
+        #view-monitor .total-item .total-value { font-size:17px; }
+        #view-monitor .total-item.total-sum .total-value { font-size:22px; }
+        #view-monitor #mo-metrics.account-summary { padding:13px 0 15px; }
+        #view-monitor .account-summary>.metric:not(.score-metric) { padding:2px 10px; }
+        #view-monitor .account-summary>.metric:not(.score-metric):first-child { padding-left:0; }
+        #view-monitor .account-summary .v { font-size:19px; }
+        #view-monitor .account-summary>.metric:first-child .v { font-size:24px; }
+        #view-live .setup-aside { grid-template-columns:1fr; }
+        #view-live .setup-aside>.setup-card:last-child { grid-column:auto; }
+        #view-live .setup-fields,#view-live .setup-aside .setup-fields { grid-template-columns:repeat(2,minmax(0,1fr)); }
+        #view-live .setup-card { padding:16px 14px; }
+        #view-live .setup-card .field label { min-height:2.8em; }
+      }
+      @media(max-width:390px) {
+        #view-monitor #mo-metrics.account-summary { grid-template-columns:1fr 1fr; }
+        #view-live .setup-fields,#view-live .setup-aside .setup-fields { grid-template-columns:1fr; }
+      }
 </style>
   </head>
   <body>
@@ -584,19 +679,19 @@
 
       <!-- ============ 实盘设置 ============ -->
       <section id="view-live" class="view">
-        <div class="panel-head setup-heading"><div><div class="panel-kicker">LIVE SETUP · HYPERLIQUID</div><h2>实盘设置</h2><p class="sub">账户连接、策略参数与执行控制，集中管理。</p></div><span class="setup-chip">设置变更后请保存</span></div>
+        <div class="panel-head setup-heading"><div><div class="panel-kicker">实盘账户与策略</div><h2>实盘设置</h2><p class="sub">账户、参数、自动调仓和执行操作。</p></div><span class="setup-chip">修改后记得保存</span></div>
         <div class="setup-layout"><div class="setup-main">
 
-        <section class="setup-card"><header><span class="setup-number">01</span><div><h3>账户连接</h3><p>使用交易主账户与服务器上的 API 密钥文件。子账户地址可选（Two-subaccount 并行时填）。</p></div></header><div class="setup-fields"><div class="field"><label for="lv-account">账户地址（主账户，不是 API 钱包）</label><input id="lv-account" placeholder="0x..." /></div><div class="field"><label for="lv-key">API 钱包密钥文件路径</label><input id="lv-key" placeholder="必填，例如 /etc/hyper-fly/api-wallet.key" /></div><div class="field"><label for="lv-vault">动量子账户地址（可选 ✗ 留空 = 用主账户）</label><input id="lv-vault" placeholder="0x...（子账户 A ✗ 留空用主账户）" /></div></div></section>
-        <section class="setup-card"><header><span class="setup-number">ML</span><div><h3>ML 策略（第二个子账户）</h3><p>ML 子账户地址 + ML 服务的 Python 路径。配置后监控页可看 ML 子账户 + 计划调仓。</p></div></header><div class="setup-fields"><div class="field"><label for="lv-ml-vault">ML 子账户地址（ml_vault_address）</label><input id="lv-ml-vault" placeholder="0x...（子账户 B ✗ 只读监控 + 下单目标）" /></div><div class="field"><label for="lv-ml-python">ML 服务的 Python 路径（ml_python）</label><input id="lv-ml-python" placeholder="/root/miniconda3/envs/ml/bin/python" /></div><div class="field"><label for="lv-ml-dir">ML 脚本目录（ml_dir ✗ 绝对路径最稳）</label><input id="lv-ml-dir" placeholder="/opt/stars/ml" /></div></div></section>
-        <section class="setup-card"><header><span class="setup-number">02</span><div><h3>组合与信号</h3><p>定义持仓规模、筛选条件和调仓节奏。</p></div></header><div class="setup-fields"><div class="field"><label for="lv-positions">每腿仓位数</label><input id="lv-positions" type="number" value="8" min="1" max="30" /></div><div class="field"><label for="lv-lookback">回看天数</label><input id="lv-lookback" type="number" value="14" min="2" max="120" /></div><div class="field"><label for="lv-top">多头比例</label><input id="lv-top" type="number" value="0.2" min="0.02" max="0.9" step="0.05" /></div><div class="field"><label for="lv-minvol">最低成交额(USD)</label>
+        <section class="setup-card"><header><span class="setup-number">01</span><div><h3>账户连接</h3><p>主账户用于查询资产；API 钱包用于签名下单。动量子账户可选，留空时使用主账户。</p></div></header><div class="setup-fields"><div class="field"><label for="lv-account">主账户地址</label><input id="lv-account" placeholder="0x..." /></div><div class="field"><label for="lv-key">API 钱包密钥文件</label><input id="lv-key" placeholder="服务器路径，例如 /etc/hyper-fly/api-wallet.key" /></div><div class="field"><label for="lv-vault">动量子账户（可选）</label><input id="lv-vault" placeholder="0x...；留空则使用主账户" /></div></div></section>
+        <section class="setup-card"><header><span class="setup-number">ML</span><div><h3>ML 子账户</h3><p>填写子账户地址和 ML 服务位置，用于独立监控及生成调仓计划。</p></div></header><div class="setup-fields"><div class="field"><label for="lv-ml-vault">ML 子账户地址</label><input id="lv-ml-vault" placeholder="0x..." /></div><div class="field"><label for="lv-ml-python">Python 执行路径</label><input id="lv-ml-python" placeholder="/root/miniconda3/envs/ml/bin/python" /></div><div class="field"><label for="lv-ml-dir">ML 脚本目录</label><input id="lv-ml-dir" placeholder="/opt/stars/ml" /></div></div></section>
+        <section class="setup-card"><header><span class="setup-number">02</span><div><h3>组合与信号</h3><p>选币比例、过滤门槛和调仓节奏。</p></div></header><div class="setup-fields"><div class="field"><label for="lv-positions">每侧持仓数</label><input id="lv-positions" type="number" value="8" min="1" max="30" /></div><div class="field"><label for="lv-lookback">动量回看（天）</label><input id="lv-lookback" type="number" value="14" min="2" max="120" /></div><div class="field"><label for="lv-top">选币比例</label><input id="lv-top" type="number" value="0.2" min="0.02" max="0.9" step="0.05" /></div><div class="field"><label for="lv-minvol">最低日成交额</label>
               <select id="lv-minvol">
                 <option value="2000000">$2M</option>
                 <option value="5000000" selected>$5M</option>
                 <option value="10000000">$10M</option>
               </select>
-            </div><div class="field"><label for="lv-slices">错峰调仓（档）</label><input id="lv-slices" type="number" value="3" min="1" max="10" step="1" /></div><div class="field"><label for="lv-tp">止盈 % （0 = 关闭）</label><input id="lv-tp" type="number" value="10" min="0" max="50" step="1" /></div><div class="field"><label for="lv-momw">动量权重 %（其余给量能）</label><input id="lv-momw" type="number" value="50" min="0" max="100" step="5" /></div><div class="field"><label for="lv-voltarget">目标日波动 %（0 = 关闭 ✗ 2 = 约 1.8x 杠杆）</label><input id="lv-voltarget" type="number" value="0" min="0" max="10" step="0.5" /></div><div class="field"><label for="lv-stop">单币止损 %（0 = 关闭 ✗ 25 = 浮亏 25% 平仓）</label><input id="lv-stop" type="number" value="25" min="0" max="90" step="1" /></div><div class="field"><label for="lv-cool">止损冷却（天 ✗ 期间不许再开）</label><input id="lv-cool" type="number" value="5" min="0" max="60" step="1" /></div></div></section>
-        <section class="setup-card"><header><span class="setup-number">03</span><div><h3>资金与成交约束</h3><p>控制名义敞口及订单执行容差。</p></div></header><div class="setup-fields"><div class="field"><label for="lv-leverage">杠杆</label><input id="lv-leverage" type="number" value="3" min="1" max="20" step="0.5" /></div><div class="field"><label for="lv-buffer">保证金缓冲 %</label><input id="lv-buffer" type="number" value="90" min="30" max="100" /></div><div class="field"><label for="lv-slippage">滑点上限 %</label><input id="lv-slippage" type="number" value="0.5" min="0.05" max="5" step="0.05" /></div><div class="field"><label for="lv-minpct">最小下单额占净值 %</label><input id="lv-minpct" type="number" value="0" min="0" max="5" step="0.1" /></div></div></section>
+            </div><div class="field"><label for="lv-slices">错峰调仓档数</label><input id="lv-slices" type="number" value="3" min="1" max="10" step="1" /></div><div class="field"><label for="lv-tp">止盈比例（0 关闭）</label><input id="lv-tp" type="number" value="10" min="0" max="50" step="1" /></div><div class="field"><label for="lv-momw">动量权重（%）</label><input id="lv-momw" type="number" value="50" min="0" max="100" step="5" /></div><div class="field"><label for="lv-voltarget">目标日波动（0 关闭）</label><input id="lv-voltarget" type="number" value="0" min="0" max="10" step="0.5" /></div><div class="field"><label for="lv-stop">单币止损比例（0 关闭）</label><input id="lv-stop" type="number" value="25" min="0" max="90" step="1" /></div><div class="field"><label for="lv-cool">止损后冷却（天）</label><input id="lv-cool" type="number" value="5" min="0" max="60" step="1" /></div></div></section>
+        <section class="setup-card"><header><span class="setup-number">03</span><div><h3>资金与成交约束</h3><p>控制杠杆、保证金使用和订单执行范围。</p></div></header><div class="setup-fields"><div class="field"><label for="lv-leverage">目标杠杆</label><input id="lv-leverage" type="number" value="3" min="1" max="20" step="0.5" /></div><div class="field"><label for="lv-buffer">保证金使用上限（%）</label><input id="lv-buffer" type="number" value="90" min="30" max="100" /></div><div class="field"><label for="lv-slippage">允许滑点上限（%）</label><input id="lv-slippage" type="number" value="0.5" min="0.05" max="5" step="0.05" /></div><div class="field"><label for="lv-minpct">最小订单 / 净值（%）</label><input id="lv-minpct" type="number" value="0" min="0" max="5" step="0.1" /></div></div></section>
         <div class="setup-save"><span>保存参数后，下一次计划使用新配置。</span><button class="btn ghost" id="lv-save">保存配置</button><p id="lv-save-status" role="status" aria-live="polite"></p></div>
         </div><aside class="setup-aside">
         <section class="setup-card"><header><span class="setup-number">CONTROL</span><div><h3>运行控制</h3><p>开关修改后需保存配置。</p></div></header><div class="setup-fields"><div class="field"><label for="lv-armed">启用实盘（允许发单）</label>
@@ -613,7 +708,7 @@
               <button class="btn ghost" id="lv-flow-btn" type="button">记录</button>
             </div><p id="lv-flow-status" class="note" role="status" aria-live="polite"></p><div id="lv-flow-history"></div></section>
         </aside></div>
-        <section class="setup-card setup-result"><header><div><span class="section-eyebrow">EXECUTION RESULT</span><h3>计划 / 执行结果</h3></div></header><div id="lv-plan-out"></div></section>
+        <section class="setup-card setup-result"><header><div><span class="section-eyebrow">执行反馈</span><h3>计划 / 执行结果</h3></div></header><div id="lv-plan-out"></div></section>
 <details class="setup-reference"><summary>策略说明与检查记录</summary>          <details class="note" style="margin:12px 0">
             <summary style="cursor:pointer;font-weight:600;color:#617680">当前策略与已排除的边际（点击展开）</summary>
             <div style="margin-top:8px">
@@ -654,10 +749,10 @@
 
       <!-- ============ 实盘监控 ============ -->
       <section id="view-monitor" class="view active">
-        <div class="panel">
+        <div class="panel monitor-shell">
           <div class="panel-head">
             <div>
-              <div class="panel-kicker">LIVE MONITOR</div>
+              <div class="panel-kicker">实盘概览</div>
               <h2>实盘监控</h2>
               <p class="sub">只读观测。<b>配置与启停在「实盘设置」。</b></p>
             </div>
@@ -676,10 +771,10 @@
           </div>
           <div class="performance-panel">
           <div class="metrics" id="mo-metrics"></div>
-          <div class="content-card equity-card"><div class="panel-head monitor-section-head"><div><span class="section-eyebrow">STRATEGY PNL</span><h2>策略盈亏曲线</h2></div><div class="segmented" id="mo-chart-tabs" role="group" aria-label="策略盈亏时间区间"><button type="button" data-range="day" aria-pressed="false">日</button><button type="button" data-range="week" aria-pressed="true">周</button><button type="button" data-range="month" aria-pressed="false">月</button><button type="button" data-range="all" aria-pressed="false">全部</button></div></div>
+          <div class="content-card equity-card"><div class="panel-head monitor-section-head"><div><span class="section-eyebrow">账户表现</span><h2>策略盈亏曲线</h2></div><div class="segmented" id="mo-chart-tabs" role="group" aria-label="策略盈亏时间区间"><button type="button" data-range="day" aria-pressed="false">日</button><button type="button" data-range="week" aria-pressed="true">周</button><button type="button" data-range="month" aria-pressed="false">月</button><button type="button" data-range="all" aria-pressed="false">全部</button></div></div>
           <div class="chart" id="mo-chart"></div></div>
           </div>
-          <div class="content-card"><div class="panel-head" style="margin-top:14px"><h2>当前持仓</h2></div>
+          <div class="content-card"><div class="panel-head"><h2>当前持仓</h2></div>
           <div id="mo-positions"></div></div>
         </div>
       </section>
@@ -748,7 +843,7 @@
                 <input id="hc-p-payback" type="number" min="1" max="365" step="1" />
               </div>
               <div class="field">
-                <label for="hc-p-minhold">最短持有（小时 ✗ 期间不换仓）</label>
+                <label for="hc-p-minhold">最短持有时间（小时）</label>
                 <input id="hc-p-minhold" type="number" min="0" max="720" step="12" />
               </div>
             </div>
@@ -862,7 +957,7 @@
             <div class="panel-kicker">COMBINED STRATEGY · 已证伪</div>
             <h1>组合策略</h1>
             <p>日线动量 + 12 小时区间位置 · 纸面模拟，不会发送真实订单</p>
-            <p class="note neg" style="margin-top:6px">⚠️ 12 小时区间腿的回测含未来函数 ✗ 修正后 Sharpe −0.91 / 年化 −70% ✗ 已证伪 ✗ 本页仅保留记录 ✗ 请勿据此上实盘。</p>
+            <p class="note neg" style="margin-top:6px">⚠️ 12 小时区间腿的回测含未来函数；修正后 Sharpe −0.91、年化 −70%，已证伪。本页仅保留研究记录，请勿用于实盘。</p>
           </div>
           <div class="combine-heading-actions">
             <span id="cb-run-state" class="combine-state"><i></i>读取中</span>

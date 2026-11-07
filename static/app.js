@@ -630,6 +630,10 @@ let currentStrategy = 'all';
 function renderTotal(d) {
   const el = $('mo-total');
   if (!el) return;
+  if (currentStrategy !== 'all') {
+    el.innerHTML = '';
+    return;
+  }
   const mom = Number.isFinite(d.equity) ? d.equity : 0;
   const ml = d.ml_account && !d.ml_account.error && Number.isFinite(d.ml_account.equity)
     ? d.ml_account.equity : null;
@@ -653,9 +657,9 @@ function renderTotal(d) {
   }
   el.innerHTML = `
     <div class="total-card">
-      <div class="total-item"><span class="total-label">动量策略净值</span><span class="total-value">$${fmt(mom, 2)}</span></div>
-      <div class="total-item"><span class="total-label">ML 策略净值</span><span class="total-value">$${fmt(ml, 2)}</span></div>
-      <div class="total-item total-sum"><span class="total-label">全部账户总额</span><span class="total-value">$${fmt(total, 2)}</span>${changeHtml}</div>
+      <div class="total-item total-sum"><span class="total-label">全部账户净值</span><span class="total-value">$${fmt(total, 2)}</span>${changeHtml}</div>
+      <div class="total-item"><span class="total-label">动量账户</span><span class="total-value">$${fmt(mom, 2)}</span></div>
+      <div class="total-item"><span class="total-label">ML 账户</span><span class="total-value">$${fmt(ml, 2)}</span></div>
     </div>`;
 }
 
@@ -745,17 +749,37 @@ function renderMonitor(d) {
   // 策略切换：ML 时看 ML 子账户的持仓/净值，否则看动量子账户。
   const mlAcc = d.ml_account && !d.ml_account.error ? d.ml_account : null;
   const isMl = currentStrategy === 'ml' && !!mlAcc;
-  const pos = isMl ? (mlAcc.positions || []) : (d.positions || []);
+  const allView = currentStrategy === 'all' && !!mlAcc;
+  const momPositions = d.positions || [];
+  const mlPositions = mlAcc ? (mlAcc.positions || []) : [];
+  const pos = isMl
+    ? mlPositions
+    : allView
+      ? [...momPositions.map(p => ({ ...p, _account: '动量' })), ...mlPositions.map(p => ({ ...p, _account: 'ML' }))]
+      : momPositions;
+  const positionGross = positions => positions.reduce((sum, p) => sum + (Number.isFinite(p.notional) ? p.notional : 0), 0);
+  const grossNow = allView
+    ? (d.gross_notional || positionGross(momPositions)) + positionGross(mlPositions)
+    : isMl
+      ? positionGross(mlPositions)
+      : (d.gross_notional || 0);
   const mlHist = d.ml_history || [];
   const hist = currentStrategy === 'all'
     ? mergeHistory(d.history || [], mlHist)
     : isMl ? mlHist : (d.history || []);
-  const eq = isMl ? (mlAcc.equity || 0) : (d.equity || 0);
+  const eq = isMl
+    ? (mlAcc.equity || 0)
+    : allView
+      ? (d.equity || 0) + (mlAcc.equity || 0)
+      : (d.equity || 0);
   const capital = capitalPerformance(d);
   const valid = capital.valid;
   const pnl = capital.change;
   const pnlPct = capital.percent;
-  const buffer = d.liq_buffer_pct || 0;
+  const buffers = allView
+    ? [d.liq_buffer_pct, mlAcc.liq_buffer_pct].filter(Number.isFinite)
+    : [isMl ? mlAcc.liq_buffer_pct : d.liq_buffer_pct].filter(Number.isFinite);
+  const buffer = buffers.length ? Math.min(...buffers) : 0;
 
   const keyed = !!(c.key_path && c.key_path.trim());
   const ready = !!(d.configured && keyed);
@@ -777,7 +801,7 @@ function renderMonitor(d) {
   } else if (c.armed && keyed && holding) {
     cls = "run";
     tag = "● 运行中";
-    text = `<b>实盘已启动</b> · 持有 <b>${pos.length}</b> 个仓位 · 总名义 $${fmt(d.gross_notional || 0, 0)}`;
+    text = `<b>实盘已启动</b> · 持有 <b>${pos.length}</b> 个仓位 · 总名义 $${fmt(grossNow, 0)}`;
   } else if (c.armed && keyed && !holding) {
     cls = "idle";
     tag = "● 已启用，尚无持仓";
@@ -791,7 +815,11 @@ function renderMonitor(d) {
     tag = "● 未启用";
     text = "当前只会生成计划，不会发送订单";
   }
-  const isoN = d.isolated_count || 0;
+  const isoN = allView
+    ? (Number(d.isolated_count) || 0) + (Number(mlAcc.isolated_count) || 0)
+    : isMl
+      ? (Number(mlAcc.isolated_count) || 0)
+      : (d.isolated_count || 0);
   if (isoN > 0) {
     text += `<span class="neg"><b>⚠ ${isoN} 个仓位仍是逐仓</b>（Hyperliquid 不允许持仓时切换模式，需用「转为全仓」逐币处理）</span>`;
   }
@@ -812,11 +840,10 @@ function renderMonitor(d) {
   const slip = parsed.slip;
   const targetLev = (c.leverage || 0) * (c.margin_buffer || 1);
   // ML tab 用 ML 子账户自己的总名义（d.gross_notional 是动量的）
-  const grossNow = isMl ? pos.reduce((sum, p) => sum + (Number.isFinite(p.notional) ? p.notional : 0), 0) : (d.gross_notional || 0);
   const actualLev = eq > 0 ? grossNow / eq : 0;
   const nPos = pos.length;
-  const nCross = nPos - (d.isolated_count || 0);
-  const currentValid = !d.error && Number.isFinite(d.equity) && pos.every(p => Number.isFinite(p.unrealized));
+  const nCross = nPos - isoN;
+  const currentValid = !d.error && Number.isFinite(eq) && pos.every(p => Number.isFinite(p.unrealized));
   const unrealized = pos.reduce((sum, p) => sum + (Number.isFinite(p.unrealized) ? p.unrealized : 0), 0);
 
   // 拿不到行情的持仓：必须显眼提示，否则净值看着正常但风险是隐形的
@@ -830,7 +857,7 @@ function renderMonitor(d) {
 
   $("mo-metrics").innerHTML =
     metricGroup(
-      isMl ? "实时概览 · ML 策略子账户" : "实时概览 · 当前账户与持仓",
+      allView ? "账户合计 · 当前持仓" : isMl ? "ML 账户 · 当前持仓" : "动量账户 · 当前持仓",
       metric("账户净值", currentValid ? "$" + fmt(eq, 2) : "—") +
       metric("未实现盈亏 · PNL", currentValid ? moneySigned(unrealized) : "—", currentValid ? (unrealized >= 0 ? "pos" : "neg") : "") +
       metric("持仓数量", currentValid ? nPos + '<span class="metric-unit"> 个</span>' : "—") +
@@ -852,7 +879,7 @@ function renderMonitor(d) {
     metricGroup(
       "风险与仓位",
       metric("账户强平缓冲", currentValid ? fmt(buffer, 1) + "%" : "—", buffer < 40 ? "neg" : "pos") +
-        metric("净敞口 · 多减空", currentValid ? moneySigned(d.net_notional || 0) : "—", Math.abs(d.net_notional || 0) <= eq * 0.1 ? "" : "neg") +
+        metric("净敞口 · 多减空", currentValid ? moneySigned((d.net_notional || 0) + (allView ? (mlAcc.net_notional || 0) : 0)) : "—", Math.abs((d.net_notional || 0) + (allView ? (mlAcc.net_notional || 0) : 0)) <= eq * 0.1 ? "" : "neg") +
         metric("实际 / 目标杠杆", fmt(actualLev, 2) + "x / " + fmt(targetLev, 2) + "x",
           actualLev < targetLev * 0.9 ? "neg" : "pos") +
         metric(
@@ -860,11 +887,11 @@ function renderMonitor(d) {
           // 全是全仓时只说「全仓」。逐仓是早期一个真实 bug（is_cross 传了 false），
           // 现已修复；把「0 逐仓」挂在卡片上只会让人以为还有问题。
           nPos
-            ? (d.isolated_count || 0) > 0
-              ? nCross + " 全仓 / " + d.isolated_count + " 逐仓"
+            ? isoN > 0
+              ? nCross + " 全仓 / " + isoN + " 逐仓"
               : nCross + " 全仓"
             : "—",
-          (d.isolated_count || 0) > 0 ? "neg" : "pos"
+          isoN > 0 ? "neg" : "pos"
         )
     ) +
     metricGroup(
@@ -872,7 +899,7 @@ function renderMonitor(d) {
       metric("实测平均滑点", slip ? slip.avg.toFixed(3) + "%" : "—", slip && slip.avg > 0.15 ? "neg" : "pos") +
         metric("补录已实现 · 未扣费", parsed.n ? moneySigned(realized) : "—",
           realized >= 0 ? "pos" : "neg") +
-        metric("总名义敞口", "$" + fmt(d.gross_notional || 0, 0)) +
+        metric("总名义敞口", "$" + fmt(grossNow, 0)) +
         metric("当前挂单", currentValid ? (d.tp_orders || []).length + " 笔" : "—") +
         metric("最后调仓", d.last_run_at ? `<span class="sm">${ts2m(d.last_run_at)}</span>` : "—")
     ) +
@@ -938,7 +965,7 @@ function renderMonitor(d) {
         const cls = p.unrealized >= 0 ? "pos" : "neg";
         const dist = p.dist_pct == null ? "—" : fmt(p.dist_pct, 1) + "%";
         // 离止盈：止盈线 = 成本 × (1±tp) ✗ 显示还差多少【价格】✗
-        const tp = isMl ? 0 : ((d.config && d.config.take_profit_pct) || 0);
+        const tp = isMl || p._account === 'ML' ? 0 : ((d.config && d.config.take_profit_pct) || 0);
         const long = p.side === "long";
         const line = tp > 0 && p.entry_px > 0 ? p.entry_px * (long ? 1 + tp : 1 - tp) : null;
         const toTp = line && p.mark_px > 0 ? (line / p.mark_px - 1) * (long ? 1 : -1) * 100 : null;
@@ -947,6 +974,7 @@ function renderMonitor(d) {
           : `<span class="${toTp <= 0 ? "pos" : "muted"}">${toTp <= 0 ? "已到线" : fmt(toTp, 1) + "%"}</span>`;
         return `<tr>
           <td>${p.coin}</td>
+          ${allView ? `<td><span class="badge-mini ${p._account === 'ML' ? 'mute' : 'ok'}">${p._account}</span></td>` : ''}
           <td>${sideLabel(p.side)}</td>
           <td>${fmtCompact(p.size)}</td>
           <td>${fmtCompact(p.entry_px)}</td>
@@ -961,7 +989,7 @@ function renderMonitor(d) {
       })
       .join("");
     $("mo-positions").innerHTML = err + `<div class="table-scroll"><table><thead><tr>
-      <th>币</th><th>方向</th><th>数量</th><th>入场价</th><th>当前价</th>
+      <th>币</th>${allView ? '<th>账户</th>' : ''}<th>方向</th><th>数量</th><th>入场价</th><th>当前价</th>
       <th>名义</th><th>未实现盈亏</th><th>强平价</th><th>距强平</th><th>离止盈</th><th>保证金模式</th>
     </tr></thead><tbody>${rows}</tbody></table></div>` + pager("pos", pos.length, posPage, LIVE_PAGE_SIZE);
   }
@@ -1820,7 +1848,7 @@ function arrangeMonitorSummary(id, shadow = false) {
   const first = [...groups[0].querySelectorAll('.metric')];
   const capital = groups.find(g => g.classList.contains('capital-account'));
   root.replaceChildren();
-  root.className = 'account-summary';
+  root.className = 'account-summary' + (!shadow && currentStrategy === 'all' ? ' account-summary-all' : '');
   if (shadow) {
     // 影子页沿用原来的三格（净值 ✗ 累计盈亏 ✗ 浮动 ✓）
     const earnings = first[1];
@@ -1866,7 +1894,8 @@ function arrangeMonitorSummary(id, shadow = false) {
       const principalAll = base + mlBase;
       const unrlAll = unrl + (mlAcc2.positions || []).reduce((s2, p2) => s2 + (Number.isFinite(p2.unrealized) ? p2.unrealized : 0), 0);
       const pctAll = principalAll > 0 ? ((eqAll / principalAll - 1) * 100).toFixed(2) + "%" : "";
-      root.append(cell("全部账户净值", usd(eqAll), "", pctAll ? `合计收益率 ${Number(pctAll) >= 0 ? "+" : ""}${pctAll}` : ""));
+      const netAll = eqAll - principalAll;
+      root.append(cell("合计净收益", money(netAll), netAll >= 0 ? "pos" : "neg", pctAll ? `净投入收益率 ${Number(pctAll) >= 0 ? "+" : ""}${pctAll}` : ""));
       root.append(cell("合计本金", usd(principalAll)));
       root.append(cell("当前浮盈", money(unrlAll), unrlAll >= 0 ? "pos" : "neg"));
       return;
