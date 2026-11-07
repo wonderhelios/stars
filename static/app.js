@@ -1108,8 +1108,10 @@ function mergeHistory(a, b) {
   const aS = clean(a), bS = clean(b);
   if (!aS.length) return bS;
   if (!bS.length) return aS;
+  // 只取【两个子账户都有数据】的区间（否则早期只有动量 ✗ baseline 用合计会算出假的 -3000）
+  const startTs = Math.max(aS[0].ts, bS[0].ts);
   const tsSet = new Set([...aS.map(p => p.ts), ...bS.map(p => p.ts)]);
-  const tsList = [...tsSet].sort((x, y) => x - y);
+  const tsList = [...tsSet].filter(ts => ts >= startTs).sort((x, y) => x - y);
   const valAt = (arr, ts) => { let v = null; for (const p of arr) { if (p.ts <= ts) v = p.equity; else break; } return v; };
   return tsList.map(ts => {
     const av = valAt(aS, ts), bv = valAt(bS, ts);
