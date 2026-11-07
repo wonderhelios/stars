@@ -75,7 +75,8 @@ def sign_l1_action(wallet_priv: str, action: dict, nonce: int, vault_address: st
             {"name": "connectionId", "type": "bytes32"},
         ]
     }
-    message = {"source": "a", "connectionId": connection_id.hex()}
+    # connectionId 是 bytes32 ✗ 必须传 0x 开头的 66 字符 hex（传 64 字符纯 hex 会被当成 64 字节 ✗ 超长报错）
+    message = {"source": "a", "connectionId": "0x" + connection_id.hex()}
     signable = encode_typed_data(domain, types, message)
     signed = Account.sign_message(signable, wallet_priv)
     return {
