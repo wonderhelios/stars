@@ -733,6 +733,14 @@ async fn live_status(State(state): State<AppState>) -> Response {
             );
         }
     }
+    // 记录 ML 子账户净值历史（用于「全部账户」= 动量 + ML 合计曲线）
+    if let Some(acct) = &snap.ml_account {
+        if acct.error.is_none() && acct.equity.is_finite() && acct.equity >= 0.0 {
+            if let Err(e) = crate::live::record_ml_equity(&state.live, &state.live_path, acct.equity).await {
+                tracing::warn!("ML 净值记录失败: {e:#}");
+            }
+        }
+    }
     // 五项健康指标（红黄绿）✗ 需要 IC/回撤 ✗ 从同一份面板和调整后净值算 ✓
     let scorecard = {
         let panel: Vec<PanelEntry> = state

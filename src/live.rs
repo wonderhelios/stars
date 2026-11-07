@@ -246,6 +246,9 @@ pub struct LiveState {
     pub capital_baseline: Option<CapitalBaseline>,
     pub config: LiveConfig,
     pub history: Vec<EquityPoint>,
+    /// ML 子账户 B 的净值历史（默认全部账户曲线 = 动量 + ML 合并）。
+    #[serde(default)]
+    pub ml_history: Vec<EquityPoint>,
     pub records: Vec<LiveRecord>,
     pub last_run_at: Option<i64>,
     pub last_plan: Vec<String>,
@@ -528,6 +531,9 @@ pub struct LiveSnapshot {
     pub tp_oids: Vec<u64>,
     pub config: LiveConfig,
     pub history: Vec<EquityPoint>,
+    /// ML 子账户 B 的净值历史（默认全部账户曲线 = 动量 + ML 合并）。
+    #[serde(default)]
+    pub ml_history: Vec<EquityPoint>,
     pub records: Vec<LiveRecord>,
     pub last_run_at: Option<i64>,
     pub last_plan: Vec<String>,
@@ -834,6 +840,7 @@ pub async fn snapshot(
         tp_ref: HashMap::new(),
         config: cfg.clone(),
         history: state.history.clone(),
+        ml_history: state.ml_history.clone(),
         records: state.records.clone(),
         last_run_at: state.last_run_at,
         last_plan: state.last_plan.clone(),
@@ -2217,6 +2224,30 @@ pub async fn record_equity(
         g.history.drain(0..len - 6000);
     }
     if let Err(e) = g.save(path) { *g = previous; return Err(e.context("净值记录保存失败")); }
+    Ok(())
+}
+
+/// 记录 ML 子账户 B 的净值点（按小时去重）。用于「全部账户」合计曲线。
+pub async fn record_ml_equity(
+    live: &std::sync::Arc<tokio::sync::Mutex<LiveState>>,
+    path: &std::path::Path,
+    equity: f64,
+) -> Result<()> {
+    if !equity.is_finite() || equity < 0.0 {
+        anyhow::bail!("ML 净值不是有效数值");
+    }
+    let now = now_ms_pub();
+    let hour = now / 3_600_000;
+    let mut g = live.lock().await;
+    if g.ml_history.last().map(|p| p.ts / 3_600_000) == Some(hour) {
+        return Ok(());
+    }
+    g.ml_history.push(EquityPoint { ts: now, equity, pnl: 0.0 });
+    let len = g.ml_history.len();
+    if len > 6000 {
+        g.ml_history.drain(0..len - 6000);
+    }
+    g.save(path).context("ML 净值记录保存失败")?;
     Ok(())
 }
 

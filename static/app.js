@@ -638,11 +638,22 @@ function renderTotal(d) {
     return;
   }
   const total = mom + ml;
+  // 合计变化：用两个子账户合并历史的首尾算
+  const merged = mergeHistory(d.history || [], d.ml_history || []);
+  let changeHtml = "";
+  if (merged.length >= 2) {
+    const first = merged[0].equity, last = merged[merged.length - 1].equity;
+    if (Number.isFinite(first) && Number.isFinite(last) && first > 0) {
+      const diff = last - first, pct = (diff / first) * 100;
+      const cls = diff >= 0 ? "pos" : "neg";
+      changeHtml = `<span class="total-change ${cls}">${moneySigned(diff)}（${pct >= 0 ? "+" : ""}${fmt(pct, 1)}%）</span>`;
+    }
+  }
   el.innerHTML = `
     <div class="total-card">
       <div class="total-item"><span class="total-label">动量策略净值</span><span class="total-value">$${fmt(mom, 2)}</span></div>
       <div class="total-item"><span class="total-label">ML 策略净值</span><span class="total-value">$${fmt(ml, 2)}</span></div>
-      <div class="total-item total-sum"><span class="total-label">全部账户总额</span><span class="total-value">$${fmt(total, 2)}</span></div>
+      <div class="total-item total-sum"><span class="total-label">全部账户总额</span><span class="total-value">$${fmt(total, 2)}</span>${changeHtml}</div>
     </div>`;
 }
 
@@ -738,7 +749,10 @@ function renderMonitor(d) {
   const mlAcc = d.ml_account && !d.ml_account.error ? d.ml_account : null;
   const isMl = currentStrategy === 'ml' && !!mlAcc;
   const pos = isMl ? (mlAcc.positions || []) : (d.positions || []);
-  const hist = isMl ? [] : (d.history || []);
+  const mlHist = d.ml_history || [];
+  const hist = currentStrategy === 'all'
+    ? mergeHistory(d.history || [], mlHist)
+    : isMl ? mlHist : (d.history || []);
   const eq = isMl ? (mlAcc.equity || 0) : (d.equity || 0);
   const capital = capitalPerformance(d);
   const valid = capital.valid;
@@ -1076,6 +1090,22 @@ function equityWindow(history, range, now) {
   // Preserve exact first/last observed values, without filling missing periods.
   const points = [raw[0], ...buckets.values()].filter((p, i, list) => !i || p.ts !== list[i - 1].ts);
   return { raw, points };
+}
+
+
+// 合并两个子账户的净值历史（按时间对齐，前值填充后相加）——「全部账户」曲线。
+function mergeHistory(a, b) {
+  const clean = arr => (arr || []).filter(p => Number.isFinite(p.ts) && Number.isFinite(p.equity)).sort((x, y) => x.ts - y.ts);
+  const aS = clean(a), bS = clean(b);
+  if (!aS.length) return bS;
+  if (!bS.length) return aS;
+  const tsSet = new Set([...aS.map(p => p.ts), ...bS.map(p => p.ts)]);
+  const tsList = [...tsSet].sort((x, y) => x - y);
+  const valAt = (arr, ts) => { let v = null; for (const p of arr) { if (p.ts <= ts) v = p.equity; else break; } return v; };
+  return tsList.map(ts => {
+    const av = valAt(aS, ts), bv = valAt(bS, ts);
+    return { ts, equity: (av ?? 0) + (bv ?? 0) };
+  });
 }
 
 function renderLiveChart(history, shadow) {
