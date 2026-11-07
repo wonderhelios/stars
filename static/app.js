@@ -1831,6 +1831,16 @@ function arrangeMonitorSummary(id, shadow = false) {
       return item;
     };
     const pct = principal > 0 ? ((eq / principal - 1) * 100).toFixed(2) + "%" : "";
+    // ML tab：显示 ML 子账户自己的净值/浮盈/持仓（不能显示动量的 $4,500）
+    const mlAcc2 = ld.ml_account && !ld.ml_account.error ? ld.ml_account : null;
+    if (currentStrategy === 'ml' && mlAcc2) {
+      const eqMl = Number.isFinite(mlAcc2.equity) ? mlAcc2.equity : 0;
+      const unrlMl = (mlAcc2.positions || []).reduce((s2, p2) => s2 + (Number.isFinite(p2.unrealized) ? p2.unrealized : 0), 0);
+      root.append(cell("ML 子账户净值", usd(eqMl)));
+      root.append(cell("当前浮盈", money(unrlMl), unrlMl >= 0 ? "pos" : "neg"));
+      root.append(cell("持仓数量", (mlAcc2.positions || []).length + " 个"));
+      return;
+    }
     root.append(
       cell("账户净值", usd(eq), "", pct ? `净投入收益率 ${Number(pct) >= 0 ? "+" : ""}${pct}` : "")
     );
