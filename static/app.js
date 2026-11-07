@@ -220,6 +220,9 @@ function lvConfigInto(d) {
   const c = d.config || {};
   $("lv-account").value = c.account || "";
   $("lv-key").value = c.key_path || "";
+  if ($("lv-vault")) $("lv-vault").value = c.vault_address || "";
+  if ($("lv-ml-vault")) $("lv-ml-vault").value = c.ml_vault_address || "";
+  if ($("lv-ml-python")) $("lv-ml-python").value = c.ml_python || "";
   $("lv-positions").value = c.target_positions ?? 8;
   $("lv-leverage").value = c.leverage ?? 3;
   $("lv-buffer").value = Math.round((c.margin_buffer ?? 0.9) * 100);
@@ -248,6 +251,9 @@ $("lv-save").addEventListener("click", async () => {
   const body = {
     account: $("lv-account").value,
     key_path: $("lv-key").value,
+    vault_address: $("lv-vault") ? $("lv-vault").value : "",
+    ml_vault_address: $("lv-ml-vault") ? $("lv-ml-vault").value : "",
+    ml_python: $("lv-ml-python") ? $("lv-ml-python").value : "",
     target_positions: Number($("lv-positions").value),
     leverage: Number($("lv-leverage").value),
     margin_buffer: Number($("lv-buffer").value) / 100,

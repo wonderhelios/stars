@@ -798,6 +798,7 @@ struct LiveConfigBody {
     account: Option<String>,
     vault_address: Option<String>,
     ml_vault_address: Option<String>,
+    ml_python: Option<String>,
     key_path: Option<String>,
     target_positions: Option<usize>,
     leverage: Option<f64>,
@@ -835,6 +836,11 @@ async fn live_config(
     }
     if let Some(v) = body.ml_vault_address {
         c.ml_vault_address = if v.trim().is_empty() { None } else { Some(v.trim().to_string()) };
+    }
+    if let Some(v) = body.ml_python {
+        if !v.trim().is_empty() {
+            c.ml_python = v.trim().to_string();
+        }
     }
     if let Some(v) = body.key_path {
         c.key_path = v.trim().to_string();
