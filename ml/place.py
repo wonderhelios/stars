@@ -14,6 +14,7 @@
 from pathlib import Path
 BASE = Path(__file__).resolve().parent
 import json
+import math
 import urllib.request
 import time
 import datetime
@@ -114,6 +115,31 @@ def current_positions(vault_address: str):
     return pos
 
 
+SLIPPAGE = 0.005  # 和 Rust 动量一致（Ioc 吃单的滑点容忍）
+
+
+def order_price(px: float, sz_decimals: int, round_up: bool) -> float:
+    """价格格式化：最多 5 个有效数字，且小数位 ≤ 6 - szDecimals（和 Rust 的 order_price 一致）。
+    HL 要求价格是 tick size 的倍数 ✗ 直接用 mark price 会被拒（Price must be divisible by tick size）。
+    """
+    if not math.isfinite(px) or px <= 0:
+        return 0.0
+    decimal_places = min(4 - int(math.floor(math.log10(px))), 6 - sz_decimals)
+    factor = 10.0 ** decimal_places
+    scaled = px * factor
+    return math.ceil(scaled) / factor if round_up else math.floor(scaled) / factor
+
+
+def fmt_price(px: float, sz_decimals: int, round_up: bool) -> str:
+    """格式化价格字符串（避免浮点误差 ✗ 直接按 decimal_places 输出）。"""
+    p = order_price(px, sz_decimals, round_up)
+    if p <= 0:
+        return "0"
+    decimal_places = min(4 - int(math.floor(math.log10(p))), 6 - sz_decimals)
+    decimal_places = max(decimal_places, 0)
+    return f"{p:.{decimal_places}f}"
+
+
 def build_orders(target: dict, current: dict, idx: dict, decimals: dict, equity: float):
     """目标持仓（{coin: signed_notional}）vs 当前持仓 → 下单列表。
 
@@ -122,12 +148,11 @@ def build_orders(target: dict, current: dict, idx: dict, decimals: dict, equity:
     orders = []
     # 目标每个仓位的名义（USD）
     per_leg = equity / 6.0
+    mids = info_post({"type": "allMids"})  # 只调一次（之前每个币调一次 ✗ 慢且限流）
     for coin, target_notional in target.items():
         asset_idx = idx[coin]
         cur_size = current.get(coin, 0.0)
         dec = decimals.get(coin, 5)
-        # 当前价格（取中间价，简化用 markPx）
-        mids = info_post({"type": "allMids"})
         px = float(mids.get(coin, 0.0))
         if px <= 0:
             continue
@@ -136,11 +161,22 @@ def build_orders(target: dict, current: dict, idx: dict, decimals: dict, equity:
         delta = target_size - cur_size
         if abs(delta) * px < 10:  # 小于 $10 不调
             continue
+        buy = delta > 0  # 买 = 加多/减空
+        # Ioc 吃单价：买单上浮、卖单下浮在 slippage 内；再按 tick size 格式化
+        aggressive = px * (1.0 + SLIPPAGE) if buy else px * (1.0 - SLIPPAGE)
+        price_str = fmt_price(aggressive, dec, round_up=not buy)
+        size_str = round_sz(abs(delta), dec)
+        # 数量为 0 的跳过（价格太高时可能四舍五入到 0）
+        try:
+            if float(size_str) <= 0:
+                continue
+        except ValueError:
+            continue
         order = {
             "a": asset_idx,
-            "b": delta > 0,           # 买 = 加多/减空
-            "p": str(px),
-            "s": round_sz(abs(delta), dec),
+            "b": buy,
+            "p": price_str,
+            "s": size_str,
             "r": False,
             "t": {"limit": {"tif": "Ioc"}},
         }
