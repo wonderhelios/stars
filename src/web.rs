@@ -576,9 +576,12 @@ async fn run_ml_python(
     script: &str,
     extra: &[&str],
 ) -> anyhow::Result<String> {
+    // ml_dir 是绝对路径直接用；相对路径按工作目录解析。
+    let dir = cfg.ml_dir.trim_end_matches('/');
+    let path = if dir.is_empty() { script.to_string() } else { format!("{dir}/{script}") };
     let cwd = std::env::current_dir().unwrap_or_default();
     let out = tokio::process::Command::new(&cfg.ml_python)
-        .arg(script)
+        .arg(&path)
         .args(extra)
         .current_dir(&cwd)
         .output()
@@ -610,7 +613,7 @@ async fn ml_plan(State(state): State<AppState>) -> Response {
                 .into_response();
         }
     };
-    let predict = match run_ml_python(&cfg, "ml/predict.py", &["--json"]).await {
+    let predict = match run_ml_python(&cfg, "predict.py", &["--json"]).await {
         Ok(s) => s,
         Err(e) => {
             return (StatusCode::INTERNAL_SERVER_ERROR,
@@ -620,7 +623,7 @@ async fn ml_plan(State(state): State<AppState>) -> Response {
     };
     let plan = match run_ml_python(
         &cfg,
-        "ml/place.py",
+        "place.py",
         &["--wallet", &key, "--vault", &ml_addr, "--dry-run", "--json"],
     )
     .await
@@ -667,7 +670,7 @@ async fn ml_execute(State(state): State<AppState>) -> Response {
                 .into_response();
         }
     };
-    match run_ml_python(&cfg, "ml/place.py", &["--wallet", &key, "--vault", &ml_addr, "--json"]).await {
+    match run_ml_python(&cfg, "place.py", &["--wallet", &key, "--vault", &ml_addr, "--json"]).await {
         Ok(s) => Json(json!({"ok": true, "result": s})).into_response(),
         Err(e) => (StatusCode::INTERNAL_SERVER_ERROR,
             Json(json!({"ok": false, "error": format!("下单失败: {e}")}))).into_response(),
@@ -799,6 +802,7 @@ struct LiveConfigBody {
     vault_address: Option<String>,
     ml_vault_address: Option<String>,
     ml_python: Option<String>,
+    ml_dir: Option<String>,
     key_path: Option<String>,
     target_positions: Option<usize>,
     leverage: Option<f64>,
@@ -840,6 +844,11 @@ async fn live_config(
     if let Some(v) = body.ml_python {
         if !v.trim().is_empty() {
             c.ml_python = v.trim().to_string();
+        }
+    }
+    if let Some(v) = body.ml_dir {
+        if !v.trim().is_empty() {
+            c.ml_dir = v.trim().to_string();
         }
     }
     if let Some(v) = body.key_path {

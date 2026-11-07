@@ -48,6 +48,9 @@ pub struct LiveConfig {
     /// ML 服务用的 Python 可执行文件（conda ml 环境）。默认 "python"。
     #[serde(default = "d_ml_python")]
     pub ml_python: String,
+    /// ML 脚本目录（predict.py/place.py 所在 ✗ 绝对路径最稳 ✗ 默认 "ml"）。
+    #[serde(default = "d_ml_dir")]
+    pub ml_dir: String,
     /// 目标日波动（0 = 关闭 ✗ 0.02 = 把组合日波动控制在约 2%）。
     /// 每天按 目标/实际 缩放仓位 ✗ 波动大时减仓 ✗ 小时加仓 ✓
     #[serde(default = "d_vol_target")]
@@ -103,6 +106,7 @@ impl Default for LiveConfig {
             vault_address: None,
             ml_vault_address: None,
             ml_python: d_ml_python(),
+            ml_dir: d_ml_dir(),
             key_path: String::new(),
             target_positions: 8,
             leverage: 3.0,
@@ -138,6 +142,11 @@ fn default_momentum_weight() -> f64 {
 fn d_ml_python() -> String {
     // ML 服务默认用 PATH 里的 python（部署时可在配置里改成 conda 环境的绝对路径）。
     "python".to_string()
+}
+
+fn d_ml_dir() -> String {
+    // ML 脚本目录。部署时建议填绝对路径（如 /opt/stars/ml），否则依赖服务的工作目录。
+    "ml".to_string()
 }
 
 fn default_tp() -> f64 {
