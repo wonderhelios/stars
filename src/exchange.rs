@@ -84,7 +84,12 @@ pub struct Exec {
 
 impl Exec {
     pub async fn signer_config(cfg: &crate::live::LiveConfig) -> Result<Self> {
-        Self::signer(&cfg.account, Path::new(&cfg.key_path)).await
+        Self::signer(
+            &cfg.account,
+            Path::new(&cfg.key_path),
+            cfg.vault_address.as_deref(),
+        )
+        .await
     }
     async fn info_post(&self, body: Value) -> Result<Value> {
         let mut last: Option<anyhow::Error> = None;
@@ -139,7 +144,9 @@ impl Exec {
     }
 
     pub async fn reader_config(cfg: &crate::live::LiveConfig) -> Result<Self> {
-        Self::reader_for(Some(&cfg.account)).await
+        // 有子账户就查子账户，否则查主账户
+        let addr = cfg.vault_address.as_deref().unwrap_or(&cfg.account);
+        Self::reader_for(Some(addr)).await
     }
 
     pub async fn reader_for(account: Option<&str>) -> Result<Self> {
@@ -158,7 +165,8 @@ impl Exec {
     }
 
     /// Build a signing client from an authorized API wallet (never the main key).
-    pub async fn signer(account: &str, key_path: &Path) -> Result<Self> {
+    /// `vault_address` 是子账户地址：下单和查询都作用在子账户上（None = 主账户）。
+    pub async fn signer(account: &str, key_path: &Path, vault_address: Option<&str>) -> Result<Self> {
         let http = reqwest::Client::builder()
             .timeout(Duration::from_secs(20))
             .build()?;
@@ -172,16 +180,22 @@ impl Exec {
             wallet.address() != address,
             "refusing to use the main wallet key; supply an authorized API wallet"
         );
+        // 子账户地址（None = 主账户）
+        let vault = vault_address
+            .map(|v| Address::from_str(v).context("invalid vault_address"))
+            .transpose()?;
         let trading = tokio::time::timeout(
             Duration::from_secs(40),
-            ExchangeClient::new(None, wallet, Some(BaseUrl::Mainnet), None, None),
+            ExchangeClient::new(None, wallet, Some(BaseUrl::Mainnet), None, vault),
         )
         .await
         .context("exchange client init timed out")??;
+        // 查询余额/仓位时，有子账户就查子账户
+        let query_addr = vault.unwrap_or(address);
         Ok(Self {
             http,
             trading: Some(trading),
-            account: Some(address),
+            account: Some(query_addr),
         })
     }
 

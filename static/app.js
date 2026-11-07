@@ -616,14 +616,54 @@ function renderExecDaily(d) {
   };
 }
 
+// 实盘监控的策略切换：all=全部账户合计，momentum=动量，ml=ML。
+let currentStrategy = 'all';
+
+function renderTotal(d) {
+  const el = $('mo-total');
+  if (!el) return;
+  const mom = Number.isFinite(d.equity) ? d.equity : 0;
+  const ml = d.ml_account && !d.ml_account.error && Number.isFinite(d.ml_account.equity)
+    ? d.ml_account.equity : null;
+  if (ml == null) {
+    el.innerHTML = '';
+    return;
+  }
+  const total = mom + ml;
+  el.innerHTML = `
+    <div class="total-card">
+      <div class="total-item"><span class="total-label">动量策略净值</span><span class="total-value">$${fmt(mom, 2)}</span></div>
+      <div class="total-item"><span class="total-label">ML 策略净值</span><span class="total-value">$${fmt(ml, 2)}</span></div>
+      <div class="total-item total-sum"><span class="total-label">全部账户总额</span><span class="total-value">$${fmt(total, 2)}</span></div>
+    </div>`;
+}
+
+function bindStrategyTabs() {
+  const root = $('mo-strategy-tabs');
+  if (!root || root.dataset.bound) return;
+  root.dataset.bound = '1';
+  root.onclick = (event) => {
+    const btn = event.target.closest('[data-strategy]');
+    if (!btn) return;
+    currentStrategy = btn.dataset.strategy;
+    root.querySelectorAll('[data-strategy]').forEach(b => b.setAttribute('aria-pressed', b === btn ? 'true' : 'false'));
+    if (lastLiveData) renderMonitor(lastLiveData);
+  };
+}
+
 function renderMonitor(d) {
   if (!d) return;
   lastLiveData = d;
+  renderTotal(d);
+  bindStrategyTabs();
   renderCapitalFlows(d);
   const c = d.config || {};
-  const pos = d.positions || [];
-  const hist = d.history || [];
-  const eq = d.equity || 0;
+  // 策略切换：ML 时看 ML 子账户的持仓/净值，否则看动量子账户。
+  const mlAcc = d.ml_account && !d.ml_account.error ? d.ml_account : null;
+  const isMl = currentStrategy === 'ml' && !!mlAcc;
+  const pos = isMl ? (mlAcc.positions || []) : (d.positions || []);
+  const hist = isMl ? [] : (d.history || []);
+  const eq = isMl ? (mlAcc.equity || 0) : (d.equity || 0);
   const capital = capitalPerformance(d);
   const valid = capital.valid;
   const pnl = capital.change;
@@ -701,7 +741,7 @@ function renderMonitor(d) {
 
   $("mo-metrics").innerHTML =
     metricGroup(
-      "实时概览 · 当前账户与持仓",
+      isMl ? "实时概览 · ML 策略子账户" : "实时概览 · 当前账户与持仓",
       metric("账户净值", currentValid ? "$" + fmt(eq, 2) : "—") +
       metric("未实现盈亏 · PNL", currentValid ? moneySigned(unrealized) : "—", currentValid ? (unrealized >= 0 ? "pos" : "neg") : "") +
       metric("持仓数量", currentValid ? nPos + '<span class="metric-unit"> 个</span>' : "—") +
@@ -804,7 +844,7 @@ function renderMonitor(d) {
         const cls = p.unrealized >= 0 ? "pos" : "neg";
         const dist = p.dist_pct == null ? "—" : fmt(p.dist_pct, 1) + "%";
         // 离止盈：止盈线 = 成本 × (1±tp) ✗ 显示还差多少【价格】✗
-        const tp = (d.config && d.config.take_profit_pct) || 0;
+        const tp = isMl ? 0 : ((d.config && d.config.take_profit_pct) || 0);
         const long = p.side === "long";
         const line = tp > 0 && p.entry_px > 0 ? p.entry_px * (long ? 1 + tp : 1 - tp) : null;
         const toTp = line && p.mark_px > 0 ? (line / p.mark_px - 1) * (long ? 1 : -1) * 100 : null;

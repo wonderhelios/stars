@@ -1,4 +1,3 @@
-mod combine;
 mod exchange;
 mod hlcarry;
 mod health;
@@ -98,12 +97,6 @@ async fn main() -> anyhow::Result<()> {
         paper3.running = true;
     }
     let paper3 = Arc::new(Mutex::new(paper3));
-    let combine_path = std::env::var("STARS_COMBINE")
-        .unwrap_or_else(|_| "/var/lib/stars/combine.json".to_string());
-    let combine = Arc::new(Mutex::new(crate::combine::CombineState::load_or_init(
-        std::path::Path::new(&combine_path),
-        5000.0,
-    )));
     let hl_live = live::LiveState::load(std::path::Path::new(&live_path));
     let live = Arc::new(Mutex::new(hl_live));
     let hlcarry = Arc::new(Mutex::new(crate::hlcarry::HlCarryState::load(std::path::Path::new(&hlcarry_path))));
@@ -131,8 +124,6 @@ async fn main() -> anyhow::Result<()> {
         refresh: refresh.clone(),
         hlcarry: hlcarry.clone(),
         hlcarry_path: Arc::new(std::path::PathBuf::from(&hlcarry_path)),
-        combine: combine.clone(),
-        combine_path: Arc::new(std::path::PathBuf::from(&combine_path)),
     };
 
     // ===== HL 单账户 carry 影子：每 5 分钟推进一步 =====
@@ -447,51 +438,6 @@ async fn main() -> anyhow::Result<()> {
         });
     }
 
-    // ===== 组合策略纸面步进（每天 ✗ 用 store 的日线 + 1h 面板）=====
-    {
-        let store = store.clone();
-        let combine = combine.clone();
-        let meta = meta.clone();
-        tokio::spawn(async move {
-            loop {
-                if let (Ok(panel_1d), Ok(panel_1h)) = (store.all_panels(), store.all_panels_1h()) {
-                    let d: Vec<crate::momentum::PanelEntry> = panel_1d
-                        .into_iter()
-                        .map(|(coin, candles)| crate::momentum::PanelEntry { coin, candles })
-                        .collect();
-                    let h: Vec<crate::momentum::PanelEntry> = panel_1h
-                        .into_iter()
-                        .map(|(coin, candles)| crate::momentum::PanelEntry { coin, candles })
-                        .collect();
-                    let mut st = combine.lock().await;
-                    if st.running {
-                        let before = st.history.len();
-                        crate::combine::step(&mut st, &d, &h);
-                        // 还没有历史（刚部署）时 ✗ 至少把当前仓位算出来给页面看 ✓
-                        // 只在拿到实时标记价后才建仓 ✗ 否则会用过期 K 线价建出假浮盈 ✓
-                        if st.history.len() < 2 {
-                            let marks: std::collections::HashMap<String, f64> = {
-                                let m = meta.lock().await;
-                                m.ctxs
-                                    .iter()
-                                    .filter(|x| x.mark_px > 0.0)
-                                    .map(|x| (x.coin.clone(), x.mark_px))
-                                    .collect()
-                            };
-                            if !marks.is_empty() {
-                                crate::combine::preview(&mut st, &d, &h, &marks);
-                            }
-                        }
-                        if st.history.len() != before {
-                            st.save(combine_path.as_ref());
-                        }
-                    }
-                }
-                tokio::time::sleep(Duration::from_secs(600)).await;
-            }
-        });
-    }
-
     // ===== background refresh task =====
     {
         let store = store.clone();
@@ -781,7 +727,8 @@ async fn run_trade(args: &[String], db_path: &str) -> anyhow::Result<()> {
         (true, Some(addr)) => {
             let key = std::env::var("HL_API_WALLET_KEY_FILE")
                 .context("live 交易需要 HL_API_WALLET_KEY_FILE")?;
-            exchange::Exec::signer(addr, std::path::Path::new(&key)).await?
+            let vault = std::env::var("HL_VAULT_ADDRESS").ok();
+            exchange::Exec::signer(addr, std::path::Path::new(&key), vault.as_deref()).await?
         }
         // Dry run still reads the real account (read-only) so the plan matches.
         (false, Some(addr)) => exchange::Exec::reader_for(Some(addr)).await?,

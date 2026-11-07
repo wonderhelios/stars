@@ -37,6 +37,14 @@ pub fn markets_from_meta(universe: &[crate::hl::CoinMeta]) -> HashMap<String, Ma
 #[serde(default)]
 pub struct LiveConfig {
     pub account: String,
+    /// 子账户地址（vault address）。Some = 交易/查询都作用在这个子账户上；
+    /// None = 用主账户 account。用于「两个子账户分别跑不同策略」。
+    #[serde(default)]
+    pub vault_address: Option<String>,
+    /// ML 策略的子账户地址（第二个子账户）。只读监控用：live_status 会查这个
+    /// 子账户的净值/仓位，与动量子账户并排展示 + 合计总资金。
+    #[serde(default)]
+    pub ml_vault_address: Option<String>,
     /// 目标日波动（0 = 关闭 ✗ 0.02 = 把组合日波动控制在约 2%）。
     /// 每天按 目标/实际 缩放仓位 ✗ 波动大时减仓 ✗ 小时加仓 ✓
     #[serde(default = "d_vol_target")]
@@ -89,6 +97,8 @@ impl Default for LiveConfig {
     fn default() -> Self {
         Self {
             account: String::new(),
+            vault_address: None,
+            ml_vault_address: None,
             key_path: String::new(),
             target_positions: 8,
             leverage: 3.0,
@@ -437,6 +447,15 @@ pub struct LivePosition {
     pub leverage: u32,
 }
 
+/// ML 策略子账户的只读快照（第二个子账户 ✗ 与动量子账户并排展示 + 合计）。
+#[derive(Serialize)]
+pub struct MlAccountSnapshot {
+    pub account: String,
+    pub equity: f64,
+    pub positions: Vec<LivePosition>,
+    pub error: Option<String>,
+}
+
 #[derive(Serialize)]
 pub struct LiveSnapshot {
     pub capital_baseline: Option<CapitalBaseline>,
@@ -498,6 +517,9 @@ pub struct LiveSnapshot {
     /// 否则手动刷新会把止盈线随行情搬走（100 建仓、现价 80 的多头会被挂到 88）。
     pub tp_ref: HashMap<String, f64>,
     pub last_live: bool,
+    /// ML 策略子账户（第二个子账户）的快照。None = 没配置 ml_vault_address。
+    #[serde(default)]
+    pub ml_account: Option<MlAccountSnapshot>,
 }
 
 
@@ -798,14 +820,17 @@ pub async fn snapshot(
         last_run_at: state.last_run_at,
         last_plan: state.last_plan.clone(),
         last_live: state.last_live,
+        ml_account: None,
     };
     if cfg.account.is_empty() {
         snap.error = Some("未配置账户地址".into());
         return snap;
     }
+    // 有子账户（vault）就查子账户，否则查主账户。
+    let query_addr = cfg.vault_address.as_deref().unwrap_or(&cfg.account);
     let exec_res = match http {
-        Some(h) => Exec::reader_shared(h, Some(&cfg.account)).await,
-        None => Exec::reader_for(Some(&cfg.account)).await,
+        Some(h) => Exec::reader_shared(h, Some(query_addr)).await,
+        None => Exec::reader_for(Some(query_addr)).await,
     };
     let exec = match exec_res {
         Ok(e) => e,
@@ -913,6 +938,84 @@ pub async fn snapshot(
     snap
 }
 
+/// 查询 ML 策略子账户（第二个子账户）的净值/仓位，只读。
+/// 与动量子账户并排展示 + 合计总资金。
+pub async fn ml_account_snapshot(
+    ml_vault_address: &str,
+    http: Option<reqwest::Client>,
+) -> MlAccountSnapshot {
+    let mut out = MlAccountSnapshot {
+        account: ml_vault_address.to_string(),
+        equity: 0.0,
+        positions: Vec::new(),
+        error: None,
+    };
+    let exec = match http {
+        Some(h) => Exec::reader_shared(h, Some(ml_vault_address)).await,
+        None => Exec::reader_for(Some(ml_vault_address)).await,
+    };
+    let exec = match exec {
+        Ok(e) => e,
+        Err(e) => {
+            out.error = Some(format!("{e}"));
+            return out;
+        }
+    };
+    let acct = match exec.account().await {
+        Ok(a) => a,
+        Err(e) => {
+            out.error = Some(format!("读取 ML 子账户失败: {e}"));
+            return out;
+        }
+    };
+    out.equity = acct.equity;
+    let coins: Vec<String> = acct.positions.keys().cloned().collect();
+    let mids = trader::fetch_mids(&exec, &coins).await;
+    for (coin, pos) in acct.positions.iter() {
+        let mark = mids
+            .get(coin)
+            .copied()
+            .filter(|m| *m > 0.0)
+            .unwrap_or_else(|| {
+                if pos.size.abs() > 1e-12 && pos.position_value > 0.0 {
+                    pos.position_value / pos.size.abs()
+                } else {
+                    pos.entry_px
+                }
+            });
+        let notional = (pos.size * mark).abs();
+        let unrealized = if mark > 0.0 {
+            pos.size * (mark - pos.entry_px)
+        } else {
+            pos.unrealized_pnl
+        };
+        out.positions.push(LivePosition {
+            coin: coin.clone(),
+            side: if pos.size > 0.0 { "long".into() } else { "short".into() },
+            size: pos.size,
+            entry_px: pos.entry_px,
+            mark_px: mark,
+            notional,
+            unrealized,
+            liq_px: pos.liq_px,
+            dist_pct: pos.liq_px.and_then(|liq| {
+                if mark > 0.0 && liq > 0.0 {
+                    Some(if pos.size > 0.0 {
+                        (mark - liq) / mark * 100.0
+                    } else {
+                        (liq - mark) / mark * 100.0
+                    })
+                } else {
+                    None
+                }
+            }),
+            is_cross: pos.is_cross,
+            leverage: pos.leverage,
+        });
+    }
+    out
+}
+
 #[derive(Serialize)]
 pub struct RunResult {
     pub aborted: bool,
@@ -961,9 +1064,9 @@ pub async fn run(
     }
 
     let exec = if live {
-        Exec::signer(&cfg.account, std::path::Path::new(&cfg.key_path)).await?
+        Exec::signer_config(&cfg).await?
     } else {
-        Exec::reader_for(Some(&cfg.account)).await?
+        Exec::reader_config(&cfg).await?
     };
     let tc = cfg.trade_config();
 
@@ -1381,7 +1484,7 @@ pub async fn rebuild_cross(
     let cfg = state.config.clone();
     anyhow::ensure!(cfg.armed, "实盘未启用（需先打开「启用实盘」开关）");
     anyhow::ensure!(cfg.can_sign(), "未配置 API 钱包密钥");
-    let exec = Exec::signer(&cfg.account, std::path::Path::new(&cfg.key_path)).await?;
+    let exec = Exec::signer_config(&cfg).await?;
     let tc = cfg.trade_config();
 
     // 先读账户：仓位数上限（cap）依赖净值，必须在算权重之前拿到。

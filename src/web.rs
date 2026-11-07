@@ -47,9 +47,6 @@ pub struct AppState {
     /// HL 单账户 carry 影子（现货 + 空永续）。
     pub hlcarry: Arc<Mutex<crate::hlcarry::HlCarryState>>,
     pub hlcarry_path: Arc<std::path::PathBuf>,
-    /// 组合策略纸面（日线动量 + 12h 区间位置）。
-    pub combine: Arc<Mutex<crate::combine::CombineState>>,
-    pub combine_path: Arc<std::path::PathBuf>,
 }
 
 #[derive(Clone, Default)]
@@ -94,10 +91,6 @@ pub fn router(state: AppState) -> Router {
         .route("/api/paper3/step", post(paper3_step))
         .route("/api/live", get(live_status))
         .route("/api/strategy-health", get(strategy_health))
-        .route("/api/paper4", get(paper4_status))
-        .route("/api/paper4/start", post(paper4_start))
-        .route("/api/paper4/stop", post(paper4_stop))
-        .route("/api/paper4/reset", post(paper4_reset))
         .route("/api/snapshots", get(snapshots_view))
         .route("/api/live/config", post(live_config))
         .route("/api/live/run", post(live_run))
@@ -554,111 +547,6 @@ async fn snapshots_view(State(state): State<AppState>) -> Json<serde_json::Value
     }))
 }
 
-async fn paper4_status(State(state): State<AppState>) -> Json<serde_json::Value> {
-    {
-        // 首次打开（还没历史 ✗ 也没仓位）✗ 现场算一次当前仓位给出页面看 ✓
-        let mut c = state.combine.lock().await;
-        if c.history.len() < 2 && c.a_pos.is_empty() && c.b_pos.is_empty() {
-            let d: Vec<PanelEntry> = state
-                .store
-                .all_panels()
-                .unwrap_or_default()
-                .into_iter()
-                .map(|(coin, candles)| PanelEntry { coin, candles })
-                .collect();
-            let h: Vec<PanelEntry> = state
-                .store
-                .all_panels_1h()
-                .unwrap_or_default()
-                .into_iter()
-                .map(|(coin, candles)| PanelEntry { coin, candles })
-                .collect();
-            if !d.is_empty() {
-                let mut marks: std::collections::HashMap<String, f64> = {
-                    let m = state.meta.lock().await;
-                    m.ctxs
-                        .iter()
-                        .filter(|x| x.mark_px > 0.0)
-                        .map(|x| (x.coin.clone(), x.mark_px))
-                        .collect()
-                };
-                // meta 还没刷新（启动时 backfill 会拖住它 ✗）✗ 自己拉一次现价 ✓
-                if marks.is_empty() {
-                    if let Ok(ctxs) = crate::hl::HlClient::new().market_ctxs().await {
-                        marks = ctxs
-                            .into_iter()
-                            .filter(|x| x.mark_px > 0.0)
-                            .map(|x| (x.coin, x.mark_px))
-                            .collect();
-                    }
-                }
-                // 拿不到实时价就【先不建仓】✗ 免得用过期价建出一个假浮盈 ✓
-                if !marks.is_empty() {
-                    crate::combine::preview(&mut c, &d, &h, &marks);
-                    c.save(state.combine_path.as_ref());
-                }
-            }
-        } else {
-            // 已有仓位：优先用【实时标记价】刷浮盈（meta 每 ~60 秒刷新 ✓）
-            let marks: std::collections::HashMap<String, f64> = {
-                let m = state.meta.lock().await;
-                m.ctxs
-                    .iter()
-                    .filter(|x| x.mark_px > 0.0)
-                    .map(|x| (x.coin.clone(), x.mark_px))
-                    .collect()
-            };
-            crate::combine::mark_with_prices(&mut c, &marks);
-        }
-    }
-    let snap = state.combine.lock().await.snapshot();
-    Json(json!({
-        "equity": snap.equity,
-        "pnl_pct": snap.pnl_pct,
-        "days_elapsed": snap.days_elapsed,
-        "history": snap.history,
-        "positions": snap.positions,
-        "running": snap.running,
-        "last_a": snap.last_a,
-        "last_b": snap.last_b,
-        "unrealized": snap.unrealized,
-        "a_pos": snap.a_pos.iter().map(|p| json!({
-            "coin": p.coin, "side": p.side, "entry_px": p.entry_px,
-            "notional": p.notional, "mark_px": p.mark_px, "unrealized": p.unrealized(),
-            "entry_ts": p.entry_ts,
-        })).collect::<Vec<_>>(),
-        "b_pos": snap.b_pos.iter().map(|p| json!({
-            "coin": p.coin, "side": p.side, "entry_px": p.entry_px,
-            "notional": p.notional, "mark_px": p.mark_px, "unrealized": p.unrealized(),
-            "entry_ts": p.entry_ts,
-        })).collect::<Vec<_>>(),
-        "config": snap.config,
-    }))
-}
-
-async fn paper4_start(State(state): State<AppState>) -> Response {
-    let mut c = state.combine.lock().await;
-    c.running = true;
-    let _ = std::fs::write(state.combine_path.as_ref(), serde_json::to_vec(&*c).unwrap_or_default());
-    Json(json!({"ok": true})).into_response()
-}
-
-async fn paper4_stop(State(state): State<AppState>) -> Response {
-    let mut c = state.combine.lock().await;
-    c.running = false;
-    let _ = std::fs::write(state.combine_path.as_ref(), serde_json::to_vec(&*c).unwrap_or_default());
-    Json(json!({"ok": true})).into_response()
-}
-
-async fn paper4_reset(State(state): State<AppState>) -> Response {
-    let cap = state.combine.lock().await.config.as_ref().map(|c| c.capital).unwrap_or(5000.0);
-    let mut c = state.combine.lock().await;
-    // 重置：先删文件 ✗ 再用固定起点重建 ✓
-    let _ = std::fs::remove_file(state.combine_path.as_ref());
-    *c = crate::combine::CombineState::load_or_init(state.combine_path.as_ref(), cap);
-    let _ = std::fs::write(state.combine_path.as_ref(), serde_json::to_vec(&*c).unwrap_or_default());
-    Json(json!({"ok": true})).into_response()
-}
 
 async fn strategy_health(State(state): State<AppState>) -> Json<serde_json::Value> {
     let panel: Vec<PanelEntry> = state
@@ -726,6 +614,14 @@ async fn live_status(State(state): State<AppState>) -> Response {
         }
     }
     snap.shadow = shadow;
+    // ML 策略子账户（第二个子账户）：只读查询净值/仓位，供页面并排展示 + 合计总资金。
+    if let Some(ml_addr) = snap.config.ml_vault_address.clone() {
+        if !ml_addr.is_empty() {
+            snap.ml_account = Some(
+                crate::live::ml_account_snapshot(&ml_addr, Some(state.http.clone())).await,
+            );
+        }
+    }
     // 五项健康指标（红黄绿）✗ 需要 IC/回撤 ✗ 从同一份面板和调整后净值算 ✓
     let scorecard = {
         let panel: Vec<PanelEntry> = state
@@ -792,6 +688,8 @@ struct LiveConfigBody {
     position_stop_pct: Option<f64>,
     stop_cooldown_days: Option<i64>,
     account: Option<String>,
+    vault_address: Option<String>,
+    ml_vault_address: Option<String>,
     key_path: Option<String>,
     target_positions: Option<usize>,
     leverage: Option<f64>,
@@ -822,6 +720,13 @@ async fn live_config(
     let c = &mut st.config;
     if let Some(v) = body.account {
         c.account = v.trim().to_string();
+    }
+    if let Some(v) = body.vault_address {
+        // 空串 = 清空子账户（回到主账户）
+        c.vault_address = if v.trim().is_empty() { None } else { Some(v.trim().to_string()) };
+    }
+    if let Some(v) = body.ml_vault_address {
+        c.ml_vault_address = if v.trim().is_empty() { None } else { Some(v.trim().to_string()) };
     }
     if let Some(v) = body.key_path {
         c.key_path = v.trim().to_string();
@@ -1479,11 +1384,6 @@ mod live_routes_tests {
             run_gate: Arc::new(Mutex::new(())),
             hlcarry: Arc::new(Mutex::new(crate::hlcarry::HlCarryState::default())),
             hlcarry_path: Arc::new(root.join("hlcarry.json")),
-            combine: Arc::new(Mutex::new(crate::combine::CombineState::load_or_init(
-                &root.join("combine.json"),
-                5000.0,
-            ))),
-            combine_path: Arc::new(root.join("combine.json")),
             auth_token: None,
             paper2: Arc::new(Mutex::new(crate::paper::PaperState::default())),
             paper2_path: Arc::new(root.join("paper2.json")),
@@ -1536,11 +1436,6 @@ mod live_routes_tests {
             run_gate: Arc::new(Mutex::new(())),
             hlcarry: Arc::new(Mutex::new(crate::hlcarry::HlCarryState::default())),
             hlcarry_path: Arc::new(root.join("hlcarry.json")),
-            combine: Arc::new(Mutex::new(crate::combine::CombineState::load_or_init(
-                &root.join("combine.json"),
-                5000.0,
-            ))),
-            combine_path: Arc::new(root.join("combine.json")),
             auth_token: None,
             paper2: Arc::new(Mutex::new(crate::paper::PaperState::default())),
             paper2_path: Arc::new(root.join("paper2.json")),
