@@ -221,7 +221,7 @@ def build_orders(target: dict, current: dict, idx: dict, decimals: dict, equity:
 def main():
     import argparse
     ap = argparse.ArgumentParser()
-    ap.add_argument("--wallet", required=True, help="API wallet 私钥（authorized agent，不是主钱包）")
+    ap.add_argument("--wallet", default="", help="API wallet 私钥（dry-run 只算 orders 时可省略）")
     ap.add_argument("--vault", required=True, help="ML 子账户 B 地址（vaultAddress）")
     ap.add_argument("--equity", type=float, default=0.0, help="子账户净值（不传则自动读）")
     ap.add_argument("--dry-run", action="store_true", help="只打印下单指令，不真下单")
@@ -233,15 +233,16 @@ def main():
     # 容忍 "HL:0x..." 前缀（HL 网页复制出来常带 ✗ 纯地址才能查）
     if vault.upper().startswith("HL:"):
         vault = vault[3:].strip()
-    if not wallet.startswith("0x") or len(wallet) != 66:
+    if wallet and (not wallet.startswith("0x") or len(wallet) != 66):
         print(f"错误：--wallet 应是 0x 开头的 64 位 hex 私钥（实际长度 {len(wallet)}）", file=sys.stderr)
         sys.exit(1)
     # 诊断：打印实际用的 API wallet 地址 + vault（排查 "does not exist"）
-    try:
-        print(f"[place] API wallet 地址: {Account.from_key(wallet).address}", file=sys.stderr, flush=True)
-        print(f"[place] vault(子账户) 地址: {vault}", file=sys.stderr, flush=True)
-    except Exception as e:
-        print(f"[place] 推导 API wallet 地址失败: {e}", file=sys.stderr, flush=True)
+    if wallet:
+        try:
+            print(f"[place] API wallet 地址: {Account.from_key(wallet).address}", file=sys.stderr, flush=True)
+            print(f"[place] vault(子账户) 地址: {vault}", file=sys.stderr, flush=True)
+        except Exception as e:
+            print(f"[place] 推导 API wallet 地址失败: {e}", file=sys.stderr, flush=True)
 
     target = latest_positions()
     if not getattr(args, 'json_out', False):

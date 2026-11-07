@@ -668,7 +668,9 @@ async fn ml_plan(State(state): State<AppState>) -> Response {
     .into_response()
 }
 
-/// ML 策略的「执行调仓」：真下单到 ML 子账户。
+/// ML 策略的「执行调仓」：Python 只算 orders（不下单），Rust 用已验证的签名下单。
+/// 为什么不让 Python 签名：Python 复现 Rust SDK 的 msgpack 序列化有细微差异 ✗
+/// HL 会恢复出错误地址（does not exist）✗ 所以签名交给 Rust。
 async fn ml_execute(State(state): State<AppState>) -> Response {
     let _gate = match state.exec_gate.try_lock() {
         Ok(g) => g,
@@ -687,19 +689,65 @@ async fn ml_execute(State(state): State<AppState>) -> Response {
                 .into_response();
         }
     };
-    let key = match std::fs::read_to_string(&cfg.key_path) {
-        Ok(k) => k.trim().to_string(),
+
+    // 1. Python 只算 orders（dry-run ✗ 不需要私钥）
+    let plan_json = match run_ml_python(&cfg, "place.py", &["--vault", &ml_addr, "--dry-run", "--json"]).await {
+        Ok(s) => s,
         Err(e) => {
-            return (StatusCode::BAD_REQUEST,
-                Json(json!({"ok": false, "error": format!("读 API 钱包密钥失败: {e}")})))
-                .into_response();
+            return (StatusCode::INTERNAL_SERVER_ERROR,
+                Json(json!({"ok": false, "error": format!("计算 ML 调仓失败: {e}")}))).into_response();
         }
     };
-    match run_ml_python(&cfg, "place.py", &["--wallet", &key, "--vault", &ml_addr, "--json"]).await {
-        Ok(s) => Json(json!({"ok": true, "result": s})).into_response(),
-        Err(e) => (StatusCode::INTERNAL_SERVER_ERROR,
-            Json(json!({"ok": false, "error": format!("下单失败: {e}")}))).into_response(),
+    let plan: serde_json::Value = match serde_json::from_str(plan_json.trim()) {
+        Ok(v) => v,
+        Err(e) => {
+            return (StatusCode::INTERNAL_SERVER_ERROR,
+                Json(json!({"ok": false, "error": format!("解析 ML 计划失败: {e}")}))).into_response();
+        }
+    };
+    let orders = plan.get("orders").and_then(|v| v.as_array()).cloned().unwrap_or_default();
+    if orders.is_empty() {
+        return Json(json!({"ok": true, "results": [], "note": "无需调仓"})).into_response();
     }
+
+    // 2. Rust 用 ML 子账户的 Exec 下单（签名已验证 ✗ 和动量同一套）
+    let exec = match crate::exchange::Exec::signer(
+        &cfg.account, std::path::Path::new(&cfg.key_path), Some(&ml_addr),
+    ).await {
+        Ok(e) => e,
+        Err(e) => {
+            return (StatusCode::INTERNAL_SERVER_ERROR,
+                Json(json!({"ok": false, "error": format!("创建 ML 子账户签名客户端失败: {e}")}))).into_response();
+        }
+    };
+    let markets = match exec.markets().await {
+        Ok(m) => m,
+        Err(e) => {
+            return (StatusCode::INTERNAL_SERVER_ERROR,
+                Json(json!({"ok": false, "error": format!("读取市场信息失败: {e}")}))).into_response();
+        }
+    };
+
+    let mut results = Vec::new();
+    let mut errors = 0;
+    for o in &orders {
+        let coin = o.get("coin").and_then(|v| v.as_str()).unwrap_or("");
+        let buy = o.get("buy").and_then(|v| v.as_bool()).unwrap_or(false);
+        let size: f64 = o.get("size").and_then(|v| v.as_str()).and_then(|v| v.parse().ok()).unwrap_or(0.0);
+        let price: f64 = o.get("price").and_then(|v| v.as_str()).and_then(|v| v.parse().ok()).unwrap_or(0.0);
+        if coin.is_empty() || size <= 0.0 || price <= 0.0 {
+            results.push(json!({"coin": coin, "ok": false, "error": "参数无效"}));
+            errors += 1;
+            continue;
+        }
+        let sz_dec = markets.get(coin).map(|m| m.sz_decimals).unwrap_or(5);
+        // price 已是 place.py 算好的含滑点 Ioc 限价 ✗ mid 直接传 price + slippage=0
+        match exec.ioc(coin, buy, false, size, price, 0.0, sz_dec).await {
+            Ok(st) => results.push(json!({"coin": coin, "buy": buy, "size": size, "status": format!("{st:?}")})),
+            Err(e) => { results.push(json!({"coin": coin, "ok": false, "error": format!("{e}")})); errors += 1; }
+        }
+    }
+    Json(json!({"ok": errors == 0, "errors": errors, "results": results})).into_response()
 }
 
 async fn live_status(State(state): State<AppState>) -> Response {
