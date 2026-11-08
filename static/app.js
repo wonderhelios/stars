@@ -867,12 +867,20 @@ function renderMonitor(d) {
   if (isoN > 0) {
     text += `<span class="neg"><b>⚠ ${isoN} 个仓位仍是逐仓</b>（Hyperliquid 不允许持仓时切换模式，需用「转为全仓」逐币处理）</span>`;
   }
-  const autoText = auto
-    ? `<span>每日自动调仓：<b>已开启</b>，下次 <b>${nextRun} UTC</b>（北京时间 08:05）</span>`
-    : `<span>每日自动调仓：<b>已关闭</b>（需手动点「执行调仓」）</span>`;
-  const lastText = d.last_run_at
-    ? `<span>上次调仓 <b>${ts2m(d.last_run_at)}</b>${d.last_live ? "（真实下单）" : "（仅生成计划）"}</span>`
-    : "<span>还没有调仓记录</span>";
+  const autoText = isMl
+    ? '<span>ML 调仓：<b>每 3 天</b>（daily.py 自动 ✗ 调仓日 11-09 / 11-12 / ...）</span>'
+    : (auto
+      ? `<span>每日自动调仓：<b>已开启</b>，下次 <b>${nextRun} UTC</b>（北京时间 08:05）</span>`
+      : `<span>每日自动调仓：<b>已关闭</b>（需手动点「执行调仓」）</span>`);
+  // ML 有自己的调仓节奏（每 3 天）✗ 不能显示动量的"上次调仓"
+  const mlLastTs = (d.ml_history || []).length ? d.ml_history[d.ml_history.length - 1].ts : null;
+  const lastText = isMl
+    ? (mlLastTs
+      ? `<span>ML 净值最后记录 <b>${ts2m(mlLastTs)}</b></span>`
+      : "<span>ML 还没有净值记录</span>")
+    : (d.last_run_at
+      ? `<span>上次调仓 <b>${ts2m(d.last_run_at)}</b>${d.last_live ? "（真实下单）" : "（仅生成计划）"}</span>`
+      : "<span>还没有调仓记录</span>");
   const ago = liveFetchedAt ? Math.round((Date.now() - liveFetchedAt) / 1000) : null;
   const freshness = ago == null ? "" : `<span class="muted" id="mo-ago">数据更新于 ${ago} 秒前</span>`;
   $("mo-status").innerHTML = `<div class="live-status ${cls}">
