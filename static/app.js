@@ -701,6 +701,12 @@ async function fetchJsonSafe(url, opts = {}, timeoutMs = 300000) {
 async function mlPlan() {
   const view = $('lv-plan-out');
   if (!view) return;
+  const btn = $('ml-plan-btn');
+  const label = btn?.textContent || 'ML 计划调仓（不下单）';
+  if (btn) {
+    btn.disabled = true;
+    btn.textContent = '计算中…';
+  }
   view.innerHTML = '<div class="empty">正在计算 ML 计划调仓…</div>';
   try {
     const d = await fetchJsonSafe("/api/ml/plan", { cache: "no-store" }, 120000);
@@ -708,6 +714,11 @@ async function mlPlan() {
     renderMlPlan(view, d);
   } catch (e) {
     view.innerHTML = `<div class="note neg">读取 ML 计划失败：${escapeHTML(String(e))}</div>`;
+  } finally {
+    if (btn) {
+      btn.textContent = label;
+      btn.disabled = false;
+    }
   }
 }
 
