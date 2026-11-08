@@ -792,7 +792,7 @@ function renderMonitor(d) {
   const c = d.config || {};
   // 策略切换：ML 时看 ML 子账户的持仓/净值，否则看动量子账户。
   const mlAcc = d.ml_account && !d.ml_account.error ? d.ml_account : null;
-  const isMl = currentStrategy === 'ml' && !!mlAcc;
+  const isMl = currentStrategy === 'ml';
   const allView = currentStrategy === 'all' && !!mlAcc;
   const momPositions = d.positions || [];
   const mlPositions = mlAcc ? (mlAcc.positions || []) : [];
@@ -812,7 +812,7 @@ function renderMonitor(d) {
     ? mergeHistory(d.history || [], mlHist)
     : isMl ? mlHist : (d.history || []);
   const eq = isMl
-    ? (mlAcc.equity || 0)
+    ? (Number.isFinite(mlAcc?.equity) ? mlAcc.equity : NaN)
     : allView
       ? (d.equity || 0) + (mlAcc.equity || 0)
       : (d.equity || 0);
@@ -822,7 +822,7 @@ function renderMonitor(d) {
   const pnlPct = capital.percent;
   const buffers = allView
     ? [d.liq_buffer_pct, mlAcc.liq_buffer_pct].filter(Number.isFinite)
-    : [isMl ? mlAcc.liq_buffer_pct : d.liq_buffer_pct].filter(Number.isFinite);
+    : [isMl ? mlAcc?.liq_buffer_pct : d.liq_buffer_pct].filter(Number.isFinite);
   const buffer = buffers.length ? Math.min(...buffers) : 0;
 
   const keyed = !!(c.key_path && c.key_path.trim());
@@ -838,7 +838,11 @@ function renderMonitor(d) {
 
   // 状态横幅：一眼看出到底跑没跑
   let cls, tag, text;
-  if (d.error) {
+  if (isMl && !mlAcc) {
+    cls = "idle";
+    tag = "● ML 账户数据暂不可用";
+    text = escapeHTML(d.ml_account?.error || d.error || "暂时无法读取 ML 子账户快照，请稍后刷新。");
+  } else if (d.error) {
     cls = "idle";
     tag = "● 账户数据不可用";
     text = escapeHTML(d.error);
@@ -862,7 +866,7 @@ function renderMonitor(d) {
   const isoN = allView
     ? (Number(d.isolated_count) || 0) + (Number(mlAcc.isolated_count) || 0)
     : isMl
-      ? (Number(mlAcc.isolated_count) || 0)
+      ? (Number(mlAcc?.isolated_count) || 0)
       : (d.isolated_count || 0);
   if (isoN > 0) {
     text += `<span class="neg"><b>⚠ ${isoN} 个仓位仍是逐仓</b>（Hyperliquid 不允许持仓时切换模式，需用「转为全仓」逐币处理）</span>`;
@@ -899,7 +903,7 @@ function renderMonitor(d) {
   const unrealized = pos.reduce((sum, p) => sum + (Number.isFinite(p.unrealized) ? p.unrealized : 0), 0);
 
   // 拿不到行情的持仓：必须显眼提示，否则净值看着正常但风险是隐形的
-  const unp = d.unpriced || [];
+  const unp = isMl ? [] : (d.unpriced || []);
   $("mo-warn").innerHTML = unp.length
     ? `<div class="warn-banner">⚠ ${unp.length} 个持仓拿不到行情（${unp
         .slice(0, 8)
@@ -1906,7 +1910,7 @@ function arrangeMonitorSummary(id, shadow = false) {
   const capital = groups.find(g => g.classList.contains('capital-account'));
   root.replaceChildren();
   const mlAccountAvailable = lastLiveData?.ml_account && !lastLiveData.ml_account.error;
-  const threeMetricSummary = !shadow && !!mlAccountAvailable && (currentStrategy === 'all' || currentStrategy === 'ml');
+  const threeMetricSummary = !shadow && !!mlAccountAvailable && currentStrategy === 'all';
   root.className = 'account-summary' + (threeMetricSummary ? ' account-summary-three' : '');
   if (shadow) {
     // 影子页沿用原来的三格（净值 ✗ 累计盈亏 ✗ 浮动 ✓）
@@ -1960,17 +1964,20 @@ function arrangeMonitorSummary(id, shadow = false) {
       return;
     }
     // ML tab：显示 ML 子账户自己的净值/浮盈/持仓（不能显示动量的 $4,500）
-    if (currentStrategy === 'ml' && mlAcc2) {
+    if (currentStrategy === 'ml') {
       // 和动量的 4 格对齐：净值（含收益率）+ 本金 + 当前浮盈 + 组合预估日波动
-      const eqMl = Number.isFinite(mlAcc2.equity) ? mlAcc2.equity : 0;
+      const eqMl = Number.isFinite(mlAcc2?.equity) ? mlAcc2.equity : null;
       const mlHist = ld.ml_history || [];
       const baseMl = (mlHist[0] || {}).equity || 0;
-      const unrlMl = (mlAcc2.positions || []).reduce((s2, p2) => s2 + (Number.isFinite(p2.unrealized) ? p2.unrealized : 0), 0);
-      const pctMl = baseMl > 0 ? ((eqMl / baseMl - 1) * 100).toFixed(2) + "%" : "";
-      root.append(cell("ML 子账户净值", usd(eqMl), "", pctMl ? `净投入收益率 ${Number(pctMl) >= 0 ? "+" : ""}${pctMl}` : ""));
-      root.append(cell("本金", usd(baseMl)));
-      root.append(cell("当前浮盈", money(unrlMl), unrlMl >= 0 ? "pos" : "neg"));
+      const unrlMl = mlAcc2
+        ? (mlAcc2.positions || []).reduce((s2, p2) => s2 + (Number.isFinite(p2.unrealized) ? p2.unrealized : 0), 0)
+        : null;
+      const pctMl = baseMl > 0 && eqMl != null ? ((eqMl / baseMl - 1) * 100).toFixed(2) + "%" : "";
+      root.append(cell("ML 子账户净值", eqMl == null ? "—" : usd(eqMl), "", pctMl ? `净投入收益率 ${Number(pctMl) >= 0 ? "+" : ""}${pctMl}` : (eqMl == null ? "ML 账户数据暂不可用" : "")));
+      root.append(cell("本金", baseMl > 0 ? usd(baseMl) : "—"));
+      root.append(cell("当前浮盈", unrlMl == null ? "—" : money(unrlMl), unrlMl == null ? "" : unrlMl >= 0 ? "pos" : "neg"));
       // 组合预估日波动：ml_history 是小时点 ✗ 小时收益 std × sqrt(24) = 日波动
+      let volPct = null;
       if (mlHist.length >= 4) {
         const rets = [];
         for (let i = 1; i < mlHist.length; i++) {
@@ -1982,13 +1989,12 @@ function arrangeMonitorSummary(id, shadow = false) {
           const n = rets.length;
           const mean = rets.reduce((a, r) => a + r, 0) / n;
           const var_ = rets.reduce((a, r) => a + (r - mean) ** 2, 0) / (n - 1);
-          const volPct = Math.sqrt(var_) * Math.sqrt(24) * 100;
-          if (Number.isFinite(volPct)) {
-            const tone = volPct > 3 ? "neg" : volPct > 2.2 ? "warn" : "pos";
-            root.append(cell("组合预估日波动", volPct.toFixed(2) + "%", tone));
-          }
+          const estimate = Math.sqrt(var_) * Math.sqrt(24) * 100;
+          if (Number.isFinite(estimate)) volPct = estimate;
         }
       }
+      const tone = volPct == null ? "" : volPct > 3 ? "neg" : volPct > 2.2 ? "warn" : "pos";
+      root.append(cell("组合预估日波动", volPct == null ? "—" : volPct.toFixed(2) + "%", tone));
       return;
     }
     root.append(
