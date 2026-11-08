@@ -417,8 +417,6 @@
       @media(max-width:760px) { .performance-panel { padding:0 16px 16px; margin:12px 0 14px; } .performance-panel>.content-card.equity-card { padding:16px 0 0; } }
       /* Secondary metrics are opt-in. */
       #mo-metrics { display:grid; grid-template-columns:1.15fr 1fr 1fr 0.95fr 0.95fr; gap:20px; padding:22px 0 24px; margin:0; }
-      /* 本金那一格用和主数一样的字号 ✗ 但颜色淡一点 ✗ 表明它是参照值 */
-      .account-summary>.metric:nth-child(2) .v { color:#33474f; }
       #sh-metrics { display:grid; grid-template-columns:1.2fr 1fr 1fr; gap:24px; padding:22px 0 24px; margin:0; }
       #cb-metrics { display:grid; grid-template-columns:1fr 1fr 1fr; gap:18px; padding:22px 0 24px; margin:0; align-items:start; }
       #cb-metrics .metric-group { border:0; box-shadow:none; padding:0; }
@@ -440,6 +438,8 @@
       .account-summary .k { font-size:12px; color:#687c86; margin-bottom:10px; }
       .account-summary .v { font-size:30px; font-weight:600; letter-spacing:-.9px; line-height:1.3; }
       .account-summary>.metric:first-child .v { font-size:36px; }
+      .account-summary .v.pos { color:var(--green); }
+      .account-summary .v.neg { color:var(--red); }
       .account-details { padding:0 20px; }
       .account-return { display:block; font-size:12px; margin-top:6px; font-weight:500; letter-spacing:0; }
       .account-details>summary { display:flex; align-items:center; gap:12px; padding:16px 0; font-weight:600; font-size:13px; list-style:none; }
@@ -577,7 +577,7 @@
       #view-monitor .mo-strategy-tabs button { padding-inline:15px; }
       #view-monitor .performance-panel { padding:0 20px 16px; margin:12px 0; border-radius:12px; }
       #view-monitor #mo-metrics.account-summary { grid-template-columns:repeat(4,minmax(0,1fr)); gap:0; padding:16px 0 18px; }
-      #view-monitor #mo-metrics.account-summary.account-summary-all { grid-template-columns:repeat(3,minmax(0,1fr)); }
+      #view-monitor #mo-metrics.account-summary.account-summary-three { grid-template-columns:repeat(3,minmax(0,1fr)); }
       #view-monitor .account-summary>.metric:not(.score-metric):not(:last-child) { padding:2px 14px; border-right:1px solid var(--line); }
       #view-monitor .account-summary>.metric:not(.score-metric):last-child { border-right:0; }
       #view-monitor .account-summary>.metric:not(.score-metric):first-child { padding-left:0; }
@@ -591,6 +591,10 @@
       #view-monitor .content-card { border-radius:11px; }
       #view-monitor .content-card>.panel-head { margin-top:0!important; margin-bottom:12px; padding-bottom:11px; }
       #view-monitor #mo-positions table { min-width:980px; }
+      #view-live .execution-result-block { display:grid; gap:12px; }
+      #view-live .result-heading { display:flex; align-items:center; gap:9px; font-size:14px; }
+      #view-live .result-targets { margin:0; }
+      #view-live .setup-result .empty { padding:14px 0; text-align:left; }
 
       /* Settings: align fields to a small grid and keep controls easy to scan. */
       #view-live .setup-heading { margin-bottom:16px; }
@@ -620,7 +624,7 @@
       #view-live .setup-reference>summary { min-height:36px; padding:7px 0; }
       @media(max-width:1150px) {
         #view-monitor #mo-metrics.account-summary { grid-template-columns:repeat(2,minmax(0,1fr)); row-gap:13px; }
-        #view-monitor #mo-metrics.account-summary.account-summary-all { grid-template-columns:repeat(2,minmax(0,1fr)); }
+        #view-monitor #mo-metrics.account-summary.account-summary-three { grid-template-columns:repeat(3,minmax(0,1fr)); }
         #view-monitor .account-summary>.metric:not(.score-metric):nth-child(even) { border-right:0; }
         #view-monitor .account-summary>.metric:not(.score-metric):last-child { border-right:0; }
         #view-live .setup-layout { grid-template-columns:minmax(0,1fr) 300px; }
@@ -634,6 +638,8 @@
       @media(max-width:760px) {
         #view-monitor .panel-head:first-child h2 { font-size:23px; }
         #view-monitor .performance-panel { padding:0 14px 13px; }
+        #view-monitor #mo-metrics.account-summary.account-summary-three { grid-template-columns:1fr; }
+        #view-monitor #mo-metrics.account-summary.account-summary-three>.metric:first-child { grid-column:auto; }
         #view-monitor .total-card { grid-template-columns:1fr 1fr; gap:8px; }
         #view-monitor .total-item.total-sum { grid-column:1/-1; }
         #view-monitor .total-item { min-height:62px; padding:10px 12px; }
@@ -652,6 +658,8 @@
       }
       @media(max-width:390px) {
         #view-monitor #mo-metrics.account-summary { grid-template-columns:1fr 1fr; }
+        #view-monitor #mo-metrics.account-summary.account-summary-three { grid-template-columns:1fr; }
+        #view-monitor #mo-metrics.account-summary.account-summary-three>.metric:first-child { grid-column:auto; }
         #view-live .setup-fields,#view-live .setup-aside .setup-fields { grid-template-columns:1fr; }
       }
 </style>
@@ -701,14 +709,14 @@
             </div></div></section>
         <section class="setup-card"><header><div><h3>手动执行</h3><p>使用已保存的配置。执行调仓会发送真实订单。</p></div></header><div class="setup-actions"><button class="btn ghost" id="lv-plan">生成计划（不下单）</button><button class="btn danger" id="lv-run">执行调仓</button></div>
             <div class="setup-actions" style="margin-top:10px"><button class="btn ghost" id="ml-plan-btn">ML 计划调仓（不下单）</button><button class="btn danger" id="ml-execute-btn">ML 执行调仓</button></div>
-            <div id="ml-plan-view"></div><details class="setup-details"><summary>仓位维护</summary><div class="setup-actions"><button class="btn ghost" id="lv-tp-btn">刷新止盈单</button><button class="btn ghost" id="lv-rebuild">转为全仓</button></div><p>转为全仓可能平仓并重开；刷新止盈按已保存的止盈参数处理。</p></details></section>
+            <details class="setup-details"><summary>仓位维护</summary><div class="setup-actions"><button class="btn ghost" id="lv-tp-btn">刷新止盈单</button><button class="btn ghost" id="lv-rebuild">转为全仓</button></div><p>转为全仓可能平仓并重开；刷新止盈按已保存的止盈参数处理。</p></details></section>
         <section class="setup-card"><header><div><h3>资金流水</h3><p>仅登记已完成的转账，不会实际转入或转出资金。只记录起点之后的出入金。</p></div></header><div class="field"><label for="lv-flow">记录入金/出金（+入 −出）</label>
               <input id="lv-flow" type="number" step="0.01" placeholder="如 2415 或 -500" />
               <label for="lv-flow-time">实际到账时间 · UTC（可补记）</label><input id="lv-flow-time" type="datetime-local" step="1" /><span class="note">留空按登记时间估算，可在流水中校正。</span>
               <button class="btn ghost" id="lv-flow-btn" type="button">记录</button>
             </div><p id="lv-flow-status" class="note" role="status" aria-live="polite"></p><div id="lv-flow-history"></div></section>
         </aside></div>
-        <section class="setup-card setup-result"><header><div><span class="section-eyebrow">执行反馈</span><h3>计划 / 执行结果</h3></div></header><div id="lv-plan-out"></div></section>
+        <section class="setup-card setup-result"><header><div><span class="section-eyebrow">执行反馈</span><h3>计划 / 执行结果</h3></div></header><div id="lv-plan-out" aria-live="polite"></div></section>
 <details class="setup-reference"><summary>策略说明与检查记录</summary>          <details class="note" style="margin:12px 0">
             <summary style="cursor:pointer;font-weight:600;color:#617680">当前策略与已排除的边际（点击展开）</summary>
             <div style="margin-top:8px">
