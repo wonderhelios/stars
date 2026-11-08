@@ -1174,12 +1174,6 @@ function liveHist(d) {
 // 统一渲染监控曲线（切换周期 / 数据刷新都走这里 ✗ 避免用错 hist）
 function renderMonitorChart(d) {
   if (!d) return;
-  const isMl = currentStrategy === 'ml' && d.ml_account && !d.ml_account.error;
-  if (isMl) {
-    const chartEl = $("mo-chart");
-    if (chartEl) chartEl.innerHTML = '<div class="empty">ML 子账户历史不足（每天记录一个点 ✗ 跑几天后出现曲线）</div>';
-    return;
-  }
   renderLiveChart(liveHist(d), d.shadow);
 }
 
@@ -1187,10 +1181,11 @@ function renderLiveChart(history, shadow) {
   const el = $("mo-chart");
   const now = Date.now();
   const observations = [...(history || [])];
-  // 「全部账户」曲线：当前点用 A+B 合计，基准也用 A+B 合计（否则 ML 的初始资金会被当收益）
+  // 「全部账户」= A+B 合计；「ML」= ML 子账户自己的净值和基准
   const isAll = currentStrategy === 'all';
   const mlAccC = lastLiveData && lastLiveData.ml_account && !lastLiveData.ml_account.error ? lastLiveData.ml_account : null;
-  if (lastLiveData && !lastLiveData.error && Number.isFinite(lastLiveData.equity) && liveFetchedAt > 0) {
+  const isMl = currentStrategy === 'ml' && !!mlAccC;
+  if (lastLiveData && !lastLiveData.error && Number.isFinite(lastLiveData.equity) && liveFetchedAt > 0 && !isMl) {
     const curEq = (isAll && mlAccC && Number.isFinite(mlAccC.equity))
       ? lastLiveData.equity + mlAccC.equity
       : lastLiveData.equity;
@@ -1201,6 +1196,16 @@ function renderLiveChart(history, shadow) {
     const aBase = (lastLiveData.capital_baseline || {}).equity || 0;
     const bBase = ((lastLiveData.ml_history || [])[0] || {}).equity || 0;
     ldForBaseline = { ...lastLiveData, capital_baseline: { ...(lastLiveData.capital_baseline || {}), equity: aBase + bBase } };
+  } else if (isMl) {
+    // ML 用自己的起始净值做基准（不能用动量的 capital_baseline ✗ 会算出 -$3000）
+    const mlHistArr = lastLiveData.ml_history || [];
+    const mlBase = (mlHistArr[0] || {}).equity || 0;
+    ldForBaseline = {
+      capital_baseline: { equity: mlBase, account: mlAccC.account },
+      account: mlAccC.account,
+      capital_flows: [],
+      net_deposit: 0,
+    };
   }
   const adjusted = strategyHistory(observations, ldForBaseline);
   if (adjusted.error) { el.innerHTML = `<div class="empty">${escapeHTML(adjusted.error)}</div>`; return; }
