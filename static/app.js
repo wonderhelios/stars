@@ -1961,11 +1961,34 @@ function arrangeMonitorSummary(id, shadow = false) {
     }
     // ML tab：显示 ML 子账户自己的净值/浮盈/持仓（不能显示动量的 $4,500）
     if (currentStrategy === 'ml' && mlAcc2) {
+      // 和动量的 4 格对齐：净值（含收益率）+ 本金 + 当前浮盈 + 组合预估日波动
       const eqMl = Number.isFinite(mlAcc2.equity) ? mlAcc2.equity : 0;
+      const mlHist = ld.ml_history || [];
+      const baseMl = (mlHist[0] || {}).equity || 0;
       const unrlMl = (mlAcc2.positions || []).reduce((s2, p2) => s2 + (Number.isFinite(p2.unrealized) ? p2.unrealized : 0), 0);
-      root.append(cell("ML 子账户净值", usd(eqMl)));
+      const pctMl = baseMl > 0 ? ((eqMl / baseMl - 1) * 100).toFixed(2) + "%" : "";
+      root.append(cell("ML 子账户净值", usd(eqMl), "", pctMl ? `净投入收益率 ${Number(pctMl) >= 0 ? "+" : ""}${pctMl}` : ""));
+      root.append(cell("本金", usd(baseMl)));
       root.append(cell("当前浮盈", money(unrlMl), unrlMl >= 0 ? "pos" : "neg"));
-      root.append(cell("持仓数量", (mlAcc2.positions || []).length + " 个"));
+      // 组合预估日波动：ml_history 是小时点 ✗ 小时收益 std × sqrt(24) = 日波动
+      if (mlHist.length >= 4) {
+        const rets = [];
+        for (let i = 1; i < mlHist.length; i++) {
+          if (mlHist[i].ts > mlHist[i-1].ts && mlHist[i-1].equity > 0) {
+            rets.push(mlHist[i].equity / mlHist[i-1].equity - 1);
+          }
+        }
+        if (rets.length >= 3) {
+          const n = rets.length;
+          const mean = rets.reduce((a, r) => a + r, 0) / n;
+          const var_ = rets.reduce((a, r) => a + (r - mean) ** 2, 0) / (n - 1);
+          const volPct = Math.sqrt(var_) * Math.sqrt(24) * 100;
+          if (Number.isFinite(volPct)) {
+            const tone = volPct > 3 ? "neg" : volPct > 2.2 ? "warn" : "pos";
+            root.append(cell("组合预估日波动", volPct.toFixed(2) + "%", tone));
+          }
+        }
+      }
       return;
     }
     root.append(
