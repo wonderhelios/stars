@@ -1,0 +1,11 @@
+{
+ "id":"momentum75_volume25",
+ "status":"research_candidate_not_validated_for_live",
+ "formula":"normalize_L1(0.75 * momentum_book + 0.25 * volume_book)",
+ "gross_target":2.7,
+ "baseline":"normalize_L1(0.5 * momentum_book + 0.5 * volume_book)",
+ "reason":"Less influence from unstable high-turnover directionless volume factor",
+ "recent_window_does_not_show_material_protection":true,
+ "production_changes":false,
+ "required_before_promotion":["independent future evidence","historical funding and execution modeling","multi-test correction including prior searches","agreed loss budget and separate execution of risk actions"]
+}

@@ -1,0 +1,12 @@
+first_half control_gross2 13.95 1.38 -21.12
+first_half candidate_delay2 49.31 3.1 -20.96
+first_half control_rebalance02 11.29 1.29 -30.57
+first_half candidate_rebalance02 37.2 2.65 -25.76
+second_half control_gross2 -2.4 -0.01 -11.11
+second_half candidate_delay2 11.75 1.54 -10.18
+second_half control_rebalance02 -10.85 -0.64 -16.57
+second_half candidate_rebalance02 3.8 0.74 -11.5
+recent control_gross2 -11.32 -9.35 -11.37
+recent candidate_delay2 -16.01 -7.99 -17.25
+recent control_rebalance02 -14.65 -8.5 -14.93
+recent candidate_rebalance02 -18.56 -8.13 -20.17

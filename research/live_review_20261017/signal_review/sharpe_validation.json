@@ -1,0 +1,296 @@
+{
+  "15": {
+    "momentum_only": {
+      "delta_sharpe": 0.16246491068756663,
+      "paired_block_percentile_ci95": [
+        -0.6526537708044191,
+        0.9595918025813645
+      ],
+      "p_fwer_approx": 0.962
+    },
+    "volume_only": {
+      "delta_sharpe": -1.2297305928798525,
+      "paired_block_percentile_ci95": [
+        -2.3630335712428283,
+        -0.22976397924714204
+      ],
+      "p_fwer_approx": 1.0
+    },
+    "momentum75_volume25": {
+      "delta_sharpe": 0.1931351035371529,
+      "paired_block_percentile_ci95": [
+        -0.2703218551230985,
+        0.6580889232109821
+      ],
+      "p_fwer_approx": 0.823
+    },
+    "momentum_plus_signed_volume": {
+      "delta_sharpe": -1.2369708934538624,
+      "paired_block_percentile_ci95": [
+        -2.4776427242185757,
+        -0.10537234741025309
+      ],
+      "p_fwer_approx": 1.0
+    },
+    "momentum_plus_reverse_volume": {
+      "delta_sharpe": -2.6449077559560714,
+      "paired_block_percentile_ci95": [
+        -5.001968619428556,
+        -0.5241605568827574
+      ],
+      "p_fwer_approx": 1.0
+    },
+    "momentum_plus_direction_confirmed_volume": {
+      "delta_sharpe": 0.18425528688744874,
+      "paired_block_percentile_ci95": [
+        -0.6991328744229232,
+        1.0044083852567105
+      ],
+      "p_fwer_approx": 0.958
+    },
+    "raw_momentum_plus_volume": {
+      "delta_sharpe": -0.4318960164652257,
+      "paired_block_percentile_ci95": [
+        -0.999378227796103,
+        0.1852883751898464
+      ],
+      "p_fwer_approx": 1.0
+    },
+    "absolute14_veto": {
+      "delta_sharpe": -0.15331689929442582,
+      "paired_block_percentile_ci95": [
+        -0.8672378432644229,
+        0.5080328705985369
+      ],
+      "p_fwer_approx": 1.0
+    },
+    "short_trend3_veto": {
+      "delta_sharpe": -1.454950866683825,
+      "paired_block_percentile_ci95": [
+        -2.443611952782713,
+        -0.3962778866475378
+      ],
+      "p_fwer_approx": 1.0
+    },
+    "no_post_cancellation_reinflation": {
+      "delta_sharpe": -0.07559872172004489,
+      "paired_block_percentile_ci95": [
+        -0.25896741152405683,
+        0.12292975390467765
+      ],
+      "p_fwer_approx": 1.0
+    },
+    "volume_health90": {
+      "delta_sharpe": -0.08897200245734282,
+      "paired_block_percentile_ci95": [
+        -0.2953979155249738,
+        0.08662986297335515
+      ],
+      "p_fwer_approx": 1.0
+    },
+    "both_factor_health90": {
+      "delta_sharpe": -0.13972713544161408,
+      "paired_block_percentile_ci95": [
+        -0.3945895681280615,
+        0.075637766003214
+      ],
+      "p_fwer_approx": 1.0
+    }
+  },
+  "30": {
+    "momentum_only": {
+      "delta_sharpe": 0.16246491068756663,
+      "paired_block_percentile_ci95": [
+        -0.6583287212224683,
+        0.9193267806420542
+      ],
+      "p_fwer_approx": 0.949
+    },
+    "volume_only": {
+      "delta_sharpe": -1.2297305928798525,
+      "paired_block_percentile_ci95": [
+        -2.204378189362769,
+        -0.23118073567813177
+      ],
+      "p_fwer_approx": 1.0
+    },
+    "momentum75_volume25": {
+      "delta_sharpe": 0.1931351035371529,
+      "paired_block_percentile_ci95": [
+        -0.27452133200110324,
+        0.6323823719807138
+      ],
+      "p_fwer_approx": 0.8165
+    },
+    "momentum_plus_signed_volume": {
+      "delta_sharpe": -1.2369708934538624,
+      "paired_block_percentile_ci95": [
+        -2.6688503628126923,
+        0.010762616663425609
+      ],
+      "p_fwer_approx": 1.0
+    },
+    "momentum_plus_reverse_volume": {
+      "delta_sharpe": -2.6449077559560714,
+      "paired_block_percentile_ci95": [
+        -4.928068077801502,
+        -0.5212731596378677
+      ],
+      "p_fwer_approx": 1.0
+    },
+    "momentum_plus_direction_confirmed_volume": {
+      "delta_sharpe": 0.18425528688744874,
+      "paired_block_percentile_ci95": [
+        -0.7244307132639302,
+        1.0084001574530297
+      ],
+      "p_fwer_approx": 0.9465
+    },
+    "raw_momentum_plus_volume": {
+      "delta_sharpe": -0.4318960164652257,
+      "paired_block_percentile_ci95": [
+        -0.9988206419730005,
+        0.18899934495705184
+      ],
+      "p_fwer_approx": 1.0
+    },
+    "absolute14_veto": {
+      "delta_sharpe": -0.15331689929442582,
+      "paired_block_percentile_ci95": [
+        -0.8195741429652316,
+        0.49309937367745715
+      ],
+      "p_fwer_approx": 1.0
+    },
+    "short_trend3_veto": {
+      "delta_sharpe": -1.454950866683825,
+      "paired_block_percentile_ci95": [
+        -2.455178909470951,
+        -0.3123742259268557
+      ],
+      "p_fwer_approx": 1.0
+    },
+    "no_post_cancellation_reinflation": {
+      "delta_sharpe": -0.07559872172004489,
+      "paired_block_percentile_ci95": [
+        -0.25378321312922186,
+        0.10825288396561165
+      ],
+      "p_fwer_approx": 1.0
+    },
+    "volume_health90": {
+      "delta_sharpe": -0.08897200245734282,
+      "paired_block_percentile_ci95": [
+        -0.27797815490232836,
+        0.06763244834780463
+      ],
+      "p_fwer_approx": 1.0
+    },
+    "both_factor_health90": {
+      "delta_sharpe": -0.13972713544161408,
+      "paired_block_percentile_ci95": [
+        -0.3724892155576646,
+        0.06486726858793178
+      ],
+      "p_fwer_approx": 1.0
+    }
+  },
+  "60": {
+    "momentum_only": {
+      "delta_sharpe": 0.16246491068756663,
+      "paired_block_percentile_ci95": [
+        -0.5490156800588437,
+        0.8964443304980574
+      ],
+      "p_fwer_approx": 0.9575
+    },
+    "volume_only": {
+      "delta_sharpe": -1.2297305928798525,
+      "paired_block_percentile_ci95": [
+        -2.1806983164883555,
+        -0.33802898335060183
+      ],
+      "p_fwer_approx": 1.0
+    },
+    "momentum75_volume25": {
+      "delta_sharpe": 0.1931351035371529,
+      "paired_block_percentile_ci95": [
+        -0.2273300446979404,
+        0.6045768017463944
+      ],
+      "p_fwer_approx": 0.798
+    },
+    "momentum_plus_signed_volume": {
+      "delta_sharpe": -1.2369708934538624,
+      "paired_block_percentile_ci95": [
+        -2.749165227954699,
+        0.09716724459687731
+      ],
+      "p_fwer_approx": 1.0
+    },
+    "momentum_plus_reverse_volume": {
+      "delta_sharpe": -2.6449077559560714,
+      "paired_block_percentile_ci95": [
+        -4.794001317867569,
+        -0.5540755714203494
+      ],
+      "p_fwer_approx": 1.0
+    },
+    "momentum_plus_direction_confirmed_volume": {
+      "delta_sharpe": 0.18425528688744874,
+      "paired_block_percentile_ci95": [
+        -0.6287505338197567,
+        1.0047300742311571
+      ],
+      "p_fwer_approx": 0.958
+    },
+    "raw_momentum_plus_volume": {
+      "delta_sharpe": -0.4318960164652257,
+      "paired_block_percentile_ci95": [
+        -0.9235029802445709,
+        0.07974224225950993
+      ],
+      "p_fwer_approx": 1.0
+    },
+    "absolute14_veto": {
+      "delta_sharpe": -0.15331689929442582,
+      "paired_block_percentile_ci95": [
+        -0.8503533256431499,
+        0.42757684795041895
+      ],
+      "p_fwer_approx": 0.9995
+    },
+    "short_trend3_veto": {
+      "delta_sharpe": -1.454950866683825,
+      "paired_block_percentile_ci95": [
+        -2.3744544105302663,
+        -0.4429467538884231
+      ],
+      "p_fwer_approx": 1.0
+    },
+    "no_post_cancellation_reinflation": {
+      "delta_sharpe": -0.07559872172004489,
+      "paired_block_percentile_ci95": [
+        -0.2308155858320055,
+        0.07862919093405618
+      ],
+      "p_fwer_approx": 1.0
+    },
+    "volume_health90": {
+      "delta_sharpe": -0.08897200245734282,
+      "paired_block_percentile_ci95": [
+        -0.24576402302554784,
+        0.04360866112919988
+      ],
+      "p_fwer_approx": 1.0
+    },
+    "both_factor_health90": {
+      "delta_sharpe": -0.13972713544161408,
+      "paired_block_percentile_ci95": [
+        -0.3473948656548714,
+        0.03795982967926606
+      ],
+      "p_fwer_approx": 1.0
+    }
+  }
+}

@@ -1,0 +1,177 @@
+{
+  "label": "nara_model",
+  "start": "2026-05-04",
+  "end": "2026-11-03",
+  "days": 184,
+  "sharpe": 0.5956056747778206,
+  "annual_pct": 6.803536959716294,
+  "maxdd_pct": 5.5850841615547875,
+  "win_pct": 53.2608695652174,
+  "top5_gain_share_pct": 221.95644197624773,
+  "equity": 1.033737551775553,
+  "mean_turnover_pct": 65.00064045472102,
+  "site_display_window": {
+    "label": "nara_model_site_window",
+    "start": "2026-05-04",
+    "end": "2026-10-06",
+    "days": 156,
+    "sharpe": 0.31187689686702047,
+    "annual_pct": 3.188669606362815,
+    "maxdd_pct": 5.5850841615547875,
+    "win_pct": 52.56410256410257,
+    "top5_gain_share_pct": 489.1157296557096,
+    "equity": 1.0135059090266738,
+    "mean_turnover_pct": 63.025523994098286
+  },
+  "site_display_window_fixed_2x": {
+    "label": "nara_model_site_window_2x",
+    "start": "2026-05-04",
+    "end": "2026-10-06",
+    "days": 156,
+    "sharpe": 0.9878791283421037,
+    "annual_pct": 42.95493648950561,
+    "maxdd_pct": 16.598782288224413,
+    "win_pct": 52.56410256410257,
+    "top5_gain_share_pct": 152.12403932992183,
+    "equity": 1.1650154757845261,
+    "mean_turnover_pct": 194.23076923076923
+  },
+  "validation": {
+    "label": "nara_validation",
+    "start": "2025-09-30",
+    "end": "2026-04-29",
+    "days": 212,
+    "sharpe": 2.1120235304982926,
+    "annual_pct": 27.868316226867517,
+    "maxdd_pct": 4.775816610227979,
+    "win_pct": 59.43396226415094,
+    "top5_gain_share_pct": 56.05991566627938,
+    "equity": 1.1534805060324962,
+    "mean_turnover_pct": 53.38536169137347
+  },
+  "random_control": {
+    "label": "random",
+    "start": "2026-05-04",
+    "end": "2026-11-03",
+    "days": 184,
+    "sharpe": -1.901956745456864,
+    "annual_pct": -22.691853785405492,
+    "maxdd_pct": 20.03650262333648,
+    "win_pct": 40.76086956521739,
+    "top5_gain_share_pct": NaN,
+    "equity": 0.8783210301418239,
+    "mean_turnover_pct": 114.71384822380743
+  },
+  "random_20_seed_median": {
+    "sharpe": -0.7722362100651325,
+    "annual_pct": -11.253015110232912,
+    "maxdd_pct": 12.235419225906856,
+    "win_pct": 49.72826086956522,
+    "top5_gain_share_pct": 154.90126822961295
+  },
+  "data": {
+    "assets": 222,
+    "start": "2024-03-30",
+    "end": "2026-11-05",
+    "features": 151,
+    "available_feature_groups": [
+      "OHLCV",
+      "trade_count",
+      "funding_rate"
+    ],
+    "unavailable": [
+      "open_interest",
+      "premium",
+      "true_vwap"
+    ],
+    "split_date": "2025-09-30",
+    "best_iteration": 29,
+    "train_rows": 15444,
+    "validation_rows": 6897,
+    "test_rows": 6072,
+    "test_ic_mean": 0.08952672294774834,
+    "test_ic_positive_fraction": 0.6756756756756757,
+    "feature_gain_top20": [
+      [
+        "sumn_60",
+        115.35644644498825
+      ],
+      [
+        "wvma_60",
+        59.622265100479126
+      ],
+      [
+        "log_price",
+        50.35506570339203
+      ],
+      [
+        "log_dv",
+        35.82854700088501
+      ],
+      [
+        "wvma_30",
+        32.8523970246315
+      ],
+      [
+        "cord_20",
+        30.856348872184753
+      ],
+      [
+        "roc_60",
+        30.470980405807495
+      ],
+      [
+        "cord_60",
+        30.118305027484894
+      ],
+      [
+        "cord_5",
+        27.88296914100647
+      ],
+      [
+        "cord_30",
+        24.94251823425293
+      ],
+      [
+        "imxd_60",
+        22.785928905010223
+      ],
+      [
+        "qtld_60",
+        22.771601796150208
+      ],
+      [
+        "min_20",
+        22.618983030319214
+      ],
+      [
+        "qtld_5",
+        22.44251924753189
+      ],
+      [
+        "std_30",
+        22.194158911705017
+      ],
+      [
+        "corr_60",
+        19.432132840156555
+      ],
+      [
+        "qtld_10",
+        19.305999159812927
+      ],
+      [
+        "sump_30",
+        16.856832027435303
+      ],
+      [
+        "sumn_30",
+        16.570199966430664
+      ],
+      [
+        "imax_60",
+        16.569788813591003
+      ]
+    ]
+  }
+}

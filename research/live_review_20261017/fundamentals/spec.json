@@ -1,0 +1,27 @@
+{
+  "purpose": "First principles predictive ranking and return concentration diagnosis; no strategy optimization",
+  "factors": [
+    "risk_adjusted_momentum",
+    "volume_shock"
+  ],
+  "horizons_days": [
+    1,
+    2,
+    5
+  ],
+  "periods": [
+    "2023-24",
+    "2025",
+    "2026"
+  ],
+  "execution": "signal complete daily close; entry next open; exit horizon close; gross returns only",
+  "universe": "as-of lagged30day volume>=10m; same production history/SD requirements; no HIP3",
+  "limitations": [
+    "historical universe survivorship and historical metadata unresolved",
+    "missing future marks explicitly counted; complete-case results conditional on coverage",
+    "multi-day observations overlap; 30-day time-block confidence intervals descriptive, no significance or promotion claims",
+    "all historical periods previously inspected; no untouched OOS",
+    "quintiles diagnostic equal-count portfolios, not capped production books"
+  ],
+  "family": "18 diagnostic cells; no candidate selected"
+}

@@ -1,0 +1,30 @@
+{
+  "2023": {
+    "days": 181,
+    "eligible_8plus_days": 9,
+    "eligible_10plus_days": 8,
+    "median_universe": 0.0,
+    "first_8plus": "2023-07-04"
+  },
+  "2024": {
+    "days": 366,
+    "eligible_8plus_days": 207,
+    "eligible_10plus_days": 166,
+    "median_universe": 8.0,
+    "first_8plus": "2024-02-02"
+  },
+  "2025": {
+    "days": 365,
+    "eligible_8plus_days": 365,
+    "eligible_10plus_days": 365,
+    "median_universe": 27.0,
+    "first_8plus": "2025-01-01"
+  },
+  "2026": {
+    "days": 289,
+    "eligible_8plus_days": 289,
+    "eligible_10plus_days": 289,
+    "median_universe": 16.0,
+    "first_8plus": "2026-01-01"
+  }
+}

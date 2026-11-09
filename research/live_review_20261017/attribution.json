@@ -1,0 +1,551 @@
+{
+  "note": "Coin subtotal does not allocate the initial retained unrealized PnL of -10.612746. Daily bins end at last retained snapshot, not necessarily midnight. Config history not available; current rules cannot be asserted as rules used all week.",
+  "coins": [
+    {
+      "coin": "STRK",
+      "realized": -47.0057,
+      "fee": 0.961637,
+      "funding": -2.811879,
+      "unrealized": -326.25373599999995,
+      "volume": 2226.027333,
+      "fills": 13,
+      "subtotal": -377.03295199999997
+    },
+    {
+      "coin": "CASHCAT",
+      "realized": -209.64484900000002,
+      "fee": 1.9205659999999998,
+      "funding": 0.37919300000000056,
+      "unrealized": -2.4618879999999854,
+      "volume": 4491.77538,
+      "fills": 53,
+      "subtotal": -213.64811000000003
+    },
+    {
+      "coin": "ZRO",
+      "realized": -44.049782,
+      "fee": 0.868228,
+      "funding": -1.3181089999999995,
+      "unrealized": -93.00667200000005,
+      "volume": 2009.7965100000001,
+      "fills": 11,
+      "subtotal": -139.24279100000007
+    },
+    {
+      "coin": "NEAR",
+      "realized": -67.65082,
+      "fee": 0.924628,
+      "funding": -1.2015259999999992,
+      "unrealized": -38.49157499999999,
+      "volume": 2140.36532,
+      "fills": 18,
+      "subtotal": -108.26854899999998
+    },
+    {
+      "coin": "VVV",
+      "realized": -89.75221099999999,
+      "fee": 1.4754260000000003,
+      "funding": -0.001162999999999999,
+      "unrealized": 0.0,
+      "volume": 3415.3796899999993,
+      "fills": 34,
+      "subtotal": -91.22879999999999
+    },
+    {
+      "coin": "GRASS",
+      "realized": -87.202985,
+      "fee": 0.7749659999999998,
+      "funding": -0.548992,
+      "unrealized": 0.0,
+      "volume": 1793.920971,
+      "fills": 13,
+      "subtotal": -88.526943
+    },
+    {
+      "coin": "kPEPE",
+      "realized": -59.823465,
+      "fee": 1.677113,
+      "funding": -0.05797199999999995,
+      "unrealized": -9.098793000000018,
+      "volume": 3882.2219929999997,
+      "fills": 13,
+      "subtotal": -70.65734300000001
+    },
+    {
+      "coin": "AERO",
+      "realized": -67.012527,
+      "fee": 0.9182429999999998,
+      "funding": -0.46777099999999994,
+      "unrealized": 0.0,
+      "volume": 2125.60556,
+      "fills": 38,
+      "subtotal": -68.39854100000001
+    },
+    {
+      "coin": "XPL",
+      "realized": -64.25922800000001,
+      "fee": 1.749641,
+      "funding": 0.4246690000000001,
+      "unrealized": 0.0,
+      "volume": 4050.1163110000007,
+      "fills": 20,
+      "subtotal": -65.58420000000001
+    },
+    {
+      "coin": "WLD",
+      "realized": -35.631493999999996,
+      "fee": 1.100677,
+      "funding": -0.9435379999999997,
+      "unrealized": -22.576092000000006,
+      "volume": 2547.8731169999996,
+      "fills": 9,
+      "subtotal": -60.251801
+    },
+    {
+      "coin": "ONDO",
+      "realized": -63.226455,
+      "fee": 1.004983,
+      "funding": 0.09087100000000004,
+      "unrealized": 5.353725000000049,
+      "volume": 2326.36075,
+      "fills": 10,
+      "subtotal": -58.78684199999994
+    },
+    {
+      "coin": "CRV",
+      "realized": -28.110346,
+      "fee": 0.640389,
+      "funding": -0.39628699999999994,
+      "unrealized": -18.495839999999994,
+      "volume": 1482.395013,
+      "fills": 11,
+      "subtotal": -47.642861999999994
+    },
+    {
+      "coin": "PUMP",
+      "realized": -43.836523,
+      "fee": 1.6023999999999998,
+      "funding": -0.6745669999999998,
+      "unrealized": 0.0,
+      "volume": 3709.2793059999995,
+      "fills": 18,
+      "subtotal": -46.113490000000006
+    },
+    {
+      "coin": "ARB",
+      "realized": -8.925707,
+      "fee": 0.8883570000000001,
+      "funding": -0.21387699999999985,
+      "unrealized": -26.389374000000032,
+      "volume": 2078.728792,
+      "fills": 11,
+      "subtotal": -36.41731500000003
+    },
+    {
+      "coin": "MON",
+      "realized": -59.850148,
+      "fee": 1.3836469999999996,
+      "funding": -0.055992000000000014,
+      "unrealized": 27.64376999999994,
+      "volume": 3202.9057149999994,
+      "fills": 19,
+      "subtotal": -33.64601700000006
+    },
+    {
+      "coin": "USELESS",
+      "realized": -26.741284999999998,
+      "fee": 0.511131,
+      "funding": 0.39214400000000005,
+      "unrealized": 0.0,
+      "volume": 1183.19657,
+      "fills": 22,
+      "subtotal": -26.860271999999995
+    },
+    {
+      "coin": "BTC",
+      "realized": -10.405696,
+      "fee": 1.095393,
+      "funding": -0.7450620000000001,
+      "unrealized": -10.850624999999999,
+      "volume": 2535.6393099999996,
+      "fills": 6,
+      "subtotal": -23.096776
+    },
+    {
+      "coin": "AAVE",
+      "realized": -21.00964,
+      "fee": 0.546504,
+      "funding": -0.37053600000000003,
+      "unrealized": 0.0,
+      "volume": 1265.064,
+      "fills": 7,
+      "subtotal": -21.92668
+    },
+    {
+      "coin": "AVAX",
+      "realized": -15.35409,
+      "fee": 0.8284920000000001,
+      "funding": 0.03586899999999999,
+      "unrealized": 0.6402070000000302,
+      "volume": 1917.813474,
+      "fills": 10,
+      "subtotal": -15.506505999999968
+    },
+    {
+      "coin": "INJ",
+      "realized": -13.79375,
+      "fee": 0.24826299999999998,
+      "funding": -0.15996499999999997,
+      "unrealized": 0.0,
+      "volume": 574.6906600000001,
+      "fills": 7,
+      "subtotal": -14.201977999999999
+    },
+    {
+      "coin": "BCH",
+      "realized": -2.462396,
+      "fee": 0.266295,
+      "funding": 0.11512000000000003,
+      "unrealized": 0.0,
+      "volume": 616.4283800000001,
+      "fills": 4,
+      "subtotal": -2.613571
+    },
+    {
+      "coin": "HYPE",
+      "realized": -1.9111850000000001,
+      "fee": 0.241068,
+      "funding": -0.12298899999999997,
+      "unrealized": 0.0,
+      "volume": 558.0346999999999,
+      "fills": 5,
+      "subtotal": -2.275242
+    },
+    {
+      "coin": "SAND",
+      "realized": -1.4983680000000001,
+      "fee": 0.07419100000000001,
+      "funding": -0.203747,
+      "unrealized": 0.0,
+      "volume": 198.300537,
+      "fills": 5,
+      "subtotal": -1.776306
+    },
+    {
+      "coin": "ASTER",
+      "realized": -1.41908,
+      "fee": 0.015927,
+      "funding": -0.011549,
+      "unrealized": 0.0,
+      "volume": 36.86956,
+      "fills": 1,
+      "subtotal": -1.446556
+    },
+    {
+      "coin": "TRUMP",
+      "realized": -0.8347820000000006,
+      "fee": 0.317728,
+      "funding": 0.08934900000000001,
+      "unrealized": 0.0,
+      "volume": 780.32541,
+      "fills": 6,
+      "subtotal": -1.0631610000000005
+    },
+    {
+      "coin": "SUI",
+      "realized": -0.68411,
+      "fee": 0.03225,
+      "funding": -0.010876,
+      "unrealized": 0.0,
+      "volume": 74.65561,
+      "fills": 2,
+      "subtotal": -0.727236
+    },
+    {
+      "coin": "BNB",
+      "realized": 0.1369,
+      "fee": 0.225385,
+      "funding": -0.076681,
+      "unrealized": 0.0,
+      "volume": 521.72802,
+      "fills": 3,
+      "subtotal": -0.165166
+    },
+    {
+      "coin": "ETH",
+      "realized": 2.8291299999999997,
+      "fee": 1.024912,
+      "funding": 0.155669,
+      "unrealized": -1.4600550000000376,
+      "volume": 2372.49288,
+      "fills": 9,
+      "subtotal": 0.4998319999999621
+    },
+    {
+      "coin": "ETHFI",
+      "realized": 0.89512,
+      "fee": 0.033009,
+      "funding": -0.0042970000000000005,
+      "unrealized": 0.0,
+      "volume": 76.41216,
+      "fills": 2,
+      "subtotal": 0.8578140000000001
+    },
+    {
+      "coin": "ENA",
+      "realized": 2.20275,
+      "fee": 0.031594,
+      "funding": 0.025169,
+      "unrealized": 0.0,
+      "volume": 73.13624999999999,
+      "fills": 2,
+      "subtotal": 2.196325
+    },
+    {
+      "coin": "TAO",
+      "realized": 4.99646,
+      "fee": 0.550636,
+      "funding": 0.5057700000000002,
+      "unrealized": 0.0,
+      "volume": 1274.6250499999999,
+      "fills": 6,
+      "subtotal": 4.951594
+    },
+    {
+      "coin": "LINK",
+      "realized": 7.415,
+      "fee": 1.058843,
+      "funding": 0.399589,
+      "unrealized": 0.0,
+      "volume": 2451.0368,
+      "fills": 11,
+      "subtotal": 6.755745999999999
+    },
+    {
+      "coin": "ADA",
+      "realized": 9.16729,
+      "fee": 0.504651,
+      "funding": 0.052770000000000004,
+      "unrealized": 0.0,
+      "volume": 1168.17957,
+      "fills": 8,
+      "subtotal": 8.715409
+    },
+    {
+      "coin": "XMR",
+      "realized": 11.089905,
+      "fee": 1.37226,
+      "funding": -0.7646880000000001,
+      "unrealized": 2.0004879999999394,
+      "volume": 3176.54294,
+      "fills": 13,
+      "subtotal": 10.953444999999938
+    },
+    {
+      "coin": "JUP",
+      "realized": 12.418056,
+      "fee": 0.238313,
+      "funding": -0.08236099999999999,
+      "unrealized": 0.0,
+      "volume": 551.6578099999999,
+      "fills": 7,
+      "subtotal": 12.097382
+    },
+    {
+      "coin": "SOL",
+      "realized": 21.43272,
+      "fee": 1.264333,
+      "funding": 0.14010299999999992,
+      "unrealized": 0.0,
+      "volume": 2926.7088999999996,
+      "fills": 14,
+      "subtotal": 20.30849
+    },
+    {
+      "coin": "UNI",
+      "realized": 25.717158000000005,
+      "fee": 1.1306100000000001,
+      "funding": 0.9450230000000001,
+      "unrealized": -1.1896099999999865,
+      "volume": 2617.1704999999997,
+      "fills": 15,
+      "subtotal": 24.341961000000016
+    },
+    {
+      "coin": "LTC",
+      "realized": -2.621425,
+      "fee": 0.744432,
+      "funding": 0.9684810000000001,
+      "unrealized": 28.197989999999958,
+      "volume": 1723.23063,
+      "fills": 7,
+      "subtotal": 25.800613999999957
+    },
+    {
+      "coin": "ZEC",
+      "realized": 27.868996,
+      "fee": 0.828644,
+      "funding": 0.6591850000000001,
+      "unrealized": 0.0,
+      "volume": 1918.1670000000001,
+      "fills": 7,
+      "subtotal": 27.699537
+    },
+    {
+      "coin": "GRAM",
+      "realized": 28.695429999999998,
+      "fee": 0.477056,
+      "funding": -0.13623799999999997,
+      "unrealized": 0.0,
+      "volume": 1104.312,
+      "fills": 15,
+      "subtotal": 28.082136
+    },
+    {
+      "coin": "PENGU",
+      "realized": 31.968675,
+      "fee": 0.651919,
+      "funding": -0.3693739999999999,
+      "unrealized": 0.0,
+      "volume": 1509.089831,
+      "fills": 15,
+      "subtotal": 30.947382
+    },
+    {
+      "coin": "FARTCOIN",
+      "realized": 32.216184,
+      "fee": 0.53911,
+      "funding": 0.5527249999999999,
+      "unrealized": 0.0,
+      "volume": 1247.942499,
+      "fills": 3,
+      "subtotal": 32.229799
+    },
+    {
+      "coin": "XRP",
+      "realized": 14.9271,
+      "fee": 0.553062,
+      "funding": 0.27048199999999994,
+      "unrealized": 43.673256000000045,
+      "volume": 1280.2419,
+      "fills": 5,
+      "subtotal": 58.317776000000045
+    },
+    {
+      "coin": "DOGE",
+      "realized": 41.17751,
+      "fee": 1.409554,
+      "funding": 0.8034629999999998,
+      "unrealized": 40.596040000000045,
+      "volume": 3262.868438,
+      "fills": 13,
+      "subtotal": 81.16745900000004
+    },
+    {
+      "coin": "LIT",
+      "realized": 90.690854,
+      "fee": 0.755416,
+      "funding": 0.30628700000000003,
+      "unrealized": 0.0,
+      "volume": 1748.6608999999999,
+      "fills": 11,
+      "subtotal": 90.241725
+    },
+    {
+      "coin": "PONS",
+      "realized": 84.726454,
+      "fee": 1.005474,
+      "funding": 1.2661729999999993,
+      "unrealized": 54.296720000000064,
+      "volume": 2327.50751,
+      "fills": 17,
+      "subtotal": 139.28387300000006
+    }
+  ],
+  "daily": [
+    {
+      "utc_day": "2026-10-06",
+      "ts": 1791327621642,
+      "equity": 547.0198005,
+      "net_deposit": 0,
+      "pnl": 5.995089000000007
+    },
+    {
+      "utc_day": "2026-10-07",
+      "ts": 1791392989694,
+      "equity": 557.1822415,
+      "net_deposit": 0,
+      "pnl": 10.162441000000058
+    },
+    {
+      "utc_day": "2026-10-08",
+      "ts": 1791500682907,
+      "equity": 575.5150955,
+      "net_deposit": 0,
+      "pnl": 18.332853999999998
+    },
+    {
+      "utc_day": "2026-10-09",
+      "ts": 1791586828785,
+      "equity": 579.7265985,
+      "net_deposit": 0,
+      "pnl": 4.211502999999993
+    },
+    {
+      "utc_day": "2026-10-10",
+      "ts": 1791673421106,
+      "equity": 3086.1684715,
+      "net_deposit": 2498.443151,
+      "pnl": 7.998722000000271
+    },
+    {
+      "utc_day": "2026-10-11",
+      "ts": 1791759807526,
+      "equity": 3013.4027975,
+      "net_deposit": 0,
+      "pnl": -72.76567400000022
+    },
+    {
+      "utc_day": "2026-10-12",
+      "ts": 1791846291139,
+      "equity": 5443.1004255,
+      "net_deposit": 2699.8,
+      "pnl": -270.1023720000003
+    },
+    {
+      "utc_day": "2026-10-13",
+      "ts": 1791932430507,
+      "equity": 5203.0542125,
+      "net_deposit": 0,
+      "pnl": -240.04621299999963
+    },
+    {
+      "utc_day": "2026-10-14",
+      "ts": 1792018869099,
+      "equity": 4909.9261455,
+      "net_deposit": 0,
+      "pnl": -293.12806700000056
+    },
+    {
+      "utc_day": "2026-10-15",
+      "ts": 1792105308541,
+      "equity": 5047.0582965,
+      "net_deposit": 0,
+      "pnl": 137.1321510000007
+    },
+    {
+      "utc_day": "2026-10-16",
+      "ts": 1792191678050,
+      "equity": 4854.2672615,
+      "net_deposit": 0,
+      "pnl": -192.7910350000002
+    },
+    {
+      "utc_day": "2026-10-17",
+      "ts": 1792238498289,
+      "equity": 4770.7290945,
+      "net_deposit": 0,
+      "pnl": -83.5381669999997
+    }
+  ]
+}

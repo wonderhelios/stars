@@ -1,0 +1,9 @@
+train_2023_24 volume_health90 S 1.459 total 264.45 DD -60.8 {}
+train_2023_24 both_factor_health90 S 1.381 total 231.08 DD -60.8 {}
+validation_2025 volume_health90 S 2.803 total 643.88 DD -38.12 {}
+validation_2025 both_factor_health90 S 2.692 total 590.05 DD -38.12 {}
+validation_2026 volume_health90 S 2.064 total 277.32 DD -47.77 {}
+validation_2026 both_factor_health90 S 2.064 total 277.32 DD -47.77 {}
+recent_diagnostic_only volume_health90 S -12.508 total -17.22 DD -17.22 {}
+recent_diagnostic_only both_factor_health90 S -12.508 total -17.22 DD -17.22 {}
+DONE

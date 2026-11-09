@@ -1,0 +1,26 @@
+{
+  "names_equal": true,
+  "sides_equal": true,
+  "reconstructed_targets": {
+    "ARB": 0.03846153846153847,
+    "AVAX": -0.03846153846153847,
+    "BTC": 0.03846153846153847,
+    "CASHCAT": -0.03846153846153847,
+    "CRV": 0.03846153846153847,
+    "DOGE": -0.07692307692307694,
+    "ETH": -0.03846153846153847,
+    "LTC": -0.07692307692307694,
+    "MON": -0.07692307692307694,
+    "NEAR": 0.03846153846153847,
+    "ONDO": -0.03846153846153847,
+    "PONS": -0.03846153846153847,
+    "STRK": 0.07692307692307694,
+    "UNI": -0.03846153846153847,
+    "WLD": 0.07692307692307694,
+    "XMR": 0.07692307692307694,
+    "XRP": -0.03846153846153847,
+    "ZRO": 0.07692307692307694,
+    "kPEPE": 0.03846153846153847
+  },
+  "note": "Matches names and directions of captured live positions for last closed October16 signal. No claim that earlier live configurations were identical."
+}

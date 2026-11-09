@@ -1,0 +1,19 @@
+{
+ "id":"long_tp8_short_stop5_cool24",
+ "status":"paper_only_exploratory_not_approved_for_live",
+ "entry":"unchanged two-factor selection",
+ "long_exit":"hourly completed high >= weighted_entry*1.08",
+ "short_exit":"hourly completed high >= weighted_entry*1.05",
+ "execution":"next hourly open with cost; never assume stop-barrier fill",
+ "cooldown_hours":24,
+ "cooldown_scope":"coin, both directions",
+ "gross_target":2.7,
+ "baseline_gross_target":2.7,
+ "baseline_rebalance_hour_utc":1,
+ "production_execution_hour_utc":"00:05 not exactly modeled",
+ "long_hard_stop":null,
+ "evidence":"Improves both halves of observed101day sample; cost/timing stress retains relative improvement; does not fix recent9day losses; adjusted significance fails",
+ "p_fwer_block15":0.653,
+ "required_before_live":["independent future validation","longer regime coverage","historical funding and real execution costs","account-level loss budget and protective exits"],
+ "production_changed":false
+}

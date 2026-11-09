@@ -1,0 +1,76 @@
+{
+  "question": "Can changing the signal improve returns and stability, rather than just reducing leverage?",
+  "fixed": {
+    "gross": 2.7,
+    "initial_equity": 5739.2678625,
+    "min_vol": 10000000,
+    "top_fraction": 0.2,
+    "cap": 10,
+    "min_order_pct": 0.017,
+    "band": 0.02,
+    "fee": 0.00075,
+    "stress_fee": 0.00125
+  },
+  "candidates": [
+    "momentum_only",
+    "volume_only",
+    "momentum75_volume25",
+    "momentum_plus_signed_volume",
+    "momentum_plus_reverse_volume",
+    "momentum_plus_direction_confirmed_volume",
+    "raw_momentum_plus_volume"
+  ],
+  "rules": {
+    "signed_volume": "rank sign(one-day return)*volume shock",
+    "reverse_volume": "reverse original volume ranking",
+    "direction_confirmed_volume": "volume leg longs require positive 14-day return, shorts require negative 14-day return; rank volume descending on both sides; each leg 0.5 if enough eligible names; blend equally with momentum, renormalize",
+    "raw_momentum": "14-day return without volatility division"
+  },
+  "windows": {
+    "train_2023_24": [
+      "2023-07-04",
+      "2025-01-01"
+    ],
+    "validation_2025": [
+      "2025-01-14",
+      "2026-01-01"
+    ],
+    "validation_2026": [
+      "2026-01-01",
+      "2026-10-17"
+    ],
+    "recent_diagnostic_only": [
+      "2026-10-08",
+      "2026-10-17"
+    ]
+  },
+  "promotion": "Price coverage required; both 2023-24 and 2025-26 Sharpe must improve, costs stressed, maxT FWER<.05 over all candidates, previous search history and missing funding still prohibit strong discovery claims; recent week not selection criterion",
+  "known_limitations": [
+    "historical funding not complete",
+    "price gaps disqualify affected runs",
+    "metadata not point-in-time audited",
+    "daily open proxy for real 00:05 execution",
+    "historical splits already observed, not pristine OOS",
+    "no liquidation modeling"
+  ],
+  "deployment": "none",
+  "second_batch_before_execution": {
+    "trigger": "STRK long supported by stale 14d strength despite daily selloff; volume-only weak in 2026",
+    "candidates": [
+      "absolute14_veto",
+      "short_trend3_veto",
+      "no_post_cancellation_reinflation"
+    ],
+    "rules": "Veto wrong-sign long/short weights after forming baseline, shrink larger leg to keep dollar-neutral without refilling freed risk. No renormalization after veto. Third candidate uses raw average of factor books without post-cancellation normalization.",
+    "multiplicity": "Include all first and second batch candidates in common maxT family; adaptive extension is exploratory, not pristine preregistration."
+  },
+  "third_batch_before_execution": {
+    "question": "Do weak factors need an explicit rule to stop receiving money?",
+    "candidates": [
+      "volume_health90",
+      "both_factor_health90"
+    ],
+    "rule": "Use only previous 90 fully completed daily net paper returns of separate momentum-only and volume-only books; no lookback search. During first 90 days of each reset window use baseline. Volume health removes volume if its trailing net mean <=0; momentum remains. Both-factor health allocates only to positive-mean books, and stays flat if neither passes. Rescale selected book to original gross. Paper net returns exclude historical funding, which remains a deployment block.",
+    "multiplicity": "Recompute common maxT over all 12 variants; exploratory adaptive batch, not confirmatory."
+  }
+}

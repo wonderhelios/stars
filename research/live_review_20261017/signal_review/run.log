@@ -1,0 +1,34 @@
+BASELINE WEIGHT PARITY PASS
+train_2023_24 baseline 1.627 346.19 {}
+train_2023_24 momentum_only 1.484 282.6 {}
+train_2023_24 volume_only 0.859 75.42 {}
+train_2023_24 momentum75_volume25 1.598 317.83 {}
+train_2023_24 momentum_plus_signed_volume 0.422 10.55 {}
+train_2023_24 momentum_plus_reverse_volume -0.101 -33.15 {}
+train_2023_24 momentum_plus_direction_confirmed_volume 1.242 173.25 {}
+train_2023_24 raw_momentum_plus_volume 1.226 173.27 {}
+validation_2025 baseline 2.803 643.88 {}
+validation_2025 momentum_only 2.541 582.03 {}
+validation_2025 volume_only 2.325 429.02 {}
+validation_2025 momentum75_volume25 2.785 652.0 {}
+validation_2025 momentum_plus_signed_volume 1.099 74.15 {}
+validation_2025 momentum_plus_reverse_volume -1.48 -79.23 {}
+validation_2025 momentum_plus_direction_confirmed_volume 2.525 500.11 {}
+validation_2025 raw_momentum_plus_volume 2.547 553.74 {}
+validation_2026 baseline 2.219 314.9 {}
+validation_2026 momentum_only 2.818 764.49 {}
+validation_2026 volume_only 0.154 -27.78 {}
+validation_2026 momentum75_volume25 2.641 544.37 {}
+validation_2026 momentum_plus_signed_volume 1.441 122.29 {}
+validation_2026 momentum_plus_reverse_volume 1.266 86.13 {}
+validation_2026 momentum_plus_direction_confirmed_volume 2.873 673.3 {}
+validation_2026 raw_momentum_plus_volume 1.586 145.03 {}
+recent_diagnostic_only baseline -12.508 -17.22 {}
+recent_diagnostic_only momentum_only -9.188 -15.79 {}
+recent_diagnostic_only volume_only -16.576 -18.19 {}
+recent_diagnostic_only momentum75_volume25 -10.873 -16.75 {}
+recent_diagnostic_only momentum_plus_signed_volume -12.766 -17.45 {}
+recent_diagnostic_only momentum_plus_reverse_volume -0.157 -0.39 {}
+recent_diagnostic_only momentum_plus_direction_confirmed_volume -8.98 -16.78 {}
+recent_diagnostic_only raw_momentum_plus_volume -10.146 -12.36 {}
+DONE

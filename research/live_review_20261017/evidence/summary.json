@@ -1,0 +1,16 @@
+{
+  "source": "Live API plus read-only Hyperliquid info endpoints",
+  "equity": 4737.8137765,
+  "initial_equity": 541.0247115,
+  "net_deposits_exchange": 5198.243151000001,
+  "net_pnl": -1001.4540859999997,
+  "simple_return_pct": -17.44916093816487,
+  "closed_pnl": -624.146355,
+  "fees": 36.467356,
+  "funding": -3.171932,
+  "current_unrealized_mid": -347.87206399999997,
+  "initial_unrealized_recorded": -10.612745999999966,
+  "attributed_net_pnl": -1001.0449609999998,
+  "residual": -0.4091249999999036,
+  "warning": "Independent requests, mark/mid and snapshot timestamps differ. Initial unrealized is retained application record, not independently reconstructed."
+}

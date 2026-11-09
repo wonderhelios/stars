@@ -1,0 +1,35 @@
+{
+  "objective": "Test entry selection, position age, stop loss, take profit and cooldown as executable position lifecycle rules at fixed target gross 2.7",
+  "variants": [
+    "baseline",
+    "confirm2",
+    "age90_no_shock3sigma",
+    "max48_cool24",
+    "max120_cool24",
+    "stop5_cool24",
+    "stop2sigma_cool24",
+    "tp8_cool24",
+    "trail8_4_cool24",
+    "confirm2_stop2sigma_max48"
+  ],
+  "entry": "Daily decisions at UTC 01:00 using previous completed daily candle; same delay for baseline. Confirm2 requires same target direction on two completed daily signals. age90_no_shock3sigma requires 90 calendar days since first observed candle and no abs daily return >3 preceding-day vol20 during preceding 3 completed days, filtering universe before ranking.",
+  "exit": "Stops/TP inspect just-completed hourly OHLC and execute at next hourly open plus explicit trading friction, never at ideal barrier. Trail uses peak from prior completed hours; update peak only after trigger check, avoiding unknown intrabar high/low order. Hourly monitoring is the tested product, not exchange resting-stop behavior.",
+  "position_state": "First entry starts age; additions update weighted entry without resetting age; reductions preserve entry; flips reset age. Any risk exit blocks that coin in both directions for at least24h. Daily rebalance cannot immediately reopen blocked positions. Sigma stop at entry max(0.02,2*prior20day volatility).",
+  "capital": 5739.2678625,
+  "cost_one_way": [
+    0.00075,
+    0.00125
+  ],
+  "coverage": "Hourly cached July-Oct2026 plus fresh recent data, >=60 completed days desired; incomplete held price disqualifies run. Daily long-history cannot validate intraday exits. Funding and liquidation model remain incomplete.",
+  "validation": "First half vs second half, last observed nine days diagnostic only; block bootstrap all9 variants; no true unseen OOS and no deployment based on single recent winner",
+  "additional_batch_before_execution": {
+    "variants": [
+      "long_tp8_cool24",
+      "short_stop5_cool24",
+      "long_tp8_short_stop5",
+      "no_loser_add"
+    ],
+    "reason": "Live STRK is long winner giveback after additions, while short losses have different price path. Test asymmetric management and prohibit adding below entry on a losing held position, without optimizing thresholds.",
+    "multiplicity": "All 13 nonbaseline variants combined; adaptive exploration, not unseen confirmation."
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "purpose": "Audit live losses and compare bounded risk/execution changes; no deployment",
+  "baseline": {
+    "initial_equity": 5739.2678625,
+    "gross": 2.7,
+    "min_volume": 10000000,
+    "cap": 10,
+    "top_fraction": 0.2,
+    "min_order_pct": 0.017,
+    "band": 0.02,
+    "slices": 1,
+    "factors": [
+      "momentum14/vol20",
+      "volume/mean30"
+    ]
+  },
+  "candidates": [
+    "gross1.35",
+    "gross0.9",
+    "single-name weight capped at 5% gross without redistribution",
+    "rebalance band10%",
+    "signal-changes-only resize with 10% gross overrun guard",
+    "slices3 all three phases using byte-sum hash"
+  ],
+  "costs_one_way": [
+    0.00075,
+    0.00125
+  ],
+  "capital_sensitivity": [
+    5739.2678625,
+    1000000
+  ],
+  "splits": [
+    "2023-24",
+    "2025-2026-06",
+    "2026-07 to cached end"
+  ],
+  "multiple_testing": "centered paired moving-block maxT mean-return improvements, 1999 draws, block lengths15/30/60; all six families and three slice phases included; historical prior search count unknown so no global discovery claim",
+  "limitations": [
+    "previously searched historical data is not pristine out-of-sample",
+    "daily next-open proxy not actual 00:05 fills",
+    "historical funding missing: zero and explicit funding-drag sensitivity, not net verified results",
+    "historical metadata/retired-market completeness not proven",
+    "no historical order-book/margin liquidation simulation; reject any solvency breach",
+    "current live week already observed; attribution, not optimization holdout"
+  ],
+  "amendments": [
+    {
+      "reason": "Held FTM lacks prices after 2025-01-12; TON has gaps too. Full-path backtests cannot establish tradability.",
+      "action": "Report diagnostics as invalid for promotion; add separately cold-started windows, explicitly exclude Jan1-Jan13 2025 in 2025 window; never splice them into a CAGR. Recent Oct8-Oct16 is already observed and not untouched OOS."
+    }
+  ]
+}

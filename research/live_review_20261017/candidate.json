@@ -1,0 +1,10 @@
+{
+  "status":"paper_only_not_approved_for_live",
+  "purpose":"reduce risk of the same signal, not claim new alpha",
+  "production_changes":false,
+  "proposed_delta":{"leverage":1.5,"margin_buffer":0.9},
+  "target_gross":1.35,
+  "hold_other_parameters_fixed":true,
+  "blocks":["historical settlements incomplete","historical funding incomplete","no independent future validation","intraday liquidation and execution model incomplete"],
+  "historical_window_drawdown_warning":"approximately 32 percent remains possible in evaluated historical windows; not a guaranteed bound"
+}

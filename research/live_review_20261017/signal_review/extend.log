@@ -1,0 +1,13 @@
+train_2023_24 absolute14_veto 1.215 144.1 DD -38.76 gross 0.63 {}
+train_2023_24 short_trend3_veto 0.805 54.06 DD -35.63 gross 0.41 {}
+train_2023_24 no_post_cancellation_reinflation 1.429 213.4 DD -52.78 gross 0.96 {}
+validation_2025 absolute14_veto 2.05 221.05 DD -36.39 gross 1.6 {}
+validation_2025 short_trend3_veto 0.736 28.06 DD -28.79 gross 0.91 {}
+validation_2025 no_post_cancellation_reinflation 2.944 615.9 DD -34.96 gross 2.49 {}
+validation_2026 absolute14_veto 2.666 405.51 DD -36.61 gross 1.81 {}
+validation_2026 short_trend3_veto 1.356 75.67 DD -57.53 gross 1.06 {}
+validation_2026 no_post_cancellation_reinflation 1.928 203.33 DD -47.06 gross 2.48 {}
+recent_diagnostic_only absolute14_veto -12.861 -16.66 DD -16.66 gross 1.94 {}
+recent_diagnostic_only short_trend3_veto -19.256 -13.07 DD -13.07 gross 0.76 {}
+recent_diagnostic_only no_post_cancellation_reinflation -13.326 -16.64 DD -16.64 gross 2.49 {}
+DONE
