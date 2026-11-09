@@ -5,9 +5,8 @@ BASE = Path(__file__).resolve().parent
 import json, urllib.request, datetime, time, os
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
-HEAD = ['BTC','ETH','SOL','BNB','XRP','ADA','DOGE','AVAX','LINK','SUI','NEAR','UNI','AAVE',
-        'INJ','TAO','XMR','ZEC','ARB','STRK','CRV','ENA','WLD','ZRO','ONDO','HYPE','PUMP',
-        'FARTCOIN','kPEPE','CASHCAT','PONS','LIT','VVV','XPL']
+# 拉全宇宙币的 funding（HL fundingHistory 对所有永续合约都返回 ✗ 之前只拉了 33 个 head 币 ✗ 漏了 202 个）
+HEAD = sorted(Path(p).stem for p in (BASE/'data'/'hl2').glob('*.json'))
 
 def hl_info(body):
     req = urllib.request.Request('https://api.hyperliquid.xyz/info',

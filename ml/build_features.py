@@ -89,54 +89,98 @@ feats['klow']=(np.minimum(O,C)-L)/O; feats['klow_2']=(np.minimum(O,C)-L)/(H-L)
 feats['ksft']=(2*C-H-L)/O; feats['ksft_2']=(2*C-H-L)/(H-L)
 feats['open_0']=O/C; feats['high_0']=H/C; feats['low_0']=L/C; feats['vwap_0']=np.full((n,k),np.nan)
 WINDOWS=(5,10,20,30,60)
-dC=pd.DataFrame(C);dH=pd.DataFrame(H);dL=pd.DataFrame(L);dV=pd.DataFrame(V);dOI=pd.DataFrame(OI)
-logV=np.log(np.where(V>0, V, np.nan)); dlogV=pd.DataFrame(logV)
-ret=C/dC.shift(1).values-1
+# numpy 手写滚动（对齐 alphapilot operators.py 的 _windowed 浮点累加顺序）
+def _sw(arr, w, partial=False):
+    ap = np.pad(arr, ((w-1,0),(0,0)), constant_values=np.nan) if partial else arr
+    return np.lib.stride_tricks.sliding_window_view(ap, w, axis=0)
+def _mean3(wins):
+    valid = ~np.isnan(wins)
+    counts = valid.sum(axis=2)
+    totals = np.sum(wins, axis=2, where=valid)
+    return np.divide(totals, counts, out=np.full(counts.shape, np.nan), where=counts>0)
+def _std3(wins):
+    valid = ~np.isnan(wins)
+    first = valid.argmax(axis=2)
+    fi, fj = np.ogrid[:wins.shape[0], :wins.shape[1]]
+    shifted = wins - wins[fi, fj, first][:,:,None]
+    centered = shifted - _mean3(shifted)[:,:,None]
+    return np.sqrt(_mean3(centered*centered))
+def _corr3(xw, yw):
+    with np.errstate(divide='ignore', invalid='ignore'):
+        cx = xw - xw.mean(axis=2, keepdims=True)
+        cy = yw - yw.mean(axis=2, keepdims=True)
+        return (cx*cy).sum(axis=2) / np.sqrt((cx*cx).sum(axis=2)*(cy*cy).sum(axis=2))
+def _rank3(wins):
+    return (wins <= wins[:,:,-1:]).sum(axis=2) / wins.shape[2]
+def _part(arr, w, fn):
+    return fn(_sw(arr, w, True))
+def _strict1(arr, w, fn):
+    wins = _sw(arr, w, False)
+    res = fn(wins)
+    complete = (~np.isnan(wins)).all(axis=2)
+    res = np.where(complete, res, np.nan)
+    out = np.full((arr.shape[0], arr.shape[1]), np.nan)
+    out[w-1:] = res
+    return out
+def _strict2(a, b, w):
+    aw = _sw(a, w, False); bw = _sw(b, w, False)
+    res = _corr3(aw, bw)
+    complete = (~np.isnan(aw)).all(axis=2) & (~np.isnan(bw)).all(axis=2)
+    res = np.where(complete, res, np.nan)
+    out = np.full((a.shape[0], a.shape[1]), np.nan)
+    out[w-1:] = res
+    return out
+def _shift(arr, n):
+    out = np.full_like(arr, np.nan)
+    if n > 0: out[n:] = arr[:-n]
+    elif n < 0: out[:n] = arr[-n:]
+    else: out = arr.copy()
+    return out
+logV = np.log(np.where(V>0, V, np.nan))
+_c1 = _shift(C, 1)
+ret = C/_c1 - 1
 for w in WINDOWS:
-    feats[f'roc_{w}']=dC.shift(w).values/C
-    feats[f'ma_{w}']=dC.rolling(w,min_periods=1).mean().values/C
-    _c1=dC.shift(1).values
+    feats[f'roc_{w}']=_shift(C, w)/C
+    feats[f'ma_{w}']=_part(C, w, _mean3)/C
     up=np.where(np.isfinite(_c1),(C>_c1).astype(float),np.nan); dn=np.where(np.isfinite(_c1),(C<_c1).astype(float),np.nan)
-    feats[f'cntp_{w}']=pd.DataFrame(up).rolling(w,min_periods=1).mean().values
-    feats[f'cntn_{w}']=pd.DataFrame(dn).rolling(w,min_periods=1).mean().values
+    feats[f'cntp_{w}']=_part(up, w, _mean3)
+    feats[f'cntn_{w}']=_part(dn, w, _mean3)
     feats[f'cntd_{w}']=feats[f'cntp_{w}']-feats[f'cntn_{w}']
-    feats[f'std_{w}']=dC.rolling(w,min_periods=1).std(ddof=0).values/C
-    feats[f'max_{w}']=dH.rolling(w,min_periods=1).max().values/C
-    feats[f'min_{w}']=dL.rolling(w,min_periods=1).min().values/C
-    feats[f'qtlu_{w}']=dC.rolling(w,min_periods=w).quantile(0.8).values/C
-    feats[f'qtld_{w}']=dC.rolling(w,min_periods=w).quantile(0.2).values/C
-    imax=dH.rolling(w,min_periods=w).apply(lambda a:float(np.nanargmax(a))+1.0,raw=True).values
-    imin=dL.rolling(w,min_periods=w).apply(lambda a:float(np.nanargmin(a))+1.0,raw=True).values
+    feats[f'std_{w}']=_part(C, w, _std3)/C
+    feats[f'max_{w}']=_part(H, w, lambda x: np.nanmax(x, axis=2))/C
+    feats[f'min_{w}']=_part(L, w, lambda x: np.nanmin(x, axis=2))/C
+    feats[f'qtlu_{w}']=_strict1(C, w, lambda x: np.quantile(x, 0.8, axis=2, method='linear'))/C
+    feats[f'qtld_{w}']=_strict1(C, w, lambda x: np.quantile(x, 0.2, axis=2, method='linear'))/C
+    imax=_strict1(H, w, lambda x: x.argmax(axis=2)+1); imin=_strict1(L, w, lambda x: x.argmin(axis=2)+1)
     feats[f'imax_{w}']=imax/w; feats[f'imin_{w}']=imin/w; feats[f'imxd_{w}']=(imax-imin)/w
-    feats[f'rank_{w}']=dC.rolling(w,min_periods=w).rank(pct=True,method='max').values
-    feats[f'rsv_{w}']=(C-dL.rolling(w,min_periods=1).min().values)/(dH.rolling(w,min_periods=1).max().values-dL.rolling(w,min_periods=1).min().values)
-    feats[f'corr_{w}']=dC.rolling(w,min_periods=w).corr(dlogV).values
-    feats[f'cord_{w}']=pd.DataFrame(C/dC.shift(1).values).rolling(w,min_periods=w).corr(pd.DataFrame(np.log(V/dV.shift(1).values+1))).values
-    feats[f'vma_{w}']=dV.rolling(w,min_periods=1).mean().values/V
-    feats[f'vstd_{w}']=dV.rolling(w,min_periods=1).std(ddof=0).values/V
-    wv=pd.DataFrame(np.abs(ret)*V)
-    feats[f'wvma_{w}']=wv.rolling(w,min_periods=1).std(ddof=0).values/wv.rolling(w,min_periods=1).mean().values
-    pos=np.maximum(C-dC.shift(1).values,0); neg=np.maximum(dC.shift(1).values-C,0); tot=np.abs(C-dC.shift(1).values)
-    dpos=pd.DataFrame(pos);dneg=pd.DataFrame(neg);dtot=pd.DataFrame(tot)
-    feats[f'sump_{w}']=dpos.rolling(w,min_periods=w).sum().values/dtot.rolling(w,min_periods=w).sum().values
-    feats[f'sumn_{w}']=dneg.rolling(w,min_periods=w).sum().values/dtot.rolling(w,min_periods=w).sum().values
+    feats[f'rank_{w}']=_strict1(C, w, _rank3)
+    mnL=_part(L, w, lambda x: np.nanmin(x, axis=2)); mxH=_part(H, w, lambda x: np.nanmax(x, axis=2))
+    feats[f'rsv_{w}']=(C-mnL)/(mxH-mnL)
+    feats[f'corr_{w}']=_strict2(C, logV, w)
+    feats[f'cord_{w}']=_strict2(C/_c1, np.log(V/_shift(V,1)+1), w)
+    feats[f'vma_{w}']=_part(V, w, _mean3)/V
+    feats[f'vstd_{w}']=_part(V, w, _std3)/V
+    wv=np.abs(ret)*V
+    feats[f'wvma_{w}']=_part(wv, w, _std3)/_part(wv, w, _mean3)
+    pos=np.maximum(C-_c1,0); neg=np.maximum(_c1-C,0); tot=np.abs(C-_c1)
+    feats[f'sump_{w}']=_strict1(pos, w, lambda x: x.sum(axis=2))/_strict1(tot, w, lambda x: x.sum(axis=2))
+    feats[f'sumn_{w}']=_strict1(neg, w, lambda x: x.sum(axis=2))/_strict1(tot, w, lambda x: x.sum(axis=2))
     feats[f'sumd_{w}']=feats[f'sump_{w}']-feats[f'sumn_{w}']
-    vpos=np.maximum(V-dV.shift(1).values,0); vneg=np.maximum(dV.shift(1).values-V,0); vtot=np.abs(V-dV.shift(1).values)
-    dvpos=pd.DataFrame(vpos);dvneg=pd.DataFrame(vneg);dvtot=pd.DataFrame(vtot)
-    feats[f'vsump_{w}']=dvpos.rolling(w,min_periods=w).sum().values/dvtot.rolling(w,min_periods=w).sum().values
-    feats[f'vsumn_{w}']=dvneg.rolling(w,min_periods=w).sum().values/dvtot.rolling(w,min_periods=w).sum().values
+    vpos=np.maximum(V-_shift(V,1),0); vneg=np.maximum(_shift(V,1)-V,0); vtot=np.abs(V-_shift(V,1))
+    feats[f'vsump_{w}']=_strict1(vpos, w, lambda x: x.sum(axis=2))/_strict1(vtot, w, lambda x: x.sum(axis=2))
+    feats[f'vsumn_{w}']=_strict1(vneg, w, lambda x: x.sum(axis=2))/_strict1(vtot, w, lambda x: x.sum(axis=2))
     feats[f'vsumd_{w}']=feats[f'vsump_{w}']-feats[f'vsumn_{w}']
-feats['fr_1d']=pd.DataFrame(FR).rolling(1,min_periods=1).mean().values
-feats['fr_7d']=pd.DataFrame(FR).rolling(7,min_periods=1).mean().values
-feats['prem_1d']=pd.DataFrame(PREM).rolling(1,min_periods=1).mean().values
-feats['oi_chg_1d']=OI/dOI.shift(1).values-1
-feats['oi_chg_7d']=OI/dOI.shift(7).values-1
-feats['tc_ratio']=N/pd.DataFrame(N).rolling(7,min_periods=1).mean().values
-feats['log_dv']=np.log(pd.DataFrame(C*V).rolling(7,min_periods=1).mean().values)
+feats['fr_1d']=_part(FR, 1, _mean3)
+feats['fr_7d']=_part(FR, 7, _mean3)
+feats['prem_1d']=_part(PREM, 1, _mean3)
+feats['oi_chg_1d']=OI/_shift(OI,1)-1
+feats['oi_chg_7d']=OI/_shift(OI,7)-1
+feats['tc_ratio']=N/_part(N, 7, _mean3)
+feats['log_dv']=np.log(_part(C*V, 7, _mean3))
 feats['log_price']=np.log(C)  # 第 151 位（最后 ✗ 和 alphapilot 列顺序一致）
 log(f"特征 {len(feats)} 个")
 # 5. 标签 pct_cs(forward) 在 head 成员内
-fwd=dC.shift(-3).values/C-1
+fwd=_shift(C, -3)/C-1
 labels=np.full((n,k),np.nan)
 for i in range(n):
     hm=members[i]
