@@ -50,8 +50,10 @@ def latest_positions():
     members = d['members']
     feat_names = [f for f in d.files if f.startswith('F_')]
 
-    # 最新一天
+    # 从最新往前找 head 成员数正常的日期（bar 未闭合时最新一天 head 会异常少 ✗ 比如只有 6 币）
     i = len(ts) - 1
+    while i > 0 and members[i].astype(bool).sum() < 20:
+        i -= 1
     hm = members[i].astype(bool)
 
     # 算最新一天每个币的 151 个特征
