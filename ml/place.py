@@ -182,15 +182,21 @@ def build_orders(target: dict, current: dict, idx: dict, decimals: dict, equity:
     # 目标每个仓位的名义（USD）
     per_leg = equity / 6.0
     mids = info_post({"type": "allMids"})  # 只调一次（之前每个币调一次 ✗ 慢且限流）
-    for coin, target_notional in target.items():
-        asset_idx = idx[coin]
+    # 关键: 遍历【目标 ∪ 当前持仓】✗ 否则旧持仓里被踢出的币永远不平仓（会累积成 18 个仓位）
+    for coin in set(target) | set(current):
+        asset_idx = idx.get(coin)
+        if asset_idx is None:
+            continue
         cur_size = current.get(coin, 0.0)
         dec = decimals.get(coin, 5)
         px = float(mids.get(coin, 0.0))
         if px <= 0:
             continue
-        # 目标数量（币）= 名义 / 价格，多头为正、空头为负
-        target_size = (per_leg / px) * (1.0 if target_notional > 0 else -1.0)
+        # 目标数量（币）= 名义 / 价格，多头为正、空头为负；不在目标里 = 0（平仓）
+        if coin in target:
+            target_size = (per_leg / px) * (1.0 if target[coin] > 0 else -1.0)
+        else:
+            target_size = 0.0
         delta = target_size - cur_size
         if abs(delta) * px < 10:  # 小于 $10 不调
             continue
