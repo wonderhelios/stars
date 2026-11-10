@@ -878,10 +878,10 @@ function renderMonitor(d) {
         const step = 3 * 86400000;
         const now = Date.now();
         const next = base + (Math.floor((now - base) / step) + 1) * step;
-        const days = Math.ceil((next - now) / 86400000);
-        const dstr = new Date(next).toISOString().slice(5, 10);
-        const when = days <= 0 ? "今天" : days === 1 ? "明天" : `${days} 天后`;
-        return `<span>ML 调仓：<b>每 3 天</b>（daily.py 自动 ✗ 下次 <b>${dstr}</b> UTC ✗ ${when}）</span>`;
+        const bj = new Date(next + 8 * 3600000);  // UTC 00:00 = 北京 08:00
+        const dstr = bj.toISOString().slice(5, 10);
+        const hhmm = bj.toISOString().slice(11, 16);
+        return `<span>ML 调仓：<b>每 3 天</b>（daily.py 自动 ✗ 下次 <b>${dstr} ${hhmm}</b> 北京时间）</span>`;
       })()
     : (auto
       ? `<span>每日自动调仓：<b>已开启</b>，下次 <b>${nextRun} UTC</b>（北京时间 08:05）</span>`
