@@ -21,6 +21,9 @@ universe = [m['name'] for m in meta[0]['universe'] if ':' not in m['name']]
 print(f"宇宙 {len(universe)} 币", flush=True)
 
 end = int(datetime.datetime.now(datetime.UTC).timestamp() * 1000)
+# 向下对齐到日线边界 ✗ 排除【当前未闭合的 bar】（否则 08:10 跑时会把当天未走完的日线当成完整数据 ✗ 特征/选币都会偏）
+_DAY_MS = 86400000
+end = (end // _DAY_MS) * _DAY_MS
 full_start = int(datetime.datetime(2023, 2, 26).timestamp() * 1000)  # 和 alphapilot 数据起点一致
 out_dir = BASE / 'data' / 'hl2'
 os.makedirs(out_dir, exist_ok=True)
