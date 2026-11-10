@@ -41,7 +41,8 @@ class FundingRetryTests(unittest.TestCase):
         )
         urlopen.side_effect = [error, io.BytesIO(b"[]")]
         self.assertEqual(hl_info({"coin": "SOL"}), [])
-        sleep.assert_called_once_with(7.0)
+        # 429 采用至少 30 秒冷却；Retry-After 更长时才使用服务端值。
+        sleep.assert_called_once_with(30.0)
 
 
 class MarketDataFileTests(unittest.TestCase):

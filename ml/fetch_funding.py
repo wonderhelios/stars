@@ -3,7 +3,6 @@
 请求失败会打印原因并有限重试；最终失败使进程非零退出，daily 不得继续使用旧数据。
 """
 from pathlib import Path
-from concurrent.futures import ThreadPoolExecutor, as_completed
 import datetime
 import json
 import os
@@ -15,7 +14,7 @@ BASE = Path(__file__).resolve().parent
 INFO_URL = "https://api.hyperliquid.xyz/info"
 UTC = datetime.timezone.utc
 MAX_RETRIES = 3
-MAX_WORKERS = 4
+REQUEST_INTERVAL_SECONDS = 1.0
 
 
 def market_data_files(directory):
@@ -43,10 +42,11 @@ def hl_info(body, retries=MAX_RETRIES, timeout=30):
                 detail = ""
             error = "HTTP %s %s" % (e.code, detail.strip())
             retry_after = e.headers.get("Retry-After") if e.headers else None
+            backoff = min(120.0, 30.0 * (2 ** attempt))
             try:
-                wait = float(retry_after) if retry_after else min(30.0, 5.0 * (2 ** attempt))
+                wait = max(float(retry_after), backoff) if retry_after else backoff
             except ValueError:
-                wait = min(30.0, 5.0 * (2 ** attempt))
+                wait = backoff
         except Exception as e:
             error = "%s: %s" % (type(e).__name__, e)
             wait = min(30.0, 2.0 ** attempt)
@@ -119,21 +119,20 @@ def main():
     os.makedirs(out_dir, exist_ok=True)
     coins = [path.stem for path in market_data_files(BASE / "data" / "hl2")]
     end_ms = int(datetime.datetime.now(UTC).timestamp() * 1000)
-    print("[funding] 开始更新 %d 币，%d 并发，单请求最多重试 %d 次" % (
-        len(coins), MAX_WORKERS, MAX_RETRIES), flush=True)
-    with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
-        futures = {executor.submit(pull, coin, out_dir, end_ms): coin for coin in coins}
-        done = 0
-        for future in as_completed(futures):
-            coin, merged, count = future.result()  # 任一币最终失败则非零退出，daily 中止。
-            path = out_dir / (coin + ".json")
-            temporary = out_dir / (coin + ".json.tmp")
-            with open(temporary, "w", encoding="utf-8") as f:
-                json.dump(merged, f)
-            temporary.replace(path)
-            done += 1
-            print("[funding] [%d/%d] %s %d 天（新 %d）" % (
-                done, len(coins), coin, len(merged), count), flush=True)
+    print("[funding] 开始更新 %d 币，单线程，每币间隔 %.1f 秒，单请求最多重试 %d 次" % (
+        len(coins), REQUEST_INTERVAL_SECONDS, MAX_RETRIES), flush=True)
+    for done, coin in enumerate(coins, 1):
+        # 顺序请求，避免多线程瞬时打满 HL 信息接口权重。
+        _, merged, count = pull(coin, out_dir, end_ms)
+        path = out_dir / (coin + ".json")
+        temporary = out_dir / (coin + ".json.tmp")
+        with open(temporary, "w", encoding="utf-8") as f:
+            json.dump(merged, f)
+        temporary.replace(path)
+        print("[funding] [%d/%d] %s %d 天（新 %d）" % (
+            done, len(coins), coin, len(merged), count), flush=True)
+        if done < len(coins):
+            time.sleep(REQUEST_INTERVAL_SECONDS)
     print("[funding] 完成", flush=True)
 
 
