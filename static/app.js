@@ -872,7 +872,17 @@ function renderMonitor(d) {
     text += `<span class="neg"><b>⚠ ${isoN} 个仓位仍是逐仓</b>（Hyperliquid 不允许持仓时切换模式，需用「转为全仓」逐币处理）</span>`;
   }
   const autoText = isMl
-    ? '<span>ML 调仓：<b>每 3 天</b>（daily.py 自动 ✗ 调仓日 11-09 / 11-12 / ...）</span>'
+    ? (() => {
+        // ML 调仓日 = 2026-05-04 起每 3 天（UTC 00:00）—— 显示下一次 + 距离天数
+        const base = Date.UTC(2026, 4, 4);
+        const step = 3 * 86400000;
+        const now = Date.now();
+        const next = base + (Math.floor((now - base) / step) + 1) * step;
+        const days = Math.ceil((next - now) / 86400000);
+        const dstr = new Date(next).toISOString().slice(5, 10);
+        const when = days <= 0 ? "今天" : days === 1 ? "明天" : `${days} 天后`;
+        return `<span>ML 调仓：<b>每 3 天</b>（daily.py 自动 ✗ 下次 <b>${dstr}</b> UTC ✗ ${when}）</span>`;
+      })()
     : (auto
       ? `<span>每日自动调仓：<b>已开启</b>，下次 <b>${nextRun} UTC</b>（北京时间 08:05）</span>`
       : `<span>每日自动调仓：<b>已关闭</b>（需手动点「执行调仓」）</span>`);
