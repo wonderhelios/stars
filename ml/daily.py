@@ -32,22 +32,18 @@ def log(msg):
 
 
 def run_script(script, *args, timeout=1800):
-    """跑一个 ml/ 下的脚本，失败返回 False。"""
+    """跑一个 ml/ 下的脚本，子进程 stdout/stderr 直接实时透传。"""
     log(f"执行 {script} {' '.join(args)}")
     try:
-        r = subprocess.run(
-            [PY, str(BASE / script), *args],
-            capture_output=True, text=True, timeout=timeout,
-        )
+        # 不再 capture_output：长下载的错误和进度必须立即可见，便于 cron 日志排查。
+        r = subprocess.run([PY, str(BASE / script), *args], timeout=timeout)
     except subprocess.TimeoutExpired:
         log(f"{script} 超时（{timeout}s）")
         return False
     if r.returncode != 0:
-        log(f"{script} 失败（退出码 {r.returncode}）: {(r.stderr or '')[-800:]}")
+        log(f"{script} 失败（退出码 {r.returncode}），中止；详细错误见上方子进程日志")
         return False
-    out = (r.stdout or "").strip()
-    if out:
-        log(f"{script} 输出: {out[-400:]}")
+    log(f"{script} 完成")
     return True
 
 
