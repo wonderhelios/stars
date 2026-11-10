@@ -125,7 +125,12 @@ def exchange_post(wallet_priv: str, action: dict, vault_address: str | None, ret
             headers={"Content-Type": "application/json"},
         )
         try:
-            return json.load(urllib.request.urlopen(req, timeout=30))
+            resp = json.load(urllib.request.urlopen(req, timeout=30))
+            # HL 下单失败通常返回 200 + {"status":"err","response":"..."} ✗ 必须显式检查 ✗
+            # 否则会【静默失败】（进程正常退出 ✗ 上层误判"下单成功"）。
+            if resp.get("status") == "err":
+                raise RuntimeError(f"下单被交易所拒绝: {resp.get('response')}")
+            return resp
         except urllib.error.HTTPError as e:
             last = e
             if e.code == 429:

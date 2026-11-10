@@ -82,25 +82,46 @@ def main():
         log(f"{today} 不是调仓日（每 {REBALANCE_EVERY} 天 ✗ 起始 {REBALANCE_START}），数据已更新，不下单")
         return
 
-    # 4. 调仓日：取私钥 + 下单
-    key_file = os.environ.get("STARS_ML_KEY_FILE", "/etc/hyper-fly/api-wallet.key")
-    try:
-        wallet = Path(key_file).read_text().strip()
-    except Exception as e:
-        log(f"读 API 钱包私钥失败（{key_file}）: {e}")
-        sys.exit(1)
+    # 4. 调仓日：下单（走 Rust /api/ml/execute ✗ 它内部用 Rust 签名下单 ✗ Python 签名是坏的）
+    #
+    # 为什么不能调 place.py --wallet 下单：
+    #   Python 的 msgpack 序列化 ≠ Rust rmp_serde ✗ connection_id 算错 ✗
+    #   HL 恢复出的 signer 不是 API wallet ✗ 下单返回 "does not exist" ✗
+    #   而且 place.py 不检查下单结果 ✗ 会【静默失败】✗ 让 daily 误判"调仓完成"。
     vault = args.vault.strip()
     if not vault:
         log("未配置 ML 子账户地址（STARS_ML_VAULT 或 --vault）")
         sys.exit(1)
 
-    extra = ["--wallet", wallet, "--vault", vault]
     if args.dry_run:
-        extra.append("--dry-run")
-    if not run_script("place.py", *extra):
-        log("下单失败")
+        # dry-run：只算订单，不下单（place.py --dry-run 不需要私钥）
+        run_script("place.py", "--vault", vault, "--dry-run", "--json")
+        return
+
+    # 真实下单：调本机 Rust 接口（Rust 用 api-wallet.key 签名 ✗ 与动量同一套）
+    token = os.environ.get("STARS_TOKEN", "").strip()
+    if not token:
+        log("未设置 STARS_TOKEN，无法自动下单（请手动在前端点「ML 执行调仓」）")
         sys.exit(1)
-    log("调仓完成" + ("（dry-run 未下单）" if args.dry_run else ""))
+    import json as _json
+    import urllib.request as _ur
+    req = _ur.Request(
+        "http://127.0.0.1:3000/api/ml/execute",
+        data=b"",
+        headers={"Authorization": f"Bearer {token}", "Content-Type": "application/json"},
+        method="POST",
+    )
+    try:
+        with _ur.urlopen(req, timeout=600) as r:
+            resp = _json.loads(r.read())
+    except Exception as e:
+        log(f"调用 Rust 下单接口失败: {e}")
+        sys.exit(1)
+    if not resp.get("ok"):
+        log(f"ML 调仓失败: {resp.get('error') or _json.dumps(resp)}")
+        sys.exit(1)
+    note = resp.get("note") or f"{len(resp.get('results', []))} 项订单"
+    log(f"调仓完成: {note}")
 
 
 if __name__ == "__main__":
