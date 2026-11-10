@@ -1,68 +1,148 @@
+"""按季度扩展窗口训练四周期 LightGBM，并导出 model_ensemble.json。"""
 from pathlib import Path
-BASE = Path(__file__).resolve().parent
-"""训练 ML 模型（LightGBM）→ 导出 model.json（给 predict.py 加载）。"""
-import numpy as np,pandas as pd,datetime,warnings,json
+import argparse
+import datetime
+import json
+
 import lightgbm as lgb
-warnings.filterwarnings('ignore')
-d=np.load(str(BASE/'features.npz'))
-ts=d['ts']; coins=d['coins']; labels=d['labels']; members=d['members']
-n,k=labels.shape
-feat_names=[f for f in d.files if f.startswith('F_')]
-X=np.column_stack([d[f].reshape(-1) for f in feat_names])
-y=labels.reshape(-1); day=np.repeat(np.arange(n),k)
-ts_dt=np.array([np.datetime64(datetime.datetime.utcfromtimestamp(t/1000)) for t in ts])
-train_end=np.datetime64('2026-04-30')
-train_start=np.datetime64('2023-06-01')
-elig=(ts_dt[day]>=train_start)&(ts_dt[day]<=train_end)&np.isfinite(y)
-dates=np.unique(ts_dt[day][elig]); split=dates[len(dates)*4//5]
-train_mask=elig&(ts_dt[np.minimum(day+3,n-1)]<split)
-valid_mask=(ts_dt[day]>=split)&(ts_dt[day]<=train_end)&np.isfinite(y)
-params={'objective':'regression','metric':'rmse','learning_rate':0.05,'num_leaves':31,
-        'min_data_in_leaf':200,'feature_fraction':0.8,'bagging_fraction':0.8,'bagging_freq':1,
-        'lambda_l2':10,'seed':42,'num_threads':-1,'verbose':-1}
-tr=lgb.Dataset(X[train_mask],label=y[train_mask],feature_name=feat_names)
-va=lgb.Dataset(X[valid_mask],label=y[valid_mask],reference=tr)
-model=lgb.train(params,tr,num_boost_round=1000,valid_sets=[va],callbacks=[lgb.early_stopping(100,verbose=False)])
-print(f"最佳轮数 {model.best_iteration}, 树数 {model.num_trees()}")
-# dump 成简洁格式: 每棵树 = 节点列表(特征idx/阈值/左右子/叶子值)
-dump=model.dump_model()
-trees=[]
-for tinfo in dump['tree_info']:
-    nodes=[]  # 用 BFS/DFS 展开成数组
-    def walk(node):
-        if 'leaf_value' in node:
-            idx=len(nodes); nodes.append({'leaf':float(node['leaf_value'])})
-            return idx
-        idx=len(nodes); nodes.append({'feat':int(node['split_feature']),'thr':float(node['threshold']),
-            'left':-1,'right':-1,'miss':1 if node.get('default_left',True) else 0})
-        li=walk(node['left_child']); ri=walk(node['right_child'])
-        nodes[idx]['left']=li; nodes[idx]['right']=ri
-        return idx
-    walk(tinfo['tree_structure'])
-    trees.append(nodes)
-out={'feature_names':[f.replace('F_','') for f in feat_names],
-     'trees':trees, 'shrinkage':0.05}
-json.dump(out, open(str(BASE/'model.json'), 'w'))
-print(f"导出 {len(trees)} 棵树, 总节点 {sum(len(t) for t in trees)}")
-print(f"特征名: {out['feature_names']}")
-# 验证: 用导出的 JSON 自己推理, 对比 model.predict
-def predict_json(x, out):
-    s=0.0
-    for nodes in out['trees']:
-        idx=0
-        while 'leaf' not in nodes[idx]:
-            n=nodes[idx]
-            fv=x[n['feat']]
-            if np.isnan(fv):
-                idx=n['right'] if n['miss']==0 else n['left']  # miss=1→left, miss=0→right
-            else:
-                idx=n['left'] if fv<=n['thr'] else n['right']
-        s+=nodes[idx]['leaf']
-    return s
-# 取最后一天有标签的行验证
-sel=np.where(valid_mask)[0][-100:]
-pred_model=model.predict(X[sel])
-pred_json=[predict_json(X[i], out) for i in sel]
-diff=np.max(np.abs(np.array(pred_model)-np.array(pred_json)))
-print(f"JSON 推理 vs model.predict 最大误差: {diff:.6f}")
-print("导出完成 model.json")
+import numpy as np
+
+try:
+    from .ensemble import (
+        BASE, component_labels, component_maturity, export_component, load_config,
+        predict_component_rows, quarter_for_date, quarter_start, utc_now_iso, validate_model,
+    )
+except ImportError:
+    from ensemble import (
+        BASE, component_labels, component_maturity, export_component, load_config,
+        predict_component_rows, quarter_for_date, quarter_start, utc_now_iso, validate_model,
+    )
+
+
+def aligned_prices(features_path, ts, coins):
+    """从原始日线读取 O/C，避免用特征反推价格造成标签漂移。"""
+    n, k = len(ts), len(coins)
+    open_prices = np.full((n, k), np.nan)
+    close_prices = np.full((n, k), np.nan)
+    time_index = {int(t): i for i, t in enumerate(ts)}
+    base = Path(features_path).resolve().parent
+    for j, coin in enumerate(coins):
+        path = base / "data" / "hl2" / (str(coin) + ".json")
+        if not path.exists():
+            continue
+        with open(path, encoding="utf-8") as f:
+            bars = json.load(f)
+        for bar in bars:
+            i = time_index.get(int(bar["t"]))
+            if i is None:
+                continue
+            open_prices[i, j] = float(bar["o"])
+            close_prices[i, j] = float(bar["c"])
+    return open_prices, close_prices
+
+
+def train_ensemble(features_path, output_path, config, as_of=None):
+    as_of = as_of or datetime.datetime.now(datetime.timezone.utc).date().isoformat()
+    start = quarter_start(as_of)
+    quarter = quarter_for_date(as_of)
+    with np.load(str(features_path)) as d:
+        ts = d["ts"].copy()
+        coins = d["coins"].astype(str)
+        members = d["members"].astype(bool)
+        feature_keys = [key for key in d.files if key.startswith("F_")]
+        feature_names = [key[2:] for key in feature_keys]
+        n, k = members.shape
+        rows = np.flatnonzero(members.reshape(-1))
+        raw = np.column_stack([d[key].reshape(-1)[rows] for key in feature_keys])
+        open_prices, close_prices = aligned_prices(features_path, ts, coins)
+
+    dates = ts.astype("int64").astype("datetime64[ms]").astype("datetime64[D]")
+    row_days = rows // k
+    row_dates = dates[row_days]
+    lgb_params = {key: value for key, value in config["lightgbm"].items()
+                  if key not in ("num_boost_round", "early_stopping_rounds")}
+    components = []
+    training_log = []
+    for name in config["ensemble_components"]:
+        labels_2d = component_labels(name, open_prices, close_prices, members)
+        labels = labels_2d.reshape(-1)[rows]
+        # open3/open5 分别多等待一天；内部验证标签也必须在季度开始前成熟。
+        maturity = component_maturity(name)
+        mature_dates = dates[np.minimum(row_days + maturity, n - 1)]
+        eligible = (
+            np.isfinite(labels)
+            & (row_dates >= np.datetime64(config["train_start"], "D"))
+            & (mature_dates < start)
+        )
+        eligible_dates = np.unique(row_dates[eligible])
+        if len(eligible_dates) < 100:
+            raise ValueError("%s 在 %s 前只有 %d 个训练日，拒绝训练" % (name, start, len(eligible_dates)))
+        split = eligible_dates[len(eligible_dates) * 4 // 5]
+        train_mask = eligible & (mature_dates < split)
+        valid_mask = eligible & (row_dates >= split)
+        if not train_mask.any() or not valid_mask.any():
+            raise ValueError("%s 的训练集或内部验证集为空" % name)
+        train = lgb.Dataset(raw[train_mask], label=labels[train_mask], feature_name=feature_names)
+        valid = lgb.Dataset(raw[valid_mask], label=labels[valid_mask], reference=train)
+        booster = lgb.train(
+            lgb_params, train,
+            num_boost_round=int(config["lightgbm"]["num_boost_round"]),
+            valid_sets=[valid],
+            callbacks=[lgb.early_stopping(int(config["lightgbm"]["early_stopping_rounds"]), verbose=False)],
+        )
+        component = export_component(booster, name)
+        sample = raw[valid_mask][-100:]
+        expected = booster.predict(sample, num_iteration=booster.best_iteration)
+        actual = predict_component_rows(component, sample)
+        error = float(np.max(np.abs(expected - actual))) if len(sample) else 0.0
+        if error > 1e-10:
+            raise ValueError("%s 的 JSON 推理误差过大: %.3g" % (name, error))
+        info = {
+            "model": name,
+            "maturity_days": maturity,
+            "inner_valid_start": str(split),
+            "train_rows": int(train_mask.sum()),
+            "valid_rows": int(valid_mask.sum()),
+            "best_iteration": int(booster.best_iteration),
+            "json_max_error": error,
+        }
+        training_log.append(info)
+        components.append(component)
+        print(json.dumps(info, ensure_ascii=False), flush=True)
+        del train, valid, booster
+
+    model = {
+        "format_version": 2,
+        "strategy_id": config["strategy_id"],
+        "quarter": quarter,
+        "train_before": str(start),
+        "trained_at": utc_now_iso(),
+        "feature_names": feature_names,
+        "components": components,
+        "training": training_log,
+        "gross_leverage": float(config["gross_leverage"]),
+        "volatility_target": None,
+    }
+    validate_model(model, config)
+    output_path = Path(output_path)
+    temporary = output_path.with_suffix(output_path.suffix + ".tmp")
+    with open(temporary, "w", encoding="utf-8") as f:
+        json.dump(model, f, ensure_ascii=False, separators=(",", ":"))
+    temporary.replace(output_path)
+    print("导出 %s：%s，%d 个组件，固定总杠杆 %.1f 倍" % (
+        output_path, quarter, len(components), config["gross_leverage"]), flush=True)
+    return model
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--features", default=str(BASE / "features.npz"))
+    parser.add_argument("--output", default=str(BASE / "model_ensemble.json"))
+    parser.add_argument("--config", default=str(BASE / "strategy_config.json"))
+    parser.add_argument("--as-of", help="训练所属成交日 YYYY-MM-DD；默认当前 UTC 日期")
+    args = parser.parse_args()
+    train_ensemble(args.features, args.output, load_config(args.config), args.as_of)
+
+
+if __name__ == "__main__":
+    main()

@@ -1,99 +1,78 @@
-"""ML 策略预测 + 选币。
-
-加载 model.json（LightGBM 树结构）+ features.npz（特征矩阵），
-取最新一天的 head 成分币，预测 score，输出前 6 做多、后 6 做空的目标持仓。
+"""四周期 LightGBM 集成预测，输出 6 多 6 空及固定 2 倍目标权重。
 
 用法：
-    python predict.py            # 打印最新一天的目标持仓
-    python predict.py --json     # 输出 JSON（给下单/监控用）
+    python predict.py
+    python predict.py --json
 """
 from pathlib import Path
-BASE = Path(__file__).resolve().parent
 import json
+import sys
+
 import numpy as np
-import pandas as pd
-import datetime
 
-LONG_N = 6   # 做多数量
-SHORT_N = 6  # 做空数量
-LEVERAGE = 2.0
-
-
-def load_model(path=None):
-    """加载导出的模型（树结构）。"""
-    path = Path(path or BASE / 'model.json')
-    return json.load(open(path))
-
-
-def predict_score(model, x):
-    """纯 Python 推理：遍历每棵树，累加叶子值。缺失用 NaN。"""
-    s = 0.0
-    for nodes in model['trees']:
-        idx = 0
-        while 'leaf' not in nodes[idx]:
-            n = nodes[idx]
-            fv = x[n['feat']]
-            if np.isnan(fv):
-                idx = n['right'] if n['miss'] == 0 else n['left']
-            else:
-                idx = n['left'] if fv <= n['thr'] else n['right']
-        s += nodes[idx]['leaf']
-    return s
+try:
+    from .ensemble import (
+        BASE, ensemble_scores, fixed_weight_selection, load_config, load_model,
+        validate_execution_quarter, validate_model,
+    )
+except ImportError:
+    from ensemble import (
+        BASE, ensemble_scores, fixed_weight_selection, load_config, load_model,
+        validate_execution_quarter, validate_model,
+    )
 
 
-def latest_positions():
-    """返回最新一天的目标持仓：{'long': [...], 'short': [...], 'date': 'YYYY-MM-DD'}。"""
-    model = load_model()
-    d = np.load(str(BASE / 'features.npz'))
-    ts = d['ts']
-    coins = d['coins']
-    members = d['members']
-    feat_names = [f for f in d.files if f.startswith('F_')]
+def latest_positions(features_path=None, model_path=None, config_path=None):
+    config = load_config(config_path)
+    model = load_model(model_path)
+    validate_model(model, config)
+    with np.load(str(features_path or BASE / "features.npz")) as d:
+        ts = d["ts"].copy()
+        coins = d["coins"].astype(str)
+        members = d["members"].astype(bool)
+        feature_keys = [key for key in d.files if key.startswith("F_")]
+        feature_names = [key[2:] for key in feature_keys]
+        if model["feature_names"] != feature_names:
+            raise ValueError("模型与 features.npz 的特征列顺序不一致")
+        i = len(ts) - 1
+        while i >= 0 and members[i].sum() < int(config["min_universe"]):
+            i -= 1
+        if i < 0:
+            raise ValueError("features.npz 中没有成员数足够的 head 日期")
+        idx = np.flatnonzero(members[i])
+        x = np.column_stack([d[key][i, idx] for key in feature_keys])
+        signal_date = str(ts[i].astype("int64").astype("datetime64[ms]").astype("datetime64[D]"))
 
-    # 从最新往前找 head 成员数正常的日期（bar 未闭合时最新一天 head 会异常少 ✗ 比如只有 6 币）
-    i = len(ts) - 1
-    while i > 0 and members[i].astype(bool).sum() < 20:
-        i -= 1
-    hm = members[i].astype(bool)
-
-    # 算最新一天每个币的 151 个特征
-    feats = np.column_stack([d[f][i, :] for f in feat_names])
-
-    # 预测 head 成分币的 score
-    scores = np.full(len(coins), np.nan)
-    for j in range(len(coins)):
-        if not hm[j]:
-            continue
-        x = feats[j]
-        # 特征全 NaN 的币跳过
-        scores[j] = predict_score(model, x)
-
-    # 排序：score 高 → 做多，score 低 → 做空
-    idx = np.flatnonzero(np.isfinite(scores))
-    order = idx[np.lexsort((coins[idx], np.nan_to_num(scores[idx])))]
-
-    long_coins = [str(coins[j]) for j in order[-LONG_N:]]
-    short_coins = [str(coins[j]) for j in order[:SHORT_N]]
-
-    date = datetime.datetime.utcfromtimestamp(ts[i] / 1000).strftime('%Y-%m-%d')
-    return {
-        'date': date,
-        'long': long_coins,
-        'short': short_coins,
-        'n_universe': int(hm.sum()),
+    model_quarter = validate_execution_quarter(model, signal_date)
+    scores = ensemble_scores(model, x)
+    selected = fixed_weight_selection(scores, coins[idx], config)
+    result = {
+        "date": signal_date,
+        "execution": "next_open",
+        "model_quarter": model_quarter,
+        "n_universe": int(len(idx)),
+        "gross_leverage": float(config["gross_leverage"]),
+        "long": selected["long"],
+        "short": selected["short"],
+        "weights": selected["weights"],
     }
+    gross = sum(abs(value) for value in result["weights"].values())
+    if abs(gross - float(config["gross_leverage"])) > 1e-12:
+        raise ValueError("目标权重总杠杆校验失败")
+    return result
 
 
 def main():
-    import sys
-    r = latest_positions()
-    if '--json' in sys.argv:
-        print(json.dumps(r, ensure_ascii=False))
+    result = latest_positions()
+    if "--json" in sys.argv:
+        print(json.dumps(result, ensure_ascii=False))
     else:
-        print(f"=== ML 策略目标持仓（{r['date']} ✗ head {r['n_universe']} 币）===")
-        print(f"做多 {LONG_N}: {', '.join(r['long'])}")
-        print(f"做空 {SHORT_N}: {', '.join(r['short'])}")
+        print("=== ML 四周期集成目标持仓（%s，%s，head %d 币）===" % (
+            result["date"], result["model_quarter"], result["n_universe"]))
+        print("做多 %d: %s" % (len(result["long"]), ", ".join(result["long"])))
+        print("做空 %d: %s" % (len(result["short"]), ", ".join(result["short"])))
+        print("固定总杠杆 %.1f 倍（无波动目标）" % result["gross_leverage"])
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

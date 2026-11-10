@@ -1,67 +1,51 @@
-# ML 策略（复刻 alphapilot LightGBM）
+# ML 策略：四周期 LightGBM 集成
 
-复刻 alphapilot「ML Alpha Long-Short」的 LightGBM 模型，与实盘动量策略并行跑，吃「小币分化」行情。
+151 个价量与加密原生特征，经过 `close3 / close5 / open3 / open5` 四个 LightGBM 回归模型，预测动态 head 内的横截面收益分位。每日先将四个模型的预测分别转成 head 内截面分位，再等权平均。
 
-## 目录
+## 当前策略口径
 
-```
+- 币池：30 天成交额前 20%，18%/22% 缓冲，成分滞后 2 天。
+- 选币：集成 score 前 6 做多、后 6 做空，共 12 个仓位。
+- 仓位：**固定总杠杆 2 倍**，多空各 1 倍，单仓绝对权重 `1/6`；没有波动目标或动态杠杆。
+- 执行：信号日收盘计算特征，下一日开盘成交，每 3 天调仓。
+- 训练：每季度扩展窗口重训；四个标签的训练和内部验证数据都必须在季度开始前成熟。
+- 标签成熟期：`close3=3`、`close5=5`、`open3=4`、`open5=6` 天。open 标签从下一日开盘持有到相应未来开盘。
+- 手续费研究口径：单边名义成交额 0.03%。
+
+## 文件
+
+```text
 ml/
-  model.json        训练好的 LightGBM 模型（42 棵树，151 特征）
-  train_model.py    训练 + 导出模型（从 features.npz → model.json）
-  build_features.py 算 151 个特征 + 动态 head + 标签（从 data/ → features.npz）
-  predict.py        加载模型 + 预测 score + 输出前6多后6空
-  fetch_ohlcv.py    拉 Hyperliquid 日线 OHLCV（2023-04 起）
-  fetch_funding.py  拉资金费率 + premium（2023-05 起）
-  fetch_oi.py       拉 OI 月度 parquet（2023-04 起）
-  data/             原始数据（hl2 / hl_funding / hl_oi，.gitignore 不提交）
-  features.npz      特征矩阵（161M，build_features.py 生成，.gitignore 不提交）
+  strategy_config.json   唯一策略参数来源（模型、6/6、固定 2 倍等）
+  ensemble.py           共享标签、JSON 推理、截面集成和选币逻辑
+  model_ensemble.json   当前季度四模型文件（训练生成）
+  model.json            历史单模型，仅保留作研究对照，不作为回退
+  train_model.py        季度扩展窗口训练与 JSON 导出
+  build_features.py     生成 151 个特征、动态 head 和历史 close3 标签
+  predict.py            输出 long / short / 带符号 weights
+  place.py              按 weights × equity / price 生成订单，目标外旧仓归零
+  daily.py              更新数据、重算特征、检查季度模型、按周期调仓
+  test_ensemble.py      不访问网络的离线单元测试
 ```
 
-## 策略口径（与 alphapilot 对齐）
-
-- 信号：151 个特征（Alpha158 价量 + 加密原生 fr/prem/oi/tc/log_dv）→ LightGBM → score
-- 标签：`pct_cs(forward_3d)`（未来 3 天收益在当天 head 成分内的截面百分位）
-- 币池：head = 30 天成交额前 20%（进出 18%/22% 缓冲）
-- 选币：score 排序，前 6 做多、后 6 做空，等权 1/12，2x 杠杆
-- 调仓：每 3 天（日线），无止损、无波动目标
-- 手续费：0.03%
-
-## 依赖
+## 本地训练与 dry-run
 
 ```bash
-pip install lightgbm numpy pandas pyarrow
+# 使用当前 features.npz，训练当前 UTC 季度模型
+.venv/bin/python ml/train_model.py
+
+# 也可明确指定成交日（季度首日训练只使用此前成熟标签）
+.venv/bin/python ml/train_model.py --as-of 2026-11-11
+
+# 只生成目标持仓，不访问交易接口
+.venv/bin/python ml/predict.py --json
+
+# 离线测试
+.venv/bin/python -m unittest discover -s ml -p 'test_*.py' -v
 ```
 
-## 部署流程
+`daily.py` 在调仓日检查模型季度。模型缺失、损坏、训练失败或季度不匹配都会中止，**不会回退 `model.json`，也不会沿用旧模型下单**。`place.py` 只接受新预测结果中的带符号 `weights`，不再自行假定每仓 `equity/6`。
 
-```bash
-# 1. 拉数据（首次或每日）
-python ml/fetch_ohlcv.py      # 日线 OHLCV
-python ml/fetch_funding.py    # 资金费率 + premium
-python ml/fetch_oi.py         # OI parquet
+## 研究边界
 
-# 2. 算特征（每次拉完数据后）
-python ml/build_features.py   # → features.npz
-
-# 3. 预测 + 输出持仓
-python ml/predict.py          # 打印最新一天前6多后6空
-python ml/predict.py --json   # 输出 JSON（给下单/监控）
-```
-
-## 训练（复现时用）
-
-```bash
-python ml/train_model.py      # 用 features.npz 训练 → model.json
-```
-
-训练参数与 alphapilot 一致：`lr=0.05, num_leaves=31, min_data_in_leaf=200,
-feature_fraction=0.8, bagging_fraction=0.8, bagging_freq=1, lambda_l2=10,
-seed=42, num_boost_round=1000, 早停 100`。训练区间 2023-06 ~ 2026-04-30，
-切分 80/20，purge 3 天前瞻。
-
-## 复现验证结果
-
-- 验证 Rank IC：0.114（alphapilot 0.108）
-- 25 天（10-09 ~ 11-05）回测：+23.9%（alphapilot 官方 +23%）
-- 半年（05-04 ~ 11-05）回测：+81.4%（alphapilot 官方 +71.6%）
-- head 历史币：139（alphapilot 124，我们宇宙 234 币 vs 它 165 永续）
+四模型候选来自 `research/ml_autoresearch_20261110/` 的滚动研究。研究中的收益与回撤不构成上线保证；固定 2 倍版本也不等同于研究里曾评估的 2.1 倍加波动目标版本。生产改动需要先完成本地训练、JSON 推理一致性、离线订单 dry-run 和小额验证，再另行决定是否部署。

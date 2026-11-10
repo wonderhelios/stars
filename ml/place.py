@@ -11,6 +11,8 @@
 说明：每 3 天调仓，前 6 多后 6 空等权，每个仓位 1/6 名义（2x 杠杆多空各 100%）。
       上线前务必用 --dry-run + 小额验证签名正确。
 """
+from __future__ import annotations
+
 from pathlib import Path
 BASE = Path(__file__).resolve().parent
 import json
@@ -21,11 +23,7 @@ import time
 import datetime
 import sys
 
-import msgpack
-from eth_account import Account
-from eth_account.messages import encode_typed_data
-from eth_utils import keccak
-
+# 签名依赖只在真实签名时加载；离线预测、dry-run 和订单计算不需要安装它们。
 from predict import latest_positions
 
 INFO_URL = "https://api.hyperliquid.xyz/info"
@@ -73,6 +71,11 @@ def round_sz(sz: float, decimals: int) -> str:
 
 
 def sign_l1_action(wallet_priv: str, action: dict, nonce: int, vault_address: str | None):
+    import msgpack
+    from eth_account import Account
+    from eth_account.messages import encode_typed_data
+    from eth_utils import keccak
+
     packed = msgpack.packb(action, use_bin_type=True)
     data = bytearray(packed)
     data += nonce.to_bytes(8, "big")
@@ -178,30 +181,29 @@ def fmt_price(px: float, sz_decimals: int, round_up: bool) -> str:
     return f"{p:.{decimal_places}f}"
 
 
-def build_orders(target: dict, current: dict, idx: dict, decimals: dict, equity: float):
-    """目标持仓（{coin: signed_notional}）vs 当前持仓 → 下单列表。
+def build_orders(target: dict, current: dict, idx: dict, decimals: dict, equity: float, mids=None):
+    """带符号目标权重 vs 当前持仓 → 下单列表。
 
-    前 6 多后 6 空，每个仓位名义 = equity / 6（多空各 100% = 2x 杠杆）。
+    target[coin] 是相对子账户净值的目标名义权重；目标外旧仓一律归零。
     """
+    if not math.isfinite(equity) or equity <= 0:
+        raise ValueError("子账户净值必须为正数")
+    if not target or not all(math.isfinite(float(w)) for w in target.values()):
+        raise ValueError("目标权重为空或含非有限值，拒绝下单")
     orders = []
-    # 目标每个仓位的名义（USD）
-    per_leg = equity / 6.0
-    mids = info_post({"type": "allMids"})  # 只调一次（之前每个币调一次 ✗ 慢且限流）
-    # 关键: 遍历【目标 ∪ 当前持仓】✗ 否则旧持仓里被踢出的币永远不平仓（会累积成 18 个仓位）
-    for coin in set(target) | set(current):
+    mids = mids if mids is not None else info_post({"type": "allMids"})
+    # 关键: 遍历【目标 ∪ 当前持仓】，确保被移出目标旧仓也会平仓。
+    for coin in sorted(set(target) | set(current)):
         asset_idx = idx.get(coin)
         if asset_idx is None:
-            continue
+            raise ValueError("目标或当前持仓缺少资产序号: %s" % coin)
         cur_size = current.get(coin, 0.0)
         dec = decimals.get(coin, 5)
         px = float(mids.get(coin, 0.0))
-        if px <= 0:
-            continue
-        # 目标数量（币）= 名义 / 价格，多头为正、空头为负；不在目标里 = 0（平仓）
-        if coin in target:
-            target_size = (per_leg / px) * (1.0 if target[coin] > 0 else -1.0)
-        else:
-            target_size = 0.0
+        if not math.isfinite(px) or px <= 0:
+            raise ValueError("目标或当前持仓缺少有效价格: %s" % coin)
+        # 目标数量 = 带符号权重 × 净值 / 价格；不在目标里 = 0（平仓）。
+        target_size = float(target.get(coin, 0.0)) * equity / px
         delta = target_size - cur_size
         if abs(delta) * px < 10:  # 小于 $10 不调
             continue
@@ -250,6 +252,7 @@ def main():
     # 诊断：打印实际用的 API wallet 地址 + vault（排查 "does not exist"）
     if wallet:
         try:
+            from eth_account import Account
             print(f"[place] API wallet 地址: {Account.from_key(wallet).address}", file=sys.stderr, flush=True)
             print(f"[place] vault(子账户) 地址: {vault}", file=sys.stderr, flush=True)
         except Exception as e:
@@ -280,12 +283,10 @@ def main():
         print(f"子账户净值 ${equity:,.2f}")
 
     idx, decimals = meta_index()
-    # 目标：多头正名义、空头负名义
-    target_map = {}
-    for c in target["long"]:
-        target_map[c] = equity / 6.0
-    for c in target["short"]:
-        target_map[c] = -equity / 6.0
+    # 只消费四模型预测给出的带符号固定权重；旧 long/short 单模型格式不兼容。
+    target_map = target.get("weights")
+    if not isinstance(target_map, dict) or not target_map:
+        raise ValueError("预测结果缺少带符号 weights，拒绝下单")
 
     current = current_positions(vault)
     orders = build_orders(target_map, current, idx, decimals, equity)

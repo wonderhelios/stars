@@ -1,0 +1,31 @@
+{
+  "format_version": 2,
+  "strategy_id": "ml_horizon_ensemble_fixed2x",
+  "model_family": "LightGBM",
+  "label": "horizon_ensemble",
+  "ensemble_components": ["close3", "close5", "open3", "open5"],
+  "retrain_frequency": "quarterly_expanding_window",
+  "train_start": "2023-06-01",
+  "rebalance_days": 3,
+  "long_n": 6,
+  "short_n": 6,
+  "gross_leverage": 2.0,
+  "long_fraction": 0.5,
+  "min_universe": 20,
+  "lightgbm": {
+    "objective": "regression",
+    "metric": "rmse",
+    "learning_rate": 0.05,
+    "num_leaves": 31,
+    "min_data_in_leaf": 200,
+    "feature_fraction": 0.8,
+    "bagging_fraction": 0.8,
+    "bagging_freq": 1,
+    "lambda_l2": 10.0,
+    "seed": 42,
+    "num_threads": 4,
+    "verbose": -1,
+    "num_boost_round": 1000,
+    "early_stopping_rounds": 100
+  }
+}
