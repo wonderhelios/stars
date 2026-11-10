@@ -772,6 +772,7 @@ async function mlExecute() {
 function bindMlPlanButtons() {
   const planBtn = $('ml-plan-btn');
   const execBtn = $('ml-execute-btn');
+  const resetBtn = $('ml-reset-btn');
   if (planBtn && !planBtn.dataset.bound) {
     planBtn.dataset.bound = '1';
     planBtn.onclick = mlPlan;
@@ -779,6 +780,27 @@ function bindMlPlanButtons() {
   if (execBtn && !execBtn.dataset.bound) {
     execBtn.dataset.bound = '1';
     execBtn.onclick = mlExecute;
+  }
+  if (resetBtn && !resetBtn.dataset.bound) {
+    resetBtn.dataset.bound = '1';
+    resetBtn.onclick = mlReset;
+  }
+}
+
+// ML 重置记录：只清空 ML 净值历史 ✗ 不动动量。平仓后调整初始资金时用。
+async function mlReset() {
+  const view = $('lv-plan-out');
+  const btn = $('ml-reset-btn');
+  if (!confirm('ML 重置记录：清空 ML 子账户的净值历史（不动动量记录）。下一次记录会用【当前净值】作为新基准。\n\n建议先平掉 ML 全部仓位、把资金调整到目标金额，再点这个。继续？')) return;
+  if (btn) { btn.disabled = true; btn.textContent = '重置中…'; }
+  try {
+    const d = await fetchJsonSafe('/api/ml/reset', { method: 'POST' }, 30000);
+    if (view) view.innerHTML = `<div class="execution-result-block"><div class="note ok">✅ ${escapeHTML(d.note || 'ML 净值历史已清空，下一次记录会用当前净值作为新基准')}</div></div>`;
+    setTimeout(() => { try { refreshLive(); } catch (_) {} }, 800);
+  } catch (e) {
+    if (view) view.innerHTML = `<div class="execution-result-block"><div class="note neg">重置失败：${escapeHTML(String(e))}</div></div>`;
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = 'ML 重置记录'; }
   }
 }
 

@@ -708,7 +708,7 @@
               <select id="lv-auto"><option value="false" selected>关闭</option><option value="true">开启</option></select>
             </div></div></section>
         <section class="setup-card"><header><div><h3>手动执行</h3><p>使用已保存的配置。执行调仓会发送真实订单。</p></div></header><div class="setup-actions"><button class="btn ghost" id="lv-plan">生成计划（不下单）</button><button class="btn danger" id="lv-run">执行调仓</button></div>
-            <div class="setup-actions" style="margin-top:10px"><button class="btn ghost" id="ml-plan-btn">ML 计划调仓（不下单）</button><button class="btn danger" id="ml-execute-btn">ML 执行调仓</button></div>
+            <div class="setup-actions" style="margin-top:10px"><button class="btn ghost" id="ml-plan-btn">ML 计划调仓（不下单）</button><button class="btn danger" id="ml-execute-btn">ML 执行调仓</button><button class="btn ghost" id="ml-reset-btn" title="只清空 ML 的净值历史，不动动量记录。平仓后调整初始资金时用。">ML 重置记录</button></div>
             <details class="setup-details"><summary>仓位维护</summary><div class="setup-actions"><button class="btn ghost" id="lv-tp-btn">刷新止盈单</button><button class="btn ghost" id="lv-rebuild">转为全仓</button></div><p>转为全仓可能平仓并重开；刷新止盈按已保存的止盈参数处理。</p></details></section>
         <section class="setup-card"><header><div><h3>资金流水</h3><p>仅登记已完成的转账，不会实际转入或转出资金。只记录起点之后的出入金。</p></div></header><div class="field"><label for="lv-flow">记录入金/出金（+入 −出）</label>
               <input id="lv-flow" type="number" step="0.01" placeholder="如 2415 或 -500" />

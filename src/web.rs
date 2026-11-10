@@ -94,6 +94,7 @@ pub fn router(state: AppState) -> Router {
         .route("/api/strategy-health", get(strategy_health))
         .route("/api/ml/plan", get(ml_plan))
         .route("/api/ml/execute", post(ml_execute))
+        .route("/api/ml/reset", post(ml_reset))
         .route("/api/snapshots", get(snapshots_view))
         .route("/api/live/config", post(live_config))
         .route("/api/live/run", post(live_run))
@@ -748,6 +749,21 @@ async fn ml_execute(State(state): State<AppState>) -> Response {
         }
     }
     Json(json!({"ok": errors == 0, "errors": errors, "results": results})).into_response()
+}
+
+/// 清空 ML 子账户 B 的净值历史 ✗ 不动动量的记录。
+/// 用途：ML 平仓后调整初始资金（比如改成 $2500）✗ 清空后下一次记录会以当前净值作为新基准。
+async fn ml_reset(State(state): State<AppState>) -> Response {
+    let mut st = state.live.lock().await;
+    st.ml_history.clear();
+    if let Err(e) = st.save(&state.live_path) {
+        return (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(json!({"ok": false, "error": format!("保存 ML 记录失败: {e}")})),
+        )
+            .into_response();
+    }
+    Json(json!({"ok": true, "note": "ML 净值历史已清空，下一次记录会用当前净值作为新基准"})).into_response()
 }
 
 async fn live_status(State(state): State<AppState>) -> Response {
