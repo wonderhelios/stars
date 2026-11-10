@@ -752,10 +752,35 @@ async fn ml_execute(State(state): State<AppState>) -> Response {
 }
 
 /// 清空 ML 子账户 B 的净值历史 ✗ 不动动量的记录。
-/// 用途：ML 平仓后调整初始资金（比如改成 $2500）✗ 清空后下一次记录会以当前净值作为新基准。
+/// 用途：ML 平仓后调整初始资金（比如改成 $2500）✗ 清空后【立即用当前净值记一个点】当作新基准，
+/// 这样「全部账户」的本金基准（动量 baseline + ML 首点）才不会少掉 ML 那一份。
 async fn ml_reset(State(state): State<AppState>) -> Response {
+    let cfg = state.live.lock().await.config.clone();
+    let ml_addr = match cfg.ml_vault_address.as_deref().filter(|a| !a.is_empty()) {
+        Some(a) => a.to_string(),
+        None => {
+            return (
+                StatusCode::BAD_REQUEST,
+                Json(json!({"ok": false, "error": "未配置 ML 子账户地址"})),
+            )
+                .into_response();
+        }
+    };
+    // 先查当前净值（清空后作为新基准 ✗ 让「全部账户」统计保持正确）
+    let snap = crate::live::ml_account_snapshot(&ml_addr, None).await;
+    if let Some(e) = snap.error {
+        return (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(json!({"ok": false, "error": format!("读取 ML 净值失败: {e}")})),
+        )
+            .into_response();
+    }
+    let now = crate::live::now_ms_pub();
     let mut st = state.live.lock().await;
     st.ml_history.clear();
+    if snap.equity.is_finite() && snap.equity > 0.0 {
+        st.ml_history.push(crate::live::EquityPoint { ts: now, equity: snap.equity, pnl: 0.0 });
+    }
     if let Err(e) = st.save(&state.live_path) {
         return (
             StatusCode::INTERNAL_SERVER_ERROR,
@@ -763,7 +788,12 @@ async fn ml_reset(State(state): State<AppState>) -> Response {
         )
             .into_response();
     }
-    Json(json!({"ok": true, "note": "ML 净值历史已清空，下一次记录会用当前净值作为新基准"})).into_response()
+    Json(json!({
+        "ok": true,
+        "baseline": snap.equity,
+        "note": format!("ML 净值历史已清空，新基准 = 当前净值 ${:.2}", snap.equity),
+    }))
+    .into_response()
 }
 
 async fn live_status(State(state): State<AppState>) -> Response {
