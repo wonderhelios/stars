@@ -139,7 +139,8 @@ def _shift(arr, n):
 logV = np.log(np.where(V>0, V, np.nan))
 _c1 = _shift(C, 1)
 ret = C/_c1 - 1
-for w in WINDOWS:
+for _wi, w in enumerate(WINDOWS):
+    log(f"  特征窗口 {w} 开始（{_wi+1}/{len(WINDOWS)}）")
     feats[f'roc_{w}']=_shift(C, w)/C
     feats[f'ma_{w}']=_part(C, w, _mean3)/C
     up=np.where(np.isfinite(_c1),(C>_c1).astype(float),np.nan); dn=np.where(np.isfinite(_c1),(C<_c1).astype(float),np.nan)
@@ -170,6 +171,7 @@ for w in WINDOWS:
     feats[f'vsump_{w}']=_strict1(vpos, w, lambda x: x.sum(axis=2))/_strict1(vtot, w, lambda x: x.sum(axis=2))
     feats[f'vsumn_{w}']=_strict1(vneg, w, lambda x: x.sum(axis=2))/_strict1(vtot, w, lambda x: x.sum(axis=2))
     feats[f'vsumd_{w}']=feats[f'vsump_{w}']-feats[f'vsumn_{w}']
+    log(f"  特征窗口 {w} 完成（累计 {len(feats)} 个特征）")
 feats['fr_1d']=_part(FR, 1, _mean3)
 feats['fr_7d']=_part(FR, 7, _mean3)
 feats['prem_1d']=_part(PREM, 1, _mean3)
