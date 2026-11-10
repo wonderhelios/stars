@@ -261,10 +261,8 @@ impl Exec {
             self.info_post(json!({"type": "spotClearinghouseState", "user": addr}))
         );
         let perp = perp_res?;
-        let mut equity: f64 = perp["marginSummary"]["accountValue"]
-            .as_str()
-            .and_then(|s| s.parse().ok())
-            .unwrap_or(0.0);
+        // 响应缺字段/格式错误必须失败，不能回退成 0 后再用现货余额冒充账户总净值。
+        let mut equity = parse_perp_equity(&perp)?;
         // A unified account keeps its collateral in the spot balance, so the
         // perp view alone reads 0. Retry rather than silently reporting zero.
         let mut last_err: Option<anyhow::Error> = None;
@@ -543,6 +541,15 @@ impl Exec {
     }
 }
 
+fn parse_perp_equity(perp: &Value) -> Result<f64> {
+    let raw = perp["marginSummary"]["accountValue"]
+        .as_str()
+        .context("clearinghouseState 缺少 marginSummary.accountValue")?;
+    let equity: f64 = raw.parse().context("marginSummary.accountValue 不是有效数字")?;
+    anyhow::ensure!(equity.is_finite() && equity >= 0.0, "账户净值无效: {equity}");
+    Ok(equity)
+}
+
 /// Tick rounding: at most 5 significant figures and never finer than the
 /// size decimals allow (same rule the exchange applies).
 pub fn order_price(px: f64, sz_decimals: i32, round_up: bool) -> f64 {
@@ -632,4 +639,20 @@ pub fn describe(status: &ExchangeDataStatus) -> String {
 #[allow(dead_code)]
 pub fn err(msg: &str) -> anyhow::Error {
     anyhow!(msg.to_string())
+}
+
+#[cfg(test)]
+mod account_value_tests {
+    use super::*;
+
+    #[test]
+    fn perp_equity_requires_a_valid_account_value() {
+        assert_eq!(parse_perp_equity(&json!({"marginSummary":{"accountValue":"2500.25"}})).unwrap(), 2500.25);
+        // 统一账户的永续视图可以合法为 0，后续仍取永续/现货两者较大值。
+        assert_eq!(parse_perp_equity(&json!({"marginSummary":{"accountValue":"0.0"}})).unwrap(), 0.0);
+        assert!(parse_perp_equity(&json!({"status":"err","response":"rate limited"})).is_err());
+        assert!(parse_perp_equity(&json!({"marginSummary":{}})).is_err());
+        assert!(parse_perp_equity(&json!({"marginSummary":{"accountValue":"not-a-number"}})).is_err());
+        assert!(parse_perp_equity(&json!({"marginSummary":{"accountValue":"-1"}})).is_err());
+    }
 }

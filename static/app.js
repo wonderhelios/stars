@@ -1255,7 +1255,10 @@ function renderLiveChart(history, shadow) {
   const isAll = currentStrategy === 'all';
   const mlAccC = lastLiveData && lastLiveData.ml_account && !lastLiveData.ml_account.error ? lastLiveData.ml_account : null;
   const isMl = currentStrategy === 'ml' && !!mlAccC;
-  if (lastLiveData && !lastLiveData.error && Number.isFinite(lastLiveData.equity) && liveFetchedAt > 0 && !isMl) {
+  if (isMl && liveFetchedAt > 0 && Number.isFinite(mlAccC.equity)) {
+    // ML 也必须追加当前快照；否则小时历史里的一个异常点会一直作为曲线末端。
+    observations.push({ ts: liveFetchedAt, equity: mlAccC.equity });
+  } else if (lastLiveData && !lastLiveData.error && Number.isFinite(lastLiveData.equity) && liveFetchedAt > 0) {
     const curEq = (isAll && mlAccC && Number.isFinite(mlAccC.equity))
       ? lastLiveData.equity + mlAccC.equity
       : lastLiveData.equity;

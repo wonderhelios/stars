@@ -2227,7 +2227,7 @@ pub async fn record_equity(
     Ok(())
 }
 
-/// 记录 ML 子账户 B 的净值点（按小时去重）。用于「全部账户」合计曲线。
+/// 记录 ML 子账户 B 的净值点（每小时保留最新值）。用于 ML 和全部账户曲线。
 pub async fn record_ml_equity(
     live: &std::sync::Arc<tokio::sync::Mutex<LiveState>>,
     path: &std::path::Path,
@@ -2239,15 +2239,23 @@ pub async fn record_ml_equity(
     let now = now_ms_pub();
     let hour = now / 3_600_000;
     let mut g = live.lock().await;
+    let previous = g.clone();
+    // 同小时不能简单跳过：早先的异常或过时快照必须能被后续有效快照纠正。
     if g.ml_history.last().map(|p| p.ts / 3_600_000) == Some(hour) {
-        return Ok(());
+        if let Some(last) = g.ml_history.last_mut() {
+            *last = EquityPoint { ts: now, equity, pnl: 0.0 };
+        }
+    } else {
+        g.ml_history.push(EquityPoint { ts: now, equity, pnl: 0.0 });
     }
-    g.ml_history.push(EquityPoint { ts: now, equity, pnl: 0.0 });
     let len = g.ml_history.len();
     if len > 6000 {
         g.ml_history.drain(0..len - 6000);
     }
-    g.save(path).context("ML 净值记录保存失败")?;
+    if let Err(e) = g.save(path) {
+        *g = previous;
+        return Err(e.context("ML 净值记录保存失败"));
+    }
     Ok(())
 }
 
@@ -2269,6 +2277,31 @@ pub async fn record_equity_now(
     let unreal: f64 = acct.positions.values().map(|p| p.unrealized_pnl).sum();
     record_equity(live, path, &st.config.account, acct.equity, unreal).await?;
     Ok(())
+}
+
+#[cfg(test)]
+mod ml_equity_tests {
+    use super::*;
+
+    #[tokio::test]
+    async fn same_hour_snapshot_replaces_stale_or_bad_value() {
+        let root = std::env::temp_dir().join(uuid::Uuid::new_v4().to_string());
+        std::fs::create_dir_all(&root).unwrap();
+        let path = root.join("live.json");
+        let live = std::sync::Arc::new(tokio::sync::Mutex::new(LiveState::default()));
+        record_ml_equity(&live, &path, 2500.0).await.unwrap();
+        record_ml_equity(&live, &path, 635.087057).await.unwrap();
+        record_ml_equity(&live, &path, 2524.780226).await.unwrap();
+        let state = live.lock().await;
+        assert_eq!(state.ml_history.len(), 1);
+        assert_eq!(state.ml_history[0].equity, 2524.780226);
+        drop(state);
+        let saved = LiveState::load(&path);
+        assert_eq!(saved.ml_history.len(), 1);
+        assert_eq!(saved.ml_history[0].equity, 2524.780226);
+        drop(live);
+        std::fs::remove_dir_all(root).unwrap();
+    }
 }
 
 #[cfg(test)]
