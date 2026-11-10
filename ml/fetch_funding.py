@@ -15,6 +15,15 @@ BASE = Path(__file__).resolve().parent
 INFO_URL = "https://api.hyperliquid.xyz/info"
 UTC = datetime.timezone.utc
 MAX_RETRIES = 3
+MAX_WORKERS = 4
+
+
+def market_data_files(directory):
+    """只读真实 JSON；排除 macOS AppleDouble（._*）和其他隐藏文件。"""
+    return sorted(
+        path for path in Path(directory).glob("*.json")
+        if path.is_file() and not path.name.startswith(".")
+    )
 
 
 def hl_info(body, retries=MAX_RETRIES, timeout=30):
@@ -108,10 +117,11 @@ def pull(coin, out_dir, end_ms):
 def main():
     out_dir = BASE / "data" / "hl_funding"
     os.makedirs(out_dir, exist_ok=True)
-    coins = sorted(path.stem for path in (BASE / "data" / "hl2").glob("*.json"))
+    coins = [path.stem for path in market_data_files(BASE / "data" / "hl2")]
     end_ms = int(datetime.datetime.now(UTC).timestamp() * 1000)
-    print("[funding] 开始更新 %d 币，单请求最多重试 %d 次" % (len(coins), MAX_RETRIES), flush=True)
-    with ThreadPoolExecutor(max_workers=16) as executor:
+    print("[funding] 开始更新 %d 币，%d 并发，单请求最多重试 %d 次" % (
+        len(coins), MAX_WORKERS, MAX_RETRIES), flush=True)
+    with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
         futures = {executor.submit(pull, coin, out_dir, end_ms): coin for coin in coins}
         done = 0
         for future in as_completed(futures):

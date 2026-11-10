@@ -5,8 +5,8 @@ from pathlib import Path
 BASE = Path(__file__).resolve().parent
 warnings.filterwarnings('ignore')
 def log(m): print(m, flush=True)
-# 1. 加载全 234 币
-files=glob.glob(str(BASE/'data'/'hl2'/'*.json'))
+# 1. 加载全宇宙真实 JSON，排除 macOS AppleDouble（._*）等隐藏元数据文件。
+files=[f for f in glob.glob(str(BASE/'data'/'hl2'/'*.json')) if not Path(f).name.startswith('.')]
 univ=sorted(Path(f).stem for f in files)
 raw={Path(f).stem:json.load(open(f)) for f in files}
 k=len(univ); log(f"全宇宙 {k} 币")

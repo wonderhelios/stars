@@ -2,6 +2,7 @@
 from pathlib import Path
 import io
 import sys
+import tempfile
 import unittest
 import urllib.error
 from unittest import mock
@@ -10,7 +11,7 @@ ML = Path(__file__).resolve().parent
 if str(ML) not in sys.path:
     sys.path.insert(0, str(ML))
 
-from fetch_funding import hl_info
+from fetch_funding import hl_info, market_data_files
 
 
 class FundingRetryTests(unittest.TestCase):
@@ -41,6 +42,17 @@ class FundingRetryTests(unittest.TestCase):
         urlopen.side_effect = [error, io.BytesIO(b"[]")]
         self.assertEqual(hl_info({"coin": "SOL"}), [])
         sleep.assert_called_once_with(7.0)
+
+
+class MarketDataFileTests(unittest.TestCase):
+    def test_apple_double_and_hidden_files_are_excluded(self):
+        with tempfile.TemporaryDirectory(dir=str(ML)) as directory:
+            root = Path(directory)
+            (root / "AAVE.json").write_text("[]", encoding="utf-8")
+            (root / "BTC.json").write_text("[]", encoding="utf-8")
+            (root / "._AAVE.json").write_bytes(b"not-json")
+            (root / ".hidden.json").write_bytes(b"not-json")
+            self.assertEqual([p.stem for p in market_data_files(root)], ["AAVE", "BTC"])
 
 
 if __name__ == "__main__":
