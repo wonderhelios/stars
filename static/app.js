@@ -878,7 +878,7 @@ function renderMonitor(d) {
         const step = 3 * 86400000;
         const now = Date.now();
         const next = base + (Math.floor((now - base) / step) + 1) * step;
-        const bj = new Date(next + 8 * 3600000);  // UTC 00:00 = 北京 08:00
+        const bj = new Date(next + 8 * 3600000 + 10 * 60000);  // UTC 00:10 = 北京 08:10（等 5min K 线闭合）
         const dstr = bj.toISOString().slice(5, 10);
         const hhmm = bj.toISOString().slice(11, 16);
         return `<span>ML 调仓：<b>每 3 天</b>（daily.py 自动 ✗ 下次 <b>${dstr} ${hhmm}</b> 北京时间）</span>`;
