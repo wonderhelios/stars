@@ -99,9 +99,18 @@ def main():
         return
 
     # 真实下单：调本机 Rust 接口（Rust 用 api-wallet.key 签名 ✗ 与动量同一套）
+    # token 读取顺序：STARS_TOKEN 环境变量 → 文件（和 api-wallet.key 放一起 ✗ cron 不继承 shell 环境变量）
     token = os.environ.get("STARS_TOKEN", "").strip()
     if not token:
-        log("未设置 STARS_TOKEN，无法自动下单（请手动在前端点「ML 执行调仓」）")
+        for tp in ("/etc/hyper-fly/api-token", "/opt/stars/api-token"):
+            try:
+                token = Path(tp).read_text().strip()
+                if token:
+                    break
+            except Exception:
+                continue
+    if not token:
+        log("未设置 STARS_TOKEN（环境变量或 /etc/hyper-fly/api-token 文件）✗ 无法自动下单，请手动在前端点「ML 执行调仓」")
         sys.exit(1)
     import json as _json
     import urllib.request as _ur
