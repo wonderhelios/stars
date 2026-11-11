@@ -4,6 +4,7 @@ from pathlib import Path
 BASE = Path(__file__).resolve().parent
 import json, urllib.request, time, datetime, os
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from candle_rules import DAY_MS, daily_request_end, merge_closed_daily_bars
 
 def post(url, body):
     req = urllib.request.Request(url, data=json.dumps(body).encode(),
@@ -20,10 +21,9 @@ meta = post("https://api.hyperliquid.xyz/info", {"type": "metaAndAssetCtxs"})
 universe = [m['name'] for m in meta[0]['universe'] if ':' not in m['name']]
 print(f"宇宙 {len(universe)} 币", flush=True)
 
-end = int(datetime.datetime.now(datetime.UTC).timestamp() * 1000)
-# 向下对齐到日线边界 ✗ 排除【当前未闭合的 bar】（否则 08:10 跑时会把当天未走完的日线当成完整数据 ✗ 特征/选币都会偏）
-_DAY_MS = 86400000
-end = (end // _DAY_MS) * _DAY_MS
+now_ms = int(datetime.datetime.now(datetime.UTC).timestamp() * 1000)
+# Hyperliquid endTime 是包含式边界：必须减 1ms，否则日界整点也会返回当天未闭合 bar。
+end = daily_request_end(now_ms)
 full_start = int(datetime.datetime(2023, 2, 26).timestamp() * 1000)  # 和 alphapilot 数据起点一致
 out_dir = BASE / 'data' / 'hl2'
 os.makedirs(out_dir, exist_ok=True)
@@ -36,20 +36,23 @@ def fetch_one(c):
             existing = json.load(open(p))
         except Exception:
             existing = []
+    # 旧文件可能已被未闭合日线污染；计算增量起点前先剔除。
+    existing = merge_closed_daily_bars(existing, [], now_ms)
     last_t = max((int(x['t']) for x in existing), default=0)
     # 增量：从最后一天之后拉；保留 2 天重叠（防漏）
-    req_start = max(full_start, last_t - 2 * 86400000) if existing else full_start
+    req_start = max(full_start, last_t - 2 * DAY_MS) if existing else full_start
     if existing and req_start >= end:
+        json.dump(existing, open(p, 'w'))
         return c, 0
     cs = post("https://api.hyperliquid.xyz/info",
               {"type": "candleSnapshot", "req": {"coin": c, "interval": "1d",
                                                  "startTime": req_start, "endTime": end}})
     if not cs:
+        if existing or os.path.exists(p):
+            json.dump(existing, open(p, 'w'))
         return c, 0
-    by_t = {int(x['t']): x for x in existing}
-    for x in cs:
-        by_t[int(x['t'])] = x
-    merged = sorted(by_t.values(), key=lambda x: int(x['t']))
+    # 请求和本地合并双重过滤，避免包含式边界或历史快照污染特征。
+    merged = merge_closed_daily_bars(existing, cs, now_ms)
     json.dump(merged, open(p, 'w'))
     return c, len(cs)
 
