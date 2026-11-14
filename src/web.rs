@@ -631,26 +631,13 @@ async fn ml_plan(State(state): State<AppState>) -> Response {
                 .into_response();
         }
     };
-    let key = match std::fs::read_to_string(&cfg.key_path) {
-        Ok(k) => k.trim().to_string(),
-        Err(e) => {
-            return (StatusCode::BAD_REQUEST,
-                Json(json!({"ok": false, "error": format!("读 API 钱包密钥失败: {e}")})))
-                .into_response();
-        }
-    };
-    let predict = match run_ml_python(&cfg, "predict.py", &["--json"]).await {
-        Ok(s) => s,
-        Err(e) => {
-            return (StatusCode::INTERNAL_SERVER_ERROR,
-                Json(json!({"ok": false, "error": format!("预测失败: {e}")})))
-                .into_response();
-        }
-    };
-    let plan = match run_ml_python(
+    // 只调用一次 place.py：它先读取真实旧仓，再应用 buffer9。
+    // predict 字段保留给前端兼容，但必须复用实际计划中的同一个 target，
+    // 不能再单独调用无持仓 predict.py，否则目标文字与订单会互相矛盾。
+    let plan_json = match run_ml_python(
         &cfg,
         "place.py",
-        &["--wallet", &key, "--vault", &ml_addr, "--dry-run", "--json"],
+        &["--vault", &ml_addr, "--dry-run", "--json"],
     )
     .await
     {
@@ -661,10 +648,26 @@ async fn ml_plan(State(state): State<AppState>) -> Response {
                 .into_response();
         }
     };
+    let plan: serde_json::Value = match serde_json::from_str(plan_json.trim()) {
+        Ok(v) => v,
+        Err(e) => {
+            return (StatusCode::INTERNAL_SERVER_ERROR,
+                Json(json!({"ok": false, "error": format!("解析调仓计划失败: {e}")})))
+                .into_response();
+        }
+    };
+    let target = plan.get("target").cloned().unwrap_or(json!({}));
+    if target.get("preview_without_current_positions").and_then(|v| v.as_bool()) != Some(false)
+        || target.get("buffer").and_then(|v| v.as_i64()) != Some(9)
+    {
+        return (StatusCode::INTERNAL_SERVER_ERROR,
+            Json(json!({"ok": false, "error": "调仓计划缺少真实持仓 buffer9，拒绝展示"})))
+            .into_response();
+    }
     Json(json!({
         "ok": true,
-        "predict": serde_json::from_str::<serde_json::Value>(&predict).unwrap_or(json!({})),
-        "plan": serde_json::from_str::<serde_json::Value>(&plan).unwrap_or(json!({})),
+        "predict": target,
+        "plan": plan,
     }))
     .into_response()
 }
