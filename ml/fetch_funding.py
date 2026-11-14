@@ -135,7 +135,7 @@ def pull(coin, out_dir, end_ms):
     return coin, aggregate_daily(records), new_records
 
 
-def main():
+def update_all():
     out_dir = BASE / "data" / "hl_funding"
     os.makedirs(out_dir, exist_ok=True)
     coins = [path.stem for path in market_data_files(BASE / "data" / "hl2")]
@@ -154,6 +154,27 @@ def main():
         if done < len(coins):
             time.sleep(REQUEST_INTERVAL_SECONDS)
     print("[funding] 完成", flush=True)
+
+
+def main():
+    import argparse
+    import fcntl
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--wait", action="store_true",
+                        help="等待已有下载结束；daily 调仓前使用，避免沿用旧数据")
+    args = parser.parse_args()
+    lock_path = BASE / "data" / ".fetch_funding.lock"
+    lock_path.parent.mkdir(parents=True, exist_ok=True)
+    with open(lock_path, "w") as lock_file:
+        try:
+            fcntl.flock(lock_file.fileno(), fcntl.LOCK_EX | (0 if args.wait else fcntl.LOCK_NB))
+        except BlockingIOError:
+            print("[funding] 已有更新进程运行，小时任务本次跳过", flush=True)
+            return
+        if args.wait:
+            print("[funding] 已获得更新锁，开始调仓前最终增量校验", flush=True)
+        update_all()
 
 
 if __name__ == "__main__":

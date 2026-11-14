@@ -43,3 +43,13 @@ ml/
 ```
 
 `predict.py` 单独运行时明确标记 `preview_without_current_positions=true`。真实计划由 `place.py` 先调用 `clearinghouseState` 获取持仓，再调用 `latest_positions(current_positions=...)` 生成；目标外旧仓归零，执行方式仍为 `next_open`。
+
+## 小时资金费归档
+
+服务器每小时独立运行一次 `python ml/fetch_funding.py`，持续保存原始小时记录。脚本内部使用 `ml/data/.fetch_funding.lock`：小时任务遇到已有进程会跳过，不会并发写缓存。`daily.py` 使用 `fetch_funding.py --wait`，会等待小时任务完成，再做调仓前最后一次增量校验；下载失败仍然中止，不沿用不完整数据下单。
+
+```cron
+17 * * * * cd /opt/stars && /root/miniconda3/envs/ml/bin/python ml/fetch_funding.py >> /var/log/stars-ml-funding.log 2>&1
+```
+
+首次部署必须先上传 `hl_funding_hourly/`，否则任何一次运行都会从 2023-05-01 开始补历史。

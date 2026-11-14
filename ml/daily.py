@@ -83,8 +83,10 @@ def main():
 
     # 1. 更新数据
     ok = True
-    for s in ["fetch_ohlcv.py", "fetch_funding.py", "fetch_oi.py"]:
-        ok = run_script(s) and ok
+    for script in ["fetch_ohlcv.py", "fetch_oi.py"]:
+        ok = run_script(script) and ok
+    # 小时任务负责持续归档；调仓前等待其释放锁，并做最后一次增量校验。
+    ok = run_script("fetch_funding.py", "--wait") and ok
     if not ok:
         log("数据拉取失败，中止（避免用旧数据调仓）")
         sys.exit(1)
