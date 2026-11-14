@@ -300,9 +300,9 @@ impl Exec {
             break;
         }
         if let Some(e) = last_err {
-            if equity <= 0.0 {
-                return Err(e).context("读取账户余额失败（现货接口）");
-            }
+            // Unified accounts can have most collateral in spot and only a small
+            // positive perp subaccount value. Never silently size from that partial value.
+            return Err(e).context("读取统一账户总余额失败（现货接口），拒绝使用永续分账户净值");
         }
         let mut positions = HashMap::new();
         if let Some(arr) = perp["assetPositions"].as_array() {

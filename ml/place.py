@@ -156,6 +156,27 @@ def current_positions(vault_address: str):
     return pos
 
 
+def account_equity(vault):
+    """统一账户总净值：现货 USDC 与永续视图取大者，任一必要响应异常即中止。"""
+    perp = info_post({"type": "clearinghouseState", "user": vault})
+    equity = float(perp.get("marginSummary", {}).get("accountValue", 0) or 0)
+    if not math.isfinite(equity) or equity < 0:
+        raise ValueError("永续账户净值无效，拒绝计算订单")
+    # 统一账户抵押品主要在现货视图。查询失败时绝不能回退到较小的永续分账户净值，
+    # 否则所有目标仓位会按错误净值缩小，产生非预期的大幅减仓。
+    spot = info_post({"type": "spotClearinghouseState", "user": vault})
+    balances = spot.get("balances")
+    if not isinstance(balances, list):
+        raise ValueError("现货账户响应缺少 balances，拒绝使用不完整净值")
+    usdc_values = [b.get("total") for b in balances if b.get("coin") == "USDC"]
+    if not usdc_values:
+        raise ValueError("现货账户缺少 USDC 总余额，拒绝使用不完整净值")
+    usdc = sum(float(value or 0) for value in usdc_values)
+    if not math.isfinite(usdc) or usdc < 0:
+        raise ValueError("现货 USDC 总余额无效，拒绝计算订单")
+    return max(equity, usdc)
+
+
 SLIPPAGE = 0.005  # 和 Rust 动量一致（Ioc 吃单的滑点容忍）
 
 
@@ -265,20 +286,7 @@ def main():
         print(f"目标持仓（{target['date']}）：做多 {target['long']} 做空 {target['short']}")
 
     if args.equity <= 0:
-        perp = info_post({"type": "clearinghouseState", "user": vault})
-        equity = float(perp.get("marginSummary", {}).get("accountValue", 0) or 0)
-        # 统一账户（unified）的抵押品在现货账户里 ✗ 取 max（否则现货有 $3000 也读成 0）
-        try:
-            spot = info_post({"type": "spotClearinghouseState", "user": vault})
-            usdc = sum(
-                float(b.get("total", 0) or 0)
-                for b in spot.get("balances", [])
-                if b.get("coin") == "USDC"
-            )
-            if usdc > equity:
-                equity = usdc
-        except Exception:
-            pass
+        equity = account_equity(vault)
     else:
         equity = args.equity
     if not getattr(args, 'json_out', False):

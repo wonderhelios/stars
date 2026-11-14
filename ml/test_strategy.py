@@ -3,6 +3,7 @@ from pathlib import Path
 import copy
 import sys
 import unittest
+from unittest import mock
 
 import numpy as np
 
@@ -11,7 +12,7 @@ if str(ML) not in sys.path:
     sys.path.insert(0, str(ML))
 
 from strategy import fixed_weight_selection, load_config, predict_component
-from place import build_orders
+from place import account_equity, build_orders
 
 
 class StrategyTests(unittest.TestCase):
@@ -62,6 +63,25 @@ class StrategyTests(unittest.TestCase):
         self.assertNotIn("C09", selected["short"])  # 倒数第 10 被移出
         self.assertIn("C08", selected["short"])  # 倒数第 9 保留
         self.assertIn("C04", selected["short"])  # 按分数补入下一空仓
+
+
+class UnifiedEquityTests(unittest.TestCase):
+    @unittest.mock.patch("place.info_post")
+    def test_uses_unified_spot_total(self, info_post):
+        info_post.side_effect = [
+            {"marginSummary": {"accountValue": "568.136963"}},
+            {"balances": [{"coin": "USDC", "total": "2345.230768"}]},
+        ]
+        self.assertAlmostEqual(account_equity("0xvault"), 2345.230768)
+
+    @unittest.mock.patch("place.info_post")
+    def test_spot_failure_never_falls_back_to_perp_subaccount(self, info_post):
+        info_post.side_effect = [
+            {"marginSummary": {"accountValue": "568.136963"}},
+            RuntimeError("temporary spot failure"),
+        ]
+        with self.assertRaisesRegex(RuntimeError, "temporary spot failure"):
+            account_equity("0xvault")
 
 
 class OrderTests(unittest.TestCase):
