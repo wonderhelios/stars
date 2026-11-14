@@ -258,7 +258,9 @@ def main():
         except Exception as e:
             print(f"[place] 推导 API wallet 地址失败: {e}", file=sys.stderr, flush=True)
 
-    target = latest_positions()
+    current = current_positions(vault)
+    # buffer9 必须基于真实旧仓方向和当前截面排名，不能使用无持仓预览。
+    target = latest_positions(current_positions=current)
     if not getattr(args, 'json_out', False):
         print(f"目标持仓（{target['date']}）：做多 {target['long']} 做空 {target['short']}")
 
@@ -283,12 +285,11 @@ def main():
         print(f"子账户净值 ${equity:,.2f}")
 
     idx, decimals = meta_index()
-    # 只消费四模型预测给出的带符号固定权重；旧 long/short 单模型格式不兼容。
+    # 只消费冻结单模型 + buffer9 给出的带符号固定权重。
     target_map = target.get("weights")
     if not isinstance(target_map, dict) or not target_map:
         raise ValueError("预测结果缺少带符号 weights，拒绝下单")
 
-    current = current_positions(vault)
     orders = build_orders(target_map, current, idx, decimals, equity)
 
     # 把 asset 序号换回币名（给前端/监控看）

@@ -52,26 +52,26 @@ def is_rebalance_day(today=None):
     return (today - REBALANCE_START).days % REBALANCE_EVERY == 0
 
 
-def model_is_current(today):
-    """模型必须属于本成交季度；缺失或损坏都触发完整重训。"""
+def model_is_current(today=None):
+    """冻结模型只校验格式、特征、训练窗口和 51 棵树，不按季度滚动。"""
     try:
-        from ensemble import load_config, load_model, quarter_for_date, validate_model
+        from strategy import load_config, load_model, validate_model
         model = load_model()
         validate_model(model, load_config())
-        return model.get("quarter") == quarter_for_date(today.isoformat())
+        return model.get("retrain_frequency") == "frozen"
     except Exception as e:
-        log("当前四模型不可用: %s" % e)
+        log("当前冻结单模型不可用: %s" % e)
         return False
 
 
-def ensure_current_model(today):
+def ensure_current_model(today=None):
     if model_is_current(today):
         return
-    log("开始季度扩展窗口重训（四个标签，训练数据截止本季度开始前）")
-    if not run_script("train_model.py", "--as-of", today.isoformat(), timeout=3600):
-        raise RuntimeError("季度模型训练失败，中止；不会回退旧单模型或继续下单")
+    log("模型缺失或损坏，按固定 2023-06-01 至 2026-04-30 窗口重建")
+    if not run_script("train_model.py", timeout=3600):
+        raise RuntimeError("冻结模型训练失败，中止；不会回退旧模型或继续下单")
     if not model_is_current(today):
-        raise RuntimeError("季度模型训练后校验失败，中止")
+        raise RuntimeError("冻结模型训练后校验失败，中止")
 
 
 def main():
@@ -100,7 +100,7 @@ def main():
         log(f"{today} 不是调仓日（每 {REBALANCE_EVERY} 天 ✗ 起始 {REBALANCE_START}），数据已更新，不下单")
         return
 
-    # 4. 调仓日前先确保四模型属于本成交季度；失败必须中止。
+    # 4. 调仓日前校验冻结单模型；绝不自动滚动训练窗口。
     try:
         ensure_current_model(today)
     except Exception as e:

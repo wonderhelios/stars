@@ -1,9 +1,12 @@
-"""增量拉取 Hyperliquid 资金费率和 premium 到 ml/data/hl_funding/。
+"""增量拉取原始小时资金费，并按平台 (t, t+1d] 口径生成日聚合。
 
-请求失败会打印原因并有限重试；最终失败使进程非零退出，daily 不得继续使用旧数据。
+原始缓存：ml/data/hl_funding_hourly/{COIN}.json.gz
+日聚合：  ml/data/hl_funding/{COIN}.json
+单线程、有限重试、断点续抓；失败必须非零退出，daily 不得沿用旧数据下单。
 """
 from pathlib import Path
 import datetime
+import gzip
 import json
 import os
 import time
@@ -15,19 +18,17 @@ INFO_URL = "https://api.hyperliquid.xyz/info"
 UTC = datetime.timezone.utc
 MAX_RETRIES = 3
 REQUEST_INTERVAL_SECONDS = 1.0
+START_MS = int(datetime.datetime(2023, 5, 1, tzinfo=UTC).timestamp() * 1000)
 
 
 def market_data_files(directory):
-    """只读真实 JSON；排除 macOS AppleDouble（._*）和其他隐藏文件。"""
-    return sorted(
-        path for path in Path(directory).glob("*.json")
-        if path.is_file() and not path.name.startswith(".")
-    )
+    return sorted(path for path in Path(directory).glob("*.json")
+                  if path.is_file() and not path.name.startswith("."))
 
 
-def hl_info(body, retries=MAX_RETRIES, timeout=30):
-    """调用 HL info；每次请求最多 retries 次，429 遵守 Retry-After。"""
+def hl_info(body, retries=MAX_RETRIES, timeout=40):
     coin = body.get("coin", "?")
+    error = "未知错误"
     for attempt in range(retries):
         req = urllib.request.Request(
             INFO_URL, data=json.dumps(body).encode(),
@@ -42,7 +43,7 @@ def hl_info(body, retries=MAX_RETRIES, timeout=30):
                 detail = ""
             error = "HTTP %s %s" % (e.code, detail.strip())
             retry_after = e.headers.get("Retry-After") if e.headers else None
-            backoff = min(120.0, 30.0 * (2 ** attempt))
+            backoff = min(120.0, 30.0 * (2 ** attempt)) if e.code == 429 else min(30.0, 2.0 ** attempt)
             try:
                 wait = max(float(retry_after), backoff) if retry_after else backoff
             except ValueError:
@@ -59,59 +60,79 @@ def hl_info(body, retries=MAX_RETRIES, timeout=30):
         coin, retries, error))
 
 
-def pull(coin, out_dir, end_ms):
-    path = out_dir / (coin + ".json")
-    existing = {}
-    if path.exists():
+def platform_day(time_ms):
+    """UTC 00:00 的小时记录归入前一资金费日，即 (D-1 00:00, D 00:00]。"""
+    value = int(time_ms)
+    if value % 86400000 == 0:
+        value -= 1
+    return datetime.datetime.fromtimestamp(value / 1000, UTC).strftime("%Y-%m-%d")
+
+
+def aggregate_daily(records):
+    values = {}
+    for record in records:
+        day = platform_day(record["time"])
+        item = values.setdefault(day, {"fr_sum": 0.0, "fr_n": 0, "prem_sum": 0.0, "prem_n": 0})
         try:
-            with open(path, encoding="utf-8") as f:
-                existing = json.load(f)
-        except Exception as e:
-            print("[funding] %s 旧文件不可读，将全量重拉：%s" % (coin, e), flush=True)
-            existing = {}
-    last_day = max(existing.keys()) if existing else None
-    if last_day:
-        # 从最后一天的前一天开始，重叠一天防漏。
-        t = datetime.datetime.strptime(last_day, "%Y-%m-%d").replace(tzinfo=UTC)
-        cur = int(t.timestamp() * 1000) - 86400000
-    else:
-        cur = int(datetime.datetime(2023, 5, 1, tzinfo=UTC).timestamp() * 1000)
+            item["fr_sum"] += float(record["fundingRate"])
+            item["fr_n"] += 1
+        except (KeyError, TypeError, ValueError):
+            pass
+        try:
+            item["prem_sum"] += float(record["premium"])
+            item["prem_n"] += 1
+        except (KeyError, TypeError, ValueError):
+            pass
+    return {
+        day: {
+            "fr": item["fr_sum"] / item["fr_n"] if item["fr_n"] else None,
+            "prem": item["prem_sum"] / item["prem_n"] if item["prem_n"] else None,
+            "hours": item["fr_n"],
+        }
+        for day, item in sorted(values.items())
+    }
+
+
+def pull(coin, out_dir, end_ms):
+    out_dir = Path(out_dir)
+    raw_dir = out_dir.parent / "hl_funding_hourly"
+    raw_dir.mkdir(parents=True, exist_ok=True)
+    raw_path = raw_dir / (coin + ".json.gz")
     records = []
+    if raw_path.exists():
+        try:
+            with gzip.open(raw_path, "rt", encoding="utf-8") as f:
+                records = json.load(f)
+        except Exception as e:
+            print("[funding] %s 原始缓存不可读，将全量重拉：%s" % (coin, e), flush=True)
+            records = []
+    records.sort(key=lambda row: int(row["time"]))
+    cursor = max(int(records[-1]["time"]) + 1, START_MS) if records else START_MS
+    new_records = 0
     guard = 0
-    while cur < end_ms:
+    while cursor < end_ms:
         if guard >= 300:
             raise RuntimeError("%s funding 分页超过 300 次，中止以防死循环" % coin)
-        batch = hl_info({"type": "fundingHistory", "coin": coin, "startTime": cur})
+        batch = hl_info({"type": "fundingHistory", "coin": coin,
+                         "startTime": cursor, "endTime": int(end_ms)})
         if not batch:
             break
         records.extend(batch)
-        next_cur = int(batch[-1]["time"]) + 1
-        if next_cur <= cur:
-            raise RuntimeError("%s funding 分页时间没有前进，中止以防死循环" % coin)
-        cur = next_cur
-        if len(batch) < 2:
-            break
+        new_records += len(batch)
+        following = int(batch[-1]["time"]) + 1
+        if following <= cursor:
+            raise RuntimeError("%s funding 分页时间没有前进，中止" % coin)
+        cursor = following
         guard += 1
-    daily = {}
-    for record in records:
-        day = datetime.datetime.fromtimestamp(int(record["time"]) / 1000, UTC).strftime("%Y-%m-%d")
-        values = daily.setdefault(day, {"fr": [], "prem": []})
-        try:
-            values["fr"].append(float(record["fundingRate"]))
-        except Exception:
-            pass
-        try:
-            values["prem"].append(float(record["premium"]))
-        except Exception:
-            pass
-    new = {
-        day: {
-            "fr": sum(v["fr"]) / len(v["fr"]) if v["fr"] else None,
-            "prem": sum(v["prem"]) / len(v["prem"]) if v["prem"] else None,
-        }
-        for day, v in daily.items()
-    }
-    return coin, {**existing, **new}, len(new)
+        if len(batch) < 500:
+            break
+        time.sleep(REQUEST_INTERVAL_SECONDS)
+    if new_records or not raw_path.exists():
+        temporary = raw_path.with_suffix(raw_path.suffix + ".tmp")
+        with gzip.open(temporary, "wt", encoding="utf-8") as f:
+            json.dump(records, f, separators=(",", ":"))
+        temporary.replace(raw_path)
+    return coin, aggregate_daily(records), new_records
 
 
 def main():
@@ -119,18 +140,17 @@ def main():
     os.makedirs(out_dir, exist_ok=True)
     coins = [path.stem for path in market_data_files(BASE / "data" / "hl2")]
     end_ms = int(datetime.datetime.now(UTC).timestamp() * 1000)
-    print("[funding] 开始更新 %d 币，单线程，每币间隔 %.1f 秒，单请求最多重试 %d 次" % (
-        len(coins), REQUEST_INTERVAL_SECONDS, MAX_RETRIES), flush=True)
+    print("[funding] 开始更新 %d 币，单线程，每币间隔 %.1f 秒" % (
+        len(coins), REQUEST_INTERVAL_SECONDS), flush=True)
     for done, coin in enumerate(coins, 1):
-        # 顺序请求，避免多线程瞬时打满 HL 信息接口权重。
-        _, merged, count = pull(coin, out_dir, end_ms)
+        _, daily, count = pull(coin, out_dir, end_ms)
         path = out_dir / (coin + ".json")
         temporary = out_dir / (coin + ".json.tmp")
         with open(temporary, "w", encoding="utf-8") as f:
-            json.dump(merged, f)
+            json.dump(daily, f, separators=(",", ":"))
         temporary.replace(path)
-        print("[funding] [%d/%d] %s %d 天（新 %d）" % (
-            done, len(coins), coin, len(merged), count), flush=True)
+        print("[funding] [%d/%d] %s %d 天（新 %d 条小时记录）" % (
+            done, len(coins), coin, len(daily), count), flush=True)
         if done < len(coins):
             time.sleep(REQUEST_INTERVAL_SECONDS)
     print("[funding] 完成", flush=True)

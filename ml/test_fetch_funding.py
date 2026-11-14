@@ -11,7 +11,24 @@ ML = Path(__file__).resolve().parent
 if str(ML) not in sys.path:
     sys.path.insert(0, str(ML))
 
-from fetch_funding import hl_info, market_data_files
+from fetch_funding import aggregate_daily, hl_info, market_data_files, platform_day
+
+
+class FundingAggregationTests(unittest.TestCase):
+    def test_midnight_belongs_to_previous_day(self):
+        utc = __import__("datetime").timezone.utc
+        datetime = __import__("datetime").datetime
+        midnight = int(datetime(2026, 11, 10, tzinfo=utc).timestamp() * 1000)
+        one = midnight + 3600000
+        self.assertEqual(platform_day(midnight), "2026-11-09")
+        self.assertEqual(platform_day(one), "2026-11-10")
+        daily = aggregate_daily([
+            {"time": midnight, "fundingRate": "0.001", "premium": "0.01"},
+            {"time": one, "fundingRate": "0.003", "premium": "0.03"},
+        ])
+        self.assertEqual(daily["2026-11-09"]["fr"], 0.001)
+        self.assertEqual(daily["2026-11-10"]["fr"], 0.003)
+        self.assertEqual(daily["2026-11-09"]["hours"], 1)
 
 
 class FundingRetryTests(unittest.TestCase):

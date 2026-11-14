@@ -1,51 +1,45 @@
-# ML 策略：四周期 LightGBM 集成
+# ML 策略：冻结 51 树 close3 + buffer9
 
-151 个价量与加密原生特征，经过 `close3 / close5 / open3 / open5` 四个 LightGBM 回归模型，预测动态 head 内的横截面收益分位。每日先将四个模型的预测分别转成 head 内截面分位，再等权平均。
+这套生产策略复刻已验证的 AlphaPilot 参考模型，替代此前的四模型季度集成。研究回测不构成未来收益保证；本地修改在部署前仍需服务器 dry-run 核对。
 
-## 当前策略口径
+## 当前规则
 
-- 币池：30 天成交额前 20%，18%/22% 缓冲，成分滞后 2 天。
-- 选币：集成 score 前 6 做多、后 6 做空，共 12 个仓位。
-- 仓位：**固定总杠杆 2 倍**，多空各 1 倍，单仓绝对权重 `1/6`；没有波动目标或动态杠杆。
-- 执行：信号日收盘计算特征，下一日开盘成交，每 3 天调仓。
-- 训练：每季度扩展窗口重训；四个标签的训练和内部验证数据都必须在季度开始前成熟。
-- 标签成熟期：`close3=3`、`close5=5`、`open3=4`、`open5=6` 天。open 标签从下一日开盘持有到相应未来开盘。
-- 手续费研究口径：单边名义成交额 0.03%。
+- **模型**：单个 LightGBM，最佳迭代 51 棵树，151 个特征；标签为未来 3 根日 K 收益的当期币池截面百分位。
+- **冻结窗口**：2023-06-01 至 2026-04-30。每天只校验模型，不随季度滚动重训；模型缺失或损坏时仍按同一冻结窗口重建。
+- **训练复现**：训练/内部验证按唯一时间戳 4/5 切分；训练标签必须在切分日前成熟。Arrow 保留缺失值，特征每 16 列分批构造 Dataset，验证集共用训练分箱。
+- **币池**：30 天成交额前 20%，18%/22% 缓冲，成分滞后 2 天。
+- **选币**：目标 6 多 6 空。旧多仓仍排名前 9 就保留，旧空仓仍排名后 9 就保留，再按 score 补齐；不是每期全部重建。
+- **仓位**：固定总杠杆 2 倍，多空各 1 倍，单仓绝对权重 1/6，无波动目标。
+- **执行**：信号日收盘计算，次日 UTC 00:00 开盘执行；从 2026-05-04 起每 3 天调仓。
+- **资金费**：保留原始小时记录，日聚合采用 `(t, t+1d]`，所以 UTC 00:00 记录属于前一日。
 
 ## 文件
 
 ```text
 ml/
-  strategy_config.json   唯一策略参数来源（模型、6/6、固定 2 倍等）
-  ensemble.py           共享标签、JSON 推理、截面集成和选币逻辑
-  model_ensemble.json   当前季度四模型文件（训练生成）
-  model.json            历史单模型，仅保留作研究对照，不作为回退
-  train_model.py        季度扩展窗口训练与 JSON 导出
-  build_features.py     生成 151 个特征、动态 head 和历史 close3 标签
-  predict.py            输出 long / short / 带符号 weights
-  place.py              按 weights × equity / price 生成订单，目标外旧仓归零
-  daily.py              更新数据、重算特征、检查季度模型、按周期调仓
-  test_ensemble.py      不访问网络的离线单元测试
+  strategy_config.json  冻结训练、51 树、buffer9 和固定 2 倍配置
+  strategy.py           JSON 推理、buffer9 选币及模型校验
+  model.json            当前冻结单模型（训练生成）
+  train_model.py        精确训练切分、指标核对及 JSON 导出
+  build_features.py     151 特征、动态币池及 close3 标签
+  fetch_funding.py      原始小时资金费缓存及正确日聚合
+  predict.py            standalone 无旧仓预览，或传入真实持仓生成目标
+  place.py              先读真实持仓，再应用 buffer9 并生成订单
+  daily.py              更新数据、校验冻结模型、按周期调仓
+  test_strategy.py      模型/选币/订单离线测试
 ```
 
-## 本地训练与 dry-run
+## 本地训练、预测和测试
 
 ```bash
-# 使用当前 features.npz，训练当前 UTC 季度模型
+# 默认使用 ml/features.npz 和固定训练窗口
 .venv/bin/python ml/train_model.py
 
-# 也可明确指定成交日（季度首日训练只使用此前成熟标签）
-.venv/bin/python ml/train_model.py --as-of 2026-11-11
-
-# 只生成目标持仓，不访问交易接口
+# 无交易所持仓的 standalone 预览（不应用 buffer9）
 .venv/bin/python ml/predict.py --json
 
 # 离线测试
 .venv/bin/python -m unittest discover -s ml -p 'test_*.py' -v
 ```
 
-`daily.py` 在调仓日检查模型季度。模型缺失、损坏、训练失败或季度不匹配都会中止，**不会回退 `model.json`，也不会沿用旧模型下单**。`place.py` 只接受新预测结果中的带符号 `weights`，不再自行假定每仓 `equity/6`。
-
-## 研究边界
-
-四模型候选来自 `research/ml_autoresearch_20261110/` 的滚动研究。研究中的收益与回撤不构成上线保证；固定 2 倍版本也不等同于研究里曾评估的 2.1 倍加波动目标版本。生产改动需要先完成本地训练、JSON 推理一致性、离线订单 dry-run 和小额验证，再另行决定是否部署。
+`predict.py` 单独运行时明确标记 `preview_without_current_positions=true`。真实计划由 `place.py` 先调用 `clearinghouseState` 获取持仓，再调用 `latest_positions(current_positions=...)` 生成；目标外旧仓归零，执行方式仍为 `next_open`。

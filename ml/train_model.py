@@ -1,4 +1,4 @@
-"""按季度扩展窗口训练四周期 LightGBM，并导出 model_ensemble.json。"""
+"""复现平台冻结的 close3 单模型：精确切分、分批分箱和 JSON 树导出。"""
 from pathlib import Path
 import argparse
 import datetime
@@ -6,120 +6,128 @@ import json
 
 import lightgbm as lgb
 import numpy as np
+import pyarrow as pa
+from scipy.stats import pearsonr, spearmanr
 
 try:
-    from .ensemble import (
-        BASE, component_labels, component_maturity, export_component, load_config,
-        predict_component_rows, quarter_for_date, quarter_start, utc_now_iso, validate_model,
+    from .strategy import (
+        BASE, export_component, load_config, ordered_feature_names,
+        predict_component_rows, validate_model,
     )
 except ImportError:
-    from ensemble import (
-        BASE, component_labels, component_maturity, export_component, load_config,
-        predict_component_rows, quarter_for_date, quarter_start, utc_now_iso, validate_model,
+    from strategy import (
+        BASE, export_component, load_config, ordered_feature_names,
+        predict_component_rows, validate_model,
     )
 
 
-def aligned_prices(features_path, ts, coins):
-    """从原始日线读取 O/C，避免用特征反推价格造成标签漂移。"""
-    n, k = len(ts), len(coins)
-    open_prices = np.full((n, k), np.nan)
-    close_prices = np.full((n, k), np.nan)
-    time_index = {int(t): i for i, t in enumerate(ts)}
-    base = Path(features_path).resolve().parent
-    for j, coin in enumerate(coins):
-        path = base / "data" / "hl2" / (str(coin) + ".json")
-        if not path.exists():
-            continue
-        with open(path, encoding="utf-8") as f:
-            bars = json.load(f)
-        for bar in bars:
-            i = time_index.get(int(bar["t"]))
-            if i is None:
-                continue
-            open_prices[i, j] = float(bar["o"])
-            close_prices[i, j] = float(bar["c"])
-    return open_prices, close_prices
+def utc_now_iso():
+    return datetime.datetime.now(datetime.timezone.utc).isoformat()
 
 
-def train_ensemble(features_path, output_path, config, as_of=None):
-    as_of = as_of or datetime.datetime.now(datetime.timezone.utc).date().isoformat()
-    start = quarter_start(as_of)
-    quarter = quarter_for_date(as_of)
+def validation_metrics(pred, forward, days):
+    rank_ic, pearson_ic = [], []
+    for day in np.unique(days):
+        take = days == day
+        if take.sum() > 1 and len(np.unique(pred[take])) > 1:
+            rank_ic.append(spearmanr(pred[take], forward[take]).statistic)
+            pearson_ic.append(pearsonr(pred[take], forward[take]).statistic)
+    rank_ic = np.asarray(rank_ic, dtype=float)
+    pearson_ic = np.asarray(pearson_ic, dtype=float)
+    return {
+        "rank_ic": float(np.nanmean(rank_ic)),
+        "rank_icir": float(np.nanmean(rank_ic) / np.nanstd(rank_ic, ddof=1)),
+        "pearson_ic": float(np.nanmean(pearson_ic)),
+        "pearson_icir": float(np.nanmean(pearson_ic) / np.nanstd(pearson_ic, ddof=1)),
+        "validation_days": int(len(rank_ic)),
+    }
+
+
+def arrow_block(x, row_ids, names, offset, stop):
+    # from_pandas=True 保留 Arrow null，与平台 Dataset 的缺失值分箱一致。
+    return pa.table({names[col]: pa.array(x[row_ids, col], from_pandas=True)
+                     for col in range(offset, stop)})
+
+
+def train_model(features_path, output_path, config):
+    names = ordered_feature_names()
+    keys = ["F_" + name for name in names]
     with np.load(str(features_path)) as d:
-        ts = d["ts"].copy()
-        coins = d["coins"].astype(str)
+        missing = [key for key in keys if key not in d.files]
+        if missing:
+            raise ValueError("features.npz 缺少特征: %s" % ", ".join(missing[:5]))
+        ts = d["ts"].astype("datetime64[ms]").astype("datetime64[D]")
         members = d["members"].astype(bool)
-        feature_keys = [key for key in d.files if key.startswith("F_")]
-        feature_names = [key[2:] for key in feature_keys]
+        labels = d["labels"].copy()
+        forward = d["fwd"].copy()
         n, k = members.shape
         rows = np.flatnonzero(members.reshape(-1))
-        raw = np.column_stack([d[key].reshape(-1)[rows] for key in feature_keys])
-        open_prices, close_prices = aligned_prices(features_path, ts, coins)
+        x = np.column_stack([d[key].reshape(-1)[rows] for key in keys])
 
-    dates = ts.astype("int64").astype("datetime64[ms]").astype("datetime64[D]")
     row_days = rows // k
-    row_dates = dates[row_days]
-    lgb_params = {key: value for key, value in config["lightgbm"].items()
-                  if key not in ("num_boost_round", "early_stopping_rounds")}
-    components = []
-    training_log = []
-    for name in config["ensemble_components"]:
-        labels_2d = component_labels(name, open_prices, close_prices, members)
-        labels = labels_2d.reshape(-1)[rows]
-        # open3/open5 分别多等待一天；内部验证标签也必须在季度开始前成熟。
-        maturity = component_maturity(name)
-        mature_dates = dates[np.minimum(row_days + maturity, n - 1)]
-        eligible = (
-            np.isfinite(labels)
-            & (row_dates >= np.datetime64(config["train_start"], "D"))
-            & (mature_dates < start)
-        )
-        eligible_dates = np.unique(row_dates[eligible])
-        if len(eligible_dates) < 100:
-            raise ValueError("%s 在 %s 前只有 %d 个训练日，拒绝训练" % (name, start, len(eligible_dates)))
-        split = eligible_dates[len(eligible_dates) * 4 // 5]
-        train_mask = eligible & (mature_dates < split)
-        valid_mask = eligible & (row_dates >= split)
-        if not train_mask.any() or not valid_mask.any():
-            raise ValueError("%s 的训练集或内部验证集为空" % name)
-        train = lgb.Dataset(raw[train_mask], label=labels[train_mask], feature_name=feature_names)
-        valid = lgb.Dataset(raw[valid_mask], label=labels[valid_mask], reference=train)
-        booster = lgb.train(
-            lgb_params, train,
-            num_boost_round=int(config["lightgbm"]["num_boost_round"]),
-            valid_sets=[valid],
-            callbacks=[lgb.early_stopping(int(config["lightgbm"]["early_stopping_rounds"]), verbose=False)],
-        )
-        component = export_component(booster, name)
-        sample = raw[valid_mask][-100:]
-        expected = booster.predict(sample, num_iteration=booster.best_iteration)
-        actual = predict_component_rows(component, sample)
-        error = float(np.max(np.abs(expected - actual))) if len(sample) else 0.0
-        if error > 1e-10:
-            raise ValueError("%s 的 JSON 推理误差过大: %.3g" % (name, error))
-        info = {
-            "model": name,
-            "maturity_days": maturity,
-            "inner_valid_start": str(split),
-            "train_rows": int(train_mask.sum()),
-            "valid_rows": int(valid_mask.sum()),
-            "best_iteration": int(booster.best_iteration),
-            "json_max_error": error,
-        }
-        training_log.append(info)
-        components.append(component)
-        print(json.dumps(info, ensure_ascii=False), flush=True)
-        del train, valid, booster
+    row_dates = ts[row_days]
+    row_labels = labels.reshape(-1)[rows]
+    eligible = ((row_dates >= np.datetime64(config["train_start"], "D"))
+                & (row_dates <= np.datetime64(config["train_end"], "D"))
+                & np.isfinite(row_labels))
+    unique = np.unique(row_dates[eligible])
+    if len(unique) < 100:
+        raise ValueError("冻结窗口内有效训练日不足")
+    split = unique[len(unique) * 4 // 5]
+    label_end = ts[np.minimum(row_days + 3, n - 1)]
+    train_mask = eligible & (label_end < split)
+    valid_mask = eligible & (row_dates >= split)
+    train_rows, valid_rows = np.flatnonzero(train_mask), np.flatnonzero(valid_mask)
+    if not len(train_rows) or not len(valid_rows):
+        raise ValueError("训练集或验证集为空")
 
+    params = {key: value for key, value in config["lightgbm"].items()
+              if key not in ("num_boost_round", "early_stopping_rounds")}
+    train = None
+    for offset in range(0, len(names), 16):
+        stop = min(offset + 16, len(names))
+        block = lgb.Dataset(
+            arrow_block(x, train_rows, names, offset, stop), row_labels[train_rows],
+            feature_name=names[offset:stop], params=params,
+        ).construct()
+        if train is None:
+            train = block
+        else:
+            train.add_features_from(block)
+    valid = lgb.Dataset(
+        arrow_block(x, valid_rows, names, 0, len(names)), row_labels[valid_rows],
+        reference=train, feature_name=names, params=params,
+    ).construct()
+    booster = lgb.train(
+        params, train, num_boost_round=int(config["lightgbm"]["num_boost_round"]),
+        valid_sets=[valid], valid_names=["validation"],
+        callbacks=[lgb.early_stopping(
+            int(config["lightgbm"]["early_stopping_rounds"]), verbose=False)],
+    )
+    component = export_component(booster)
+    expected = booster.predict(x[valid_rows], num_iteration=booster.best_iteration)
+    actual = predict_component_rows(component, x[valid_rows])
+    error = float(np.max(np.abs(expected - actual)))
+    if error > 1e-10:
+        raise ValueError("JSON 推理与 LightGBM 不一致: %.3g" % error)
+
+    report = {
+        "split": str(split), "train_rows": int(train_mask.sum()),
+        "validation_rows": int(valid_mask.sum()), "trees": int(booster.best_iteration),
+        "feature_count": len(names), "json_max_error": error,
+        **validation_metrics(expected, forward.reshape(-1)[rows][valid_mask], row_dates[valid_mask]),
+    }
     model = {
-        "format_version": 2,
+        "format_version": 3,
         "strategy_id": config["strategy_id"],
-        "quarter": quarter,
-        "train_before": str(start),
+        "model": "alphapilot51_close3",
+        "train_start": config["train_start"],
+        "train_end": config["train_end"],
+        "retrain_frequency": "frozen",
         "trained_at": utc_now_iso(),
-        "feature_names": feature_names,
-        "components": components,
-        "training": training_log,
+        "feature_names": names,
+        "component": component,
+        "training": report,
         "gross_leverage": float(config["gross_leverage"]),
         "volatility_target": None,
     }
@@ -129,19 +137,18 @@ def train_ensemble(features_path, output_path, config, as_of=None):
     with open(temporary, "w", encoding="utf-8") as f:
         json.dump(model, f, ensure_ascii=False, separators=(",", ":"))
     temporary.replace(output_path)
-    print("导出 %s：%s，%d 个组件，固定总杠杆 %.1f 倍" % (
-        output_path, quarter, len(components), config["gross_leverage"]), flush=True)
+    print(json.dumps(report, ensure_ascii=False), flush=True)
+    print("导出冻结单模型 %s（%d 棵树）" % (output_path, booster.best_iteration), flush=True)
     return model
 
 
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--features", default=str(BASE / "features.npz"))
-    parser.add_argument("--output", default=str(BASE / "model_ensemble.json"))
+    parser.add_argument("--output", default=str(BASE / "model.json"))
     parser.add_argument("--config", default=str(BASE / "strategy_config.json"))
-    parser.add_argument("--as-of", help="训练所属成交日 YYYY-MM-DD；默认当前 UTC 日期")
     args = parser.parse_args()
-    train_ensemble(args.features, args.output, load_config(args.config), args.as_of)
+    train_model(args.features, args.output, load_config(args.config))
 
 
 if __name__ == "__main__":
