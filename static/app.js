@@ -1454,7 +1454,7 @@ if (combineRefreshButton) combineRefreshButton.addEventListener("click", () => r
 setInterval(() => {
   const v = $("view-combine");
   if (v && v.classList.contains("active")) refreshCombine();
-}, 60000);
+}, 15000);
 
 // 启动：首次拉取 + 周期轮询。
 refreshHlCarry();
@@ -1825,7 +1825,7 @@ function renderIntraday(d) {
     kpi("已实现 / 浮盈", moneySigned(d.realized_pnl || 0), "浮动 " + moneySigned(d.unrealized_pnl || 0), (d.realized_pnl || 0) >= 0 ? "pos" : "neg") +
     kpi("当前持仓", String(ps.length), "多 " + ps.filter(p => isLongPosition(p)).length + " · 空 " + ps.filter(p => !isLongPosition(p)).length) +
     kpi("平仓胜率", (d.win_rate || 0).toFixed(1) + "%", (d.trades || []).length + " 笔已平仓") +
-    kpi("运行时间", days.toFixed(2) + " 天", "纯前向 · 无历史回放");
+    kpi("运行时间", days.toFixed(1) + " 天", "纯前向 · 无历史回放");
   const state = $("cb-run-state");
   const fresh = Number.isFinite(d.last_update) && Date.now() - d.last_update < 180000;
   if (state) {

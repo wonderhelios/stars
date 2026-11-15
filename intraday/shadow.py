@@ -208,6 +208,7 @@ def main():
     except BlockingIOError:print('日内影子已有进程运行',flush=True);return
     print(f'日内影子启动，状态={STATE_PATH}，只读行情，不下单',flush=True)
     while True:
-        run_once();time.sleep(60)
+        # 每15秒只批量读取一次premiumIndex并检查持仓；110币K线和OI仍仅整点扫描。
+        run_once();time.sleep(15)
 
 if __name__=='__main__':main()
