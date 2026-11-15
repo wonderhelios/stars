@@ -1814,6 +1814,7 @@ function renderCombine(d) {
 function renderIntraday(d) {
   d = d || {};
   const cfg = d.config || {}, ps = d.positions || [];
+  const isLongPosition = p => Number(p.side) === 1 || p.side === "long";
   const eq = Number(d.equity) || 0, pnlPct = Number(d.pnl_pct) || 0;
   const pnl = Number(d.pnl) || 0, days = Number(d.days_elapsed) || 0;
   const kpi = (label, value, detail, cls) => `<div class="combine-kpi"><div class="combine-kpi-label">${label}</div><div class="combine-kpi-value ${cls || ""}">${value}</div>${detail ? `<div class="combine-kpi-detail">${detail}</div>` : ""}</div>`;
@@ -1822,7 +1823,7 @@ function renderIntraday(d) {
     kpi("影子净值", "$" + fmt(eq, 2), "独立模拟账户 · 本金 $" + fmt(d.capital || 0, 0)) +
     kpi("累计收益", moneySigned(pnl), (pnlPct >= 0 ? "+" : "") + pnlPct.toFixed(2) + "%", pnl >= 0 ? "pos" : "neg") +
     kpi("已实现 / 浮盈", moneySigned(d.realized_pnl || 0), "浮动 " + moneySigned(d.unrealized_pnl || 0), (d.realized_pnl || 0) >= 0 ? "pos" : "neg") +
-    kpi("当前持仓", String(ps.length), "多 " + ps.filter(p => p.side === "long").length + " · 空 " + ps.filter(p => p.side === "short").length) +
+    kpi("当前持仓", String(ps.length), "多 " + ps.filter(p => isLongPosition(p)).length + " · 空 " + ps.filter(p => !isLongPosition(p)).length) +
     kpi("平仓胜率", (d.win_rate || 0).toFixed(1) + "%", (d.trades || []).length + " 笔已平仓") +
     kpi("运行时间", days.toFixed(2) + " 天", "纯前向 · 无历史回放");
   const state = $("cb-run-state");
@@ -1846,7 +1847,7 @@ function renderIntraday(d) {
   } else if ($("cb-chart")) $("cb-chart").innerHTML = '<div class="empty">等待第一个前向净值点</div>';
   const legs = $("cb-legs");
   if (legs) legs.innerHTML = ps.length ? '<div class="table-scroll"><table><thead><tr><th>币</th><th>方向</th><th>概率</th><th>名义</th><th>开仓价</th><th>现价</th><th>止盈 / 止损</th><th>浮盈</th></tr></thead><tbody>' +
-    ps.map(p => { const long=p.side === "long",u=Number(p.unrealized_pnl)||0; return `<tr><td><b>${escapeHTML(p.coin)}</b></td><td class="${long?"pos":"neg"}">${long?"多":"空"}</td><td>${(100*(p.probability||0)).toFixed(1)}%</td><td>$${fmt(p.notional,0)}</td><td>${fmtCompact(p.entry_price)}</td><td>${fmtCompact(p.mark_price)}</td><td>${fmtCompact(p.target_price)} / ${fmtCompact(p.stop_price)}</td><td class="${u>=0?"pos":"neg"}">${moneySigned(u)}</td></tr>`; }).join("") + '</tbody></table></div>'
+    ps.map(p => { const long=isLongPosition(p),u=Number(p.unrealized_pnl)||0; return `<tr><td><b>${escapeHTML(p.coin)}</b></td><td class="${long?"pos":"neg"}">${long?"多":"空"}</td><td>${(100*(p.probability||0)).toFixed(1)}%</td><td>$${fmt(p.notional,0)}</td><td>${fmtCompact(p.entry_price)}</td><td>${fmtCompact(p.mark_price)}</td><td>${fmtCompact(p.target_price)} / ${fmtCompact(p.stop_price)}</td><td class="${u>=0?"pos":"neg"}">${moneySigned(u)}</td></tr>`; }).join("") + '</tbody></table></div>'
     : '<div class="empty">当前空仓。没有足够强的趋势延续信号就不出手。</div>';
   if ($("cb-position-count")) $("cb-position-count").textContent = `${ps.length} / 4 仓 · 毛敞口 $${fmt(d.gross_notional||0,0)}`;
   if ($("cb-config")) $("cb-config").innerHTML = [`单仓 ${100*(cfg.position_fraction||.25)}%`,`最多 ${cfg.max_positions||4} 仓`,`概率 ≥ ${cfg.threshold||.55}`,`成本 ${10000*(cfg.fee_per_side||.0007)}bp/边`,`最长 ${cfg.max_holding_hours||6} 小时`,`冷却 ${cfg.cooldown_hours||24} 小时`].map(x=>`<span>${x}</span>`).join("");
