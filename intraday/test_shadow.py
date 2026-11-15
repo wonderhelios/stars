@@ -1,4 +1,6 @@
 import unittest
+import tempfile
+from pathlib import Path
 from unittest.mock import patch
 import shadow
 from shadow import initial_state,process_entries,process_exits,snapshot,FEE
@@ -51,5 +53,16 @@ class MetricWindowTests(unittest.TestCase):
         f=shadow.metric_features('BTCUSDT',signal)
         self.assertAlmostEqual(f['oi_chg_24h'],(1000+295)/(1000+7)-1)
         self.assertEqual(f['sum_taker_long_short_vol_ratio'],1.2)
+
+class RestartWindowTests(unittest.TestCase):
+    @patch('shadow.scan_candidates')
+    def test_late_restart_never_backfills_an_hour_old_entry(self,scan):
+        with tempfile.TemporaryDirectory() as tmp, patch.object(shadow,'STATE_PATH',Path(tmp)/'state.json'), \
+             patch.object(shadow,'now_ms',return_value=4_200_000), patch.object(shadow,'get',return_value=[]):
+            shadow.run_once()
+            state=shadow.load_state()
+        scan.assert_not_called()
+        self.assertEqual(state['last_signal_time'],3_600_000)
+        self.assertEqual(state['positions'],[])
 
 if __name__=='__main__':unittest.main()

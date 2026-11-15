@@ -184,11 +184,16 @@ def run_once():
         marks={r['symbol']:float(r['markPrice']) for r in get('/fapi/v1/premiumIndex')}
         process_exits(state,marks);snapshot(state,marks)
         now=now_ms();current_hour=now//3600000*3600000
-        if state.get('last_signal_time')!=current_hour and now>=current_hour+45000:
-            signal_time,candidates,warnings=scan_candidates()
-            if signal_time==current_hour:
-                process_entries(state,signal_time,candidates);snapshot(state,marks)
-                state['last_error']='；'.join(warnings[:3]) if warnings else None
+        if state.get('last_signal_time')!=current_hour:
+            if current_hour+45000<=now<current_hour+5*60000:
+                signal_time,candidates,warnings=scan_candidates()
+                if signal_time==current_hour:
+                    process_entries(state,signal_time,candidates);snapshot(state,marks)
+                    state['last_error']='；'.join(warnings[:3]) if warnings else None
+            elif now>=current_hour+5*60000:
+                # 重启或停机后不得按一小时前的open补造入场。
+                state['last_signal_time']=current_hour
+                state['last_error']='错过整点入场窗口，本轮空仓，等待下一小时'
         hist=state['history'];bucket=now//900000*900000
         if not hist or hist[-1][0]!=bucket:hist.append([bucket,state['equity']])
         else:hist[-1]=[bucket,state['equity']]
