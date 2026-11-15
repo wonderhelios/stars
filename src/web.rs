@@ -48,6 +48,8 @@ pub struct AppState {
     /// HL 单账户 carry 影子（现货 + 空永续）。
     pub hlcarry: Arc<Mutex<crate::hlcarry::HlCarryState>>,
     pub hlcarry_path: Arc<std::path::PathBuf>,
+    /// 币安日内前向影子账本，由独立只读采集进程写入。
+    pub intraday_path: Arc<std::path::PathBuf>,
 }
 
 #[derive(Clone, Default)]
@@ -112,6 +114,7 @@ pub fn router(state: AppState) -> Router {
         .route("/api/hlcarry/open", post(hlcarry_open))
         .route("/api/hlcarry/step", post(hlcarry_step))
         .route("/api/hlcarry/params", post(hlcarry_params))
+        .route("/api/intraday", get(intraday_status))
         .layer(axum::middleware::from_fn({
             let token = state.auth_token.clone();
             move |req: axum::http::Request<axum::body::Body>, next: axum::middleware::Next| {
@@ -177,6 +180,16 @@ async fn app_js() -> impl IntoResponse {
 
 async fn health() -> &'static str {
     "ok"
+}
+
+async fn intraday_status(State(state): State<AppState>) -> Response {
+    match tokio::fs::read(&*state.intraday_path).await {
+        Ok(bytes) => match serde_json::from_slice::<serde_json::Value>(&bytes) {
+            Ok(value) => Json(value).into_response(),
+            Err(e) => (StatusCode::INTERNAL_SERVER_ERROR, Json(json!({"error":format!("日内影子账本损坏: {e}")}))).into_response(),
+        },
+        Err(e) => (StatusCode::SERVICE_UNAVAILABLE, Json(json!({"error":format!("日内影子尚未启动: {e}")}))).into_response(),
+    }
 }
 
 async fn status(State(state): State<AppState>) -> Json<serde_json::Value> {
@@ -1646,6 +1659,7 @@ mod live_routes_tests {
             paper2_path: Arc::new(root.join("paper2.json")),
             paper3: Arc::new(Mutex::new(crate::paper::PaperState::default())),
             paper3_path: Arc::new(root.join("paper3.json")),
+            intraday_path: Arc::new(root.join("intraday.json")),
         };
         let app = router(base.clone());
         let response = app.clone().oneshot(Request::builder().uri("/").body(Body::empty()).unwrap()).await.unwrap();
@@ -1698,6 +1712,7 @@ mod live_routes_tests {
             paper2_path: Arc::new(root.join("paper2.json")),
             paper3: Arc::new(Mutex::new(crate::paper::PaperState::default())),
             paper3_path: Arc::new(root.join("paper3.json")),
+            intraday_path: Arc::new(root.join("intraday.json")),
         };
         let app = router(base.clone());
         // 资金矩阵：保存 → 持久化 → 拒绝对负数。

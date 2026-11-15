@@ -65,6 +65,25 @@ cargo build --release --locked
 systemctl restart stars
 ```
 
+## 币安日内前向影子（只读，不下单）
+
+日内页面读取 `/api/intraday`，数据来自独立 Python 进程；Rust 服务本身不调用币安交易接口，也不需要币安密钥。
+
+```bash
+cd /opt/stars
+/root/miniconda3/envs/ml/bin/python -m unittest discover -s intraday -p 'test_*.py' -v
+install -d -m 755 /var/lib/stars
+cp deploy/stars-intraday.service /etc/systemd/system/stars-intraday.service
+systemctl daemon-reload
+systemctl enable --now stars-intraday
+systemctl status stars-intraday --no-pager
+journalctl -u stars-intraday -n 50 --no-pager
+```
+
+首次启动本金为 2,500 USD，只记录启动之后的前向交易。状态保存在 `/var/lib/stars/intraday_shadow.json`。服务每小时扫描一次候选，每分钟用公开标记价格检查模拟止盈/止损。网络或数据覆盖不足时保留账本、记录错误并跳过本轮，不补造历史交易。
+
+如服务器访问 `https://fapi.binance.com` 需要代理，可在 `stars-intraday.service` 中增加 `Environment=HTTPS_PROXY=...`。先确认公开接口可用再启动；不需要也不应配置交易密钥。
+
 ## 环境变量
 
 | 变量 | 默认 | 说明 |

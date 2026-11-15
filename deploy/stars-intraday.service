@@ -1,0 +1,20 @@
+[Unit]
+Description=stars Binance intraday forward shadow (public data only)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/stars
+ExecStart=/root/miniconda3/envs/ml/bin/python /opt/stars/intraday/shadow.py
+Restart=always
+RestartSec=10
+Environment=STARS_INTRADAY=/var/lib/stars/intraday_shadow.json
+Environment=STARS_INTRADAY_CAPITAL=2500
+Environment=PYTHONUNBUFFERED=1
+# 如服务器访问币安需要代理，在此设置 HTTPS_PROXY；不要配置任何交易密钥。
+NoNewPrivileges=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

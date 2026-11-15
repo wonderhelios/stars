@@ -674,7 +674,7 @@
         <button data-view="hlcarry"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg><span>套利影子</span></button>
         <button data-view="shadow"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 20h18M5 20V10M11 20V4M17 20v-6"/></svg><span>影子监控</span></button>
         <button data-view="shadow-setup"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg><span>影子设置</span></button>
-        <button data-view="combine"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 18l5-6 4 3 7-9"/><circle cx="4" cy="18" r="1.6"/><circle cx="20" cy="6" r="1.6"/></svg><span>组合策略</span></button>
+        <button data-view="combine"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 18l5-6 4 3 7-9"/><circle cx="4" cy="18" r="1.6"/><circle cx="20" cy="6" r="1.6"/></svg><span>日内影子</span></button>
       </nav>
       <div class="status-pill">
         <span class="led" id="led"></span>
@@ -962,10 +962,10 @@
       <section id="view-combine" class="view combine-view">
         <header class="combine-heading">
           <div>
-            <div class="panel-kicker">COMBINED STRATEGY · 已证伪</div>
-            <h1>组合策略</h1>
-            <p>日线动量 + 12 小时区间位置 · 纸面模拟，不会发送真实订单</p>
-            <p class="note neg" style="margin-top:6px">⚠️ 12 小时区间腿的回测含未来函数；修正后 Sharpe −0.91、年化 −70%，已证伪。本页仅保留研究记录，请勿用于实盘。</p>
+            <div class="panel-kicker">BINANCE INTRADAY · 前向影子验证</div>
+            <h1>日内影子</h1>
+            <p>24h 涨跌榜 + 趋势 + OI 持仓结构 · 有机会才出手，1 ATR 止盈止损</p>
+            <p class="note" style="margin-top:6px">真实公开行情、独立模拟账本，从启动时刻开始记录，不含历史回放，绝不发送真实订单。</p>
           </div>
           <div class="combine-heading-actions">
             <span id="cb-run-state" class="combine-state"><i></i>读取中</span>
@@ -973,27 +973,30 @@
           </div>
         </header>
         <div id="cb-status" class="combine-alert" hidden></div>
-        <section class="combine-overview" id="cb-metrics" aria-label="组合表现"></section>
+        <section class="combine-overview" id="cb-metrics" aria-label="日内影子表现"></section>
         <section class="combine-section combine-chart-section">
           <div class="combine-section-head">
-            <div><span class="section-eyebrow">PERFORMANCE</span><h2>权益表现</h2></div>
-            <div class="segmented" id="cb-chart-tabs" role="group" aria-label="组合策略时间区间"><button type="button" data-range="day" aria-pressed="false">日</button><button type="button" data-range="week" aria-pressed="false">周</button><button type="button" data-range="month" aria-pressed="false">月</button><button type="button" data-range="all" aria-pressed="true">全部</button></div>
+            <div><span class="section-eyebrow">PERFORMANCE</span><h2>影子盈亏曲线</h2></div>
+            <div class="segmented" id="cb-chart-tabs" role="group" aria-label="日内影子时间区间"><button type="button" data-range="day" aria-pressed="false">日</button><button type="button" data-range="week" aria-pressed="false">周</button><button type="button" data-range="month" aria-pressed="false">月</button><button type="button" data-range="all" aria-pressed="true">全部</button></div>
           </div>
           <div class="chart" id="cb-chart"></div>
         </section>
         <section class="combine-section combine-positions-section">
           <div class="combine-section-head">
-            <div><span class="section-eyebrow">CURRENT ALLOCATION</span><h2>当前组合</h2></div>
-            <div class="combine-head-right">
-              <div class="segmented" id="cb-leg-tabs" role="group" aria-label="切换策略持仓">
-                <button type="button" data-leg="mom" aria-pressed="true">动量</button>
-                <button type="button" data-leg="range" aria-pressed="false">波段</button>
-              </div>
-              <span id="cb-position-count" class="combine-section-meta"></span>
-            </div>
+            <div><span class="section-eyebrow">CURRENT POSITIONS</span><h2>当前持仓</h2></div>
+            <span id="cb-position-count" class="combine-section-meta"></span>
           </div>
           <div id="cb-legs" class="combine-legs"></div>
           <div id="cb-config" class="combine-config"></div>
+        </section>
+        <section class="combine-section">
+          <div class="combine-section-head"><div><span class="section-eyebrow">OPPORTUNITY LOG</span><h2>最近信号</h2></div></div>
+          <p class="note">展示模型为什么开仓或放弃；概率不足、冷却中和仓位上限都会留下记录。</p>
+          <div id="cb-signals"></div>
+        </section>
+        <section class="combine-section">
+          <div class="combine-section-head"><div><span class="section-eyebrow">PAPER FILLS</span><h2>最近模拟成交</h2></div></div>
+          <div id="cb-trades"></div>
         </section>
       </section>
 

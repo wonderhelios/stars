@@ -1527,7 +1527,7 @@ function renderShadow(d) {
         metric("影子 三因子（" + ctlDays + " 天 ✗）", (d.pnl_pct || 0).toFixed(1) + "%", (d.pnl_pct || 0) >= 0 ? "pos" : "neg") +
         metric("对照 现行70/30", (ctl.pnl_pct || 0).toFixed(1) + "%", (ctl.pnl_pct || 0) >= 0 ? "pos" : "neg") +
         metric("波动目标组合", (vt.pnl_pct || 0).toFixed(1) + "%", (vt.pnl_pct || 0) >= 0 ? "pos" : "neg") +
-        metric("组合策略（动量+波段）", (cb.pnl_pct || 0).toFixed(1) + "%", (cb.pnl_pct || 0) >= 0 ? "pos" : "neg") +
+        metric("日内影子（价量+OI）", (cb.pnl_pct || 0).toFixed(1) + "%", (cb.pnl_pct || 0) >= 0 ? "pos" : "neg") +
         metric("实盘同期", liveWinPct == null ? "—" : liveWinPct.toFixed(1) + "%",
           liveWinPct == null ? "" : (liveWinPct >= 0 ? "pos" : "neg")) +
         metric("影子 − 对照", ((d.pnl_pct || 0) - (ctl.pnl_pct || 0)).toFixed(1) + '<span class="metric-unit"> pp</span>',
@@ -1639,7 +1639,7 @@ async function refreshShadow() {
     try { lastControlData = await fetchJSONRetry("/api/paper", {}, 8000); } catch (e) {}
     try { lastLiveForShadow = await fetchJSONRetry("/api/live", {}, 8000); } catch (e) {}
     try { lastVTData = await fetchJSONRetry("/api/paper3", {}, 8000); } catch (e) {}
-    try { lastCombineData = await fetchJSONRetry("/api/paper4", {}, 8000); } catch (e) {}
+    try { lastCombineData = await fetchJSONRetry("/api/intraday", {}, 8000); } catch (e) {}
     renderShadow(lastShadowData);
     renderShadowConfig(lastShadowData.config);
   } catch (e) {}
@@ -1811,15 +1811,60 @@ function renderCombine(d) {
   }
 }
 
+function renderIntraday(d) {
+  d = d || {};
+  const cfg = d.config || {}, ps = d.positions || [];
+  const eq = Number(d.equity) || 0, pnlPct = Number(d.pnl_pct) || 0;
+  const pnl = Number(d.pnl) || 0, days = Number(d.days_elapsed) || 0;
+  const kpi = (label, value, detail, cls) => `<div class="combine-kpi"><div class="combine-kpi-label">${label}</div><div class="combine-kpi-value ${cls || ""}">${value}</div>${detail ? `<div class="combine-kpi-detail">${detail}</div>` : ""}</div>`;
+  const m = $("cb-metrics");
+  if (m) m.innerHTML =
+    kpi("影子净值", "$" + fmt(eq, 2), "独立模拟账户 · 本金 $" + fmt(d.capital || 0, 0)) +
+    kpi("累计收益", moneySigned(pnl), (pnlPct >= 0 ? "+" : "") + pnlPct.toFixed(2) + "%", pnl >= 0 ? "pos" : "neg") +
+    kpi("已实现 / 浮盈", moneySigned(d.realized_pnl || 0), "浮动 " + moneySigned(d.unrealized_pnl || 0), (d.realized_pnl || 0) >= 0 ? "pos" : "neg") +
+    kpi("当前持仓", String(ps.length), "多 " + ps.filter(p => p.side === "long").length + " · 空 " + ps.filter(p => p.side === "short").length) +
+    kpi("平仓胜率", (d.win_rate || 0).toFixed(1) + "%", (d.trades || []).length + " 笔已平仓") +
+    kpi("运行时间", days.toFixed(2) + " 天", "纯前向 · 无历史回放");
+  const state = $("cb-run-state");
+  const fresh = Number.isFinite(d.last_update) && Date.now() - d.last_update < 180000;
+  if (state) {
+    state.className = "combine-state " + (d.running && fresh ? "is-running" : "is-stopped");
+    state.innerHTML = `<i></i>${d.running && fresh ? "影子运行中" : "数据过期 / 已停止"}`;
+  }
+  const st = $("cb-status");
+  if (st) {
+    st.textContent = d.last_error ? "最近采集异常：" + d.last_error + "。异常期间不会补造交易。" : "";
+    st.hidden = !d.last_error;
+  }
+  const h = (d.history || []).filter(p => Array.isArray(p) && Number.isFinite(p[0]) && Number.isFinite(p[1]));
+  if (h.length) {
+    const obs = h.map(p => ({ts:p[0], equity:p[1]}));
+    let pts = equityWindow(obs, cbRange, Date.now()).points.map(p => [p.ts, p.equity]);
+    if (pts.length < 3 && cbRange !== "all") pts = h.slice(-3);
+    renderEquityChart("cb-chart", withNow(pts, eq), "日内影子权益曲线", undefined, undefined, undefined,
+      {equityLabel:"影子净值 · 最新",changeLabel:"记录区间变化",legendName:"日内影子"});
+  } else if ($("cb-chart")) $("cb-chart").innerHTML = '<div class="empty">等待第一个前向净值点</div>';
+  const legs = $("cb-legs");
+  if (legs) legs.innerHTML = ps.length ? '<div class="table-scroll"><table><thead><tr><th>币</th><th>方向</th><th>概率</th><th>名义</th><th>开仓价</th><th>现价</th><th>止盈 / 止损</th><th>浮盈</th></tr></thead><tbody>' +
+    ps.map(p => { const long=p.side === "long",u=Number(p.unrealized_pnl)||0; return `<tr><td><b>${escapeHTML(p.coin)}</b></td><td class="${long?"pos":"neg"}">${long?"多":"空"}</td><td>${(100*(p.probability||0)).toFixed(1)}%</td><td>$${fmt(p.notional,0)}</td><td>${fmtCompact(p.entry_price)}</td><td>${fmtCompact(p.mark_price)}</td><td>${fmtCompact(p.target_price)} / ${fmtCompact(p.stop_price)}</td><td class="${u>=0?"pos":"neg"}">${moneySigned(u)}</td></tr>`; }).join("") + '</tbody></table></div>'
+    : '<div class="empty">当前空仓。没有足够强的趋势延续信号就不出手。</div>';
+  if ($("cb-position-count")) $("cb-position-count").textContent = `${ps.length} / 4 仓 · 毛敞口 $${fmt(d.gross_notional||0,0)}`;
+  if ($("cb-config")) $("cb-config").innerHTML = [`单仓 ${100*(cfg.position_fraction||.25)}%`,`最多 ${cfg.max_positions||4} 仓`,`概率 ≥ ${cfg.threshold||.55}`,`成本 ${10000*(cfg.fee_per_side||.0007)}bp/边`,`最长 ${cfg.max_holding_hours||6} 小时`,`冷却 ${cfg.cooldown_hours||24} 小时`].map(x=>`<span>${x}</span>`).join("");
+  const sigs=(d.signals||[]).slice(-20).reverse();
+  if ($("cb-signals")) $("cb-signals").innerHTML=sigs.length?'<div class="table-scroll"><table><thead><tr><th>时间</th><th>币</th><th>方向</th><th>24h涨跌</th><th>4h OI</th><th>概率</th><th>处理</th></tr></thead><tbody>'+sigs.map(s=>`<tr><td class="muted">${ts2m(s.ts)}</td><td>${escapeHTML(s.coin)}</td><td class="${s.side==="long"?"pos":"neg"}">${s.side==="long"?"多":"空"}</td><td>${(100*(s.ret24||0)).toFixed(1)}%</td><td>${(100*(s.oi_chg_4h||0)).toFixed(1)}%</td><td>${(100*(s.probability||0)).toFixed(1)}%</td><td class="${s.accepted?"pos":"muted"}">${escapeHTML(s.reason)}</td></tr>`).join("")+'</tbody></table></div>':'<div class="empty">尚无信号记录，每小时检查一次。</div>';
+  const trades=(d.trades||[]).slice(-50).reverse();
+  if ($("cb-trades")) $("cb-trades").innerHTML=trades.length?'<div class="table-scroll"><table><thead><tr><th>平仓时间</th><th>币</th><th>方向</th><th>开仓 / 平仓</th><th>概率</th><th>净盈亏</th><th>原因</th></tr></thead><tbody>'+trades.map(t=>`<tr><td class="muted">${ts2m(t.exit_ts)}</td><td>${escapeHTML(t.coin)}</td><td class="${t.side==="long"?"pos":"neg"}">${t.side==="long"?"多":"空"}</td><td>${fmtCompact(t.entry_price)} / ${fmtCompact(t.exit_price)}</td><td>${(100*(t.probability||0)).toFixed(1)}%</td><td class="${(t.pnl_usd||0)>=0?"pos":"neg"}">${moneySigned(t.pnl_usd||0)}</td><td>${escapeHTML(t.reason)}</td></tr>`).join("")+'</tbody></table></div>':'<div class="empty">暂无已平仓模拟成交。</div>';
+}
+
 async function refreshCombine() {
   try {
-    const d = await fetchJSONRetry("/api/paper4", {}, 15000);
+    const d = await fetchJSONRetry("/api/intraday", {}, 15000);
     lastCombineData = d;
-    renderCombine(d);
+    renderIntraday(d);
   } catch (e) {
     const st = $("cb-status");
     if (st) {
-      st.textContent = "读取组合策略失败：" + ((e && e.message) || e);
+      st.textContent = "读取日内影子失败：" + ((e && e.message) || e);
       st.hidden = false;
     }
   }
