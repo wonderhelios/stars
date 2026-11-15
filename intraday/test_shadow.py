@@ -1,4 +1,6 @@
 import unittest
+from unittest.mock import patch
+import shadow
 from shadow import initial_state,process_entries,process_exits,snapshot,FEE
 
 
@@ -34,5 +36,20 @@ class ShadowBookTests(unittest.TestCase):
         process_exits(s,{'ETHUSDT':p['stop_price']});snapshot(s,{})
         self.assertEqual(s['trades'][0]['reason'],'止损');self.assertLess(s['trades'][0]['pnl_usd'],0)
         self.assertAlmostEqual(s['equity'],s['balance']);self.assertLess(s['equity'],s['capital'])
+
+class MetricWindowTests(unittest.TestCase):
+    @patch('shadow.get')
+    def test_future_5m_rows_are_filtered_before_24h_window(self,mock_get):
+        signal=1_800_000_000_000
+        oi=[{'timestamp':signal-295*300000+i*300000,'sumOpenInterestValue':str(1000+i)} for i in range(301)]
+        def fake_get(path,params=None,timeout=15):
+            self.assertNotEqual(params.get('limit'),289)
+            if path.endswith('openInterestHist'):return oi
+            key='buySellRatio' if path.endswith('takerlongshortRatio') else 'longShortRatio'
+            return [{'timestamp':signal,key:'1.2'}]
+        mock_get.side_effect=fake_get
+        f=shadow.metric_features('BTCUSDT',signal)
+        self.assertAlmostEqual(f['oi_chg_24h'],(1000+295)/(1000+7)-1)
+        self.assertEqual(f['sum_taker_long_short_vol_ratio'],1.2)
 
 if __name__=='__main__':unittest.main()

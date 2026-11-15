@@ -80,7 +80,7 @@ def features_at(x):
     return r.to_dict(),float(entry.iloc[0].open)
 
 def metric_features(symbol,signal_time):
-    oi=get('/futures/data/openInterestHist',{'symbol':symbol,'period':'5m','limit':289})
+    oi=get('/futures/data/openInterestHist',{'symbol':symbol,'period':'5m','limit':500})
     top_pos=get('/futures/data/topLongShortPositionRatio',{'symbol':symbol,'period':'5m','limit':2})
     top_acct=get('/futures/data/topLongShortAccountRatio',{'symbol':symbol,'period':'5m','limit':2})
     retail=get('/futures/data/globalLongShortAccountRatio',{'symbol':symbol,'period':'5m','limit':2})
@@ -116,8 +116,12 @@ def scan_candidates():
         long=s in high and f['ema_16']>f['ema_64'] and f['ema64_slope16']>0
         short=s in low and f['ema_16']<f['ema_64'] and f['ema64_slope16']<0
         if not ((long or short) and f['quote24']>=5_000_000 and finite(f['atr_pct'])):continue
-        f=f.copy();f['side']=1 if long else -1;f['log_quote24']=math.log(max(f['quote24'],1));f.update(metric_features(s,signal_time))
-        f['probability']=float(MODEL.predict(pd.DataFrame([f])[FEATURES])[0]);f['symbol']=s;f['entry']=entries[s];out.append(f)
+        try:
+            f=f.copy();f['side']=1 if long else -1;f['log_quote24']=math.log(max(f['quote24'],1));f.update(metric_features(s,signal_time))
+            f['probability']=float(MODEL.predict(pd.DataFrame([f])[FEATURES])[0]);f['symbol']=s;f['entry']=entries[s];out.append(f)
+        except Exception as e:
+            # 单币OI不可用只放弃这个机会，不能中断其他候选。
+            errors.append(f'{s} OI: {e}')
     return signal_time,sorted(out,key=lambda x:x['probability'],reverse=True),errors
 
 def features_at_entry(x,f):
