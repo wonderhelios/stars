@@ -655,11 +655,21 @@ function renderTotal(d) {
     const cls = diff >= 0 ? "pos" : "neg";
     changeHtml = `<span class="total-change ${cls}">${moneySigned(diff)}（${pct >= 0 ? "+" : ""}${fmt(pct, 1)}%）</span>`;
   }
+  const momShare = total > 0 ? (mom / total) * 100 : 0;
+  const mlShare = total > 0 ? (ml / total) * 100 : 0;
+  const momDiff = aBase > 0 ? mom - aBase : null;
+  const mlDiff = bBase > 0 ? ml - bBase : null;
+  const momSub = momDiff != null
+    ? `<span class="total-sub">占比 ${fmt(momShare, 1)}% · <span class="${momDiff >= 0 ? 'pos' : 'neg'}">${moneySigned(momDiff)}</span></span>`
+    : `<span class="total-sub">占比 ${fmt(momShare, 1)}%</span>`;
+  const mlSub = mlDiff != null
+    ? `<span class="total-sub">占比 ${fmt(mlShare, 1)}% · <span class="${mlDiff >= 0 ? 'pos' : 'neg'}">${moneySigned(mlDiff)}</span></span>`
+    : `<span class="total-sub">占比 ${fmt(mlShare, 1)}%</span>`;
   el.innerHTML = `
     <div class="total-card">
       <div class="total-item total-sum"><span class="total-label">全部账户净值</span><span class="total-value">$${fmt(total, 2)}</span>${changeHtml}</div>
-      <div class="total-item"><span class="total-label">动量账户</span><span class="total-value">$${fmt(mom, 2)}</span></div>
-      <div class="total-item"><span class="total-label">ML 账户</span><span class="total-value">$${fmt(ml, 2)}</span></div>
+      <div class="total-item"><span class="total-label">动量账户</span><span class="total-value">$${fmt(mom, 2)}</span>${momSub}</div>
+      <div class="total-item"><span class="total-label">ML 账户</span><span class="total-value">$${fmt(ml, 2)}</span>${mlSub}</div>
     </div>`;
 }
 
@@ -920,7 +930,8 @@ function renderMonitor(d) {
   const ago = liveFetchedAt ? Math.round((Date.now() - liveFetchedAt) / 1000) : null;
   const freshness = ago == null ? "" : `<span class="muted" id="mo-ago">数据更新于 ${ago} 秒前</span>`;
   $("mo-status").innerHTML = `<div class="live-status ${cls}">
-    <span class="tag">${tag}</span><span>${text}</span>${autoText}${lastText}${freshness}
+    <div class="live-status-left"><span class="tag">${tag}</span><span>${text}</span></div>
+    <div class="live-status-right">${autoText}${lastText}${freshness}</div>
   </div>`;
 
   const parsed = chronRecords(d);
@@ -1305,12 +1316,12 @@ function renderLiveChart(history, shadow) {
   const circles = points.map(p => `<circle cx="${X(p.ts)}" cy="${Y(p.equity)}" r="6" fill="transparent" class="equity-point"><title>${ts2m(p.ts)} UTC · ${money(p.equity)}</title></circle>`).join("");
   el.innerHTML = `<div class="chart-summary"><div><span class="chart-eyebrow">累计策略盈亏 · 区间末值</span><strong>${money(last.equity)}</strong></div><div><span class="chart-eyebrow">区间策略盈亏</span><strong class="${change >= 0 ? "pos" : "neg"}">${change >= 0 ? "+" : "−"}$${Math.abs(change).toFixed(2)}</strong></div><div class="chart-coverage"><span class="chart-eyebrow">实际记录区间 · UTC</span>${ts2m(first.ts)} — ${ts2m(last.ts)}</div></div>
     <svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${names[chartRange]}策略盈亏曲线">
-      <defs><linearGradient id="equity-area" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#168473" stop-opacity="0.14"/><stop offset="100%" stop-color="#168473" stop-opacity="0"/></linearGradient></defs>
+      <defs><linearGradient id="equity-area" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#0d9488" stop-opacity="0.14"/><stop offset="100%" stop-color="#0d9488" stop-opacity="0"/></linearGradient></defs>
       ${grid}
       ${points.length > 1 ? `<polygon points="${X(first.ts)},${H-padB} ${line} ${X(last.ts)},${H-padB}" fill="url(#equity-area)"/>` : ""}
-      <line x1="${padL}" y1="${Y(first.equity)}" x2="${W-padR}" y2="${Y(first.equity)}" stroke="#bacac8" stroke-dasharray="4 5"/>
-      <polyline points="${line}" fill="none" stroke="#168473" stroke-width="2.5" stroke-linejoin="round"/>
-      <circle cx="${X(last.ts)}" cy="${Y(last.equity)}" r="4" fill="#168473" stroke="white" stroke-width="2"/>
+      <line x1="${padL}" y1="${Y(first.equity)}" x2="${W-padR}" y2="${Y(first.equity)}" stroke="#cbd5e1" stroke-dasharray="4 5"/>
+      <polyline points="${line}" fill="none" stroke="#0d9488" stroke-width="2.5" stroke-linejoin="round"/>
+      <circle cx="${X(last.ts)}" cy="${Y(last.equity)}" r="4" fill="#0d9488" stroke="white" stroke-width="2"/>
       ${circles}${xlabels}
     </svg><div class="chart-caption"><span><i></i>策略盈亏 <span class="muted">· 虚线为区间起点</span></span><span>${raw.length === 1 ? "仅一条记录，等待下一次采样" : "悬停查看采样值"} · 已扣登记出入金，含手续费与资金费</span></div>${adjusted.estimated ? '<p class="note">旧流水按登记时间估算；如为事后补记，请在资金流水中校正到账时间，避免历史曲线出现错位跳变。</p>' : ""}`;
 }
@@ -1913,7 +1924,7 @@ function renderEquityChart(id, history, aria, compare, third, fourth, summaryLab
   const sw = (color) => `<span style="display:inline-block;width:14px;height:3px;border-radius:2px;background:${color};margin-right:6px;vertical-align:middle"></span>`;
   const legendName = summaryLabels && summaryLabels.legendName ? summaryLabels.legendName : "影子 三因子";
   const cmpLegend = cmp.length > 1
-    ? `<div class="chart-coverage">${sw("#168473")}影子 三因子 · $${fmt(last.eq, 2)} · ${moneySigned(last.eq - first.eq)}</div>` +
+    ? `<div class="chart-coverage">${sw("#0d9488")}影子 三因子 · $${fmt(last.eq, 2)} · ${moneySigned(last.eq - first.eq)}</div>` +
       `<div class="chart-coverage">${sw("#e0873a")}对照 纯动量 · $${fmt(cmp[cmp.length - 1].eq, 2)} · ${moneySigned(cmp[cmp.length - 1].eq - cmp[0].eq)}</div>` +
       (thd.length > 1
         ? `<div class="chart-coverage">${sw("#4a7fd4")}波动目标 · $${fmt(thd[thd.length - 1].eq, 2)} · ${moneySigned(thd[thd.length - 1].eq - thd[0].eq)}</div>`
@@ -1921,7 +1932,7 @@ function renderEquityChart(id, history, aria, compare, third, fourth, summaryLab
       (fth.length > 1
         ? `<div class="chart-coverage">${sw("#7c4dff")}组合策略（动量+12h波段） · $${fmt(fth[fth.length - 1].eq, 2)} · ${moneySigned(fth[fth.length - 1].eq - fth[0].eq)}</div>`
         : "")
-    : `<div class="chart-coverage">${sw("#168473")}${legendName} · $${fmt(last.eq, 2)} · ${moneySigned(last.eq - first.eq)}</div>`;
+    : `<div class="chart-coverage">${sw("#0d9488")}${legendName} · $${fmt(last.eq, 2)} · ${moneySigned(last.eq - first.eq)}</div>`;
   el.innerHTML = `<div class="chart-summary">
       <div><span class="chart-eyebrow">${summaryLabels && summaryLabels.equityLabel ? summaryLabels.equityLabel : "影子权益 · 最新"}</span><strong>$${fmt(last.eq, 2)}</strong></div>
       <div><span class="chart-eyebrow">${summaryLabels && summaryLabels.changeLabel ? summaryLabels.changeLabel : "影子区间变化"}</span><strong class="${change >= 0 ? "pos" : "neg"}">${moneySigned(change)}</strong></div>
@@ -1929,15 +1940,15 @@ function renderEquityChart(id, history, aria, compare, third, fourth, summaryLab
       <div class="chart-coverage"><span class="chart-eyebrow">点数</span>${pts.length} · ${ts2m(first.ts)} — ${ts2m(last.ts)}</div>
     </div>
     <svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${aria}">
-      <defs><linearGradient id="carry-area" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#168473" stop-opacity="0.14"/><stop offset="100%" stop-color="#168473" stop-opacity="0"/></linearGradient></defs>
+      <defs><linearGradient id="carry-area" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#0d9488" stop-opacity="0.14"/><stop offset="100%" stop-color="#0d9488" stop-opacity="0"/></linearGradient></defs>
       ${grid}
       <polygon points="${X(first.ts)},${H - padB} ${line} ${X(last.ts)},${H - padB}" fill="url(#carry-area)"/>
-      <line x1="${padL}" y1="${Y(first.eq)}" x2="${W - padR}" y2="${Y(first.eq)}" stroke="#bacac8" stroke-dasharray="4 5"/>
+      <line x1="${padL}" y1="${Y(first.eq)}" x2="${W - padR}" y2="${Y(first.eq)}" stroke="#cbd5e1" stroke-dasharray="4 5"/>
       ${cmpLine ? `<polyline points="${cmpLine}" fill="none" stroke="#e0873a" stroke-width="2.2" stroke-linejoin="round" opacity="0.95"/>` : ""}
       ${thdLine ? `<polyline points="${thdLine}" fill="none" stroke="#4a7fd4" stroke-width="2.2" stroke-linejoin="round" opacity="0.95"/>` : ""}
       ${fthLine ? `<polyline points="${fthLine}" fill="none" stroke="#7c4dff" stroke-width="2.2" stroke-linejoin="round" opacity="0.95"/>` : ""}
-      <polyline points="${line}" fill="none" stroke="#168473" stroke-width="2.5" stroke-linejoin="round"/>
-      <circle cx="${X(last.ts)}" cy="${Y(last.eq)}" r="4" fill="#168473" stroke="white" stroke-width="2"/>
+      <polyline points="${line}" fill="none" stroke="#0d9488" stroke-width="2.5" stroke-linejoin="round"/>
+      <circle cx="${X(last.ts)}" cy="${Y(last.eq)}" r="4" fill="#0d9488" stroke="white" stroke-width="2"/>
       ${xlabels}
     </svg>`;
 }
@@ -1991,9 +2002,7 @@ function arrangeMonitorSummary(id, shadow = false) {
   const first = [...groups[0].querySelectorAll('.metric')];
   const capital = groups.find(g => g.classList.contains('capital-account'));
   root.replaceChildren();
-  const mlAccountAvailable = lastLiveData?.ml_account && !lastLiveData.ml_account.error;
-  const threeMetricSummary = !shadow && !!mlAccountAvailable && currentStrategy === 'all';
-  root.className = 'account-summary' + (threeMetricSummary ? ' account-summary-three' : '');
+  root.className = 'account-summary';
   if (shadow) {
     // 影子页沿用原来的三格（净值 ✗ 累计盈亏 ✗ 浮动 ✓）
     const earnings = first[1];
@@ -2040,9 +2049,12 @@ function arrangeMonitorSummary(id, shadow = false) {
       const unrlAll = unrl + (mlAcc2.positions || []).reduce((s2, p2) => s2 + (Number.isFinite(p2.unrealized) ? p2.unrealized : 0), 0);
       const pctAll = principalAll > 0 ? ((eqAll / principalAll - 1) * 100).toFixed(2) + "%" : "";
       const netAll = eqAll - principalAll;
+      const bufs = [ld.liq_buffer_pct, mlAcc2.liq_buffer_pct].filter(Number.isFinite);
+      const minBuf = bufs.length ? Math.min(...bufs) : null;
       root.append(cell("合计净收益", money(netAll), netAll >= 0 ? "pos" : "neg", pctAll ? `净投入收益率 ${Number(pctAll) >= 0 ? "+" : ""}${pctAll}` : ""));
       root.append(cell("合计本金", usd(principalAll)));
       root.append(cell("当前浮盈", money(unrlAll), unrlAll >= 0 ? "pos" : "neg"));
+      root.append(cell("最低强平缓冲", minBuf == null ? "—" : minBuf.toFixed(1) + "%", minBuf == null ? "" : minBuf < 40 ? "neg" : "pos"));
       return;
     }
     // ML tab：显示 ML 子账户自己的净值/浮盈/持仓（不能显示动量的 $4,500）
@@ -2121,7 +2133,7 @@ function arrangeMonitorSummary(id, shadow = false) {
         const feeUsd = Number.isFinite(grossRow.fee) ? "（$" + grossRow.fee.toFixed(0) + "）" : "";
         hint = hint + " · 毛 " + gross + " = 净 " + net + " + 费用 " + feePct + feeUsd;
       }
-      return `<div class="score-row"><span>${dot}</span><span class="score-name">${escapeHTML(row.name || "")}</span><span class="score-val ${tone}">${escapeHTML(val)}</span><span class="score-hint">${escapeHTML(hint)}</span></div>`;
+      return `<div class="score-row"><div class="score-row-top">${dot}<span class="score-name">${escapeHTML(row.name || "")}</span><span class="score-val ${tone}">${escapeHTML(val)}</span></div><span class="score-hint">${escapeHTML(hint)}</span></div>`;
     }).join("");
     card.innerHTML = `<div class="k">策略健康度</div><div class="score-body">${rows}</div>`;
     root.append(card);
