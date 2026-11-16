@@ -17,7 +17,7 @@ BASE = Path(__file__).resolve().parent
 INFO_URL = "https://api.hyperliquid.xyz/info"
 UTC = datetime.timezone.utc
 MAX_RETRIES = 3
-REQUEST_INTERVAL_SECONDS = 1.0
+REQUEST_INTERVAL_SECONDS = 0.35
 START_MS = int(datetime.datetime(2023, 5, 1, tzinfo=UTC).timestamp() * 1000)
 
 
@@ -98,6 +98,7 @@ def pull(coin, out_dir, end_ms):
     raw_dir = out_dir.parent / "hl_funding_hourly"
     raw_dir.mkdir(parents=True, exist_ok=True)
     raw_path = raw_dir / (coin + ".json.gz")
+    daily_path = out_dir / (coin + ".json")
     records = []
     if raw_path.exists():
         try:
@@ -107,6 +108,9 @@ def pull(coin, out_dir, end_ms):
             print("[funding] %s 原始缓存不可读，将全量重拉：%s" % (coin, e), flush=True)
             records = []
     records.sort(key=lambda row: int(row["time"]))
+    latest_hour_ms = (int(end_ms) // 3600000) * 3600000
+    if records and int(records[-1]["time"]) >= latest_hour_ms - 60000 and daily_path.exists():
+        return coin, None, 0, True
     cursor = max(int(records[-1]["time"]) + 1, START_MS) if records else START_MS
     new_records = 0
     guard = 0
@@ -132,7 +136,7 @@ def pull(coin, out_dir, end_ms):
         with gzip.open(temporary, "wt", encoding="utf-8") as f:
             json.dump(records, f, separators=(",", ":"))
         temporary.replace(raw_path)
-    return coin, aggregate_daily(records), new_records
+    return coin, aggregate_daily(records), new_records, False
 
 
 def update_all():
@@ -140,20 +144,30 @@ def update_all():
     os.makedirs(out_dir, exist_ok=True)
     coins = [path.stem for path in market_data_files(BASE / "data" / "hl2")]
     end_ms = int(datetime.datetime.now(UTC).timestamp() * 1000)
-    print("[funding] 开始更新 %d 币，单线程，每币间隔 %.1f 秒" % (
+    print("[funding] 检查 %d 币资金费缓存（单线程间隔 %.2f 秒，已含本小时记录将跳过）" % (
         len(coins), REQUEST_INTERVAL_SECONDS), flush=True)
+    skipped = 0
+    fetched = 0
+    total_new = 0
     for done, coin in enumerate(coins, 1):
-        _, daily, count = pull(coin, out_dir, end_ms)
-        path = out_dir / (coin + ".json")
-        temporary = out_dir / (coin + ".json.tmp")
-        with open(temporary, "w", encoding="utf-8") as f:
-            json.dump(daily, f, separators=(",", ":"))
-        temporary.replace(path)
-        print("[funding] [%d/%d] %s %d 天（新 %d 条小时记录）" % (
-            done, len(coins), coin, len(daily), count), flush=True)
-        if done < len(coins):
-            time.sleep(REQUEST_INTERVAL_SECONDS)
-    print("[funding] 完成", flush=True)
+        _, daily, count, was_skipped = pull(coin, out_dir, end_ms)
+        if was_skipped:
+            skipped += 1
+        else:
+            fetched += 1
+            total_new += count
+            path = out_dir / (coin + ".json")
+            temporary = out_dir / (coin + ".json.tmp")
+            with open(temporary, "w", encoding="utf-8") as f:
+                json.dump(daily, f, separators=(",", ":"))
+            temporary.replace(path)
+            if count > 0 or done % 50 == 0:
+                print("[funding] [%d/%d] %s %d 天（新 %d 条小时记录）" % (
+                    done, len(coins), coin, len(daily), count), flush=True)
+            if done < len(coins):
+                time.sleep(REQUEST_INTERVAL_SECONDS)
+    print("[funding] 完成：请求 %d 币，跳过已最新 %d 币，新增 %d 条小时记录" % (
+        fetched, skipped, total_new), flush=True)
 
 
 def main():
