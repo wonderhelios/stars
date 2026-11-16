@@ -539,6 +539,110 @@ impl Exec {
         .await?;
         one_status(resp)
     }
+
+    /// 先挂被动限价单（Alo / Post-Only）吃 Maker 费率（~0.015%），超时未成交再撤单改用 IOC 补齐。
+    ///
+    /// - 挂单价贴近 `mid`（买单向下取整到 tick，卖单向上取整到 tick），不穿越盘口；
+    /// - 若 Alo 因会立即吃单而被拒（Post-Only reject），直接回退到 `ioc`；
+    /// - 若等待 `wait_secs` 后仍有未成交残余，先撤单；若撤单返回 `Ok(0)` 说明刚巧成交（不再补单，防止双倍成交），否则对残余量下 `ioc`。
+    #[allow(clippy::too_many_arguments)]
+    pub async fn maker_then_ioc(
+        &self,
+        coin: &str,
+        buy: bool,
+        reduce_only: bool,
+        size: f64,
+        mid: f64,
+        slippage: f64,
+        sz_decimals: i32,
+        wait_secs: u64,
+    ) -> Result<String> {
+        let trading = self.trading.as_ref().context("not a signing client")?;
+        let px = order_price(mid, sz_decimals, !buy);
+        if px <= 0.0 || wait_secs == 0 {
+            let st = self
+                .ioc(coin, buy, reduce_only, size, mid, slippage, sz_decimals)
+                .await?;
+            return Ok(describe(&st));
+        }
+
+        let cloid = Uuid::new_v4();
+        let coin_owned = coin.to_string();
+        let resp = sdk_retry(&format!("被动挂单 {coin}"), || {
+            let order = ClientOrderRequest {
+                asset: coin_owned.clone(),
+                is_buy: buy,
+                reduce_only,
+                limit_px: px,
+                sz: size,
+                cloid: Some(cloid),
+                order_type: ClientOrder::Limit(ClientLimit { tif: "Alo".into() }),
+            };
+            trading.order(order, None)
+        })
+        .await;
+
+        let status = match resp.and_then(one_status) {
+            Ok(st) => st,
+            Err(_) => {
+                // Alo 被拒（例如盘口价差极窄，Post-Only 会立即吃单）→ 回退 IOC
+                let st = self
+                    .ioc(coin, buy, reduce_only, size, mid, slippage, sz_decimals)
+                    .await?;
+                return Ok(format!("IOC回退 · {}", describe(&st)));
+            }
+        };
+
+        let oid = match status {
+            ExchangeDataStatus::Filled(_) => {
+                return Ok(format!("Maker · {}", describe(&status)));
+            }
+            ExchangeDataStatus::Resting(r) => r.oid,
+            other => {
+                let st = self
+                    .ioc(coin, buy, reduce_only, size, mid, slippage, sz_decimals)
+                    .await?;
+                return Ok(format!("IOC({other:?}) · {}", describe(&st)));
+            }
+        };
+
+        let deadline = tokio::time::Instant::now() + Duration::from_secs(wait_secs);
+        let mut remaining = size;
+        while tokio::time::Instant::now() < deadline {
+            tokio::time::sleep(Duration::from_secs(2)).await;
+            if let Ok(open) = self.open_order_details().await {
+                if let Some(o) = open.iter().find(|x| x.oid == oid) {
+                    remaining = o.sz;
+                } else {
+                    // 不在未成交挂单列表里，说明已全部成交
+                    return Ok(format!("Maker成交 {size:.6}@{px}"));
+                }
+            }
+        }
+
+        // 超时撤单：Ok(0) 表示 MissingOrder（撤单前刚成交），绝不重复下 IOC
+        match self.cancel_orders(&[(coin_owned, oid)]).await {
+            Ok(0) => return Ok(format!("Maker成交 {size:.6}@{px}")),
+            Ok(_) => {}
+            Err(e) => {
+                return Err(e.context(format!("Maker 超时撤单失败 {coin} (oid={oid})")));
+            }
+        }
+
+        let rem = round_size(remaining, sz_decimals);
+        if rem <= 0.0 || rem * mid < 10.0 {
+            return Ok(format!("Maker成交 {:.6}@{px}", (size - rem).max(0.0)));
+        }
+        let st = self
+            .ioc(coin, buy, reduce_only, rem, mid, slippage, sz_decimals)
+            .await?;
+        let filled_maker = (size - rem).max(0.0);
+        if filled_maker > 1e-12 {
+            Ok(format!("Maker {filled_maker:.6} + IOC {rem:.6} · {}", describe(&st)))
+        } else {
+            Ok(format!("超时转IOC · {}", describe(&st)))
+        }
+    }
 }
 
 fn parse_perp_equity(perp: &Value) -> Result<f64> {

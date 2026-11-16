@@ -71,6 +71,8 @@ pub struct TradeConfig {
     ///   换手 1.69→1.45，两个半段都改善（2.58/2.30 → 2.61/2.60）。
     /// 诚实标注：样本内结论，尚未前向验证。默认保持 0.5，不静默改变实盘行为。
     pub momentum_weight: f64,
+    /// 分腿逆波动率加权（1/σ_20d，截断到 [0.01, 0.25] 并分别归一化多空两腿各占 0.5）。
+    pub inv_vol: bool,
 }
 
 impl TradeConfig {
@@ -107,6 +109,7 @@ impl Default for TradeConfig {
             take_profit_pct: 0.0,
             dd_weight: 0.0,
             upfrac_weight: 0.0,
+            inv_vol: true,
         }
     }
 }
@@ -274,6 +277,7 @@ impl FactorPanel {
         let mut coins: Vec<String> = Vec::new();
         let mut mom_adj: Vec<f64> = Vec::new();
         let mut low_vol: Vec<f64> = Vec::new();
+        let mut vol_map: HashMap<String, f64> = HashMap::new();
         let mut shock_v: Vec<f64> = Vec::new();
         let mut dd_v: Vec<f64> = Vec::new();
         let mut upfrac_v: Vec<f64> = Vec::new();
@@ -366,6 +370,7 @@ impl FactorPanel {
             let dd = if hi > 0.0 && hi.is_finite() { now / hi - 1.0 } else { 0.0 };
             let upfrac = if win_n > 0 { ups as f64 / win_n as f64 } else { 0.5 };
 
+            vol_map.insert(coin.clone(), vol);
             coins.push(coin.clone());
             mom_adj.push((now / past - 1.0) / vol);
             low_vol.push(-vol);
@@ -450,11 +455,36 @@ impl FactorPanel {
         // 跨因子抵消会把 Σ|w| 压到 1 以下：某币一个因子看多、另一个看空时会相互
         // 抵消（实测约 44 个流动币里有 23 个归零）。不重新归一化的话，实际敞口会
         // 比设置低 13%~30%，而且恰好在三因子分歧最大时最低。
-        let sum: f64 = out.iter().map(|(_, w)| w.abs()).sum();
-        assert!(sum.is_finite(), "权重和出现了非有限值");
-        if sum > 0.0 {
-            for (_, w) in out.iter_mut() {
-                *w /= sum;
+        if cfg.inv_vol {
+            for (coin, w) in out.iter_mut() {
+                let v = vol_map.get(coin).copied().unwrap_or(0.05).clamp(0.01, 0.25);
+                *w /= v;
+            }
+            let long_sum: f64 = out.iter().filter(|(_, w)| *w > 0.0).map(|(_, w)| *w).sum();
+            let short_sum: f64 = out.iter().filter(|(_, w)| *w < 0.0).map(|(_, w)| w.abs()).sum();
+            if long_sum > 0.0 && short_sum > 0.0 {
+                for (_, w) in out.iter_mut() {
+                    if *w > 0.0 {
+                        *w *= 0.5 / long_sum;
+                    } else {
+                        *w *= 0.5 / short_sum;
+                    }
+                }
+            } else {
+                let sum: f64 = out.iter().map(|(_, w)| w.abs()).sum();
+                if sum > 0.0 {
+                    for (_, w) in out.iter_mut() {
+                        *w /= sum;
+                    }
+                }
+            }
+        } else {
+            let sum: f64 = out.iter().map(|(_, w)| w.abs()).sum();
+            assert!(sum.is_finite(), "权重和出现了非有限值");
+            if sum > 0.0 {
+                for (_, w) in out.iter_mut() {
+                    *w /= sum;
+                }
             }
         }
 
@@ -913,7 +943,7 @@ async fn execute_inner(
             continue;
         }
         orders[i] = match exec
-            .ioc(&o.coin, o.buy, true, o.size, o.mid, cfg.slippage, o.sz_decimals)
+            .maker_then_ioc(&o.coin, o.buy, true, o.size, o.mid, cfg.slippage, o.sz_decimals, 12)
             .await
         {
             Ok(st) => format!(
@@ -921,7 +951,7 @@ async fn execute_inner(
                 if o.buy { "买" } else { "卖" },
                 o.coin,
                 o.size,
-                crate::exchange::describe(&st),
+                st,
                 o.reason
             ),
             Err(e) => format!("{} {} 平仓失败: {e}", if o.buy { "买" } else { "卖" }, o.coin),
@@ -979,7 +1009,7 @@ async fn execute_inner(
             // 绝不能按计划继续加另一个方向。
             if actual * o.target < 0.0 && actual.abs() > 1e-12 {
                 orders[i] = match exec
-                    .ioc(
+                    .maker_then_ioc(
                         &o.coin,
                         actual < 0.0,
                         true,
@@ -987,6 +1017,7 @@ async fn execute_inner(
                         o.mid,
                         cfg.slippage,
                         o.sz_decimals,
+                        12,
                     )
                     .await
                 {
@@ -995,7 +1026,7 @@ async fn execute_inner(
                         if actual < 0.0 { "买" } else { "卖" },
                         o.coin,
                         actual.abs(),
-                        crate::exchange::describe(&st)
+                        st
                     ),
                     Err(e) => format!("{} 纠正残余仓位失败: {e}", o.coin),
                 };
@@ -1014,7 +1045,7 @@ async fn execute_inner(
             }
             let reduce_only = actual * delta < 0.0;
             orders[i] = match exec
-                .ioc(
+                .maker_then_ioc(
                     &o.coin,
                     delta > 0.0,
                     reduce_only,
@@ -1022,6 +1053,7 @@ async fn execute_inner(
                     o.mid,
                     cfg.slippage,
                     o.sz_decimals,
+                    12,
                 )
                 .await
             {
@@ -1031,7 +1063,7 @@ async fn execute_inner(
                     o.coin,
                     if reduce_only { "只减仓" } else { "开仓" },
                     dsize,
-                    crate::exchange::describe(&st),
+                    st,
                     if (dsize - o.size).abs() > 1e-12 {
                         format!("{}（按实际仓位修正）", o.reason)
                     } else {
@@ -1121,7 +1153,7 @@ mod tests {
     #[test]
     fn factor_weight_is_a_linear_mix_of_the_two_books() {
         let panel = synthetic();
-        let base = TradeConfig { min_position_usd: 0.0, ..Default::default() };
+        let base = TradeConfig { min_position_usd: 0.0, inv_vol: false, ..Default::default() };
         let weights = |mw: f64| {
             let cfg = TradeConfig { momentum_weight: mw, ..base.clone() };
             let (w, _) = target_weights(&panel, &cfg, 1000.0, i64::MAX);
@@ -1253,6 +1285,22 @@ mod tests {
         let (w, _) = target_weights(&panel, &cfg, 1000.0, i64::MAX);
         let net: f64 = w.iter().map(|(_, x)| *x).sum();
         assert!(net.abs() < 1e-9, "组合必须市场中性，净敞口 {net}");
+    }
+
+    #[test]
+    fn inv_vol_weights_keep_market_neutrality_and_unit_gross() {
+        let panel = synthetic();
+        let cfg = TradeConfig {
+            min_position_usd: 0.0,
+            inv_vol: true,
+            ..Default::default()
+        };
+        let (w, _) = target_weights(&panel, &cfg, 1000.0, i64::MAX);
+        assert!(!w.is_empty());
+        let gross: f64 = w.iter().map(|(_, x)| x.abs()).sum();
+        let net: f64 = w.iter().map(|(_, x)| *x).sum();
+        assert!((gross - 1.0).abs() < 1e-9, "inv_vol Σ|w| 必须是 1，实际 {gross}");
+        assert!(net.abs() < 1e-9, "inv_vol 净敞口必须是 0，实际 {net}");
     }
 
     #[test]
