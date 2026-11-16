@@ -5,7 +5,7 @@
 """
 from pathlib import Path
 BASE = Path(__file__).resolve().parent
-import json, urllib.request, urllib.error, time, datetime, os
+import json, urllib.request, urllib.error, time, datetime, os, random, threading
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from candle_rules import (
     DAY_MS, daily_request_end, merge_closed_daily_bars,
@@ -13,8 +13,24 @@ from candle_rules import (
 )
 
 INFO_URL = "https://api.hyperliquid.xyz/info"
-MAX_WORKERS = 4
-MAX_RETRIES = 5
+MAX_WORKERS = 2
+MAX_RETRIES = 6
+MIN_REQ_INTERVAL = 0.35
+_rate_lock = threading.Lock()
+_next_req_at = 0.0
+
+
+def _pace(extra_delay=0.0):
+    global _next_req_at
+    with _rate_lock:
+        now = time.monotonic()
+        if extra_delay > 0:
+            _next_req_at = max(_next_req_at, now + extra_delay)
+            return
+        wait = _next_req_at - now
+        _next_req_at = max(now, _next_req_at) + MIN_REQ_INTERVAL
+    if wait > 0:
+        time.sleep(wait)
 
 
 def post(url, body):
@@ -22,6 +38,7 @@ def post(url, body):
                                  headers={"Content-Type": "application/json"})
     errors = []
     for attempt in range(MAX_RETRIES):
+        _pace()
         try:
             with urllib.request.urlopen(req, timeout=30) as r:
                 result = json.load(r)
@@ -31,13 +48,16 @@ def post(url, body):
         except Exception as e:
             errors.append("%s: %s" % (type(e).__name__, e))
             if attempt + 1 < MAX_RETRIES:
-                wait = min(120.0, 5.0 * (2 ** attempt)) if isinstance(
-                    e, urllib.error.HTTPError) and e.code == 429 else min(30.0, 2.0 ** attempt)
+                is_429 = isinstance(e, urllib.error.HTTPError) and e.code == 429
+                wait = min(120.0, 5.0 * (2 ** attempt)) if is_429 else min(30.0, 2.0 ** attempt)
                 if isinstance(e, urllib.error.HTTPError) and e.headers.get("Retry-After"):
                     try:
                         wait = max(wait, float(e.headers["Retry-After"]))
                     except ValueError:
                         pass
+                wait += random.uniform(0.5, 3.0)
+                if is_429:
+                    _pace(extra_delay=wait)
                 print("[ohlcv] %s 请求失败，%.1f 秒后重试（%d/%d）" % (
                     body.get("req", {}).get("coin", body.get("type", "?")),
                     wait, attempt + 1, MAX_RETRIES), flush=True)
