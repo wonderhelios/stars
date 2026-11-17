@@ -4,6 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>stars · 量化策略控制台</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='bg' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0%25' stop-color='%23101826'/%3E%3Cstop offset='100%25' stop-color='%2307090e'/%3E%3C/linearGradient%3E%3ClinearGradient id='g' x1='0' y1='1' x2='1' y2='0'%3E%3Cstop offset='0%25' stop-color='%2310b981'/%3E%3Cstop offset='100%25' stop-color='%2338bdf8'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect x='2' y='2' width='60' height='60' rx='16' fill='url(%23bg)' stroke='url(%23g)' stroke-opacity='.5' stroke-width='2.5'/%3E%3Cpath d='M13 43 L25 34 L34 38 L49 18' fill='none' stroke='url(%23g)' stroke-width='4.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M44 13 L45.9 18.1 L51 20 L45.9 21.9 L44 27 L42.1 21.9 L37 20 L42.1 18.1 Z' fill='%2334d399'/%3E%3C/svg%3E" />
     <style>
       :root {
         --bg: #07090e;
@@ -1006,6 +1007,140 @@
           grid-template-columns: 1fr;
         }
       }
+
+      /* 手机端：可见导航、紧凑指标、表单双列，避免桌面布局缩小后显得拥挤。 */
+      @media (max-width: 820px) {
+        html, body { width: 100%; overflow-x: clip; }
+        .topbar {
+          padding: 8px 10px 9px;
+          gap: 7px;
+          box-shadow: 0 8px 22px rgba(0,0,0,.18);
+        }
+        .brand { min-height: 30px; }
+        .nav {
+          display: grid;
+          grid-template-columns: repeat(4, minmax(0, 1fr));
+          flex: 0 0 auto;
+          gap: 4px;
+          padding: 0;
+          overflow: visible;
+        }
+        .nav button {
+          min-width: 0;
+          min-height: 44px;
+          width: 100%;
+          padding: 5px 3px;
+          justify-content: center;
+          flex-direction: column;
+          gap: 3px;
+          border-radius: 8px;
+          font-size: 10.5px;
+          line-height: 1.2;
+        }
+        .nav button svg { width: 16px; height: 16px; }
+        #workspace { padding: 14px 12px 28px; }
+        .panel, .monitor-shell { gap: 13px; }
+        .panel-head, .workspace-heading, .setup-heading, .combine-heading,
+        .hc-overview-head { gap: 9px; }
+        .panel-head h2, .workspace-heading h2, .setup-heading h2 { font-size: 20px; }
+        .panel-head .actions, .workspace-heading .actions, .combine-heading-actions { width: 100%; }
+        .panel-head .actions .btn, .workspace-heading .actions .btn { min-height: 40px; }
+        .monitor-toolbar { gap: 9px; }
+        .live-status { align-items: flex-start; gap: 8px; padding: 10px 11px; font-size: 12px; }
+        .live-status-left, .live-status-right { gap: 6px 9px; }
+        .mo-strategy-tabs, #an-strategy-tabs { gap: 2px; padding: 3px; }
+        .mo-strategy-tabs button, #an-strategy-tabs button { min-height: 38px; padding: 6px 8px; font-size: 11px; }
+        .content-card, .setup-card, .combine-section, .account-details { padding: 14px 13px; border-radius: 10px; }
+        .performance-panel { gap: 10px; }
+        .account-summary, .daily-exec-kpis, .combine-overview,
+        .account-summary.cols-3, .monitor-overview-band:not(.single-col) .account-summary,
+        .hc-primary-metrics, .hc-secondary-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+        .account-summary .metric, .daily-exec-kpis .metric { min-width: 0; padding: 11px 10px; }
+        .metric .k, .combine-kpi-label { font-size: 11px; line-height: 1.35; }
+        .metric .v, .combine-kpi-value { font-size: 17px; line-height: 1.35; overflow-wrap: anywhere; }
+        .account-return, .combine-kpi-detail { font-size: 10px; line-height: 1.35; }
+        .total-card, .monitor-overview-band:not(.single-col) .total-card { grid-template-columns: 1fr 1fr; gap: 9px; padding: 14px; }
+        .total-item, .monitor-overview-band:not(.single-col) .total-item { min-width: 0; padding: 9px 0 0; border-top: 1px solid var(--border); border-left: 0; }
+        .total-item.total-sum, .monitor-overview-band:not(.single-col) .total-item.total-sum { grid-column: 1 / -1; padding: 0 0 9px; border-top: 0; }
+        .total-sum .total-value { font-size: 25px; overflow-wrap: anywhere; }
+        .total-value { font-size: 17px; overflow-wrap: anywhere; }
+        .chart-summary { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+        .chart-summary > div { min-width: 0; }
+        .chart-summary .chart-coverage { grid-column: 1 / -1; margin: 0; overflow-wrap: anywhere; }
+        .chart-summary strong { font-size: 17px; overflow-wrap: anywhere; }
+        .chart-caption { justify-content: flex-start; }
+        .setup-layout { grid-template-columns: minmax(0, 1fr); gap: 10px; }
+        .setup-main, .setup-aside { gap: 10px; min-width: 0; }
+        .setup-card header { gap: 9px; margin-bottom: 11px; }
+        .setup-card header p, .sub { font-size: 12px; line-height: 1.5; }
+        .setup-fields, .shadow-fields { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px 8px; }
+        .setup-fields .field, .shadow-fields .field { min-width: 0; }
+        .setup-fields input, .setup-fields select, .shadow-fields input, .shadow-fields select { min-width: 0; font-size: 14px; }
+        .setup-card .field:has(#lv-account), .setup-card .field:has(#lv-key),
+        .setup-card .field:has(#lv-vault), .setup-card .field:has(#lv-ml-vault),
+        .setup-card .field:has(#lv-ml-python), .setup-card .field:has(#lv-ml-dir) { grid-column: 1 / -1; }
+        .setup-aside .setup-fields { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .setup-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px; }
+        .setup-actions .btn, .setup-save .btn { min-width: 0; min-height: 42px; padding: 8px; white-space: normal; line-height: 1.3; font-size: 11.5px; }
+        .setup-save { align-items: stretch; gap: 8px; padding: 11px; }
+        .setup-save > span { flex-basis: 100%; }
+        .setup-save .btn { width: 100%; }
+        .daily-exec-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .daily-exec-kpis .metric .v { font-size: 16px; }
+        .daily-exec-head { align-items: stretch; }
+        .daily-exec-head .segmented { width: 100%; }
+        .daily-exec-head .segmented button { flex: 1; padding-inline: 6px; }
+        .daily-exec-chart-label { gap: 4px 10px; font-size: 10.5px; }
+        .daily-exec-pagination { gap: 8px; }
+        .daily-exec-pagination > div { display: flex; gap: 6px; }
+        .daily-exec-pagination .btn, .pager .btn { min-height: 38px; padding: 7px 9px; font-size: 11px; }
+        .pager { justify-content: space-between; flex-wrap: wrap; gap: 7px; }
+        .pager .info { order: -1; flex-basis: 100%; text-align: center; }
+        .hc-budget-control { align-items: stretch; }
+        .hc-budget-control .field { flex: 1 1 100%; }
+        .hc-event { align-items: flex-start; gap: 7px; }
+        .hc-event-time { font-size: 10px; }
+        .combine-bottom-grid, .hlcarry-top-grid, .hlcarry-bottom-grid { grid-template-columns: minmax(0, 1fr); gap: 10px; }
+        .combine-overview > :last-child:nth-child(odd) { grid-column: 1 / -1; }
+        .score-body { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px; }
+        .score-row { min-width: 0; padding: 9px; }
+        .account-detail-tabs { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: thin; }
+        .account-detail-tabs button { flex: 0 0 auto; min-height: 38px; }
+        .account-details .metric { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px; }
+        .account-details .metric .v { overflow-wrap: anywhere; }
+        .table-scroll { max-width: 100%; overscroll-behavior-x: contain; scrollbar-width: thin; }
+        .table-scroll table { min-width: max-content; }
+        th, td { padding: 9px 10px; }
+        .empty { padding: 18px 12px; }
+        .note, .metric-definition p, .daily-exec-definition p { overflow-wrap: anywhere; }
+        details > summary { min-height: 42px; }
+      }
+      @media (max-width: 520px) {
+        #workspace { padding: 12px 10px 24px; }
+        .topbar { padding-inline: 8px; }
+        .nav { gap: 3px; }
+        .nav button { min-height: 42px; font-size: 10px; }
+        .account-summary, .daily-exec-kpis, .combine-overview,
+        .account-summary.cols-3, .monitor-overview-band:not(.single-col) .account-summary,
+        .hc-primary-metrics, .hc-secondary-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .setup-fields, .shadow-fields, .setup-aside .setup-fields { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .setup-card h3 { font-size: 14px; }
+        .field label { font-size: 11px; line-height: 1.35; }
+        .content-card > .panel-head, .monitor-section-head, .combine-section-head { align-items: flex-start; }
+        .monitor-section-head > .segmented { width: 100%; }
+        .monitor-section-head > .segmented button { flex: 1; min-width: 0; padding-inline: 5px; }
+        .combine-overview > :last-child:nth-child(odd) { grid-column: 1 / -1; }
+        .score-body { grid-template-columns: 1fr 1fr; }
+        .checklist li { align-items: flex-start; padding: 9px 10px; gap: 8px; }
+        .checklist .txt span { font-size: 11px; line-height: 1.4; }
+      }
+      @media (max-width: 360px) {
+        #workspace { padding-inline: 8px; }
+        .content-card, .setup-card, .combine-section, .account-details { padding: 12px 10px; }
+        .account-summary .metric, .daily-exec-kpis .metric { padding: 9px 8px; }
+        .metric .v, .combine-kpi-value { font-size: 15px; }
+        .nav button { font-size: 9.5px; }
+      }
     </style>
     <script>
       try {
@@ -1018,7 +1153,7 @@
     <a class="skip-link" href="#workspace">跳转到主要内容</a>
     <header class="topbar">
       <div class="brand">
-        <span class="dot" aria-hidden="true"></span>
+        <svg width="24" height="24" viewBox="0 0 64 64" aria-hidden="true" style="flex-shrink:0"><defs><linearGradient id="brand-bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#101826"/><stop offset="100%" stop-color="#07090e"/></linearGradient><linearGradient id="brand-g" x1="0" y1="1" x2="1" y2="0"><stop offset="0%" stop-color="#10b981"/><stop offset="100%" stop-color="#38bdf8"/></linearGradient></defs><rect x="2" y="2" width="60" height="60" rx="16" fill="url(#brand-bg)" stroke="url(#brand-g)" stroke-opacity=".55" stroke-width="2.5"/><path d="M13 43 L25 34 L34 38 L49 18" fill="none" stroke="url(#brand-g)" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M44 13 L45.9 18.1 L51 20 L45.9 21.9 L44 27 L42.1 21.9 L37 20 L42.1 18.1 Z" fill="#34d399"/></svg>
         <span>stars<small>QUANT TERMINAL</small></span>
         <button id="theme-toggle" class="theme-toggle" type="button" title="切换深色 / 浅色风格" aria-label="切换深色 / 浅色风格">
           <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
