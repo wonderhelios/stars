@@ -800,15 +800,19 @@ function mlMetricsSummary(d, mlAcc, mlHist) {
     const rets = [];
     for (let i = 0; i < adjPts.length; i++) {
       const p = adjPts[i];
-      const v = Number.isFinite(p.equity) ? p.equity : (base + (p.pnl || 0));
+      // strategyHistory 返回的是扣除基准和出入金后的累计盈亏（从 0 起步），加回 base 才是调整后净值
+      const v = base + (Number.isFinite(p.equity) ? p.equity : 0);
       if (v > peak) peak = v;
       if (peak > 0) maxDd = Math.max(maxDd, ((peak - v) / peak) * 100);
       const iso = new Date(p.ts).toISOString();
       dayLast.set(iso.slice(0, 10), v);
       monthLast.set(iso.slice(0, 7), v);
-      if (i > 0 && adjPts[i].ts > adjPts[i - 1].ts) {
-        const prev = Number.isFinite(adjPts[i - 1].equity) ? adjPts[i - 1].equity : (base + (adjPts[i - 1].pnl || 0));
-        if (prev > 0) rets.push(v / prev - 1);
+      if (i > 0) {
+        const dtHours = (adjPts[i].ts - adjPts[i - 1].ts) / 3600000;
+        const prev = base + (Number.isFinite(adjPts[i - 1].equity) ? adjPts[i - 1].equity : 0);
+        if (dtHours >= 0.5 && prev > 0) {
+          rets.push((v / prev - 1) / Math.sqrt(dtHours));
+        }
       }
     }
     maxDdPct = maxDd;
