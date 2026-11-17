@@ -704,6 +704,7 @@ function renderTotal(d) {
       <div class="total-item total-sum"><span class="total-label">全部账户净值</span><span class="total-value">$${fmt(total, 2)}</span>${changeHtml}</div>
       <div class="total-item"><span class="total-label">动量账户</span><span class="total-value">$${fmt(mom, 2)}</span>${momSub}</div>
       <div class="total-item"><span class="total-label">ML 账户</span><span class="total-value">$${fmt(ml, 2)}</span>${mlSub}</div>
+      <div class="total-alloc-bar" aria-hidden="true"><div class="total-alloc-mom" style="width:${momShare.toFixed(1)}%"></div><div class="total-alloc-ml" style="width:${mlShare.toFixed(1)}%"></div></div>
     </div>`;
 }
 
@@ -1348,22 +1349,51 @@ function renderLiveChart(history, shadow) {
   const X = ts => padL + (last.ts === first.ts ? 0.5 : (ts - first.ts) / (last.ts - first.ts)) * (W - padL - padR);
   const Y = v => padT + (1 - (v - ax.lo) / span) * (H - padT - padB);
   const money = v => (v < 0 ? "−" : "+") + "$" + Math.abs(v).toFixed(2);
-  const grid = ax.lines.map(v => `<line x1="${padL}" y1="${Y(v)}" x2="${W-padR}" y2="${Y(v)}" stroke="#eaf0f0"/><text x="${padL-10}" y="${Y(v)+4}" text-anchor="end" font-size="11" fill="#86949d">$${v.toFixed(span < 10 ? 2 : 0)}</text>`).join("");
+  const grid = ax.lines.map(v => `<line x1="${padL}" y1="${Y(v)}" x2="${W-padR}" y2="${Y(v)}" stroke="rgba(255,255,255,0.06)"/><text x="${padL-10}" y="${Y(v)+4}" text-anchor="end" font-size="11" font-family="var(--font-mono)" fill="#64748b">$${v.toFixed(span < 10 ? 2 : 0)}</text>`).join("");
   const label = ts => chartRange === "day" ? new Date(ts).toISOString().slice(11,16) : ts2m(ts).slice(0,5);
   const ticks = last.ts === first.ts ? [first.ts] : [first.ts, first.ts + (last.ts-first.ts)/2, last.ts];
-  const xlabels = ticks.map((ts,i) => `<text x="${X(ts)}" y="${H-10}" text-anchor="${i === 0 ? "start" : i === ticks.length-1 ? "end" : "middle"}" font-size="11" fill="#86949d">${label(ts)}</text>`).join("");
+  const xlabels = ticks.map((ts,i) => `<text x="${X(ts)}" y="${H-10}" text-anchor="${i === 0 ? "start" : i === ticks.length-1 ? "end" : "middle"}" font-size="11" font-family="var(--font-mono)" fill="#64748b">${label(ts)}</text>`).join("");
   const line = points.map(p => `${X(p.ts)},${Y(p.equity)}`).join(" ");
-  const circles = points.map(p => `<circle cx="${X(p.ts)}" cy="${Y(p.equity)}" r="6" fill="transparent" class="equity-point"><title>${ts2m(p.ts)} UTC · ${money(p.equity)}</title></circle>`).join("");
   el.innerHTML = `<div class="chart-summary"><div><span class="chart-eyebrow">累计策略盈亏 · 区间末值</span><strong>${money(last.equity)}</strong></div><div><span class="chart-eyebrow">区间策略盈亏</span><strong class="${change >= 0 ? "pos" : "neg"}">${change >= 0 ? "+" : "−"}$${Math.abs(change).toFixed(2)}</strong></div><div class="chart-coverage"><span class="chart-eyebrow">实际记录区间 · UTC</span>${ts2m(first.ts)} — ${ts2m(last.ts)}</div></div>
-    <svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${names[chartRange]}策略盈亏曲线">
-      <defs><linearGradient id="equity-area" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#0d9488" stop-opacity="0.14"/><stop offset="100%" stop-color="#0d9488" stop-opacity="0"/></linearGradient></defs>
-      ${grid}
-      ${points.length > 1 ? `<polygon points="${X(first.ts)},${H-padB} ${line} ${X(last.ts)},${H-padB}" fill="url(#equity-area)"/>` : ""}
-      <line x1="${padL}" y1="${Y(first.equity)}" x2="${W-padR}" y2="${Y(first.equity)}" stroke="#cbd5e1" stroke-dasharray="4 5"/>
-      <polyline points="${line}" fill="none" stroke="#0d9488" stroke-width="2.5" stroke-linejoin="round"/>
-      <circle cx="${X(last.ts)}" cy="${Y(last.equity)}" r="4" fill="#0d9488" stroke="white" stroke-width="2"/>
-      ${circles}${xlabels}
-    </svg><div class="chart-caption"><span><i></i>策略盈亏 <span class="muted">· 虚线为区间起点</span></span><span>${raw.length === 1 ? "仅一条记录，等待下一次采样" : "悬停查看采样值"} · 已扣登记出入金，含手续费与资金费</span></div>${adjusted.estimated ? '<p class="note">旧流水按登记时间估算；如为事后补记，请在资金流水中校正到账时间，避免历史曲线出现错位跳变。</p>' : ""}`;
+    <div style="position:relative">
+      <svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${names[chartRange]}策略盈亏曲线">
+        <defs><linearGradient id="equity-area" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#10b981" stop-opacity="0.24"/><stop offset="100%" stop-color="#10b981" stop-opacity="0"/></linearGradient></defs>
+        ${grid}
+        ${points.length > 1 ? `<polygon points="${X(first.ts)},${H-padB} ${line} ${X(last.ts)},${H-padB}" fill="url(#equity-area)"/>` : ""}
+        <line x1="${padL}" y1="${Y(first.equity)}" x2="${W-padR}" y2="${Y(first.equity)}" stroke="rgba(148,163,184,0.3)" stroke-dasharray="4 5"/>
+        <polyline points="${line}" fill="none" stroke="#10b981" stroke-width="2.2" stroke-linejoin="round"/>
+        <circle cx="${X(last.ts)}" cy="${Y(last.equity)}" r="4.5" fill="#34d399" stroke="#0e131b" stroke-width="2"/>
+        <line class="mo-xhair" x1="0" y1="${padT}" x2="0" y2="${H-padB}" stroke="rgba(255,255,255,0.22)" stroke-dasharray="3 3" style="display:none"/>
+        <circle class="mo-xdot" cx="0" cy="0" r="4.5" fill="#34d399" stroke="#0e131b" stroke-width="2" style="display:none"/>
+        ${xlabels}
+      </svg>
+      <div class="chart-tooltip" style="display:none"></div>
+    </div><div class="chart-caption"><span><i></i>策略盈亏 <span class="muted">· 虚线为区间起点</span></span><span>${raw.length === 1 ? "仅一条记录，等待下一次采样" : "移动鼠标查看精确采样值"} · 已扣登记出入金，含手续费与资金费</span></div>${adjusted.estimated ? '<p class="note">旧流水按登记时间估算；如为事后补记，请在资金流水中校正到账时间，避免历史曲线出现错位跳变。</p>' : ""}`;
+  const svg = el.querySelector("svg");
+  const tip = el.querySelector(".chart-tooltip");
+  const xhair = el.querySelector(".mo-xhair");
+  const xdot = el.querySelector(".mo-xdot");
+  if (svg && tip && xhair && xdot && points.length) {
+    svg.addEventListener("mousemove", (ev) => {
+      const rect = svg.getBoundingClientRect();
+      const mx = ((ev.clientX - rect.left) / rect.width) * W;
+      let best = points[0], bestDist = Infinity;
+      for (const p of points) {
+        const d = Math.abs(X(p.ts) - mx);
+        if (d < bestDist) { bestDist = d; best = p; }
+      }
+      const cx = X(best.ts), cy = Y(best.equity);
+      xhair.setAttribute("x1", cx); xhair.setAttribute("x2", cx); xhair.style.display = "";
+      xdot.setAttribute("cx", cx); xdot.setAttribute("cy", cy); xdot.style.display = "";
+      tip.style.display = "block";
+      tip.style.left = `${(cx / W) * 100}%`;
+      tip.style.top = `${(cy / H) * 100}%`;
+      tip.innerHTML = `<span class="muted">${ts2m(best.ts)} UTC</span> · <b class="${best.equity >= 0 ? 'pos' : 'neg'}">${money(best.equity)}</b>`;
+    });
+    svg.addEventListener("mouseleave", () => {
+      xhair.style.display = "none"; xdot.style.display = "none"; tip.style.display = "none";
+    });
+  }
 }
 
 
@@ -1954,25 +1984,25 @@ function renderEquityChart(id, history, aria, compare, third, fourth, summaryLab
   const span = ax.hi - ax.lo || 1;
   const X = (ts) => padL + (last.ts === first.ts ? 0.5 : (ts - first.ts) / (last.ts - first.ts)) * (W - padL - padR);
   const Y = (v) => padT + (1 - (v - ax.lo) / span) * (H - padT - padB);
-  const grid = ax.lines.map((v) => `<line x1="${padL}" y1="${Y(v)}" x2="${W - padR}" y2="${Y(v)}" stroke="#eaf0f0"/><text x="${padL - 10}" y="${Y(v) + 4}" text-anchor="end" font-size="11" fill="#86949d">$${v.toFixed(span < 10 ? 2 : 0)}</text>`).join("");
+  const grid = ax.lines.map((v) => `<line x1="${padL}" y1="${Y(v)}" x2="${W - padR}" y2="${Y(v)}" stroke="rgba(255,255,255,0.06)"/><text x="${padL - 10}" y="${Y(v) + 4}" text-anchor="end" font-size="11" font-family="var(--font-mono)" fill="#64748b">$${v.toFixed(span < 10 ? 2 : 0)}</text>`).join("");
   const line = pts.map((p) => `${X(p.ts)},${Y(p.eq)}`).join(" ");
   const ticks = [first.ts, first.ts + (last.ts - first.ts) / 2, last.ts];
-  const xlabels = ticks.map((ts, i) => `<text x="${X(ts)}" y="${H - 8}" text-anchor="${i === 0 ? "start" : i === ticks.length - 1 ? "end" : "middle"}" font-size="11" fill="#86949d">${ts2m(ts)}</text>`).join("");
+  const xlabels = ticks.map((ts, i) => `<text x="${X(ts)}" y="${H - 8}" text-anchor="${i === 0 ? "start" : i === ticks.length - 1 ? "end" : "middle"}" font-size="11" font-family="var(--font-mono)" fill="#64748b">${ts2m(ts)}</text>`).join("");
   const cmpLine = cmp.length > 1 ? cmp.map((p) => `${X(p.ts)},${Y(p.eq)}`).join(" ") : "";
   const thdLine = thd.length > 1 ? thd.map((p) => `${X(p.ts)},${Y(p.eq)}`).join(" ") : "";
   const fthLine = fth.length > 1 ? fth.map((p) => `${X(p.ts)},${Y(p.eq)}`).join(" ") : "";
   const sw = (color) => `<span style="display:inline-block;width:14px;height:3px;border-radius:2px;background:${color};margin-right:6px;vertical-align:middle"></span>`;
   const legendName = summaryLabels && summaryLabels.legendName ? summaryLabels.legendName : "影子 三因子";
   const cmpLegend = cmp.length > 1
-    ? `<div class="chart-coverage">${sw("#0d9488")}影子 三因子 · $${fmt(last.eq, 2)} · ${moneySigned(last.eq - first.eq)}</div>` +
-      `<div class="chart-coverage">${sw("#e0873a")}对照 纯动量 · $${fmt(cmp[cmp.length - 1].eq, 2)} · ${moneySigned(cmp[cmp.length - 1].eq - cmp[0].eq)}</div>` +
+    ? `<div class="chart-coverage">${sw("#10b981")}影子 三因子 · $${fmt(last.eq, 2)} · ${moneySigned(last.eq - first.eq)}</div>` +
+      `<div class="chart-coverage">${sw("#f59e0b")}对照 纯动量 · $${fmt(cmp[cmp.length - 1].eq, 2)} · ${moneySigned(cmp[cmp.length - 1].eq - cmp[0].eq)}</div>` +
       (thd.length > 1
-        ? `<div class="chart-coverage">${sw("#4a7fd4")}波动目标 · $${fmt(thd[thd.length - 1].eq, 2)} · ${moneySigned(thd[thd.length - 1].eq - thd[0].eq)}</div>`
+        ? `<div class="chart-coverage">${sw("#38bdf8")}波动目标 · $${fmt(thd[thd.length - 1].eq, 2)} · ${moneySigned(thd[thd.length - 1].eq - thd[0].eq)}</div>`
         : "") +
       (fth.length > 1
-        ? `<div class="chart-coverage">${sw("#7c4dff")}组合策略（动量+12h波段） · $${fmt(fth[fth.length - 1].eq, 2)} · ${moneySigned(fth[fth.length - 1].eq - fth[0].eq)}</div>`
+        ? `<div class="chart-coverage">${sw("#a78bfa")}组合策略（动量+12h波段） · $${fmt(fth[fth.length - 1].eq, 2)} · ${moneySigned(fth[fth.length - 1].eq - fth[0].eq)}</div>`
         : "")
-    : `<div class="chart-coverage">${sw("#0d9488")}${legendName} · $${fmt(last.eq, 2)} · ${moneySigned(last.eq - first.eq)}</div>`;
+    : `<div class="chart-coverage">${sw("#10b981")}${legendName} · $${fmt(last.eq, 2)} · ${moneySigned(last.eq - first.eq)}</div>`;
   el.innerHTML = `<div class="chart-summary">
       <div><span class="chart-eyebrow">${summaryLabels && summaryLabels.equityLabel ? summaryLabels.equityLabel : "影子权益 · 最新"}</span><strong>$${fmt(last.eq, 2)}</strong></div>
       <div><span class="chart-eyebrow">${summaryLabels && summaryLabels.changeLabel ? summaryLabels.changeLabel : "影子区间变化"}</span><strong class="${change >= 0 ? "pos" : "neg"}">${moneySigned(change)}</strong></div>
@@ -1980,15 +2010,15 @@ function renderEquityChart(id, history, aria, compare, third, fourth, summaryLab
       <div class="chart-coverage"><span class="chart-eyebrow">点数</span>${pts.length} · ${ts2m(first.ts)} — ${ts2m(last.ts)}</div>
     </div>
     <svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${aria}">
-      <defs><linearGradient id="carry-area" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#0d9488" stop-opacity="0.14"/><stop offset="100%" stop-color="#0d9488" stop-opacity="0"/></linearGradient></defs>
+      <defs><linearGradient id="carry-area" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#10b981" stop-opacity="0.22"/><stop offset="100%" stop-color="#10b981" stop-opacity="0"/></linearGradient></defs>
       ${grid}
       <polygon points="${X(first.ts)},${H - padB} ${line} ${X(last.ts)},${H - padB}" fill="url(#carry-area)"/>
-      <line x1="${padL}" y1="${Y(first.eq)}" x2="${W - padR}" y2="${Y(first.eq)}" stroke="#cbd5e1" stroke-dasharray="4 5"/>
-      ${cmpLine ? `<polyline points="${cmpLine}" fill="none" stroke="#e0873a" stroke-width="2.2" stroke-linejoin="round" opacity="0.95"/>` : ""}
-      ${thdLine ? `<polyline points="${thdLine}" fill="none" stroke="#4a7fd4" stroke-width="2.2" stroke-linejoin="round" opacity="0.95"/>` : ""}
-      ${fthLine ? `<polyline points="${fthLine}" fill="none" stroke="#7c4dff" stroke-width="2.2" stroke-linejoin="round" opacity="0.95"/>` : ""}
-      <polyline points="${line}" fill="none" stroke="#0d9488" stroke-width="2.5" stroke-linejoin="round"/>
-      <circle cx="${X(last.ts)}" cy="${Y(last.eq)}" r="4" fill="#0d9488" stroke="white" stroke-width="2"/>
+      <line x1="${padL}" y1="${Y(first.eq)}" x2="${W - padR}" y2="${Y(first.eq)}" stroke="rgba(148,163,184,0.3)" stroke-dasharray="4 5"/>
+      ${cmpLine ? `<polyline points="${cmpLine}" fill="none" stroke="#f59e0b" stroke-width="2" stroke-linejoin="round" opacity="0.9"/>` : ""}
+      ${thdLine ? `<polyline points="${thdLine}" fill="none" stroke="#38bdf8" stroke-width="2" stroke-linejoin="round" opacity="0.9"/>` : ""}
+      ${fthLine ? `<polyline points="${fthLine}" fill="none" stroke="#a78bfa" stroke-width="2" stroke-linejoin="round" opacity="0.9"/>` : ""}
+      <polyline points="${line}" fill="none" stroke="#10b981" stroke-width="2.2" stroke-linejoin="round"/>
+      <circle cx="${X(last.ts)}" cy="${Y(last.eq)}" r="4.5" fill="#34d399" stroke="#0e131b" stroke-width="2"/>
       ${xlabels}
     </svg>`;
 }
