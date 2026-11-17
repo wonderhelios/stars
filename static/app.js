@@ -14,6 +14,10 @@ const ts2m = (ms) => {
   const iso = new Date(ms).toISOString();
   return iso.slice(5, 10) + " " + iso.slice(11, 16);
 };
+const ts2bj = (ms) => {
+  const iso = new Date(ms + 8 * 3600000).toISOString();
+  return iso.slice(5, 10) + " " + iso.slice(11, 16);
+};
 
 // ---------- 鉴权（STARS_TOKEN ✗） ----------
 const AUTH_KEY = "stars_token";
@@ -2119,7 +2123,7 @@ function renderIntraday(d) {
     let pts = equityWindow(obs, cbRange, Date.now()).points.map(p => [p.ts, p.equity]);
     if (pts.length < 3 && cbRange !== "all") pts = h.slice(-3);
     renderEquityChart("cb-chart", withNow(pts, eq), "日内影子权益曲线", undefined, undefined, undefined,
-      {equityLabel:"影子净值 · 最新",changeLabel:"记录区间变化",legendName:"日内影子"});
+      {equityLabel:"影子净值 · 最新",changeLabel:"记录区间变化",legendName:"日内影子",useBjTime:true});
   } else if ($("cb-chart")) $("cb-chart").innerHTML = '<div class="empty">等待第一个前向净值点</div>';
   const legs = $("cb-legs");
   if (legs) {
@@ -2137,14 +2141,14 @@ function renderIntraday(d) {
     const sigPages = Math.max(1, Math.ceil(sigs.length / CB_PAGE_SIZE));
     if (cbSigPage > sigPages - 1) cbSigPage = 0;
     const sigRows = sigs.slice(cbSigPage * CB_PAGE_SIZE, (cbSigPage + 1) * CB_PAGE_SIZE);
-    $("cb-signals").innerHTML = sigs.length ? '<div class="table-scroll"><table><thead><tr><th>时间</th><th>币</th><th>方向</th><th>24h涨跌</th><th>4h OI</th><th>概率</th><th>处理</th></tr></thead><tbody>'+sigRows.map(s=>`<tr><td class="muted">${ts2m(s.ts)}</td><td>${escapeHTML(s.coin)}</td><td class="${s.side==="long"?"pos":"neg"}">${s.side==="long"?"多":"空"}</td><td>${(100*(s.ret24||0)).toFixed(1)}%</td><td>${(100*(s.oi_chg_4h||0)).toFixed(1)}%</td><td>${(100*(s.probability||0)).toFixed(1)}%</td><td class="${s.accepted?"pos":"muted"}">${escapeHTML(s.reason)}</td></tr>`).join("")+'</tbody></table></div>' + pager("cbsig", sigs.length, cbSigPage, CB_PAGE_SIZE) : '<div class="empty">尚无信号记录，每小时检查一次。</div>';
+    $("cb-signals").innerHTML = sigs.length ? '<div class="table-scroll"><table><thead><tr><th>时间 · UTC+8</th><th>币</th><th>方向</th><th>24h涨跌</th><th>4h OI</th><th>概率</th><th>处理</th></tr></thead><tbody>'+sigRows.map(s=>`<tr><td class="muted">${ts2bj(s.ts)}</td><td>${escapeHTML(s.coin)}</td><td class="${s.side==="long"?"pos":"neg"}">${s.side==="long"?"多":"空"}</td><td>${(100*(s.ret24||0)).toFixed(1)}%</td><td>${(100*(s.oi_chg_4h||0)).toFixed(1)}%</td><td>${(100*(s.probability||0)).toFixed(1)}%</td><td class="${s.accepted?"pos":"muted"}">${escapeHTML(s.reason)}</td></tr>`).join("")+'</tbody></table></div>' + pager("cbsig", sigs.length, cbSigPage, CB_PAGE_SIZE) : '<div class="empty">尚无信号记录，每小时检查一次。</div>';
   }
   const trades = (d.trades || []).slice().reverse();
   if ($("cb-trades")) {
     const trPages = Math.max(1, Math.ceil(trades.length / CB_PAGE_SIZE));
     if (cbTradePage > trPages - 1) cbTradePage = 0;
     const trRows = trades.slice(cbTradePage * CB_PAGE_SIZE, (cbTradePage + 1) * CB_PAGE_SIZE);
-    $("cb-trades").innerHTML = trades.length ? '<div class="table-scroll"><table><thead><tr><th>平仓时间</th><th>币</th><th>方向</th><th>开仓 / 平仓</th><th>概率</th><th>净盈亏</th><th>原因</th></tr></thead><tbody>'+trRows.map(t=>`<tr><td class="muted">${ts2m(t.exit_ts)}</td><td>${escapeHTML(t.coin)}</td><td class="${t.side==="long"?"pos":"neg"}">${t.side==="long"?"多":"空"}</td><td>${fmtCompact(t.entry_price)} / ${fmtCompact(t.exit_price)}</td><td>${(100*(t.probability||0)).toFixed(1)}%</td><td class="${(t.pnl_usd||0)>=0?"pos":"neg"}">${moneySigned(t.pnl_usd||0)}</td><td>${escapeHTML(t.reason)}</td></tr>`).join("")+'</tbody></table></div>' + pager("cbtr", trades.length, cbTradePage, CB_PAGE_SIZE) : '<div class="empty">暂无已平仓模拟成交。</div>';
+    $("cb-trades").innerHTML = trades.length ? '<div class="table-scroll"><table><thead><tr><th>平仓时间 · UTC+8</th><th>币</th><th>方向</th><th>开仓 / 平仓</th><th>概率</th><th>净盈亏</th><th>原因</th></tr></thead><tbody>'+trRows.map(t=>`<tr><td class="muted">${ts2bj(t.exit_ts)}</td><td>${escapeHTML(t.coin)}</td><td class="${t.side==="long"?"pos":"neg"}">${t.side==="long"?"多":"空"}</td><td>${fmtCompact(t.entry_price)} / ${fmtCompact(t.exit_price)}</td><td>${(100*(t.probability||0)).toFixed(1)}%</td><td class="${(t.pnl_usd||0)>=0?"pos":"neg"}">${moneySigned(t.pnl_usd||0)}</td><td>${escapeHTML(t.reason)}</td></tr>`).join("")+'</tbody></table></div>' + pager("cbtr", trades.length, cbTradePage, CB_PAGE_SIZE) : '<div class="empty">暂无已平仓模拟成交。</div>';
   }
 }
 
@@ -2197,7 +2201,8 @@ function renderEquityChart(id, history, aria, compare, third, fourth, summaryLab
   const grid = ax.lines.map((v) => `<line x1="${padL}" y1="${Y(v)}" x2="${W - padR}" y2="${Y(v)}" stroke="var(--grid-line, rgba(255,255,255,0.06))"/><text x="${padL - 10}" y="${Y(v) + 4}" text-anchor="end" font-size="11" font-family="var(--font-mono)" fill="#64748b">$${v.toFixed(span < 10 ? 2 : 0)}</text>`).join("");
   const line = pts.map((p) => `${X(p.ts)},${Y(p.eq)}`).join(" ");
   const ticks = [first.ts, first.ts + (last.ts - first.ts) / 2, last.ts];
-  const xlabels = ticks.map((ts, i) => `<text x="${X(ts)}" y="${H - 8}" text-anchor="${i === 0 ? "start" : i === ticks.length - 1 ? "end" : "middle"}" font-size="11" font-family="var(--font-mono)" fill="#64748b">${ts2m(ts)}</text>`).join("");
+  const tfmt = summaryLabels && summaryLabels.useBjTime ? ts2bj : ts2m;
+  const xlabels = ticks.map((ts, i) => `<text x="${X(ts)}" y="${H - 8}" text-anchor="${i === 0 ? "start" : i === ticks.length - 1 ? "end" : "middle"}" font-size="11" font-family="var(--font-mono)" fill="#64748b">${tfmt(ts)}</text>`).join("");
   const cmpLine = cmp.length > 1 ? cmp.map((p) => `${X(p.ts)},${Y(p.eq)}`).join(" ") : "";
   const thdLine = thd.length > 1 ? thd.map((p) => `${X(p.ts)},${Y(p.eq)}`).join(" ") : "";
   const fthLine = fth.length > 1 ? fth.map((p) => `${X(p.ts)},${Y(p.eq)}`).join(" ") : "";
@@ -2217,7 +2222,7 @@ function renderEquityChart(id, history, aria, compare, third, fourth, summaryLab
       <div><span class="chart-eyebrow">${summaryLabels && summaryLabels.equityLabel ? summaryLabels.equityLabel : "影子权益 · 最新"}</span><strong>$${fmt(last.eq, 2)}</strong></div>
       <div><span class="chart-eyebrow">${summaryLabels && summaryLabels.changeLabel ? summaryLabels.changeLabel : "影子区间变化"}</span><strong class="${change >= 0 ? "pos" : "neg"}">${moneySigned(change)}</strong></div>
       ${cmpLegend}
-      <div class="chart-coverage"><span class="chart-eyebrow">点数</span>${pts.length} · ${ts2m(first.ts)} — ${ts2m(last.ts)}</div>
+      <div class="chart-coverage"><span class="chart-eyebrow">点数${summaryLabels && summaryLabels.useBjTime ? " · UTC+8" : ""}</span>${pts.length} · ${tfmt(first.ts)} — ${tfmt(last.ts)}</div>
     </div>
     <svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${aria}">
       <defs><linearGradient id="carry-area" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#10b981" stop-opacity="0.22"/><stop offset="100%" stop-color="#10b981" stop-opacity="0"/></linearGradient></defs>

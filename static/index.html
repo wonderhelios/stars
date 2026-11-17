@@ -1390,49 +1390,51 @@
       </section>
 
       <!-- ============ 日内影子 ============ -->
-      <section id="view-combine" class="view combine-view">
-        <header class="combine-heading">
-          <div>
-            <span class="panel-kicker">BINANCE INTRADAY · 前向影子验证</span>
-            <h1>日内影子</h1>
-            <p class="sub">24h 涨跌榜 + 趋势 + OI 持仓结构 · 有机会才出手，1 ATR 止盈止损（纯前向模拟，绝不发真单）。</p>
-          </div>
-          <div class="combine-heading-actions">
-            <span id="cb-run-state" class="combine-state"><i></i>读取中</span>
-            <button class="btn ghost" id="cb-refresh" type="button">刷新数据</button>
-          </div>
-        </header>
-        <div id="cb-status" class="combine-alert" hidden></div>
-        <section class="combine-overview" id="cb-metrics" aria-label="日内影子表现"></section>
-        <section class="combine-section combine-chart-section">
-          <div class="combine-section-head">
-            <div><span class="section-eyebrow">PERFORMANCE</span><h2>影子盈亏曲线</h2></div>
-            <div class="segmented" id="cb-chart-tabs" role="group" aria-label="日内影子时间区间">
-              <button type="button" data-range="day" aria-pressed="false">日</button>
-              <button type="button" data-range="week" aria-pressed="false">周</button>
-              <button type="button" data-range="month" aria-pressed="false">月</button>
-              <button type="button" data-range="all" aria-pressed="true">全部</button>
+      <section id="view-combine" class="view">
+        <div class="panel">
+          <div class="panel-head">
+            <div>
+              <span class="panel-kicker">BINANCE INTRADAY · 前向影子验证</span>
+              <h2>日内影子</h2>
+              <p class="sub">24h 涨跌榜 + 趋势 + OI 持仓结构 · 有机会才出手，1 ATR 止盈止损（纯前向模拟，绝不发真单）。</p>
+            </div>
+            <div class="actions">
+              <span id="cb-run-state" class="combine-state"><i></i>读取中</span>
+              <button class="btn ghost" id="cb-refresh" type="button">刷新数据</button>
             </div>
           </div>
-          <div class="chart" id="cb-chart"></div>
-        </section>
-        <section class="combine-section combine-positions-section">
-          <div class="combine-section-head">
-            <div><span class="section-eyebrow">CURRENT POSITIONS</span><h2>当前持仓</h2></div>
-            <span id="cb-position-count" class="combine-section-meta"></span>
+          <div id="cb-status" class="warn-banner" hidden></div>
+          <section class="combine-overview" id="cb-metrics" aria-label="日内影子表现"></section>
+          <div class="content-card equity-card">
+            <div class="panel-head monitor-section-head">
+              <div><span class="section-eyebrow">PERFORMANCE</span><h2>影子盈亏曲线</h2></div>
+              <div class="segmented" id="cb-chart-tabs" role="group" aria-label="日内影子时间区间">
+                <button type="button" data-range="day" aria-pressed="false">日</button>
+                <button type="button" data-range="week" aria-pressed="false">周</button>
+                <button type="button" data-range="month" aria-pressed="false">月</button>
+                <button type="button" data-range="all" aria-pressed="true">全部</button>
+              </div>
+            </div>
+            <div class="chart" id="cb-chart"></div>
           </div>
-          <div id="cb-legs" class="combine-legs"></div>
-          <div id="cb-config" class="combine-config"></div>
-        </section>
-        <div class="combine-bottom-grid">
-          <section class="combine-section">
-            <div class="combine-section-head"><div><span class="section-eyebrow">OPPORTUNITY LOG</span><h2>最近信号</h2></div></div>
-            <div id="cb-signals"></div>
-          </section>
-          <section class="combine-section">
-            <div class="combine-section-head"><div><span class="section-eyebrow">PAPER FILLS</span><h2>最近模拟成交</h2></div></div>
-            <div id="cb-trades"></div>
-          </section>
+          <div class="content-card">
+            <div class="panel-head monitor-section-head">
+              <div><span class="section-eyebrow">CURRENT POSITIONS</span><h2>当前持仓</h2></div>
+              <span id="cb-position-count" class="muted sm"></span>
+            </div>
+            <div id="cb-legs" class="combine-legs"></div>
+            <div id="cb-config" class="combine-config"></div>
+          </div>
+          <div class="combine-bottom-grid">
+            <div class="content-card">
+              <div class="panel-head"><div><span class="section-eyebrow">OPPORTUNITY LOG</span><h2>最近信号</h2></div></div>
+              <div id="cb-signals"></div>
+            </div>
+            <div class="content-card">
+              <div class="panel-head"><div><span class="section-eyebrow">PAPER FILLS</span><h2>最近模拟成交</h2></div></div>
+              <div id="cb-trades"></div>
+            </div>
+          </div>
         </div>
       </section>
 
