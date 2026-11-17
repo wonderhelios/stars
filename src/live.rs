@@ -2276,6 +2276,12 @@ pub async fn record_equity_now(
     let acct = exec.account().await?;
     let unreal: f64 = acct.positions.values().map(|p| p.unrealized_pnl).sum();
     record_equity(live, path, &st.config.account, acct.equity, unreal).await?;
+    if let Some(ml_addr) = st.config.ml_vault_address.as_deref().filter(|s| !s.is_empty()) {
+        let ml_snap = ml_account_snapshot(ml_addr, None).await;
+        if ml_snap.error.is_none() && ml_snap.equity.is_finite() && ml_snap.equity >= 0.0 {
+            let _ = record_ml_equity(live, path, ml_snap.equity).await;
+        }
+    }
     Ok(())
 }
 

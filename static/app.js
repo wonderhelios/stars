@@ -1259,22 +1259,29 @@ function equityWindow(history, range, now) {
 }
 
 
-// 合并两个子账户的净值历史（按时间对齐，前值填充后相加）——「全部账户」曲线。
+// 合并两个子账户的净值历史（按小时对齐，避免异步采样/关网页期间互转导致中间出现假跳变）——「全部账户」曲线。
 function mergeHistory(a, b) {
   const clean = arr => (arr || []).filter(p => Number.isFinite(p.ts) && Number.isFinite(p.equity)).sort((x, y) => x.ts - y.ts);
   const aS = clean(a), bS = clean(b);
   if (!aS.length) return bS;
   if (!bS.length) return aS;
-  // 用【动量完整区间】✗ ML 首点之前用 ML 首点（初始资金 ✗ 假设持平）填充 ✗ 不要用 0
-  // （用 0 会导致 ML 记录开始那一刻曲线跳升 ML 本金 ✗ 被当成收益）
-  const tsSet = new Set([...aS.map(p => p.ts), ...bS.map(p => p.ts)]);
-  const tsList = [...tsSet].sort((x, y) => x - y);
-  const valAt = (arr, ts) => { let v = null; for (const p of arr) { if (p.ts <= ts) v = p.equity; else break; } return v; };
-  return tsList.map(ts => {
-    const av = valAt(aS, ts);
-    const bv = valAt(bS, ts);
-    return { ts, equity: (av ?? 0) + (bv ?? bS[0].equity) };
-  });
+  const bStart = bS[0].ts;
+  const bStartHour = Math.floor(bStart / 3600000);
+  const aBuckets = new Map();
+  for (const p of aS) aBuckets.set(Math.floor(p.ts / 3600000), p);
+  const bBuckets = new Map();
+  for (const p of bS) bBuckets.set(Math.floor(p.ts / 3600000), p);
+  const out = [];
+  for (const [h, ap] of [...aBuckets.entries()].sort((x, y) => x[0] - y[0])) {
+    if (h < bStartHour) {
+      out.push({ ts: ap.ts, equity: ap.equity + bS[0].equity });
+    } else {
+      // 同一小时（或相邻 ±1 小时内）都有采样才合并，跳过因未开网页导致 ML 缺采样的时段
+      const bp = bBuckets.get(h) || bBuckets.get(h - 1) || bBuckets.get(h + 1);
+      if (bp) out.push({ ts: Math.max(ap.ts, bp.ts), equity: ap.equity + bp.equity });
+    }
+  }
+  return out;
 }
 
 // 根据当前策略 tab 取曲线数据：all = A+B 合并，ml = ML，momentum = 动量
