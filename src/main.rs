@@ -138,7 +138,8 @@ async fn main() -> anyhow::Result<()> {
         let st = state.clone();
         tokio::spawn(async move {
             loop {
-                match crate::hlcarry::fetch_market(&st.http).await {
+                let carry_coins = st.hlcarry.lock().await.legs.iter().map(|l| l.coin.clone()).collect::<Vec<_>>();
+                match crate::hlcarry::fetch_market_with_funding(&st.http, &carry_coins).await {
                     Ok(market) => {
                         let now = crate::live::now_ms_pub();
                         let budget = {

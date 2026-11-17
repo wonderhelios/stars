@@ -126,8 +126,11 @@ pub fn select_candidates(market: &Market, params: &Params) -> Vec<Candidate> {
         b.funding_ann
             .partial_cmp(&a.funding_ann)
             .unwrap_or(std::cmp::Ordering::Equal)
+            .then_with(|| b.spot_volume.partial_cmp(&a.spot_volume).unwrap_or(std::cmp::Ordering::Equal))
             .then_with(|| a.coin.cmp(&b.coin))
     });
+    let mut seen = std::collections::HashSet::new();
+    out.retain(|c| seen.insert(c.coin.clone()));
     out.truncate(params.top_k);
     out
 }
@@ -639,9 +642,12 @@ impl HlCarryState {
             if !(q.spot > 0.0 && q.perp > 0.0 && q.spot.is_finite() && q.perp.is_finite()) {
                 continue;
             }
-            let dt_hours = ((now - leg.last_accrual_ms).max(0) as f64) / 3_600_000.0;
-            if dt_hours > 0.0 && q.funding_hourly.is_finite() {
-                let delta = leg.notional * q.funding_hourly * dt_hours;
+            if let Some(history) = market.funding_history.get(&leg.coin) {
+                // 只计已结算事件；不得用当前资金费率回填过去几小时。
+                let delta = history.iter()
+                    .filter(|(t, _)| *t > leg.last_accrual_ms && *t <= now)
+                    .map(|(_, rate)| leg.notional * rate)
+                    .sum::<f64>();
                 leg.funding_accrued += delta;
                 self.funding_total += delta;
                 leg.last_accrual_ms = now;
@@ -745,7 +751,6 @@ impl HlCarryState {
 pub struct Quote {
     pub spot: f64,
     pub perp: f64,
-    pub funding_hourly: f64,
     pub funding_ann: f64,
 }
 
@@ -763,6 +768,8 @@ pub struct Market {
     pub perp_mid: std::collections::HashMap<String, f64>,
     pub spot_mid: std::collections::HashMap<String, f64>,
     pub funding: std::collections::HashMap<String, f64>,
+    /// 实际资金费结算记录：(结算时间 ms, 当期费率)，只用于持仓计提。
+    pub funding_history: std::collections::HashMap<String, Vec<(i64, f64)>>,
     /// 现货 24h 成交额（按现货对名）。
     pub spot_volume: std::collections::HashMap<String, f64>,
     /// 已配对的标的（永续名 + 现货对），带成交额与资金费。
@@ -777,27 +784,25 @@ impl Market {
         Some(Quote {
             spot: sp,
             perp,
-            funding_hourly: fh,
             funding_ann: fh * 24.0 * 365.0 * 100.0,
         })
     }
 }
 
-/// 现货 token 名 → 永续币名。HL 现货用桥接符（UBTC/UETH/USOL/XMR1/USDT0）。
+/// 现货 token 名 → 永续币名。只接受同名或明确验证过的桥接资产。
+/// 绝不能删除末尾数字：XMR1 与 XMR2 是不同发行方的不同资产。
 pub fn perp_of_spot_token(token: &str, perps: &std::collections::HashSet<String>) -> Option<String> {
     if perps.contains(token) {
         return Some(token.to_string());
     }
-    if let Some(rest) = token.strip_prefix('U') {
-        if !rest.is_empty() && perps.contains(rest) {
-            return Some(rest.to_string());
-        }
-    }
-    let trimmed = token.trim_end_matches(|c: char| c.is_ascii_digit());
-    if !trimmed.is_empty() && perps.contains(trimmed) {
-        return Some(trimmed.to_string());
-    }
-    None
+    let mapped = match token {
+        "UBTC" => "BTC",
+        "UETH" => "ETH",
+        "USOL" => "SOL",
+        "XMR1" => "XMR",
+        _ => return None,
+    };
+    perps.contains(mapped).then(|| mapped.to_string())
 }
 
 async fn post(http: &reqwest::Client, payload: Value) -> Result<Value> {
@@ -811,12 +816,35 @@ async fn post(http: &reqwest::Client, payload: Value) -> Result<Value> {
     Ok(v)
 }
 
-/// 拉一次全市场快照：3 个公开请求。
+/// 拉一次全市场快照：3 个公开请求。新建仓不需要历史资金费。
 pub async fn fetch_market(http: &reqwest::Client) -> Result<Market> {
     let mids = post(http, json!({"type": "allMids"})).await?;
     let ctxs = post(http, json!({"type": "metaAndAssetCtxs"})).await?;
     let spot = post(http, json!({"type": "spotMetaAndAssetCtxs"})).await?;
     Ok(parse_market(&mids, &ctxs, &spot))
+}
+
+/// 持仓更新必须额外读取每个持仓币的实际资金费结算记录。
+pub async fn fetch_market_with_funding(http: &reqwest::Client, coins: &[String]) -> Result<Market> {
+    let mut market = fetch_market(http).await?;
+    let now = crate::live::now_ms_pub();
+    for coin in coins.iter().collect::<std::collections::HashSet<_>>() {
+        let rows = post(http, json!({
+            "type": "fundingHistory", "coin": coin,
+            "startTime": now - 48 * 3_600_000, "endTime": now,
+        })).await?;
+        let arr = rows.as_array().context("fundingHistory 响应不是数组")?;
+        let mut history = Vec::new();
+        for row in arr {
+            let Some(t) = row.get("time").and_then(|v| v.as_i64()) else { continue };
+            let Some(rate) = row.get("fundingRate").and_then(|v| v.as_str())
+                .and_then(|v| v.parse::<f64>().ok()).filter(|v| v.is_finite()) else { continue };
+            history.push((t, rate));
+        }
+        history.sort_by_key(|x| x.0);
+        market.funding_history.insert(coin.clone(), history);
+    }
+    Ok(market)
 }
 
 /// 纯解析：三个接口的原始 JSON → Market。抽出来便于用真实报文做单测。
@@ -1057,13 +1085,19 @@ mod tests {
             },
             ..HlCarryState::default()
         };
-        let m = market(&[("BTC", "@142", 0.000_0125, 5e6, 80_000.0)]);
+        let mut m = market(&[("BTC", "@142", 0.000_0125, 5e6, 80_000.0)]);
         st.open(1000.0, &m, 1_000_000);
         assert_eq!(st.legs.len(), 1);
         let fee = st.legs[0].fee_paid;
         assert!((fee - 1000.0 * ROUND_TRIP_FEE_BP / 10_000.0).abs() < 1e-9);
-        st.step(&m, 1_000_000 + 10 * 3_600_000);
-        let expect = 1000.0 * 0.000_0125 * 10.0;
+        let end = 1_000_000 + 10 * 3_600_000;
+        m.funding_history.insert("BTC".into(), vec![
+            (1_000_000 + 3_600_000, 0.000_01),
+            (end, -0.000_02),
+        ]);
+        st.step(&m, end);
+        st.step(&m, end); // 同一结算事件不得重复计提。
+        let expect = 1000.0 * (0.000_01 - 0.000_02);
         assert!((st.legs[0].funding_accrued - expect).abs() < 1e-9);
         assert!(st.legs[0].basis_pnl.abs() < 1e-6);
     }
@@ -1097,8 +1131,12 @@ mod tests {
             },
             ..HlCarryState::default()
         };
-        let m = market(&[("BTC", "@142", 0.000_0125, 5e6, 80_000.0)]);
+        let mut m = market(&[("BTC", "@142", 0.000_0125, 5e6, 80_000.0)]);
         let t0 = 1_793_059_200_000i64; // 2026-10-27T00:00Z
+        m.funding_history.insert("BTC".into(), vec![
+            (t0 + 10 * 3_600_000, 0.000_01),
+            (t0 + 30 * 3_600_000, 0.000_02),
+        ]);
         st.open(1000.0, &m, t0);
         let fee0 = st.fees_paid_total;
         assert!(fee0 > 0.0);
@@ -1270,5 +1308,37 @@ mod tests {
         assert!(latched.contains(&"ETH"), "UETH 应映射到永续 ETH");
         let q = m.quote("BTC", "@142").unwrap();
         assert!((q.funding_ann - 10.95).abs() < 0.01);
+    }
+
+    #[test]
+    fn xmr2_is_not_xmr_and_candidates_are_unique() {
+        let perps = std::collections::HashSet::from(["XMR".to_string()]);
+        assert_eq!(perp_of_spot_token("XMR1", &perps).as_deref(), Some("XMR"));
+        assert_eq!(perp_of_spot_token("XMR2", &perps), None);
+        assert_eq!(perp_of_spot_token("XMRN", &perps), None);
+        let m = market(&[
+            ("XMR", "@260", 0.000_1, 8e6, 500.0),
+            ("XMR", "@260", 0.000_1, 8e6, 500.0),
+        ]);
+        let selected = select_candidates(&m, &Params::default());
+        assert_eq!(selected.len(), 1);
+    }
+
+    #[test]
+    fn daily_components_reconcile_with_total_equity() {
+        let mut st = HlCarryState { params: Params { max_leg_weight: 1.0, ..Params::default() },
+            ..HlCarryState::default() };
+        let mut m = market(&[("BTC", "@142", 0.000_0125, 5e6, 80_000.0)]);
+        let t0 = 1_793_059_200_000i64;
+        m.funding_history.insert("BTC".into(), vec![(t0 + 3_600_000, 0.000_01)]);
+        st.open(1000.0, &m, t0);
+        st.step(&m, t0 + 3_600_000);
+        let funding = st.daily.iter().map(|d| d.funding).sum::<f64>();
+        let basis = st.daily.iter().map(|d| d.basis).sum::<f64>();
+        let fees = st.daily.iter().map(|d| d.fees).sum::<f64>();
+        assert!((funding - st.funding_total).abs() < 1e-8);
+        assert!((fees - st.fees_paid_total).abs() < 1e-8);
+        assert!((basis - st.basis_total()).abs() < 1e-8);
+        assert!((st.equity() - st.start_equity - funding - basis + fees).abs() < 1e-8);
     }
 }

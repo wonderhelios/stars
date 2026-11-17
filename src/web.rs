@@ -1473,11 +1473,12 @@ async fn hlcarry_step(State(state): State<AppState>) -> Response {
                 Json(json!({"ok": false, "error": "还没有影子持仓，请先用「按预算重置模拟」设置预算"})))
             .into_response();
     }
-    let market = match crate::hlcarry::fetch_market(&state.http).await {
+    let coins = state.hlcarry.lock().await.legs.iter().map(|l| l.coin.clone()).collect::<Vec<_>>();
+    let market = match crate::hlcarry::fetch_market_with_funding(&state.http, &coins).await {
         Ok(m) => m,
         Err(e) => {
             return (StatusCode::BAD_GATEWAY,
-                    Json(json!({"ok": false, "error": format!("行情失败: {e:#}")}))).into_response()
+                    Json(json!({"ok": false, "error": format!("行情或资金费历史失败: {e:#}")}))).into_response()
         }
     };
     let now = crate::live::now_ms_pub();
