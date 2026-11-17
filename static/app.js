@@ -2985,3 +2985,48 @@ if (themeToggleBtn) {
     syncThemeLabel();
   });
 }
+
+(() => {
+  let pop = null;
+  const ensurePop = () => {
+    if (!pop) {
+      pop = document.createElement("div");
+      pop.className = "trade-legs-floating";
+      pop.hidden = true;
+      document.body.appendChild(pop);
+    }
+    return pop;
+  };
+  const showPop = (wrap) => {
+    const src = wrap.querySelector(".trade-legs-pop");
+    if (!src) return;
+    const el = ensurePop();
+    el.innerHTML = src.innerHTML;
+    el.hidden = false;
+    const rect = wrap.getBoundingClientRect();
+    const pr = el.getBoundingClientRect();
+    let left = Math.min(window.innerWidth - pr.width - 12, Math.max(12, rect.right - pr.width));
+    let top = rect.top - pr.height - 8;
+    if (top < 12) top = Math.min(window.innerHeight - pr.height - 12, rect.bottom + 8);
+    el.style.left = left + "px";
+    el.style.top = top + "px";
+  };
+  const hidePop = () => { if (pop) pop.hidden = true; };
+  document.addEventListener("mouseover", (e) => {
+    const wrap = e.target.closest(".trade-legs-wrap");
+    if (wrap) showPop(wrap);
+  });
+  document.addEventListener("mouseout", (e) => {
+    const wrap = e.target.closest(".trade-legs-wrap");
+    if (wrap && !wrap.contains(e.relatedTarget)) hidePop();
+  });
+  document.addEventListener("focusin", (e) => {
+    const wrap = e.target.closest(".trade-legs-wrap");
+    if (wrap) showPop(wrap);
+  });
+  document.addEventListener("focusout", (e) => {
+    const wrap = e.target.closest(".trade-legs-wrap");
+    if (wrap && !wrap.contains(e.relatedTarget)) hidePop();
+  });
+  window.addEventListener("scroll", hidePop, true);
+})();
