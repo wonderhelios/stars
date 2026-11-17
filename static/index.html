@@ -178,9 +178,10 @@
       }
       .view { display: none; }
       .view.active { display: block; animation: viewFade 0.16s ease-out; }
+      .view.active.combine-view { display: flex; flex-direction: column; gap: 18px; }
       @keyframes viewFade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
 
-      .panel, .monitor-shell, .combine-view {
+      .panel, .monitor-shell {
         display: flex;
         flex-direction: column;
         gap: 18px;
