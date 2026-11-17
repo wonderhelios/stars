@@ -1344,7 +1344,7 @@
         <details class="setup-guide">
           <summary>策略说明与上线检查清单</summary>
           <div class="content-card" style="margin-top:10px">
-            <p class="note"><b>组合架构（动量 + ML）：</b>动量腿采用波动调整动量 + 成交量冲击（腿内等权），ML 腿采用 LightGBM 51 树 + buffer9 持仓惯性（腿内等权）；动量执行层优先使用 <b>Alo（Post-Only）Maker 挂单</b>（12 秒超时查单后转 IOC）。</p>
+            <p class="note"><b>组合架构（动量 + ML）：</b>动量腿采用波动调整动量 + 成交量冲击（腿内等权），ML 腿采用冻结 LightGBM close1/3/5 等权集成 + 8 多 8 空 + buffer11 持仓惯性（腿内等权，固定 2×）；动量执行层优先使用 <b>Alo（Post-Only）Maker 挂单</b>（12 秒超时查单后转 IOC）。</p>
             <p class="note"><b>⚠ 保证金模式：</b>Hyperliquid 不允许持仓时切换全仓/逐仓。新增开仓会自动设为全仓；已有逐仓仓位如需切换，请使用右侧「转为全仓」。</p>
             <ul class="checklist" style="margin-top:12px">
               <li><span class="state">✅</span><div class="txt"><b>信号与回测对齐</b><span>仅使用已收盘日线，避免未收盘当根 K 线污染因子</span></div><span class="badge ok">已对齐</span></li>

@@ -644,7 +644,7 @@ async fn ml_plan(State(state): State<AppState>) -> Response {
                 .into_response();
         }
     };
-    // 只调用一次 place.py：它先读取真实旧仓，再应用 buffer9。
+    // 只调用一次 place.py：它先读取真实旧仓，再应用 buffer11。
     // predict 字段保留给前端兼容，但必须复用实际计划中的同一个 target，
     // 不能再单独调用无持仓 predict.py，否则目标文字与订单会互相矛盾。
     let plan_json = match run_ml_python(
@@ -671,10 +671,10 @@ async fn ml_plan(State(state): State<AppState>) -> Response {
     };
     let target = plan.get("target").cloned().unwrap_or(json!({}));
     if target.get("preview_without_current_positions").and_then(|v| v.as_bool()) != Some(false)
-        || target.get("buffer").and_then(|v| v.as_i64()) != Some(9)
+        || target.get("buffer").and_then(|v| v.as_i64()) != Some(11)
     {
         return (StatusCode::INTERNAL_SERVER_ERROR,
-            Json(json!({"ok": false, "error": "调仓计划缺少真实持仓 buffer9，拒绝展示"})))
+            Json(json!({"ok": false, "error": "调仓计划缺少真实持仓 buffer11，拒绝展示"})))
             .into_response();
     }
     Json(json!({

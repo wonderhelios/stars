@@ -1,4 +1,4 @@
-"""AlphaPilot 复刻：单模型 JSON 推理、buffer9 选币和固定 2 倍权重。"""
+"""固定 close1/close3/close5 集成、buffer11 选币和固定 2 倍权重。"""
 from pathlib import Path
 import json
 import math
@@ -13,14 +13,23 @@ DEFAULT_MODEL_PATH = BASE / "model.json"
 def load_config(path=None):
     with open(path or DEFAULT_CONFIG_PATH, encoding="utf-8") as f:
         config = json.load(f)
-    if config.get("format_version") != 3:
+    if config.get("format_version") != 4:
         raise ValueError("不支持的 ML 策略配置版本")
-    if config.get("label") != "close3" or config.get("ensemble_components"):
-        raise ValueError("当前策略只允许单个 close3 模型")
+    if config.get("label") != "close1_close3_close5_equal":
+        raise ValueError("当前策略只允许固定 close1/close3/close5 等权集成")
+    components = config.get("ensemble_components")
+    if not isinstance(components, list) or [c.get("name") for c in components] != ["close1", "close3", "close5"]:
+        raise ValueError("集成组件必须依次为 close1、close3、close5")
+    if [c.get("horizon") for c in components] != [1, 3, 5]:
+        raise ValueError("集成组件周期必须为 1、3、5 日")
+    if any(abs(float(c.get("weight", 0)) - 1 / 3) > 1e-12 for c in components):
+        raise ValueError("三个集成组件必须等权")
+    if (config.get("long_n"), config.get("short_n"), config.get("exit_rank")) != (8, 8, 11):
+        raise ValueError("当前策略要求 8 多 8 空和 buffer11")
     if config.get("gross_leverage") != 2.0 or config.get("long_fraction") != 0.5:
         raise ValueError("当前实现要求固定总杠杆 2 倍且多空各占一半")
-    if config.get("exit_rank") != 9:
-        raise ValueError("当前复刻策略要求 buffer9")
+    if config.get("retrain_frequency") != "frozen":
+        raise ValueError("当前策略只允许冻结模型")
     return config
 
 
@@ -29,7 +38,7 @@ def load_model(path=None):
         return json.load(f)
 
 
-def export_component(model, name="close3"):
+def export_component(model, name="close3", horizon=3, weight=1.0):
     """将最佳迭代轮数导出为不依赖 LightGBM 的 JSON 树。"""
     best_iteration = int(model.best_iteration)
     dump = model.dump_model(num_iteration=best_iteration)
@@ -59,7 +68,8 @@ def export_component(model, name="close3"):
 
         walk(tree_info["tree_structure"])
         trees.append(nodes)
-    return {"name": name, "best_iteration": best_iteration, "trees": trees}
+    return {"name": name, "horizon": int(horizon), "weight": float(weight),
+            "best_iteration": best_iteration, "trees": trees}
 
 
 def predict_component(component, x):
@@ -87,7 +97,9 @@ def predict_component_rows(component, x):
 
 
 def model_scores(model, x):
-    values = predict_component_rows(model["component"], x)
+    values = np.zeros(len(x), dtype=float)
+    for component in model["components"]:
+        values += float(component["weight"]) * predict_component_rows(component, x)
     if not np.isfinite(values).all():
         raise ValueError("模型产生了非有限分数")
     return values
@@ -111,7 +123,7 @@ def ordered_feature_names():
 
 
 def fixed_weight_selection(scores, coins, config, current_positions=None):
-    """保留排名仍在 buffer9 内的旧仓，再按 score 排名补齐 6 多 6 空。"""
+    """保留排名仍在 buffer11 内的旧仓，再按 score 排名补齐 8 多 8 空。"""
     scores = np.asarray(scores, dtype=float)
     coins = np.asarray(coins).astype(str)
     if len(scores) < max(int(config["min_universe"]),
@@ -132,7 +144,7 @@ def fixed_weight_selection(scores, coins, config, current_positions=None):
                      if float(size) < 0 and rank.get(c, 0) >= n - exit_rank + 1),
                     key=rank.get, reverse=True)
     if len(longs) > long_n or len(shorts) > short_n:
-        raise ValueError("当前单边持仓超过目标数量，无法应用 buffer9")
+        raise ValueError("当前单边持仓超过目标数量，无法应用 buffer11")
     for coin in ranked:
         if len(longs) == long_n:
             break
@@ -144,7 +156,7 @@ def fixed_weight_selection(scores, coins, config, current_positions=None):
         if coin not in longs and coin not in shorts:
             shorts.append(coin)
     if len(longs) != long_n or len(shorts) != short_n or set(longs) & set(shorts):
-        raise ValueError("无法生成互不重叠的 6 多 6 空目标")
+        raise ValueError("无法生成互不重叠的 8 多 8 空目标")
     gross = float(config["gross_leverage"])
     long_fraction = float(config["long_fraction"])
     weights = {c: gross * long_fraction / long_n for c in longs}
@@ -153,16 +165,23 @@ def fixed_weight_selection(scores, coins, config, current_positions=None):
 
 
 def validate_model(model, config):
-    if model.get("format_version") != 3 or model.get("strategy_id") != config.get("strategy_id"):
+    if model.get("format_version") != 4 or model.get("strategy_id") != config.get("strategy_id"):
         raise ValueError("模型文件与当前策略配置不匹配")
-    component = model.get("component", {})
-    if component.get("name") != "close3" or not component.get("trees"):
-        raise ValueError("模型缺少可用的 close3 树")
-    if component.get("best_iteration") != len(component["trees"]):
-        raise ValueError("模型树数与 best_iteration 不一致")
+    if model.get("retrain_frequency") != "frozen" or model.get("train_end") != config.get("train_end"):
+        raise ValueError("模型训练窗口与冻结配置不一致")
     if len(model.get("feature_names", [])) != 151:
         raise ValueError("模型必须包含 151 个特征")
-    if model.get("train_end") != config.get("train_end"):
-        raise ValueError("模型训练窗口与冻结配置不一致")
-    if len(component["trees"]) != int(config.get("model_trees", 51)):
-        raise ValueError("模型必须使用复现验证过的 51 棵最佳迭代树")
+    components = model.get("components")
+    if not isinstance(components, list) or len(components) != len(config["ensemble_components"]):
+        raise ValueError("模型缺少完整的三周期集成组件")
+    for component, spec in zip(components, config["ensemble_components"]):
+        if (component.get("name"), component.get("horizon")) != (spec["name"], spec["horizon"]):
+            raise ValueError("模型组件名称或周期与配置不一致")
+        if abs(float(component.get("weight", 0)) - float(spec["weight"])) > 1e-12:
+            raise ValueError("模型组件权重与配置不一致")
+        if not component.get("trees"):
+            raise ValueError("模型组件缺少可用树")
+        if component.get("best_iteration") != len(component["trees"]):
+            raise ValueError("模型树数与 best_iteration 不一致")
+        if len(component["trees"]) != int(spec["trees"]):
+            raise ValueError("模型树数与已验证的冻结模型不一致")

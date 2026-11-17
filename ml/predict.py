@@ -1,4 +1,4 @@
-"""冻结 51 树 close3 模型预测，应用 buffer9，输出固定 2 倍目标权重。
+"""冻结 close1/close3/close5 等权集成，应用 buffer11，输出固定 2 倍权重。
 
 用法：
     python predict.py --json
@@ -54,12 +54,12 @@ def latest_positions(features_path=None, model_path=None, config_path=None,
     result = {
         "date": signal_date,
         "execution": "next_open",
-        "model": "alphapilot51_close3",
-        "trees": len(model["component"]["trees"]),
+        "model": "fixed_h135_equal",
+        "trees": {c["name"]: len(c["trees"]) for c in model["components"]},
         "train_end": model["train_end"],
         "n_universe": int(len(idx)),
         "gross_leverage": float(config["gross_leverage"]),
-        "buffer": 9 if has_current else None,
+        "buffer": int(config["exit_rank"]) if has_current else None,
         "preview_without_current_positions": not has_current,
         "long": selected["long"],
         "short": selected["short"],
@@ -80,7 +80,7 @@ def main():
     if "--json" in sys.argv:
         print(json.dumps(result, ensure_ascii=False))
     else:
-        print("=== ML 51树 close3 + buffer9（%s，head %d 币）===" % (
+        print("=== ML close1/3/5 等权 + buffer11（%s，head %d 币）===" % (
             result["date"], result["n_universe"]))
         print("做多 %d: %s" % (len(result["long"]), ", ".join(result["long"])))
         print("做空 %d: %s" % (len(result["short"]), ", ".join(result["short"])))

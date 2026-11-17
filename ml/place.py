@@ -1,4 +1,4 @@
-"""ML 策略下单：把 predict.py 选出的前 6 多 / 后 6 空下单到 HL 子账户。
+"""ML 策略下单：把 predict.py 选出的前 8 多 / 后 8 空下单到 HL 子账户。
 
 签名流程（按 HL L1 签名，与 Rust SDK 的 sign_l1_action 一致）：
   1. connection_id = keccak256(msgpack(action) + nonce(8 字节大端) + vault_flag + vault_addr)
@@ -8,7 +8,7 @@
 用法：
   python place.py --wallet <api-wallet-私钥> --vault <子账户B地址> --equity <子账户净值> [--dry-run]
 
-说明：每 3 天调仓，前 6 多后 6 空等权，每个仓位 1/6 名义（2x 杠杆多空各 100%）。
+说明：每 3 天调仓，前 8 多后 8 空等权，每个仓位 1/8 名义（2x 杠杆多空各 100%）。
       上线前务必用 --dry-run + 小额验证签名正确。
 """
 from __future__ import annotations
@@ -280,7 +280,7 @@ def main():
             print(f"[place] 推导 API wallet 地址失败: {e}", file=sys.stderr, flush=True)
 
     current = current_positions(vault)
-    # buffer9 必须基于真实旧仓方向和当前截面排名，不能使用无持仓预览。
+    # buffer11 必须基于真实旧仓方向和当前截面排名，不能使用无持仓预览。
     target = latest_positions(current_positions=current)
     if not getattr(args, 'json_out', False):
         print(f"目标持仓（{target['date']}）：做多 {target['long']} 做空 {target['short']}")
@@ -293,7 +293,7 @@ def main():
         print(f"子账户净值 ${equity:,.2f}")
 
     idx, decimals = meta_index()
-    # 只消费冻结单模型 + buffer9 给出的带符号固定权重。
+    # 只消费冻结三周期集成 + buffer11 给出的带符号固定权重。
     target_map = target.get("weights")
     if not isinstance(target_map, dict) or not target_map:
         raise ValueError("预测结果缺少带符号 weights，拒绝下单")
