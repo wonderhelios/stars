@@ -133,30 +133,44 @@ def snapshot(state,marks=None):
     marks=marks or {};unreal=0.;gross=0.;net=0.
     for p in state['positions']:
         mark=marks.get(p['coin'],p.get('mark_price',p['entry_price']));p['mark_price']=mark
-        p['unrealized_pnl']=p['notional']*p['side']*(mark/p['entry_price']-1)
-        unreal+=p['unrealized_pnl'];gross+=p['notional'];net+=p['notional']*p['side']
+        remaining=p.get('remaining_fraction',1.0);p['remaining_notional']=p['notional']*remaining
+        p['unrealized_pnl']=p['remaining_notional']*p['side']*(mark/p['entry_price']-1)
+        unreal+=p['unrealized_pnl'];gross+=p['remaining_notional'];net+=p['remaining_notional']*p['side']
     state['equity']=state['balance']+unreal;state['unrealized_pnl']=unreal;state['pnl']=state['equity']-state['capital']
     state['pnl_pct']=100*state['pnl']/state['capital'];state['gross_notional']=gross;state['net_notional']=net
     state['days_elapsed']=(now_ms()-state['started_at'])/86400000
     wins=sum(1 for t in state['trades'] if t['pnl_usd']>0);state['win_rate']=100*wins/len(state['trades']) if state['trades'] else 0
     state['last_update']=now_ms()
-    state['config']={'fee_per_side':FEE,'threshold':THRESHOLD,'position_fraction':.25,'max_positions':4,'gross_leverage':1,'cooldown_hours':24,'max_holding_hours':6}
+    state['config']={'fee_per_side':FEE,'threshold':THRESHOLD,'position_fraction':.25,'max_positions':4,'gross_leverage':1,
+      'cooldown_hours':0,'max_holding_hours':6,'partial_fraction':.5,'partial_target_atr':.5,'move_remainder_stop_to_entry':True}
     return state
 
 def process_exits(state,marks):
     now=now_ms()
     for p in list(state['positions']):
-        mark=marks.get(p['coin']);
+        mark=marks.get(p['coin'])
         if not finite(mark):continue
+        # 升级前已存在的仓位补齐字段，保留原净值与持仓，不重建账本。
+        p.setdefault('remaining_fraction',1.0);p.setdefault('partial_done',False)
+        p.setdefault('partial_price',p['entry_price']+(p['target_price']-p['entry_price'])*.5)
         hit_tp=mark>=p['target_price'] if p['side']==1 else mark<=p['target_price']
         hit_sl=mark<=p['stop_price'] if p['side']==1 else mark>=p['stop_price']
-        reason='止盈' if hit_tp else ('止损' if hit_sl else ('超时退出' if now>=p['expiry_ts'] else None))
-        if not reason:continue
-        exit_fee=p['notional']*FEE;gross=p['notional']*p['side']*(mark/p['entry_price']-1);net=gross-exit_fee-p['entry_fee']
+        hit_partial=(not p['partial_done'] and (mark>=p['partial_price'] if p['side']==1 else mark<=p['partial_price']))
+        # 同一次刷新若同时满足多个条件，优先执行止损，保持保守口径。
+        if hit_sl:reason='保本退出' if p['partial_done'] and p['stop_price']==p['entry_price'] else '止损';fraction=p['remaining_fraction']
+        elif hit_tp:reason='止盈';fraction=p['remaining_fraction']
+        elif hit_partial:reason='半仓止盈';fraction=.5*p['remaining_fraction'] if p['remaining_fraction']<.99 else .5
+        elif now>=p['expiry_ts']:reason='超时退出';fraction=p['remaining_fraction']
+        else:continue
+        fraction=min(fraction,p['remaining_fraction']);notional=p['notional']*fraction
+        exit_fee=notional*FEE;gross=notional*p['side']*(mark/p['entry_price']-1);net=gross-exit_fee-p['entry_fee']*fraction
         state['balance']+=gross-exit_fee;state['total_cost']+=exit_fee;state['realized_pnl']+=net
         state['trades'].append({'exit_ts':now,'entry_ts':p['entry_ts'],'coin':p['coin'],'side':'long' if p['side']==1 else 'short',
-          'exit_price':mark,'entry_price':p['entry_price'],'notional':p['notional'],'pnl_usd':net,'reason':reason,'probability':p['probability']})
-        state['cooldowns'][p['coin']]=now+24*3600000;state['positions'].remove(p)
+          'exit_price':mark,'entry_price':p['entry_price'],'notional':notional,'pnl_usd':net,'reason':reason,'probability':p['probability']})
+        p['remaining_fraction']-=fraction
+        if reason=='半仓止盈':
+            p['partial_done']=True;p['stop_price']=p['entry_price']
+        if p['remaining_fraction']<=1e-12:state['positions'].remove(p)
 
 def process_entries(state,signal_time,candidates):
     if state.get('last_signal_time')==signal_time:return
@@ -165,13 +179,13 @@ def process_entries(state,signal_time,candidates):
         s=c['symbol'];reason=''
         if c['probability']<THRESHOLD:reason='概率低于阈值'
         elif any(p['coin']==s for p in state['positions']):reason='已有同币仓位'
-        elif state['cooldowns'].get(s,0)>now_ms():reason='24小时冷却中'
         elif len(state['positions'])>=4:reason='已达4仓上限'
         else:
             notional=.25*state['equity'];entry=c['entry'];fee=notional*FEE;side=c['side'];atr=c['atr_pct']
             state['balance']-=fee;state['total_cost']+=fee
             state['positions'].append({'coin':s,'side':side,'entry_ts':signal_time,'entry_price':entry,'mark_price':entry,
               'notional':notional,'entry_fee':fee,'probability':c['probability'],'target_price':entry*(1+side*atr),
+              'partial_price':entry*(1+side*.5*atr),'partial_done':False,'remaining_fraction':1.0,
               'stop_price':entry*(1-side*atr),'expiry_ts':signal_time+6*3600000,'unrealized_pnl':0.0})
             accepted.add(s);reason='模拟开仓'
         state['signals'].append({'ts':signal_time,'coin':s,'side':'long' if c['side']==1 else 'short',
