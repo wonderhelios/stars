@@ -642,6 +642,10 @@ let execDailyPage = 0;
 function renderExecDaily(d) {
   const root = $("mo-exec-daily");
   if (!root) return;
+  if (currentStrategy === "ml") {
+    root.innerHTML = '<div class="empty">ML 子账户由 Python 定时脚本（daily.py）每 3 天独立执行调仓，当前仅接入小时级净值快照与实时持仓；逐日成交统计仅适用于动量子账户。</div>';
+    return;
+  }
   if (!Array.isArray(d.exec_daily)) {
     root.innerHTML = '<div class="empty">当前接口尚未提供每日执行数据，请更新服务后刷新。</div>'; return;
   }
@@ -736,16 +740,98 @@ function renderTotal(d) {
     </div>`;
 }
 
+function syncStrategyTabs() {
+  for (const id of ['mo-strategy-tabs', 'an-strategy-tabs']) {
+    const root = $(id);
+    if (!root) continue;
+    root.querySelectorAll('[data-strategy]').forEach(b => {
+      b.setAttribute('aria-pressed', b.dataset.strategy === currentStrategy ? 'true' : 'false');
+    });
+  }
+}
+
 function bindStrategyTabs() {
-  const root = $('mo-strategy-tabs');
-  if (!root || root.dataset.bound) return;
-  root.dataset.bound = '1';
-  root.onclick = (event) => {
-    const btn = event.target.closest('[data-strategy]');
-    if (!btn) return;
-    currentStrategy = btn.dataset.strategy;
-    root.querySelectorAll('[data-strategy]').forEach(b => b.setAttribute('aria-pressed', b === btn ? 'true' : 'false'));
-    if (lastLiveData) renderMonitor(lastLiveData);
+  for (const id of ['mo-strategy-tabs', 'an-strategy-tabs']) {
+    const root = $(id);
+    if (!root || root.dataset.bound) continue;
+    root.dataset.bound = '1';
+    root.onclick = (event) => {
+      const btn = event.target.closest('[data-strategy]');
+      if (!btn) return;
+      currentStrategy = btn.dataset.strategy;
+      syncStrategyTabs();
+      if (lastLiveData) renderMonitor(lastLiveData);
+    };
+  }
+  syncStrategyTabs();
+}
+
+function mlMetricsSummary(d, mlAcc, mlHist) {
+  const { mlFlows, mlNetDep } = splitCapitalFlows(d);
+  const mlPos = mlAcc ? (mlAcc.positions || []) : [];
+  const eq = Number.isFinite(mlAcc?.equity) ? mlAcc.equity : NaN;
+  const base = (mlHist[0] || {}).equity;
+  const baseTs = (mlHist[0] || {}).ts || null;
+  const principal = Number.isFinite(base) && base > 0 ? base + mlNetDep : NaN;
+  const valid = !!mlAcc && Number.isFinite(eq) && Number.isFinite(principal) && principal > 0;
+  const change = valid ? eq - mlNetDep - base : null;
+  const percent = valid ? (change / principal) * 100 : null;
+  const unrealized = mlPos.reduce((s, p) => s + (Number.isFinite(p.unrealized) ? p.unrealized : 0), 0);
+  const grossNotional = mlPos.reduce((s, p) => s + (Number.isFinite(p.notional) ? p.notional : 0), 0);
+  const netNotional = mlPos.reduce((s, p) => s + (p.side === "long" ? 1 : -1) * (Number.isFinite(p.notional) ? p.notional : 0), 0);
+  const dists = mlPos.map(p => p.dist_pct).filter(Number.isFinite);
+  const minDist = dists.length ? Math.min(...dists) : null;
+  const isoN = mlPos.filter(p => !p.is_cross).length;
+
+  let adjPts = [];
+  if (Number.isFinite(base) && base > 0 && mlHist.length >= 2) {
+    const res = strategyHistory(mlHist, {
+      account: mlAcc?.account || "ml",
+      capital_baseline: { equity: base, ts: baseTs, account: mlAcc?.account || "ml" },
+      capital_flows: mlFlows,
+      net_deposit: mlNetDep,
+    });
+    adjPts = res.history || [];
+  }
+  let maxDdPct = null, annVolPct = null, winDays = 0, totalDays = 0, winMonths = 0, totalMonths = 0;
+  if (adjPts.length >= 2) {
+    let peak = -Infinity, maxDd = 0;
+    const dayLast = new Map(), monthLast = new Map();
+    const rets = [];
+    for (let i = 0; i < adjPts.length; i++) {
+      const p = adjPts[i];
+      const v = Number.isFinite(p.equity) ? p.equity : (base + (p.pnl || 0));
+      if (v > peak) peak = v;
+      if (peak > 0) maxDd = Math.max(maxDd, ((peak - v) / peak) * 100);
+      const iso = new Date(p.ts).toISOString();
+      dayLast.set(iso.slice(0, 10), v);
+      monthLast.set(iso.slice(0, 7), v);
+      if (i > 0 && adjPts[i].ts > adjPts[i - 1].ts) {
+        const prev = Number.isFinite(adjPts[i - 1].equity) ? adjPts[i - 1].equity : (base + (adjPts[i - 1].pnl || 0));
+        if (prev > 0) rets.push(v / prev - 1);
+      }
+    }
+    maxDdPct = maxDd;
+    if (rets.length >= 3) {
+      const mean = rets.reduce((a, r) => a + r, 0) / rets.length;
+      const var_ = rets.reduce((a, r) => a + (r - mean) ** 2, 0) / (rets.length - 1);
+      annVolPct = Math.sqrt(var_) * Math.sqrt(24 * 365) * 100;
+    }
+    const dVals = [...dayLast.values()];
+    for (let i = 1; i < dVals.length; i++) { totalDays++; if (dVals[i] > dVals[i - 1]) winDays++; }
+    const mVals = [...monthLast.values()];
+    for (let i = 1; i < mVals.length; i++) { totalMonths++; if (mVals[i] > mVals[i - 1]) winMonths++; }
+  }
+  return {
+    valid, base, baseTs, netDep: mlNetDep, principal, eq, change, percent, unrealized,
+    realized: valid ? change - unrealized : null,
+    grossNotional, netNotional, minDist, nPos: mlPos.length, isoN, nCross: mlPos.length - isoN,
+    actualLev: Number.isFinite(eq) && eq > 0 ? grossNotional / eq : 0,
+    maxDdPct, annVolPct,
+    winRateDays: totalDays ? (winDays / totalDays) * 100 : null, winSamplesDays: totalDays,
+    winRateMonths: totalMonths ? (winMonths / totalMonths) * 100 : null, winSamplesMonths: totalMonths,
+    lastTs: mlHist.length ? mlHist[mlHist.length - 1].ts : null,
+    pointsCount: mlHist.length,
   };
 }
 
@@ -1017,9 +1103,57 @@ function renderMonitor(d) {
         但这些仓位的强平距离无法计算，请检查是否已退市。</div>`
     : "";
 
+  if (isMl) {
+    const mlm = mlMetricsSummary(d, mlAcc, mlHist);
+    $("mo-metrics").innerHTML =
+      metricGroup(
+        "ML 账户 · 当前持仓",
+        metric("ML 净值", mlm.valid ? "$" + fmt(mlm.eq, 2) : "—") +
+        metric("未实现盈亏 · PNL", mlm.valid ? moneySigned(mlm.unrealized) : "—", mlm.valid ? (mlm.unrealized >= 0 ? "pos" : "neg") : "") +
+        metric("持仓数量", mlm.valid ? mlm.nPos + '<span class="metric-unit"> 个</span>' : "—") +
+        metric("实际杠杆", mlm.valid ? fmt(mlm.actualLev, 2) + '<span class="metric-unit"> x</span>' : "—"),
+        "live-overview",
+        '<div class="metric-footnote"><span class="live-dot"></span>ML 子账户独立统计，仅包含 ML 持仓与净值曲线。</div>'
+      ) +
+      metricGroup(
+        "资金表现 · ML 相对起点",
+        metric("净投入本金", mlm.valid ? "$" + fmt(mlm.principal, 2) : "—") +
+          metric("子账户互转净额", mlm.valid ? moneySigned(mlm.netDep) : "—") +
+          metric("扣除互转后净收益", mlm.valid ? moneySigned(mlm.change) : "—", mlm.valid && mlm.change >= 0 ? "pos" : "neg") +
+          metric("已实现盈亏 · 推算", mlm.valid ? moneySigned(mlm.realized) : "—", mlm.valid && mlm.realized >= 0 ? "pos" : "neg") +
+          metric("净投入收益率", mlm.percent != null ? pct(mlm.percent) : "—", mlm.percent != null ? (mlm.percent >= 0 ? "pos" : "neg") : ""),
+        "capital-account",
+        `<details class="metric-definition"><summary>ML 记录起点 ${Number.isFinite(mlm.base) ? "$" + fmt(mlm.base, 2) : "—"} · ${mlm.baseTs ? ts2m(mlm.baseTs) + " UTC" : "时间未知"} · 查看口径</summary><p>ML 净投入本金 = ML 记录起点资金 + 子账户互转净额；净收益 = 当前 ML 净值 − 净投入本金；已实现盈亏·推算 = 净收益 − 当前未实现盈亏。</p></details>`
+      ) +
+      metricGroup(
+        "风险与仓位 · ML",
+        metric("最低强平缓冲", mlm.minDist != null ? fmt(mlm.minDist, 1) + "%" : "—", mlm.minDist == null ? "" : (mlm.minDist < 40 ? "neg" : "pos")) +
+          metric("净敞口 · 多减空", mlm.valid ? moneySigned(mlm.netNotional) : "—", mlm.valid && Math.abs(mlm.netNotional) <= mlm.eq * 0.15 ? "" : "neg") +
+          metric("总名义敞口", mlm.valid ? "$" + fmt(mlm.grossNotional, 0) : "—") +
+          metric("保证金模式", mlm.nPos ? (mlm.isoN > 0 ? mlm.nCross + " 全仓 / " + mlm.isoN + " 逐仓" : mlm.nCross + " 全仓") : "—", mlm.isoN > 0 ? "neg" : "pos")
+      ) +
+      metricGroup(
+        "调仓与记录 · ML",
+        metric("调仓节奏", "每 3 天") +
+          metric("净值样本点数", mlm.pointsCount + " 点") +
+          metric("年化波动率", mlm.annVolPct != null ? fmt(mlm.annVolPct, 1) + "%" : "—") +
+          metric("记录期最大回撤", mlm.maxDdPct != null ? fmt(mlm.maxDdPct, 2) + "%" : "—", mlm.maxDdPct != null && mlm.maxDdPct > 15 ? "neg" : "") +
+          metric("最后净值时间", mlm.lastTs ? `<span class="sm">${ts2m(mlm.lastTs)}</span>` : "—")
+      ) +
+      metricGroup(
+        "胜率 · ML 净值口径",
+        metric("按交易日", mlm.winRateDays != null ? fmt(mlm.winRateDays, 0) + "%" : "—",
+          mlm.winRateDays == null ? "" : (mlm.winRateDays >= 50 ? "pos" : "neg")) +
+          metric("按自然月", mlm.winRateMonths != null ? fmt(mlm.winRateMonths, 0) + "%" : "—",
+            mlm.winRateMonths == null ? "" : (mlm.winRateMonths >= 50 ? "pos" : "neg")) +
+          metric("样本量", `<span class="sm">${mlm.winSamplesDays} 天 / ${mlm.winSamplesMonths} 月</span>`),
+        "win-rates",
+        '<details class="metric-definition"><summary>ML 胜率口径说明</summary><p>按每日/每月最后一个调整后净值点对比前一日/上一月计算（已扣除子账户互转影响）。</p></details>'
+      );
+  } else {
   $("mo-metrics").innerHTML =
     metricGroup(
-      allView ? "账户合计 · 当前持仓" : isMl ? "ML 账户 · 当前持仓" : "动量账户 · 当前持仓",
+      allView ? "账户合计 · 当前持仓" : "动量账户 · 当前持仓",
       metric("账户净值", currentValid ? "$" + fmt(eq, 2) : "—") +
       metric("未实现盈亏 · PNL", currentValid ? moneySigned(unrealized) : "—", currentValid ? (unrealized >= 0 ? "pos" : "neg") : "") +
       metric("持仓数量", currentValid ? nPos + '<span class="metric-unit"> 个</span>' : "—") +
@@ -1081,11 +1215,6 @@ function renderMonitor(d) {
         '<b>按平仓记录</b>：交易所回执里的已实现盈亏 &gt; 0 算赢，已含手续费；同一仓位分多次平仓会算成多笔，所以它不等于「按仓位」的胜率。<br>' +
         '三者都不是预测，只是对已发生记录的不同切法；样本很小时波动极大。</p></details>'
     );
-
-  // ML tab 只保留「实时概览」（其余组是动量的指标 ✗ 会误导）
-  if (isMl) {
-    const mgs = $("mo-metrics").querySelectorAll(".metric-group");
-    mgs.forEach((g, i) => { if (i > 0) g.remove(); });
   }
   try {
     arrangeMonitorSummary("mo-metrics");
@@ -1159,6 +1288,10 @@ function renderMonitor(d) {
   renderExecDaily(d);
   renderMonitorChart(d);
 
+  if (isMl) {
+    $("mo-orders").innerHTML = '<div class="empty">ML 策略由每日定时脚本（daily.py）每 3 天独立执行调仓，不使用动量被动止盈挂单。</div>';
+    $("mo-records").innerHTML = '<div class="empty">ML 子账户暂未接入独立成交流水；请在「实盘监控」查看 ML 实时持仓与净值曲线，或切换至「动量策略」查看动量订单与成交记录。</div>';
+  } else {
   const chron = d.records || [];
   const hints = entryHints(chron);
   const orders = d.tp_orders || [];
@@ -1247,6 +1380,7 @@ function renderMonitor(d) {
         .join("")}</tbody></table></div>
       ${pager("live", recs.length, livePage, LIVE_PAGE_SIZE)}`
     : '<div class="empty">还没有下单记录</div>';
+  }
 }
 
 // Convert every observation before windowing: earlier cash flows also affect a short window.
@@ -1406,7 +1540,7 @@ function renderLiveChart(history, shadow) {
   const X = ts => padL + (last.ts === first.ts ? 0.5 : (ts - first.ts) / (last.ts - first.ts)) * (W - padL - padR);
   const Y = v => padT + (1 - (v - ax.lo) / span) * (H - padT - padB);
   const money = v => (v < 0 ? "−" : "+") + "$" + Math.abs(v).toFixed(2);
-  const grid = ax.lines.map(v => `<line x1="${padL}" y1="${Y(v)}" x2="${W-padR}" y2="${Y(v)}" stroke="rgba(255,255,255,0.06)"/><text x="${padL-10}" y="${Y(v)+4}" text-anchor="end" font-size="11" font-family="var(--font-mono)" fill="#64748b">$${v.toFixed(span < 10 ? 2 : 0)}</text>`).join("");
+  const grid = ax.lines.map(v => `<line x1="${padL}" y1="${Y(v)}" x2="${W-padR}" y2="${Y(v)}" stroke="var(--grid-line, rgba(255,255,255,0.06))"/><text x="${padL-10}" y="${Y(v)+4}" text-anchor="end" font-size="11" font-family="var(--font-mono)" fill="#64748b">$${v.toFixed(span < 10 ? 2 : 0)}</text>`).join("");
   const label = ts => chartRange === "day" ? new Date(ts).toISOString().slice(11,16) : ts2m(ts).slice(0,5);
   const ticks = last.ts === first.ts ? [first.ts] : [first.ts, first.ts + (last.ts-first.ts)/2, last.ts];
   const xlabels = ticks.map((ts,i) => `<text x="${X(ts)}" y="${H-10}" text-anchor="${i === 0 ? "start" : i === ticks.length-1 ? "end" : "middle"}" font-size="11" font-family="var(--font-mono)" fill="#64748b">${label(ts)}</text>`).join("");
@@ -1419,9 +1553,9 @@ function renderLiveChart(history, shadow) {
         ${points.length > 1 ? `<polygon points="${X(first.ts)},${H-padB} ${line} ${X(last.ts)},${H-padB}" fill="url(#equity-area)"/>` : ""}
         <line x1="${padL}" y1="${Y(first.equity)}" x2="${W-padR}" y2="${Y(first.equity)}" stroke="rgba(148,163,184,0.3)" stroke-dasharray="4 5"/>
         <polyline points="${line}" fill="none" stroke="#10b981" stroke-width="2.2" stroke-linejoin="round"/>
-        <circle cx="${X(last.ts)}" cy="${Y(last.equity)}" r="4.5" fill="#34d399" stroke="#0e131b" stroke-width="2"/>
-        <line class="mo-xhair" x1="0" y1="${padT}" x2="0" y2="${H-padB}" stroke="rgba(255,255,255,0.22)" stroke-dasharray="3 3" style="display:none"/>
-        <circle class="mo-xdot" cx="0" cy="0" r="4.5" fill="#34d399" stroke="#0e131b" stroke-width="2" style="display:none"/>
+        <circle cx="${X(last.ts)}" cy="${Y(last.equity)}" r="4.5" fill="#34d399" stroke="var(--surface, #0e131b)" stroke-width="2"/>
+        <line class="mo-xhair" x1="0" y1="${padT}" x2="0" y2="${H-padB}" stroke="var(--xhair, rgba(255,255,255,0.22))" stroke-dasharray="3 3" style="display:none"/>
+        <circle class="mo-xdot" cx="0" cy="0" r="4.5" fill="#34d399" stroke="var(--surface, #0e131b)" stroke-width="2" style="display:none"/>
         ${xlabels}
       </svg>
       <div class="chart-tooltip" style="display:none"></div>
@@ -2056,7 +2190,7 @@ function renderEquityChart(id, history, aria, compare, third, fourth, summaryLab
   const span = ax.hi - ax.lo || 1;
   const X = (ts) => padL + (last.ts === first.ts ? 0.5 : (ts - first.ts) / (last.ts - first.ts)) * (W - padL - padR);
   const Y = (v) => padT + (1 - (v - ax.lo) / span) * (H - padT - padB);
-  const grid = ax.lines.map((v) => `<line x1="${padL}" y1="${Y(v)}" x2="${W - padR}" y2="${Y(v)}" stroke="rgba(255,255,255,0.06)"/><text x="${padL - 10}" y="${Y(v) + 4}" text-anchor="end" font-size="11" font-family="var(--font-mono)" fill="#64748b">$${v.toFixed(span < 10 ? 2 : 0)}</text>`).join("");
+  const grid = ax.lines.map((v) => `<line x1="${padL}" y1="${Y(v)}" x2="${W - padR}" y2="${Y(v)}" stroke="var(--grid-line, rgba(255,255,255,0.06))"/><text x="${padL - 10}" y="${Y(v) + 4}" text-anchor="end" font-size="11" font-family="var(--font-mono)" fill="#64748b">$${v.toFixed(span < 10 ? 2 : 0)}</text>`).join("");
   const line = pts.map((p) => `${X(p.ts)},${Y(p.eq)}`).join(" ");
   const ticks = [first.ts, first.ts + (last.ts - first.ts) / 2, last.ts];
   const xlabels = ticks.map((ts, i) => `<text x="${X(ts)}" y="${H - 8}" text-anchor="${i === 0 ? "start" : i === ticks.length - 1 ? "end" : "middle"}" font-size="11" font-family="var(--font-mono)" fill="#64748b">${ts2m(ts)}</text>`).join("");
@@ -2090,7 +2224,7 @@ function renderEquityChart(id, history, aria, compare, third, fourth, summaryLab
       ${thdLine ? `<polyline points="${thdLine}" fill="none" stroke="#38bdf8" stroke-width="2" stroke-linejoin="round" opacity="0.9"/>` : ""}
       ${fthLine ? `<polyline points="${fthLine}" fill="none" stroke="#a78bfa" stroke-width="2" stroke-linejoin="round" opacity="0.9"/>` : ""}
       <polyline points="${line}" fill="none" stroke="#10b981" stroke-width="2.2" stroke-linejoin="round"/>
-      <circle cx="${X(last.ts)}" cy="${Y(last.eq)}" r="4.5" fill="#34d399" stroke="#0e131b" stroke-width="2"/>
+      <circle cx="${X(last.ts)}" cy="${Y(last.eq)}" r="4.5" fill="#34d399" stroke="var(--surface, #0e131b)" stroke-width="2"/>
       ${xlabels}
     </svg>`;
 }
@@ -2112,11 +2246,12 @@ if (typeof ResizeObserver !== "undefined") {
       chartWidths.set(target, width);
       if (target.id === "mo-chart" && lastLiveData) renderMonitorChart(lastLiveData);
       if (target.id === "sh-chart" && lastShadowData) renderShadow(lastShadowData);
+      if (target.id === "hc-chart" && lastHlCarryData) renderHlCarry(lastHlCarryData);
       if (target.id === "cy-chart" && lastCarryData) renderEquityChart("cy-chart", lastCarryData.history || [], "纸面 carry 权益曲线");
       if (target.id === "xp-chart" && lastXData) renderEquityChart("xp-chart", lastXData.history || [], "跨所价差纸面权益曲线");
     }
   });
-  ["mo-chart", "cy-chart", "xp-chart", "sh-chart"].forEach(id => {
+  ["mo-chart", "hc-chart", "cy-chart", "xp-chart", "sh-chart"].forEach(id => {
     const chart = $(id);
     if (chart) chartResize.observe(chart);
   });
@@ -2198,11 +2333,8 @@ function arrangeMonitorSummary(id, shadow = false) {
       root.append(cell("合计本金", usd(principalAll)));
       root.append(cell("当前浮盈", money(unrlAll), unrlAll >= 0 ? "pos" : "neg"));
       root.append(cell("最低强平缓冲", minBuf == null ? "—" : minBuf.toFixed(1) + "%", minBuf == null ? "" : minBuf < 40 ? "neg" : "pos"));
-      return;
-    }
-    // ML tab：显示 ML 子账户自己的净值/浮盈/持仓（扣除子账户互转）
-    if (currentStrategy === 'ml') {
-      // 和动量的 4 格对齐：净值（含收益率）+ 本金 + 当前浮盈 + 组合预估日波动
+    } else if (currentStrategy === 'ml') {
+      // ML tab：显示 ML 子账户自己的净值/浮盈/持仓（扣除子账户互转）
       const eqMl = Number.isFinite(mlAcc2?.equity) ? mlAcc2.equity : null;
       const mlHist = ld.ml_history || [];
       const baseMl = (mlHist[0] || {}).equity || 0;
@@ -2233,26 +2365,78 @@ function arrangeMonitorSummary(id, shadow = false) {
       }
       const tone = volPct == null ? "" : volPct > 3 ? "neg" : volPct > 2.2 ? "warn" : "pos";
       root.append(cell("组合预估日波动", volPct == null ? "—" : volPct.toFixed(2) + "%", tone));
-      return;
-    }
-    root.append(
-      cell("账户净值", usd(eq), "", pct ? `净投入收益率 ${Number(pct) >= 0 ? "+" : ""}${pct}` : "")
-    );
-    root.append(cell("本金", usd(principal)));
-    root.append(cell("当前浮盈", money(unrl), unrl >= 0 ? "pos" : "neg"));
-    // 组合预估日波动（波动目标看的数 ✗ 高波动时会自动减仓 ✓）
-    const vn = lastLiveData && lastLiveData.vol_now;
-    if (vn && Number.isFinite(vn.pct)) {
-      const pct = vn.pct;
-      const target = Number(vn.target_pct) || 2;
-      const tone = pct > target * 1.5 ? "neg" : pct > target * 1.1 ? "warn" : "pos";
-      root.append(cell("组合预估日波动", pct.toFixed(2) + "%", tone));
+    } else {
+      root.append(
+        cell("账户净值", usd(eq), "", pct ? `净投入收益率 ${Number(pct) >= 0 ? "+" : ""}${pct}` : "")
+      );
+      root.append(cell("本金", usd(principal)));
+      root.append(cell("当前浮盈", money(unrl), unrl >= 0 ? "pos" : "neg"));
+      // 组合预估日波动（波动目标看的数 ✗ 高波动时会自动减仓 ✓）
+      const vn = lastLiveData && lastLiveData.vol_now;
+      if (vn && Number.isFinite(vn.pct)) {
+        const pct = vn.pct;
+        const target = Number(vn.target_pct) || 2;
+        const tone = pct > target * 1.5 ? "neg" : pct > target * 1.1 ? "warn" : "pos";
+        root.append(cell("组合预估日波动", pct.toFixed(2) + "%", tone));
+      }
     }
   }
-  // 五项健康指标（Bento 侧栏与曲线并排 ✓）
+  // 策略健康度（Bento 侧栏与曲线并排 ✓ ML 与动量各自独立计算 ✓）
   const healthHost = !shadow ? $('mo-health-host') : null;
   const perfPanel = !shadow ? $('mo-perf-panel') : null;
-  if (!shadow && currentStrategy !== 'ml' && lastLiveData && Array.isArray(lastLiveData.scorecard) && lastLiveData.scorecard.length) {
+  if (!shadow && currentStrategy === 'ml' && lastLiveData) {
+    const mlAccH = lastLiveData.ml_account && !lastLiveData.ml_account.error ? lastLiveData.ml_account : null;
+    const mlm = mlMetricsSummary(lastLiveData, mlAccH, lastLiveData.ml_history || []);
+    const netRatio = mlm.valid && mlm.eq > 0 ? (Math.abs(mlm.netNotional) / mlm.eq) * 100 : null;
+    const items = [
+      {
+        name: "区间净收益（扣互转）",
+        val: mlm.percent != null ? `${mlm.percent >= 0 ? "+" : "−"}${Math.abs(mlm.percent).toFixed(2)}%` : "样本不足",
+        status: mlm.percent == null ? "unknown" : (mlm.percent >= 0 ? "green" : mlm.percent > -8 ? "yellow" : "red"),
+        hint: mlm.valid ? `净收益 ${moneySigned(mlm.change)} · 起点 $${fmt(mlm.base, 0)}` : "等待更多净值记录",
+      },
+      {
+        name: "记录期最大回撤",
+        val: mlm.maxDdPct != null ? `${mlm.maxDdPct.toFixed(2)}%` : "样本不足",
+        status: mlm.maxDdPct == null ? "unknown" : (mlm.maxDdPct <= 10 ? "green" : mlm.maxDdPct <= 20 ? "yellow" : "red"),
+        hint: "目标 ≤ 15% · 基于调整后净值序列",
+      },
+      {
+        name: "年化波动率",
+        val: mlm.annVolPct != null ? `${mlm.annVolPct.toFixed(1)}%` : "样本不足",
+        status: mlm.annVolPct == null ? "unknown" : (mlm.annVolPct <= 25 ? "green" : mlm.annVolPct <= 40 ? "yellow" : "red"),
+        hint: `共 ${mlm.pointsCount} 个小时采样点`,
+      },
+      {
+        name: "净敞口 / 净值",
+        val: netRatio != null ? `${netRatio.toFixed(1)}%` : "—",
+        status: netRatio == null ? "unknown" : (netRatio <= 15 ? "green" : netRatio <= 30 ? "yellow" : "red"),
+        hint: "多空净额偏移 · 目标 ≤ 15%",
+      },
+      {
+        name: "最低强平缓冲",
+        val: mlm.minDist != null ? `${mlm.minDist.toFixed(1)}%` : "—",
+        status: mlm.minDist == null ? "unknown" : (mlm.minDist >= 40 ? "green" : mlm.minDist >= 25 ? "yellow" : "red"),
+        hint: "安全线 > 40% · 距最近强平价",
+      },
+    ];
+    const rows = items.map((row) => {
+      const stateLabel = row.status === "green" ? "正常" : row.status === "yellow" ? "关注" : row.status === "red" ? "异常" : "样本不足";
+      const dot = '<span class="score-dot ' + row.status + '" role="img" aria-label="' + stateLabel + '"></span>';
+      const tone = row.status === "green" ? "pos" : row.status === "yellow" ? "warn" : row.status === "red" ? "neg" : "";
+      return `<div class="score-row"><div class="score-row-top">${dot}<span class="score-name">${escapeHTML(row.name)}</span><span class="score-val ${tone}">${escapeHTML(row.val)}</span></div><span class="score-hint">${escapeHTML(row.hint)}</span></div>`;
+    }).join("");
+    const card = document.createElement("div");
+    card.className = "metric score-metric";
+    card.innerHTML = `<div class="k">策略健康度 · ML</div><div class="score-body">${rows}</div>`;
+    if (healthHost && perfPanel) {
+      healthHost.replaceChildren(card);
+      healthHost.hidden = false;
+      perfPanel.classList.add('with-health');
+    } else {
+      root.append(card);
+    }
+  } else if (!shadow && lastLiveData && Array.isArray(lastLiveData.scorecard) && lastLiveData.scorecard.length) {
     const card = document.createElement("div");
     card.className = "metric score-metric";
     const scorecard = lastLiveData.scorecard;
@@ -2281,7 +2465,7 @@ function arrangeMonitorSummary(id, shadow = false) {
       }
       return `<div class="score-row"><div class="score-row-top">${dot}<span class="score-name">${escapeHTML(row.name || "")}</span><span class="score-val ${tone}">${escapeHTML(val)}</span></div><span class="score-hint">${escapeHTML(hint)}</span></div>`;
     }).join("");
-    card.innerHTML = `<div class="k">策略健康度</div><div class="score-body">${rows}</div>`;
+    card.innerHTML = `<div class="k">策略健康度 · 动量</div><div class="score-body">${rows}</div>`;
     if (healthHost && perfPanel) {
       healthHost.replaceChildren(card);
       healthHost.hidden = false;
@@ -2339,6 +2523,7 @@ let hcLegPage = 0;
 let hcRbPage = 0;
 let hcDailyPage = 0;
 let hcLogPage = 0;
+let hcRange = "all";
 let lastHlCarryData = null;
 
 function hcMoney(v) {
@@ -2497,6 +2682,36 @@ function renderHlCarry(d) {
         pager("hclog", all.length, hcLogPage, HC_PAGE_2)
       : '<div class="empty">暂无事件</div>';
   }
+
+  // ---- 套利影子收益曲线（优先使用 s.history，不足时用 s.daily 兜底）----
+  const hcChartEl = $("hc-chart");
+  if (hcChartEl) {
+    let rawHist = Array.isArray(s.history)
+      ? s.history.filter((p) => Array.isArray(p) && Number.isFinite(p[0]) && Number.isFinite(p[1]))
+      : [];
+    if (rawHist.length < 2 && Array.isArray(s.daily) && s.daily.length) {
+      rawHist = s.daily
+        .map((row) => [Date.parse(row.date + "T23:59:59Z"), Number(row.equity_end)])
+        .filter((p) => Number.isFinite(p[0]) && Number.isFinite(p[1]));
+    }
+    if (rawHist.length >= 1) {
+      const obs = rawHist.map((p) => ({ ts: p[0], equity: p[1] }));
+      let pts = equityWindow(obs, hcRange, Date.now()).points.map((p) => [p.ts, p.equity]);
+      if (pts.length < 2 && hcRange !== "all") pts = rawHist.slice(-3);
+      const series = Number.isFinite(eq) && eq > 0 ? withNow(pts, eq) : pts;
+      if (series.length >= 2) {
+        renderEquityChart("hc-chart", series, "套利影子收益曲线", undefined, undefined, undefined, {
+          equityLabel: "影子权益 · 最新",
+          changeLabel: "记录区间变化",
+          legendName: "套利影子",
+        });
+      } else {
+        hcChartEl.innerHTML = '<div class="empty">已记录 1 个采样点，等待下一个小时采样点形成曲线。</div>';
+      }
+    } else {
+      hcChartEl.innerHTML = '<div class="empty">暂无曲线数据，按预算重置模拟后将每小时自动记录。</div>';
+    }
+  }
 }
 
 async function refreshHlCarry() {
@@ -2515,6 +2730,14 @@ async function refreshHlCarry() {
     if (m) m.innerHTML = `<div class="empty neg">读取失败：${escapeHTML(String((e && e.message) || e))}</div>`;
   }
 }
+
+document.querySelectorAll("#hc-chart-tabs button").forEach((b) => {
+  b.addEventListener("click", () => {
+    hcRange = b.dataset.range || "all";
+    document.querySelectorAll("#hc-chart-tabs button").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+    if (lastHlCarryData) renderHlCarry(lastHlCarryData);
+  });
+});
 
 document.addEventListener("click", (e) => {
   const b = e.target.closest("[data-pager^='hc']");
@@ -2696,3 +2919,19 @@ if (hcBudgetInput)
     hcOpenDisarm();
     hcBudgetStatus("预算已修改，请重新确认后才会执行。", "");
   });
+
+const themeToggleBtn = $("theme-toggle");
+if (themeToggleBtn) {
+  const syncThemeLabel = () => {
+    const isLight = document.documentElement.dataset.theme === "light";
+    themeToggleBtn.title = isLight ? "切换为深色风格" : "切换为浅色风格";
+    themeToggleBtn.setAttribute("aria-label", themeToggleBtn.title);
+  };
+  syncThemeLabel();
+  themeToggleBtn.addEventListener("click", () => {
+    const next = document.documentElement.dataset.theme === "light" ? "dark" : "light";
+    document.documentElement.dataset.theme = next;
+    try { localStorage.setItem("stars_theme", next); } catch (_) {}
+    syncThemeLabel();
+  });
+}

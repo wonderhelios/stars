@@ -32,6 +32,38 @@
         --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
         --font-mono: "JetBrains Mono", "SF Mono", ui-monospace, Menlo, Consolas, monospace;
         --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+        --heading: #f8fafc;
+        --grid-line: rgba(255, 255, 255, 0.06);
+        --xhair: rgba(255, 255, 255, 0.22);
+      }
+
+      html[data-theme="light"] {
+        color-scheme: light;
+        --bg: #f3f5f8;
+        --bg-rail: #ffffff;
+        --surface: #ffffff;
+        --surface-2: #f8fafc;
+        --surface-3: #eef2f6;
+        --border: rgba(15, 23, 42, 0.09);
+        --border-strong: rgba(15, 23, 42, 0.16);
+        --ink: #0f172a;
+        --ink-2: #475569;
+        --muted: #64748b;
+        --accent: #059669;
+        --accent-bright: #047857;
+        --accent-soft: rgba(5, 150, 105, 0.10);
+        --accent-border: rgba(5, 150, 105, 0.28);
+        --cyan: #0284c7;
+        --pos: #059669;
+        --pos-bg: rgba(5, 150, 105, 0.10);
+        --neg: #e11d48;
+        --neg-bg: rgba(225, 29, 72, 0.10);
+        --warn: #d97706;
+        --warn-bg: rgba(217, 119, 6, 0.10);
+        --shadow-card: 0 1px 3px rgba(15, 23, 42, 0.06), 0 1px 2px rgba(15, 23, 42, 0.04);
+        --heading: #0f172a;
+        --grid-line: rgba(15, 23, 42, 0.08);
+        --xhair: rgba(15, 23, 42, 0.25);
       }
 
       *, *::before, *::after { box-sizing: border-box; }
@@ -52,6 +84,41 @@
         min-height: 100vh;
         background-image: radial-gradient(ellipse 75% 40% at 58% -8%, rgba(16, 185, 129, 0.07), transparent);
       }
+      html[data-theme="light"] body {
+        background-image: radial-gradient(ellipse 75% 40% at 58% -8%, rgba(5, 150, 105, 0.05), transparent);
+      }
+      html[data-theme="light"] .brand span,
+      html[data-theme="light"] .panel-head h2,
+      html[data-theme="light"] .workspace-heading h2,
+      html[data-theme="light"] .combine-heading h1,
+      html[data-theme="light"] .total-value,
+      html[data-theme="light"] .metric .v,
+      html[data-theme="light"] .combine-kpi-value,
+      html[data-theme="light"] .chart-summary strong,
+      html[data-theme="light"] .auth-box h3 { color: var(--heading); }
+      html[data-theme="light"] .nav button:hover { background: rgba(15, 23, 42, 0.04); }
+      html[data-theme="light"] .nav button.active { color: #065f46; }
+      html[data-theme="light"] .total-card {
+        background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+        border-color: var(--border-strong);
+        box-shadow: 0 6px 20px rgba(15, 23, 42, 0.06);
+      }
+      html[data-theme="light"] .segmented button[aria-pressed="true"] {
+        background: #ffffff;
+        color: var(--ink);
+        box-shadow: 0 1px 2px rgba(15, 23, 42, 0.08);
+      }
+      html[data-theme="light"] .field input,
+      html[data-theme="light"] .field select,
+      html[data-theme="light"] .auth-box input,
+      html[data-theme="light"] .flow-entry input { background: #ffffff; }
+      html[data-theme="light"] .logbox { background: #f8fafc; color: #334155; }
+      html[data-theme="light"] .chart-tooltip {
+        background: rgba(255, 255, 255, 0.96);
+        box-shadow: 0 8px 24px rgba(15, 23, 42, 0.12);
+      }
+      html[data-theme="light"] .warn-banner,
+      html[data-theme="light"] .combine-alert { color: #92400e; }
       button, input, select { font: inherit; color: inherit; }
       a { color: var(--accent-bright); text-decoration: none; }
       code { font-family: var(--font-mono); font-size: 0.9em; color: var(--accent-bright); }
@@ -97,6 +164,23 @@
         font-family: var(--font-mono);
         font-size: 9.5px; font-weight: 500; letter-spacing: 0.14em; color: var(--muted); margin-top: 2px;
       }
+      .theme-toggle {
+        margin-left: auto;
+        width: 30px; height: 30px;
+        display: inline-flex; align-items: center; justify-content: center;
+        border-radius: 8px;
+        border: 1px solid var(--border-strong);
+        background: var(--surface-2);
+        color: var(--ink-2);
+        cursor: pointer;
+        flex-shrink: 0;
+        transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+      }
+      .theme-toggle:hover { color: var(--ink); border-color: var(--accent-border); background: var(--accent-soft); }
+      .theme-toggle svg { width: 15px; height: 15px; }
+      .theme-toggle .icon-moon { display: none; }
+      html[data-theme="light"] .theme-toggle .icon-sun { display: none; }
+      html[data-theme="light"] .theme-toggle .icon-moon { display: block; }
       .nav-section-label {
         padding: 8px 10px 4px;
         font-family: var(--font-mono);
@@ -873,11 +957,24 @@
         .account-summary, .daily-exec-kpis { grid-template-columns: 1fr; }
       }
     </style>
+    <script>
+      try {
+        var t = localStorage.getItem("stars_theme");
+        if (t === "light" || t === "dark") document.documentElement.dataset.theme = t;
+      } catch (_) {}
+    </script>
   </head>
   <body>
     <a class="skip-link" href="#workspace">跳转到主要内容</a>
     <header class="topbar">
-      <div class="brand"><span class="dot" aria-hidden="true"></span><span>stars<small>QUANT TERMINAL</small></span></div>
+      <div class="brand">
+        <span class="dot" aria-hidden="true"></span>
+        <span>stars<small>QUANT TERMINAL</small></span>
+        <button id="theme-toggle" class="theme-toggle" type="button" title="切换深色 / 浅色风格" aria-label="切换深色 / 浅色风格">
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+      </div>
       <nav class="nav" aria-label="工作台导航">
         <div class="nav-section-label">实盘交易</div>
         <button data-view="monitor" class="active" aria-current="page"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg><span>实盘监控</span></button>
@@ -1089,24 +1186,44 @@
             </div>
           </div>
           <div id="hc-warn"></div>
-          <div class="hlcarry-top-grid">
-            <div class="content-card hc-overview">
-              <div class="hc-overview-head">
-                <div><h2>模拟账户</h2><p>余额与收益拆分 · 所有数据仅来自影子模拟</p></div>
-                <span class="badge todo">不发送真实订单</span>
-              </div>
+          <div class="content-card hc-overview">
+            <div class="hc-overview-head">
+              <div><h2>模拟账户</h2><p>余额与收益拆分 · 所有数据仅来自影子模拟</p></div>
               <div class="hc-budget-control">
                 <div class="field">
                   <label for="hc-budget">模拟预算 · USD</label>
                   <input id="hc-budget" type="number" min="1" max="10000000" step="100" inputmode="decimal" aria-describedby="hc-budget-note hc-budget-status" />
                 </div>
                 <div class="hc-budget-action"><button class="btn" id="hc-open" type="button">按预算重置模拟</button></div>
+                <span class="badge todo">不发送真实订单</span>
               </div>
-              <p class="note" id="hc-budget-note">重置会清空现有模拟持仓、累计盈亏和曲线，再按此金额建仓。</p>
-              <p class="note" id="hc-budget-status" role="status" aria-live="polite"></p>
-              <div class="metrics" id="hc-metrics"></div>
             </div>
+            <p class="note" id="hc-budget-note">重置会清空现有模拟持仓、累计盈亏和曲线，再按此金额建仓。</p>
+            <p class="note" id="hc-budget-status" role="status" aria-live="polite"></p>
+            <div class="metrics" id="hc-metrics"></div>
+          </div>
 
+          <div class="content-card equity-card">
+            <div class="panel-head monitor-section-head">
+              <div><span class="section-eyebrow">CARRY PNL</span><h2>套利影子收益曲线</h2></div>
+              <div class="segmented" id="hc-chart-tabs" role="group" aria-label="套利影子时间区间">
+                <button type="button" data-range="day" aria-pressed="false">日</button>
+                <button type="button" data-range="week" aria-pressed="false">周</button>
+                <button type="button" data-range="month" aria-pressed="false">月</button>
+                <button type="button" data-range="all" aria-pressed="true">全部</button>
+              </div>
+            </div>
+            <div class="chart" id="hc-chart"></div>
+          </div>
+
+          <div class="content-card"><div class="panel-head"><h2>当前持仓</h2></div><div id="hc-legs"></div></div>
+
+          <div class="hlcarry-bottom-grid">
+            <div class="content-card"><div class="panel-head"><h2>换仓记录</h2></div><div id="hc-rebalances"></div></div>
+            <div class="content-card"><div class="panel-head"><h2>每日汇总（UTC）</h2></div><div id="hc-daily"></div></div>
+          </div>
+
+          <div class="hlcarry-bottom-grid">
             <div class="content-card">
               <div class="panel-head">
                 <div><span class="section-eyebrow">SELECTION</span><h2>选币与换仓规则</h2></div>
@@ -1122,14 +1239,8 @@
               </div>
               <p class="note" id="hc-params-status"></p>
             </div>
+            <div class="content-card"><div class="panel-head"><h2>最近事件</h2></div><div id="hc-log"></div></div>
           </div>
-
-          <div class="content-card"><div class="panel-head"><h2>当前持仓</h2></div><div id="hc-legs"></div></div>
-          <div class="hlcarry-bottom-grid">
-            <div class="content-card"><div class="panel-head"><h2>换仓记录</h2></div><div id="hc-rebalances"></div></div>
-            <div class="content-card"><div class="panel-head"><h2>每日汇总（UTC）</h2></div><div id="hc-daily"></div></div>
-          </div>
-          <div class="content-card"><div class="panel-head"><h2>最近事件</h2></div><div id="hc-log"></div></div>
         </div>
       </section>
 
@@ -1204,7 +1315,14 @@
       <section id="view-analysis" class="view">
         <div class="workspace-heading">
           <div><span class="panel-kicker">ANALYSIS &amp; RECORDS · 实盘</span><h2>实盘分析与记录</h2><p class="sub">账务拆分、当前挂单、每日执行统计与成交流水。</p></div>
-          <div class="actions"><button class="btn ghost" data-open-view="monitor" type="button">返回实盘监控</button></div>
+          <div class="actions">
+            <div class="segmented" id="an-strategy-tabs" role="group" aria-label="分析视角切换">
+              <button type="button" data-strategy="all" aria-pressed="true">全部账户</button>
+              <button type="button" data-strategy="momentum" aria-pressed="false">动量策略</button>
+              <button type="button" data-strategy="ml" aria-pressed="false">ML 策略</button>
+            </div>
+            <button class="btn ghost" data-open-view="monitor" type="button">返回实盘监控</button>
+          </div>
         </div>
         <div id="mo-analysis-metrics"></div>
         <div class="content-card"><div class="panel-head"><h2>当前挂单</h2></div><div id="mo-orders"></div></div>
