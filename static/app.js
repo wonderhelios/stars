@@ -2135,7 +2135,7 @@ function renderIntraday(d) {
       : '<div class="empty">当前空仓。没有足够强的趋势延续信号就不出手。</div>';
   }
   if ($("cb-position-count")) $("cb-position-count").textContent = `${ps.length} / ${cfg.max_positions||4} 仓 · 毛敞口 $${fmt(d.gross_notional||0,0)}`;
-  if ($("cb-config")) $("cb-config").innerHTML = [`单仓 ${100*(cfg.position_fraction||.25)}%`,`最多 ${cfg.max_positions||4} 仓`,`概率 ≥ ${cfg.threshold||.55}`,`成本 ${10000*(cfg.fee_per_side||.0007)}bp/边`,`最长 ${cfg.max_holding_hours||6} 小时`,`冷却 ${cfg.cooldown_hours||24} 小时`].map(x=>`<span>${x}</span>`).join("");
+  if ($("cb-config")) $("cb-config").innerHTML = [`单仓 ${100*(cfg.position_fraction||.25)}%`,`最多 ${cfg.max_positions||4} 仓`,`概率 ≥ ${cfg.threshold||.55}`,`成本 ${10000*(cfg.fee_per_side||.0007)}bp/边`,`最长 ${cfg.max_holding_hours||6} 小时`].map(x=>`<span>${x}</span>`).join("");
   const sigs = (d.signals || []).slice().reverse();
   if ($("cb-signals")) {
     const sigPages = Math.max(1, Math.ceil(sigs.length / CB_PAGE_SIZE));
@@ -2143,12 +2143,53 @@ function renderIntraday(d) {
     const sigRows = sigs.slice(cbSigPage * CB_PAGE_SIZE, (cbSigPage + 1) * CB_PAGE_SIZE);
     $("cb-signals").innerHTML = sigs.length ? '<div class="table-scroll"><table><thead><tr><th>时间 · UTC+8</th><th>币</th><th>方向</th><th>24h涨跌</th><th>4h OI</th><th>概率</th><th>处理</th></tr></thead><tbody>'+sigRows.map(s=>`<tr><td class="muted">${ts2bj(s.ts)}</td><td>${escapeHTML(s.coin)}</td><td class="${s.side==="long"?"pos":"neg"}">${s.side==="long"?"多":"空"}</td><td>${(100*(s.ret24||0)).toFixed(1)}%</td><td>${(100*(s.oi_chg_4h||0)).toFixed(1)}%</td><td>${(100*(s.probability||0)).toFixed(1)}%</td><td class="${s.accepted?"pos":"muted"}">${escapeHTML(s.reason)}</td></tr>`).join("")+'</tbody></table></div>' + pager("cbsig", sigs.length, cbSigPage, CB_PAGE_SIZE) : '<div class="empty">尚无信号记录，每小时检查一次。</div>';
   }
-  const trades = (d.trades || []).slice().reverse();
+  const groupedTrades = [];
+  const tradeGroups = new Map();
+  for (const t of (d.trades || [])) {
+    const key = `${t.coin || ""}|${t.side || ""}|${t.entry_ts ?? t.entry_price ?? ""}`;
+    let g = tradeGroups.get(key);
+    if (!g) {
+      g = {
+        coin: t.coin,
+        side: t.side,
+        entry_ts: t.entry_ts,
+        entry_price: t.entry_price,
+        probability: t.probability,
+        exit_ts: t.exit_ts || 0,
+        pnl_usd: 0,
+        notional_sum: 0,
+        weighted_exit: 0,
+        legs: [],
+      };
+      tradeGroups.set(key, g);
+      groupedTrades.push(g);
+    }
+    const n = Number(t.notional) || 0;
+    const px = Number(t.exit_price) || 0;
+    g.pnl_usd += Number(t.pnl_usd) || 0;
+    g.notional_sum += n;
+    g.weighted_exit += px * n;
+    if ((t.exit_ts || 0) >= g.exit_ts) g.exit_ts = t.exit_ts || 0;
+    g.legs.push(t);
+  }
+  const trades = groupedTrades.sort((a, b) => (b.exit_ts || 0) - (a.exit_ts || 0));
   if ($("cb-trades")) {
     const trPages = Math.max(1, Math.ceil(trades.length / CB_PAGE_SIZE));
     if (cbTradePage > trPages - 1) cbTradePage = 0;
     const trRows = trades.slice(cbTradePage * CB_PAGE_SIZE, (cbTradePage + 1) * CB_PAGE_SIZE);
-    $("cb-trades").innerHTML = trades.length ? '<div class="table-scroll"><table><thead><tr><th>平仓时间 · UTC+8</th><th>币</th><th>方向</th><th>开仓 / 平仓</th><th>概率</th><th>净盈亏</th><th>原因</th></tr></thead><tbody>'+trRows.map(t=>`<tr><td class="muted">${ts2bj(t.exit_ts)}</td><td>${escapeHTML(t.coin)}</td><td class="${t.side==="long"?"pos":"neg"}">${t.side==="long"?"多":"空"}</td><td>${fmtCompact(t.entry_price)} / ${fmtCompact(t.exit_price)}</td><td>${(100*(t.probability||0)).toFixed(1)}%</td><td class="${(t.pnl_usd||0)>=0?"pos":"neg"}">${moneySigned(t.pnl_usd||0)}</td><td>${escapeHTML(t.reason)}</td></tr>`).join("")+'</tbody></table></div>' + pager("cbtr", trades.length, cbTradePage, CB_PAGE_SIZE) : '<div class="empty">暂无已平仓模拟成交。</div>';
+    $("cb-trades").innerHTML = trades.length ? '<div class="table-scroll"><table><thead><tr><th>平仓时间 · UTC+8</th><th>币</th><th>方向</th><th>开仓 / 平仓</th><th>概率</th><th>净盈亏</th><th>原因</th></tr></thead><tbody>'+trRows.map(t=>{
+      t.legs.sort((a, b) => (a.exit_ts || 0) - (b.exit_ts || 0));
+      const avgExit = t.notional_sum > 0 ? t.weighted_exit / t.notional_sum : (t.legs[t.legs.length - 1]?.exit_price || 0);
+      const reasons = t.legs.map(l => l.reason || "平仓");
+      const summaryReason = reasons.length > 1 ? reasons.join(" → ") : reasons[0];
+      const reasonCell = t.legs.length > 1
+        ? `<span class="trade-legs-wrap" tabindex="0"><span>${escapeHTML(summaryReason)}</span><span class="trade-legs-badge">${t.legs.length}笔</span><div class="trade-legs-pop">${
+            (t.entry_ts ? `<div>开仓 ${ts2bj(t.entry_ts)} · 均价 ${fmtCompact(t.entry_price)}</div>` : "") +
+            t.legs.map((l, idx) => `<div>${idx + 1}. ${escapeHTML(l.reason || "平仓")} · ${fmtCompact(l.exit_price)} · <span class="${(l.pnl_usd||0)>=0?"pos":"neg"}">${moneySigned(l.pnl_usd||0)}</span> · ${ts2bj(l.exit_ts)}</div>`).join("")
+          }</div></span>`
+        : escapeHTML(summaryReason);
+      return `<tr><td class="muted">${ts2bj(t.exit_ts)}</td><td>${escapeHTML(t.coin)}</td><td class="${t.side==="long"?"pos":"neg"}">${t.side==="long"?"多":"空"}</td><td>${fmtCompact(t.entry_price)} / ${fmtCompact(avgExit)}</td><td>${(100*(t.probability||0)).toFixed(1)}%</td><td class="${t.pnl_usd>=0?"pos":"neg"}">${moneySigned(t.pnl_usd)}</td><td>${reasonCell}</td></tr>`;
+    }).join("")+'</tbody></table></div>' + pager("cbtr", trades.length, cbTradePage, CB_PAGE_SIZE) : '<div class="empty">暂无已平仓模拟成交。</div>';
   }
 }
 
