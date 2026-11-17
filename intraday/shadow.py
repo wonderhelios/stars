@@ -11,7 +11,7 @@ ROOT=Path(__file__).resolve().parent
 STATE_PATH=Path(os.environ.get('STARS_INTRADAY','/var/lib/stars/intraday_shadow.json'))
 CAPITAL=float(os.environ.get('STARS_INTRADAY_CAPITAL','2500'))
 FEE=0.0007
-THRESHOLD=0.55
+THRESHOLD=0.542786741423357  # 净胜率模型：阈值仅在2026-10验证段确定
 BASE='https://fapi.binance.com'
 FEATURES=json.loads((ROOT/'features.json').read_text())
 UNIVERSE=json.loads((ROOT/'universe.json').read_text())
@@ -84,16 +84,30 @@ def metric_features(symbol,signal_time):
     top_pos=get('/futures/data/topLongShortPositionRatio',{'symbol':symbol,'period':'5m','limit':2})
     top_acct=get('/futures/data/topLongShortAccountRatio',{'symbol':symbol,'period':'5m','limit':2})
     retail=get('/futures/data/globalLongShortAccountRatio',{'symbol':symbol,'period':'5m','limit':2})
-    taker=get('/futures/data/takerlongshortRatio',{'symbol':symbol,'period':'5m','limit':2})
+    taker=get('/futures/data/takerlongshortRatio',{'symbol':symbol,'period':'5m','limit':50})
     oi=[r for r in oi if int(r['timestamp'])<=signal_time]
+    taker=[r for r in taker if int(r['timestamp'])<=signal_time]
     if len(oi)<289 or signal_time-int(oi[-1]['timestamp'])>6*3600000:raise ValueError('OI数据过期或不完整')
+    if len(taker)<50:raise ValueError('主动成交数据不足4小时')
     vals=[float(r['sumOpenInterestValue']) for r in oi]
     latest=lambda rows,key:float([r for r in rows if int(r['timestamp'])<=signal_time][-1][key])
+    taker_now=latest(taker,'buySellRatio')
     return {'oi_chg_1h':vals[-1]/vals[-13]-1,'oi_chg_4h':vals[-1]/vals[-49]-1,
       'oi_chg_24h':vals[-1]/vals[-289]-1,'sum_toptrader_long_short_ratio':latest(top_pos,'longShortRatio'),
       'count_toptrader_long_short_ratio':latest(top_acct,'longShortRatio'),
       'count_long_short_ratio':latest(retail,'longShortRatio'),
-      'sum_taker_long_short_vol_ratio':latest(taker,'buySellRatio')}
+      'sum_taker_long_short_vol_ratio':taker_now,'oi_value':vals[-1],
+      'taker_change_4h':taker_now-float(taker[-49]['buySellRatio'])}
+
+
+def add_interaction_features(f):
+    f['side_oi_1h']=f['side']*f['oi_chg_1h'];f['side_oi_4h']=f['side']*f['oi_chg_4h']
+    f['side_oi_24h']=f['side']*f['oi_chg_24h'];f['price_oi_1h']=f['ret_4']*f['oi_chg_1h']
+    f['price_oi_4h']=f['ret_16']*f['oi_chg_4h']
+    f['top_position_retail_spread']=f['sum_toptrader_long_short_ratio']-f['count_long_short_ratio']
+    f['top_account_retail_spread']=f['count_toptrader_long_short_ratio']-f['count_long_short_ratio']
+    f['oi_to_volume24']=f['oi_value']/f['quote24']
+    return f
 
 def scan_candidates():
     frames={};entries={};errors=[]
@@ -118,6 +132,7 @@ def scan_candidates():
         if not ((long or short) and f['quote24']>=5_000_000 and finite(f['atr_pct'])):continue
         try:
             f=f.copy();f['side']=1 if long else -1;f['log_quote24']=math.log(max(f['quote24'],1));f.update(metric_features(s,signal_time))
+            f=add_interaction_features(f)
             f['probability']=float(MODEL.predict(pd.DataFrame([f])[FEATURES])[0]);f['symbol']=s;f['entry']=entries[s];out.append(f)
         except Exception as e:
             # 单币OI不可用只放弃这个机会，不能中断其他候选。
@@ -177,7 +192,7 @@ def process_entries(state,signal_time,candidates):
     accepted=set()
     for c in candidates:
         s=c['symbol'];reason=''
-        if c['probability']<THRESHOLD:reason='概率低于阈值'
+        if c['probability']<THRESHOLD:reason='评分低于阈值'
         elif any(p['coin']==s for p in state['positions']):reason='已有同币仓位'
         elif len(state['positions'])>=4:reason='已达4仓上限'
         else:

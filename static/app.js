@@ -2130,18 +2130,18 @@ function renderIntraday(d) {
     const posPages = Math.max(1, Math.ceil(ps.length / CB_PAGE_SIZE));
     if (cbPosPage > posPages - 1) cbPosPage = 0;
     const posRows = ps.slice(cbPosPage * CB_PAGE_SIZE, (cbPosPage + 1) * CB_PAGE_SIZE);
-    legs.innerHTML = ps.length ? '<div class="table-scroll"><table><thead><tr><th>币</th><th>方向</th><th>概率</th><th>名义</th><th>开仓价</th><th>现价</th><th>止盈 / 止损</th><th>浮盈</th></tr></thead><tbody>' +
+    legs.innerHTML = ps.length ? '<div class="table-scroll"><table><thead><tr><th>币</th><th>方向</th><th>模型评分</th><th>名义</th><th>开仓价</th><th>现价</th><th>止盈 / 止损</th><th>浮盈</th></tr></thead><tbody>' +
       posRows.map(p => { const long=isLongPosition(p),u=Number(p.unrealized_pnl)||0; return `<tr><td><b>${escapeHTML(p.coin)}</b></td><td class="${long?"pos":"neg"}">${long?"多":"空"}</td><td>${(100*(p.probability||0)).toFixed(1)}%</td><td>$${fmt(p.notional,0)}</td><td>${fmtCompact(p.entry_price)}</td><td>${fmtCompact(p.mark_price)}</td><td>${fmtCompact(p.target_price)} / ${fmtCompact(p.stop_price)}</td><td class="${u>=0?"pos":"neg"}">${moneySigned(u)}</td></tr>`; }).join("") + '</tbody></table></div>' + (ps.length > CB_PAGE_SIZE ? pager("cbpos", ps.length, cbPosPage, CB_PAGE_SIZE) : "")
       : '<div class="empty">当前空仓。没有足够强的趋势延续信号就不出手。</div>';
   }
   if ($("cb-position-count")) $("cb-position-count").textContent = `${ps.length} / ${cfg.max_positions||4} 仓 · 毛敞口 $${fmt(d.gross_notional||0,0)}`;
-  if ($("cb-config")) $("cb-config").innerHTML = [`单仓 ${100*(cfg.position_fraction||.25)}%`,`最多 ${cfg.max_positions||4} 仓`,`概率 ≥ ${cfg.threshold||.55}`,`成本 ${10000*(cfg.fee_per_side||.0007)}bp/边`,`最长 ${cfg.max_holding_hours||6} 小时`].map(x=>`<span>${x}</span>`).join("");
+  if ($("cb-config")) $("cb-config").innerHTML = [`单仓 ${100*(cfg.position_fraction||.25)}%`,`最多 ${cfg.max_positions||4} 仓`,`模型评分 ≥ ${cfg.threshold||.55}`,`成本 ${10000*(cfg.fee_per_side||.0007)}bp/边`,`最长 ${cfg.max_holding_hours||6} 小时`].map(x=>`<span>${x}</span>`).join("");
   const sigs = (d.signals || []).slice().reverse();
   if ($("cb-signals")) {
     const sigPages = Math.max(1, Math.ceil(sigs.length / CB_PAGE_SIZE));
     if (cbSigPage > sigPages - 1) cbSigPage = 0;
     const sigRows = sigs.slice(cbSigPage * CB_PAGE_SIZE, (cbSigPage + 1) * CB_PAGE_SIZE);
-    $("cb-signals").innerHTML = sigs.length ? '<div class="table-scroll"><table><thead><tr><th>时间 · UTC+8</th><th>币</th><th>方向</th><th>24h涨跌</th><th>4h OI</th><th>概率</th><th>处理</th></tr></thead><tbody>'+sigRows.map(s=>`<tr><td class="muted">${ts2bj(s.ts)}</td><td>${escapeHTML(s.coin)}</td><td class="${s.side==="long"?"pos":"neg"}">${s.side==="long"?"多":"空"}</td><td>${(100*(s.ret24||0)).toFixed(1)}%</td><td>${(100*(s.oi_chg_4h||0)).toFixed(1)}%</td><td>${(100*(s.probability||0)).toFixed(1)}%</td><td class="${s.accepted?"pos":"muted"}">${escapeHTML(s.reason)}</td></tr>`).join("")+'</tbody></table></div>' + pager("cbsig", sigs.length, cbSigPage, CB_PAGE_SIZE) : '<div class="empty">尚无信号记录，每小时检查一次。</div>';
+    $("cb-signals").innerHTML = sigs.length ? '<div class="table-scroll"><table><thead><tr><th>时间 · UTC+8</th><th>币</th><th>方向</th><th>24h涨跌</th><th>4h OI</th><th>模型评分</th><th>处理</th></tr></thead><tbody>'+sigRows.map(s=>`<tr><td class="muted">${ts2bj(s.ts)}</td><td>${escapeHTML(s.coin)}</td><td class="${s.side==="long"?"pos":"neg"}">${s.side==="long"?"多":"空"}</td><td>${(100*(s.ret24||0)).toFixed(1)}%</td><td>${(100*(s.oi_chg_4h||0)).toFixed(1)}%</td><td>${(100*(s.probability||0)).toFixed(1)}%</td><td class="${s.accepted?"pos":"muted"}">${escapeHTML(s.reason)}</td></tr>`).join("")+'</tbody></table></div>' + pager("cbsig", sigs.length, cbSigPage, CB_PAGE_SIZE) : '<div class="empty">尚无信号记录，每小时检查一次。</div>';
   }
   const groupedTrades = [];
   const tradeGroups = new Map();
@@ -2177,7 +2177,7 @@ function renderIntraday(d) {
     const trPages = Math.max(1, Math.ceil(trades.length / CB_PAGE_SIZE));
     if (cbTradePage > trPages - 1) cbTradePage = 0;
     const trRows = trades.slice(cbTradePage * CB_PAGE_SIZE, (cbTradePage + 1) * CB_PAGE_SIZE);
-    $("cb-trades").innerHTML = trades.length ? '<div class="table-scroll"><table><thead><tr><th>平仓时间 · UTC+8</th><th>币</th><th>方向</th><th>开仓 / 平仓</th><th>概率</th><th>净盈亏</th><th>原因</th></tr></thead><tbody>'+trRows.map(t=>{
+    $("cb-trades").innerHTML = trades.length ? '<div class="table-scroll"><table><thead><tr><th>平仓时间 · UTC+8</th><th>币</th><th>方向</th><th>开仓 / 平仓</th><th>模型评分</th><th>净盈亏</th><th>原因</th></tr></thead><tbody>'+trRows.map(t=>{
       t.legs.sort((a, b) => (a.exit_ts || 0) - (b.exit_ts || 0));
       const avgExit = t.notional_sum > 0 ? t.weighted_exit / t.notional_sum : (t.legs[t.legs.length - 1]?.exit_price || 0);
       const reasons = t.legs.map(l => l.reason || "平仓");

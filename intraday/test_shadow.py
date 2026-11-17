@@ -24,7 +24,7 @@ class ShadowBookTests(unittest.TestCase):
 
     def test_low_probability_does_not_trade(self):
         s=initial_state();process_entries(s,1000,[candidate('BTCUSDT',.54)])
-        self.assertEqual(len(s['positions']),0);self.assertEqual(s['signals'][0]['reason'],'概率低于阈值')
+        self.assertEqual(len(s['positions']),0);self.assertEqual(s['signals'][0]['reason'],'评分低于阈值')
 
     def test_long_partial_take_profit_then_breakeven_without_cooldown(self):
         s=initial_state();process_entries(s,1000,[candidate('BTCUSDT')]);p=s['positions'][0]
@@ -55,12 +55,21 @@ class MetricWindowTests(unittest.TestCase):
         def fake_get(path,params=None,timeout=15):
             self.assertNotEqual(params.get('limit'),289)
             if path.endswith('openInterestHist'):return oi
-            key='buySellRatio' if path.endswith('takerlongshortRatio') else 'longShortRatio'
-            return [{'timestamp':signal,key:'1.2'}]
+            if path.endswith('takerlongshortRatio'):
+                return [{'timestamp':signal-i*300000,'buySellRatio':str(1.2+i*.01)} for i in range(49,-1,-1)]
+            return [{'timestamp':signal,'longShortRatio':'1.2'}]
         mock_get.side_effect=fake_get
         f=shadow.metric_features('BTCUSDT',signal)
         self.assertAlmostEqual(f['oi_chg_24h'],(1000+295)/(1000+7)-1)
         self.assertEqual(f['sum_taker_long_short_vol_ratio'],1.2)
+        self.assertAlmostEqual(f['taker_change_4h'],-.48)
+        f.update({'side':1,'ret_4':.02,'ret_16':.04,'quote24':6_000_000})
+        derived=shadow.add_interaction_features(f)
+        self.assertAlmostEqual(derived['price_oi_4h'],.04*f['oi_chg_4h'])
+        self.assertAlmostEqual(derived['oi_to_volume24'],f['oi_value']/6_000_000)
+        expected={'side_oi_1h','side_oi_4h','side_oi_24h','price_oi_1h','price_oi_4h',
+                  'taker_change_4h','top_position_retail_spread','top_account_retail_spread','oi_to_volume24'}
+        self.assertTrue(expected.issubset(derived));self.assertTrue(expected.issubset(shadow.FEATURES))
 
 class RestartWindowTests(unittest.TestCase):
     @patch('shadow.scan_candidates')
