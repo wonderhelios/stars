@@ -174,7 +174,14 @@ function orderSideLabel(s) {
 
 
 // ---------- 分页 ----------
-const LIVE_PAGE_SIZE = 5;
+const LIVE_PAGE_SIZE = 10;
+const POS_PAGE_SIZE = 10;
+const FLOW_PAGE_SIZE = 5;
+const CB_PAGE_SIZE = 8;
+let flowPage = 0;
+let cbPosPage = 0;
+let cbSigPage = 0;
+let cbTradePage = 0;
 
 // 通用分页条；点击由全局委托处理
 
@@ -183,15 +190,28 @@ document.addEventListener("click", (e) => {
   if (!btn) return;
   const key = btn.dataset.pager;
   const to = Number(btn.dataset.to);
+  if (!Number.isFinite(to)) return;
   if (key === "live") {
-    livePage = to;
+    livePage = Math.max(0, to);
     renderMonitor(lastLiveData);
   } else if (key === "pos") {
-    posPage = to;
+    posPage = Math.max(0, to);
     renderMonitor(lastLiveData);
   } else if (key === "order") {
-    orderPage = to;
+    orderPage = Math.max(0, to);
     renderMonitor(lastLiveData);
+  } else if (key === "flow") {
+    flowPage = Math.max(0, to);
+    if (lastLiveData) renderCapitalFlows(lastLiveData);
+  } else if (key === "cbpos") {
+    cbPosPage = Math.max(0, to);
+    if (lastCombineData) renderIntraday(lastCombineData);
+  } else if (key === "cbsig") {
+    cbSigPage = Math.max(0, to);
+    if (lastCombineData) renderIntraday(lastCombineData);
+  } else if (key === "cbtr") {
+    cbTradePage = Math.max(0, to);
+    if (lastCombineData) renderIntraday(lastCombineData);
   }
 });
 
@@ -526,12 +546,16 @@ function splitCapitalFlows(d) {
 function renderCapitalFlows(d) {
   const el = $("lv-flow-history");
   if (!el) return;
-  const key = JSON.stringify([d.account, d.capital_flows]);
+  const flows = (d.capital_flows || []).map((f, index) => ({ ...f, index })).reverse();
+  const pages = Math.max(1, Math.ceil(flows.length / FLOW_PAGE_SIZE));
+  if (flowPage > pages - 1) flowPage = 0;
+  const key = JSON.stringify([d.account, d.capital_flows, flowPage]);
   if (el.flowKey === key) return; // Polling must not overwrite an in-progress time correction.
   el.flowKey = key;
-  const flows = (d.capital_flows || []).map((f,index) => ({...f,index})).reverse();
-  el.innerHTML = flows.length ? flows.map(f => `<div class="flow-entry"><div class="flow-row"><time>${ts2m(f.effective_ts ?? f.ts)} UTC${f.effective_ts == null ? " · 登记时间" : " · 到账时间"}${isTransferFlow(f) ? " · 子账户互转" : ""}</time><b>${f.amount >= 0 ? "+" : "−"}$${fmt(Math.abs(f.amount), 2)}</b></div><details><summary>校正到账时间 / 删除</summary><input aria-label="到账时间 UTC" type="datetime-local" step="1" value="${new Date(f.effective_ts ?? f.ts).toISOString().slice(0,19)}"><button type="button" class="btn ghost" data-flow-index="${f.index}" data-flow-ts="${f.ts}" data-flow-account="${escapeHTML(d.account)}">保存时间</button><button type="button" class="btn ghost neg" data-flow-delete="${f.index}">删除</button></details></div>`).join("") : '<p>暂无登记流水</p>';
-
+  const pageRows = flows.slice(flowPage * FLOW_PAGE_SIZE, (flowPage + 1) * FLOW_PAGE_SIZE);
+  el.innerHTML = flows.length
+    ? pageRows.map(f => `<div class="flow-entry"><div class="flow-row"><time>${ts2m(f.effective_ts ?? f.ts)} UTC${f.effective_ts == null ? " · 登记时间" : " · 到账时间"}${isTransferFlow(f) ? " · 子账户互转" : ""}</time><b>${f.amount >= 0 ? "+" : "−"}$${fmt(Math.abs(f.amount), 2)}</b></div><details><summary>校正到账时间 / 删除</summary><input aria-label="到账时间 UTC" type="datetime-local" step="1" value="${new Date(f.effective_ts ?? f.ts).toISOString().slice(0,19)}"><button type="button" class="btn ghost" data-flow-index="${f.index}" data-flow-ts="${f.ts}" data-flow-account="${escapeHTML(d.account)}">保存时间</button><button type="button" class="btn ghost neg" data-flow-delete="${f.index}">删除</button></details></div>`).join("") + (flows.length > FLOW_PAGE_SIZE ? pager("flow", flows.length, flowPage, FLOW_PAGE_SIZE) : "")
+    : '<p>暂无登记流水</p>';
 }
 
 function setupCapitalFlow() {
@@ -661,9 +685,11 @@ let currentStrategy = 'all';
 
 function renderTotal(d) {
   const el = $('mo-total');
+  const band = $('mo-overview-band');
   if (!el) return;
   if (currentStrategy !== 'all') {
     el.innerHTML = '';
+    if (band) band.classList.add('single-col');
     return;
   }
   const mom = Number.isFinite(d.equity) ? d.equity : 0;
@@ -671,8 +697,10 @@ function renderTotal(d) {
     ? d.ml_account.equity : null;
   if (ml == null) {
     el.innerHTML = '';
+    if (band) band.classList.add('single-col');
     return;
   }
+  if (band) band.classList.remove('single-col');
   const total = mom + ml;
   // 合计变化基准 = 两个子账户【各自的起始净值】之和（不能用合并首尾 ✗
   // ML 的初始资金会被当成收益 ✗ 之前 +2962 就是这个 bug）
@@ -1091,10 +1119,10 @@ function renderMonitor(d) {
   if (!pos.length) {
     $("mo-positions").innerHTML = err + '<div class="empty">账户当前没有持仓</div>';
   } else {
-    const posPages = Math.max(1, Math.ceil(pos.length / LIVE_PAGE_SIZE));
+    const posPages = Math.max(1, Math.ceil(pos.length / POS_PAGE_SIZE));
     if (posPage > posPages - 1) posPage = 0;
     const rows = pos
-      .slice(posPage * LIVE_PAGE_SIZE, (posPage + 1) * LIVE_PAGE_SIZE)
+      .slice(posPage * POS_PAGE_SIZE, (posPage + 1) * POS_PAGE_SIZE)
       .map((p) => {
         const cls = p.unrealized >= 0 ? "pos" : "neg";
         const dist = p.dist_pct == null ? "—" : fmt(p.dist_pct, 1) + "%";
@@ -1125,7 +1153,7 @@ function renderMonitor(d) {
     $("mo-positions").innerHTML = err + `<div class="table-scroll"><table><thead><tr>
       <th>币</th>${allView ? '<th>账户</th>' : ''}<th>方向</th><th>数量</th><th>入场价</th><th>当前价</th>
       <th>名义</th><th>未实现盈亏</th><th>强平价</th><th>距强平</th><th>离止盈</th><th>保证金模式</th>
-    </tr></thead><tbody>${rows}</tbody></table></div>` + pager("pos", pos.length, posPage, LIVE_PAGE_SIZE);
+    </tr></thead><tbody>${rows}</tbody></table></div>` + pager("pos", pos.length, posPage, POS_PAGE_SIZE);
   }
 
   renderExecDaily(d);
@@ -1956,15 +1984,30 @@ function renderIntraday(d) {
       {equityLabel:"影子净值 · 最新",changeLabel:"记录区间变化",legendName:"日内影子"});
   } else if ($("cb-chart")) $("cb-chart").innerHTML = '<div class="empty">等待第一个前向净值点</div>';
   const legs = $("cb-legs");
-  if (legs) legs.innerHTML = ps.length ? '<div class="table-scroll"><table><thead><tr><th>币</th><th>方向</th><th>概率</th><th>名义</th><th>开仓价</th><th>现价</th><th>止盈 / 止损</th><th>浮盈</th></tr></thead><tbody>' +
-    ps.map(p => { const long=isLongPosition(p),u=Number(p.unrealized_pnl)||0; return `<tr><td><b>${escapeHTML(p.coin)}</b></td><td class="${long?"pos":"neg"}">${long?"多":"空"}</td><td>${(100*(p.probability||0)).toFixed(1)}%</td><td>$${fmt(p.notional,0)}</td><td>${fmtCompact(p.entry_price)}</td><td>${fmtCompact(p.mark_price)}</td><td>${fmtCompact(p.target_price)} / ${fmtCompact(p.stop_price)}</td><td class="${u>=0?"pos":"neg"}">${moneySigned(u)}</td></tr>`; }).join("") + '</tbody></table></div>'
-    : '<div class="empty">当前空仓。没有足够强的趋势延续信号就不出手。</div>';
-  if ($("cb-position-count")) $("cb-position-count").textContent = `${ps.length} / 4 仓 · 毛敞口 $${fmt(d.gross_notional||0,0)}`;
+  if (legs) {
+    const posPages = Math.max(1, Math.ceil(ps.length / CB_PAGE_SIZE));
+    if (cbPosPage > posPages - 1) cbPosPage = 0;
+    const posRows = ps.slice(cbPosPage * CB_PAGE_SIZE, (cbPosPage + 1) * CB_PAGE_SIZE);
+    legs.innerHTML = ps.length ? '<div class="table-scroll"><table><thead><tr><th>币</th><th>方向</th><th>概率</th><th>名义</th><th>开仓价</th><th>现价</th><th>止盈 / 止损</th><th>浮盈</th></tr></thead><tbody>' +
+      posRows.map(p => { const long=isLongPosition(p),u=Number(p.unrealized_pnl)||0; return `<tr><td><b>${escapeHTML(p.coin)}</b></td><td class="${long?"pos":"neg"}">${long?"多":"空"}</td><td>${(100*(p.probability||0)).toFixed(1)}%</td><td>$${fmt(p.notional,0)}</td><td>${fmtCompact(p.entry_price)}</td><td>${fmtCompact(p.mark_price)}</td><td>${fmtCompact(p.target_price)} / ${fmtCompact(p.stop_price)}</td><td class="${u>=0?"pos":"neg"}">${moneySigned(u)}</td></tr>`; }).join("") + '</tbody></table></div>' + (ps.length > CB_PAGE_SIZE ? pager("cbpos", ps.length, cbPosPage, CB_PAGE_SIZE) : "")
+      : '<div class="empty">当前空仓。没有足够强的趋势延续信号就不出手。</div>';
+  }
+  if ($("cb-position-count")) $("cb-position-count").textContent = `${ps.length} / ${cfg.max_positions||4} 仓 · 毛敞口 $${fmt(d.gross_notional||0,0)}`;
   if ($("cb-config")) $("cb-config").innerHTML = [`单仓 ${100*(cfg.position_fraction||.25)}%`,`最多 ${cfg.max_positions||4} 仓`,`概率 ≥ ${cfg.threshold||.55}`,`成本 ${10000*(cfg.fee_per_side||.0007)}bp/边`,`最长 ${cfg.max_holding_hours||6} 小时`,`冷却 ${cfg.cooldown_hours||24} 小时`].map(x=>`<span>${x}</span>`).join("");
-  const sigs=(d.signals||[]).slice(-20).reverse();
-  if ($("cb-signals")) $("cb-signals").innerHTML=sigs.length?'<div class="table-scroll"><table><thead><tr><th>时间</th><th>币</th><th>方向</th><th>24h涨跌</th><th>4h OI</th><th>概率</th><th>处理</th></tr></thead><tbody>'+sigs.map(s=>`<tr><td class="muted">${ts2m(s.ts)}</td><td>${escapeHTML(s.coin)}</td><td class="${s.side==="long"?"pos":"neg"}">${s.side==="long"?"多":"空"}</td><td>${(100*(s.ret24||0)).toFixed(1)}%</td><td>${(100*(s.oi_chg_4h||0)).toFixed(1)}%</td><td>${(100*(s.probability||0)).toFixed(1)}%</td><td class="${s.accepted?"pos":"muted"}">${escapeHTML(s.reason)}</td></tr>`).join("")+'</tbody></table></div>':'<div class="empty">尚无信号记录，每小时检查一次。</div>';
-  const trades=(d.trades||[]).slice(-50).reverse();
-  if ($("cb-trades")) $("cb-trades").innerHTML=trades.length?'<div class="table-scroll"><table><thead><tr><th>平仓时间</th><th>币</th><th>方向</th><th>开仓 / 平仓</th><th>概率</th><th>净盈亏</th><th>原因</th></tr></thead><tbody>'+trades.map(t=>`<tr><td class="muted">${ts2m(t.exit_ts)}</td><td>${escapeHTML(t.coin)}</td><td class="${t.side==="long"?"pos":"neg"}">${t.side==="long"?"多":"空"}</td><td>${fmtCompact(t.entry_price)} / ${fmtCompact(t.exit_price)}</td><td>${(100*(t.probability||0)).toFixed(1)}%</td><td class="${(t.pnl_usd||0)>=0?"pos":"neg"}">${moneySigned(t.pnl_usd||0)}</td><td>${escapeHTML(t.reason)}</td></tr>`).join("")+'</tbody></table></div>':'<div class="empty">暂无已平仓模拟成交。</div>';
+  const sigs = (d.signals || []).slice().reverse();
+  if ($("cb-signals")) {
+    const sigPages = Math.max(1, Math.ceil(sigs.length / CB_PAGE_SIZE));
+    if (cbSigPage > sigPages - 1) cbSigPage = 0;
+    const sigRows = sigs.slice(cbSigPage * CB_PAGE_SIZE, (cbSigPage + 1) * CB_PAGE_SIZE);
+    $("cb-signals").innerHTML = sigs.length ? '<div class="table-scroll"><table><thead><tr><th>时间</th><th>币</th><th>方向</th><th>24h涨跌</th><th>4h OI</th><th>概率</th><th>处理</th></tr></thead><tbody>'+sigRows.map(s=>`<tr><td class="muted">${ts2m(s.ts)}</td><td>${escapeHTML(s.coin)}</td><td class="${s.side==="long"?"pos":"neg"}">${s.side==="long"?"多":"空"}</td><td>${(100*(s.ret24||0)).toFixed(1)}%</td><td>${(100*(s.oi_chg_4h||0)).toFixed(1)}%</td><td>${(100*(s.probability||0)).toFixed(1)}%</td><td class="${s.accepted?"pos":"muted"}">${escapeHTML(s.reason)}</td></tr>`).join("")+'</tbody></table></div>' + pager("cbsig", sigs.length, cbSigPage, CB_PAGE_SIZE) : '<div class="empty">尚无信号记录，每小时检查一次。</div>';
+  }
+  const trades = (d.trades || []).slice().reverse();
+  if ($("cb-trades")) {
+    const trPages = Math.max(1, Math.ceil(trades.length / CB_PAGE_SIZE));
+    if (cbTradePage > trPages - 1) cbTradePage = 0;
+    const trRows = trades.slice(cbTradePage * CB_PAGE_SIZE, (cbTradePage + 1) * CB_PAGE_SIZE);
+    $("cb-trades").innerHTML = trades.length ? '<div class="table-scroll"><table><thead><tr><th>平仓时间</th><th>币</th><th>方向</th><th>开仓 / 平仓</th><th>概率</th><th>净盈亏</th><th>原因</th></tr></thead><tbody>'+trRows.map(t=>`<tr><td class="muted">${ts2m(t.exit_ts)}</td><td>${escapeHTML(t.coin)}</td><td class="${t.side==="long"?"pos":"neg"}">${t.side==="long"?"多":"空"}</td><td>${fmtCompact(t.entry_price)} / ${fmtCompact(t.exit_price)}</td><td>${(100*(t.probability||0)).toFixed(1)}%</td><td class="${(t.pnl_usd||0)>=0?"pos":"neg"}">${moneySigned(t.pnl_usd||0)}</td><td>${escapeHTML(t.reason)}</td></tr>`).join("")+'</tbody></table></div>' + pager("cbtr", trades.length, cbTradePage, CB_PAGE_SIZE) : '<div class="empty">暂无已平仓模拟成交。</div>';
+  }
 }
 
 async function refreshCombine() {
@@ -2101,7 +2144,7 @@ function arrangeMonitorSummary(id, shadow = false) {
   const first = [...groups[0].querySelectorAll('.metric')];
   const capital = groups.find(g => g.classList.contains('capital-account'));
   root.replaceChildren();
-  root.className = 'account-summary';
+  root.className = shadow ? 'account-summary cols-3' : 'account-summary';
   if (shadow) {
     // 影子页沿用原来的三格（净值 ✗ 累计盈亏 ✗ 浮动 ✓）
     const earnings = first[1];
@@ -2206,7 +2249,9 @@ function arrangeMonitorSummary(id, shadow = false) {
       root.append(cell("组合预估日波动", pct.toFixed(2) + "%", tone));
     }
   }
-  // 五项健康指标（整个块占满一行 ✗ 红黄绿一眼可见 ✓）
+  // 五项健康指标（Bento 侧栏与曲线并排 ✓）
+  const healthHost = !shadow ? $('mo-health-host') : null;
+  const perfPanel = !shadow ? $('mo-perf-panel') : null;
   if (!shadow && currentStrategy !== 'ml' && lastLiveData && Array.isArray(lastLiveData.scorecard) && lastLiveData.scorecard.length) {
     const card = document.createElement("div");
     card.className = "metric score-metric";
@@ -2237,7 +2282,17 @@ function arrangeMonitorSummary(id, shadow = false) {
       return `<div class="score-row"><div class="score-row-top">${dot}<span class="score-name">${escapeHTML(row.name || "")}</span><span class="score-val ${tone}">${escapeHTML(val)}</span></div><span class="score-hint">${escapeHTML(hint)}</span></div>`;
     }).join("");
     card.innerHTML = `<div class="k">策略健康度</div><div class="score-body">${rows}</div>`;
-    root.append(card);
+    if (healthHost && perfPanel) {
+      healthHost.replaceChildren(card);
+      healthHost.hidden = false;
+      perfPanel.classList.add('with-health');
+    } else {
+      root.append(card);
+    }
+  } else if (healthHost && perfPanel) {
+    healthHost.replaceChildren();
+    healthHost.hidden = true;
+    perfPanel.classList.remove('with-health');
   }
   // 兜底：如果整理后根节点什么都没有（比如 structure 变了 ✗）
   // 就把原来的分组放回去 ✗ 宁可丑也不能空白 ✓
@@ -2280,7 +2335,9 @@ function arrangeMonitorSummary(id, shadow = false) {
 // 用 const 会让渲染撞上 TDZ：Cannot access 'hcMoney' before initialization。
 const HC_PAGE = 10;
 const HC_PAGE_2 = 15;
+let hcLegPage = 0;
 let hcRbPage = 0;
+let hcDailyPage = 0;
 let hcLogPage = 0;
 let lastHlCarryData = null;
 
@@ -2358,13 +2415,16 @@ function renderHlCarry(d) {
 
   const tb = $("hc-legs");
   if (tb) {
+    const legPages = Math.max(1, Math.ceil(legs.length / HC_PAGE));
+    if (hcLegPage > legPages - 1) hcLegPage = 0;
+    const legRows = legs.slice(hcLegPage * HC_PAGE, (hcLegPage + 1) * HC_PAGE);
     tb.innerHTML = legs.length
-      ? `<div class="table-scroll"><table><thead><tr><th>币</th><th>现货对</th><th>名义</th><th>资金费/年</th><th>当前基差</th><th>资金费累计</th><th>基差盈亏</th><th>腿盈亏</th></tr></thead><tbody>${legs
+      ? `<div class="table-scroll"><table><thead><tr><th>币</th><th>现货对</th><th>名义</th><th>资金费/年</th><th>当前基差</th><th>资金费累计</th><th>基差盈亏</th><th>腿盈亏</th></tr></thead><tbody>${legRows
           .map(
             (l) =>
               `<tr><td>${escapeHTML(l.coin || "")}</td><td>${escapeHTML(l.spot || "")}</td><td>${hcMoney(l.notional)}</td><td class="${Number(l.funding_ann) >= 0 ? "pos" : "neg"}">${fmt(l.funding_ann, 2)}%</td><td>${fmt(l.basis_bp, 1)} bp</td><td>${moneySigned(l.funding_accrued)}</td><td>${moneySigned(l.basis_pnl)}</td><td class="${Number(l.leg_pnl) >= 0 ? "pos" : "neg"}">${moneySigned(l.leg_pnl)}</td></tr>`
           )
-          .join("")}</tbody></table></div>`
+          .join("")}</tbody></table></div>` + (legs.length > HC_PAGE ? pager("hcleg", legs.length, hcLegPage, HC_PAGE) : "")
       : '<div class="empty">无持仓</div>';
   }
 
@@ -2399,17 +2459,20 @@ function renderHlCarry(d) {
     }
   }
 
-  // ---- 每日汇总 ----
+  // ---- 每日汇总（分页）----
   const dl = $("hc-daily");
   if (dl) {
-    const rows = (s.daily || []).slice(-30).reverse();
-    dl.innerHTML = rows.length
+    const allDaily = (s.daily || []).slice().reverse();
+    const dPages = Math.max(1, Math.ceil(allDaily.length / HC_PAGE));
+    if (hcDailyPage > dPages - 1) hcDailyPage = 0;
+    const rows = allDaily.slice(hcDailyPage * HC_PAGE, (hcDailyPage + 1) * HC_PAGE);
+    dl.innerHTML = allDaily.length
       ? `<div class="table-scroll"><table><thead><tr><th>日期</th><th>权益</th><th>资金费</th><th>基差</th><th>手续费</th><th>换仓</th></tr></thead><tbody>${rows
           .map(
             (d) =>
               `<tr><td>${escapeHTML(d.date)}</td><td>${hcMoney(d.equity_start)} → ${hcMoney(d.equity_end)}</td><td class="${Number(d.funding) >= 0 ? "pos" : "neg"}">${moneySigned(d.funding)}</td><td class="${Number(d.basis) >= 0 ? "pos" : "neg"}">${moneySigned(d.basis)}</td><td>−${hcMoney(d.fees)}</td><td>${d.rebalances || 0}</td></tr>`,
           )
-          .join("")}</tbody></table></div>`
+          .join("")}</tbody></table></div>` + pager("hcdl", allDaily.length, hcDailyPage, HC_PAGE)
       : '<div class="empty">还没有满一小时的记录。</div>';
   }
 
@@ -2458,7 +2521,9 @@ document.addEventListener("click", (e) => {
   if (!b) return;
   const to = Number(b.dataset.to);
   if (!Number.isFinite(to)) return;
+  if (b.dataset.pager === "hcleg") hcLegPage = Math.max(0, to);
   if (b.dataset.pager === "hcrb") hcRbPage = Math.max(0, to);
+  if (b.dataset.pager === "hcdl") hcDailyPage = Math.max(0, to);
   if (b.dataset.pager === "hclog") hcLogPage = Math.max(0, to);
   if (lastHlCarryData) renderHlCarry(lastHlCarryData);
 });

@@ -425,12 +425,61 @@
       .total-alloc-mom { background: linear-gradient(90deg, #059669, #34d399); border-radius: 999px; transition: width 0.35s ease; }
       .total-alloc-ml { background: linear-gradient(90deg, #0284c7, #38bdf8); border-radius: 999px; transition: width 0.35s ease; }
 
+      /* 监控 Bento 编排 */
+      .monitor-toolbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px 16px;
+        flex-wrap: wrap;
+      }
+      .monitor-toolbar #mo-status { flex: 1 1 360px; min-width: 0; }
+      .monitor-overview-band {
+        display: grid;
+        grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+        gap: 14px;
+        align-items: stretch;
+      }
+      .monitor-overview-band.single-col {
+        grid-template-columns: 1fr;
+      }
+      .monitor-overview-band.single-col #mo-total { display: none; }
+      .monitor-overview-band:not(.single-col) .total-card {
+        height: 100%;
+        grid-template-columns: 1fr 1fr;
+        align-content: space-between;
+      }
+      .monitor-overview-band:not(.single-col) .total-item.total-sum {
+        grid-column: 1 / -1;
+        padding-bottom: 12px;
+        border-bottom: 1px solid var(--border);
+      }
+      .monitor-overview-band:not(.single-col) .total-item:nth-child(2) {
+        padding-left: 0;
+        border-left: none;
+      }
+      .monitor-overview-band:not(.single-col) .account-summary {
+        height: 100%;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
       /* 核心 KPI 网格 */
-      .performance-panel { display: flex; flex-direction: column; gap: 16px; }
+      .performance-panel {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 14px;
+        align-items: stretch;
+      }
+      .performance-panel.with-health {
+        grid-template-columns: minmax(0, 1.7fr) minmax(0, 0.95fr);
+      }
       .account-summary {
         display: grid;
         grid-template-columns: repeat(4, minmax(0, 1fr));
         gap: 12px;
+      }
+      .account-summary.cols-3 {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
       }
       .account-summary .metric, .combine-kpi, .daily-exec-kpis .metric {
         background: var(--surface);
@@ -460,8 +509,25 @@
       .metric-unit { font-size: 13px; font-weight: 500; color: var(--muted); }
       .account-return, .combine-kpi-detail { font-family: var(--font-mono); font-size: 11.5px; color: var(--muted); font-variant-numeric: tabular-nums; }
 
-      /* 策略健康度卡片 */
-      .score-metric { grid-column: 1 / -1; }
+      /* 策略健康度卡片（侧栏 Bento） */
+      .health-side-card[hidden] { display: none; }
+      .health-side-card .score-metric {
+        height: 100%;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 18px 20px;
+        box-shadow: var(--shadow-card);
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .health-side-card .score-body {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin-top: 2px;
+      }
       .score-body {
         display: grid;
         grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -740,7 +806,11 @@
       .shadow-param-group { border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 14px 16px; margin-bottom: 14px; }
       .shadow-param-group legend { font-family: var(--font-mono); font-size: 11.5px; font-weight: 600; color: var(--ink-2); padding: 0 6px; }
 
-      .combine-overview { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 12px; }
+      .hlcarry-top-grid { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 14px; align-items: stretch; }
+      .hlcarry-bottom-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; align-items: start; }
+
+      .combine-overview { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+      .combine-bottom-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; align-items: start; }
       .combine-state {
         display: inline-flex; align-items: center; gap: 7px; padding: 5px 12px; border-radius: 999px;
         font-size: 12px; font-weight: 600; background: var(--surface-2); border: 1px solid var(--border); color: var(--ink-2);
@@ -772,9 +842,14 @@
       .auth-box .btn { width: 100%; }
 
       /* 响应式 */
+      @media (max-width: 1180px) {
+        .monitor-overview-band, .performance-panel.with-health, .hlcarry-top-grid, .hlcarry-bottom-grid, .combine-bottom-grid {
+          grid-template-columns: 1fr;
+        }
+      }
       @media (max-width: 1080px) {
         .setup-layout { grid-template-columns: 1fr; }
-        .account-summary, .daily-exec-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .account-summary, .daily-exec-kpis, .combine-overview, .account-summary.cols-3 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
         .total-card { grid-template-columns: 1fr; }
         .total-item { padding-left: 0; border-left: none; padding-top: 12px; border-top: 1px solid var(--border); }
         .total-item.total-sum { padding-top: 0; border-top: none; }
@@ -836,18 +911,23 @@
             </div>
           </div>
 
-          <div id="mo-status"></div>
-          <div id="mo-total"></div>
-          <div id="mo-warn"></div>
-
-          <div class="segmented mo-strategy-tabs" id="mo-strategy-tabs" role="group" aria-label="策略切换">
-            <button type="button" data-strategy="all" aria-pressed="true">全部账户</button>
-            <button type="button" data-strategy="momentum" aria-pressed="false">动量策略 (75%)</button>
-            <button type="button" data-strategy="ml" aria-pressed="false">ML 策略 (25%)</button>
+          <div class="monitor-toolbar">
+            <div id="mo-status"></div>
+            <div class="segmented mo-strategy-tabs" id="mo-strategy-tabs" role="group" aria-label="策略切换">
+              <button type="button" data-strategy="all" aria-pressed="true">全部账户</button>
+              <button type="button" data-strategy="momentum" aria-pressed="false">动量策略 (75%)</button>
+              <button type="button" data-strategy="ml" aria-pressed="false">ML 策略 (25%)</button>
+            </div>
           </div>
 
-          <div class="performance-panel">
+          <div id="mo-warn"></div>
+
+          <div class="monitor-overview-band" id="mo-overview-band">
+            <div id="mo-total"></div>
             <div class="metrics" id="mo-metrics"></div>
+          </div>
+
+          <div class="performance-panel" id="mo-perf-panel">
             <div class="content-card equity-card">
               <div class="panel-head monitor-section-head">
                 <div><span class="section-eyebrow">EQUITY &amp; PNL</span><h2>策略盈亏曲线</h2></div>
@@ -860,6 +940,7 @@
               </div>
               <div class="chart" id="mo-chart"></div>
             </div>
+            <aside class="health-side-card" id="mo-health-host" hidden></aside>
           </div>
 
           <div class="content-card">
@@ -1008,42 +1089,46 @@
             </div>
           </div>
           <div id="hc-warn"></div>
-          <div class="content-card hc-overview">
-            <div class="hc-overview-head">
-              <div><h2>模拟账户</h2><p>余额与收益拆分 · 所有数据仅来自影子模拟</p></div>
-              <span class="badge todo">不发送真实订单</span>
-            </div>
-            <div class="hc-budget-control">
-              <div class="field">
-                <label for="hc-budget">模拟预算 · USD</label>
-                <input id="hc-budget" type="number" min="1" max="10000000" step="100" inputmode="decimal" aria-describedby="hc-budget-note hc-budget-status" />
+          <div class="hlcarry-top-grid">
+            <div class="content-card hc-overview">
+              <div class="hc-overview-head">
+                <div><h2>模拟账户</h2><p>余额与收益拆分 · 所有数据仅来自影子模拟</p></div>
+                <span class="badge todo">不发送真实订单</span>
               </div>
-              <div class="hc-budget-action"><button class="btn" id="hc-open" type="button">按预算重置模拟</button></div>
+              <div class="hc-budget-control">
+                <div class="field">
+                  <label for="hc-budget">模拟预算 · USD</label>
+                  <input id="hc-budget" type="number" min="1" max="10000000" step="100" inputmode="decimal" aria-describedby="hc-budget-note hc-budget-status" />
+                </div>
+                <div class="hc-budget-action"><button class="btn" id="hc-open" type="button">按预算重置模拟</button></div>
+              </div>
+              <p class="note" id="hc-budget-note">重置会清空现有模拟持仓、累计盈亏和曲线，再按此金额建仓。</p>
+              <p class="note" id="hc-budget-status" role="status" aria-live="polite"></p>
+              <div class="metrics" id="hc-metrics"></div>
             </div>
-            <p class="note" id="hc-budget-note">重置会清空现有模拟持仓、累计盈亏和曲线，再按此金额建仓。</p>
-            <p class="note" id="hc-budget-status" role="status" aria-live="polite"></p>
-            <div class="metrics" id="hc-metrics"></div>
-          </div>
 
-          <div class="content-card">
-            <div class="panel-head">
-              <div><span class="section-eyebrow">SELECTION</span><h2>选币与换仓规则</h2></div>
-              <div class="actions"><button class="btn ghost" id="hc-params-save" type="button">保存规则</button></div>
+            <div class="content-card">
+              <div class="panel-head">
+                <div><span class="section-eyebrow">SELECTION</span><h2>选币与换仓规则</h2></div>
+                <div class="actions"><button class="btn ghost" id="hc-params-save" type="button">保存规则</button></div>
+              </div>
+              <div class="setup-fields">
+                <div class="field"><label for="hc-p-topk">最多持有几腿</label><input id="hc-p-topk" type="number" min="1" max="12" step="1" /></div>
+                <div class="field"><label for="hc-p-minfund">资金费门槛（%/年）</label><input id="hc-p-minfund" type="number" min="-50" max="500" step="0.5" /></div>
+                <div class="field"><label for="hc-p-minvol">现货 24h 成交额门槛</label><input id="hc-p-minvol" type="number" min="0" step="100000" /></div>
+                <div class="field"><label for="hc-p-maxw">单腿权重上限（%）</label><input id="hc-p-maxw" type="number" min="5" max="100" step="5" /></div>
+                <div class="field"><label for="hc-p-payback">换仓回本天数</label><input id="hc-p-payback" type="number" min="1" max="365" step="1" /></div>
+                <div class="field"><label for="hc-p-minhold">最短持有（小时）</label><input id="hc-p-minhold" type="number" min="0" max="720" step="12" /></div>
+              </div>
+              <p class="note" id="hc-params-status"></p>
             </div>
-            <div class="setup-fields">
-              <div class="field"><label for="hc-p-topk">最多持有几腿</label><input id="hc-p-topk" type="number" min="1" max="12" step="1" /></div>
-              <div class="field"><label for="hc-p-minfund">资金费门槛（%/年）</label><input id="hc-p-minfund" type="number" min="-50" max="500" step="0.5" /></div>
-              <div class="field"><label for="hc-p-minvol">现货 24h 成交额门槛</label><input id="hc-p-minvol" type="number" min="0" step="100000" /></div>
-              <div class="field"><label for="hc-p-maxw">单腿权重上限（%）</label><input id="hc-p-maxw" type="number" min="5" max="100" step="5" /></div>
-              <div class="field"><label for="hc-p-payback">换仓回本天数</label><input id="hc-p-payback" type="number" min="1" max="365" step="1" /></div>
-              <div class="field"><label for="hc-p-minhold">最短持有（小时）</label><input id="hc-p-minhold" type="number" min="0" max="720" step="12" /></div>
-            </div>
-            <p class="note" id="hc-params-status"></p>
           </div>
 
           <div class="content-card"><div class="panel-head"><h2>当前持仓</h2></div><div id="hc-legs"></div></div>
-          <div class="content-card"><div class="panel-head"><h2>换仓记录</h2></div><div id="hc-rebalances"></div></div>
-          <div class="content-card"><div class="panel-head"><h2>每日汇总（UTC）</h2></div><div id="hc-daily"></div></div>
+          <div class="hlcarry-bottom-grid">
+            <div class="content-card"><div class="panel-head"><h2>换仓记录</h2></div><div id="hc-rebalances"></div></div>
+            <div class="content-card"><div class="panel-head"><h2>每日汇总（UTC）</h2></div><div id="hc-daily"></div></div>
+          </div>
           <div class="content-card"><div class="panel-head"><h2>最近事件</h2></div><div id="hc-log"></div></div>
         </div>
       </section>
@@ -1188,14 +1273,16 @@
           <div id="cb-legs" class="combine-legs"></div>
           <div id="cb-config" class="combine-config"></div>
         </section>
-        <section class="combine-section">
-          <div class="combine-section-head"><div><span class="section-eyebrow">OPPORTUNITY LOG</span><h2>最近信号</h2></div></div>
-          <div id="cb-signals"></div>
-        </section>
-        <section class="combine-section">
-          <div class="combine-section-head"><div><span class="section-eyebrow">PAPER FILLS</span><h2>最近模拟成交</h2></div></div>
-          <div id="cb-trades"></div>
-        </section>
+        <div class="combine-bottom-grid">
+          <section class="combine-section">
+            <div class="combine-section-head"><div><span class="section-eyebrow">OPPORTUNITY LOG</span><h2>最近信号</h2></div></div>
+            <div id="cb-signals"></div>
+          </section>
+          <section class="combine-section">
+            <div class="combine-section-head"><div><span class="section-eyebrow">PAPER FILLS</span><h2>最近模拟成交</h2></div></div>
+            <div id="cb-trades"></div>
+          </section>
+        </div>
       </section>
 
     </main>
