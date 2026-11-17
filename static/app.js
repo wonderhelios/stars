@@ -1259,7 +1259,7 @@ function equityWindow(history, range, now) {
 }
 
 
-// 合并两个子账户的净值历史（严格按同小时对齐并过滤跨账本异步单点毛刺）——「全部账户」曲线。
+// 合并两个子账户的净值历史（严格按同小时对齐并过滤跨账本异步划转毛刺）——「全部账户」曲线。
 function mergeHistory(a, b) {
   const clean = arr => (arr || []).filter(p => Number.isFinite(p.ts) && Number.isFinite(p.equity)).sort((x, y) => x.ts - y.ts);
   const aS = clean(a), bS = clean(b);
@@ -1273,20 +1273,37 @@ function mergeHistory(a, b) {
   const out = [];
   for (const [h, ap] of [...aBuckets.entries()].sort((x, y) => x[0] - y[0])) {
     if (h < bStartHour) {
-      out.push({ ts: ap.ts, equity: ap.equity + bS[0].equity });
+      out.push({ ts: ap.ts, equity: ap.equity + bS[0].equity, sync: true });
     } else {
       const bp = bBuckets.get(h);
-      if (bp) out.push({ ts: Math.max(ap.ts, bp.ts), equity: ap.equity + bp.equity });
+      if (bp) {
+        const sync = Math.abs(ap.ts - bp.ts) <= 120000;
+        out.push({ ts: Math.max(ap.ts, bp.ts), equity: ap.equity + bp.equity, sync });
+      }
     }
   }
-  // 过滤同小时内一侧已划转、另一侧尚未更新导致的孤立单点毛刺（如 +$630 后下一小时立刻回落）
-  return out.filter((p, i, arr) => {
-    if (i <= 0 || i >= arr.length - 1) return true;
-    const d1 = p.equity - arr[i - 1].equity;
-    const d2 = arr[i + 1].equity - p.equity;
-    if (Math.abs(d1) > 250 && Math.abs(d2) > 250 && d1 * d2 < 0) return false;
-    return true;
-  });
+  // 过滤异步采样（>2分钟）导致的孤立或连续多点划转尖刺（跳变 > $220 且在 8 个点内回落）
+  const cleaned = [];
+  for (let i = 0; i < out.length; i++) {
+    const cur = out[i];
+    if (cleaned.length > 0) {
+      const prev = cleaned[cleaned.length - 1];
+      const jump = cur.equity - prev.equity;
+      if (Math.abs(jump) > 220) {
+        let reverted = false;
+        for (let j = i + 1; j < Math.min(out.length, i + 8); j++) {
+          const back = out[j].equity - cur.equity;
+          if (back * jump < 0 && Math.abs(out[j].equity - prev.equity) <= Math.abs(jump) * 0.45) {
+            reverted = true;
+            break;
+          }
+        }
+        if (reverted || !cur.sync) continue;
+      }
+    }
+    cleaned.push({ ts: cur.ts, equity: cur.equity });
+  }
+  return cleaned;
 }
 
 // 根据当前策略 tab 取曲线数据：all = A+B 合并，ml = ML，momentum = 动量
