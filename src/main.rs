@@ -148,16 +148,14 @@ async fn main() -> anyhow::Result<()> {
                         {
                             let mut hc = st.hlcarry.lock().await;
                             let previous = hc.clone();
-                            if hc.start_equity <= 0.0 || hc.legs.is_empty() {
-                                // 首次初始化使用实盘分配；已经设置过影子预算但首轮无候选时，
-                                // 必须沿用该预算重试，不能永久卡在“已初始化但空仓”。
+                            if hc.start_equity <= 0.0 {
                                 let opening_budget = if hc.budget_usd > 0.0 { hc.budget_usd } else { budget };
                                 if opening_budget > 0.0 {
                                     hc.open(opening_budget, &market, now);
                                 }
                             } else {
                                 hc.step(&market, now);
-                                // 先计提资金费与盯市（equity 依赖它们），再评估换仓。
+                                // 空仓也继续评估；重新开仓绝不能清空已有影子账本。
                                 hc.maybe_rebalance(&market, now);
                             }
                             // 状态锁持有到落盘完成，避免慢的旧快照覆盖刚提交的新预算。

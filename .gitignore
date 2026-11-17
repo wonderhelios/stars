@@ -1,5 +1,6 @@
 /target
 **/target/
+.venv/
 txflow-agents/
 
 # 研究过程的原始数据不进仓库：把结论（REPORT.md）和脚本（*.py）留下就够了，

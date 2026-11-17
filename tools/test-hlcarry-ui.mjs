@@ -12,7 +12,9 @@ import vm from 'node:vm';
 const src = readFileSync(new URL('../static/app.js', import.meta.url), 'utf8');
 const start = src.indexOf('// ---------- HL 单账户 carry 影子');
 assert.ok(start > 0, 'app.js 里找不到 hlcarry 前端块');
-const block = src.slice(start);
+const end = src.indexOf('const themeToggleBtn', start);
+assert.ok(end > start, 'app.js 里找不到 hlcarry 前端块的结束位置');
+const block = src.slice(start, end);
 
 // ---- 最小 DOM 桩 ----
 const els = new Map();
@@ -48,6 +50,10 @@ const ctx = vm.createContext({
   metric: (k, v, cls) =>
     `<div class="metric"><div class="k">${k}</div><div class="v ${cls || ''}">${v}</div></div>`,
   moneySigned: (v) => (v >= 0 ? '+' : '−') + '$' + Math.abs(v).toFixed(2),
+  pager: () => '',
+  equityWindow: (obs) => ({points: obs}),
+  withNow: (points) => points,
+  renderEquityChart: () => {},
   escapeHTML: (s) =>
     String(s).replace(/[&<>"]/g, (c) => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[c])),
   fetchJSONRetry: async (url, opts) => {
@@ -65,6 +71,7 @@ const ctx = vm.createContext({
   document: {
     getElementById: el,
     querySelectorAll: () => [],
+    addEventListener: (type, fn) => listeners.push({id: 'document', type, fn}),
     activeElement: null,
   },
   window: {},
@@ -93,18 +100,20 @@ let lastPayload = null;
 const payload = {
   equity: 1012.34,
   annualized_pct: 21.5,
+  funding_total: 13.44,
+  basis_total: 0.15,
   warnings: ['XMR 资金费偏低（2.10%/年）'],
   state: {
-    params: { top_k: 5, min_funding_ann_pct: 3, min_spot_volume_usd: 1000000, max_leg_weight: 0.4, payback_days: 30 },
+    params: { top_k: 5, min_funding_ann_pct: 3, min_spot_volume_usd: 1000000, max_leg_weight: 0.4, payback_days: 30, min_hold_hours: 48, basis_take_profit_bp: 50 },
     start_equity: 1000,
     budget_usd: 1000,
     legs: [
       {
-        coin: 'BTC', spot: '@142', notional: 300, funding_ann: 10.95, basis_bp: 8.4,
+        coin: 'BTC', spot: '@142', notional: 300, funding_ann: 10.95, basis_bp: 8.4, basis_move_bp: -20,
         funding_accrued: 0.31, basis_pnl: 0.05, fee_paid: 0.33, leg_pnl: 0.03,
       },
       {
-        coin: 'XMR', spot: '@260', notional: 200, funding_ann: 41.82, basis_bp: -12.0,
+        coin: 'XMR', spot: '@260', notional: 200, funding_ann: 41.82, basis_bp: -12.0, basis_move_bp: -49,
         funding_accrued: 0.95, basis_pnl: -0.2, fee_paid: 0.22, leg_pnl: 0.53,
       },
     ],
@@ -113,8 +122,13 @@ const payload = {
       {
         ts: 1761523600000, turnover: 0.4, funding_before: 10.95, funding_after: 21.3,
         threshold: 1.32, fee_usd: 0.44, added: ['ZEC'], removed: ['ETH'],
-        resized: [['BTC', 0.3, 0.35]],
+        resized: [['BTC', 0.3, 0.35]], reason: 'funding_rotation', basis_moves: [],
         target: [['ZEC', 0.4, 41.8], ['BTC', 0.35, 10.95]],
+      },
+      {
+        ts: 1761527200000, turnover: 0.2, funding_before: 18, funding_after: 0,
+        threshold: 50, fee_usd: 0, added: [], removed: ['XMR'], resized: [],
+        reason: 'basis_take_profit', basis_moves: [['XMR', -51.2]], target: [],
       },
     ],
     daily: [
@@ -149,6 +163,8 @@ assert.match(legs, /BTC/, '缺少 BTC 行');
 assert.match(legs, /XMR/, '缺少 XMR 行');
 assert.match(legs, /41\.82/, 'XMR 资金费未显示');
 assert.match(legs, /-12\.0 bp|-12 bp/, '基差未显示');
+assert.match(legs, /XMR1\/USDC · Wagyu（@260）/, '第三方现货应显示可读名称和市场 ID');
+assert.match(legs, /较入场基差/, '持仓应显示相对入场基差');
 
 const log = el('hc-log').innerHTML;
 assert.match(log, /开仓/, '事件日志未渲染');
@@ -157,7 +173,7 @@ assert.match(log, /开仓/, '事件日志未渲染');
 els.clear();
 ctx.renderHlCarry({equity: 0, annualized_pct: null, warnings: [], state: {legs: [], log: []}});
 const empty = el('hc-metrics').innerHTML;
-assert.match(empty, /还没有影子持仓/, '空仓时缺少引导文案');
+assert.match(empty, /还没有影子账户/, '空仓时缺少引导文案');
 assert.match(empty, /按预算重置模拟/, '空仓时应提示如何开仓，而不是自动用默认金额');
 assert.equal(el('hc-warn').innerHTML, '', '无告警时不应渲染告警卡片');
 
@@ -238,6 +254,7 @@ assert.equal(el('hc-p-topk').value, '5', 'top_k 应回填');
 assert.equal(el('hc-p-minfund').value, '3', '资金费门槛应回填');
 assert.equal(el('hc-p-maxw').value, '40', '单腿上限应按百分数回填');
 assert.equal(el('hc-p-payback').value, '30', '回本天数应回填');
+assert.equal(el('hc-p-basistp').value, '50', '基差止盈应回填');
 
 const paramsBtn = listeners.find((l) => l.id === 'hc-params-save');
 assert.ok(paramsBtn, '#hc-params-save 未绑定');
@@ -246,6 +263,7 @@ el('hc-p-minfund').value = '5';
 el('hc-p-minvol').value = '2000000';
 el('hc-p-maxw').value = '25';
 el('hc-p-payback').value = '14';
+el('hc-p-basistp').value = '60';
 const beforeParams = fetchCalls.length;
 await paramsBtn.fn();
 const saveCall = fetchCalls.slice(beforeParams).find((c) => String(c.url).includes('/api/hlcarry/params'));
@@ -256,6 +274,7 @@ assert.equal(sent.min_funding_ann_pct, 5);
 assert.equal(sent.min_spot_volume_usd, 2000000);
 assert.equal(sent.max_leg_weight, 0.25, '百分比要换算成小数');
 assert.equal(sent.payback_days, 14);
+assert.equal(sent.basis_take_profit_bp, 60);
 assert.match(el('hc-params-status').textContent, /已保存/, '保存后应有状态提示');
 
 // 资金利用率
@@ -268,6 +287,8 @@ assert.match(rbHtml, /−ETH/, '换仓记录应显示移出的币');
 assert.match(rbHtml, /10\.95% → 21\.3/, '应显示加权资金费前后');
 assert.match(rbHtml, /1\.32%/, '应显示触发门槛');
 assert.match(rbHtml, /40%/, '应显示换手率');
+assert.match(rbHtml, /基差止盈/, '应标注基差止盈原因');
+assert.match(rbHtml, /XMR -51\.2bp/, '应记录触发时的相对基差');
 
 // ---- 用例 11：每日汇总 ----
 const dlHtml = el('hc-daily').innerHTML;
@@ -278,7 +299,7 @@ assert.match(dlHtml, /−\$0\.36/, '基差为负应带负号');
 
 // 空状态的引导
 ctx.renderHlCarry({equity: 0, annualized_pct: null, warnings: [], state: {legs: [], log: [], rebalances: [], daily: []}});
-assert.match(el('hc-rebalances').innerHTML, /还没有换过仓/, '无换仓时应有说明');
+assert.match(el('hc-rebalances').innerHTML, /还没有止盈或资金费轮动记录/, '无换仓时应有说明');
 assert.match(el('hc-daily').innerHTML, /还没有满一小时/, '无日报时应有说明');
 
-console.log('✓ hlcarry 影子 tab：渲染正确；预算与选币规则可调；换仓记录与每日汇总都有');
+console.log('✓ 基差影子：渲染、预算、资金费与基差参数、止盈记录及每日汇总均正常');

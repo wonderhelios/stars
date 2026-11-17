@@ -2582,22 +2582,33 @@ function hcMoney(v) {
     : "—";
 }
 
+function hcSpotLabel(pair) {
+  const known = {
+    "@107": "HYPE/USDC",
+    "@142": "UBTC/USDC · Unit",
+    "@151": "UETH/USDC · Unit",
+    "@260": "XMR1/USDC · Wagyu",
+  };
+  return known[pair] ? `${known[pair]}（${pair}）` : (pair || "—");
+}
+
 function renderHlCarry(d) {
   const s = (d && d.state) || {};
   const legs = Array.isArray(s.legs) ? s.legs : [];
   const eq = Number.isFinite(d.equity) ? d.equity : 0;
   const start = Number.isFinite(s.start_equity) && s.start_equity > 0 ? s.start_equity : 0;
-  const fund = legs.reduce((a, l) => a + (Number(l.funding_accrued) || 0), 0);
-  const basis = legs.reduce((a, l) => a + (Number(l.basis_pnl) || 0), 0);
-  // 注意：腿上的 fee_paid 只统计【当前还持有的腿】✗ 换掉的腿的费用已经进 closed_pnl
-  // 所以这里要分开显示：今日（来自 daily）和累计（来自 fees_paid_total）
+  const fund = Number.isFinite(d.funding_total)
+    ? d.funding_total
+    : legs.reduce((a, l) => a + (Number(l.funding_accrued) || 0), 0);
+  const basis = Number.isFinite(d.basis_total)
+    ? d.basis_total
+    : legs.reduce((a, l) => a + (Number(l.basis_pnl) || 0), 0);
   const feeToday = (Array.isArray(s.daily) && s.daily.length)
     ? Number(s.daily[s.daily.length - 1].fees) || 0
     : 0;
   const feeTotal = Number.isFinite(s.fees_paid_total) ? s.fees_paid_total : 0;
   const ann = d.annualized_pct;
   const p = s.params || {};
-  // 参数回填（不覆盖正在编辑的输入框）
   const pf = [
     ["hc-p-topk", p.top_k, 0],
     ["hc-p-minfund", p.min_funding_ann_pct, 2],
@@ -2605,6 +2616,7 @@ function renderHlCarry(d) {
     ["hc-p-maxw", Number.isFinite(p.max_leg_weight) ? p.max_leg_weight * 100 : null, 0],
     ["hc-p-payback", p.payback_days, 0],
     ["hc-p-minhold", p.min_hold_hours, 0],
+    ["hc-p-basistp", p.basis_take_profit_bp, 0],
   ];
   for (const [id, val, digits] of pf) {
     const inp = $(id);
@@ -2613,7 +2625,6 @@ function renderHlCarry(d) {
     }
   }
   window.__hcBudget = Number.isFinite(s.budget_usd) ? s.budget_usd : 0;
-  // 回填预算输入框；用户正在编辑时不覆盖（renderMonitor 那种轮询会打架）
   const budgetInput = $("hc-budget");
   if (budgetInput && document.activeElement !== budgetInput) {
     budgetInput.value = window.__hcBudget > 0 ? String(window.__hcBudget) : "";
@@ -2621,8 +2632,8 @@ function renderHlCarry(d) {
 
   const m = $("hc-metrics");
   if (m) {
-    m.innerHTML = legs.length
-      ? `<div class="hc-primary-metrics"><div class="hc-metric-label">账户表现</div>${[
+    m.innerHTML = start > 0
+      ? `<div class="hc-primary-metrics"><div class="hc-metric-label">账户表现 · 含已实现盈亏</div>${[
           metric("影子权益", hcMoney(eq)),
           metric("累计盈亏", moneySigned(eq - start), eq - start >= 0 ? "pos" : "neg"),
           metric("资金费收入", moneySigned(fund), fund >= 0 ? "pos" : "neg"),
@@ -2631,13 +2642,10 @@ function renderHlCarry(d) {
           metric("累计手续费", "−" + hcMoney(feeTotal)),
           metric("今日手续费", "−" + hcMoney(feeToday)),
           metric("影子预算", hcMoney(start)),
-          metric(
-            "资金利用率",
-            start > 0 ? fmt((legs.reduce((a, l) => a + (Number(l.notional) || 0), 0) / start) * 100, 0) + "%" : "—",
-          ),
+          metric("资金利用率", fmt((legs.reduce((a, l) => a + (Number(l.notional) || 0), 0) / start) * 100, 0) + "%"),
           metric("年化", Number.isFinite(ann) ? (ann >= 0 ? "+" : "−") + Math.abs(ann).toFixed(1) + "%" : "—"),
-        ].join("")}</div>`
-      : '<div class="empty">还没有影子持仓。填写 USD 预算并点击「按预算重置模拟」即可开始；如果规则暂时筛不出标的，预算会保留，账户显示为空仓。</div>';
+        ].join("")}</div>` + (legs.length ? "" : '<div class="empty">当前空仓等待机会；累计盈亏和曲线会继续保留。</div>')
+      : '<div class="empty">还没有影子账户。填写 USD 预算并点击「按预算重置模拟」即可开始。</div>';
   }
 
   const w = $("hc-warn");
@@ -2654,16 +2662,16 @@ function renderHlCarry(d) {
     if (hcLegPage > legPages - 1) hcLegPage = 0;
     const legRows = legs.slice(hcLegPage * HC_PAGE, (hcLegPage + 1) * HC_PAGE);
     tb.innerHTML = legs.length
-      ? `<div class="table-scroll"><table><thead><tr><th>币</th><th>现货对</th><th>名义</th><th>资金费/年</th><th>当前基差</th><th>资金费累计</th><th>基差盈亏</th><th>腿盈亏</th></tr></thead><tbody>${legRows
-          .map(
-            (l) =>
-              `<tr><td>${escapeHTML(l.coin || "")}</td><td>${escapeHTML(l.spot || "")}</td><td>${hcMoney(l.notional)}</td><td class="${Number(l.funding_ann) >= 0 ? "pos" : "neg"}">${fmt(l.funding_ann, 2)}%</td><td>${fmt(l.basis_bp, 1)} bp</td><td>${moneySigned(l.funding_accrued)}</td><td>${moneySigned(l.basis_pnl)}</td><td class="${Number(l.leg_pnl) >= 0 ? "pos" : "neg"}">${moneySigned(l.leg_pnl)}</td></tr>`
-          )
+      ? `<div class="table-scroll"><table><thead><tr><th>币</th><th>现货对</th><th>名义</th><th>资金费/年</th><th>当前基差</th><th>较入场基差</th><th>资金费累计</th><th>基差盈亏</th><th>腿盈亏</th></tr></thead><tbody>${legRows
+          .map((l) => {
+            const basisMove = Number.isFinite(Number(l.basis_move_bp)) ? Number(l.basis_move_bp) : 0;
+            return `<tr><td>${escapeHTML(l.coin || "")}</td><td>${escapeHTML(hcSpotLabel(l.spot))}</td><td>${hcMoney(l.notional)}</td><td class="${Number(l.funding_ann) >= 0 ? "pos" : "neg"}">${fmt(l.funding_ann, 2)}%</td><td>${fmt(l.basis_bp, 1)} bp</td><td class="${basisMove <= 0 ? "pos" : "neg"}">${fmt(basisMove, 1)} bp</td><td>${moneySigned(l.funding_accrued)}</td><td>${moneySigned(l.basis_pnl)}</td><td class="${Number(l.leg_pnl) >= 0 ? "pos" : "neg"}">${moneySigned(l.leg_pnl)}</td></tr>`;
+          })
           .join("")}</tbody></table></div>` + (legs.length > HC_PAGE ? pager("hcleg", legs.length, hcLegPage, HC_PAGE) : "")
-      : '<div class="empty">无持仓</div>';
+      : '<div class="empty">当前空仓，等待新的资金费与基差机会。</div>';
   }
 
-  // ---- 换仓记录（分页 ✗ 全部记录 ✗ 不截断）----
+  // ---- 换仓记录 ----
   const rb = $("hc-rebalances");
   if (rb) {
     const all = (s.rebalances || []).slice().reverse();
@@ -2671,24 +2679,23 @@ function renderHlCarry(d) {
     if (hcRbPage > pages - 1) hcRbPage = 0;
     const rows = all.slice(hcRbPage * HC_PAGE, (hcRbPage + 1) * HC_PAGE);
     rb.innerHTML = rows.length
-      ? `<div class="table-scroll"><table><thead><tr><th>时间</th><th>换手</th><th>加权资金费</th><th>门槛</th><th>手续费</th><th>变动</th></tr></thead><tbody>${rows
+      ? `<div class="table-scroll"><table><thead><tr><th>时间</th><th>原因</th><th>换手</th><th>加权资金费</th><th>门槛</th><th>手续费</th><th>变动</th></tr></thead><tbody>${rows
           .map((r) => {
             const dt = new Date(r.ts).toLocaleString("zh-CN", { hour12: false });
+            const takeProfit = r.reason === "basis_take_profit";
             const up = Number(r.funding_after) >= Number(r.funding_before);
             const change = []
               .concat((r.added || []).map((c) => `<span class="pos">+${escapeHTML(c)}</span>`))
               .concat((r.removed || []).map((c) => `<span class="neg">−${escapeHTML(c)}</span>`))
-              .concat(
-                (r.resized || []).map(
-                  ([c, a, b]) =>
-                    `${escapeHTML(c)} ${fmt(a * 100, 0)}%→${fmt(b * 100, 0)}%`,
-                ),
-              )
+              .concat((r.resized || []).map(([c, a, b]) => `${escapeHTML(c)} ${fmt(a * 100, 0)}%→${fmt(b * 100, 0)}%`))
               .join(" · ");
-            return `<tr><td class="muted">${dt}</td><td>${fmt(r.turnover * 100, 0)}%</td><td class="${up ? "pos" : "neg"}">${fmt(r.funding_before, 2)}% → ${fmt(r.funding_after, 2)}%</td><td class="muted">${fmt(r.threshold, 2)}%</td><td>−${hcMoney(r.fee_usd)}</td><td>${change || "—"}</td></tr>`;
+            const moves = takeProfit && (r.basis_moves || []).length
+              ? `<div class="muted">${(r.basis_moves || []).map(([c, b]) => `${escapeHTML(c)} ${fmt(b, 1)}bp`).join(" · ")}</div>`
+              : "";
+            return `<tr><td class="muted">${dt}</td><td>${takeProfit ? "基差止盈" : "资金费轮动"}</td><td>${fmt(r.turnover * 100, 0)}%</td><td class="${up ? "pos" : "neg"}">${takeProfit ? "—" : `${fmt(r.funding_before, 2)}% → ${fmt(r.funding_after, 2)}%`}</td><td class="muted">${fmt(r.threshold, takeProfit ? 0 : 2)}${takeProfit ? " bp" : "%"}</td><td>−${hcMoney(r.fee_usd)}</td><td>${change || "—"}${moves}</td></tr>`;
           })
           .join("")}</tbody></table></div>`
-      : '<div class="empty">还没有换过仓——说明任何一次评估都没达到「回本」门槛。这本身是好事：频繁换仓只会把收益交给手续费。</div>';
+      : '<div class="empty">还没有止盈或资金费轮动记录。</div>';
     if (rows.length) {
       rb.innerHTML += pager("hcrb", all.length, hcRbPage, HC_PAGE);
     }
@@ -2733,7 +2740,7 @@ function renderHlCarry(d) {
       : '<div class="empty">暂无事件</div>';
   }
 
-  // ---- 套利影子收益曲线（优先使用 s.history，不足时用 s.daily 兜底）----
+  // ---- 基差影子收益曲线（优先使用 s.history，不足时用 s.daily 兜底）----
   const hcChartEl = $("hc-chart");
   if (hcChartEl) {
     let rawHist = Array.isArray(s.history)
@@ -2750,10 +2757,10 @@ function renderHlCarry(d) {
       if (pts.length < 2 && hcRange !== "all") pts = rawHist.slice(-3);
       const series = Number.isFinite(eq) && eq > 0 ? withNow(pts, eq) : pts;
       if (series.length >= 2) {
-        renderEquityChart("hc-chart", series, "套利影子收益曲线", undefined, undefined, undefined, {
+        renderEquityChart("hc-chart", series, "基差影子收益曲线", undefined, undefined, undefined, {
           equityLabel: "影子权益 · 最新",
           changeLabel: "记录区间变化",
-          legendName: "套利影子",
+          legendName: "基差影子",
         });
       } else {
         hcChartEl.innerHTML = '<div class="empty">已记录 1 个采样点，等待下一个小时采样点形成曲线。</div>';
@@ -2842,6 +2849,7 @@ if (hcParamsBtn)
       max_leg_weight: maxw == null ? null : maxw / 100,
       payback_days: num("hc-p-payback"),
       min_hold_hours: num("hc-p-minhold"),
+      basis_take_profit_bp: num("hc-p-basistp"),
     };
     // null 表示"没填"，服务端会保留原值
     for (const k of Object.keys(body)) if (body[k] == null) delete body[k];

@@ -43,30 +43,32 @@ pub struct Params {
     pub max_leg_weight: f64,
     /// 换仓回本天数：一次性成本按这么多天摊成年化，作为换仓门槛。
     pub payback_days: f64,
-    /// 最短持有小时数 ✗ 这段时间内无论资金费怎么变都不换仓 ✓
-    /// （资金费每小时都在变 ✗ 不设下限会每天换十几次 ✗ 手续费吃掉一切）
+    /// 最短持有小时数；只限制资金费轮动，不阻止基差止盈。
     #[serde(default = "d_min_hold")]
     pub min_hold_hours: f64,
+    /// 相对入场基差收敛多少 bp 就止盈该腿；0 表示关闭。
+    #[serde(default = "d_basis_take_profit")]
+    pub basis_take_profit_bp: f64,
 }
 
 fn d_min_hold() -> f64 {
-    // 48 小时：$5k 预算下资金费约 $1.5/天 ✗ 一次部分换仓约 $1.9 ✓
-    // 所以最多两天换一次才能不亏 ✗ 24 小时都嫌频繁 ✓
     48.0
+}
+
+fn d_basis_take_profit() -> f64 {
+    50.0
 }
 
 impl Default for Params {
     fn default() -> Self {
         Params {
             top_k: 5,
-            // 10.95%/年是 HL 常见档位；1% 的币基本在空转，不值得占一腿。
             min_funding_ann_pct: 3.0,
-            // $1M/24h 是能容纳 $5k 级别下单的下限。
             min_spot_volume_usd: 1_000_000.0,
             max_leg_weight: 0.40,
-            // 90 天回本：换仓门槛提高 3 倍 ✗ 只有明显更好的机会才动 ✓
             payback_days: 90.0,
             min_hold_hours: 48.0,
+            basis_take_profit_bp: 50.0,
         }
     }
 }
@@ -80,6 +82,7 @@ impl Params {
             max_leg_weight: self.max_leg_weight.clamp(0.05, 1.0),
             payback_days: self.payback_days.clamp(1.0, 365.0),
             min_hold_hours: self.min_hold_hours.clamp(0.0, 720.0),
+            basis_take_profit_bp: self.basis_take_profit_bp.clamp(0.0, 2_000.0),
         }
     }
 }
@@ -222,6 +225,9 @@ pub struct Leg {
     pub perp_px: f64,
     pub funding_ann: f64,
     pub basis_bp: f64,
+    /// 当前 perp/spot 相对入场时的变化（bp）；负值表示收敛、该腿获利。
+    #[serde(default)]
+    pub basis_move_bp: f64,
     pub leg_pnl: f64,
 }
 
@@ -240,7 +246,7 @@ pub struct RebalanceRecord {
     /// 换仓前后的加权年化资金费（%）。
     pub funding_before: f64,
     pub funding_after: f64,
-    /// 触发换仓所需的年化门槛（%）。
+    /// 资金费轮动时为年化门槛（%），基差止盈时为 bp 门槛。
     pub threshold: f64,
     /// 本次换仓付出的手续费（USD）。
     pub fee_usd: f64,
@@ -250,6 +256,11 @@ pub struct RebalanceRecord {
     pub resized: Vec<(String, f64, f64)>,
     /// 换仓后的目标篮子：(coin, 权重, 资金费%/年)，按资金费降序。
     pub target: Vec<(String, f64, f64)>,
+    #[serde(default)]
+    pub reason: String,
+    /// 基差止盈时各币相对入场基差的变化（bp）。
+    #[serde(default)]
+    pub basis_moves: Vec<(String, f64)>,
 }
 
 /// 按 UTC 自然日聚合的表现。增量口径，重启后继续累计。
@@ -397,7 +408,7 @@ impl HlCarryState {
         }
     }
 
-    /// 按预算建仓（首次开仓 / 重置）。
+    /// 按预算建仓（首次开仓 / 手动重置）。只有这里可以清空历史。
     pub fn open(&mut self, budget_usd: f64, market: &Market, now: i64) {
         self.legs.clear();
         self.closed_pnl = 0.0;
@@ -410,13 +421,22 @@ impl HlCarryState {
         self.start_equity = budget_usd;
         self.last_history_ms = Some(now);
         self.last_check_ms = Some(now);
-        // 先立当日的基线，再建仓——否则开仓手续费会落在基线之前，
-        // 当日统计里就看不见这笔成本。
+        // 先立当日的基线，再建仓——否则开仓手续费会落在基线之前。
         self.roll_daily(now);
+        if !self.reopen(market, now) {
+            self.log(now, "没有满足条件的标的（现货成交额 / 资金费门槛）".into());
+        }
+    }
+
+    /// 空仓后重新寻找机会，保留累计盈亏、历史曲线和已实现资金费。
+    pub fn reopen(&mut self, market: &Market, now: i64) -> bool {
+        if self.start_equity <= 0.0 || !self.legs.is_empty() {
+            return false;
+        }
+        self.last_check_ms = Some(now);
         let targets = target_weights(&select_candidates(market, &self.params), &self.params);
         if targets.is_empty() {
-            self.log(now, "没有满足条件的标的（现货成交额 / 资金费门槛）".into());
-            return;
+            return false;
         }
         let eq = self.equity();
         let mut n = 0usize;
@@ -425,7 +445,11 @@ impl HlCarryState {
                 n += 1;
             }
         }
-        self.log(now, format!("开仓：{} 腿，总名义 ${:.0}", n, eq));
+        if n > 0 {
+            self.roll_daily(now);
+            self.log(now, format!("开仓：{} 腿，总名义 ${:.0}", n, eq));
+        }
+        n > 0
     }
 
     fn add_leg(&mut self, t: &Target, equity: f64, market: &Market, now: i64) -> bool {
@@ -456,6 +480,7 @@ impl HlCarryState {
             perp_px: q.perp,
             funding_ann: q.funding_ann,
             basis_bp: (q.perp - q.spot) / q.spot * 10_000.0,
+            basis_move_bp: 0.0,
             leg_pnl: -fee,
         });
         true
@@ -489,9 +514,9 @@ impl HlCarryState {
         leg.perp_px = q.perp;
         leg.funding_ann = q.funding_ann;
         leg.basis_bp = (q.perp - q.spot) / q.spot * 10_000.0;
+        leg.basis_move_bp = 0.0;
         leg.last_accrual_ms = now;
         // 调整前先把已经发生的基差盈亏落袋：入场价要换，基差从零重新起算。
-        // 不落袋的话，equity 会凭空跳一下（旧基差从腿里消失又没进 closed_pnl）。
         let realized_basis = leg.basis_pnl;
         self.closed_pnl += realized_basis;
         leg.fee_paid += fee;
@@ -499,14 +524,89 @@ impl HlCarryState {
         leg.leg_pnl = leg.funding_accrued - leg.fee_paid;
     }
 
-    /// 评估并在满足闸门时换仓。返回是否真的动了仓位。
+    /// 先执行基差止盈，再评估资金费轮动。返回是否真的动了仓位。
     pub fn maybe_rebalance(&mut self, market: &Market, now: i64) -> bool {
-        if self.legs.is_empty() {
-            return false;
-        }
         self.last_check_ms = Some(now);
-        // 最短持有期：刚换过仓就不动 ✗ 否则每 5 分钟一次评估会让资金费的小波动
-        // 反复触发换仓 ✗ 实测 2 天换了 21 次 ✗ 手续费 $39 vs 资金费 $2 ✓
+        if self.legs.is_empty() {
+            return self.reopen(market, now);
+        }
+
+        let cur_f = self
+            .legs
+            .iter()
+            .map(|l| {
+                let f = market
+                    .quote(&l.coin, &l.spot)
+                    .map(|q| q.funding_ann)
+                    .unwrap_or(l.funding_ann);
+                l.weight * f
+            })
+            .sum::<f64>();
+
+        // 买现货 + 空永续在 perp/spot 相对入场下降时获利。止盈不受 48 小时
+        // 资金费轮动锁限制；往返费已在开仓时预扣，所以这里不重复收费。
+        if self.params.basis_take_profit_bp > 0.0 {
+            let triggered: Vec<(String, f64, f64)> = self
+                .legs
+                .iter()
+                .filter(|l| l.basis_move_bp <= -self.params.basis_take_profit_bp)
+                .map(|l| (l.coin.clone(), l.weight, l.basis_move_bp))
+                .collect();
+            if !triggered.is_empty() {
+                let turn = triggered.iter().map(|(_, w, _)| *w).sum::<f64>() / 2.0;
+                let realized = self
+                    .legs
+                    .iter()
+                    .filter(|l| triggered.iter().any(|(c, _, _)| c == &l.coin))
+                    .map(|l| l.leg_pnl)
+                    .sum::<f64>();
+                self.closed_pnl += realized;
+                self.legs.retain(|l| !triggered.iter().any(|(c, _, _)| c == &l.coin));
+                let removed: Vec<String> = triggered.iter().map(|(c, _, _)| c.clone()).collect();
+                let basis_moves = triggered.iter().map(|(c, _, b)| (c.clone(), *b)).collect();
+                let target = self
+                    .legs
+                    .iter()
+                    .map(|l| (l.coin.clone(), l.weight, l.funding_ann))
+                    .collect();
+                self.rebalances.push(RebalanceRecord {
+                    ts: now,
+                    turnover: turn,
+                    funding_before: cur_f,
+                    funding_after: 0.0,
+                    threshold: self.params.basis_take_profit_bp,
+                    fee_usd: 0.0,
+                    added: Vec::new(),
+                    removed: removed.clone(),
+                    resized: Vec::new(),
+                    target,
+                    reason: "basis_take_profit".into(),
+                    basis_moves,
+                });
+                self.roll_daily(now);
+                let today = ymd_from_ms(now);
+                if let Some(d) = self.daily.last_mut() {
+                    if d.date == today {
+                        d.rebalances += 1;
+                    }
+                }
+                if self.rebalances.len() > 100 {
+                    let drop = self.rebalances.len() - 100;
+                    self.rebalances.drain(0..drop);
+                }
+                self.log(
+                    now,
+                    format!(
+                        "基差止盈：{}，实现盈亏 ${:.2}；仓位转入现金等待机会",
+                        removed.join(" / "),
+                        realized
+                    ),
+                );
+                return true;
+            }
+        }
+
+        // 最短持有期只限制资金费轮动，避免频繁追逐瞬时资金费。
         if let Some(last) = self.rebalances.last().map(|r| r.ts) {
             let hold_h = ((now - last).max(0) as f64) / 3_600_000.0;
             if hold_h < self.params.min_hold_hours {
@@ -527,17 +627,6 @@ impl HlCarryState {
             return false;
         }
 
-        let cur_f = self
-            .legs
-            .iter()
-            .map(|l| {
-                let f = market
-                    .quote(&l.coin, &l.spot)
-                    .map(|q| q.funding_ann)
-                    .unwrap_or(l.funding_ann);
-                l.weight * f
-            })
-            .sum::<f64>();
         let tgt_f: f64 = targets.iter().map(|t| t.weight * t.funding_ann).sum();
         let improve = tgt_f - cur_f;
         let threshold = rebalance_threshold_ann_pct(turn, &self.params);
@@ -555,8 +644,6 @@ impl HlCarryState {
             .filter(|l| !target_coins.contains(&l.coin))
             .map(|l| l.coin.clone())
             .collect();
-        // 移仓后不再保留旧腿，因此把该腿全部已计入的损益结转到已实现盈亏。
-        // 开仓时预扣的手续费已包含在 leg_pnl 中；这里不重复收，只避免删腿时抹账。
         self.closed_pnl += self
             .legs
             .iter()
@@ -597,6 +684,8 @@ impl HlCarryState {
                 .iter()
                 .map(|t| (t.coin.clone(), t.weight, t.funding_ann))
                 .collect(),
+            reason: "funding_rotation".into(),
+            basis_moves: Vec::new(),
         });
         self.roll_daily(now);
         let today = ymd_from_ms(now);
@@ -613,7 +702,7 @@ impl HlCarryState {
         self.log(
             now,
             format!(
-                "换仓：换手 {:.0}%，加权资金费 {:.2}% → {:.2}%/年（门槛 {:.2}%），手续费累计 ${:.2}",
+                "资金费轮动：换手 {:.0}%，加权资金费 {:.2}% → {:.2}%/年（门槛 {:.2}%），手续费累计 ${:.2}",
                 turn * 100.0,
                 cur_f,
                 tgt_f,
@@ -656,6 +745,8 @@ impl HlCarryState {
             leg.perp_px = q.perp;
             leg.funding_ann = q.funding_ann;
             leg.basis_bp = (q.perp - q.spot) / q.spot * 10_000.0;
+            leg.basis_move_bp =
+                ((q.perp / q.spot) / (leg.perp_entry / leg.spot_entry) - 1.0) * 10_000.0;
             leg.basis_pnl =
                 (q.spot - leg.spot_entry) * leg.spot_qty + (leg.perp_entry - q.perp) * leg.perp_qty_abs;
             leg.leg_pnl = leg.basis_pnl + leg.funding_accrued - leg.fee_paid;
@@ -1340,5 +1431,76 @@ mod tests {
         assert!((fees - st.fees_paid_total).abs() < 1e-8);
         assert!((basis - st.basis_total()).abs() < 1e-8);
         assert!((st.equity() - st.start_equity - funding - basis + fees).abs() < 1e-8);
+    }
+
+    #[test]
+    fn basis_take_profit_closes_only_triggered_leg_during_lock() {
+        let mut st = HlCarryState::default();
+        let m0 = market(&[
+            ("AAA", "@1", 0.000_2, 5e6, 100.0),
+            ("BBB", "@2", 0.000_2, 5e6, 100.0),
+        ]);
+        st.open(1000.0, &m0, 1_000_000);
+        let mut m1 = market(&[
+            ("AAA", "@1", 0.000_2, 5e6, 100.0),
+            ("BBB", "@2", 0.000_2, 5e6, 100.0),
+        ]);
+        m1.perp_mid.insert("AAA".into(), 99.0);
+        st.step(&m1, 1_000_000 + 3_600_000);
+        assert!((st.legs[0].basis_move_bp + 100.0).abs() < 1e-8);
+        let equity_before = st.equity();
+        let fees_before = st.fees_paid_total;
+
+        assert!(st.maybe_rebalance(&m1, 1_000_000 + 3_600_000));
+        assert_eq!(st.legs.len(), 1);
+        assert_eq!(st.legs[0].coin, "BBB");
+        assert!((st.equity() - equity_before).abs() < 1e-8, "止盈本身不得改变权益");
+        assert_eq!(st.fees_paid_total, fees_before, "往返费已预扣，不得重复收费");
+        let record = st.rebalances.last().unwrap();
+        assert_eq!(record.reason, "basis_take_profit");
+        assert_eq!(record.removed, vec!["AAA"]);
+        assert_eq!(record.basis_moves.len(), 1);
+    }
+
+    #[test]
+    fn basis_move_is_relative_to_entry_ratio() {
+        let mut st = HlCarryState {
+            params: Params { top_k: 1, max_leg_weight: 1.0, ..Params::default() },
+            ..HlCarryState::default()
+        };
+        let mut m0 = market(&[("AAA", "@1", 0.000_2, 5e6, 100.0)]);
+        m0.perp_mid.insert("AAA".into(), 102.0);
+        st.open(1000.0, &m0, 1_000_000);
+        let m1 = market(&[("AAA", "@1", 0.000_2, 5e6, 100.0)]);
+        st.step(&m1, 1_000_000 + 3_600_000);
+        let expected = ((100.0 / 100.0) / (102.0 / 100.0) - 1.0) * 10_000.0;
+        assert!((st.legs[0].basis_move_bp - expected).abs() < 1e-8);
+        assert!(st.legs[0].basis_bp.abs() < 1e-8, "当前绝对基差与相对入场变化不是一回事");
+    }
+
+    #[test]
+    fn reopen_after_full_take_profit_preserves_ledger() {
+        let mut st = HlCarryState {
+            params: Params { top_k: 1, max_leg_weight: 1.0, ..Params::default() },
+            ..HlCarryState::default()
+        };
+        let m0 = market(&[("AAA", "@1", 0.000_2, 5e6, 100.0)]);
+        st.open(1000.0, &m0, 1_000_000);
+        st.step(&m0, 1_000_000 + 3_600_000);
+        let mut m1 = m0.clone();
+        m1.perp_mid.insert("AAA".into(), 99.0);
+        st.step(&m1, 1_000_000 + 2 * 3_600_000);
+        assert!(st.maybe_rebalance(&m1, 1_000_000 + 2 * 3_600_000));
+        assert!(st.legs.is_empty());
+        let closed = st.closed_pnl;
+        let history_len = st.history.len();
+        let fees_before = st.fees_paid_total;
+
+        assert!(st.maybe_rebalance(&m0, 1_000_000 + 3 * 3_600_000));
+        assert_eq!(st.legs.len(), 1);
+        assert_eq!(st.start_equity, 1000.0);
+        assert_eq!(st.closed_pnl, closed);
+        assert_eq!(st.history.len(), history_len);
+        assert!(st.fees_paid_total > fees_before);
     }
 }

@@ -1383,6 +1383,8 @@ async fn hlcarry_status(State(state): State<AppState>) -> Json<serde_json::Value
         "state": st,
         "equity": st.equity(),
         "annualized_pct": st.annualized_pct(),
+        "funding_total": st.funding_total,
+        "basis_total": st.basis_total(),
         "warnings": st.warnings(),
     }))
 }
@@ -1396,6 +1398,7 @@ struct HlCarryParamsBody {
     max_leg_weight: Option<f64>,
     payback_days: Option<f64>,
     min_hold_hours: Option<f64>,
+    basis_take_profit_bp: Option<f64>,
 }
 
 /// 改选币/换仓参数。只改规则，不动当前持仓——下一次评估才生效。
@@ -1422,6 +1425,9 @@ async fn hlcarry_params(
     }
     if let Some(v) = body.payback_days {
         st.params.payback_days = v;
+    }
+    if let Some(v) = body.basis_take_profit_bp {
+        st.params.basis_take_profit_bp = v;
     }
     st.params = st.params.clone().sanitized();
     if let Err(e) = st.save(&state.hlcarry_path) {
@@ -1467,10 +1473,9 @@ async fn hlcarry_open(State(state): State<AppState>, Json(body): Json<HlCarryOpe
 }
 
 async fn hlcarry_step(State(state): State<AppState>) -> Response {
-    // 先看有没有持仓，再决定要不要打网络：空仓时没必要拉行情。
-    if state.hlcarry.lock().await.legs.is_empty() {
+    if state.hlcarry.lock().await.start_equity <= 0.0 {
         return (StatusCode::BAD_REQUEST,
-                Json(json!({"ok": false, "error": "还没有影子持仓，请先用「按预算重置模拟」设置预算"})))
+                Json(json!({"ok": false, "error": "还没有影子账户，请先用「按预算重置模拟」设置预算"})))
             .into_response();
     }
     let coins = state.hlcarry.lock().await.legs.iter().map(|l| l.coin.clone()).collect::<Vec<_>>();
@@ -1483,19 +1488,15 @@ async fn hlcarry_step(State(state): State<AppState>) -> Response {
     };
     let now = crate::live::now_ms_pub();
     let mut st = state.hlcarry.lock().await;
-    if st.legs.is_empty() {
-        return (StatusCode::BAD_REQUEST,
-                Json(json!({"ok": false, "error": "影子持仓已清空，请先用「按预算重置模拟」设置预算"})))
-            .into_response();
-    }
     let previous = st.clone();
     st.step(&market, now);
+    st.maybe_rebalance(&market, now);
     if let Err(e) = st.save(&state.hlcarry_path) {
         *st = previous;
         return (StatusCode::INTERNAL_SERVER_ERROR,
                 Json(json!({"ok": false, "error": format!("保存失败: {e:#}")}))).into_response();
     }
-    Json(json!({"ok": true})).into_response()
+    Json(json!({"ok": true, "legs": st.legs.len()})).into_response()
 }
 
 // ---- 纸面资金费 carry 策略 ----

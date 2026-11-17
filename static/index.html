@@ -877,7 +877,7 @@
       .daily-exec-bar-date { position: absolute; bottom: 0; font-family: var(--font-mono); font-size: 10.5px; color: var(--muted); }
       .daily-exec-pagination { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; font-size: 12px; color: var(--muted); }
 
-      /* 套利影子 / 影子设置 / 日内影子 */
+      /* 基差影子 / 影子设置 / 日内影子 */
       .hc-overview-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 12px; }
       .hc-budget-control { display: flex; align-items: flex-end; gap: 10px; flex-wrap: wrap; }
       .hc-budget-control .field { min-width: 220px; }
@@ -1165,7 +1165,7 @@
         <button data-view="monitor" class="active" aria-current="page"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg><span>实盘监控</span></button>
         <button data-view="live"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7h16M4 17h16"/><circle cx="8" cy="7" r="3"/><circle cx="16" cy="17" r="3"/></svg><span>实盘设置</span></button>
         <div class="nav-section-label">研究影子</div>
-        <button data-view="hlcarry"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg><span>套利影子</span></button>
+        <button data-view="hlcarry"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg><span>基差影子</span></button>
         <button data-view="shadow"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 20h18M5 20V10M11 20V4M17 20v-6"/></svg><span>影子监控</span></button>
         <button data-view="shadow-setup"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg><span>影子设置</span></button>
         <button data-view="combine"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 18l5-6 4 3 7-9"/><circle cx="4" cy="18" r="1.6"/><circle cx="20" cy="6" r="1.6"/></svg><span>日内影子</span></button>
@@ -1356,14 +1356,14 @@
         </details>
       </section>
 
-      <!-- ============ 套利影子 ============ -->
+      <!-- ============ 基差影子 ============ -->
       <section id="view-hlcarry" class="view">
         <div class="panel">
           <div class="panel-head">
             <div>
-              <span class="panel-kicker">HL CARRY SHADOW</span>
-              <h2>套利影子 · 买现货 + 空永续</h2>
-              <p class="sub">赚取永续资金费率。真实行情、模拟持仓、<b>不发送真实订单</b>（预扣 10.88bp 往返 Maker 成本）。</p>
+              <span class="panel-kicker">HL BASIS + FUNDING SHADOW</span>
+              <h2>基差影子 · 资金费 + 基差收敛</h2>
+              <p class="sub">买入现货并等名义做空永续，收取资金费；相对入场基差收敛 50bp 时单腿止盈。真实行情、模拟持仓、<b>不发送真实订单</b>（预扣 10.88bp 往返 Maker 成本）。</p>
             </div>
             <div class="actions">
               <button class="btn ghost" id="hc-refresh" type="button">刷新</button>
@@ -1390,8 +1390,8 @@
 
           <div class="content-card equity-card">
             <div class="panel-head monitor-section-head">
-              <div><span class="section-eyebrow">CARRY PNL</span><h2>套利影子收益曲线</h2></div>
-              <div class="segmented" id="hc-chart-tabs" role="group" aria-label="套利影子时间区间">
+              <div><span class="section-eyebrow">CARRY PNL</span><h2>基差影子收益曲线</h2></div>
+              <div class="segmented" id="hc-chart-tabs" role="group" aria-label="基差影子时间区间">
                 <button type="button" data-range="day" aria-pressed="false">日</button>
                 <button type="button" data-range="week" aria-pressed="false">周</button>
                 <button type="button" data-range="month" aria-pressed="false">月</button>
@@ -1401,7 +1401,7 @@
             <div class="chart" id="hc-chart"></div>
           </div>
 
-          <div class="content-card"><div class="panel-head"><h2>当前持仓</h2></div><div id="hc-legs"></div></div>
+          <div class="content-card"><div class="panel-head"><div><h2>当前持仓</h2><p class="note">Unit / Wagyu 等现货为第三方发行资产，存在脱锚与赎回风险；括号内为 HyperCore 市场 ID。</p></div></div><div id="hc-legs"></div></div>
 
           <div class="hlcarry-bottom-grid">
             <div class="content-card"><div class="panel-head"><h2>换仓记录</h2></div><div id="hc-rebalances"></div></div>
@@ -1420,8 +1420,10 @@
                 <div class="field"><label for="hc-p-minvol">现货 24h 成交额门槛</label><input id="hc-p-minvol" type="number" min="0" step="100000" /></div>
                 <div class="field"><label for="hc-p-maxw">单腿权重上限（%）</label><input id="hc-p-maxw" type="number" min="5" max="100" step="5" /></div>
                 <div class="field"><label for="hc-p-payback">换仓回本天数</label><input id="hc-p-payback" type="number" min="1" max="365" step="1" /></div>
-                <div class="field"><label for="hc-p-minhold">最短持有（小时）</label><input id="hc-p-minhold" type="number" min="0" max="720" step="12" /></div>
+                <div class="field"><label for="hc-p-minhold">资金费轮动锁（小时）</label><input id="hc-p-minhold" type="number" min="0" max="720" step="12" /></div>
+                <div class="field"><label for="hc-p-basistp">基差止盈（bp，0 关闭）</label><input id="hc-p-basistp" type="number" min="0" max="2000" step="10" /></div>
               </div>
+              <p class="note">基差止盈按 perp/spot 相对入场时的变化计算，不受资金费轮动锁限制；止盈只平触发腿。</p>
               <p class="note" id="hc-params-status"></p>
             </div>
             <div class="content-card"><div class="panel-head"><h2>最近事件</h2></div><div id="hc-log"></div></div>
