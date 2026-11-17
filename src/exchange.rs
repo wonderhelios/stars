@@ -584,12 +584,54 @@ impl Exec {
 
         let status = match resp.and_then(one_status) {
             Ok(st) => st,
-            Err(_) => {
-                // Alo 被拒（例如盘口价差极窄，Post-Only 会立即吃单）→ 回退 IOC
-                let st = self
-                    .ioc(coin, buy, reduce_only, size, mid, slippage, sz_decimals)
-                    .await?;
-                return Ok(format!("IOC回退 · {}", describe(&st)));
+            Err(e) => {
+                let msg = format!("{e:#}");
+                let explicit_reject = msg.contains("exchange order error:")
+                    || msg.contains("exchange action rejected:");
+                if explicit_reject {
+                    // Alo 被交易所明确拒绝（例如 Post-Only 会立即吃单）→ 安全回退 IOC
+                    let st = self
+                        .ioc(coin, buy, reduce_only, size, mid, slippage, sz_decimals)
+                        .await?;
+                    return Ok(format!("IOC回退 · {}", describe(&st)));
+                }
+                // 网络超时或未知错误：先按 cloid 查交易所状态，确认未挂单/未成交才允许回退 IOC，防止双倍下单
+                let cloid_hex = format!("0x{}", cloid.simple());
+                let acct = self.account.context("missing account for orderStatus")?;
+                let st_resp = self
+                    .info_post(json!({
+                        "type": "orderStatus",
+                        "user": acct.to_string(),
+                        "oid": cloid_hex,
+                    }))
+                    .await
+                    .with_context(|| format!("Alo 状态未知且查询失败 ({coin}): {msg}"))?;
+                let order_status = st_resp["status"].as_str().unwrap_or("");
+                if order_status == "unknownOid" {
+                    let st = self
+                        .ioc(coin, buy, reduce_only, size, mid, slippage, sz_decimals)
+                        .await?;
+                    return Ok(format!("IOC回退(未落地) · {}", describe(&st)));
+                }
+                let inner_status = st_resp["order"]["status"].as_str().unwrap_or("");
+                match inner_status {
+                    "filled" => return Ok(format!("Maker成交 {size:.6}@{px}")),
+                    "open" => {
+                        let oid = st_resp["order"]["order"]["oid"]
+                            .as_u64()
+                            .context("orderStatus open 缺少 oid")?;
+                        ExchangeDataStatus::Resting(hyperliquid_rust_sdk::RestingOrder { oid })
+                    }
+                    "canceled" | "rejected" | "marginCanceled" => {
+                        let st = self
+                            .ioc(coin, buy, reduce_only, size, mid, slippage, sz_decimals)
+                            .await?;
+                        return Ok(format!("IOC回退({inner_status}) · {}", describe(&st)));
+                    }
+                    _ => {
+                        bail!("Alo 下单状态未确认 ({coin}, status={order_status}/{inner_status}): {msg}");
+                    }
+                }
             }
         };
 

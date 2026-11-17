@@ -507,6 +507,22 @@ function capitalPerformance(d) {
     percent: valid && principal > 0 ? (change / principal) * 100 : null };
 }
 
+function isTransferFlow(f) {
+  return /ML互转|互转|划转/.test((f && f.note) || "");
+}
+
+function splitCapitalFlows(d) {
+  const flows = d?.capital_flows || [];
+  const transferFlows = flows.filter(isTransferFlow);
+  const externalFlows = flows.filter(f => !isTransferFlow(f));
+  const transferNet = transferFlows.reduce((s, f) => s + (Number(f.amount) || 0), 0);
+  const netDep = Number(d?.net_deposit) || 0;
+  const extNetDep = netDep - transferNet;
+  const mlFlows = transferFlows.map(f => ({ ...f, amount: -Number(f.amount || 0) }));
+  const mlNetDep = -transferNet;
+  return { externalFlows, extNetDep, mlFlows, mlNetDep };
+}
+
 function renderCapitalFlows(d) {
   const el = $("lv-flow-history");
   if (!el) return;
@@ -514,7 +530,7 @@ function renderCapitalFlows(d) {
   if (el.flowKey === key) return; // Polling must not overwrite an in-progress time correction.
   el.flowKey = key;
   const flows = (d.capital_flows || []).map((f,index) => ({...f,index})).reverse();
-  el.innerHTML = flows.length ? flows.map(f => `<div class="flow-entry"><div class="flow-row"><time>${ts2m(f.effective_ts ?? f.ts)} UTC${f.effective_ts == null ? " · 登记时间" : " · 到账时间"}</time><b>${f.amount >= 0 ? "+" : "−"}$${fmt(Math.abs(f.amount), 2)}</b></div><details><summary>校正到账时间</summary><input aria-label="到账时间 UTC" type="datetime-local" step="1" value="${new Date(f.effective_ts ?? f.ts).toISOString().slice(0,19)}"><button type="button" class="btn ghost" data-flow-index="${f.index}" data-flow-ts="${f.ts}" data-flow-account="${escapeHTML(d.account)}">保存时间</button></details></div>`).join("") : '<p>暂无登记流水</p>';
+  el.innerHTML = flows.length ? flows.map(f => `<div class="flow-entry"><div class="flow-row"><time>${ts2m(f.effective_ts ?? f.ts)} UTC${f.effective_ts == null ? " · 登记时间" : " · 到账时间"}${isTransferFlow(f) ? " · 子账户互转" : ""}</time><b>${f.amount >= 0 ? "+" : "−"}$${fmt(Math.abs(f.amount), 2)}</b></div><details><summary>校正到账时间 / 删除</summary><input aria-label="到账时间 UTC" type="datetime-local" step="1" value="${new Date(f.effective_ts ?? f.ts).toISOString().slice(0,19)}"><button type="button" class="btn ghost" data-flow-index="${f.index}" data-flow-ts="${f.ts}" data-flow-account="${escapeHTML(d.account)}">保存时间</button><button type="button" class="btn ghost neg" data-flow-delete="${f.index}">删除</button></details></div>`).join("") : '<p>暂无登记流水</p>';
 
 }
 
@@ -525,22 +541,38 @@ function setupCapitalFlow() {
     const input = $("lv-flow");
     const amount = Number(input && input.value);
     if (!amount || !Number.isFinite(amount)) { alert("请填非零金额（正 = 入金，负 = 出金）"); return; }
+    const isTransfer = !!($("lv-flow-transfer") && $("lv-flow-transfer").checked);
     btn.textContent = "记录中…"; btn.disabled = true;
     try {
       const res = await fetch("/api/live/capital", {
         method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ amount, effective_ts: $("lv-flow-time")?.value ? Date.parse($("lv-flow-time").value + "Z") : null })
+        body: JSON.stringify({ amount, effective_ts: $("lv-flow-time")?.value ? Date.parse($("lv-flow-time").value + "Z") : null, note: isTransfer ? "ML互转" : "" })
       });
       const j = await res.json();
       if (res.ok && j.ok) {
         if (input) input.value = "";
+        if ($("lv-flow-transfer")) $("lv-flow-transfer").checked = false;
         $("lv-flow-status").textContent = "流水已保存，正在刷新资金指标…";
         try { const latest = await fetchLive(); liveFetchedAt = Date.now(); renderMonitor(latest); $("lv-flow-status").textContent = "流水已保存，资金指标已更新。"; }
         catch (_) { $("lv-flow-status").textContent = "流水已保存；账户刷新失败，请点击监控页刷新，无需重复记录。"; }
       }
       else { alert(j.error || ("HTTP " + res.status)); }
     } catch (e) { alert("请求失败: " + e); }
-    finally { btn.textContent = "记录"; btn.disabled = false; }
+    finally { btn.textContent = "记录流水"; btn.disabled = false; }
+  });
+  $("lv-flow-history")?.addEventListener("click", async e => {
+    const del = e.target.closest("[data-flow-delete]");
+    if (!del) return;
+    if (!confirm("确认删除这条资金流水？")) return;
+    del.disabled = true;
+    try {
+      const res = await fetch("/api/live/capital/delete", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ index: Number(del.dataset.flowDelete) }) });
+      const j = await res.json();
+      if (!res.ok || !j.ok) throw Error(j.error || "删除失败");
+      $("lv-flow-status").textContent = "流水已删除。";
+      const latest = await fetchLive(); liveFetchedAt = Date.now(); renderMonitor(latest);
+    } catch (err) { alert(err.message); }
+    finally { del.disabled = false; }
   });
 }
 setupCapitalFlow();
@@ -644,11 +676,13 @@ function renderTotal(d) {
   const total = mom + ml;
   // 合计变化基准 = 两个子账户【各自的起始净值】之和（不能用合并首尾 ✗
   // ML 的初始资金会被当成收益 ✗ 之前 +2962 就是这个 bug）
+  const { extNetDep, mlNetDep } = splitCapitalFlows(d);
+  const momNetDep = Number(d.net_deposit) || 0;
   const aBase = (d.capital_baseline && Number.isFinite(d.capital_baseline.equity) && d.capital_baseline.equity > 0)
     ? d.capital_baseline.equity : mom;
   const mlH = d.ml_history || [];
   const bBase = mlH.length && Number.isFinite(mlH[0].equity) ? mlH[0].equity : ml;
-  const baseTotal = aBase + bBase;
+  const baseTotal = aBase + bBase + extNetDep;
   let changeHtml = "";
   if (baseTotal > 0) {
     const diff = total - baseTotal, pct = (diff / baseTotal) * 100;
@@ -657,8 +691,8 @@ function renderTotal(d) {
   }
   const momShare = total > 0 ? (mom / total) * 100 : 0;
   const mlShare = total > 0 ? (ml / total) * 100 : 0;
-  const momDiff = aBase > 0 ? mom - aBase : null;
-  const mlDiff = bBase > 0 ? ml - bBase : null;
+  const momDiff = aBase > 0 ? mom - (aBase + momNetDep) : null;
+  const mlDiff = bBase > 0 ? ml - (bBase + mlNetDep) : null;
   const momSub = momDiff != null
     ? `<span class="total-sub">占比 ${fmt(momShare, 1)}% · <span class="${momDiff >= 0 ? 'pos' : 'neg'}">${moneySigned(momDiff)}</span></span>`
     : `<span class="total-sub">占比 ${fmt(momShare, 1)}%</span>`;
@@ -1276,19 +1310,25 @@ function renderLiveChart(history, shadow) {
     observations.push({ ts: liveFetchedAt, equity: curEq });
   }
   let ldForBaseline = lastLiveData || {};
+  const { externalFlows, extNetDep, mlFlows, mlNetDep } = splitCapitalFlows(lastLiveData);
   if (isAll && mlAccC) {
     const aBase = (lastLiveData.capital_baseline || {}).equity || 0;
     const bBase = ((lastLiveData.ml_history || [])[0] || {}).equity || 0;
-    ldForBaseline = { ...lastLiveData, capital_baseline: { ...(lastLiveData.capital_baseline || {}), equity: aBase + bBase } };
+    ldForBaseline = {
+      ...lastLiveData,
+      capital_baseline: { ...(lastLiveData.capital_baseline || {}), equity: aBase + bBase },
+      capital_flows: externalFlows,
+      net_deposit: extNetDep,
+    };
   } else if (isMl) {
-    // ML 用自己的起始净值做基准（不能用动量的 capital_baseline ✗ 会算出 -$3000）
+    // ML 用自己的起始净值做基准，并扣除「子账户互转」的 ML 侧出入金
     const mlHistArr = lastLiveData.ml_history || [];
     const mlBase = (mlHistArr[0] || {}).equity || 0;
     ldForBaseline = {
       capital_baseline: { equity: mlBase, account: mlAccC.account },
       account: mlAccC.account,
-      capital_flows: [],
-      net_deposit: 0,
+      capital_flows: mlFlows,
+      net_deposit: mlNetDep,
     };
   }
   const adjusted = strategyHistory(observations, ldForBaseline);
@@ -2040,12 +2080,13 @@ function arrangeMonitorSummary(id, shadow = false) {
     };
     const pct = principal > 0 ? ((eq / principal - 1) * 100).toFixed(2) + "%" : "";
     const mlAcc2 = ld.ml_account && !ld.ml_account.error ? ld.ml_account : null;
-    // 「全部账户」：显示 A + B 合计（本金 = A 的基准 + B 的起始）
+    const { extNetDep, mlNetDep } = splitCapitalFlows(ld);
+    // 「全部账户」：显示 A + B 合计（本金 = A 的基准 + B 的起始 + 外部净入金）
     if (currentStrategy === 'all' && mlAcc2) {
       const mlEq = Number.isFinite(mlAcc2.equity) ? mlAcc2.equity : 0;
       const mlBase = ((ld.ml_history || [])[0] || {}).equity || 0;
       const eqAll = eq + mlEq;
-      const principalAll = base + mlBase;
+      const principalAll = base + mlBase + extNetDep;
       const unrlAll = unrl + (mlAcc2.positions || []).reduce((s2, p2) => s2 + (Number.isFinite(p2.unrealized) ? p2.unrealized : 0), 0);
       const pctAll = principalAll > 0 ? ((eqAll / principalAll - 1) * 100).toFixed(2) + "%" : "";
       const netAll = eqAll - principalAll;
@@ -2057,18 +2098,19 @@ function arrangeMonitorSummary(id, shadow = false) {
       root.append(cell("最低强平缓冲", minBuf == null ? "—" : minBuf.toFixed(1) + "%", minBuf == null ? "" : minBuf < 40 ? "neg" : "pos"));
       return;
     }
-    // ML tab：显示 ML 子账户自己的净值/浮盈/持仓（不能显示动量的 $4,500）
+    // ML tab：显示 ML 子账户自己的净值/浮盈/持仓（扣除子账户互转）
     if (currentStrategy === 'ml') {
       // 和动量的 4 格对齐：净值（含收益率）+ 本金 + 当前浮盈 + 组合预估日波动
       const eqMl = Number.isFinite(mlAcc2?.equity) ? mlAcc2.equity : null;
       const mlHist = ld.ml_history || [];
       const baseMl = (mlHist[0] || {}).equity || 0;
+      const principalMl = baseMl + mlNetDep;
       const unrlMl = mlAcc2
         ? (mlAcc2.positions || []).reduce((s2, p2) => s2 + (Number.isFinite(p2.unrealized) ? p2.unrealized : 0), 0)
         : null;
-      const pctMl = baseMl > 0 && eqMl != null ? ((eqMl / baseMl - 1) * 100).toFixed(2) + "%" : "";
+      const pctMl = principalMl > 0 && eqMl != null ? ((eqMl / principalMl - 1) * 100).toFixed(2) + "%" : "";
       root.append(cell("ML 子账户净值", eqMl == null ? "—" : usd(eqMl), "", pctMl ? `净投入收益率 ${Number(pctMl) >= 0 ? "+" : ""}${pctMl}` : (eqMl == null ? "ML 账户数据暂不可用" : "")));
-      root.append(cell("本金", baseMl > 0 ? usd(baseMl) : "—"));
+      root.append(cell("本金", principalMl > 0 ? usd(principalMl) : "—"));
       root.append(cell("当前浮盈", unrlMl == null ? "—" : money(unrlMl), unrlMl == null ? "" : unrlMl >= 0 ? "pos" : "neg"));
       // 组合预估日波动：ml_history 是小时点 ✗ 小时收益 std × sqrt(24) = 日波动
       let volPct = null;

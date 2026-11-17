@@ -650,7 +650,7 @@
             </section>
 
             <section class="setup-card">
-              <header><span class="setup-number">02</span><div><h3>组合与信号</h3><p>选币比例、流动性门槛与调仓节奏（默认启用分腿逆波动率加权与 Alo Maker 优先下单）。</p></div></header>
+              <header><span class="setup-number">02</span><div><h3>组合与信号</h3><p>选币比例、流动性门槛与调仓节奏（腿内等权，动量启用 Alo Maker 优先下单）。</p></div></header>
               <div class="setup-fields">
                 <div class="field"><label for="lv-positions">每侧持仓数</label><input id="lv-positions" type="number" value="8" min="1" max="30" /></div>
                 <div class="field"><label for="lv-lookback">动量回看（天）</label><input id="lv-lookback" type="number" value="14" min="2" max="120" /></div>
@@ -727,6 +727,7 @@
                 <input id="lv-flow" type="number" step="0.01" placeholder="例如 630 或 -500" />
                 <label for="lv-flow-time">到账时间 · UTC（可留空）</label>
                 <input id="lv-flow-time" type="datetime-local" step="1" />
+                <label style="display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--ink-2);margin:6px 0 4px;cursor:pointer;"><input id="lv-flow-transfer" type="checkbox" style="width:auto;margin:0;" /><span>子账户互转（ML → 动量填正数，动量 → ML 填负数；勾选后两边本金同步调整且不计入总账户出入金）</span></label>
                 <button class="btn ghost" id="lv-flow-btn" type="button" style="margin-top:4px">记录流水</button>
               </div>
               <p id="lv-flow-status" class="note" role="status" aria-live="polite"></p>
@@ -743,11 +744,11 @@
         <details class="setup-reference">
           <summary>策略说明与上线检查清单</summary>
           <div class="content-card" style="margin-top:10px">
-            <p class="note"><b>组合架构（75% 动量 + 25% ML）：</b>动量腿采用波动调整动量 + 成交量冲击，ML 腿采用 LightGBM 横截面打分，双腿均已启用 <b>分腿逆波动率加权（1/σ_20d）</b>，并在执行层优先使用 <b>Alo（Post-Only）Maker 挂单</b>（12 秒超时转 IOC）。</p>
+            <p class="note"><b>组合架构（动量 + ML）：</b>动量腿采用波动调整动量 + 成交量冲击（腿内等权），ML 腿采用 LightGBM 51 树 + buffer9 持仓惯性（腿内等权）；动量执行层优先使用 <b>Alo（Post-Only）Maker 挂单</b>（12 秒超时查单后转 IOC）。</p>
             <p class="note"><b>⚠ 保证金模式：</b>Hyperliquid 不允许持仓时切换全仓/逐仓。新增开仓会自动设为全仓；已有逐仓仓位如需切换，请使用右侧「转为全仓」。</p>
             <ul class="checklist" style="margin-top:12px">
               <li><span class="state">✅</span><div class="txt"><b>信号与回测对齐</b><span>仅使用已收盘日线，避免未收盘当根 K 线污染因子</span></div><span class="badge ok">已对齐</span></li>
-              <li><span class="state">✅</span><div class="txt"><b>分腿逆波动率加权</b><span>控制高波动币尾部风险，全期 Sharpe 3.20 → 3.55（Maker）</span></div><span class="badge ok">已启用</span></li>
+              <li><span class="state">✅</span><div class="txt"><b>Alo 超时防重机制</b><span>超时先按 cloid 查单确认未落地才补发 IOC，避免双倍成交</span></div><span class="badge ok">已启用</span></li>
               <li><span class="state" id="ck-slip-s">⬜</span><div class="txt"><b>真实滑点实测</b><span id="ck-slip-t">对比实际成交价与计划 mid 价</span></div><span class="badge pending" id="ck-slip-b">待实测</span></li>
               <li><span class="state" id="ck-buf-s">⬜</span><div class="txt"><b>强平缓冲 &gt; 40%</b><span id="ck-buf-t">低于此值需降杠杆或减少仓位</span></div><span class="badge pending" id="ck-buf-b">待验证</span></li>
             </ul>

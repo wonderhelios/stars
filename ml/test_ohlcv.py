@@ -12,7 +12,7 @@ if str(ML) not in sys.path:
     sys.path.insert(0, str(ML))
 
 from candle_rules import DAY_MS, require_latest_closed_daily_bar
-from fetch_ohlcv import fetch_one, post
+from fetch_ohlcv import MAX_RETRIES, fetch_one, post
 
 
 def ms(value):
@@ -38,7 +38,7 @@ class OhlcvFailClosedTests(unittest.TestCase):
     @patch("fetch_ohlcv.time.sleep")
     @patch("fetch_ohlcv.urllib.request.urlopen", side_effect=TimeoutError("timeout"))
     def test_request_exhaustion_raises(self, _urlopen, _sleep):
-        with self.assertRaisesRegex(RuntimeError, "连续失败 5 次"):
+        with self.assertRaisesRegex(RuntimeError, f"连续失败 {MAX_RETRIES} 次"):
             post("https://example.invalid", {"type": "candleSnapshot",
                                             "req": {"coin": "BTC"}})
 

@@ -110,9 +110,8 @@ def ordered_feature_names():
     return names
 
 
-def fixed_weight_selection(scores, coins, config, current_positions=None, vols=None):
-    """保留排名仍在 buffer9 内的旧仓，再按 score 排名补齐 6 多 6 空。
-    若提供 vols（coin -> 20日日收益波动率），在多空腿内部分别按 1/vol 配权。"""
+def fixed_weight_selection(scores, coins, config, current_positions=None):
+    """保留排名仍在 buffer9 内的旧仓，再按 score 排名补齐 6 多 6 空。"""
     scores = np.asarray(scores, dtype=float)
     coins = np.asarray(coins).astype(str)
     if len(scores) < max(int(config["min_universe"]),
@@ -148,29 +147,8 @@ def fixed_weight_selection(scores, coins, config, current_positions=None, vols=N
         raise ValueError("无法生成互不重叠的 6 多 6 空目标")
     gross = float(config["gross_leverage"])
     long_fraction = float(config["long_fraction"])
-    long_target = gross * long_fraction
-    short_target = gross * (1.0 - long_fraction)
-
-    def _leg_weights(leg_coins, total_target, sign):
-        if vols:
-            raw = []
-            for c in leg_coins:
-                v = vols.get(c)
-                if v is not None and math.isfinite(float(v)) and float(v) > 0:
-                    raw.append(1.0 / min(max(float(v), 0.01), 0.25))
-                else:
-                    raw.append(None)
-            valid_vals = [x for x in raw if x is not None]
-            if valid_vals:
-                fallback = float(np.median(valid_vals))
-                ivs = [x if x is not None else fallback for x in raw]
-                s = sum(ivs)
-                if s > 0:
-                    return {c: sign * total_target * (iv / s) for c, iv in zip(leg_coins, ivs)}
-        return {c: sign * total_target / len(leg_coins) for c in leg_coins}
-
-    weights = _leg_weights(longs, long_target, 1.0)
-    weights.update(_leg_weights(shorts, short_target, -1.0))
+    weights = {c: gross * long_fraction / long_n for c in longs}
+    weights.update({c: -gross * (1.0 - long_fraction) / short_n for c in shorts})
     return {"long": longs, "short": shorts, "weights": weights}
 
 

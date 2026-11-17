@@ -109,7 +109,7 @@ impl Default for TradeConfig {
             take_profit_pct: 0.0,
             dd_weight: 0.0,
             upfrac_weight: 0.0,
-            inv_vol: true,
+            inv_vol: false,
         }
     }
 }

@@ -23,25 +23,6 @@ except ImportError:
     )
 
 
-def _coin_vols(coins, window=20):
-    """从本地 hl2 日线计算各币过去 20 日收益波动率（缺失则跳过，回退等权）。"""
-    vols = {}
-    for coin in coins:
-        fp = BASE / "data" / "hl2" / f"{coin}.json"
-        if not fp.exists():
-            continue
-        try:
-            bars = json.loads(fp.read_text(encoding="utf-8"))
-            closes = [float(b["c"]) for b in bars[-(window + 2):] if float(b.get("c", 0)) > 0]
-            if len(closes) >= 6:
-                rets = [closes[k] / closes[k - 1] - 1.0 for k in range(1, len(closes))][-window:]
-                if len(rets) >= 5:
-                    vols[str(coin)] = float(np.std(rets, ddof=1))
-        except Exception:
-            continue
-    return vols
-
-
 def latest_positions(features_path=None, model_path=None, config_path=None,
                      current_positions=None):
     config = load_config(config_path)
@@ -67,8 +48,7 @@ def latest_positions(features_path=None, model_path=None, config_path=None,
         signal_date = str(ts[i].astype("int64").astype("datetime64[ms]").astype("datetime64[D]"))
 
     scores = model_scores(model, x)
-    vols = _coin_vols(coins[idx])
-    selected = fixed_weight_selection(scores, coins[idx], config, current_positions, vols=vols)
+    selected = fixed_weight_selection(scores, coins[idx], config, current_positions)
     has_current = current_positions is not None
     selected_set = set(selected["long"] + selected["short"])
     result = {

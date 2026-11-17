@@ -64,18 +64,6 @@ class StrategyTests(unittest.TestCase):
         self.assertIn("C08", selected["short"])  # 倒数第 9 保留
         self.assertIn("C04", selected["short"])  # 按分数补入下一空仓
 
-    def test_inverse_vol_weights_preserve_leg_balance(self):
-        vols = {c: 0.02 for c in self.coins}
-        vols["C19"] = 0.10  # 高波动多头应获得更小权重
-        vols["C00"] = 0.08  # 高波动空头应获得更小权重
-        selected = fixed_weight_selection(self.scores, self.coins, self.config, vols=vols)
-        w = selected["weights"]
-        self.assertAlmostEqual(sum(w[c] for c in selected["long"]), 1.0)
-        self.assertAlmostEqual(sum(w[c] for c in selected["short"]), -1.0)
-        self.assertAlmostEqual(sum(abs(v) for v in w.values()), 2.0)
-        self.assertLess(w["C19"], w["C18"])
-        self.assertLess(abs(w["C00"]), abs(w["C01"]))
-
 
 class UnifiedEquityTests(unittest.TestCase):
     @unittest.mock.patch("place.info_post")
