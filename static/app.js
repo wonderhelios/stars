@@ -1259,14 +1259,13 @@ function equityWindow(history, range, now) {
 }
 
 
-// 合并两个子账户的净值历史（按小时对齐，避免异步采样/关网页期间互转导致中间出现假跳变）——「全部账户」曲线。
+// 合并两个子账户的净值历史（严格按同小时对齐并过滤跨账本异步单点毛刺）——「全部账户」曲线。
 function mergeHistory(a, b) {
   const clean = arr => (arr || []).filter(p => Number.isFinite(p.ts) && Number.isFinite(p.equity)).sort((x, y) => x.ts - y.ts);
   const aS = clean(a), bS = clean(b);
   if (!aS.length) return bS;
   if (!bS.length) return aS;
-  const bStart = bS[0].ts;
-  const bStartHour = Math.floor(bStart / 3600000);
+  const bStartHour = Math.floor(bS[0].ts / 3600000);
   const aBuckets = new Map();
   for (const p of aS) aBuckets.set(Math.floor(p.ts / 3600000), p);
   const bBuckets = new Map();
@@ -1276,12 +1275,18 @@ function mergeHistory(a, b) {
     if (h < bStartHour) {
       out.push({ ts: ap.ts, equity: ap.equity + bS[0].equity });
     } else {
-      // 同一小时（或相邻 ±1 小时内）都有采样才合并，跳过因未开网页导致 ML 缺采样的时段
-      const bp = bBuckets.get(h) || bBuckets.get(h - 1) || bBuckets.get(h + 1);
+      const bp = bBuckets.get(h);
       if (bp) out.push({ ts: Math.max(ap.ts, bp.ts), equity: ap.equity + bp.equity });
     }
   }
-  return out;
+  // 过滤同小时内一侧已划转、另一侧尚未更新导致的孤立单点毛刺（如 +$630 后下一小时立刻回落）
+  return out.filter((p, i, arr) => {
+    if (i <= 0 || i >= arr.length - 1) return true;
+    const d1 = p.equity - arr[i - 1].equity;
+    const d2 = arr[i + 1].equity - p.equity;
+    if (Math.abs(d1) > 250 && Math.abs(d2) > 250 && d1 * d2 < 0) return false;
+    return true;
+  });
 }
 
 // 根据当前策略 tab 取曲线数据：all = A+B 合并，ml = ML，momentum = 动量
