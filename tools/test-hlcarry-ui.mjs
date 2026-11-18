@@ -289,6 +289,9 @@ assert.match(rbHtml, /1\.32%/, '应显示触发门槛');
 assert.match(rbHtml, /40%/, '应显示换手率');
 assert.match(rbHtml, /基差止盈/, '应标注基差止盈原因');
 assert.match(rbHtml, /XMR -51\.2bp/, '应记录触发时的相对基差');
+assert.match(rbHtml, /hc-rb-cards/, '应渲染手机卡片容器');
+assert.match(rbHtml, /hc-rb-card/, '每条换仓记录应有手机卡片');
+assert.match(rbHtml, /hc-rb-metrics/, '手机卡片应包含独立指标区');
 
 // ---- 用例 11：每日汇总 ----
 const dlHtml = el('hc-daily').innerHTML;

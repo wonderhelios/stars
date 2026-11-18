@@ -2671,30 +2671,43 @@ function renderHlCarry(d) {
       : '<div class="empty">当前空仓，等待新的资金费与基差机会。</div>';
   }
 
-  // ---- 换仓记录 ----
+  // ---- 换仓记录：桌面表格，手机逐条卡片，避免七列横向挤压 ----
   const rb = $("hc-rebalances");
   if (rb) {
     const all = (s.rebalances || []).slice().reverse();
     const pages = Math.max(1, Math.ceil(all.length / HC_PAGE));
     if (hcRbPage > pages - 1) hcRbPage = 0;
     const rows = all.slice(hcRbPage * HC_PAGE, (hcRbPage + 1) * HC_PAGE);
+    const models = rows.map((r) => {
+      const dt = new Date(r.ts).toLocaleString("zh-CN", { hour12: false });
+      const takeProfit = r.reason === "basis_take_profit";
+      const up = Number(r.funding_after) >= Number(r.funding_before);
+      const reason = takeProfit ? "基差止盈" : "资金费轮动";
+      const change = []
+        .concat((r.added || []).map((c) => `<span class="pos">+${escapeHTML(c)}</span>`))
+        .concat((r.removed || []).map((c) => `<span class="neg">−${escapeHTML(c)}</span>`))
+        .concat((r.resized || []).map(([c, a, b]) => `${escapeHTML(c)} ${fmt(a * 100, 0)}%→${fmt(b * 100, 0)}%`))
+        .join(" · ");
+      const moves = takeProfit && (r.basis_moves || []).length
+        ? `<div class="muted">${(r.basis_moves || []).map(([c, b]) => `${escapeHTML(c)} ${fmt(b, 1)}bp`).join(" · ")}</div>`
+        : "";
+      const funding = takeProfit ? "—" : `${fmt(r.funding_before, 2)}% → ${fmt(r.funding_after, 2)}%`;
+      const threshold = `${fmt(r.threshold, takeProfit ? 0 : 2)}${takeProfit ? " bp" : "%"}`;
+      return {r, dt, takeProfit, up, reason, change, moves, funding, threshold};
+    });
+    const table = `<div class="table-scroll"><table><thead><tr><th>时间</th><th>原因</th><th>换手</th><th>加权资金费</th><th>门槛</th><th>手续费</th><th>变动</th></tr></thead><tbody>${models
+      .map(({r, dt, takeProfit, up, reason, change, moves, funding, threshold}) =>
+        `<tr><td class="muted">${dt}</td><td>${reason}</td><td>${fmt(r.turnover * 100, 0)}%</td><td class="${up ? "pos" : "neg"}">${funding}</td><td class="muted">${threshold}</td><td>−${hcMoney(r.fee_usd)}</td><td>${change || "—"}${moves}</td></tr>`)
+      .join("")}</tbody></table></div>`;
+    const cards = `<div class="hc-rb-cards">${models.map(({r, dt, reason, change, moves, funding, threshold}) =>
+      `<article class="hc-rb-card"><div class="hc-rb-head"><time>${dt}</time><strong>${reason}</strong></div><div class="hc-rb-change">${change || "—"}${moves}</div><div class="hc-rb-metrics">${[
+        ["换手", fmt(r.turnover * 100, 0) + "%"],
+        ["加权资金费", funding],
+        ["门槛", threshold],
+        ["手续费", "−" + hcMoney(r.fee_usd)],
+      ].map(([k, v]) => `<div><span>${k}</span><b>${v}</b></div>`).join("")}</div></article>`).join("")}</div>`;
     rb.innerHTML = rows.length
-      ? `<div class="table-scroll"><table><thead><tr><th>时间</th><th>原因</th><th>换手</th><th>加权资金费</th><th>门槛</th><th>手续费</th><th>变动</th></tr></thead><tbody>${rows
-          .map((r) => {
-            const dt = new Date(r.ts).toLocaleString("zh-CN", { hour12: false });
-            const takeProfit = r.reason === "basis_take_profit";
-            const up = Number(r.funding_after) >= Number(r.funding_before);
-            const change = []
-              .concat((r.added || []).map((c) => `<span class="pos">+${escapeHTML(c)}</span>`))
-              .concat((r.removed || []).map((c) => `<span class="neg">−${escapeHTML(c)}</span>`))
-              .concat((r.resized || []).map(([c, a, b]) => `${escapeHTML(c)} ${fmt(a * 100, 0)}%→${fmt(b * 100, 0)}%`))
-              .join(" · ");
-            const moves = takeProfit && (r.basis_moves || []).length
-              ? `<div class="muted">${(r.basis_moves || []).map(([c, b]) => `${escapeHTML(c)} ${fmt(b, 1)}bp`).join(" · ")}</div>`
-              : "";
-            return `<tr><td class="muted">${dt}</td><td>${takeProfit ? "基差止盈" : "资金费轮动"}</td><td>${fmt(r.turnover * 100, 0)}%</td><td class="${up ? "pos" : "neg"}">${takeProfit ? "—" : `${fmt(r.funding_before, 2)}% → ${fmt(r.funding_after, 2)}%`}</td><td class="muted">${fmt(r.threshold, takeProfit ? 0 : 2)}${takeProfit ? " bp" : "%"}</td><td>−${hcMoney(r.fee_usd)}</td><td>${change || "—"}${moves}</td></tr>`;
-          })
-          .join("")}</tbody></table></div>`
+      ? table + cards
       : '<div class="empty">还没有止盈或资金费轮动记录。</div>';
     if (rows.length) {
       rb.innerHTML += pager("hcrb", all.length, hcRbPage, HC_PAGE);
