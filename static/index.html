@@ -893,6 +893,10 @@
 
       .hlcarry-top-grid { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 14px; align-items: stretch; }
       .hlcarry-bottom-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; align-items: start; }
+      #hc-rebalances table { font-size: 12px; line-height: 1.45; }
+      @media (max-width: 820px) {
+        #hc-rebalances table { font-size: 11.5px; }
+      }
 
       .combine-overview { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
       .combine-bottom-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; align-items: start; }
@@ -1011,6 +1015,7 @@
       /* 手机端：可见导航、紧凑指标、表单双列，避免桌面布局缩小后显得拥挤。 */
       @media (max-width: 820px) {
         html, body { width: 100%; overflow-x: clip; }
+        body { padding-bottom: calc(68px + env(safe-area-inset-bottom, 0px)); }
         .topbar {
           padding: 8px 10px 9px;
           gap: 7px;
@@ -1018,12 +1023,19 @@
         }
         .brand { min-height: 30px; }
         .nav {
+          position: fixed;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          z-index: 100;
           display: grid;
-          grid-template-columns: repeat(4, minmax(0, 1fr));
-          flex: 0 0 auto;
+          grid-template-columns: repeat(6, minmax(0, 1fr));
           gap: 4px;
-          padding: 0;
+          padding: 6px 6px calc(6px + env(safe-area-inset-bottom, 0px));
           overflow: visible;
+          background: var(--bg-rail);
+          border-top: 1px solid var(--border);
+          box-shadow: 0 -8px 22px rgba(0,0,0,.18);
         }
         .nav button {
           min-width: 0;
