@@ -22,6 +22,7 @@ import urllib.error
 import time
 import datetime
 import sys
+import uuid
 
 # 签名依赖只在真实签名时加载；离线预测、dry-run 和订单计算不需要安装它们。
 from predict import latest_positions
@@ -177,7 +178,11 @@ def account_equity(vault):
     return max(equity, usdc)
 
 
-SLIPPAGE = 0.005  # 和 Rust 动量一致（Ioc 吃单的滑点容忍）
+SLIPPAGE = 0.005        # 和 Rust 动量一致（Ioc 吃单的滑点容忍）
+MAKER_OFFSET_BP = 1.0   # Alo 挂单相对 mid 退让 1bp，降低 Post-Only 立即被拒概率
+MAKER_TIMEOUT_SEC = 12.0
+MAKER_POLL_SEC = 1.5
+MIN_NOTIONAL_USD = 10.0
 
 
 def order_price(px: float, sz_decimals: int, round_up: bool) -> float:
@@ -252,6 +257,254 @@ def build_orders(target: dict, current: dict, idx: dict, decimals: dict, equity:
     return orders
 
 
+def make_cloid() -> str:
+    """生成 Hyperliquid 规范 cloid（0x + 32 位十六进制）。"""
+    return "0x" + uuid.uuid4().hex
+
+
+def build_alo_order(order: dict, mid: float, dec: int, cloid: str, offset_bp: float = MAKER_OFFSET_BP) -> dict:
+    """基于基础订单生成 Alo (Post-Only) 挂单：买单略低于 mid 向下取整，卖单略高于 mid 向上取整。"""
+    buy = bool(order["b"])
+    off = offset_bp / 10000.0
+    px = mid * (1.0 - off) if buy else mid * (1.0 + off)
+    price_str = fmt_price(px, dec, round_up=not buy)
+    return {
+        "a": order["a"],
+        "b": buy,
+        "p": price_str,
+        "s": order["s"],
+        "r": bool(order.get("r", False)),
+        "t": {"limit": {"tif": "Alo"}},
+        "c": cloid,
+    }
+
+
+def build_ioc_order(order: dict, mid: float, dec: int, size_float: float | None = None) -> dict:
+    """基于最新 mid 与剩余数量生成 IOC 吃单。"""
+    buy = bool(order["b"])
+    aggressive = mid * (1.0 + SLIPPAGE) if buy else mid * (1.0 - SLIPPAGE)
+    price_str = fmt_price(aggressive, dec, round_up=not buy)
+    size_str = order["s"] if size_float is None else round_sz(size_float, dec)
+    return {
+        "a": order["a"],
+        "b": buy,
+        "p": price_str,
+        "s": size_str,
+        "r": bool(order.get("r", False)),
+        "t": {"limit": {"tif": "Ioc"}},
+    }
+
+
+def query_order_status(vault: str, cloid: str) -> dict:
+    """按 cloid 查询订单真实状态，防止网络超时误判导致双倍下单。"""
+    return info_post({"type": "orderStatus", "user": vault, "oid": cloid})
+
+
+def _parse_order_status(resp: dict) -> tuple[str, int | None, float | None]:
+    """解析 orderStatus 响应，返回 (state, oid, remaining_sz)。
+    state: 'filled' | 'open' | 'absent_or_canceled' | 'unknown'
+    """
+    if not isinstance(resp, dict):
+        return ("unknown", None, None)
+    top = resp.get("status")
+    if top == "unknownOid":
+        return ("absent_or_canceled", None, None)
+    if top != "order":
+        return ("unknown", None, None)
+    od = resp.get("order") or {}
+    inner = od.get("status", "")
+    info = od.get("order") or {}
+    oid = info.get("oid")
+    try:
+        rem = float(info["sz"]) if "sz" in info and info["sz"] is not None else None
+    except (TypeError, ValueError):
+        rem = None
+    if inner == "filled":
+        return ("filled", oid, 0.0)
+    if inner == "open":
+        return ("open", oid, rem)
+    if inner in ("canceled", "rejected", "marginCanceled", "minTradeNtlRejected", "reduceOnlyCanceled"):
+        return ("absent_or_canceled", oid, rem)
+    return ("unknown", oid, rem)
+
+
+def cancel_orders(wallet_priv: str, vault: str, cancels: list[dict]):
+    """批量撤单（cancels 元素格式：{'a': asset_idx, 'o': oid}）。"""
+    if not cancels:
+        return {"status": "ok", "response": {"type": "cancel", "data": {"statuses": []}}}
+    action = {"type": "cancel", "cancels": cancels}
+    return exchange_post(wallet_priv, action, vault)
+
+
+def execute_orders_maker_first(
+    wallet_priv: str,
+    vault: str,
+    orders: list[dict],
+    mids: dict,
+    decimals: dict,
+    coin_of: dict,
+    timeout_sec: float = MAKER_TIMEOUT_SEC,
+    poll_sec: float = MAKER_POLL_SEC,
+    sleep_fn=time.sleep,
+    monotonic_fn=time.monotonic,
+) -> dict:
+    """Alo Maker 优先执行器：
+    1. 为每笔单生成独立 cloid 并批量挂 Alo (Post-Only)；
+    2. 网络异常时按 cloid 查 orderStatus 防重，仅确认未落地才允许回退 IOC；
+    3. Post-Only 被拒的立即加入 IOC 回退队列；
+    4. resting 挂单轮询等待最多 timeout_sec 秒；
+    5. 超时未完全成交的先撤单再查剩余量，仅对剩余名义 >= $10 的部分补发 IOC。
+    """
+    if not orders:
+        return {"mode": "maker_first", "maker_filled": 0, "ioc_fallback": 0, "errors": [], "ioc_resp": None}
+
+    alo_orders = []
+    meta_list = []
+    for o in orders:
+        coin = coin_of.get(o["a"], str(o["a"]))
+        mid = float(mids.get(coin, 0.0))
+        dec = int(decimals.get(coin, 5))
+        cloid = make_cloid()
+        alo_o = build_alo_order(o, mid, dec, cloid)
+        alo_orders.append(alo_o)
+        meta_list.append({
+            "base": o,
+            "alo": alo_o,
+            "coin": coin,
+            "mid": mid,
+            "dec": dec,
+            "cloid": cloid,
+            "orig_sz": float(o["s"]),
+        })
+
+    maker_filled = 0
+    resting = []      # list of (meta, oid)
+    fallback = []     # list of (meta, remaining_sz)
+    errors = []
+
+    action = {"type": "order", "orders": alo_orders, "grouping": "na"}
+    try:
+        alo_resp = exchange_post(wallet_priv, action, vault)
+        statuses = (((alo_resp or {}).get("response") or {}).get("data") or {}).get("statuses") or []
+        if len(statuses) != len(meta_list):
+            raise RuntimeError(f"Alo 响应条数不匹配: {len(statuses)} vs {len(meta_list)}")
+        for meta, st in zip(meta_list, statuses):
+            if isinstance(st, dict) and "filled" in st:
+                maker_filled += 1
+            elif isinstance(st, dict) and "resting" in st:
+                oid = (st.get("resting") or {}).get("oid")
+                resting.append((meta, oid))
+            elif isinstance(st, dict) and "error" in st:
+                # Post-Only 立即吃单被拒等明确错误 → 安全回退 IOC
+                fallback.append((meta, meta["orig_sz"]))
+            else:
+                errors.append(f"{meta['coin']}: 未知 Alo 响应 {st}")
+    except Exception as exc:
+        # 网络超时或未知异常：逐笔按 cloid 查单防重，绝不盲目补单
+        print(f"[place] Alo 批量下单异常({exc})，按 cloid 查单确认防重…", file=sys.stderr, flush=True)
+        for meta in meta_list:
+            try:
+                st_resp = query_order_status(vault, meta["cloid"])
+                state, oid, rem = _parse_order_status(st_resp)
+                if state == "filled":
+                    maker_filled += 1
+                elif state == "open":
+                    resting.append((meta, oid))
+                elif state == "absent_or_canceled":
+                    rem_sz = meta["orig_sz"] if rem is None else rem
+                    if rem_sz > 0:
+                        fallback.append((meta, rem_sz))
+                else:
+                    errors.append(f"{meta['coin']}: Alo 异常后状态未确认({st_resp})，已跳过防重")
+            except Exception as qexc:
+                errors.append(f"{meta['coin']}: Alo 异常且查单失败({qexc})，已跳过防重")
+
+    # 轮询等待 resting 挂单成交
+    if resting and timeout_sec > 0:
+        deadline = monotonic_fn() + timeout_sec
+        still_open = list(resting)
+        while still_open and monotonic_fn() < deadline:
+            sleep_fn(min(poll_sec, max(0.0, deadline - monotonic_fn())))
+            next_open = []
+            for meta, oid in still_open:
+                try:
+                    st_resp = query_order_status(vault, meta["cloid"])
+                    state, q_oid, rem = _parse_order_status(st_resp)
+                    if state == "filled":
+                        maker_filled += 1
+                    elif state == "open":
+                        next_open.append((meta, q_oid if q_oid is not None else oid))
+                    elif state == "absent_or_canceled":
+                        rem_sz = meta["orig_sz"] if rem is None else rem
+                        if rem_sz > 0:
+                            fallback.append((meta, rem_sz))
+                        else:
+                            maker_filled += 1
+                    else:
+                        next_open.append((meta, oid))
+                except Exception:
+                    next_open.append((meta, oid))
+            still_open = next_open
+        resting = still_open
+
+    # 超时仍未完全成交的：先撤单，再查一次最终剩余量，仅对剩余部分补 IOC
+    if resting:
+        cancels = [{"a": m["base"]["a"], "o": oid} for m, oid in resting if oid is not None]
+        if cancels:
+            try:
+                cancel_orders(wallet_priv, vault, cancels)
+            except Exception as cexc:
+                print(f"[place] 批量撤单异常: {cexc}", file=sys.stderr, flush=True)
+        for meta, oid in resting:
+            try:
+                st_resp = query_order_status(vault, meta["cloid"])
+                state, _, rem = _parse_order_status(st_resp)
+                if state == "filled":
+                    maker_filled += 1
+                elif state == "absent_or_canceled":
+                    rem_sz = meta["orig_sz"] if rem is None else rem
+                    if rem_sz > 0:
+                        fallback.append((meta, rem_sz))
+                    else:
+                        maker_filled += 1
+                else:
+                    errors.append(f"{meta['coin']}: 撤单后仍未确认取消({state})，跳过补单防重")
+            except Exception as qexc:
+                errors.append(f"{meta['coin']}: 撤单后查单失败({qexc})，跳过补单防重")
+
+    # 对回退列表补发 IOC（过滤掉名义 < $10 或四舍五入后 <= 0 的残余）
+    ioc_orders = []
+    if fallback:
+        try:
+            latest_mids = info_post({"type": "allMids"})
+        except Exception:
+            latest_mids = mids
+        for meta, rem_sz in fallback:
+            px = float((latest_mids or {}).get(meta["coin"], meta["mid"]) or meta["mid"])
+            if rem_sz * px < MIN_NOTIONAL_USD:
+                continue
+            ioc_o = build_ioc_order(meta["base"], px, meta["dec"], size_float=rem_sz)
+            try:
+                if float(ioc_o["s"]) <= 0:
+                    continue
+            except ValueError:
+                continue
+            ioc_orders.append(ioc_o)
+
+    ioc_resp = None
+    if ioc_orders:
+        ioc_action = {"type": "order", "orders": ioc_orders, "grouping": "na"}
+        ioc_resp = exchange_post(wallet_priv, ioc_action, vault)
+
+    return {
+        "mode": "maker_first",
+        "maker_filled": maker_filled,
+        "ioc_fallback": len(ioc_orders),
+        "errors": errors,
+        "ioc_resp": ioc_resp,
+    }
+
+
 def main():
     import argparse
     ap = argparse.ArgumentParser()
@@ -259,6 +512,7 @@ def main():
     ap.add_argument("--vault", required=True, help="ML 子账户 B 地址（vaultAddress）")
     ap.add_argument("--equity", type=float, default=0.0, help="子账户净值（不传则自动读）")
     ap.add_argument("--dry-run", action="store_true", help="只打印下单指令，不真下单")
+    ap.add_argument("--ioc-only", action="store_true", help="跳过 Alo Maker，直接发 IOC 吃单")
     ap.add_argument("--json", dest="json_out", action="store_true", help="输出 JSON（给前端/监控解析）")
     args = ap.parse_args()
 
@@ -298,7 +552,8 @@ def main():
     if not isinstance(target_map, dict) or not target_map:
         raise ValueError("预测结果缺少带符号 weights，拒绝下单")
 
-    orders = build_orders(target_map, current, idx, decimals, equity)
+    mids = info_post({"type": "allMids"})
+    orders = build_orders(target_map, current, idx, decimals, equity, mids=mids)
 
     # 把 asset 序号换回币名（给前端/监控看）
     coin_of = {v: k for k, v in idx.items()}
@@ -311,15 +566,20 @@ def main():
             "size": o["s"],
         })
 
+    def _exec():
+        if args.ioc_only:
+            action = {"type": "order", "orders": orders, "grouping": "na"}
+            return exchange_post(wallet, action, vault)
+        return execute_orders_maker_first(wallet, vault, orders, mids, decimals, coin_of)
+
     if getattr(args, 'json_out', False):
         print(json.dumps({"target": target, "orders": order_views}, ensure_ascii=False))
         if not (args.dry_run or not orders):
-            action = {"type": "order", "orders": orders, "grouping": "na"}
-            resp = exchange_post(wallet, action, vault)
+            resp = _exec()
             print(json.dumps({"result": resp}, ensure_ascii=False))
         return
 
-    print(f"\n需下单 {len(orders)} 笔：")
+    print(f"\n需下单 {len(orders)} 笔（{'IOC' if args.ioc_only else 'Alo Maker 优先'}）：")
     for o in orders:
         side = "买" if o["b"] else "卖"
         print(f"  {side} asset#{o['a']} sz={o['s']} px={o['p']}")
@@ -328,9 +588,8 @@ def main():
         print("\n(dry-run：未真正下单)")
         return
 
-    action = {"type": "order", "orders": orders, "grouping": "na"}
-    resp = exchange_post(wallet, action, vault)
-    print(f"\n下单响应: {json.dumps(resp)}")
+    resp = _exec()
+    print(f"\n下单响应: {json.dumps(resp, ensure_ascii=False)}")
 
 
 if __name__ == "__main__":

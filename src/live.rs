@@ -93,6 +93,12 @@ pub struct LiveConfig {
     /// 0.7 = 动量七成/量能三成（复盘检验支持的方向，尚未前向验证）。
     #[serde(default = "default_momentum_weight")]
     pub momentum_weight: f64,
+    /// 三因子附加权重：距 14 日高点（0 = 关闭，1.0 = 与动量等权）。
+    #[serde(default)]
+    pub dd_weight: f64,
+    /// 三因子附加权重：上涨天数占比（0 = 关闭，1.0 = 与动量等权）。
+    #[serde(default)]
+    pub upfrac_weight: f64,
     /// allow sending real orders; off until the user arms it
     pub armed: bool,
     /// run one rebalance per day automatically
@@ -119,6 +125,8 @@ impl Default for LiveConfig {
             take_profit_pct: 0.0,
             rebalance_slices: 3,
             momentum_weight: default_momentum_weight(),
+            dd_weight: 0.0,
+            upfrac_weight: 0.0,
             vol_target: d_vol_target(),
             vol_band: d_vol_band(),
             position_stop_pct: d_stop_pct(),
@@ -174,6 +182,8 @@ impl LiveConfig {
             // 界面上改成 1 也毫无作用。下面有 field_parity 测试守着。
             rebalance_slices: self.rebalance_slices,
             momentum_weight: self.momentum_weight,
+            dd_weight: self.dd_weight,
+            upfrac_weight: self.upfrac_weight,
             take_profit_pct: self.take_profit_pct,
             ..Default::default()
         }
@@ -2138,6 +2148,8 @@ mod config_parity_tests {
             margin_buffer: 0.77,
             rebalance_slices: 4,
             momentum_weight: 0.7,
+            dd_weight: 1.0,
+            upfrac_weight: 0.8,
             take_profit_pct: 0.1,
             ..LiveConfig::default()
         };
@@ -2151,6 +2163,8 @@ mod config_parity_tests {
         assert_eq!(tc.margin_buffer, 0.77, "margin_buffer 没传");
         assert_eq!(tc.rebalance_slices, 4, "rebalance_slices 没传（UI 会失效）");
         assert_eq!(tc.momentum_weight, 0.7, "momentum_weight 没传（UI 会失效）");
+        assert_eq!(tc.dd_weight, 1.0, "dd_weight 没传（三因子 UI 会失效）");
+        assert_eq!(tc.upfrac_weight, 0.8, "upfrac_weight 没传（三因子 UI 会失效）");
         assert_eq!(tc.take_profit_pct, 0.1, "take_profit_pct 没传（止盈会失效）");
     }
 }
