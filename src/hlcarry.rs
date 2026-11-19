@@ -329,6 +329,9 @@ pub struct HlCarryState {
     /// 每日聚合。
     #[serde(default)]
     pub daily: Vec<DailyStat>,
+    /// 当前轮动周期内已基差止盈的币（同周期不立刻买回，防止来回刷手续费）。
+    #[serde(default)]
+    pub tp_cooldown_coins: Vec<String>,
 }
 
 impl Default for HlCarryState {
@@ -348,6 +351,7 @@ impl Default for HlCarryState {
             funding_total: 0.0,
             rebalances: Vec::new(),
             daily: Vec::new(),
+            tp_cooldown_coins: Vec::new(),
         }
     }
 }
@@ -417,6 +421,7 @@ impl HlCarryState {
         self.funding_total = 0.0;
         self.rebalances.clear();
         self.daily.clear();
+        self.tp_cooldown_coins.clear();
         self.budget_usd = budget_usd;
         self.start_equity = budget_usd;
         self.last_history_ms = Some(now);
@@ -433,6 +438,7 @@ impl HlCarryState {
         if self.start_equity <= 0.0 || !self.legs.is_empty() {
             return false;
         }
+        self.tp_cooldown_coins.clear();
         self.last_check_ms = Some(now);
         let targets = target_weights(&select_candidates(market, &self.params), &self.params);
         if targets.is_empty() {
@@ -553,7 +559,7 @@ impl HlCarryState {
                 .map(|l| (l.coin.clone(), l.weight, l.basis_move_bp))
                 .collect();
             if !triggered.is_empty() {
-                let turn = triggered.iter().map(|(_, w, _)| *w).sum::<f64>() / 2.0;
+                let mut turn = triggered.iter().map(|(_, w, _)| *w).sum::<f64>() / 2.0;
                 let realized = self
                     .legs
                     .iter()
@@ -563,6 +569,40 @@ impl HlCarryState {
                 self.closed_pnl += realized;
                 self.legs.retain(|l| !triggered.iter().any(|(c, _, _)| c == &l.coin));
                 let removed: Vec<String> = triggered.iter().map(|(c, _, _)| c.clone()).collect();
+                for c in &removed {
+                    if !self.tp_cooldown_coins.contains(c) {
+                        self.tp_cooldown_coins.push(c.clone());
+                    }
+                }
+                // 止盈释放的闲置权重立即补入其他合规候选币（同周期不买回刚止盈的币），避免资金长期空转。
+                let fee_before = self.fees_paid_total;
+                let refill_equity = self.equity();
+                let mut available: Vec<Candidate> = select_candidates(market, &self.params)
+                    .into_iter()
+                    .filter(|c| {
+                        !self.legs.iter().any(|l| l.coin == c.coin)
+                            && !self.tp_cooldown_coins.contains(&c.coin)
+                    })
+                    .collect();
+                let mut added: Vec<String> = Vec::new();
+                for (_, freed_w, _) in &triggered {
+                    if available.is_empty() {
+                        break;
+                    }
+                    let cand = available.remove(0);
+                    let t = Target {
+                        coin: cand.coin.clone(),
+                        spot: cand.spot.clone(),
+                        weight: (*freed_w).min(self.params.max_leg_weight),
+                        funding_ann: cand.funding_ann,
+                    };
+                    if self.add_leg(&t, refill_equity, market, now) {
+                        added.push(t.coin);
+                        turn += t.weight / 2.0;
+                    }
+                }
+                let refill_fee = self.fees_paid_total - fee_before;
+                let funding_after: f64 = self.legs.iter().map(|l| l.weight * l.funding_ann).sum();
                 let basis_moves = triggered.iter().map(|(c, _, b)| (c.clone(), *b)).collect();
                 let target = self
                     .legs
@@ -573,10 +613,10 @@ impl HlCarryState {
                     ts: now,
                     turnover: turn,
                     funding_before: cur_f,
-                    funding_after: 0.0,
+                    funding_after,
                     threshold: self.params.basis_take_profit_bp,
-                    fee_usd: 0.0,
-                    added: Vec::new(),
+                    fee_usd: refill_fee,
+                    added: added.clone(),
                     removed: removed.clone(),
                     resized: Vec::new(),
                     target,
@@ -594,20 +634,32 @@ impl HlCarryState {
                     let drop = self.rebalances.len() - 100;
                     self.rebalances.drain(0..drop);
                 }
+                let tail = if added.is_empty() {
+                    "暂无其他合规标的，仓位暂转现金等待".to_string()
+                } else {
+                    format!("已立即补仓：{}", added.join(" / "))
+                };
                 self.log(
                     now,
                     format!(
-                        "基差止盈：{}，实现盈亏 ${:.2}；仓位转入现金等待机会",
+                        "基差止盈：{}，实现盈亏 ${:.2}；{}",
                         removed.join(" / "),
-                        realized
+                        realized,
+                        tail
                     ),
                 );
                 return true;
             }
         }
 
-        // 最短持有期只限制资金费轮动，避免频繁追逐瞬时资金费。
-        if let Some(last) = self.rebalances.last().map(|r| r.ts) {
+        // 最短持有期只看上次「资金费轮动」，单腿基差止盈不再重置 48h 轮动锁。
+        if let Some(last) = self
+            .rebalances
+            .iter()
+            .rev()
+            .find(|r| r.reason != "basis_take_profit")
+            .map(|r| r.ts)
+        {
             let hold_h = ((now - last).max(0) as f64) / 3_600_000.0;
             if hold_h < self.params.min_hold_hours {
                 self.sync_funding(market);
@@ -669,6 +721,7 @@ impl HlCarryState {
             }
         }
         let fee_usd = self.fees_paid_total - fee_before;
+        self.tp_cooldown_coins.clear();
 
         self.rebalances.push(RebalanceRecord {
             ts: now,
@@ -1502,5 +1555,48 @@ mod tests {
         assert_eq!(st.closed_pnl, closed);
         assert_eq!(st.history.len(), history_len);
         assert!(st.fees_paid_total > fees_before);
+    }
+
+    #[test]
+    fn basis_take_profit_refills_and_does_not_reset_min_hold_lock() {
+        let mut st = HlCarryState {
+            params: Params {
+                top_k: 1,
+                max_leg_weight: 1.0,
+                min_hold_hours: 48.0,
+                payback_days: 90.0,
+                ..Params::default()
+            },
+            ..HlCarryState::default()
+        };
+        // 两个合规候选：AAA 资金费略高，开仓选中 AAA；BBB 作为备选
+        let m0 = market(&[
+            ("AAA", "@1", 0.000_20, 5e6, 100.0),
+            ("BBB", "@2", 0.000_15, 5e6, 100.0),
+        ]);
+        st.open(1000.0, &m0, 1_000_000);
+        assert_eq!(st.legs.len(), 1);
+        assert_eq!(st.legs[0].coin, "AAA");
+
+        // 1 小时后 AAA 基差收敛 100bp 触发止盈：应立即补仓 BBB，且不买回 AAA
+        let mut m1 = m0.clone();
+        m1.perp_mid.insert("AAA".into(), 99.0);
+        st.step(&m1, 1_000_000 + 3_600_000);
+        assert!(st.maybe_rebalance(&m1, 1_000_000 + 3_600_000));
+        assert_eq!(st.legs.len(), 1);
+        assert_eq!(st.legs[0].coin, "BBB");
+        assert!(st.tp_cooldown_coins.contains(&"AAA".to_string()));
+        assert_eq!(st.rebalances.last().unwrap().reason, "basis_take_profit");
+        assert_eq!(st.rebalances.last().unwrap().added, vec!["BBB".to_string()]);
+
+        // 再过 1 小时（远小于 48h），若出现高资金费 CCC，不应被刚才的基差止盈锁住 48h
+        let m2 = market(&[
+            ("AAA", "@1", 0.000_20, 5e6, 100.0),
+            ("BBB", "@2", 0.000_05, 5e6, 100.0),
+            ("CCC", "@3", 0.001_00, 5e6, 100.0),
+        ]);
+        assert!(st.maybe_rebalance(&m2, 1_000_000 + 2 * 3_600_000));
+        assert_eq!(st.legs[0].coin, "CCC");
+        assert!(st.tp_cooldown_coins.is_empty());
     }
 }
