@@ -1,5 +1,5 @@
 [Unit]
-Description=stars Binance intraday forward shadow (public data only)
+Description=stars Hyperliquid A1w crowding-reversal forward shadow (public data only)
 After=network-online.target
 Wants=network-online.target
 

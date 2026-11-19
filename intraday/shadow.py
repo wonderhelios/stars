@@ -1,243 +1,435 @@
 #!/usr/bin/env python3
-"""币安日内趋势前向影子：只读公开行情，独立模拟账本，绝不下单。"""
-from pathlib import Path
-import fcntl, json, math, os, sys, time, traceback, urllib.parse, urllib.request
+"""Hyperliquid A1w 逼空衰竭做空前向影子：只读公开行情，独立模拟账本，绝不下单。
+
+策略规则（严格无前视 OOS 验证版）：
+  - 标的池：Hyperliquid 全市场永续合约，24h 成交额 >= $2M
+  - 开仓信号（整点扫描）：24h 涨幅 >= +8% 且上一整点已结算资金费率年化 <= -25%，按负费率深度降序做空
+  - 仓位与风控：单仓 15% 净值、最多 4 并发仓（最高毛敞口 0.60x）、15% 宽灾备止损、8h 到时平仓、平仓/止损后单币 24h 冷却
+  - 成本与资金费：开仓及到时平仓按 Maker 2.5bp/边，触发止损按 Taker 7.0bp/边；每整点按 Hyperliquid fundingHistory 实付结算小时资金费率
+"""
+from __future__ import annotations
+
 from datetime import datetime, timezone
-import lightgbm as lgb
-import numpy as np
-import pandas as pd
+from pathlib import Path
+import fcntl
+import json
+import math
+import os
+import time
+import traceback
+import urllib.request
 
-ROOT=Path(__file__).resolve().parent
-STATE_PATH=Path(os.environ.get('STARS_INTRADAY','/var/lib/stars/intraday_shadow.json'))
-CAPITAL=float(os.environ.get('STARS_INTRADAY_CAPITAL','2500'))
-FEE=0.0007
-THRESHOLD=0.542786741423357  # 净胜率模型：阈值仅在2026-10验证段确定
-BASE='https://fapi.binance.com'
-FEATURES=json.loads((ROOT/'features.json').read_text())
-UNIVERSE=json.loads((ROOT/'universe.json').read_text())
-MODEL=lgb.Booster(model_file=str(ROOT/'model.txt'))
+STATE_PATH = Path(os.environ.get("STARS_INTRADAY", "/var/lib/stars/intraday_shadow.json"))
+CAPITAL = float(os.environ.get("STARS_INTRADAY_CAPITAL", "2500"))
+HL_INFO_URL = os.environ.get("STARS_HL_INFO_URL", "https://api.hyperliquid.xyz/info")
 
+RET24_MIN = 0.08
+FR_ANN_MAX = -25.0
+MIN_VOL_USD = 2_000_000.0
+POSITION_FRACTION = 0.15
+MAX_POSITIONS = 4
+STOP_LOSS_PCT = 0.15
+MAX_HOLDING_HOURS = 8
+COOLDOWN_HOURS = 24
+FEE_MAKER = 0.00025
+FEE_TAKER = 0.00070
 
-def now_ms():return int(datetime.now(timezone.utc).timestamp()*1000)
-
-def get(path,params=None,timeout=15):
-    url=BASE+path+('?' + urllib.parse.urlencode(params) if params else '')
-    req=urllib.request.Request(url,headers={'User-Agent':'stars-intraday-shadow/1.0'})
-    with urllib.request.urlopen(req,timeout=timeout) as r:return json.loads(r.read())
-
-def finite(v):return v is not None and math.isfinite(float(v))
-
-def initial_state():
-    return {'running':True,'capital':CAPITAL,'balance':CAPITAL,'equity':CAPITAL,'started_at':now_ms(),
-      'positions':[],'trades':[],'signals':[],'history':[[now_ms(),CAPITAL]],'cooldowns':{},
-      'realized_pnl':0.0,'total_cost':0.0,'last_update':now_ms(),'last_signal_time':None,'last_error':None}
-
-def load_state():
-    try:return json.loads(STATE_PATH.read_text())
-    except FileNotFoundError:return initial_state()
-    # 损坏的账本必须人工处理，不能静默重置并覆盖历史。
-
-def save_state(state):
-    STATE_PATH.parent.mkdir(parents=True,exist_ok=True)
-    tmp=STATE_PATH.with_suffix('.tmp');tmp.write_text(json.dumps(state,ensure_ascii=False,separators=(',',':')));tmp.replace(STATE_PATH)
-
-def kline_frame(symbol):
-    rows=get('/fapi/v1/klines',{'symbol':symbol,'interval':'15m','limit':300})
-    cols=['open_time','open','high','low','close','volume','close_time','quote_volume','count',
-          'taker_buy_volume','taker_buy_quote_volume','ignore']
-    x=pd.DataFrame(rows,columns=cols)
-    for c in cols:x[c]=pd.to_numeric(x[c],errors='coerce')
-    x['signal_time']=x.close_time+1
-    return x
-
-def features_at(x):
-    """返回最后已收盘bar的特征；不读取尚未收盘bar的任何价格。"""
-    now=now_ms();closed=x[x.close_time<now].copy()
-    if len(closed)<193:return None
-    c=closed.close;prev=c.shift(1)
-    tr=pd.concat([closed.high-closed.low,(closed.high-prev).abs(),(closed.low-prev).abs()],axis=1).max(axis=1)
-    closed['atr_pct']=tr.rolling(96,min_periods=96).mean()/c
-    for bars in [4,16,48,96]:closed[f'ret_{bars}']=c/c.shift(bars)-1
-    for span in [16,64,192]:
-        closed[f'ema_{span}']=c.ewm(span=span,adjust=False,min_periods=span).mean()
-        closed[f'ema_dist_{span}']=c/closed[f'ema_{span}']-1
-    closed['ema16_slope4']=closed.ema_16/closed.ema_16.shift(4)-1
-    closed['ema64_slope16']=closed.ema_64/closed.ema_64.shift(16)-1
-    closed['volume_ratio']=closed.quote_volume/closed.quote_volume.rolling(96,min_periods=96).mean()
-    closed['quote24']=closed.quote_volume.rolling(96,min_periods=96).sum()
-    closed['taker_buy_ratio']=closed.taker_buy_quote_volume/closed.quote_volume
-    closed['taker_buy_ratio_4']=closed.taker_buy_quote_volume.rolling(4).sum()/closed.quote_volume.rolling(4).sum()
-    closed['range']=(closed.high-closed.low)/c
-    closed['close_location']=(2*c-closed.high-closed.low)/(closed.high-closed.low)
-    closed['upper_wick']=(closed.high-np.maximum(closed.open,c))/c
-    closed['lower_wick']=(np.minimum(closed.open,c)-closed.low)/c
-    closed['volatility24']=c.pct_change().rolling(96).std()
-    closed['high24_dist']=c/closed.high.rolling(96).max()-1
-    closed['low24_dist']=c/closed.low.rolling(96).min()-1
-    r=closed.iloc[-1]
-    entry=x[x.open_time==int(r.signal_time)]
-    if entry.empty:return None
-    return r.to_dict(),float(entry.iloc[0].open)
-
-def metric_features(symbol,signal_time):
-    oi=get('/futures/data/openInterestHist',{'symbol':symbol,'period':'5m','limit':500})
-    top_pos=get('/futures/data/topLongShortPositionRatio',{'symbol':symbol,'period':'5m','limit':2})
-    top_acct=get('/futures/data/topLongShortAccountRatio',{'symbol':symbol,'period':'5m','limit':2})
-    retail=get('/futures/data/globalLongShortAccountRatio',{'symbol':symbol,'period':'5m','limit':2})
-    taker=get('/futures/data/takerlongshortRatio',{'symbol':symbol,'period':'5m','limit':50})
-    oi=[r for r in oi if int(r['timestamp'])<=signal_time]
-    taker=[r for r in taker if int(r['timestamp'])<=signal_time]
-    if len(oi)<289 or signal_time-int(oi[-1]['timestamp'])>6*3600000:raise ValueError('OI数据过期或不完整')
-    if len(taker)<50:raise ValueError('主动成交数据不足4小时')
-    vals=[float(r['sumOpenInterestValue']) for r in oi]
-    latest=lambda rows,key:float([r for r in rows if int(r['timestamp'])<=signal_time][-1][key])
-    taker_now=latest(taker,'buySellRatio')
-    return {'oi_chg_1h':vals[-1]/vals[-13]-1,'oi_chg_4h':vals[-1]/vals[-49]-1,
-      'oi_chg_24h':vals[-1]/vals[-289]-1,'sum_toptrader_long_short_ratio':latest(top_pos,'longShortRatio'),
-      'count_toptrader_long_short_ratio':latest(top_acct,'longShortRatio'),
-      'count_long_short_ratio':latest(retail,'longShortRatio'),
-      'sum_taker_long_short_vol_ratio':taker_now,'oi_value':vals[-1],
-      'taker_change_4h':taker_now-float(taker[-49]['buySellRatio'])}
+HOUR_MS = 3_600_000
 
 
-def add_interaction_features(f):
-    f['side_oi_1h']=f['side']*f['oi_chg_1h'];f['side_oi_4h']=f['side']*f['oi_chg_4h']
-    f['side_oi_24h']=f['side']*f['oi_chg_24h'];f['price_oi_1h']=f['ret_4']*f['oi_chg_1h']
-    f['price_oi_4h']=f['ret_16']*f['oi_chg_4h']
-    f['top_position_retail_spread']=f['sum_toptrader_long_short_ratio']-f['count_long_short_ratio']
-    f['top_account_retail_spread']=f['count_toptrader_long_short_ratio']-f['count_long_short_ratio']
-    f['oi_to_volume24']=f['oi_value']/f['quote24']
-    return f
+def now_ms() -> int:
+    return int(datetime.now(timezone.utc).timestamp() * 1000)
 
-def scan_candidates():
-    frames={};entries={};errors=[]
-    for s in UNIVERSE:
+
+def finite(v) -> bool:
+    try:
+        return v is not None and math.isfinite(float(v))
+    except (TypeError, ValueError):
+        return False
+
+
+def post_info(payload: dict, timeout: int = 15):
+    body = json.dumps(payload).encode("utf-8")
+    req = urllib.request.Request(
+        HL_INFO_URL,
+        data=body,
+        headers={
+            "Content-Type": "application/json",
+            "User-Agent": "stars-hl-a1w-shadow/1.0",
+        },
+        method="POST",
+    )
+    with urllib.request.urlopen(req, timeout=timeout) as r:
+        return json.loads(r.read())
+
+
+def fetch_meta_and_ctxs() -> dict[str, dict]:
+    raw = post_info({"type": "metaAndAssetCtxs"})
+    if not isinstance(raw, list) or len(raw) < 2:
+        raise RuntimeError("Hyperliquid metaAndAssetCtxs 返回格式异常")
+    universe = raw[0].get("universe", [])
+    ctxs = raw[1]
+    out: dict[str, dict] = {}
+    for meta, ctx in zip(universe, ctxs):
+        coin = meta.get("name")
+        if not coin or meta.get("isDelisted"):
+            continue
+        mark = ctx.get("markPx")
+        prev_day = ctx.get("prevDayPx")
+        vol24 = ctx.get("dayNtlVlm")
+        funding = ctx.get("funding")
+        if not finite(mark) or float(mark) <= 0:
+            continue
+        out[coin] = {
+            "mark": float(mark),
+            "prev_day": float(prev_day) if finite(prev_day) else 0.0,
+            "vol24": float(vol24) if finite(vol24) else 0.0,
+            "funding": float(funding) if finite(funding) else 0.0,
+        }
+    return out
+
+
+def fetch_funding_history(coin: str, start_ms: int, end_ms: int | None = None) -> list[dict]:
+    payload: dict = {"type": "fundingHistory", "coin": coin, "startTime": int(start_ms)}
+    if end_ms is not None:
+        payload["endTime"] = int(end_ms)
+    rows = post_info(payload)
+    return rows if isinstance(rows, list) else []
+
+
+def initial_state() -> dict:
+    ts = now_ms()
+    return {
+        "running": True,
+        "capital": CAPITAL,
+        "balance": CAPITAL,
+        "equity": CAPITAL,
+        "started_at": ts,
+        "positions": [],
+        "trades": [],
+        "signals": [],
+        "history": [[ts, CAPITAL]],
+        "cooldowns": {},
+        "realized_pnl": 0.0,
+        "total_cost": 0.0,
+        "total_funding": 0.0,
+        "last_update": ts,
+        "last_signal_time": None,
+        "last_error": None,
+    }
+
+
+def load_state() -> dict:
+    try:
+        state = json.loads(STATE_PATH.read_text())
+        state.setdefault("cooldowns", {})
+        state.setdefault("total_funding", 0.0)
+        return state
+    except FileNotFoundError:
+        return initial_state()
+
+
+def save_state(state: dict) -> None:
+    STATE_PATH.parent.mkdir(parents=True, exist_ok=True)
+    tmp = STATE_PATH.with_suffix(".tmp")
+    tmp.write_text(json.dumps(state, ensure_ascii=False, separators=(",", ":")))
+    tmp.replace(STATE_PATH)
+
+
+def settle_hourly_funding(state: dict, current_hour: int, fetch_fn=fetch_funding_history) -> list[str]:
+    """按 Hyperliquid 实际小时资金费率结算所有在仓空单，严格按整点幂等。"""
+    warnings: list[str] = []
+    state.setdefault("total_funding", 0.0)
+    for p in state["positions"]:
+        entry_hour = (int(p["entry_ts"]) // HOUR_MS) * HOUR_MS
+        last_fh = int(p.get("last_funding_hour", entry_hour))
+        if current_hour <= last_fh:
+            continue
+        p.setdefault("funding_usd", 0.0)
         try:
-            x=kline_frame(s);result=features_at(x)
-            if result is not None:
-                f,entry=result;frames[s]=f;entries[s]=entry
-        except Exception as e:errors.append(f'{s}: {e}')
-        time.sleep(.06)
-    # 大面积失败时排名不完整，本轮必须放弃，不能用残余币池制造信号。
-    if len(frames)<len(UNIVERSE)*.9:raise RuntimeError(f'K线覆盖不足 {len(frames)}/{len(UNIVERSE)}；'+('; '.join(errors[:3])))
-    signal_times={int(f['signal_time']) for f in frames.values()}
-    if len(signal_times)!=1:raise RuntimeError('各币最新已收盘K线不一致')
-    signal_time=signal_times.pop()
-    rets={s:f['ret_96'] for s,f in frames.items() if finite(f['ret_96'])}
-    high=set(sorted(rets,key=rets.get,reverse=True)[:5]);low=set(sorted(rets,key=rets.get)[:5])
-    out=[]
-    for s,f in frames.items():
-        long=s in high and f['ema_16']>f['ema_64'] and f['ema64_slope16']>0
-        short=s in low and f['ema_16']<f['ema_64'] and f['ema64_slope16']<0
-        if not ((long or short) and f['quote24']>=5_000_000 and finite(f['atr_pct'])):continue
-        try:
-            f=f.copy();f['side']=1 if long else -1;f['log_quote24']=math.log(max(f['quote24'],1));f.update(metric_features(s,signal_time))
-            f=add_interaction_features(f)
-            f['probability']=float(MODEL.predict(pd.DataFrame([f])[FEATURES])[0]);f['symbol']=s;f['entry']=entries[s];out.append(f)
+            rows = fetch_fn(p["coin"], last_fh + 1, current_hour + 60_000)
+            by_hour: dict[int, float] = {}
+            for r in rows:
+                ts = int(r.get("time", 0))
+                h_ts = (ts // HOUR_MS) * HOUR_MS
+                if last_fh < h_ts <= current_hour and finite(r.get("fundingRate")):
+                    by_hour[h_ts] = float(r["fundingRate"])
+            for h_ts in sorted(by_hour):
+                fr = by_hour[h_ts]
+                # 空单(side=-1)：正费率收钱(+notional*fr)，负费率付钱(notional*fr < 0)
+                notional = float(p.get("remaining_notional", p["notional"]))
+                fpnl = notional * (-int(p["side"])) * fr
+                state["balance"] += fpnl
+                state["realized_pnl"] += fpnl
+                state["total_funding"] += fpnl
+                p["funding_usd"] += fpnl
+                p["last_funding_hour"] = h_ts
         except Exception as e:
-            # 单币OI不可用只放弃这个机会，不能中断其他候选。
-            errors.append(f'{s} OI: {e}')
-    return signal_time,sorted(out,key=lambda x:x['probability'],reverse=True),errors
+            warnings.append(f"{p['coin']} 费率结算失败: {e}")
+    return warnings
 
-def features_at_entry(x,f):
-    rows=x[x.open_time==int(f['signal_time'])]
-    if rows.empty:raise ValueError('下一根开盘尚未产生')
-    return float(rows.iloc[0].open)
 
-def snapshot(state,marks=None):
-    marks=marks or {};unreal=0.;gross=0.;net=0.
-    for p in state['positions']:
-        mark=marks.get(p['coin'],p.get('mark_price',p['entry_price']));p['mark_price']=mark
-        remaining=p.get('remaining_fraction',1.0);p['remaining_notional']=p['notional']*remaining
-        p['unrealized_pnl']=p['remaining_notional']*p['side']*(mark/p['entry_price']-1)
-        unreal+=p['unrealized_pnl'];gross+=p['remaining_notional'];net+=p['remaining_notional']*p['side']
-    state['equity']=state['balance']+unreal;state['unrealized_pnl']=unreal;state['pnl']=state['equity']-state['capital']
-    state['pnl_pct']=100*state['pnl']/state['capital'];state['gross_notional']=gross;state['net_notional']=net
-    state['days_elapsed']=(now_ms()-state['started_at'])/86400000
-    wins=sum(1 for t in state['trades'] if t['pnl_usd']>0);state['win_rate']=100*wins/len(state['trades']) if state['trades'] else 0
-    state['last_update']=now_ms()
-    state['config']={'fee_per_side':FEE,'threshold':THRESHOLD,'position_fraction':.25,'max_positions':4,'gross_leverage':1,
-      'cooldown_hours':0,'max_holding_hours':6,'partial_fraction':.5,'partial_target_atr':.5,'move_remainder_stop_to_entry':True}
+def scan_candidates(signal_time: int, ctxs: dict[str, dict], fetch_fn=fetch_funding_history) -> tuple[list[dict], list[str]]:
+    """严格无前视整点扫描：筛选 24h 成交额 >= $2M 且 24h 涨幅 >= +8% 的币种，读取上一整点已结算资金费率。"""
+    if len(ctxs) < 50:
+        raise RuntimeError(f"Hyperliquid 合约行情覆盖不足: {len(ctxs)}")
+    warnings: list[str] = []
+    out: list[dict] = []
+    for coin, c in ctxs.items():
+        if c["vol24"] < MIN_VOL_USD or c["prev_day"] <= 0 or c["mark"] <= 0:
+            continue
+        ret24 = c["mark"] / c["prev_day"] - 1.0
+        if ret24 < RET24_MIN:
+            continue
+        fr = c["funding"]
+        try:
+            rows = fetch_fn(coin, signal_time - 2 * HOUR_MS, signal_time + 60_000)
+            settled = [
+                ((int(r["time"]) // HOUR_MS) * HOUR_MS, float(r["fundingRate"]))
+                for r in rows
+                if finite(r.get("fundingRate")) and ((int(r["time"]) // HOUR_MS) * HOUR_MS) <= signal_time
+            ]
+            if settled:
+                settled.sort(key=lambda x: x[0])
+                fr = settled[-1][1]
+        except Exception as e:
+            warnings.append(f"{coin} fundingHistory: {e}")
+        fr_ann = fr * 24.0 * 365.0 * 100.0
+        out.append(
+            {
+                "symbol": coin,
+                "side": -1,
+                "entry": c["mark"],
+                "ret24": ret24,
+                "vol24": c["vol24"],
+                "fr_1h": fr,
+                "fr_ann": fr_ann,
+            }
+        )
+    # 负费率越深排序越靠前
+    out.sort(key=lambda x: x["fr_ann"])
+    return out, warnings
+
+
+def snapshot(state: dict, marks: dict[str, float] | None = None) -> dict:
+    marks = marks or {}
+    unreal = 0.0
+    gross = 0.0
+    net = 0.0
+    for p in state["positions"]:
+        mark = marks.get(p["coin"], p.get("mark_price", p["entry_price"]))
+        p["mark_price"] = mark
+        remaining = float(p.get("remaining_fraction", 1.0))
+        p["remaining_notional"] = p["notional"] * remaining
+        p["unrealized_pnl"] = p["remaining_notional"] * p["side"] * (mark / p["entry_price"] - 1.0)
+        unreal += p["unrealized_pnl"]
+        gross += p["remaining_notional"]
+        net += p["remaining_notional"] * p["side"]
+    state["equity"] = state["balance"] + unreal
+    state["unrealized_pnl"] = unreal
+    state["pnl"] = state["equity"] - state["capital"]
+    state["pnl_pct"] = 100.0 * state["pnl"] / state["capital"] if state["capital"] > 0 else 0.0
+    state["gross_notional"] = gross
+    state["net_notional"] = net
+    state["days_elapsed"] = (now_ms() - state["started_at"]) / 86_400_000.0
+    wins = sum(1 for t in state["trades"] if t["pnl_usd"] > 0)
+    state["win_rate"] = 100.0 * wins / len(state["trades"]) if state["trades"] else 0.0
+    state["last_update"] = now_ms()
+    state["config"] = {
+        "strategy": "hl_a1w_short",
+        "ret24_min": RET24_MIN,
+        "fr_ann_max": FR_ANN_MAX,
+        "min_vol_usd": MIN_VOL_USD,
+        "position_fraction": POSITION_FRACTION,
+        "max_positions": MAX_POSITIONS,
+        "gross_leverage": round(POSITION_FRACTION * MAX_POSITIONS, 2),
+        "stop_loss_pct": STOP_LOSS_PCT,
+        "max_holding_hours": MAX_HOLDING_HOURS,
+        "cooldown_hours": COOLDOWN_HOURS,
+        "fee_per_side": FEE_MAKER,
+        "fee_taker": FEE_TAKER,
+    }
     return state
 
-def process_exits(state,marks):
-    now=now_ms()
-    for p in list(state['positions']):
-        mark=marks.get(p['coin'])
-        if not finite(mark):continue
-        # 升级前已存在的仓位补齐字段，保留原净值与持仓，不重建账本。
-        p.setdefault('remaining_fraction',1.0);p.setdefault('partial_done',False)
-        p.setdefault('partial_price',p['entry_price']+(p['target_price']-p['entry_price'])*.5)
-        hit_tp=mark>=p['target_price'] if p['side']==1 else mark<=p['target_price']
-        hit_sl=mark<=p['stop_price'] if p['side']==1 else mark>=p['stop_price']
-        hit_partial=(not p['partial_done'] and (mark>=p['partial_price'] if p['side']==1 else mark<=p['partial_price']))
-        # 同一次刷新若同时满足多个条件，优先执行止损，保持保守口径。
-        if hit_sl:reason='保本退出' if p['partial_done'] and p['stop_price']==p['entry_price'] else '止损';fraction=p['remaining_fraction']
-        elif hit_tp:reason='止盈';fraction=p['remaining_fraction']
-        elif hit_partial:reason='半仓止盈';fraction=.5*p['remaining_fraction'] if p['remaining_fraction']<.99 else .5
-        elif now>=p['expiry_ts']:reason='超时退出';fraction=p['remaining_fraction']
-        else:continue
-        fraction=min(fraction,p['remaining_fraction']);notional=p['notional']*fraction
-        exit_fee=notional*FEE;gross=notional*p['side']*(mark/p['entry_price']-1);net=gross-exit_fee-p['entry_fee']*fraction
-        state['balance']+=gross-exit_fee;state['total_cost']+=exit_fee;state['realized_pnl']+=net
-        state['trades'].append({'exit_ts':now,'entry_ts':p['entry_ts'],'coin':p['coin'],'side':'long' if p['side']==1 else 'short',
-          'exit_price':mark,'entry_price':p['entry_price'],'notional':notional,'pnl_usd':net,'reason':reason,'probability':p['probability']})
-        p['remaining_fraction']-=fraction
-        if reason=='半仓止盈':
-            p['partial_done']=True;p['stop_price']=p['entry_price']
-        if p['remaining_fraction']<=1e-12:state['positions'].remove(p)
 
-def process_entries(state,signal_time,candidates):
-    if state.get('last_signal_time')==signal_time:return
-    accepted=set()
-    for c in candidates:
-        s=c['symbol'];reason=''
-        if c['probability']<THRESHOLD:reason='评分低于阈值'
-        elif any(p['coin']==s for p in state['positions']):reason='已有同币仓位'
-        elif len(state['positions'])>=4:reason='已达4仓上限'
+def process_exits(state: dict, marks: dict[str, float], now: int | None = None) -> None:
+    now = now_ms() if now is None else int(now)
+    state.setdefault("cooldowns", {})
+    for p in list(state["positions"]):
+        mark = marks.get(p["coin"])
+        if not finite(mark):
+            continue
+        mark = float(mark)
+        hit_sl = mark >= p["stop_price"] if p["side"] == -1 else mark <= p["stop_price"]
+        hit_expiry = now >= p["expiry_ts"]
+        if hit_sl:
+            reason = "15%宽止损"
+            exit_fee_rate = FEE_TAKER
+        elif hit_expiry:
+            reason = "8h到时平仓"
+            exit_fee_rate = FEE_MAKER
         else:
-            notional=.25*state['equity'];entry=c['entry'];fee=notional*FEE;side=c['side'];atr=c['atr_pct']
-            state['balance']-=fee;state['total_cost']+=fee
-            state['positions'].append({'coin':s,'side':side,'entry_ts':signal_time,'entry_price':entry,'mark_price':entry,
-              'notional':notional,'entry_fee':fee,'probability':c['probability'],'target_price':entry*(1+side*atr),
-              'partial_price':entry*(1+side*.5*atr),'partial_done':False,'remaining_fraction':1.0,
-              'stop_price':entry*(1-side*atr),'expiry_ts':signal_time+6*3600000,'unrealized_pnl':0.0})
-            accepted.add(s);reason='模拟开仓'
-        state['signals'].append({'ts':signal_time,'coin':s,'side':'long' if c['side']==1 else 'short',
-          'probability':c['probability'],'accepted':s in accepted,'reason':reason,'ret24':c['ret_96'],'oi_chg_4h':c['oi_chg_4h']})
-    state['last_signal_time']=signal_time;state['signals']=state['signals'][-100:]
+            continue
 
-def run_once():
-    state=load_state();marks={}
+        notional = float(p.get("remaining_notional", p["notional"]))
+        exit_fee = notional * exit_fee_rate
+        gross = notional * p["side"] * (mark / p["entry_price"] - 1.0)
+        funding_usd = float(p.get("funding_usd", 0.0))
+        entry_fee = float(p.get("entry_fee", 0.0))
+        # funding_usd 已在整点逐小时计入 balance 与 realized_pnl，这里不再重复叠加到 balance/realized_pnl
+        price_net = gross - exit_fee - entry_fee
+        total_trade_net = price_net + funding_usd
+
+        state["balance"] += gross - exit_fee
+        state["total_cost"] += exit_fee
+        state["realized_pnl"] += price_net
+        state["trades"].append(
+            {
+                "exit_ts": now,
+                "entry_ts": p["entry_ts"],
+                "coin": p["coin"],
+                "side": "long" if p["side"] == 1 else "short",
+                "exit_price": mark,
+                "entry_price": p["entry_price"],
+                "notional": notional,
+                "entry_fr_ann": p.get("entry_fr_ann", 0.0),
+                "funding_usd": funding_usd,
+                "pnl_usd": total_trade_net,
+                "reason": reason,
+            }
+        )
+        state["cooldowns"][p["coin"]] = now + COOLDOWN_HOURS * HOUR_MS
+        state["positions"].remove(p)
+
+
+def process_entries(state: dict, signal_time: int, candidates: list[dict]) -> None:
+    if state.get("last_signal_time") == signal_time:
+        return
+    cooldowns = state.setdefault("cooldowns", {})
+    # 清理已过期冷却记录
+    for coin in [k for k, v in cooldowns.items() if v <= signal_time]:
+        del cooldowns[coin]
+
+    accepted: set[str] = set()
+    for c in candidates:
+        coin = c["symbol"]
+        fr_ann = float(c["fr_ann"])
+        if fr_ann > FR_ANN_MAX:
+            reason = f"费率未达 {FR_ANN_MAX:.0f}%"
+        elif any(p["coin"] == coin for p in state["positions"]):
+            reason = "已有同币仓位"
+        elif cooldowns.get(coin, 0) > signal_time:
+            rem_h = (cooldowns[coin] - signal_time) / HOUR_MS
+            reason = f"24h冷却中({rem_h:.1f}h)"
+        elif len(state["positions"]) >= MAX_POSITIONS:
+            reason = f"已达{MAX_POSITIONS}仓上限"
+        else:
+            notional = POSITION_FRACTION * state["equity"]
+            entry = float(c["entry"])
+            fee = notional * FEE_MAKER
+            state["balance"] -= fee
+            state["total_cost"] += fee
+            entry_hour = (signal_time // HOUR_MS) * HOUR_MS
+            state["positions"].append(
+                {
+                    "coin": coin,
+                    "side": -1,
+                    "entry_ts": signal_time,
+                    "entry_price": entry,
+                    "mark_price": entry,
+                    "notional": notional,
+                    "remaining_fraction": 1.0,
+                    "remaining_notional": notional,
+                    "entry_fee": fee,
+                    "entry_fr_ann": fr_ann,
+                    "ret24": float(c["ret24"]),
+                    "vol24": float(c["vol24"]),
+                    "funding_usd": 0.0,
+                    "last_funding_hour": entry_hour,
+                    "stop_price": entry * (1.0 + STOP_LOSS_PCT),
+                    "expiry_ts": signal_time + MAX_HOLDING_HOURS * HOUR_MS,
+                    "unrealized_pnl": 0.0,
+                }
+            )
+            accepted.add(coin)
+            reason = "模拟开空"
+        state["signals"].append(
+            {
+                "ts": signal_time,
+                "coin": coin,
+                "side": "short",
+                "ret24": float(c["ret24"]),
+                "fr_ann": fr_ann,
+                "vol24": float(c["vol24"]),
+                "accepted": coin in accepted,
+                "reason": reason,
+            }
+        )
+    state["last_signal_time"] = signal_time
+    state["signals"] = state["signals"][-120:]
+
+
+def run_once() -> None:
+    state = load_state()
+    marks: dict[str, float] = {}
+    warnings: list[str] = []
     try:
-        marks={r['symbol']:float(r['markPrice']) for r in get('/fapi/v1/premiumIndex')}
-        process_exits(state,marks);snapshot(state,marks)
-        now=now_ms();current_hour=now//3600000*3600000
-        if state.get('last_signal_time')!=current_hour:
-            if current_hour+45000<=now<current_hour+5*60000:
-                signal_time,candidates,warnings=scan_candidates()
-                if signal_time==current_hour:
-                    process_entries(state,signal_time,candidates);snapshot(state,marks)
-                    state['last_error']='；'.join(warnings[:3]) if warnings else None
-            elif now>=current_hour+5*60000:
-                # 重启或停机后不得按一小时前的open补造入场。
-                state['last_signal_time']=current_hour
-                state['last_error']='错过整点入场窗口，本轮空仓，等待下一小时'
-        hist=state['history'];bucket=now//900000*900000
-        if not hist or hist[-1][0]!=bucket:hist.append([bucket,state['equity']])
-        else:hist[-1]=[bucket,state['equity']]
-        state['history']=hist[-2880:];state['trades']=state['trades'][-500:];state['running']=True
+        ctxs = fetch_meta_and_ctxs()
+        marks = {coin: c["mark"] for coin, c in ctxs.items()}
+        now = now_ms()
+        current_hour = (now // HOUR_MS) * HOUR_MS
+
+        # 1. 先结算跨整点小时资金费率，再处理止损与 8h 到时平仓
+        if now >= current_hour + 30_000:
+            warnings.extend(settle_hourly_funding(state, current_hour))
+        process_exits(state, marks, now=now)
+        snapshot(state, marks)
+
+        # 2. 整点入场窗口 [XX:00:30, XX:05:00) 执行 A1w 扫描与开空
+        if state.get("last_signal_time") != current_hour:
+            if current_hour + 30_000 <= now < current_hour + 5 * 60_000:
+                candidates, scan_warns = scan_candidates(current_hour, ctxs)
+                warnings.extend(scan_warns)
+                process_entries(state, current_hour, candidates)
+                snapshot(state, marks)
+                state["last_error"] = "；".join(warnings[:3]) if warnings else None
+            elif now >= current_hour + 5 * 60_000:
+                # 重启或停机错过整点窗口，绝不补造历史入场
+                state["last_signal_time"] = current_hour
+                state["last_error"] = "错过整点入场窗口，本轮空仓，等待下一小时"
+        elif warnings:
+            state["last_error"] = "；".join(warnings[:3])
+        else:
+            state["last_error"] = None
+
+        hist = state["history"]
+        bucket = (now // 900_000) * 900_000
+        if not hist or hist[-1][0] != bucket:
+            hist.append([bucket, state["equity"]])
+        else:
+            hist[-1] = [bucket, state["equity"]]
+        state["history"] = hist[-2880:]
+        state["trades"] = state["trades"][-500:]
+        state["running"] = True
     except Exception as e:
-        state['last_error']=f'{type(e).__name__}: {e}';state['running']=True;traceback.print_exc()
-    save_state(snapshot(state,marks))
+        state["last_error"] = f"{type(e).__name__}: {e}"
+        state["running"] = True
+        traceback.print_exc()
+    save_state(snapshot(state, marks))
 
-def main():
-    lock=open(STATE_PATH.with_suffix('.lock'),'w')
-    try:fcntl.flock(lock,fcntl.LOCK_EX|fcntl.LOCK_NB)
-    except BlockingIOError:print('日内影子已有进程运行',flush=True);return
-    print(f'日内影子启动，状态={STATE_PATH}，只读行情，不下单',flush=True)
+
+def main() -> None:
+    lock = open(STATE_PATH.with_suffix(".lock"), "w")
+    try:
+        fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    except BlockingIOError:
+        print("日内影子已有进程运行", flush=True)
+        return
+    print(f"Hyperliquid A1w 逼空衰竭影子启动，状态={STATE_PATH}，只读行情，不下单", flush=True)
     while True:
-        # 每15秒只批量读取一次premiumIndex并检查持仓；110币K线和OI仍仅整点扫描。
-        run_once();time.sleep(15)
+        run_once()
+        time.sleep(15)
 
-if __name__=='__main__':main()
+
+if __name__ == "__main__":
+    main()

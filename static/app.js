@@ -2098,6 +2098,7 @@ function renderCombine(d) {
 function renderIntraday(d) {
   d = d || {};
   const cfg = d.config || {}, ps = d.positions || [];
+  const isA1w = cfg.strategy === "hl_a1w_short";
   const isLongPosition = p => Number(p.side) === 1 || p.side === "long";
   const eq = Number(d.equity) || 0, pnlPct = Number(d.pnl_pct) || 0;
   const pnl = Number(d.pnl) || 0, days = Number(d.days_elapsed) || 0;
@@ -2106,10 +2107,12 @@ function renderIntraday(d) {
   if (m) m.innerHTML =
     kpi("影子净值", "$" + fmt(eq, 2), "独立模拟账户 · 本金 $" + fmt(d.capital || 0, 0)) +
     kpi("累计收益", moneySigned(pnl), (pnlPct >= 0 ? "+" : "") + pnlPct.toFixed(2) + "%", pnl >= 0 ? "pos" : "neg") +
-    kpi("已实现 / 浮盈", moneySigned(d.realized_pnl || 0), "浮动 " + moneySigned(d.unrealized_pnl || 0), (d.realized_pnl || 0) >= 0 ? "pos" : "neg") +
+    kpi("已实现 / 浮盈", moneySigned(d.realized_pnl || 0),
+      "浮动 " + moneySigned(d.unrealized_pnl || 0) + (isA1w ? " · 资金费 " + moneySigned(d.total_funding || 0) : ""),
+      (d.realized_pnl || 0) >= 0 ? "pos" : "neg") +
     kpi("当前持仓", String(ps.length), "多 " + ps.filter(p => isLongPosition(p)).length + " · 空 " + ps.filter(p => !isLongPosition(p)).length) +
     kpi("平仓胜率", (d.win_rate || 0).toFixed(1) + "%", (d.trades || []).length + " 笔已平仓") +
-    kpi("运行时间", days.toFixed(1) + " 天", "纯前向 · 无历史回放");
+    kpi("运行时间", days.toFixed(1) + " 天", isA1w ? "Hyperliquid A1w · 纯前向" : "纯前向 · 无历史回放");
   const state = $("cb-run-state");
   const fresh = Number.isFinite(d.last_update) && Date.now() - d.last_update < 180000;
   if (state) {
@@ -2127,25 +2130,55 @@ function renderIntraday(d) {
     let pts = equityWindow(obs, cbRange, Date.now()).points.map(p => [p.ts, p.equity]);
     if (pts.length < 3 && cbRange !== "all") pts = h.slice(-3);
     renderEquityChart("cb-chart", withNow(pts, eq), "日内影子权益曲线", undefined, undefined, undefined,
-      {equityLabel:"影子净值 · 最新",changeLabel:"记录区间变化",legendName:"日内影子",useBjTime:true});
+      {equityLabel:"影子净值 · 最新",changeLabel:"记录区间变化",legendName:isA1w?"HL A1w 影子":"日内影子",useBjTime:true});
   } else if ($("cb-chart")) $("cb-chart").innerHTML = '<div class="empty">等待第一个前向净值点</div>';
   const legs = $("cb-legs");
   if (legs) {
     const posPages = Math.max(1, Math.ceil(ps.length / CB_PAGE_SIZE));
     if (cbPosPage > posPages - 1) cbPosPage = 0;
     const posRows = ps.slice(cbPosPage * CB_PAGE_SIZE, (cbPosPage + 1) * CB_PAGE_SIZE);
-    legs.innerHTML = ps.length ? '<div class="table-scroll"><table><thead><tr><th>币</th><th>方向</th><th>模型评分</th><th>名义</th><th>开仓价</th><th>现价</th><th>止盈 / 止损</th><th>浮盈</th></tr></thead><tbody>' +
-      posRows.map(p => { const long=isLongPosition(p),u=Number(p.unrealized_pnl)||0; return `<tr><td><b>${escapeHTML(p.coin)}</b></td><td class="${long?"pos":"neg"}">${long?"多":"空"}</td><td>${(100*(p.probability||0)).toFixed(1)}%</td><td>$${fmt(p.notional,0)}</td><td>${fmtCompact(p.entry_price)}</td><td>${fmtCompact(p.mark_price)}</td><td>${fmtCompact(p.target_price)} / ${fmtCompact(p.stop_price)}</td><td class="${u>=0?"pos":"neg"}">${moneySigned(u)}</td></tr>`; }).join("") + '</tbody></table></div>' + (ps.length > CB_PAGE_SIZE ? pager("cbpos", ps.length, cbPosPage, CB_PAGE_SIZE) : "")
-      : '<div class="empty">当前空仓。没有足够强的趋势延续信号就不出手。</div>';
+    if (isA1w) {
+      legs.innerHTML = ps.length ? '<div class="table-scroll"><table><thead><tr><th>币</th><th>方向</th><th>入场年化费率</th><th>名义</th><th>开仓价</th><th>现价</th><th>15% 止损价 / 到期 (UTC+8)</th><th>已付资金费</th><th>浮盈</th></tr></thead><tbody>' +
+        posRows.map(p => { const long=isLongPosition(p),u=Number(p.unrealized_pnl)||0,fu=Number(p.funding_usd)||0; return `<tr><td><b>${escapeHTML(p.coin)}</b></td><td class="${long?"pos":"neg"}">${long?"多":"空"}</td><td class="neg">${fmt(p.entry_fr_ann||0,1)}%</td><td>$${fmt(p.notional,0)}</td><td>${fmtCompact(p.entry_price)}</td><td>${fmtCompact(p.mark_price)}</td><td>${fmtCompact(p.stop_price)} / ${p.expiry_ts?ts2bj(p.expiry_ts):"—"}</td><td class="${fu>=0?"pos":"neg"}">${moneySigned(fu)}</td><td class="${u>=0?"pos":"neg"}">${moneySigned(u)}</td></tr>`; }).join("") + '</tbody></table></div>' + (ps.length > CB_PAGE_SIZE ? pager("cbpos", ps.length, cbPosPage, CB_PAGE_SIZE) : "")
+        : '<div class="empty">当前空仓。等待 24h 涨幅 ≥ 8% 且年化负费率 ≤ −25% 的逼空衰竭信号。</div>';
+    } else {
+      legs.innerHTML = ps.length ? '<div class="table-scroll"><table><thead><tr><th>币</th><th>方向</th><th>模型评分</th><th>名义</th><th>开仓价</th><th>现价</th><th>止盈 / 止损</th><th>浮盈</th></tr></thead><tbody>' +
+        posRows.map(p => { const long=isLongPosition(p),u=Number(p.unrealized_pnl)||0; return `<tr><td><b>${escapeHTML(p.coin)}</b></td><td class="${long?"pos":"neg"}">${long?"多":"空"}</td><td>${(100*(p.probability||0)).toFixed(1)}%</td><td>$${fmt(p.notional,0)}</td><td>${fmtCompact(p.entry_price)}</td><td>${fmtCompact(p.mark_price)}</td><td>${fmtCompact(p.target_price)} / ${fmtCompact(p.stop_price)}</td><td class="${u>=0?"pos":"neg"}">${moneySigned(u)}</td></tr>`; }).join("") + '</tbody></table></div>' + (ps.length > CB_PAGE_SIZE ? pager("cbpos", ps.length, cbPosPage, CB_PAGE_SIZE) : "")
+        : '<div class="empty">当前空仓。没有足够强的趋势延续信号就不出手。</div>';
+    }
   }
   if ($("cb-position-count")) $("cb-position-count").textContent = `${ps.length} / ${cfg.max_positions||4} 仓 · 毛敞口 $${fmt(d.gross_notional||0,0)}`;
-  if ($("cb-config")) $("cb-config").innerHTML = [`单仓 ${100*(cfg.position_fraction||.25)}%`,`最多 ${cfg.max_positions||4} 仓`,`模型评分 ≥ ${cfg.threshold||.55}`,`成本 ${10000*(cfg.fee_per_side||.0007)}bp/边`,`最长 ${cfg.max_holding_hours||6} 小时`].map(x=>`<span>${x}</span>`).join("");
+  if ($("cb-config")) {
+    const chips = isA1w
+      ? [
+          `单仓 ${Math.round(100*(cfg.position_fraction||.15))}%`,
+          `最多 ${cfg.max_positions||4} 仓`,
+          `24h涨 ≥ ${Math.round(100*(cfg.ret24_min||.08))}%`,
+          `年化费率 ≤ ${cfg.fr_ann_max ?? -25}%`,
+          `成交额 ≥ $${fmt((cfg.min_vol_usd||2e6)/1e6,0)}M`,
+          `${Math.round(100*(cfg.stop_loss_pct||.15))}% 宽止损`,
+          `${cfg.cooldown_hours||24}h 单币冷却`,
+          `${cfg.max_holding_hours||8}h 平仓`,
+        ]
+      : [
+          `单仓 ${100*(cfg.position_fraction||.25)}%`,
+          `最多 ${cfg.max_positions||4} 仓`,
+          `模型评分 ≥ ${cfg.threshold||.55}`,
+          `成本 ${10000*(cfg.fee_per_side||.0007)}bp/边`,
+          `最长 ${cfg.max_holding_hours||6} 小时`,
+        ];
+    $("cb-config").innerHTML = chips.map(x=>`<span>${x}</span>`).join("");
+  }
   const sigs = (d.signals || []).slice().reverse();
   if ($("cb-signals")) {
     const sigPages = Math.max(1, Math.ceil(sigs.length / CB_PAGE_SIZE));
     if (cbSigPage > sigPages - 1) cbSigPage = 0;
     const sigRows = sigs.slice(cbSigPage * CB_PAGE_SIZE, (cbSigPage + 1) * CB_PAGE_SIZE);
-    $("cb-signals").innerHTML = sigs.length ? '<div class="table-scroll"><table><thead><tr><th>时间 · UTC+8</th><th>币</th><th>方向</th><th>24h涨跌</th><th>4h OI</th><th>模型评分</th><th>处理</th></tr></thead><tbody>'+sigRows.map(s=>`<tr><td class="muted">${ts2bj(s.ts)}</td><td>${escapeHTML(s.coin)}</td><td class="${s.side==="long"?"pos":"neg"}">${s.side==="long"?"多":"空"}</td><td>${(100*(s.ret24||0)).toFixed(1)}%</td><td>${(100*(s.oi_chg_4h||0)).toFixed(1)}%</td><td>${(100*(s.probability||0)).toFixed(1)}%</td><td class="${s.accepted?"pos":"muted"}">${escapeHTML(s.reason)}</td></tr>`).join("")+'</tbody></table></div>' + pager("cbsig", sigs.length, cbSigPage, CB_PAGE_SIZE) : '<div class="empty">尚无信号记录，每小时检查一次。</div>';
+    if (isA1w) {
+      $("cb-signals").innerHTML = sigs.length ? '<div class="table-scroll"><table><thead><tr><th>时间 · UTC+8</th><th>币</th><th>方向</th><th>24h涨幅</th><th>年化费率</th><th>24h成交额</th><th>处理</th></tr></thead><tbody>'+sigRows.map(s=>`<tr><td class="muted">${ts2bj(s.ts)}</td><td>${escapeHTML(s.coin)}</td><td class="${s.side==="long"?"pos":"neg"}">${s.side==="long"?"多":"空"}</td><td class="pos">+${(100*(s.ret24||0)).toFixed(1)}%</td><td class="${(s.fr_ann||0)<= -25?"neg":"muted"}">${fmt(s.fr_ann||0,1)}%</td><td>${usdM(s.vol24||0)}</td><td class="${s.accepted?"pos":"muted"}">${escapeHTML(s.reason)}</td></tr>`).join("")+'</tbody></table></div>' + pager("cbsig", sigs.length, cbSigPage, CB_PAGE_SIZE) : '<div class="empty">尚无信号记录，每小时整点扫描一次。</div>';
+    } else {
+      $("cb-signals").innerHTML = sigs.length ? '<div class="table-scroll"><table><thead><tr><th>时间 · UTC+8</th><th>币</th><th>方向</th><th>24h涨跌</th><th>4h OI</th><th>模型评分</th><th>处理</th></tr></thead><tbody>'+sigRows.map(s=>`<tr><td class="muted">${ts2bj(s.ts)}</td><td>${escapeHTML(s.coin)}</td><td class="${s.side==="long"?"pos":"neg"}">${s.side==="long"?"多":"空"}</td><td>${(100*(s.ret24||0)).toFixed(1)}%</td><td>${(100*(s.oi_chg_4h||0)).toFixed(1)}%</td><td>${(100*(s.probability||0)).toFixed(1)}%</td><td class="${s.accepted?"pos":"muted"}">${escapeHTML(s.reason)}</td></tr>`).join("")+'</tbody></table></div>' + pager("cbsig", sigs.length, cbSigPage, CB_PAGE_SIZE) : '<div class="empty">尚无信号记录，每小时检查一次。</div>';
+    }
   }
   const groupedTrades = [];
   const tradeGroups = new Map();
@@ -2159,6 +2192,8 @@ function renderIntraday(d) {
         entry_ts: t.entry_ts,
         entry_price: t.entry_price,
         probability: t.probability,
+        entry_fr_ann: t.entry_fr_ann,
+        funding_usd: 0,
         exit_ts: t.exit_ts || 0,
         pnl_usd: 0,
         notional_sum: 0,
@@ -2171,6 +2206,7 @@ function renderIntraday(d) {
     const n = Number(t.notional) || 0;
     const px = Number(t.exit_price) || 0;
     g.pnl_usd += Number(t.pnl_usd) || 0;
+    g.funding_usd += Number(t.funding_usd) || 0;
     g.notional_sum += n;
     g.weighted_exit += px * n;
     if ((t.exit_ts || 0) >= g.exit_ts) g.exit_ts = t.exit_ts || 0;
@@ -2181,19 +2217,27 @@ function renderIntraday(d) {
     const trPages = Math.max(1, Math.ceil(trades.length / CB_PAGE_SIZE));
     if (cbTradePage > trPages - 1) cbTradePage = 0;
     const trRows = trades.slice(cbTradePage * CB_PAGE_SIZE, (cbTradePage + 1) * CB_PAGE_SIZE);
-    $("cb-trades").innerHTML = trades.length ? '<div class="table-scroll"><table><thead><tr><th>平仓时间 · UTC+8</th><th>币</th><th>方向</th><th>开仓 / 平仓</th><th>模型评分</th><th>净盈亏</th><th>原因</th></tr></thead><tbody>'+trRows.map(t=>{
-      t.legs.sort((a, b) => (a.exit_ts || 0) - (b.exit_ts || 0));
-      const avgExit = t.notional_sum > 0 ? t.weighted_exit / t.notional_sum : (t.legs[t.legs.length - 1]?.exit_price || 0);
-      const reasons = t.legs.map(l => l.reason || "平仓");
-      const summaryReason = reasons.length > 1 ? reasons.join(" → ") : reasons[0];
-      const reasonCell = t.legs.length > 1
-        ? `<span class="trade-legs-wrap" tabindex="0"><span>${escapeHTML(summaryReason)}</span><span class="trade-legs-badge">${t.legs.length}笔</span><div class="trade-legs-pop">${
-            (t.entry_ts ? `<div>开仓 ${ts2bj(t.entry_ts)} · 均价 ${fmtCompact(t.entry_price)}</div>` : "") +
-            t.legs.map((l, idx) => `<div>${idx + 1}. ${escapeHTML(l.reason || "平仓")} · ${fmtCompact(l.exit_price)} · <span class="${(l.pnl_usd||0)>=0?"pos":"neg"}">${moneySigned(l.pnl_usd||0)}</span> · ${ts2bj(l.exit_ts)}</div>`).join("")
-          }</div></span>`
-        : escapeHTML(summaryReason);
-      return `<tr><td class="muted">${ts2bj(t.exit_ts)}</td><td>${escapeHTML(t.coin)}</td><td class="${t.side==="long"?"pos":"neg"}">${t.side==="long"?"多":"空"}</td><td>${fmtCompact(t.entry_price)} / ${fmtCompact(avgExit)}</td><td>${(100*(t.probability||0)).toFixed(1)}%</td><td class="${t.pnl_usd>=0?"pos":"neg"}">${moneySigned(t.pnl_usd)}</td><td>${reasonCell}</td></tr>`;
-    }).join("")+'</tbody></table></div>' + pager("cbtr", trades.length, cbTradePage, CB_PAGE_SIZE) : '<div class="empty">暂无已平仓模拟成交。</div>';
+    if (isA1w) {
+      $("cb-trades").innerHTML = trades.length ? '<div class="table-scroll"><table><thead><tr><th>平仓时间 · UTC+8</th><th>币</th><th>方向</th><th>开仓 / 平仓</th><th>入场费率</th><th>实付资金费</th><th>净盈亏</th><th>原因</th></tr></thead><tbody>'+trRows.map(t=>{
+        const avgExit = t.notional_sum > 0 ? t.weighted_exit / t.notional_sum : (t.legs[t.legs.length - 1]?.exit_price || 0);
+        const reason = t.legs[t.legs.length - 1]?.reason || "平仓";
+        return `<tr><td class="muted">${ts2bj(t.exit_ts)}</td><td>${escapeHTML(t.coin)}</td><td class="${t.side==="long"?"pos":"neg"}">${t.side==="long"?"多":"空"}</td><td>${fmtCompact(t.entry_price)} / ${fmtCompact(avgExit)}</td><td class="neg">${fmt(t.entry_fr_ann||0,1)}%</td><td class="${t.funding_usd>=0?"pos":"neg"}">${moneySigned(t.funding_usd)}</td><td class="${t.pnl_usd>=0?"pos":"neg"}">${moneySigned(t.pnl_usd)}</td><td>${escapeHTML(reason)}</td></tr>`;
+      }).join("")+'</tbody></table></div>' + pager("cbtr", trades.length, cbTradePage, CB_PAGE_SIZE) : '<div class="empty">暂无已平仓模拟成交。</div>';
+    } else {
+      $("cb-trades").innerHTML = trades.length ? '<div class="table-scroll"><table><thead><tr><th>平仓时间 · UTC+8</th><th>币</th><th>方向</th><th>开仓 / 平仓</th><th>模型评分</th><th>净盈亏</th><th>原因</th></tr></thead><tbody>'+trRows.map(t=>{
+        t.legs.sort((a, b) => (a.exit_ts || 0) - (b.exit_ts || 0));
+        const avgExit = t.notional_sum > 0 ? t.weighted_exit / t.notional_sum : (t.legs[t.legs.length - 1]?.exit_price || 0);
+        const reasons = t.legs.map(l => l.reason || "平仓");
+        const summaryReason = reasons.length > 1 ? reasons.join(" → ") : reasons[0];
+        const reasonCell = t.legs.length > 1
+          ? `<span class="trade-legs-wrap" tabindex="0"><span>${escapeHTML(summaryReason)}</span><span class="trade-legs-badge">${t.legs.length}笔</span><div class="trade-legs-pop">${
+              (t.entry_ts ? `<div>开仓 ${ts2bj(t.entry_ts)} · 均价 ${fmtCompact(t.entry_price)}</div>` : "") +
+              t.legs.map((l, idx) => `<div>${idx + 1}. ${escapeHTML(l.reason || "平仓")} · ${fmtCompact(l.exit_price)} · <span class="${(l.pnl_usd||0)>=0?"pos":"neg"}">${moneySigned(l.pnl_usd||0)}</span> · ${ts2bj(l.exit_ts)}</div>`).join("")
+            }</div></span>`
+          : escapeHTML(summaryReason);
+        return `<tr><td class="muted">${ts2bj(t.exit_ts)}</td><td>${escapeHTML(t.coin)}</td><td class="${t.side==="long"?"pos":"neg"}">${t.side==="long"?"多":"空"}</td><td>${fmtCompact(t.entry_price)} / ${fmtCompact(avgExit)}</td><td>${(100*(t.probability||0)).toFixed(1)}%</td><td class="${t.pnl_usd>=0?"pos":"neg"}">${moneySigned(t.pnl_usd)}</td><td>${reasonCell}</td></tr>`;
+      }).join("")+'</tbody></table></div>' + pager("cbtr", trades.length, cbTradePage, CB_PAGE_SIZE) : '<div class="empty">暂无已平仓模拟成交。</div>';
+    }
   }
 }
 
