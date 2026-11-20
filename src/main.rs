@@ -377,6 +377,24 @@ async fn main() -> anyhow::Result<()> {
         });
     }
 
+    // ===== daily TradFi Binance live auto-rebalance task (UTC 00:06) =====
+    {
+        let st = state.clone();
+        tokio::spawn(async move {
+            const DAY: i64 = 86_400_000;
+            loop {
+                let now = now_ms();
+                let mut next = now / DAY * DAY + 6 * 60 * 1000;
+                if next <= now {
+                    next += DAY;
+                }
+                let wait = (next - now).max(0) as u64;
+                tokio::time::sleep(Duration::from_millis(wait)).await;
+                web::run_tradfi_auto_rebalance(&st).await;
+            }
+        });
+    }
+
     // ===== 持仓量快照采集（只记录，绝不下单）=====
     //
     // 官方 API 不提供 OI 历史，只能拿当前快照。第三方有历史但要付费，且免费档

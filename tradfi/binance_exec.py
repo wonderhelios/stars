@@ -332,27 +332,65 @@ def execute_order_maker_first(
     return {"symbol": order.symbol, "mode": "MAKER_PARTIAL", "filled": executed, "status": status}
 
 
+def load_tradfi_config(path: Path) -> Dict[str, Any]:
+    if not path.exists():
+        return {}
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+        return data if isinstance(data, dict) else {}
+    except Exception:
+        return {}
+
+
 def main() -> None:
     p = argparse.ArgumentParser(description="Binance TradFi M3b 4-Core Dual-Leg Executor")
+    p.add_argument("--config", type=str, default=os.environ.get("STARS_TRADFI_CONFIG", ""), help="Optional JSON config path")
     p.add_argument("--live", action="store_true", help="Actually place orders on Binance (default: dry-run)")
     p.add_argument("--dry-run", action="store_true", help="Preview plan only without placing orders")
     p.add_argument("--flatten", action="store_true", help="Close all open TradFi positions (reduce-only)")
-    p.add_argument("--capital", type=float, default=2000.0, help="Simulated equity in dry-run when API key absent")
-    p.add_argument("--leverage", type=float, default=3.0, help="Total gross leverage (default 3.0x)")
-    p.add_argument("--max-dd-pct", type=float, default=20.0, help="Hard peak-to-trough DD breaker pct (0=off)")
-    p.add_argument("--maker-wait-sec", type=float, default=8.0, help="Seconds to wait for GTX Post-Only fill")
+    p.add_argument("--capital", type=float, default=None, help="Simulated equity in dry-run when API key absent")
+    p.add_argument("--leverage", type=float, default=None, help="Total gross leverage (default 3.0x)")
+    p.add_argument("--stock-alloc", type=float, default=None, help="US Stock A4 leg allocation 0..1 (default 0.5)")
+    p.add_argument("--stock-min-bars", type=int, default=None, help="Min daily bars for fast onboarding (default 7)")
+    p.add_argument("--max-dd-pct", type=float, default=None, help="Hard peak-to-trough DD breaker pct (0=off)")
+    p.add_argument("--maker-wait-sec", type=float, default=None, help="Seconds to wait for GTX Post-Only fill")
     p.add_argument("--taker-only", action="store_true", help="Skip GTX Maker and send MARKET directly")
     p.add_argument("--state-file", type=str, default="/var/lib/stars/tradfi_live_state.json")
     p.add_argument("--json", action="store_true", help="Print structured JSON output")
     args = p.parse_args()
 
+    file_cfg = load_tradfi_config(Path(args.config)) if args.config else {}
+    capital = float(args.capital if args.capital is not None else file_cfg.get("capital", 2000.0))
+    gross_lev = float(args.leverage if args.leverage is not None else file_cfg.get("gross_leverage", 3.0))
+    stock_alloc = float(args.stock_alloc if args.stock_alloc is not None else file_cfg.get("stock_alloc", 0.50))
+    stock_alloc = max(0.0, min(1.0, stock_alloc))
+    stock_min_bars = int(args.stock_min_bars if args.stock_min_bars is not None else file_cfg.get("stock_min_bars", 7))
+    max_dd_pct = float(args.max_dd_pct if args.max_dd_pct is not None else file_cfg.get("max_dd_pct", 20.0))
+    maker_wait_sec = float(args.maker_wait_sec if args.maker_wait_sec is not None else file_cfg.get("maker_wait_sec", 8.0))
+    taker_only = bool(args.taker_only or file_cfg.get("taker_only", False))
+
+    proxy_url = str(file_cfg.get("proxy_url") or "").strip()
+    if proxy_url and not os.environ.get("HTTPS_PROXY"):
+        os.environ["HTTPS_PROXY"] = proxy_url
+        os.environ["HTTP_PROXY"] = proxy_url
+
     live = bool(args.live and not args.dry_run)
-    cfg = StrategyConfig(gross_leverage=args.leverage)
+    cfg = StrategyConfig(
+        gross_leverage=gross_lev,
+        stock_alloc=stock_alloc,
+        comm_alloc=1.0 - stock_alloc,
+        stock_min_bars=stock_min_bars,
+    )
     all_syms = sorted(set(cfg.stock_universe) | set(cfg.comm_universe))
     state_path = Path(args.state_file)
 
-    api_key = os.environ.get("BINANCE_API_KEY", "")
-    api_secret = os.environ.get("BINANCE_API_SECRET", "")
+    api_key = (os.environ.get("BINANCE_API_KEY") or str(file_cfg.get("api_key") or "")).strip()
+    api_secret = (os.environ.get("BINANCE_API_SECRET") or str(file_cfg.get("api_secret") or "")).strip()
+    key_file = str(file_cfg.get("key_file") or "").strip()
+    if (not api_key or not api_secret) and key_file:
+        kf_data = load_tradfi_config(Path(key_file))
+        api_key = api_key or str(kf_data.get("api_key") or "").strip()
+        api_secret = api_secret or str(kf_data.get("api_secret") or "").strip()
     client = BinanceFuturesClient(api_key, api_secret)
 
     # Load persisted 2-phase stock state so live execution uses exact 2-phase slicing
@@ -368,17 +406,19 @@ def main() -> None:
     filters = client.exchange_filters(all_syms)
     target = compute_m3b_target(bars, cfg, prev_stock_phases=prev_phases)
 
+    equity_source = "config_capital"
     if api_key and api_secret:
         equity, cur_pos = client.account_equity_and_positions(all_syms)
+        equity_source = "binance_account"
     else:
         if live:
             raise SystemExit("ERROR: --live requires BINANCE_API_KEY and BINANCE_API_SECRET")
-        equity, cur_pos = float(args.capital), {}
+        equity, cur_pos = capital, {}
 
-    breaker_tripped, peak_eq, dd_pct = check_dd_breaker(equity, state_path, args.max_dd_pct)
+    breaker_tripped, peak_eq, dd_pct = check_dd_breaker(equity, state_path, max_dd_pct)
     if breaker_tripped and live and not args.flatten:
         raise SystemExit(
-            f"HARD DD BREAKER TRIPPED: equity=${equity:.2f} vs peak=${peak_eq:.2f} (DD={dd_pct:.2f}% >= {args.max_dd_pct:.1f}%). "
+            f"HARD DD BREAKER TRIPPED: equity=${equity:.2f} vs peak=${peak_eq:.2f} (DD={dd_pct:.2f}% >= {max_dd_pct:.1f}%). "
             f"Refusing new orders. Run with --flatten --live to close all positions."
         )
 
@@ -386,6 +426,9 @@ def main() -> None:
     summary: Dict[str, Any] = {
         "mode": "LIVE" if live else "DRY_RUN",
         "equity": round(equity, 2),
+        "equity_source": equity_source,
+        "gross_leverage": gross_lev,
+        "stock_alloc": stock_alloc,
         "peak_equity": round(peak_eq, 2),
         "dd_pct": round(dd_pct, 2),
         "breaker_tripped": breaker_tripped,
@@ -396,12 +439,12 @@ def main() -> None:
     }
 
     if live:
-        exch_lev = exchange_leverage_for_gross(args.leverage)
+        exch_lev = exchange_leverage_for_gross(gross_lev)
         for o in orders:
             flt = filters.get(o.symbol, SymbolFilters(o.symbol, 0.001, 0.001, 0.01, 5.0))
             if not o.reduce_only:
                 client.ensure_cross_and_leverage(o.symbol, leverage=exch_lev)
-            res = execute_order_maker_first(client, o, flt, maker_wait_sec=args.maker_wait_sec, taker_only=args.taker_only)
+            res = execute_order_maker_first(client, o, flt, maker_wait_sec=maker_wait_sec, taker_only=taker_only)
             summary["results"].append(res)
         # Persist updated stock_phases after live rebalance
         try:
@@ -414,7 +457,7 @@ def main() -> None:
     if args.json:
         print(json.dumps(summary, ensure_ascii=False, indent=2))
     else:
-        print(f"[{summary['mode']}] equity=${equity:.2f} | peak=${peak_eq:.2f} | DD={dd_pct:.2f}% | blocked={target.blocked_symbols}")
+        print(f"[{summary['mode']}] equity=${equity:.2f} ({equity_source}) | lev={gross_lev:.1f}x | peak=${peak_eq:.2f} | DD={dd_pct:.2f}% | blocked={target.blocked_symbols}")
         print(f"Orders ({len(orders)}):")
         for o in orders:
             print(f"  {o.side:<4} {o.symbol:<11} qty={o.qty:<10} @≈{o.price:<10.4f} (${o.notional:7.1f}) [{o.leg}] {o.reason}")

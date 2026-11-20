@@ -216,6 +216,30 @@ class TestTradFiStrategy(unittest.TestCase):
         self.assertEqual(exchange_leverage_for_gross(3.0), 6)
         self.assertEqual(exchange_leverage_for_gross(5.0), 10)
 
+    def test_tradfi_config_loading_and_shadow_sync(self) -> None:
+        from tradfi.binance_exec import load_tradfi_config
+        from tradfi.shadow import sync_shadow_config_from_file
+
+        with tempfile.TemporaryDirectory() as td:
+            cp = Path(td) / "tradfi_config.json"
+            cp.write_text(json.dumps({
+                "capital": 5000.0,
+                "gross_leverage": 4.0,
+                "stock_alloc": 0.60,
+                "stock_min_bars": 8,
+                "api_key": "demo_key",
+            }), encoding="utf-8")
+            loaded = load_tradfi_config(cp)
+            self.assertEqual(loaded["capital"], 5000.0)
+            self.assertEqual(loaded["gross_leverage"], 4.0)
+
+            ledger = TradFiShadowLedger(cfg=StrategyConfig(gross_leverage=3.0))
+            sync_shadow_config_from_file(ledger, config_path=cp)
+            self.assertEqual(ledger.cfg.gross_leverage, 4.0)
+            self.assertAlmostEqual(ledger.cfg.stock_alloc, 0.60, places=4)
+            self.assertAlmostEqual(ledger.cfg.comm_alloc, 0.40, places=4)
+            self.assertEqual(ledger.cfg.stock_min_bars, 8)
+
 
 if __name__ == "__main__":
     unittest.main()

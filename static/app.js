@@ -2337,7 +2337,63 @@ function renderTradFi(d) {
   }
 }
 
+let tradfiCfgLoaded = false;
+
+function tfConfigInto(c) {
+  c = c || {};
+  const set = (id, v) => { const el = $(id); if (el && document.activeElement !== el) el.value = v; };
+  set("tf-capital", c.capital ?? 2000);
+  set("tf-leverage", c.gross_leverage ?? 3.0);
+  set("tf-stock-alloc", Math.round((c.stock_alloc ?? 0.5) * 100));
+  set("tf-min-bars", c.stock_min_bars ?? 7);
+  set("tf-max-dd", c.max_dd_pct ?? 20);
+  set("tf-maker-wait", c.maker_wait_sec ?? 8);
+  set("tf-taker-only", String(!!c.taker_only));
+  set("tf-armed", String(!!c.armed));
+  set("tf-auto", String(!!c.auto_run));
+  set("tf-key-file", c.key_file || "");
+  set("tf-proxy", c.proxy_url || "");
+  const kb = $("tf-key-badge");
+  if (kb) {
+    const ready = !!(c.has_api_key && c.has_api_secret);
+    kb.className = "badge-mini " + (ready ? "ok" : "mute");
+    kb.textContent = ready ? ("已就绪 " + (c.api_key_masked || "")) : "未配置";
+  }
+}
+
+async function refreshTradFiConfig(force = false) {
+  try {
+    const res = await fetchJSONRetry("/api/tradfi/config", {}, 10000);
+    if (res && res.config && (!tradfiCfgLoaded || force)) {
+      tfConfigInto(res.config);
+      tradfiCfgLoaded = true;
+    }
+  } catch (_) {}
+}
+
+function renderTradFiPlanOut(title, payload) {
+  const out = $("tf-plan-out");
+  if (!out) return;
+  const p = payload || {};
+  const orders = Array.isArray(p.orders) ? p.orders : [];
+  const results = Array.isArray(p.results) ? p.results : [];
+  const srcLabel = p.equity_source === "binance_account" ? "币安实盘净值" : "规划本金";
+  const head = `<div class="note ${p.breaker_tripped ? "neg" : "ok"}" style="margin-bottom:8px"><b>${escapeHTML(title)}</b> · ${srcLabel} $${fmt(Number(p.equity) || 0, 2)} · 杠杆 ${fmt(Number(p.gross_leverage) || 3, 1)}x · 回撤 ${fmt(Number(p.dd_pct) || 0, 2)}%${(p.blocked_symbols || []).length ? " · 屏蔽 " + escapeHTML(p.blocked_symbols.join(",")) : ""}</div>`;
+  const rows = orders.map((o) => {
+    const isBuy = o.side === "BUY";
+    return `<tr><td><b>${escapeHTML(o.symbol)}</b></td><td class="${isBuy ? "pos" : "neg"}">${isBuy ? "买入" : "卖出"}</td><td>${fmtCompact(Number(o.qty) || 0)}</td><td>$${fmt(Number(o.notional) || 0, 0)}</td><td class="muted">${escapeHTML(o.reason || "")}</td></tr>`;
+  }).join("");
+  const table = orders.length
+    ? `<div class="table-scroll"><table><thead><tr><th>标的</th><th>方向</th><th>数量</th><th>名义</th><th>动作</th></tr></thead><tbody>${rows}</tbody></table></div>`
+    : '<div class="empty">当前无需调仓（或已空仓）。</div>';
+  const resHtml = results.length
+    ? `<pre class="logbox">${escapeHTML(results.map((r) => `${r.symbol}: ${r.mode || ""} ${r.status || ""}`).join("\n"))}</pre>`
+    : "";
+  out.innerHTML = head + table + resHtml;
+}
+
 async function refreshTradFi() {
+  refreshTradFiConfig(false);
   try {
     const d = await fetchJSONRetry("/api/tradfi", {}, 15000);
     lastTradFiData = d;
@@ -2351,7 +2407,105 @@ async function refreshTradFi() {
   }
 }
 
-if ($("tf-refresh")) $("tf-refresh").addEventListener("click", () => refreshTradFi());
+if ($("tf-refresh")) $("tf-refresh").addEventListener("click", () => { refreshTradFiConfig(true); refreshTradFi(); });
+if ($("tf-cfg-save")) $("tf-cfg-save").addEventListener("click", async () => {
+  const btn = $("tf-cfg-save");
+  const st = $("tf-cfg-status");
+  btn.disabled = true;
+  btn.textContent = "保存中…";
+  try {
+    const body = {
+      capital: Number($("tf-capital").value),
+      gross_leverage: Number($("tf-leverage").value),
+      stock_alloc: Number($("tf-stock-alloc").value) / 100,
+      stock_min_bars: Number($("tf-min-bars").value),
+      max_dd_pct: Number($("tf-max-dd").value),
+      maker_wait_sec: Number($("tf-maker-wait").value),
+      taker_only: $("tf-taker-only").value === "true",
+      armed: $("tf-armed").value === "true",
+      auto_run: $("tf-auto").value === "true",
+      key_file: ($("tf-key-file").value || "").trim(),
+      proxy_url: ($("tf-proxy").value || "").trim(),
+    };
+    const res = await fetchJSON("/api/tradfi/config", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    }, 15000);
+    if (res && res.config) tfConfigInto(res.config);
+    if (st) st.textContent = "配置已保存 ✓";
+    btn.textContent = "已保存 ✓";
+  } catch (e) {
+    if (st) st.textContent = "保存失败：" + ((e && e.message) || e);
+    btn.textContent = "保存失败";
+  } finally {
+    btn.disabled = false;
+    setTimeout(() => { btn.textContent = "保存配置"; }, 1600);
+  }
+});
+if ($("tf-plan-btn")) $("tf-plan-btn").addEventListener("click", async () => {
+  const btn = $("tf-plan-btn");
+  const out = $("tf-plan-out");
+  btn.disabled = true;
+  btn.textContent = "计算中…";
+  if (out) out.innerHTML = '<div class="empty">正在拉取币安行情并计算调仓计划…</div>';
+  try {
+    const res = await fetchJsonSafe("/api/tradfi/plan", { method: "POST" }, 90000);
+    if (!res.ok) throw new Error(res.error || "失败");
+    renderTradFiPlanOut("预览计划（未下单）", res.plan);
+  } catch (e) {
+    if (out) out.innerHTML = `<div class="note neg">计算计划失败：${escapeHTML(String((e && e.message) || e))}</div>`;
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "预览调仓计划（不下单）";
+  }
+});
+if ($("tf-exec-btn")) $("tf-exec-btn").addEventListener("click", async () => {
+  if ($("tf-armed").value !== "true") {
+    alert("请先把「启用币安实盘」设为开启并点「保存配置」，否则不会发送任何订单。");
+    return;
+  }
+  if (!confirm("确认执行币安 TradFi 实盘调仓？将使用已保存的配置向币安 USDⓈ-M 合约账户发送真实订单。")) return;
+  const btn = $("tf-exec-btn");
+  const out = $("tf-plan-out");
+  btn.disabled = true;
+  btn.textContent = "执行中…";
+  if (out) out.innerHTML = '<div class="empty">正在执行币安实盘调仓（GTX Maker 优先），请稍候…</div>';
+  try {
+    const res = await fetchJsonSafe("/api/tradfi/execute", { method: "POST" }, 300000);
+    if (!res.ok) throw new Error(res.error || "失败");
+    renderTradFiPlanOut("币安实盘执行完成", res.result);
+    refreshTradFi();
+  } catch (e) {
+    if (out) out.innerHTML = `<div class="note neg">实盘执行失败：${escapeHTML(String((e && e.message) || e))}</div>`;
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "执行币安实盘调仓";
+  }
+});
+if ($("tf-flatten-btn")) $("tf-flatten-btn").addEventListener("click", async () => {
+  if ($("tf-armed").value !== "true") {
+    alert("请先开启「启用币安实盘」并保存配置。");
+    return;
+  }
+  if (!confirm("⚠ 确认一键平仓？将对币安账户内全部 TradFi（美股+金银油气）持仓发送 Reduce-Only 平仓单。")) return;
+  const btn = $("tf-flatten-btn");
+  const out = $("tf-plan-out");
+  btn.disabled = true;
+  btn.textContent = "平仓中…";
+  if (out) out.innerHTML = '<div class="empty">正在发送 Reduce-Only 平仓单…</div>';
+  try {
+    const res = await fetchJsonSafe("/api/tradfi/flatten", { method: "POST" }, 300000);
+    if (!res.ok) throw new Error(res.error || "失败");
+    renderTradFiPlanOut("币安一键平仓完成", res.result);
+    refreshTradFi();
+  } catch (e) {
+    if (out) out.innerHTML = `<div class="note neg">平仓失败：${escapeHTML(String((e && e.message) || e))}</div>`;
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "一键全部平仓";
+  }
+});
 const tfChartTabs = $("tf-chart-tabs");
 if (tfChartTabs) {
   tfChartTabs.addEventListener("click", (event) => {

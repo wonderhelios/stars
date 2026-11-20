@@ -1632,6 +1632,58 @@
             </div>
           </div>
           <div id="tf-status" class="warn-banner" hidden></div>
+
+          <div class="setup-layout">
+            <div class="setup-main">
+              <section class="setup-card">
+                <header><span class="setup-number">01</span><div><h3>资金与策略参数</h3><p>配置规划本金、总杠杆、双腿比例、冷启动天数与风控参数。</p></div></header>
+                <div class="setup-fields">
+                  <div class="field"><label for="tf-capital">规划本金 (USD)</label><input id="tf-capital" type="number" value="2000" min="50" max="10000000" step="100" /></div>
+                  <div class="field"><label for="tf-leverage">目标总杠杆 (1x~5x)</label><input id="tf-leverage" type="number" value="3.0" min="1" max="5" step="0.5" /></div>
+                  <div class="field"><label for="tf-stock-alloc">美股 A4 占比（%）</label><input id="tf-stock-alloc" type="number" value="50" min="0" max="100" step="5" /></div>
+                  <div class="field"><label for="tf-min-bars">新币冷启动（天）</label><input id="tf-min-bars" type="number" value="7" min="6" max="30" step="1" /></div>
+                  <div class="field"><label for="tf-max-dd">硬回撤熔断（%，0 关闭）</label><input id="tf-max-dd" type="number" value="20" min="0" max="80" step="1" /></div>
+                  <div class="field"><label for="tf-maker-wait">Maker 等待（秒）</label><input id="tf-maker-wait" type="number" value="8" min="1" max="60" step="1" /></div>
+                  <div class="field"><label for="tf-taker-only">下单模式</label>
+                    <select id="tf-taker-only">
+                      <option value="false" selected>GTX Maker 优先</option>
+                      <option value="true">仅市价单</option>
+                    </select>
+                  </div>
+                  <div class="field"><label for="tf-key-file">币安配置文件路径 <span id="tf-key-badge" class="badge-mini mute">未配置</span></label><input id="tf-key-file" placeholder="例如 binance-tradfi.json" /></div>
+                  <div class="field"><label for="tf-proxy">网络代理（可选）</label><input id="tf-proxy" placeholder="留空直连" /></div>
+                </div>
+              </section>
+            </div>
+            <aside class="setup-aside">
+              <section class="setup-card">
+                <header><span class="setup-number">CTRL</span><div><h3>运行控制</h3><p>修改开关后需保存配置。</p></div></header>
+                <div class="setup-fields">
+                  <div class="field"><label for="tf-armed">启用实盘（允许发单）</label>
+                    <select id="tf-armed"><option value="false" selected>关闭（仅计划 / 影子）</option><option value="true">开启（允许发真单）</option></select>
+                  </div>
+                  <div class="field"><label for="tf-auto">每日自动调仓（UTC 00:06）</label>
+                    <select id="tf-auto"><option value="false" selected>关闭</option><option value="true">开启（北京时间 08:06）</option></select>
+                  </div>
+                </div>
+                <div class="setup-save" style="margin-top:14px;padding:12px 14px">
+                  <span id="tf-cfg-status" role="status" aria-live="polite">修改参数后请点保存配置。</span>
+                  <button class="btn" id="tf-cfg-save" type="button">保存配置</button>
+                </div>
+              </section>
+
+              <section class="setup-card">
+                <header><div><h3>手动执行</h3><p>先点「计划预览」核对目标仓位与名义，确认无误再执行。</p></div></header>
+                <div class="setup-actions">
+                  <button class="btn ghost" id="tf-plan-btn" type="button">计划预览（不下单）</button>
+                  <button class="btn danger" id="tf-exec-btn" type="button">执行实盘调仓</button>
+                  <button class="btn danger" id="tf-flatten-btn" type="button">一键全部平仓</button>
+                </div>
+                <div id="tf-plan-out"></div>
+              </section>
+            </aside>
+          </div>
+
           <section class="combine-overview" id="tf-metrics" aria-label="TradFi 双腿表现"></section>
           <div class="content-card equity-card">
             <div class="panel-head monitor-section-head">

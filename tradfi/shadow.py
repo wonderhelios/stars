@@ -28,6 +28,7 @@ from tradfi.strategy import (
 
 FAPI_BASE = os.environ.get("BINANCE_FAPI_BASE", "https://fapi.binance.com").rstrip("/")
 STATE_PATH = Path(os.environ.get("STARS_TRADFI", "/var/lib/stars/tradfi_shadow.json"))
+CONFIG_PATH = Path(os.environ.get("STARS_TRADFI_CONFIG", str(STATE_PATH.with_name("tradfi_config.json"))))
 CAPITAL_DEFAULT = float(os.environ.get("STARS_TRADFI_CAPITAL", "2000"))
 GROSS_LEVERAGE = float(os.environ.get("STARS_TRADFI_LEVERAGE", "3.0"))
 FEE_RATE = float(os.environ.get("STARS_TRADFI_FEE_BP", "2.0")) / 10_000.0  # Maker 2bp default
@@ -385,8 +386,38 @@ def should_rebalance_now(ledger: TradFiShadowLedger, now_ms: int) -> bool:
     return gm.tm_hour > 0 or gm.tm_min >= REBAL_MINUTE_UTC
 
 
+def sync_shadow_config_from_file(ledger: TradFiShadowLedger, config_path: Path = CONFIG_PATH) -> None:
+    """Sync non-secret strategy parameters from tradfi_config.json into the shadow daemon."""
+    if not config_path.exists():
+        return
+    try:
+        data = json.loads(config_path.read_text(encoding="utf-8"))
+        if not isinstance(data, dict):
+            return
+        if "gross_leverage" in data:
+            ledger.cfg.gross_leverage = max(1.0, min(5.0, float(data["gross_leverage"])))
+        if "stock_alloc" in data:
+            sa = max(0.0, min(1.0, float(data["stock_alloc"])))
+            ledger.cfg.stock_alloc = sa
+            ledger.cfg.comm_alloc = 1.0 - sa
+        if "stock_min_bars" in data:
+            ledger.cfg.stock_min_bars = max(6, min(30, int(data["stock_min_bars"])))
+        proxy_url = str(data.get("proxy_url") or "").strip()
+        if proxy_url and not os.environ.get("HTTPS_PROXY"):
+            os.environ["HTTPS_PROXY"] = proxy_url
+            os.environ["HTTP_PROXY"] = proxy_url
+        c = ledger.state.setdefault("config", {})
+        c["gross_leverage"] = ledger.cfg.gross_leverage
+        c["stock_alloc"] = ledger.cfg.stock_alloc
+        c["comm_alloc"] = ledger.cfg.comm_alloc
+        c["stock_min_bars"] = ledger.cfg.stock_min_bars
+    except Exception:
+        pass
+
+
 def step_once(ledger: TradFiShadowLedger) -> None:
     now_ms = int(time.time() * 1000)
+    sync_shadow_config_from_file(ledger)
     all_syms = sorted(set(ledger.cfg.stock_universe) | set(ledger.cfg.comm_universe) | set(ledger.state["positions"].keys()))
     try:
         prices = fetch_mark_prices(all_syms)
