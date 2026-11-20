@@ -58,7 +58,7 @@ document.addEventListener("DOMContentLoaded", () => {
 function openWorkspaceView(view) {
   const destination = $("view-" + view);
   if (!destination) return;
-  const parent = view === "analysis" ? "monitor" : view === "shadow-analysis" ? "shadow" : view;
+  const parent = view === "analysis" ? "monitor" : view;
   document.querySelectorAll(".nav button").forEach(button => {
     const selected = button.dataset.view === parent;
     button.classList.toggle("active", selected);
@@ -89,7 +89,7 @@ async function refreshStatus() {
     } else if (d.cached_coins > 0) {
       led.className = "led";
       $("statusText").textContent =
-        `已缓存 ${d.cached_coins} 币 · 流动性 ${d.universe_liquid} · ${d.paper?.running ? "纸交易运行中" : "纸交易未启动"}`;
+        `已缓存 ${d.cached_coins} 币 · 流动性 ${d.universe_liquid}`;
     } else {
       led.className = "led off";
       $("statusText").textContent = "等待数据";
@@ -230,10 +230,6 @@ let liveLoaded = false;
 let liveBusy = false;
 // 这些缓存必须在这里声明 ✗ 之前放在文件后面时 ✗
 // 早期调用的 renderMonitor 会踩到 TDZ（Cannot access before initialization）✗
-let lastShadowData = null;
-let lastControlData = null;
-let lastLiveForShadow = null;
-let lastVTData = null;
 let lastCombineData = null;
 let lastTradFiData = null;
 let cbRange = "all";
@@ -1707,10 +1703,6 @@ const usdM = (v) => Number.isFinite(v) ? (v >= 1e6 ? "$" + (v / 1e6).toFixed(1) 
 
 
 // 切到资金费套利视图时刷新（资金矩阵已并入 renderMonitor 的 20 秒轮询）。
-// 进入套利监控 / 套利设置时刷新对应数据
-document.querySelectorAll('.nav button[data-view="shadow"], .nav button[data-view="shadow-setup"]').forEach((b) => {
-  b.addEventListener("click", () => refreshShadow());
-});
 // 组合策略 tab：进入时拉一次 ✗ 停留时每 60 秒刷新
 document.querySelectorAll('.nav button[data-view="combine"]').forEach((b) => {
   b.addEventListener("click", () => refreshCombine());
@@ -1747,229 +1739,7 @@ setInterval(() => {
 
 // 启动：首次拉取 + 周期轮询。
 refreshHlCarry();
-refreshShadow();
 setInterval(refreshHlCarry, 120000);
-setInterval(refreshShadow, 120000);
-
-// ---------- 影子组合（三因子 ✗ 动量+距高点+上涨占比 ✗） ----------
-let shRange = "week";
-let shPosPage = 0;
-let shTradePage = 0;
-const SH_PAGE_SIZE = 8;
-function shSide(x) { const s = String(x).toLowerCase(); return s === "long" ? "多" : (s === "short" ? "空" : String(x)); }
-
-function renderShadow(d) {
-  d = d || {};
-  const eq = d.equity || 0, cap = d.capital || 0, pnl = d.pnl || 0;
-  const cfg = d.config || {};
-  const ps = d.positions || [];
-  const lev = cap > 0 ? eq / cap : 0;
-  const gross = d.gross_notional || 0, net = d.net_notional || 0;
-  const nLong = ps.filter((p) => String(p.side).toLowerCase() === "long").length;
-  const ctl = lastControlData || {};
-  const vt = lastVTData || {};
-  const cb = lastCombineData || {};
-  // 同窗口口径：以对照组合（同起点）的第一天为基准 ✗ 算实盘在同一窗口的变化 ✗
-  const ctlHist = (ctl.history || []).filter((p) => Number.isFinite(p.ts) && Number.isFinite(p.equity));
-  const ctlStart = ctlHist.length ? ctlHist[0].ts : null;
-  const ctlDays = ctl.days_elapsed || ctlHist.length || 0;
-  let liveWinPct = null;
-  let liveCumPct = null;
-  const lv = lastLiveForShadow;
-  if (lv && !lv.error && Number.isFinite(lv.equity)) {
-    const base = (lv.capital_baseline || {}).equity || 0;
-    const netd = lv.net_deposit || 0;
-    if (base + netd > 0) liveCumPct = (lv.equity / (base + netd) - 1) * 100;
-    if (ctlStart != null) {
-      const pts = (lv.history || []).filter((p) => Number.isFinite(p.ts) && Number.isFinite(p.equity) && p.ts <= ctlStart);
-      if (pts.length) liveWinPct = (lv.equity / pts[pts.length - 1].equity - 1) * 100;
-    }
-  }
-  const m = $("sh-metrics");
-  if (m) {
-    m.innerHTML =
-      metricGroup("实时概览 · 影子账户",
-        metric("影子净值", "$" + fmt(eq, 2)) +
-        metric("盈亏 · 相对本金", moneySigned(pnl), pnl >= 0 ? "pos" : "neg") +
-        metric("收益率", (d.pnl_pct || 0).toFixed(1) + "%", (d.pnl_pct || 0) >= 0 ? "pos" : "neg") +
-        metric("运行天数", (d.days_elapsed || 0) + '<span class="metric-unit"> 天</span>'),
-        "live-overview",
-        '<div class="metric-footnote"><span class="live-dot"></span>' +
-          (d.running ? "影子组合运行中 · 独立纸面模拟" : "影子组合已停止") +
-          (cfg.replay_days > 1 ? ` · 含 ${cfg.replay_days} 天历史回放` : " · 纯样本外（无回放）") +
-          "</div>"
-      ) +
-      metricGroup("盈亏构成",
-        metric("已实现", moneySigned(d.realized_pnl || 0), (d.realized_pnl || 0) >= 0 ? "pos" : "neg") +
-        metric("未实现", moneySigned(d.unrealized_pnl || 0), (d.unrealized_pnl || 0) >= 0 ? "pos" : "neg") +
-        metric("交易成本", moneySigned(-(d.total_cost || 0))) +
-        metric("胜率", (d.win_rate || 0).toFixed(0) + "%",
-          (d.win_rate || 0) >= 50 ? "pos" : "neg")
-      ) +
-      metricGroup("风险与仓位",
-        metric("实际 / 目标杠杆", fmt(gross / Math.max(eq, 1), 2) + "x / " + fmt(cfg.leverage || 0, 2) + "x") +
-        metric("毛敞口", "$" + fmt(gross, 0)) +
-        metric("净敞口 · 多减空", moneySigned(net), Math.abs(net) <= Math.max(eq * 0.05, 10) ? "" : "neg") +
-        metric("强平缓冲", (d.liq_buffer_pct || 0).toFixed(1) + "%", (d.liq_buffer_pct || 0) < 40 ? "neg" : "pos")
-      ) +
-      metricGroup("同起点对照（影子 / 对照 / 实盘同期 ✗）",
-        metric("影子 三因子（" + ctlDays + " 天 ✗）", (d.pnl_pct || 0).toFixed(1) + "%", (d.pnl_pct || 0) >= 0 ? "pos" : "neg") +
-        metric("对照 现行70/30", (ctl.pnl_pct || 0).toFixed(1) + "%", (ctl.pnl_pct || 0) >= 0 ? "pos" : "neg") +
-        metric("波动目标组合", (vt.pnl_pct || 0).toFixed(1) + "%", (vt.pnl_pct || 0) >= 0 ? "pos" : "neg") +
-        metric("日内影子（价量+OI）", (cb.pnl_pct || 0).toFixed(1) + "%", (cb.pnl_pct || 0) >= 0 ? "pos" : "neg") +
-        metric("实盘同期", liveWinPct == null ? "—" : liveWinPct.toFixed(1) + "%",
-          liveWinPct == null ? "" : (liveWinPct >= 0 ? "pos" : "neg")) +
-        metric("影子 − 对照", ((d.pnl_pct || 0) - (ctl.pnl_pct || 0)).toFixed(1) + '<span class="metric-unit"> pp</span>',
-          (d.pnl_pct || 0) >= (ctl.pnl_pct || 0) ? "pos" : "neg"),
-        "live-overview",
-        '<div class="metric-footnote"><span class="live-dot"></span>' +
-          "三者都从这个窗口的第一天开始算 ✗ 实盘账户的累计盈亏含 10-06 起的旧账 ✗ 不可直接比 ✓" +
-          (liveCumPct == null ? "" : "（实盘累计 " + liveCumPct.toFixed(1) + "% ✗ 仅供参考 ✗）") +
-          "</div>"
-      ) +
-      metricGroup("因子配置",
-        metric("动量", fmt(cfg.momentum_weight == null ? 0 : cfg.momentum_weight, 2)) +
-        metric("量能", fmt(1 - (cfg.momentum_weight == null ? 0 : cfg.momentum_weight), 2)) +
-        metric("距14日高点", fmt(cfg.dd_weight == null ? 0 : cfg.dd_weight, 2)) +
-        metric("上涨占比", fmt(cfg.upfrac_weight == null ? 0 : cfg.upfrac_weight, 2)) +
-        metric("持仓 / 多头", ps.length + " / " + nLong)
-      );
-  }
-  arrangeMonitorSummary("sh-metrics", true);
-  // 曲线：按日/周/月/全部切片
-  const histObj = (d.history || []).filter((p) => Number.isFinite(p.ts) && Number.isFinite(p.equity));
-  let win = equityWindow(histObj, shRange, Date.now());
-  let arr = (win.points || []).map((p) => [p.ts, p.equity]);
-  // 日频采样下 "近 7 天" 可能只有 1~2 个点 ✗ 画出来是一条直线 ✗ 自动回退到全部 ✓
-  if (arr.length < 3 && shRange !== "all") {
-    win = equityWindow(histObj, "all", Date.now());
-    arr = (win.points || []).map((p) => [p.ts, p.equity]);
-  }
-  const chist = (ctl.history || []).filter((p) => Number.isFinite(p.ts) && Number.isFinite(p.equity));
-  const cwin = equityWindow(chist, arr.length < 3 ? "all" : shRange, Date.now());
-  const carr = (cwin.points || []).map((p) => [p.ts, p.equity]);
-  const vhist = (vt.history || []).filter((p) => Number.isFinite(p.ts) && Number.isFinite(p.equity));
-  const vwin = equityWindow(vhist, arr.length < 3 ? "all" : shRange, Date.now());
-  const varr = (vwin.points || []).map((p) => [p.ts, p.equity]);
-  const cbhist = (cb.history || []).filter((p) => Number.isFinite(p.ts) && Number.isFinite(p.equity));
-  const cbwin = equityWindow(cbhist, arr.length < 3 ? "all" : shRange, Date.now());
-  const cbarr = (cbwin.points || []).map((p) => [p.ts, p.equity]);
-  renderEquityChart(
-    "sh-chart",
-    withNow(arr, eq),
-    "影子组合盈亏曲线",
-    carr.length ? withNow(carr, ctl.equity || 0) : null,
-    varr.length ? withNow(varr, vt.equity || 0) : null,
-    cbarr.length ? withNow(cbarr, cb.equity || 0) : null
-  );
-  // 持仓
-  const posEl = $("sh-positions");
-  if (posEl) {
-    const posPages = Math.max(1, Math.ceil(ps.length / SH_PAGE_SIZE));
-    if (shPosPage > posPages - 1) shPosPage = 0;
-    const pageRows = ps.slice(shPosPage * SH_PAGE_SIZE, (shPosPage + 1) * SH_PAGE_SIZE);
-    posEl.innerHTML = ps.length
-      ? `<div class="table-scroll"><table><thead><tr><th>币</th><th>方向</th><th>名义</th><th>入场价</th><th>现价</th><th>未实现</th></tr></thead><tbody>` +
-        pageRows.map((p) => `<tr><td>${escapeHTML(p.coin)}</td><td class="${String(p.side).toLowerCase() === "long" ? "pos" : "neg"}">${shSide(p.side)}</td><td>$${fmt(p.notional, 0)}</td><td>${fmtCompact(p.entry_price)}</td><td>${fmtCompact(p.mark_price)}</td><td class="${(p.unrealized_pnl || 0) >= 0 ? "pos" : "neg"}">${moneySigned(p.unrealized_pnl || 0)}</td></tr>`).join("") +
-        `</tbody></table></div>` + pager("shpos", ps.length, shPosPage, SH_PAGE_SIZE)
-      : '<div class="empty">暂无持仓，等待下一次调仓</div>';
-  }
-  const trEl = $("sh-trades");
-  if (trEl) {
-    const ts2 = (d.trades || []).slice(-50).reverse();
-    const trPages = Math.max(1, Math.ceil(ts2.length / SH_PAGE_SIZE));
-    if (shTradePage > trPages - 1) shTradePage = 0;
-    const trRows = ts2.slice(shTradePage * SH_PAGE_SIZE, (shTradePage + 1) * SH_PAGE_SIZE);
-    trEl.innerHTML = ts2.length
-      ? `<div class="table-scroll"><table><thead><tr><th>平仓时间</th><th>币</th><th>方向</th><th>平仓价</th><th>净盈亏</th><th>原因</th></tr></thead><tbody>` +
-        trRows.map((t) => `<tr><td class="muted">${ts2m(t.exit_ts)}</td><td>${escapeHTML(t.coin)}</td><td class="${String(t.side).toLowerCase() === "long" ? "pos" : "neg"}">${shSide(t.side)}</td><td>${fmtCompact(t.exit_price)}</td><td class="${(t.pnl_usd || 0) >= 0 ? "pos" : "neg"}">${moneySigned(t.pnl_usd || 0)}</td><td class="muted">${escapeHTML(t.reason || "")}</td></tr>`).join("") +
-        `</tbody></table></div>` + pager("shtr", ts2.length, shTradePage, SH_PAGE_SIZE)
-      : '<div class="empty">暂无成交。</div>';
-  }
-}
-
-function renderShadowConfig(cfg) {
-  // config 为 null（尚未启动/被重置）时用默认值填表，避免一片空白。
-  cfg = cfg || { momentum_weight: 1, dd_weight: 1, upfrac_weight: 1, capital: 2000, leverage: 3, lookback: 14, top_frac: 0.2, min_vol_usd: 5000000, target_positions: 8, replay_days: 90 };
-  const set = (id, v) => { const el = $(id); if (el && document.activeElement !== el) el.value = v; };
-  set("sh-mw", cfg.momentum_weight);
-  set("sh-dd", cfg.dd_weight ?? 0);
-  set("sh-up", cfg.upfrac_weight ?? 0);
-  set("sh-cap", cfg.capital);
-  set("sh-lev", cfg.leverage);
-  set("sh-lb", cfg.lookback);
-  set("sh-tf", cfg.top_frac);
-  set("sh-minv", cfg.min_vol_usd);
-  set("sh-tp", cfg.target_positions);
-  set("sh-replay", cfg.replay_days);
-  set("sh-slip", cfg.slippage != null ? cfg.slippage * 10000 : 3);
-}
-
-function shBody() {
-  return {
-    lookback: Number($("sh-lb").value) || 14,
-    top_frac: Number($("sh-tf").value) || 0.2,
-    min_vol_usd: Number($("sh-minv").value) || 0,
-    capital: Number($("sh-cap").value) || 2000,
-    leverage: Number($("sh-lev").value) || 3,
-    fee: 0,
-    replay_days: Number($("sh-replay").value) || 90,
-    target_positions: Number($("sh-tp").value) || 8,
-    momentum_weight: Number($("sh-mw").value) || 0,
-    dd_weight: Number($("sh-dd").value) || 0,
-    upfrac_weight: Number($("sh-up").value) || 0,
-    slippage: (Number($("sh-slip") && $("sh-slip").value) || 3) / 10000,
-  };
-}
-
-async function refreshShadow() {
-  try {
-    lastShadowData = await fetchJSONRetry("/api/paper2", {}, 8000);
-    try { lastControlData = await fetchJSONRetry("/api/paper", {}, 8000); } catch (e) {}
-    try { lastLiveForShadow = await fetchJSONRetry("/api/live", {}, 8000); } catch (e) {}
-    try { lastVTData = await fetchJSONRetry("/api/paper3", {}, 8000); } catch (e) {}
-    try { lastCombineData = await fetchJSONRetry("/api/intraday", {}, 8000); } catch (e) {}
-    renderShadow(lastShadowData);
-    renderShadowConfig(lastShadowData.config);
-  } catch (e) {}
-}
-
-if ($("sh-save")) $("sh-save").addEventListener("click", async () => {
-  const st = $("sh-status");
-  try {
-    const res = await fetch("/api/paper2/start", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(shBody()) });
-    const out = await res.json();
-    if (!res.ok || out.error) { st.textContent = "启动失败：" + (out.error || ("HTTP " + res.status)); return; }
-    st.textContent = "已应用并重启。";
-    refreshShadow();
-  } catch (e) { st.textContent = "启动失败：" + e; }
-});
-if ($("sh-stop")) $("sh-stop").addEventListener("click", async () => { await fetch("/api/paper2/stop", { method: "POST" }); refreshShadow(); });
-if ($("sh-reset")) $("sh-reset").addEventListener("click", async () => {
-  if (!confirm("重置影子组合：清空持仓、记录与曲线。继续？")) return;
-  await fetch("/api/paper2/reset", { method: "POST" });
-  refreshShadow();
-});
-document.addEventListener("click", (e) => {
-  const b = e.target.closest("[data-pager^='sh']");
-  if (!b) return;
-  const to = Number(b.dataset.to);
-  if (!Number.isFinite(to)) return;
-  if (b.dataset.pager === "shpos") shPosPage = Math.max(0, to);
-  if (b.dataset.pager === "shtr") shTradePage = Math.max(0, to);
-  if (lastShadowData) renderShadow(lastShadowData);
-});
-if ($("sh-refresh")) $("sh-refresh").addEventListener("click", () => refreshShadow());
-document.querySelectorAll("#sh-chart-tabs button").forEach((b) => {
-  b.addEventListener("click", () => {
-    shRange = b.dataset.range || "week";
-    document.querySelectorAll("#sh-chart-tabs button").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
-    if (lastShadowData) renderShadow(lastShadowData);
-  });
-});
-if ($("sh-step")) $("sh-step").addEventListener("click", async () => {
-  try { lastShadowData = await fetchJSONRetry("/api/paper2/step", { method: "POST" }, 20000); renderShadow(lastShadowData); } catch (e) {}
-});
 
 // ---------- 纸面 carry 策略 ----------
 
@@ -2605,14 +2375,11 @@ if (typeof ResizeObserver !== "undefined") {
       if (!width || chartWidths.get(target) === width) continue;
       chartWidths.set(target, width);
       if (target.id === "mo-chart" && lastLiveData) renderMonitorChart(lastLiveData);
-      if (target.id === "sh-chart" && lastShadowData) renderShadow(lastShadowData);
       if (target.id === "hc-chart" && lastHlCarryData) renderHlCarry(lastHlCarryData);
-      if (target.id === "cy-chart" && lastCarryData) renderEquityChart("cy-chart", lastCarryData.history || [], "纸面 carry 权益曲线");
-      if (target.id === "xp-chart" && lastXData) renderEquityChart("xp-chart", lastXData.history || [], "跨所价差纸面权益曲线");
       if (target.id === "tf-chart" && lastTradFiData) renderTradFi(lastTradFiData);
     }
   });
-  ["mo-chart", "hc-chart", "cy-chart", "xp-chart", "sh-chart", "tf-chart"].forEach(id => {
+  ["mo-chart", "hc-chart", "tf-chart"].forEach(id => {
     const chart = $(id);
     if (chart) chartResize.observe(chart);
   });

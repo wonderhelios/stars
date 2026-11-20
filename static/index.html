@@ -1041,7 +1041,7 @@
           bottom: 0;
           z-index: 100;
           display: grid;
-          grid-template-columns: repeat(7, minmax(0, 1fr));
+          grid-template-columns: repeat(5, minmax(0, 1fr));
           gap: 4px;
           padding: 6px 6px calc(6px + env(safe-area-inset-bottom, 0px));
           overflow: visible;
@@ -1190,8 +1190,6 @@
         <button data-view="live"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7h16M4 17h16"/><circle cx="8" cy="7" r="3"/><circle cx="16" cy="17" r="3"/></svg><span>实盘设置</span></button>
         <div class="nav-section-label">研究影子</div>
         <button data-view="hlcarry"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg><span>基差影子</span></button>
-        <button data-view="shadow"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 20h18M5 20V10M11 20V4M17 20v-6"/></svg><span>影子监控</span></button>
-        <button data-view="shadow-setup"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg><span>影子设置</span></button>
         <button data-view="combine"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 18l5-6 4 3 7-9"/><circle cx="4" cy="18" r="1.6"/><circle cx="20" cy="6" r="1.6"/></svg><span>日内影子</span></button>
         <button data-view="tradfi"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg><span>美股商品</span></button>
       </nav>
@@ -1458,73 +1456,6 @@
         </div>
       </section>
 
-      <!-- ============ 影子监控 ============ -->
-      <section id="view-shadow" class="view">
-        <div class="panel">
-          <div class="panel-head">
-            <div>
-              <span class="panel-kicker">SHADOW COMBO</span>
-              <h2>影子组合 · 三因子</h2>
-              <p class="sub">独立纸面组合 · 动量、距高点与上涨占比。<b>参数在「影子设置」调整。</b></p>
-            </div>
-            <div class="actions">
-              <button class="btn ghost" data-open-view="shadow-analysis" type="button">分析与记录</button>
-              <button class="btn ghost" id="sh-refresh" type="button">刷新</button>
-            </div>
-          </div>
-          <div id="sh-warn"></div>
-          <div class="performance-panel">
-            <div class="metrics" id="sh-metrics"></div>
-            <div class="content-card equity-card">
-              <div class="panel-head monitor-section-head">
-                <div><span class="section-eyebrow">SHADOW PNL</span><h2>影子盈亏曲线</h2></div>
-                <div class="segmented" id="sh-chart-tabs" role="group" aria-label="影子盈亏时间区间">
-                  <button type="button" data-range="week" aria-pressed="true">近 7 天</button>
-                  <button type="button" data-range="month" aria-pressed="false">近 30 天</button>
-                  <button type="button" data-range="all" aria-pressed="false">全部</button>
-                </div>
-              </div>
-              <div class="chart" id="sh-chart"></div>
-            </div>
-          </div>
-          <div class="content-card">
-            <div class="panel-head"><h2>当前持仓</h2></div>
-            <div id="sh-positions"></div>
-          </div>
-        </div>
-      </section>
-
-      <!-- ============ 影子设置 ============ -->
-      <section id="view-shadow-setup" class="view">
-        <div class="workspace-heading">
-          <div><span class="panel-kicker">SHADOW COMBO · PARAMS</span><h2>影子组合参数</h2><p class="sub">三因子权重 + 基础参数。改完「应用并重启」生效。</p></div>
-          <span class="setup-chip">纸面实验</span>
-        </div>
-        <div class="content-card">
-          <div class="panel-head"><div><span class="section-eyebrow">FACTOR WEIGHTS</span><h2>因子权重</h2></div></div>
-          <div class="shadow-fields">
-            <div class="field"><label for="sh-mw">动量权重（0~1）</label><input id="sh-mw" type="number" min="0" max="1" step="0.05" /></div>
-            <div class="field"><label for="sh-dd">距 14 日高点权重</label><input id="sh-dd" type="number" min="0" max="2" step="0.1" /></div>
-            <div class="field"><label for="sh-up">上涨天数占比权重</label><input id="sh-up" type="number" min="0" max="2" step="0.1" /></div>
-          </div>
-          <p class="note" id="sh-factor-status"></p>
-        </div>
-        <div class="content-card">
-          <div class="panel-head"><div><span class="section-eyebrow">BASE PARAMS</span><h2>基础参数</h2></div></div>
-          <fieldset class="shadow-param-group"><legend>资金与回放</legend><div class="shadow-fields"><div class="field"><label for="sh-cap">本金 (USD)</label><input id="sh-cap" type="number" min="1" step="100" /></div><div class="field"><label for="sh-lev">杠杆</label><input id="sh-lev" type="number" min="1" max="20" step="0.5" /></div><div class="field"><label for="sh-replay">回放天数</label><input id="sh-replay" type="number" min="1" max="365" step="1" /></div><div class="field"><label for="sh-slip">滑点（bp）</label><input id="sh-slip" type="number" min="0" max="100" step="0.5" /></div></div></fieldset>
-          <fieldset class="shadow-param-group"><legend>选币与持仓</legend><div class="shadow-fields"><div class="field"><label for="sh-lb">回看天数</label><input id="sh-lb" type="number" min="3" max="60" step="1" /></div><div class="field"><label for="sh-tf">每腿比例</label><input id="sh-tf" type="number" min="0.05" max="0.5" step="0.05" /></div><div class="field"><label for="sh-minv">最小成交额 (USD)</label><input id="sh-minv" type="number" min="0" step="500000" /></div><div class="field"><label for="sh-tp">每腿仓位数</label><input id="sh-tp" type="number" min="1" max="30" step="1" /></div></div></fieldset>
-          <div class="shadow-savebar">
-            <span class="sub">修改参数后，应用并重启影子组合。</span>
-            <div class="actions">
-              <button class="btn" id="sh-save" type="button">应用并重启</button>
-              <button class="btn ghost" id="sh-stop" type="button">停止</button>
-              <button class="btn danger" id="sh-reset" type="button">重置</button>
-            </div>
-          </div>
-          <p id="sh-status" class="note" role="status" aria-live="polite"></p>
-        </div>
-      </section>
-
       <!-- ============ 实盘分析与记录 ============ -->
       <section id="view-analysis" class="view">
         <div class="workspace-heading">
@@ -1551,22 +1482,6 @@
             </div>
           </div>
           <div id="mo-records"></div>
-        </div>
-      </section>
-
-      <!-- ============ 影子分析与记录 ============ -->
-      <section id="view-shadow-analysis" class="view">
-        <div class="workspace-heading">
-          <div><span class="panel-kicker">ANALYSIS &amp; RECORDS · 影子</span><h2>影子分析与记录</h2><p class="sub">账务、风险与模拟成交明细。</p></div>
-          <div class="actions">
-            <button class="btn ghost" id="sh-step" type="button">推进一步</button>
-            <button class="btn ghost" data-open-view="shadow" type="button">返回影子监控</button>
-          </div>
-        </div>
-        <div id="sh-analysis-metrics"></div>
-        <div class="content-card">
-          <div class="panel-head"><div><span class="section-eyebrow">TRADES</span><h2>最近 50 笔模拟成交</h2></div></div>
-          <div id="sh-trades"></div>
         </div>
       </section>
 

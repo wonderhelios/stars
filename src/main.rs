@@ -4,14 +4,12 @@ mod health;
 mod hl;
 mod live;
 mod momentum;
-mod paper;
 mod store;
 mod trader;
 mod web;
 
 use anyhow::Context;
 use crate::hl::{CoinMeta, HlClient, MarketCtx};
-use crate::paper::PaperState;
 use crate::store::Store;
 use crate::web::{AppState, MetaCache, RefreshStatus};
 use std::sync::Arc;
@@ -35,16 +33,10 @@ async fn main() -> anyhow::Result<()> {
 
     let db_path = std::env::var("STARS_DB")
         .unwrap_or_else(|_| "/var/lib/stars/candles.sqlite".to_string());
-    let paper_path = std::env::var("STARS_PAPER")
-        .unwrap_or_else(|_| "/var/lib/stars/paper.json".to_string());
     let auth_token = std::env::var("STARS_TOKEN").ok().filter(|v| !v.trim().is_empty());
     if auth_token.is_none() {
         warn!("未设置 STARS_TOKEN：HTTP 接口【没有任何鉴权】✗ 公网可访问时请务必设置");
     }
-    let paper2_path = std::env::var("STARS_PAPER2")
-        .unwrap_or_else(|_| "/var/lib/stars/paper2.json".to_string());
-    let paper3_path = std::env::var("STARS_PAPER3")
-        .unwrap_or_else(|_| "/var/lib/stars/paper3.json".to_string());
     let live_path = std::env::var("STARS_LIVE")
         .unwrap_or_else(|_| "/var/lib/stars/live.json".to_string());
     // HL 单账户 carry 影子（现货 + 空永续，赚资金费）。默认预算是影子规模，不涉真钱。
@@ -63,44 +55,6 @@ async fn main() -> anyhow::Result<()> {
 
     let store = Arc::new(Store::open(std::path::Path::new(&db_path))?);
     let client = HlClient::new();
-    let paper = Arc::new(Mutex::new(PaperState::load(std::path::Path::new(&paper_path))));
-    let base_cfg = paper.lock().await.config.clone().unwrap_or_default();
-    let mut paper2 = PaperState::load(std::path::Path::new(&paper2_path));
-    if paper2.config.is_none() {
-        // 影子组合：动量 + 距高点 + 上涨占比 三因子等权（动量权重置 1 使量能为 0）。
-        let base = base_cfg.clone();
-        paper2.config = Some(crate::paper::PaperConfig {
-            momentum_weight: 1.0,
-            dd_weight: 1.0,
-            upfrac_weight: 1.0,
-            capital: base.capital,
-            // 与实盘同宇宙（$10M ✗）✗ 否则和实盘/回测都不可比 ✗
-            min_vol_usd: 10_000_000.0,
-            // 影子组合的默认【不回放】✗ 从启动当天开始记 ✗
-            // 回放 90 天是 in-sample 预览 ✗ 不是样本外验证 ✗
-            replay_days: 1,
-            ..base
-        });
-        paper2.equity = base.capital;
-        paper2.running = true;
-    }
-    let paper2 = Arc::new(Mutex::new(paper2));
-    let mut paper3 = PaperState::load(std::path::Path::new(&paper3_path));
-    if paper3.config.is_none() {
-        paper3.config = Some(crate::paper::PaperConfig {
-            vol_target: 0.02,
-            momentum_weight: 1.0,
-            dd_weight: 0.0,
-            upfrac_weight: 0.0,
-            capital: base_cfg.capital,
-            min_vol_usd: 10_000_000.0,
-            replay_days: 1,
-            ..base_cfg.clone()
-        });
-        paper3.equity = base_cfg.capital;
-        paper3.running = true;
-    }
-    let paper3 = Arc::new(Mutex::new(paper3));
     let hl_live = live::LiveState::load(std::path::Path::new(&live_path));
     let live = Arc::new(Mutex::new(hl_live));
     let hlcarry = Arc::new(Mutex::new(crate::hlcarry::HlCarryState::load(std::path::Path::new(&hlcarry_path))));
@@ -111,13 +65,7 @@ async fn main() -> anyhow::Result<()> {
         exec_gate: std::sync::Arc::new(tokio::sync::Mutex::new(())),
         run_gate: std::sync::Arc::new(tokio::sync::Mutex::new(())),
         store: store.clone(),
-        paper: paper.clone(),
-        paper_path: Arc::new(std::path::PathBuf::from(&paper_path)),
         auth_token: auth_token.clone(),
-        paper2: paper2.clone(),
-        paper2_path: Arc::new(std::path::PathBuf::from(&paper2_path)),
-        paper3: paper3.clone(),
-        paper3_path: Arc::new(std::path::PathBuf::from(&paper3_path)),
         live: live.clone(),
         live_path: Arc::new(std::path::PathBuf::from(&live_path)),
         http: reqwest::Client::builder()
@@ -469,16 +417,8 @@ async fn main() -> anyhow::Result<()> {
         let client = client.clone();
         let meta = meta.clone();
         let refresh = refresh.clone();
-        let paper = paper.clone();
-        let paper_path = paper_path.clone();
-        let paper2 = paper2.clone();
-        let paper2_path = paper2_path.clone();
         tokio::spawn(async move {
-            refresh_loop(
-                store, client, meta, refresh, paper, paper_path, paper2, paper2_path, paper3,
-                paper3_path,
-            )
-            .await;
+            refresh_loop(store, client, meta, refresh).await;
         });
     }
 
@@ -487,7 +427,7 @@ async fn main() -> anyhow::Result<()> {
     let addr = std::env::var("STARS_BIND_ADDR").unwrap_or_else(|_| "0.0.0.0:3000".into());
     let listener = tokio::net::TcpListener::bind(&addr).await?;
     info!("stars listening on http://{addr}");
-    info!("db: {db_path}, paper: {paper_path}");
+    info!("db: {db_path}");
     axum::serve(listener, app).await?;
     Ok(())
 }
@@ -497,57 +437,19 @@ async fn refresh_loop(
     client: HlClient,
     meta: Arc<Mutex<MetaCache>>,
     refresh: Arc<Mutex<RefreshStatus>>,
-    paper: Arc<Mutex<PaperState>>,
-    paper_path: String,
-    paper2: Arc<Mutex<PaperState>>,
-    paper2_path: String,
-    paper3: Arc<Mutex<PaperState>>,
-    paper3_path: String,
 ) {
     // Initial full backfill.
     if let Err(e) = backfill(&store, &client, &meta, &refresh).await {
         error!("initial backfill failed: {e}");
     }
 
-    // Periodic refresh: re-fetch contexts + latest candles for liquid coins,
-    // and step the paper trade when new daily data lands.
+    // Periodic refresh: re-fetch contexts + latest candles for liquid coins.
     let mut ticker = tokio::time::interval(Duration::from_secs(1800));
     ticker.set_missed_tick_behavior(tokio::time::MissedTickBehavior::Skip);
     loop {
         ticker.tick().await;
         if let Err(e) = refresh_liquid(&store, &client, &meta).await {
             error!("refresh failed: {e}");
-        }
-        // advance paper trade on fresh data
-        let panel = store
-            .all_panels()
-            .unwrap_or_default()
-            .into_iter()
-            .map(|(coin, candles)| crate::momentum::PanelEntry { coin, candles })
-            .collect::<Vec<_>>();
-        let max_lev: std::collections::HashMap<String, u32> = {
-            let m = meta.lock().await;
-            m.universe
-                .iter()
-                .map(|c| (c.name.clone(), c.max_leverage))
-                .collect()
-        };
-        let mut p = paper.lock().await;
-        if p.running {
-            crate::paper::step(&mut p, &panel, &max_lev);
-            let _ = p.save(std::path::Path::new(&paper_path));
-        }
-        drop(p);
-        let mut p2 = paper2.lock().await;
-        if p2.running {
-            crate::paper::step(&mut p2, &panel, &max_lev);
-            let _ = p2.save(std::path::Path::new(&paper2_path));
-        }
-        drop(p2);
-        let mut p3 = paper3.lock().await;
-        if p3.running {
-            crate::paper::step(&mut p3, &panel, &max_lev);
-            let _ = p3.save(std::path::Path::new(&paper3_path));
         }
     }
 }
