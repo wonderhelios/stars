@@ -169,6 +169,31 @@ class TestTradFiStrategy(unittest.TestCase):
             self.assertEqual(peak2, 2000.0)
             self.assertAlmostEqual(dd2, 16.0, places=2)
 
+    def test_s4_commodity_rsi_half_size_and_5d_trailing_exit(self) -> None:
+        from tradfi.strategy import compute_comm_ema_weights
+
+        # 1. Monotonic downtrend -> RSI14 == 0 <= 25 -> short should be halved (-0.5)
+        down_px = [100.0 * (0.985 ** i) for i in range(30)]
+        # 2. Downtrend that suddenly rebounds above prior 5d high -> 5d trailing exit -> flat (0.0)
+        rebound_px = [100.0 * (0.985 ** i) for i in range(29)] + [100.0 * (0.985 ** 23) * 1.03]
+        # 3. Healthy moderate uptrend -> RSI between 25 and 75 -> full long (+1.0)
+        up_px = [100.0]
+        for i in range(29):
+            up_px.append(up_px[-1] * (1.015 if i % 2 == 0 else 0.992))
+
+        bars_map = {
+            "XAUUSDT": _make_bars(down_px),
+            "CLUSDT": _make_bars(rebound_px),
+            "NATGASUSDT": _make_bars(up_px),
+        }
+        cfg = StrategyConfig(gross_leverage=2.0, comm_universe=["XAUUSDT", "CLUSDT", "NATGASUSDT"])
+        w, sigs = compute_comm_ema_weights(bars_map, cfg)
+        self.assertEqual(sigs["XAUUSDT"], -0.5)
+        self.assertEqual(sigs["CLUSDT"], 0.0)
+        self.assertNotIn("CLUSDT", w)
+        self.assertGreater(sigs["NATGASUSDT"], 0.0)
+        self.assertLess(w["XAUUSDT"], 0.0)
+
 
 if __name__ == "__main__":
     unittest.main()

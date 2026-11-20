@@ -11,10 +11,12 @@ Architecture (verified causal OOS on 2026-04 ~ 2026-11):
     * Selection: top 30% Long, bottom 30% Short (min 2 per side, requires >= 6 eligible stocks).
     * Weighting: within-leg inverse-volatility (14d std), single-name cap = 30% of leg gross.
     * 2-Phase Slicing: even-day slice + odd-day slice averaged 50/50 to eliminate phase luck.
-- Leg 2 (50% capital): 4 High-Liquidity Core Commodities Time-Series Trend (EMA5/20)
+- Leg 2 (50% capital): 4 High-Liquidity Core Commodities S4 Swing (EMA5/20 + 5d Trailing Exit + RSI Extreme Half-Size)
     * Universe: XAUUSDT (Gold), XAGUSDT (Silver), CLUSDT (WTI Crude Oil), NATGASUSDT (NatGas).
-    * Signal: EMA(5) > EMA(20) -> Long (+1), else Short (-1).
-    * Weighting: inverse-volatility (14d std), single-commodity cap = 40% of leg gross.
+    * Signal: EMA(5) vs EMA(20) sets direction; 5-day reverse-channel breakout exits to flat (0.0);
+      RSI(14) <= 25 (short) or >= 75 (long) halves position size (0.5x) to guard against V-reversals.
+    * Weighting: inverse-volatility (14d std) normalized across all valid commodities so flat/half-size
+      exposure stays in cash; single-commodity cap = 40% of leg gross.
 """
 from __future__ import annotations
 
@@ -55,6 +57,9 @@ class StrategyConfig:
     comm_cap_frac: float = 0.40
     ema_fast: int = 5
     ema_slow: int = 20
+    comm_trail_days: int = 5
+    comm_rsi_lo: float = 25.0
+    comm_rsi_hi: float = 75.0
     stock_universe: List[str] = field(default_factory=lambda: list(DEFAULT_STOCK_UNIVERSE))
     comm_universe: List[str] = field(default_factory=lambda: list(DEFAULT_COMMODITY_UNIVERSE))
 
@@ -66,7 +71,7 @@ class TargetPortfolio:
     legs: Dict[str, str]       # symbol -> "stock_a4" | "comm_ema"
     blocked_symbols: List[str]
     stock_scores: Dict[str, float]
-    comm_signals: Dict[str, int]
+    comm_signals: Dict[str, float]
     stock_phase_weights: Dict[str, Dict[str, float]]  # {"p0": {...}, "p1": {...}}
 
 
@@ -87,6 +92,20 @@ def _ema_series(vals: List[float], span: int) -> List[float]:
     for v in vals[1:]:
         out.append(alpha * v + (1.0 - alpha) * out[-1])
     return out
+
+
+def _rsi_latest(vals: List[float], period: int = 14) -> float:
+    if len(vals) < 8:
+        return 50.0
+    diffs = [vals[i] - vals[i - 1] for i in range(max(1, len(vals) - period), len(vals))]
+    if not diffs:
+        return 50.0
+    up = sum(d for d in diffs if d > 0.0) / len(diffs)
+    dn = sum(-d for d in diffs if d < 0.0) / len(diffs)
+    if dn <= 1e-12:
+        return 100.0 if up > 0.0 else 50.0
+    rs = up / dn
+    return 100.0 - 100.0 / (1.0 + rs)
 
 
 def _pct_ranks(values: Dict[str, float]) -> Dict[str, float]:
@@ -250,10 +269,10 @@ def compute_stock_a4_slice(
 def compute_comm_ema_weights(
     bars_map: Dict[str, List[DailyBar]],
     cfg: StrategyConfig,
-) -> Tuple[Dict[str, float], Dict[str, int]]:
-    """Compute 4-core commodity EMA(5)/EMA(20) inverse-vol trend weights (gross = cfg.gross_leverage)."""
-    raw: Dict[str, float] = {}
-    signals: Dict[str, int] = {}
+) -> Tuple[Dict[str, float], Dict[str, float]]:
+    """Compute 4-core commodity S4 swing weights (EMA5/20 + 5d trailing exit + RSI extreme half-size)."""
+    inv_vols: Dict[str, float] = {}
+    signals: Dict[str, float] = {}
 
     for sym in cfg.comm_universe:
         bars = bars_map.get(sym)
@@ -263,25 +282,49 @@ def compute_comm_ema_weights(
         avg_v = sum(v_win) / len(v_win) if v_win else 0.0
         if avg_v < cfg.min_vol_usd:
             continue
-        closes = [b.close for b in bars]
-        ef = _ema_series(closes, cfg.ema_fast)[-1]
-        es = _ema_series(closes, cfg.ema_slow)[-1]
-        sig = 1 if ef > es else -1
         rets, is_blocked = _clean_returns_and_block(bars, cfg.split_ret_threshold, cfg.split_block_days)
         if is_blocked or len(rets) < 7:
             continue
-        vol = max(_std(rets[-14:]), 0.005)
-        signals[sym] = sig
-        raw[sym] = sig / vol
+        closes = [b.close for b in bars]
+        ef = _ema_series(closes, cfg.ema_fast)[-1]
+        es = _ema_series(closes, cfg.ema_slow)[-1]
+        rsi14 = _rsi_latest(closes, 14)
+        cur = closes[-1]
+        trail_n = max(2, cfg.comm_trail_days)
+        prev_win = closes[-(trail_n + 1):-1]
+        hi_n = max(prev_win) if prev_win else cur
+        lo_n = min(prev_win) if prev_win else cur
 
-    tot = sum(abs(v) for v in raw.values())
-    if tot <= 0.0:
+        if ef > es:
+            if cur < lo_n:
+                sig = 0.0
+            elif rsi14 >= cfg.comm_rsi_hi:
+                sig = 0.5
+            else:
+                sig = 1.0
+        else:
+            if cur > hi_n:
+                sig = 0.0
+            elif rsi14 <= cfg.comm_rsi_lo:
+                sig = -0.5
+            else:
+                sig = -1.0
+
+        vol = max(_std(rets[-14:]), 0.005)
+        inv_vols[sym] = 1.0 / vol
+        signals[sym] = sig
+
+    denom = sum(inv_vols.values())
+    if denom <= 0.0:
         return {}, signals
 
     cap = cfg.comm_cap_frac * cfg.gross_leverage
     weights: Dict[str, float] = {}
-    for sym, val in raw.items():
-        w = cfg.gross_leverage * val / tot
+    for sym, iv in inv_vols.items():
+        sig = signals[sym]
+        if abs(sig) < 1e-9:
+            continue
+        w = cfg.gross_leverage * (sig * iv) / denom
         weights[sym] = max(-cap, min(cap, w))
     return weights, signals
 
