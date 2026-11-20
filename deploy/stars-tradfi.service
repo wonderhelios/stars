@@ -1,0 +1,22 @@
+[Unit]
+Description=stars Binance TradFi M3b 4-Core Dual-Leg forward shadow (public data only)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/stars
+ExecStart=/root/miniconda3/envs/ml/bin/python -m tradfi.shadow
+Restart=always
+RestartSec=15
+Environment=STARS_TRADFI=/var/lib/stars/tradfi_shadow.json
+Environment=STARS_TRADFI_CAPITAL=2000
+Environment=STARS_TRADFI_LEVERAGE=2.0
+Environment=STARS_TRADFI_FEE_BP=2.0
+Environment=PYTHONUNBUFFERED=1
+# 如服务器访问币安需要代理，在此设置 HTTPS_PROXY；影子进程不要配置任何交易密钥。
+NoNewPrivileges=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

@@ -50,6 +50,8 @@ pub struct AppState {
     pub hlcarry_path: Arc<std::path::PathBuf>,
     /// 币安日内前向影子账本，由独立只读采集进程写入。
     pub intraday_path: Arc<std::path::PathBuf>,
+    /// 币安 TradFi 双腿（美股 A4 + 金银油气 EMA5/20）前向影子账本。
+    pub tradfi_path: Arc<std::path::PathBuf>,
 }
 
 #[derive(Clone, Default)]
@@ -115,6 +117,7 @@ pub fn router(state: AppState) -> Router {
         .route("/api/hlcarry/step", post(hlcarry_step))
         .route("/api/hlcarry/params", post(hlcarry_params))
         .route("/api/intraday", get(intraday_status))
+        .route("/api/tradfi", get(tradfi_status))
         .layer(axum::middleware::from_fn({
             let token = state.auth_token.clone();
             move |req: axum::http::Request<axum::body::Body>, next: axum::middleware::Next| {
@@ -189,6 +192,16 @@ async fn intraday_status(State(state): State<AppState>) -> Response {
             Err(e) => (StatusCode::INTERNAL_SERVER_ERROR, Json(json!({"error":format!("日内影子账本损坏: {e}")}))).into_response(),
         },
         Err(e) => (StatusCode::SERVICE_UNAVAILABLE, Json(json!({"error":format!("日内影子尚未启动: {e}")}))).into_response(),
+    }
+}
+
+async fn tradfi_status(State(state): State<AppState>) -> Response {
+    match tokio::fs::read(&*state.tradfi_path).await {
+        Ok(bytes) => match serde_json::from_slice::<serde_json::Value>(&bytes) {
+            Ok(value) => Json(value).into_response(),
+            Err(e) => (StatusCode::INTERNAL_SERVER_ERROR, Json(json!({"error":format!("TradFi 影子账本损坏: {e}")}))).into_response(),
+        },
+        Err(e) => (StatusCode::SERVICE_UNAVAILABLE, Json(json!({"error":format!("TradFi 影子尚未启动: {e}")}))).into_response(),
     }
 }
 
@@ -1670,6 +1683,7 @@ mod live_routes_tests {
             paper3: Arc::new(Mutex::new(crate::paper::PaperState::default())),
             paper3_path: Arc::new(root.join("paper3.json")),
             intraday_path: Arc::new(root.join("intraday.json")),
+            tradfi_path: Arc::new(root.join("tradfi.json")),
         };
         let app = router(base.clone());
         let response = app.clone().oneshot(Request::builder().uri("/").body(Body::empty()).unwrap()).await.unwrap();
@@ -1723,6 +1737,7 @@ mod live_routes_tests {
             paper3: Arc::new(Mutex::new(crate::paper::PaperState::default())),
             paper3_path: Arc::new(root.join("paper3.json")),
             intraday_path: Arc::new(root.join("intraday.json")),
+            tradfi_path: Arc::new(root.join("tradfi.json")),
         };
         let app = router(base.clone());
         // 资金矩阵：保存 → 持久化 → 拒绝对负数。

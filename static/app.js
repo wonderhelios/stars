@@ -235,7 +235,9 @@ let lastControlData = null;
 let lastLiveForShadow = null;
 let lastVTData = null;
 let lastCombineData = null;
+let lastTradFiData = null;
 let cbRange = "all";
+let tfRange = "all";
 let cbLeg = "mom";
 let lastHealth = null;
 let liveFetchedAt = 0;
@@ -1713,6 +1715,9 @@ document.querySelectorAll('.nav button[data-view="shadow"], .nav button[data-vie
 document.querySelectorAll('.nav button[data-view="combine"]').forEach((b) => {
   b.addEventListener("click", () => refreshCombine());
 });
+document.querySelectorAll('.nav button[data-view="tradfi"]').forEach((b) => {
+  b.addEventListener("click", () => refreshTradFi());
+});
 const cbLegTabs = $("cb-leg-tabs");
 if (cbLegTabs) {
   cbLegTabs.addEventListener("click", (event) => {
@@ -2255,6 +2260,108 @@ async function refreshCombine() {
   }
 }
 
+function renderTradFi(d) {
+  d = d || {};
+  const cfg = d.config || {};
+  const ps = Array.isArray(d.positions_list) ? d.positions_list : Object.values(d.positions || {});
+  const eq = Number(d.equity) || 0;
+  const pnl = Number(d.pnl) || 0;
+  const pnlPct = Number(d.pnl_pct) || 0;
+  const days = Number(d.days_elapsed) || 0;
+  const kpi = (label, value, detail, cls) =>
+    `<div class="combine-kpi"><div class="combine-kpi-label">${label}</div><div class="combine-kpi-value ${cls || ""}">${value}</div>${detail ? `<div class="combine-kpi-detail">${detail}</div>` : ""}</div>`;
+  const m = $("tf-metrics");
+  if (m) m.innerHTML =
+    kpi("影子净值", "$" + fmt(eq, 2), "独立模拟账户 · 本金 $" + fmt(d.capital || 0, 0)) +
+    kpi("累计收益", moneySigned(pnl), (pnlPct >= 0 ? "+" : "") + pnlPct.toFixed(2) + "%", pnl >= 0 ? "pos" : "neg") +
+    kpi("已实现 / 浮盈", moneySigned(d.realized_pnl || 0), "浮动 " + moneySigned(d.unrealized_pnl || 0) + " · 资金费 " + moneySigned(d.total_funding || 0), (d.realized_pnl || 0) >= 0 ? "pos" : "neg") +
+    kpi("当前持仓", String(ps.length), "美股 " + ps.filter(p => p.leg === "stock_a4").length + " · 商品 " + ps.filter(p => p.leg === "comm_ema").length) +
+    kpi("毛敞口 / 净敞口", "$" + fmt(d.gross_notional || 0, 0), "净额 " + moneySigned(d.net_notional || 0) + " · 费用 −$" + fmt(d.total_fees || 0, 2)) +
+    kpi("运行时间", days.toFixed(1) + " 天", "上次调仓 " + (d.last_rebalance_day || "—"));
+  const state = $("tf-run-state");
+  const fresh = Number.isFinite(d.last_update) && Date.now() - d.last_update < 600000;
+  if (state) {
+    state.className = "combine-state " + (d.running && fresh ? "is-running" : "is-stopped");
+    state.innerHTML = `<i></i>${d.running && fresh ? "影子运行中" : "数据过期 / 未启动"}`;
+  }
+  const st = $("tf-status");
+  if (st) {
+    const blocked = (d.blocked_symbols || []).length ? "拆股防护已屏蔽：" + d.blocked_symbols.join(", ") + "。" : "";
+    const err = d.last_error ? "最近采集异常：" + d.last_error : "";
+    const msg = [err, blocked].filter(Boolean).join(" ");
+    st.textContent = msg;
+    st.hidden = !msg;
+  }
+  const h = (d.history || []).filter(p => Array.isArray(p) && Number.isFinite(p[0]) && Number.isFinite(p[1]));
+  if (h.length) {
+    const obs = h.map(p => ({ ts: p[0], equity: p[1] }));
+    let pts = equityWindow(obs, tfRange, Date.now()).points.map(p => [p.ts, p.equity]);
+    if (pts.length < 3 && tfRange !== "all") pts = h.slice(-3);
+    renderEquityChart("tf-chart", withNow(pts, eq), "TradFi 双腿影子权益曲线", undefined, undefined, undefined,
+      { equityLabel: "影子净值 · 最新", changeLabel: "记录区间变化", legendName: "TradFi 双腿", useBjTime: true });
+  } else if ($("tf-chart")) {
+    $("tf-chart").innerHTML = '<div class="empty">等待第一个前向净值点</div>';
+  }
+  const posEl = $("tf-positions");
+  if (posEl) {
+    posEl.innerHTML = ps.length
+      ? '<div class="table-scroll"><table><thead><tr><th>标的</th><th>所属腿</th><th>方向</th><th>目标权重</th><th>名义</th><th>开仓价</th><th>现价</th><th>资金费</th><th>浮盈</th></tr></thead><tbody>' +
+        ps.map(p => {
+          const isLong = p.side === "long";
+          const u = Number(p.unrealized_pnl) || 0;
+          const fu = Number(p.funding_usd) || 0;
+          const legLabel = p.leg === "stock_a4" ? '<span class="badge-mini ok">美股A4</span>' : '<span class="badge-mini warn">商品趋势</span>';
+          return `<tr><td><b>${escapeHTML(p.symbol)}</b></td><td>${legLabel}</td><td class="${isLong ? "pos" : "neg"}">${isLong ? "多" : "空"}</td><td>${((Number(p.target_weight) || 0) * 100).toFixed(1)}%</td><td>$${fmt(p.notional || 0, 0)}</td><td>${fmtCompact(p.entry_price || 0)}</td><td>${fmtCompact(p.mark_price || 0)}</td><td class="${fu >= 0 ? "pos" : "neg"}">${moneySigned(fu)}</td><td class="${u >= 0 ? "pos" : "neg"}">${moneySigned(u)}</td></tr>`;
+        }).join("") + '</tbody></table></div>'
+      : '<div class="empty">暂无持仓，等待每日 UTC 00:05 调仓或首次初始化。</div>';
+  }
+  if ($("tf-position-count")) $("tf-position-count").textContent = `${ps.length} 个持仓 · 毛敞口 $${fmt(d.gross_notional || 0, 0)}`;
+  if ($("tf-config")) {
+    const chips = [
+      `总杠杆 ${fmt(cfg.gross_leverage || 2.0, 1)}x`,
+      `美股A4 ${Math.round(100 * (cfg.stock_alloc || 0.5))}%`,
+      `4核心商品 ${Math.round(100 * (cfg.comm_alloc || 0.5))}%`,
+      `费用 ${fmt(cfg.fee_bp || 2.0, 1)}bp/边`,
+      `拆股防护 ≥ ${Math.round(100 * (cfg.split_ret_threshold || 0.4))}%`,
+    ];
+    $("tf-config").innerHTML = chips.map(x => `<span>${x}</span>`).join("");
+  }
+  const rbs = (d.rebalances || []).slice(-20).reverse();
+  if ($("tf-rebalances")) {
+    $("tf-rebalances").innerHTML = rbs.length
+      ? '<div class="table-scroll"><table><thead><tr><th>时间 · UTC+8</th><th>净值</th><th>换手名义</th><th>手续费</th><th>持仓数</th><th>变动明细</th></tr></thead><tbody>' +
+        rbs.map(r => `<tr><td class="muted">${ts2bj(r.ts)}</td><td>$${fmt(r.equity || 0, 2)}</td><td>$${fmt(r.turnover_usd || 0, 0)}</td><td>−$${fmt(r.fees_usd || 0, 2)}</td><td>${r.n_positions || 0}</td><td class="muted">${escapeHTML((r.changes || []).join(" ") || "—")}</td></tr>`).join("") +
+        '</tbody></table></div>'
+      : '<div class="empty">暂无调仓记录。</div>';
+  }
+}
+
+async function refreshTradFi() {
+  try {
+    const d = await fetchJSONRetry("/api/tradfi", {}, 15000);
+    lastTradFiData = d;
+    renderTradFi(d);
+  } catch (e) {
+    const st = $("tf-status");
+    if (st) {
+      st.textContent = "读取 TradFi 影子失败：" + ((e && e.message) || e);
+      st.hidden = false;
+    }
+  }
+}
+
+if ($("tf-refresh")) $("tf-refresh").addEventListener("click", () => refreshTradFi());
+const tfChartTabs = $("tf-chart-tabs");
+if (tfChartTabs) {
+  tfChartTabs.addEventListener("click", (event) => {
+    const btn = event.target.closest("button[data-range]");
+    if (!btn) return;
+    tfRange = btn.dataset.range;
+    tfChartTabs.querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", String(b === btn)));
+    if (lastTradFiData) renderTradFi(lastTradFiData);
+  });
+}
+
 function renderEquityChart(id, history, aria, compare, third, fourth, summaryLabels) {
   const el = $(id);
   if (!el) return;
@@ -2347,9 +2454,10 @@ if (typeof ResizeObserver !== "undefined") {
       if (target.id === "hc-chart" && lastHlCarryData) renderHlCarry(lastHlCarryData);
       if (target.id === "cy-chart" && lastCarryData) renderEquityChart("cy-chart", lastCarryData.history || [], "纸面 carry 权益曲线");
       if (target.id === "xp-chart" && lastXData) renderEquityChart("xp-chart", lastXData.history || [], "跨所价差纸面权益曲线");
+      if (target.id === "tf-chart" && lastTradFiData) renderTradFi(lastTradFiData);
     }
   });
-  ["mo-chart", "hc-chart", "cy-chart", "xp-chart", "sh-chart"].forEach(id => {
+  ["mo-chart", "hc-chart", "cy-chart", "xp-chart", "sh-chart", "tf-chart"].forEach(id => {
     const chart = $(id);
     if (chart) chartResize.observe(chart);
   });

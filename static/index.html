@@ -1041,7 +1041,7 @@
           bottom: 0;
           z-index: 100;
           display: grid;
-          grid-template-columns: repeat(6, minmax(0, 1fr));
+          grid-template-columns: repeat(7, minmax(0, 1fr));
           gap: 4px;
           padding: 6px 6px calc(6px + env(safe-area-inset-bottom, 0px));
           overflow: visible;
@@ -1193,6 +1193,7 @@
         <button data-view="shadow"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 20h18M5 20V10M11 20V4M17 20v-6"/></svg><span>影子监控</span></button>
         <button data-view="shadow-setup"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg><span>影子设置</span></button>
         <button data-view="combine"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 18l5-6 4 3 7-9"/><circle cx="4" cy="18" r="1.6"/><circle cx="20" cy="6" r="1.6"/></svg><span>日内影子</span></button>
+        <button data-view="tradfi"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg><span>美股商品</span></button>
       </nav>
       <div class="status-pill">
         <span class="led" id="led"></span>
@@ -1612,6 +1613,49 @@
           <div class="content-card">
             <div class="panel-head"><div><span class="section-eyebrow">PAPER FILLS</span><h2>最近模拟成交</h2></div></div>
             <div id="cb-trades"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ 币安 TradFi 双腿（美股 A4 + 金银油气） ============ -->
+      <section id="view-tradfi" class="view">
+        <div class="panel">
+          <div class="panel-head">
+            <div>
+              <span class="panel-kicker">BINANCE TRADFI · M3B 4-CORE DUAL-LEG</span>
+              <h2>美股 + 商品双腿影子</h2>
+              <p class="sub">50% 美股 1x 横截面三因子 A4（7+14d 腿内逆波 + 2 相位切片 + 拆股防护）+ 50% 金银油气 EMA5/20 逆波趋势（XAU/XAG/CL/NATGAS），2.0x 总杠杆。</p>
+            </div>
+            <div class="actions">
+              <span id="tf-run-state" class="combine-state"><i></i>读取中</span>
+              <button class="btn ghost" id="tf-refresh" type="button">刷新数据</button>
+            </div>
+          </div>
+          <div id="tf-status" class="warn-banner" hidden></div>
+          <section class="combine-overview" id="tf-metrics" aria-label="TradFi 双腿表现"></section>
+          <div class="content-card equity-card">
+            <div class="panel-head monitor-section-head">
+              <div><span class="section-eyebrow">PERFORMANCE</span><h2>TradFi 影子盈亏曲线</h2></div>
+              <div class="segmented" id="tf-chart-tabs" role="group" aria-label="TradFi 时间区间">
+                <button type="button" data-range="day" aria-pressed="false">日</button>
+                <button type="button" data-range="week" aria-pressed="false">周</button>
+                <button type="button" data-range="month" aria-pressed="false">月</button>
+                <button type="button" data-range="all" aria-pressed="true">全部</button>
+              </div>
+            </div>
+            <div class="chart" id="tf-chart"></div>
+          </div>
+          <div class="content-card">
+            <div class="panel-head monitor-section-head">
+              <div><span class="section-eyebrow">CURRENT POSITIONS</span><h2>当前持仓（美股 A4 + 四核心商品）</h2></div>
+              <span id="tf-position-count" class="muted sm"></span>
+            </div>
+            <div id="tf-positions"></div>
+            <div id="tf-config" class="combine-config"></div>
+          </div>
+          <div class="content-card">
+            <div class="panel-head"><div><span class="section-eyebrow">REBALANCE LOG</span><h2>最近每日调仓记录（UTC 00:05）</h2></div></div>
+            <div id="tf-rebalances"></div>
           </div>
         </div>
       </section>
