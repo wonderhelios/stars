@@ -2177,6 +2177,29 @@ async function refreshTradFi() {
   }
 }
 
+async function saveTradFiConfig() {
+  const body = {
+    capital: Number($("tf-capital").value),
+    gross_leverage: Number($("tf-leverage").value),
+    stock_alloc: Number($("tf-stock-alloc").value) / 100,
+    stock_min_bars: Number($("tf-min-bars").value),
+    max_dd_pct: Number($("tf-max-dd").value),
+    maker_wait_sec: Number($("tf-maker-wait").value),
+    taker_only: $("tf-taker-only").value === "true",
+    armed: $("tf-armed").value === "true",
+    auto_run: $("tf-auto").value === "true",
+    key_file: ($("tf-key-file").value || "").trim(),
+    proxy_url: ($("tf-proxy").value || "").trim(),
+  };
+  const res = await fetchJSON("/api/tradfi/config", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  }, 15000);
+  if (res && res.config) tfConfigInto(res.config);
+  return res;
+}
+
 if ($("tf-refresh")) $("tf-refresh").addEventListener("click", () => { refreshTradFiConfig(true); refreshTradFi(); });
 if ($("tf-cfg-save")) $("tf-cfg-save").addEventListener("click", async () => {
   const btn = $("tf-cfg-save");
@@ -2184,26 +2207,8 @@ if ($("tf-cfg-save")) $("tf-cfg-save").addEventListener("click", async () => {
   btn.disabled = true;
   btn.textContent = "保存中…";
   try {
-    const body = {
-      capital: Number($("tf-capital").value),
-      gross_leverage: Number($("tf-leverage").value),
-      stock_alloc: Number($("tf-stock-alloc").value) / 100,
-      stock_min_bars: Number($("tf-min-bars").value),
-      max_dd_pct: Number($("tf-max-dd").value),
-      maker_wait_sec: Number($("tf-maker-wait").value),
-      taker_only: $("tf-taker-only").value === "true",
-      armed: $("tf-armed").value === "true",
-      auto_run: $("tf-auto").value === "true",
-      key_file: ($("tf-key-file").value || "").trim(),
-      proxy_url: ($("tf-proxy").value || "").trim(),
-    };
-    const res = await fetchJSON("/api/tradfi/config", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-    }, 15000);
-    if (res && res.config) tfConfigInto(res.config);
-    if (st) st.textContent = "配置已保存 ✓";
+    await saveTradFiConfig();
+    if (st) st.textContent = "配置已保存 ✓（杠杆/比例下轮自动同步，或点「立即同步影子」马上生效）";
     btn.textContent = "已保存 ✓";
   } catch (e) {
     if (st) st.textContent = "保存失败：" + ((e && e.message) || e);
@@ -2211,6 +2216,60 @@ if ($("tf-cfg-save")) $("tf-cfg-save").addEventListener("click", async () => {
   } finally {
     btn.disabled = false;
     setTimeout(() => { btn.textContent = "保存配置"; }, 1600);
+  }
+});
+if ($("tf-shadow-rebal")) $("tf-shadow-rebal").addEventListener("click", async () => {
+  const btn = $("tf-shadow-rebal");
+  const st = $("tf-cfg-status");
+  btn.disabled = true;
+  btn.textContent = "同步中…";
+  if (st) st.textContent = "正在保存参数并立即按新杠杆/比例调仓影子（保留历史收益）…";
+  try {
+    await saveTradFiConfig();
+    const res = await fetchJsonSafe("/api/tradfi/shadow/rebalance", { method: "POST" }, 90000);
+    if (!res.ok) throw new Error(res.error || "失败");
+    if (res.shadow) {
+      lastTradFiData = res.shadow;
+      renderTradFi(res.shadow);
+    } else {
+      await refreshTradFi();
+    }
+    if (st) st.textContent = "影子已按最新策略参数立即调仓 ✓";
+  } catch (e) {
+    if (st) st.textContent = "同步影子失败：" + ((e && e.message) || e);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "立即同步影子";
+  }
+});
+if ($("tf-shadow-reset")) $("tf-shadow-reset").addEventListener("click", async () => {
+  const cap = Number($("tf-capital").value);
+  if (!Number.isFinite(cap) || cap < 50) {
+    alert("请先填写有效的规划本金（≥ $50）。");
+    return;
+  }
+  if (!confirm(`确认按本金 $${cap.toLocaleString("en-US")} 重置美股+商品影子？\n\n会清空当前模拟历史与旧持仓，立即按新本金与当前策略参数重新建仓（不发真单）。`)) return;
+  const btn = $("tf-shadow-reset");
+  const st = $("tf-cfg-status");
+  btn.disabled = true;
+  btn.textContent = "重置中…";
+  if (st) st.textContent = `正在按 $${cap.toLocaleString("en-US")} 重置影子并拉取币安行情建仓…`;
+  try {
+    await saveTradFiConfig();
+    const res = await fetchJsonSafe("/api/tradfi/shadow/reset", { method: "POST" }, 90000);
+    if (!res.ok) throw new Error(res.error || "失败");
+    if (res.shadow) {
+      lastTradFiData = res.shadow;
+      renderTradFi(res.shadow);
+    } else {
+      await refreshTradFi();
+    }
+    if (st) st.textContent = `影子已按本金 $${cap.toLocaleString("en-US")} 重置并建仓 ✓`;
+  } catch (e) {
+    if (st) st.textContent = "重置影子失败：" + ((e && e.message) || e);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "按本金重置影子";
   }
 });
 if ($("tf-plan-btn")) $("tf-plan-btn").addEventListener("click", async () => {

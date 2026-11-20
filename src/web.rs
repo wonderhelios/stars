@@ -95,6 +95,8 @@ pub fn router(state: AppState) -> Router {
         .route("/api/intraday", get(intraday_status))
         .route("/api/tradfi", get(tradfi_status))
         .route("/api/tradfi/config", get(tradfi_config_get).post(tradfi_config_save))
+        .route("/api/tradfi/shadow/rebalance", post(tradfi_shadow_rebalance))
+        .route("/api/tradfi/shadow/reset", post(tradfi_shadow_reset))
         .route("/api/tradfi/plan", post(tradfi_plan))
         .route("/api/tradfi/execute", post(tradfi_execute))
         .route("/api/tradfi/flatten", post(tradfi_flatten))
@@ -490,6 +492,62 @@ async fn tradfi_config_save(
         return (StatusCode::INTERNAL_SERVER_ERROR, Json(json!({"ok": false, "error": format!("保存 TradFi 配置失败: {e}")}))).into_response();
     }
     Json(json!({"ok": true, "config": tradfi_config_public_json(&cfg)})).into_response()
+}
+
+async fn run_tradfi_shadow_python(
+    state: &AppState,
+    cfg: &TradFiConfig,
+    extra: &[&str],
+) -> anyhow::Result<serde_json::Value> {
+    let py = {
+        let live_cfg = state.live.lock().await.config.clone();
+        if !live_cfg.ml_python.trim().is_empty() && std::path::Path::new(&live_cfg.ml_python).exists() {
+            live_cfg.ml_python
+        } else {
+            "python3".to_string()
+        }
+    };
+    let repo_dir = resolve_tradfi_repo_dir();
+    let cfg_path = tradfi_config_path(state);
+    let mut cmd = tokio::process::Command::new(&py);
+    cmd.arg("-m")
+        .arg("tradfi.shadow")
+        .arg("--config")
+        .arg(&cfg_path)
+        .arg("--state-file")
+        .arg(&*state.tradfi_path)
+        .args(extra)
+        .current_dir(&repo_dir);
+    if !cfg.proxy_url.trim().is_empty() {
+        cmd.env("HTTPS_PROXY", cfg.proxy_url.trim());
+        cmd.env("HTTP_PROXY", cfg.proxy_url.trim());
+    }
+    let out = cmd.output().await.context("启动 tradfi.shadow 失败")?;
+    if !out.status.success() {
+        let stderr = String::from_utf8_lossy(&out.stderr).trim().to_string();
+        let stdout = String::from_utf8_lossy(&out.stdout).trim().to_string();
+        let detail = if !stderr.is_empty() { stderr } else { stdout };
+        return Err(anyhow::anyhow!("{detail}"));
+    }
+    let stdout = String::from_utf8_lossy(&out.stdout);
+    let val: serde_json::Value = serde_json::from_str(stdout.trim()).context("解析 TradFi 影子结果失败")?;
+    Ok(val)
+}
+
+async fn tradfi_shadow_rebalance(State(state): State<AppState>) -> Response {
+    let cfg = load_tradfi_config(&tradfi_config_path(&state));
+    match run_tradfi_shadow_python(&state, &cfg, &["--rebalance-now"]).await {
+        Ok(val) => Json(json!({"ok": true, "shadow": val})).into_response(),
+        Err(e) => (StatusCode::INTERNAL_SERVER_ERROR, Json(json!({"ok": false, "error": format!("同步并调仓 TradFi 影子失败: {e}")}))).into_response(),
+    }
+}
+
+async fn tradfi_shadow_reset(State(state): State<AppState>) -> Response {
+    let cfg = load_tradfi_config(&tradfi_config_path(&state));
+    match run_tradfi_shadow_python(&state, &cfg, &["--reset"]).await {
+        Ok(val) => Json(json!({"ok": true, "shadow": val})).into_response(),
+        Err(e) => (StatusCode::INTERNAL_SERVER_ERROR, Json(json!({"ok": false, "error": format!("重置 TradFi 影子失败: {e}")}))).into_response(),
+    }
 }
 
 async fn tradfi_plan(State(state): State<AppState>) -> Response {

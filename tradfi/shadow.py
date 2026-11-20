@@ -10,6 +10,7 @@ No API keys, never places real orders. Writes atomic JSON snapshot to `STARS_TRA
 """
 from __future__ import annotations
 
+import argparse
 import json
 import os
 import time
@@ -121,18 +122,24 @@ def fetch_funding_since(symbol: str, start_ms: int, end_ms: int) -> List[Tuple[i
 class TradFiShadowLedger:
     """In-memory + atomic-JSON shadow account for M3b 4-Core Dual-Leg."""
 
-    def __init__(self, state: Optional[Dict[str, Any]] = None, cfg: Optional[StrategyConfig] = None):
+    def __init__(
+        self,
+        state: Optional[Dict[str, Any]] = None,
+        cfg: Optional[StrategyConfig] = None,
+        capital: Optional[float] = None,
+    ):
         self.cfg = cfg or StrategyConfig(gross_leverage=GROSS_LEVERAGE)
         if state:
             self.state = state
         else:
+            cap = float(capital) if (capital is not None and float(capital) > 0.0) else CAPITAL_DEFAULT
             now_ms = int(time.time() * 1000)
             self.state = {
                 "strategy": "binance_tradfi_m3b_4core",
                 "running": True,
-                "capital": CAPITAL_DEFAULT,
-                "cash": CAPITAL_DEFAULT,
-                "equity": CAPITAL_DEFAULT,
+                "capital": cap,
+                "cash": cap,
+                "equity": cap,
                 "pnl": 0.0,
                 "pnl_pct": 0.0,
                 "realized_pnl": 0.0,
@@ -167,7 +174,12 @@ class TradFiShadowLedger:
             }
 
     @classmethod
-    def load(cls, path: Path, cfg: Optional[StrategyConfig] = None) -> "TradFiShadowLedger":
+    def load(
+        cls,
+        path: Path,
+        cfg: Optional[StrategyConfig] = None,
+        capital: Optional[float] = None,
+    ) -> "TradFiShadowLedger":
         if path.exists():
             try:
                 data = json.loads(path.read_text(encoding="utf-8"))
@@ -175,7 +187,7 @@ class TradFiShadowLedger:
                     return cls(state=data, cfg=cfg)
             except Exception:
                 pass
-        return cls(state=None, cfg=cfg)
+        return cls(state=None, cfg=cfg, capital=capital)
 
     def save(self, path: Path) -> None:
         path.parent.mkdir(parents=True, exist_ok=True)
@@ -386,14 +398,41 @@ def should_rebalance_now(ledger: TradFiShadowLedger, now_ms: int) -> bool:
     return gm.tm_hour > 0 or gm.tm_min >= REBAL_MINUTE_UTC
 
 
-def sync_shadow_config_from_file(ledger: TradFiShadowLedger, config_path: Path = CONFIG_PATH) -> None:
-    """Sync non-secret strategy parameters from tradfi_config.json into the shadow daemon."""
+def _read_config_file(config_path: Path) -> Dict[str, Any]:
     if not config_path.exists():
-        return
+        return {}
     try:
         data = json.loads(config_path.read_text(encoding="utf-8"))
-        if not isinstance(data, dict):
-            return
+        return data if isinstance(data, dict) else {}
+    except Exception:
+        return {}
+
+
+def _capital_from_config(config_path: Path) -> float:
+    data = _read_config_file(config_path)
+    try:
+        cap = float(data.get("capital", CAPITAL_DEFAULT))
+        if cap > 0.0:
+            return max(50.0, min(10_000_000.0, cap))
+    except (TypeError, ValueError):
+        pass
+    return CAPITAL_DEFAULT
+
+
+def sync_shadow_config_from_file(ledger: TradFiShadowLedger, config_path: Path = CONFIG_PATH) -> bool:
+    """Sync non-secret strategy parameters from tradfi_config.json into the shadow daemon.
+
+    Returns True if any portfolio-affecting parameter (gross_leverage, stock_alloc,
+    stock_min_bars) changed relative to the ledger's recorded config.
+    """
+    data = _read_config_file(config_path)
+    if not data:
+        return False
+    c = ledger.state.setdefault("config", {})
+    old_lev = float(c.get("gross_leverage", ledger.cfg.gross_leverage))
+    old_sa = float(c.get("stock_alloc", ledger.cfg.stock_alloc))
+    old_mb = int(c.get("stock_min_bars", ledger.cfg.stock_min_bars))
+    try:
         if "gross_leverage" in data:
             ledger.cfg.gross_leverage = max(1.0, min(5.0, float(data["gross_leverage"])))
         if "stock_alloc" in data:
@@ -406,18 +445,27 @@ def sync_shadow_config_from_file(ledger: TradFiShadowLedger, config_path: Path =
         if proxy_url and not os.environ.get("HTTPS_PROXY"):
             os.environ["HTTPS_PROXY"] = proxy_url
             os.environ["HTTP_PROXY"] = proxy_url
-        c = ledger.state.setdefault("config", {})
         c["gross_leverage"] = ledger.cfg.gross_leverage
         c["stock_alloc"] = ledger.cfg.stock_alloc
         c["comm_alloc"] = ledger.cfg.comm_alloc
         c["stock_min_bars"] = ledger.cfg.stock_min_bars
     except Exception:
-        pass
+        return False
+    return (
+        abs(ledger.cfg.gross_leverage - old_lev) > 1e-6
+        or abs(ledger.cfg.stock_alloc - old_sa) > 1e-6
+        or ledger.cfg.stock_min_bars != old_mb
+    )
 
 
-def step_once(ledger: TradFiShadowLedger) -> None:
+def step_once(
+    ledger: TradFiShadowLedger,
+    state_path: Path = STATE_PATH,
+    config_path: Path = CONFIG_PATH,
+    force_rebalance: bool = False,
+) -> Dict[str, Any]:
     now_ms = int(time.time() * 1000)
-    sync_shadow_config_from_file(ledger)
+    cfg_changed = sync_shadow_config_from_file(ledger, config_path)
     all_syms = sorted(set(ledger.cfg.stock_universe) | set(ledger.cfg.comm_universe) | set(ledger.state["positions"].keys()))
     try:
         prices = fetch_mark_prices(all_syms)
@@ -435,7 +483,7 @@ def step_once(ledger: TradFiShadowLedger) -> None:
         if f_events:
             ledger.apply_funding_events(f_events, prices)
 
-        if should_rebalance_now(ledger, now_ms):
+        if force_rebalance or cfg_changed or should_rebalance_now(ledger, now_ms):
             bars = fetch_closed_daily_bars(all_syms, limit=40, now_ms=now_ms)
             day_idx = now_ms // 86_400_000
             target = compute_m3b_target(
@@ -455,15 +503,43 @@ def step_once(ledger: TradFiShadowLedger) -> None:
     except Exception as exc:
         ledger.state["last_error"] = str(exc)
         ledger.state["last_update"] = now_ms
-    ledger.save(STATE_PATH)
+    ledger.save(state_path)
+    return ledger.snapshot()
 
 
 def main() -> None:
+    parser = argparse.ArgumentParser(description="Binance TradFi M3b 4-Core forward shadow daemon")
+    parser.add_argument("--state-file", default=str(STATE_PATH), help="Path to tradfi_shadow.json")
+    parser.add_argument("--config", default=str(CONFIG_PATH), help="Path to tradfi_config.json")
+    parser.add_argument("--reset", action="store_true", help="Reset shadow ledger using config capital & params, rebalance once, and print JSON")
+    parser.add_argument("--rebalance-now", action="store_true", help="Sync latest config params and rebalance existing shadow immediately, then print JSON")
+    args = parser.parse_args()
+
+    state_path = Path(args.state_file)
+    config_path = Path(args.config)
     cfg = StrategyConfig(gross_leverage=GROSS_LEVERAGE)
-    ledger = TradFiShadowLedger.load(STATE_PATH, cfg=cfg)
-    print(f"[tradfi-shadow] started | path={STATE_PATH} | capital=${ledger.state['capital']:.0f} | leverage={cfg.gross_leverage}x", flush=True)
+    cap = _capital_from_config(config_path)
+
+    if args.reset:
+        ledger = TradFiShadowLedger(state=None, cfg=cfg, capital=cap)
+        snap = step_once(ledger, state_path=state_path, config_path=config_path, force_rebalance=True)
+        print(json.dumps(snap, ensure_ascii=False))
+        return
+
+    if args.rebalance_now:
+        ledger = TradFiShadowLedger.load(state_path, cfg=cfg, capital=cap)
+        snap = step_once(ledger, state_path=state_path, config_path=config_path, force_rebalance=True)
+        print(json.dumps(snap, ensure_ascii=False))
+        return
+
+    ledger = TradFiShadowLedger.load(state_path, cfg=cfg, capital=cap)
+    print(f"[tradfi-shadow] started | path={state_path} | capital=${ledger.state['capital']:.0f} | leverage={cfg.gross_leverage}x", flush=True)
     while True:
-        step_once(ledger)
+        # Reload from disk each cycle so external Web UI resets/rebalances are never overwritten
+        loop_cfg = StrategyConfig(gross_leverage=GROSS_LEVERAGE)
+        loop_cap = _capital_from_config(config_path)
+        ledger = TradFiShadowLedger.load(state_path, cfg=loop_cfg, capital=loop_cap)
+        step_once(ledger, state_path=state_path, config_path=config_path)
         print(
             f"[tradfi-shadow] eq=${ledger.state['equity']:.2f} ({ledger.state['pnl_pct']:+.2f}%) "
             f"pos={len(ledger.state['positions'])} err={ledger.state['last_error']}",

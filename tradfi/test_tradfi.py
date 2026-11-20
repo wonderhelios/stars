@@ -233,12 +233,17 @@ class TestTradFiStrategy(unittest.TestCase):
             self.assertEqual(loaded["capital"], 5000.0)
             self.assertEqual(loaded["gross_leverage"], 4.0)
 
-            ledger = TradFiShadowLedger(cfg=StrategyConfig(gross_leverage=3.0))
-            sync_shadow_config_from_file(ledger, config_path=cp)
+            ledger = TradFiShadowLedger(cfg=StrategyConfig(gross_leverage=3.0), capital=5000.0)
+            self.assertEqual(ledger.state["capital"], 5000.0)
+            self.assertEqual(ledger.state["equity"], 5000.0)
+            changed = sync_shadow_config_from_file(ledger, config_path=cp)
+            self.assertTrue(changed)
             self.assertEqual(ledger.cfg.gross_leverage, 4.0)
             self.assertAlmostEqual(ledger.cfg.stock_alloc, 0.60, places=4)
             self.assertAlmostEqual(ledger.cfg.comm_alloc, 0.40, places=4)
             self.assertEqual(ledger.cfg.stock_min_bars, 8)
+            # Second sync with identical config should report no change
+            self.assertFalse(sync_shadow_config_from_file(ledger, config_path=cp))
 
 
 if __name__ == "__main__":
