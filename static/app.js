@@ -2310,7 +2310,7 @@ function renderTradFi(d) {
           const isLong = p.side === "long";
           const u = Number(p.unrealized_pnl) || 0;
           const fu = Number(p.funding_usd) || 0;
-          const legLabel = p.leg === "stock_a4" ? '<span class="badge-mini ok">美股A4</span>' : '<span class="badge-mini warn">商品趋势</span>';
+          const legLabel = p.leg === "stock_a4" ? '<span class="badge-mini ok">美股A4</span>' : '<span class="badge-mini warn">商品S4波段</span>';
           return `<tr><td><b>${escapeHTML(p.symbol)}</b></td><td>${legLabel}</td><td class="${isLong ? "pos" : "neg"}">${isLong ? "多" : "空"}</td><td>${((Number(p.target_weight) || 0) * 100).toFixed(1)}%</td><td>$${fmt(p.notional || 0, 0)}</td><td>${fmtCompact(p.entry_price || 0)}</td><td>${fmtCompact(p.mark_price || 0)}</td><td class="${fu >= 0 ? "pos" : "neg"}">${moneySigned(fu)}</td><td class="${u >= 0 ? "pos" : "neg"}">${moneySigned(u)}</td></tr>`;
         }).join("") + '</tbody></table></div>'
       : '<div class="empty">暂无持仓，等待每日 UTC 00:05 调仓或首次初始化。</div>';
@@ -2318,9 +2318,10 @@ function renderTradFi(d) {
   if ($("tf-position-count")) $("tf-position-count").textContent = `${ps.length} 个持仓 · 毛敞口 $${fmt(d.gross_notional || 0, 0)}`;
   if ($("tf-config")) {
     const chips = [
-      `总杠杆 ${fmt(cfg.gross_leverage || 2.0, 1)}x`,
+      `总杠杆 ${fmt(cfg.gross_leverage || 3.0, 1)}x`,
       `美股A4 ${Math.round(100 * (cfg.stock_alloc || 0.5))}%`,
-      `4核心商品 ${Math.round(100 * (cfg.comm_alloc || 0.5))}%`,
+      `4核心商品S4 ${Math.round(100 * (cfg.comm_alloc || 0.5))}%`,
+      `新币冷启动 ≥ ${cfg.stock_min_bars || 7}d`,
       `费用 ${fmt(cfg.fee_bp || 2.0, 1)}bp/边`,
       `拆股防护 ≥ ${Math.round(100 * (cfg.split_ret_threshold || 0.4))}%`,
     ];

@@ -5,11 +5,12 @@ Architecture (verified causal OOS on 2026-04 ~ 2026-11):
     * Universe: 18 1x US stock/ETF perps (excludes 3x leveraged SOXL/SOXS).
     * Corporate Action Guard: any symbol with |daily_ret| >= 40% in the last 14 closed bars
       (e.g. SNDK 8-for-1 stock split) is masked out of signal eligibility for 14 days.
-    * Score: 0.5 * score_3f(7d) + 0.5 * score_3f(14d), where
+    * Score: 0.5 * score_3f(7d) + 0.5 * score_3f(14d) for mature stocks (>= 15 bars), with
+      7-day fast onboarding fallback (score_3f(7d) once >= 7 closed daily bars are available).
       score_3f(L) = pct_rank(cum_ret_L / vol_L) + pct_rank(close / max_L - 1) + pct_rank(up_frac_L).
     * Liquidity filter: 7-day average quote volume >= $5,000,000.
     * Selection: top 30% Long, bottom 30% Short (min 2 per side, requires >= 6 eligible stocks).
-    * Weighting: within-leg inverse-volatility (14d std), single-name cap = 30% of leg gross.
+    * Weighting: within-leg inverse-volatility (up to 14d std), single-name cap = 30% of leg gross.
     * 2-Phase Slicing: even-day slice + odd-day slice averaged 50/50 to eliminate phase luck.
 - Leg 2 (50% capital): 4 High-Liquidity Core Commodities S4 Swing (EMA5/20 + 5d Trailing Exit + RSI Extreme Half-Size)
     * Universe: XAUUSDT (Gold), XAGUSDT (Silver), CLUSDT (WTI Crude Oil), NATGASUSDT (NatGas).
@@ -46,10 +47,11 @@ class DailyBar:
 
 @dataclass
 class StrategyConfig:
-    gross_leverage: float = 2.0
+    gross_leverage: float = 3.0
     stock_alloc: float = 0.50
     comm_alloc: float = 0.50
     min_vol_usd: float = 5_000_000.0
+    stock_min_bars: int = 7
     split_ret_threshold: float = 0.40
     split_block_days: int = 14
     stock_top_frac: float = 0.30
@@ -197,16 +199,23 @@ def compute_stock_a4_slice(
     bars_map: Dict[str, List[DailyBar]],
     cfg: StrategyConfig,
 ) -> Tuple[Dict[str, float], Dict[str, float], List[str]]:
-    """Compute one single-phase A4 stock leg weight vector (gross = cfg.gross_leverage)."""
+    """Compute one single-phase A4 stock leg weight vector (gross = cfg.gross_leverage).
+
+    Mature stocks (>= 15 bars) use 0.5 * score_3f(7d) + 0.5 * score_3f(14d).
+    Newly listed liquid stocks (cfg.stock_min_bars <= len < 15, default 7) use pure
+    score_3f(7d) fallback so fresh contracts (e.g. ANTUSDT, IGVUSDT, SOXXUSDT) onboard
+    after 7 trading days without waiting 15 days.
+    """
     rets_map: Dict[str, List[float]] = {}
     blocked: List[str] = []
     eligible: List[str] = []
+    min_bars = max(6, int(cfg.stock_min_bars))
 
     for sym in cfg.stock_universe:
         if sym in LEVERAGED_BLACKLIST:
             continue
         bars = bars_map.get(sym)
-        if not bars or len(bars) < 15:
+        if not bars or len(bars) < min_bars:
             continue
         rets, is_blocked = _clean_returns_and_block(bars, cfg.split_ret_threshold, cfg.split_block_days)
         rets_map[sym] = rets
@@ -221,11 +230,14 @@ def compute_stock_a4_slice(
 
     s7 = _stock_3f_score_for_window(bars_map, rets_map, eligible, 7)
     s14 = _stock_3f_score_for_window(bars_map, rets_map, eligible, 14)
-    common = sorted(set(s7) & set(s14))
+    common = sorted(s7.keys())
     if len(common) < 6:
         return {}, {}, blocked
 
-    scores = {s: 0.5 * s7[s] + 0.5 * s14[s] for s in common}
+    scores = {
+        s: (0.5 * s7[s] + 0.5 * s14[s]) if s in s14 else s7[s]
+        for s in common
+    }
     ranked = sorted(common, key=lambda s: (-scores[s], s))
     k = max(2, int(round(len(ranked) * cfg.stock_top_frac)))
     k = min(k, len(ranked) // 2)

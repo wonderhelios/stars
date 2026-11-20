@@ -29,7 +29,7 @@ from tradfi.strategy import (
 FAPI_BASE = os.environ.get("BINANCE_FAPI_BASE", "https://fapi.binance.com").rstrip("/")
 STATE_PATH = Path(os.environ.get("STARS_TRADFI", "/var/lib/stars/tradfi_shadow.json"))
 CAPITAL_DEFAULT = float(os.environ.get("STARS_TRADFI_CAPITAL", "2000"))
-GROSS_LEVERAGE = float(os.environ.get("STARS_TRADFI_LEVERAGE", "2.0"))
+GROSS_LEVERAGE = float(os.environ.get("STARS_TRADFI_LEVERAGE", "3.0"))
 FEE_RATE = float(os.environ.get("STARS_TRADFI_FEE_BP", "2.0")) / 10_000.0  # Maker 2bp default
 POLL_SEC = int(os.environ.get("STARS_TRADFI_POLL_SEC", "300"))
 REBAL_MINUTE_UTC = int(os.environ.get("STARS_TRADFI_REBAL_MINUTE", "5"))  # 00:05 UTC
@@ -156,6 +156,8 @@ class TradFiShadowLedger:
                     "gross_leverage": self.cfg.gross_leverage,
                     "stock_alloc": self.cfg.stock_alloc,
                     "comm_alloc": self.cfg.comm_alloc,
+                    "stock_min_bars": self.cfg.stock_min_bars,
+                    "comm_mode": "S4_swing",
                     "fee_bp": round(FEE_RATE * 10_000.0, 2),
                     "min_vol_usd": self.cfg.min_vol_usd,
                     "split_ret_threshold": self.cfg.split_ret_threshold,

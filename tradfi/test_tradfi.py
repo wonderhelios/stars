@@ -10,6 +10,7 @@ from tradfi.binance_exec import (
     SymbolFilters,
     build_rebalance_orders,
     check_dd_breaker,
+    exchange_leverage_for_gross,
     format_decimal,
     round_step,
     round_tick,
@@ -193,6 +194,27 @@ class TestTradFiStrategy(unittest.TestCase):
         self.assertNotIn("CLUSDT", w)
         self.assertGreater(sigs["NATGASUSDT"], 0.0)
         self.assertLess(w["XAUUSDT"], 0.0)
+
+    def test_fast_7d_onboarding_and_exchange_leverage_scaling(self) -> None:
+        panel = self._sample_panel()
+        # New listing with 7 bars (6 daily returns) -> should be scored via 7d fallback
+        panel["ANTUSDT"] = _make_bars([100.0 * (1.02 ** i) for i in range(7)])
+        # Very fresh listing with only 4 bars -> still skipped
+        panel["IGVUSDT"] = _make_bars([100.0 * (1.03 ** i) for i in range(4)])
+        cfg = StrategyConfig(
+            stock_universe=[k for k in panel if k not in ("XAUUSDT", "XAGUSDT", "CLUSDT", "NATGASUSDT")],
+        )
+        self.assertEqual(cfg.gross_leverage, 3.0)
+        self.assertEqual(cfg.stock_min_bars, 7)
+        w, scores, _ = compute_stock_a4_slice(panel, cfg)
+        self.assertIn("ANTUSDT", scores)
+        self.assertNotIn("IGVUSDT", scores)
+        self.assertGreater(w.get("ANTUSDT", 0.0), 0.0)
+
+        # Exchange leverage ceiling scales with target gross leverage
+        self.assertEqual(exchange_leverage_for_gross(2.0), 5)
+        self.assertEqual(exchange_leverage_for_gross(3.0), 6)
+        self.assertEqual(exchange_leverage_for_gross(5.0), 10)
 
 
 if __name__ == "__main__":

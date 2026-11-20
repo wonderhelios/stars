@@ -86,6 +86,11 @@ def format_decimal(val: float, step: float) -> str:
     return f"{val:.{_step_decimals(step)}f}"
 
 
+def exchange_leverage_for_gross(gross_leverage: float) -> int:
+    """Compute Binance per-symbol cross leverage ceiling (>= 2x target gross, min 5x)."""
+    return max(5, int(math.ceil(max(1.0, float(gross_leverage)) * 2.0)))
+
+
 class BinanceFuturesClient:
     """Minimal HMAC-SHA256 Binance USDⓈ-M Futures REST client (pure stdlib)."""
 
@@ -333,8 +338,8 @@ def main() -> None:
     p.add_argument("--dry-run", action="store_true", help="Preview plan only without placing orders")
     p.add_argument("--flatten", action="store_true", help="Close all open TradFi positions (reduce-only)")
     p.add_argument("--capital", type=float, default=2000.0, help="Simulated equity in dry-run when API key absent")
-    p.add_argument("--leverage", type=float, default=2.0, help="Total gross leverage (default 2.0x)")
-    p.add_argument("--max-dd-pct", type=float, default=15.0, help="Hard peak-to-trough DD breaker pct (0=off)")
+    p.add_argument("--leverage", type=float, default=3.0, help="Total gross leverage (default 3.0x)")
+    p.add_argument("--max-dd-pct", type=float, default=20.0, help="Hard peak-to-trough DD breaker pct (0=off)")
     p.add_argument("--maker-wait-sec", type=float, default=8.0, help="Seconds to wait for GTX Post-Only fill")
     p.add_argument("--taker-only", action="store_true", help="Skip GTX Maker and send MARKET directly")
     p.add_argument("--state-file", type=str, default="/var/lib/stars/tradfi_live_state.json")
@@ -391,10 +396,11 @@ def main() -> None:
     }
 
     if live:
+        exch_lev = exchange_leverage_for_gross(args.leverage)
         for o in orders:
             flt = filters.get(o.symbol, SymbolFilters(o.symbol, 0.001, 0.001, 0.01, 5.0))
             if not o.reduce_only:
-                client.ensure_cross_and_leverage(o.symbol, leverage=5)
+                client.ensure_cross_and_leverage(o.symbol, leverage=exch_lev)
             res = execute_order_maker_first(client, o, flt, maker_wait_sec=args.maker_wait_sec, taker_only=args.taker_only)
             summary["results"].append(res)
         # Persist updated stock_phases after live rebalance
