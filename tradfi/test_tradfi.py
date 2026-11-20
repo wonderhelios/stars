@@ -268,8 +268,22 @@ class TestTradFiStrategy(unittest.TestCase):
         self.assertNotIn(long_sym, ledger.state["positions"])
         self.assertIn(long_sym, ledger.state["stop_cooldowns"])
 
+        # Shock one short position in our favor (+16%) then pull back 6% -> trailing TP triggers
+        short_sym = next(s for s, p in ledger.state["positions"].items() if p["side"] == "short")
+        fav_px = dict(shocked)
+        fav_px[short_sym] = prices[short_sym] * 0.84  # +16% favorable for short
+        risk_peak = ledger.check_intraday_risk(fav_px, now_ms + 400_000, fee_rate=0.0002)
+        self.assertEqual(risk_peak["taken"], [])
+        self.assertAlmostEqual(ledger.state["positions"][short_sym]["peak_fav_pct"], 16.0, places=2)
+
+        pullback_px = dict(fav_px)
+        pullback_px[short_sym] = prices[short_sym] * 0.90  # +10% remaining -> 6% callback >= 5%
+        risk_tp = ledger.check_intraday_risk(pullback_px, now_ms + 500_000, fee_rate=0.0002)
+        self.assertIn(short_sym, risk_tp["taken"])
+        self.assertNotIn(short_sym, ledger.state["positions"])
+
         # Shock all remaining positions adversarially to trigger 20% account DD breaker
-        crash = dict(shocked)
+        crash = dict(pullback_px)
         for sym, pos in ledger.state["positions"].items():
             crash[sym] = pos["entry_price"] * (0.70 if pos["side"] == "long" else 1.30)
         risk2 = ledger.check_intraday_risk(crash, now_ms + 600_000, fee_rate=0.0002)

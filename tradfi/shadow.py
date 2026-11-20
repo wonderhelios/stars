@@ -36,6 +36,8 @@ FEE_RATE = float(os.environ.get("STARS_TRADFI_FEE_BP", "2.0")) / 10_000.0  # Mak
 POLL_SEC = int(os.environ.get("STARS_TRADFI_POLL_SEC", "300"))
 REBAL_MINUTE_UTC = int(os.environ.get("STARS_TRADFI_REBAL_MINUTE", "5"))  # 00:05 UTC
 POS_STOP_PCT_DEFAULT = float(os.environ.get("STARS_TRADFI_STOP_PCT", "15.0"))  # 15% intraday single-pos hard stop
+TRAIL_TP_ACTIVATE_DEFAULT = float(os.environ.get("STARS_TRADFI_TRAIL_ACT", "12.0"))  # activate trailing TP at +12%
+TRAIL_TP_CALLBACK_DEFAULT = float(os.environ.get("STARS_TRADFI_TRAIL_CB", "5.0"))  # lock profit on 5% pullback from peak
 MAX_DD_PCT_DEFAULT = float(os.environ.get("STARS_TRADFI_MAX_DD_PCT", "20.0"))  # 20% account hard DD breaker
 STOP_COOLDOWN_MS = 24 * 3_600_000
 
@@ -174,6 +176,8 @@ class TradFiShadowLedger:
                     "stock_min_bars": self.cfg.stock_min_bars,
                     "comm_mode": "S4_swing",
                     "pos_stop_pct": POS_STOP_PCT_DEFAULT,
+                    "trail_tp_activate_pct": TRAIL_TP_ACTIVATE_DEFAULT,
+                    "trail_tp_callback_pct": TRAIL_TP_CALLBACK_DEFAULT,
                     "max_dd_pct": MAX_DD_PCT_DEFAULT,
                     "fee_bp": round(FEE_RATE * 10_000.0, 2),
                     "min_vol_usd": self.cfg.min_vol_usd,
@@ -404,6 +408,8 @@ class TradFiShadowLedger:
         c = self.state.setdefault("config", {})
         max_dd_limit = float(c.get("max_dd_pct", MAX_DD_PCT_DEFAULT))
         pos_stop_limit = float(c.get("pos_stop_pct", POS_STOP_PCT_DEFAULT))
+        trail_act = float(c.get("trail_tp_activate_pct", TRAIL_TP_ACTIVATE_DEFAULT))
+        trail_cb = float(c.get("trail_tp_callback_pct", TRAIL_TP_CALLBACK_DEFAULT))
         cooldowns = self.state.setdefault("stop_cooldowns", {})
         for sym in [s for s, exp in list(cooldowns.items()) if int(exp or 0) <= now_ms]:
             del cooldowns[sym]
@@ -448,12 +454,13 @@ class TradFiShadowLedger:
         if self.state.get("breaker_tripped"):
             return {"breaker_tripped": True, "stopped": [], "dd_pct": dd_pct}
 
-        # 2. Single-position intraday hard stop-loss
+        # 2. Single-position intraday hard stop-loss & trailing take-profit
         stopped: List[str] = []
+        taken: List[str] = []
         changes: List[str] = []
         turnover = 0.0
         fees = 0.0
-        if pos_stop_limit > 0.0 and positions:
+        if positions:
             for sym in sorted(list(positions.keys())):
                 pos = positions[sym]
                 entry = float(pos["entry_price"])
@@ -461,8 +468,20 @@ class TradFiShadowLedger:
                     continue
                 px = prices.get(sym) or float(pos.get("mark_price") or entry)
                 qty = float(pos["qty"])
-                adv_pct = ((entry - px) / entry * 100.0) if qty > 0 else ((px - entry) / entry * 100.0)
-                if adv_pct >= pos_stop_limit:
+                fav_pct = ((px - entry) / entry * 100.0) if qty > 0 else ((entry - px) / entry * 100.0)
+                adv_pct = -fav_pct
+                peak_fav = max(float(pos.get("peak_fav_pct") or 0.0), fav_pct)
+                pos["peak_fav_pct"] = peak_fav
+
+                hit_stop = pos_stop_limit > 0.0 and adv_pct >= pos_stop_limit
+                hit_trail = (
+                    not hit_stop
+                    and trail_act > 0.0
+                    and trail_cb > 0.0
+                    and peak_fav >= trail_act
+                    and (peak_fav - fav_pct) >= trail_cb
+                )
+                if hit_stop or hit_trail:
                     positions.pop(sym)
                     realized = qty * (px - entry)
                     ntl = abs(qty * px)
@@ -473,9 +492,13 @@ class TradFiShadowLedger:
                     cooldowns[sym] = now_ms + STOP_COOLDOWN_MS
                     turnover += ntl
                     fees += fee
-                    stopped.append(sym)
-                    changes.append(f"⛔盘中止损:{sym}(-{adv_pct:.1f}%)")
-        if stopped:
+                    if hit_stop:
+                        stopped.append(sym)
+                        changes.append(f"⛔盘中止损:{sym}(-{adv_pct:.1f}%)")
+                    else:
+                        taken.append(sym)
+                        changes.append(f"🎯盘中移动止盈:{sym}({fav_pct:+.1f}%/峰+{peak_fav:.1f}%)")
+        if stopped or taken:
             self.mark_to_market(prices, now_ms)
             self.state["rebalances"].append({
                 "ts": now_ms,
@@ -489,7 +512,7 @@ class TradFiShadowLedger:
             })
             if len(self.state["rebalances"]) > 200:
                 del self.state["rebalances"][:-200]
-        return {"breaker_tripped": False, "stopped": stopped, "dd_pct": dd_pct}
+        return {"breaker_tripped": False, "stopped": stopped, "taken": taken, "dd_pct": dd_pct}
 
     def snapshot(self) -> Dict[str, Any]:
         snap = dict(self.state)
