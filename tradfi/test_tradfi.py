@@ -245,6 +245,38 @@ class TestTradFiStrategy(unittest.TestCase):
             # Second sync with identical config should report no change
             self.assertFalse(sync_shadow_config_from_file(ledger, config_path=cp))
 
+    def test_intraday_single_position_stop_and_dd_breaker(self) -> None:
+        panel = self._sample_panel()
+        cfg = StrategyConfig(
+            gross_leverage=3.0,
+            stock_universe=[k for k in panel if k not in ("XAUUSDT", "XAGUSDT", "CLUSDT", "NATGASUSDT")],
+            comm_universe=["XAUUSDT", "XAGUSDT", "CLUSDT", "NATGASUSDT"],
+        )
+        target = compute_m3b_target(panel, cfg, day_index=10)
+        prices = {s: bars[-1].close for s, bars in panel.items()}
+        ledger = TradFiShadowLedger(cfg=cfg, capital=5000.0)
+        now_ms = 1_763_600_000_000
+        ledger.rebalance(target, prices, now_ms, fee_rate=0.0002)
+
+        # Shock one long position by -16% -> single-pos intraday stop triggers
+        long_sym = next(s for s, p in ledger.state["positions"].items() if p["side"] == "long")
+        shocked = dict(prices)
+        shocked[long_sym] = prices[long_sym] * 0.84
+        risk1 = ledger.check_intraday_risk(shocked, now_ms + 300_000, fee_rate=0.0002)
+        self.assertFalse(risk1["breaker_tripped"])
+        self.assertIn(long_sym, risk1["stopped"])
+        self.assertNotIn(long_sym, ledger.state["positions"])
+        self.assertIn(long_sym, ledger.state["stop_cooldowns"])
+
+        # Shock all remaining positions adversarially to trigger 20% account DD breaker
+        crash = dict(shocked)
+        for sym, pos in ledger.state["positions"].items():
+            crash[sym] = pos["entry_price"] * (0.70 if pos["side"] == "long" else 1.30)
+        risk2 = ledger.check_intraday_risk(crash, now_ms + 600_000, fee_rate=0.0002)
+        self.assertTrue(risk2["breaker_tripped"])
+        self.assertTrue(ledger.state["breaker_tripped"])
+        self.assertEqual(len(ledger.state["positions"]), 0)
+
 
 if __name__ == "__main__":
     unittest.main()

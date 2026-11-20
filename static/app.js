@@ -2056,9 +2056,12 @@ function renderTradFi(d) {
   }
   const st = $("tf-status");
   if (st) {
+    const brk = d.breaker_tripped ? "⚠ 盘中回撤熔断已触发并自动平仓（需点「按本金重置影子」恢复）。" : "";
+    const coolSyms = Object.keys(d.stop_cooldowns || {});
+    const cool = coolSyms.length ? "盘中止损冷却中（24h）：" + coolSyms.join(", ") + "。" : "";
     const blocked = (d.blocked_symbols || []).length ? "拆股防护已屏蔽：" + d.blocked_symbols.join(", ") + "。" : "";
     const err = d.last_error ? "最近采集异常：" + d.last_error : "";
-    const msg = [err, blocked].filter(Boolean).join(" ");
+    const msg = [brk, cool, err, blocked].filter(Boolean).join(" ");
     st.textContent = msg;
     st.hidden = !msg;
   }
@@ -2092,6 +2095,8 @@ function renderTradFi(d) {
       `美股A4 ${Math.round(100 * (cfg.stock_alloc || 0.5))}%`,
       `4核心商品S4 ${Math.round(100 * (cfg.comm_alloc || 0.5))}%`,
       `新币冷启动 ≥ ${cfg.stock_min_bars || 7}d`,
+      `盘中止损 ${fmt(cfg.pos_stop_pct ?? 15.0, 0)}%`,
+      `回撤熔断 ${fmt(cfg.max_dd_pct ?? 20.0, 0)}%`,
       `费用 ${fmt(cfg.fee_bp || 2.0, 1)}bp/边`,
       `拆股防护 ≥ ${Math.round(100 * (cfg.split_ret_threshold || 0.4))}%`,
     ];

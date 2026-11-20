@@ -35,6 +35,9 @@ GROSS_LEVERAGE = float(os.environ.get("STARS_TRADFI_LEVERAGE", "3.0"))
 FEE_RATE = float(os.environ.get("STARS_TRADFI_FEE_BP", "2.0")) / 10_000.0  # Maker 2bp default
 POLL_SEC = int(os.environ.get("STARS_TRADFI_POLL_SEC", "300"))
 REBAL_MINUTE_UTC = int(os.environ.get("STARS_TRADFI_REBAL_MINUTE", "5"))  # 00:05 UTC
+POS_STOP_PCT_DEFAULT = float(os.environ.get("STARS_TRADFI_STOP_PCT", "15.0"))  # 15% intraday single-pos hard stop
+MAX_DD_PCT_DEFAULT = float(os.environ.get("STARS_TRADFI_MAX_DD_PCT", "20.0"))  # 20% account hard DD breaker
+STOP_COOLDOWN_MS = 24 * 3_600_000
 
 
 def _http_get_json(path: str, params: Optional[Dict[str, Any]] = None, timeout: int = 20) -> Any:
@@ -154,6 +157,10 @@ class TradFiShadowLedger:
                 "last_rebalance_ts": None,
                 "last_error": None,
                 "days_elapsed": 0.0,
+                "peak_equity": cap,
+                "max_dd_pct_seen": 0.0,
+                "breaker_tripped": False,
+                "stop_cooldowns": {},  # symbol -> expire_ts_ms
                 "stock_phases": {"p0": {}, "p1": {}},
                 "blocked_symbols": [],
                 "positions": {},   # symbol -> dict
@@ -166,6 +173,8 @@ class TradFiShadowLedger:
                     "comm_alloc": self.cfg.comm_alloc,
                     "stock_min_bars": self.cfg.stock_min_bars,
                     "comm_mode": "S4_swing",
+                    "pos_stop_pct": POS_STOP_PCT_DEFAULT,
+                    "max_dd_pct": MAX_DD_PCT_DEFAULT,
                     "fee_bp": round(FEE_RATE * 10_000.0, 2),
                     "min_vol_usd": self.cfg.min_vol_usd,
                     "split_ret_threshold": self.cfg.split_ret_threshold,
@@ -378,6 +387,110 @@ class TradFiShadowLedger:
             del self.state["rebalances"][:-200]
         return rec
 
+    def check_intraday_risk(
+        self,
+        prices: Dict[str, float],
+        now_ms: int,
+        fee_rate: float = FEE_RATE,
+    ) -> Dict[str, Any]:
+        """Enforce 5-minute intraday single-position hard stop and account DD breaker."""
+        self.mark_to_market(prices, now_ms)
+        equity = float(self.state["equity"])
+        peak = max(float(self.state.get("peak_equity") or self.state["capital"]), equity)
+        self.state["peak_equity"] = peak
+        dd_pct = ((peak - equity) / peak * 100.0) if peak > 0.0 else 0.0
+        self.state["max_dd_pct_seen"] = max(float(self.state.get("max_dd_pct_seen") or 0.0), dd_pct)
+
+        c = self.state.setdefault("config", {})
+        max_dd_limit = float(c.get("max_dd_pct", MAX_DD_PCT_DEFAULT))
+        pos_stop_limit = float(c.get("pos_stop_pct", POS_STOP_PCT_DEFAULT))
+        cooldowns = self.state.setdefault("stop_cooldowns", {})
+        for sym in [s for s, exp in list(cooldowns.items()) if int(exp or 0) <= now_ms]:
+            del cooldowns[sym]
+
+        positions = self.state["positions"]
+        day_str = time.strftime("%Y-%m-%d", time.gmtime(now_ms / 1000.0))
+
+        # 1. Account-level hard drawdown breaker
+        if max_dd_limit > 0.0 and dd_pct >= max_dd_limit:
+            self.state["breaker_tripped"] = True
+            if positions:
+                turnover = 0.0
+                fees = 0.0
+                closed: List[str] = []
+                for sym in sorted(list(positions.keys())):
+                    pos = positions.pop(sym)
+                    px = prices.get(sym) or float(pos.get("mark_price") or pos["entry_price"])
+                    qty = float(pos["qty"])
+                    realized = qty * (px - float(pos["entry_price"]))
+                    ntl = abs(qty * px)
+                    fee = ntl * fee_rate
+                    self.state["cash"] = float(self.state["cash"]) + realized - fee
+                    self.state["realized_pnl"] = float(self.state["realized_pnl"]) + realized
+                    self.state["total_fees"] = float(self.state["total_fees"]) + fee
+                    turnover += ntl
+                    fees += fee
+                    closed.append(sym)
+                self.mark_to_market(prices, now_ms)
+                self.state["rebalances"].append({
+                    "ts": now_ms,
+                    "day": day_str,
+                    "equity": round(float(self.state["equity"]), 2),
+                    "turnover_usd": round(turnover, 2),
+                    "fees_usd": round(fees, 4),
+                    "n_positions": 0,
+                    "blocked": list(self.state.get("blocked_symbols") or []),
+                    "changes": [f"⚠回撤熔断平仓(-{dd_pct:.1f}%)"] + [f"-{s}" for s in closed[:20]],
+                })
+                return {"breaker_tripped": True, "stopped": closed, "dd_pct": dd_pct}
+            return {"breaker_tripped": True, "stopped": [], "dd_pct": dd_pct}
+
+        if self.state.get("breaker_tripped"):
+            return {"breaker_tripped": True, "stopped": [], "dd_pct": dd_pct}
+
+        # 2. Single-position intraday hard stop-loss
+        stopped: List[str] = []
+        changes: List[str] = []
+        turnover = 0.0
+        fees = 0.0
+        if pos_stop_limit > 0.0 and positions:
+            for sym in sorted(list(positions.keys())):
+                pos = positions[sym]
+                entry = float(pos["entry_price"])
+                if entry <= 0.0:
+                    continue
+                px = prices.get(sym) or float(pos.get("mark_price") or entry)
+                qty = float(pos["qty"])
+                adv_pct = ((entry - px) / entry * 100.0) if qty > 0 else ((px - entry) / entry * 100.0)
+                if adv_pct >= pos_stop_limit:
+                    positions.pop(sym)
+                    realized = qty * (px - entry)
+                    ntl = abs(qty * px)
+                    fee = ntl * fee_rate
+                    self.state["cash"] = float(self.state["cash"]) + realized - fee
+                    self.state["realized_pnl"] = float(self.state["realized_pnl"]) + realized
+                    self.state["total_fees"] = float(self.state["total_fees"]) + fee
+                    cooldowns[sym] = now_ms + STOP_COOLDOWN_MS
+                    turnover += ntl
+                    fees += fee
+                    stopped.append(sym)
+                    changes.append(f"⛔盘中止损:{sym}(-{adv_pct:.1f}%)")
+        if stopped:
+            self.mark_to_market(prices, now_ms)
+            self.state["rebalances"].append({
+                "ts": now_ms,
+                "day": day_str,
+                "equity": round(float(self.state["equity"]), 2),
+                "turnover_usd": round(turnover, 2),
+                "fees_usd": round(fees, 4),
+                "n_positions": len(positions),
+                "blocked": list(self.state.get("blocked_symbols") or []),
+                "changes": changes[:24],
+            })
+            if len(self.state["rebalances"]) > 200:
+                del self.state["rebalances"][:-200]
+        return {"breaker_tripped": False, "stopped": stopped, "dd_pct": dd_pct}
+
     def snapshot(self) -> Dict[str, Any]:
         snap = dict(self.state)
         pos_list = sorted(
@@ -449,6 +562,10 @@ def sync_shadow_config_from_file(ledger: TradFiShadowLedger, config_path: Path =
         c["stock_alloc"] = ledger.cfg.stock_alloc
         c["comm_alloc"] = ledger.cfg.comm_alloc
         c["stock_min_bars"] = ledger.cfg.stock_min_bars
+        if "max_dd_pct" in data:
+            c["max_dd_pct"] = max(0.0, min(80.0, float(data["max_dd_pct"])))
+        if "pos_stop_pct" in data:
+            c["pos_stop_pct"] = max(0.0, min(50.0, float(data["pos_stop_pct"])))
     except Exception:
         return False
     return (
@@ -483,7 +600,10 @@ def step_once(
         if f_events:
             ledger.apply_funding_events(f_events, prices)
 
-        if force_rebalance or cfg_changed or should_rebalance_now(ledger, now_ms):
+        # Intraday 5-minute risk guard (single-position hard stop + account DD breaker)
+        risk = ledger.check_intraday_risk(prices, now_ms, fee_rate=FEE_RATE)
+
+        if not risk["breaker_tripped"] and (force_rebalance or cfg_changed or should_rebalance_now(ledger, now_ms)):
             bars = fetch_closed_daily_bars(all_syms, limit=40, now_ms=now_ms)
             day_idx = now_ms // 86_400_000
             target = compute_m3b_target(
@@ -492,12 +612,15 @@ def step_once(
                 prev_stock_phases=ledger.state.get("stock_phases"),
                 day_index=day_idx,
             )
+            cooldowns = ledger.state.get("stop_cooldowns") or {}
+            active_cool = {s for s, exp in cooldowns.items() if int(exp or 0) > now_ms}
+            if active_cool:
+                for s in active_cool:
+                    target.weights.pop(s, None)
             if target.weights:
                 ledger.rebalance(target, prices, now_ms, fee_rate=FEE_RATE)
             else:
                 ledger.mark_to_market(prices, now_ms)
-        else:
-            ledger.mark_to_market(prices, now_ms)
 
         ledger.state["last_error"] = None
     except Exception as exc:
