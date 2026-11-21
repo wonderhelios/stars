@@ -290,6 +290,10 @@ class TestTradFiStrategy(unittest.TestCase):
         self.assertTrue(risk2["breaker_tripped"])
         self.assertTrue(ledger.state["breaker_tripped"])
         self.assertEqual(len(ledger.state["positions"]), 0)
+        actions = [t["action"] for t in ledger.state["trades"]]
+        self.assertIn("盘中止损", actions)
+        self.assertIn("盘中移动止盈", actions)
+        self.assertIn("熔断平仓", actions)
 
 
 if __name__ == "__main__":

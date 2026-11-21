@@ -182,10 +182,12 @@ const LIVE_PAGE_SIZE = 10;
 const POS_PAGE_SIZE = 10;
 const FLOW_PAGE_SIZE = 5;
 const CB_PAGE_SIZE = 8;
+const TF_TRADE_PAGE_SIZE = 12;
 let flowPage = 0;
 let cbPosPage = 0;
 let cbSigPage = 0;
 let cbTradePage = 0;
+let tfTradePage = 0;
 
 // 通用分页条；点击由全局委托处理
 
@@ -216,6 +218,9 @@ document.addEventListener("click", (e) => {
   } else if (key === "cbtr") {
     cbTradePage = Math.max(0, to);
     if (lastCombineData) renderIntraday(lastCombineData);
+  } else if (key === "tftr") {
+    tfTradePage = Math.max(0, to);
+    if (lastTradFiData) renderTradFi(lastTradFiData);
   }
 });
 
@@ -2102,6 +2107,22 @@ function renderTradFi(d) {
       `拆股防护 ≥ ${Math.round(100 * (cfg.split_ret_threshold || 0.4))}%`,
     ];
     $("tf-config").innerHTML = chips.map(x => `<span>${x}</span>`).join("");
+  }
+  const trades = (d.trades || []).slice().reverse();
+  if ($("tf-trades")) {
+    const trPages = Math.max(1, Math.ceil(trades.length / TF_TRADE_PAGE_SIZE));
+    if (tfTradePage > trPages - 1) tfTradePage = 0;
+    const trRows = trades.slice(tfTradePage * TF_TRADE_PAGE_SIZE, (tfTradePage + 1) * TF_TRADE_PAGE_SIZE);
+    $("tf-trades").innerHTML = trades.length
+      ? '<div class="table-scroll"><table><thead><tr><th>时间 · UTC+8</th><th>标的</th><th>所属腿</th><th>动作</th><th>数量</th><th>成交价</th><th>名义</th><th>手续费</th><th>已实现盈亏</th><th>原因</th></tr></thead><tbody>' +
+        trRows.map(t => {
+          const legLabel = t.leg === "stock_a4" ? '<span class="badge-mini ok">美股A4</span>' : '<span class="badge-mini warn">商品S4波段</span>';
+          const actCls = /止损|熔断/.test(t.action || "") ? "neg" : /止盈/.test(t.action || "") ? "pos" : (t.side === "long" ? "pos" : "neg");
+          const rp = t.realized_pnl;
+          const pnlCell = rp == null ? '<span class="muted">—</span>' : `<span class="${rp >= 0 ? "pos" : "neg"}">${moneySigned(rp)}</span>`;
+          return `<tr><td class="muted">${ts2bj(t.ts)}</td><td><b>${escapeHTML(t.symbol)}</b></td><td>${legLabel}</td><td class="${actCls}">${escapeHTML(t.action || "—")}</td><td>${fmtCompact(Number(t.qty) || 0)}</td><td>${fmtCompact(Number(t.price) || 0)}</td><td>$${fmt(Number(t.notional) || 0, 0)}</td><td class="muted">−$${fmt(Number(t.fee_usd) || 0, 2)}</td><td>${pnlCell}</td><td class="muted">${escapeHTML(t.reason || "—")}</td></tr>`;
+        }).join("") + '</tbody></table></div>' + (trades.length > TF_TRADE_PAGE_SIZE ? pager("tftr", trades.length, tfTradePage, TF_TRADE_PAGE_SIZE) : "")
+      : '<div class="empty">暂无详细交易记录，下一次调仓、止盈或止损后将自动记录。</div>';
   }
   const rbs = (d.rebalances || []).slice(-20).reverse();
   if ($("tf-rebalances")) {

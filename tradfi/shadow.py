@@ -168,6 +168,7 @@ class TradFiShadowLedger:
                 "positions": {},   # symbol -> dict
                 "history": [],     # [[ts_ms, equity], ...]
                 "rebalances": [],  # recent rebalance logs
+                "trades": [],      # detailed per-symbol fill log
                 "config": {
                     "strategy": "binance_tradfi_m3b_4core",
                     "gross_leverage": self.cfg.gross_leverage,
@@ -266,6 +267,37 @@ class TradFiShadowLedger:
                 total_delta += cf
         return total_delta
 
+    def _record_trade(
+        self,
+        ts: int,
+        symbol: str,
+        leg: str,
+        action: str,
+        side: str,
+        qty: float,
+        price: float,
+        notional: float,
+        fee_usd: float,
+        realized_pnl: Optional[float],
+        reason: str,
+    ) -> None:
+        trades = self.state.setdefault("trades", [])
+        trades.append({
+            "ts": ts,
+            "symbol": symbol,
+            "leg": leg,
+            "action": action,
+            "side": side,
+            "qty": round(abs(qty), 6),
+            "price": round(price, 6),
+            "notional": round(abs(notional), 2),
+            "fee_usd": round(fee_usd, 4),
+            "realized_pnl": round(realized_pnl, 4) if realized_pnl is not None else None,
+            "reason": reason,
+        })
+        if len(trades) > 500:
+            del trades[:-500]
+
     def rebalance(self, target: TargetPortfolio, prices: Dict[str, float], now_ms: int, fee_rate: float = FEE_RATE) -> Dict[str, Any]:
         """Rebalance simulated positions to `target.weights` at `prices`."""
         self.mark_to_market(prices, now_ms)
@@ -305,12 +337,14 @@ class TradFiShadowLedger:
             self.state["cash"] = float(self.state["cash"]) - fee
             self.state["total_fees"] = float(self.state["total_fees"]) + fee
 
+            leg_name = target.legs.get(sym, (old.get("leg", "") if old else ""))
             if old is None:
                 if abs(target_qty) > 1e-12:
+                    side_str = "long" if target_qty > 0 else "short"
                     positions[sym] = {
                         "symbol": sym,
-                        "leg": target.legs.get(sym, ""),
-                        "side": "long" if target_qty > 0 else "short",
+                        "leg": leg_name,
+                        "side": side_str,
                         "qty": target_qty,
                         "entry_price": px,
                         "mark_price": px,
@@ -318,26 +352,31 @@ class TradFiShadowLedger:
                         "target_weight": tw,
                         "unrealized_pnl": 0.0,
                         "funding_usd": 0.0,
+                        "peak_fav_pct": 0.0,
                         "entry_ts": now_ms,
                         "last_funding_ts": now_ms,
                     }
                     changes.append(f"+{sym}({tw*100:+.0f}%)")
+                    self._record_trade(now_ms, sym, leg_name, "开多" if target_qty > 0 else "开空", side_str, delta_qty, px, delta_notional, fee, None, f"目标权重 {tw*100:+.1f}%")
             elif abs(target_qty) <= 1e-12:
                 # Full close
                 realized = old_qty * (px - float(old["entry_price"]))
                 self.state["cash"] = float(self.state["cash"]) + realized
                 self.state["realized_pnl"] = float(self.state["realized_pnl"]) + realized
+                old_side = old.get("side", "long" if old_qty > 0 else "short")
                 del positions[sym]
                 changes.append(f"-{sym}")
+                self._record_trade(now_ms, sym, leg_name, "平多" if old_qty > 0 else "平空", old_side, delta_qty, px, delta_notional, fee, realized, "每日调仓平仓")
             elif (old_qty > 0 and target_qty < 0) or (old_qty < 0 and target_qty > 0):
                 # Flip side
                 realized = old_qty * (px - float(old["entry_price"]))
                 self.state["cash"] = float(self.state["cash"]) + realized
                 self.state["realized_pnl"] = float(self.state["realized_pnl"]) + realized
+                side_str = "long" if target_qty > 0 else "short"
                 positions[sym] = {
                     "symbol": sym,
-                    "leg": target.legs.get(sym, old.get("leg", "")),
-                    "side": "long" if target_qty > 0 else "short",
+                    "leg": leg_name,
+                    "side": side_str,
                     "qty": target_qty,
                     "entry_price": px,
                     "mark_price": px,
@@ -345,12 +384,15 @@ class TradFiShadowLedger:
                     "target_weight": tw,
                     "unrealized_pnl": 0.0,
                     "funding_usd": 0.0,
+                    "peak_fav_pct": 0.0,
                     "entry_ts": now_ms,
                     "last_funding_ts": now_ms,
                 }
                 changes.append(f"⇄{sym}({tw*100:+.0f}%)")
+                self._record_trade(now_ms, sym, leg_name, "反手开多" if target_qty > 0 else "反手开空", side_str, delta_qty, px, delta_notional, fee, realized, f"方向切换至 {tw*100:+.1f}%")
             else:
                 # Same direction resize
+                side_str = old.get("side", "long" if old_qty > 0 else "short")
                 if abs(target_qty) < abs(old_qty):
                     # Partial reduce: realize proportional PnL
                     closed_qty = old_qty - target_qty
@@ -358,13 +400,15 @@ class TradFiShadowLedger:
                     self.state["cash"] = float(self.state["cash"]) + realized
                     self.state["realized_pnl"] = float(self.state["realized_pnl"]) + realized
                     old["qty"] = target_qty
+                    self._record_trade(now_ms, sym, leg_name, "减多" if old_qty > 0 else "减空", side_str, delta_qty, px, delta_notional, fee, realized, f"权重调至 {tw*100:+.1f}%")
                 else:
                     # Scale up: weighted average entry price
                     added_qty = target_qty - old_qty
                     new_entry = (abs(old_qty) * float(old["entry_price"]) + abs(added_qty) * px) / abs(target_qty)
                     old["qty"] = target_qty
                     old["entry_price"] = new_entry
-                old["leg"] = target.legs.get(sym, old.get("leg", ""))
+                    self._record_trade(now_ms, sym, leg_name, "加多" if old_qty > 0 else "加空", side_str, delta_qty, px, delta_notional, fee, None, f"权重调至 {tw*100:+.1f}%")
+                old["leg"] = leg_name
                 old["target_weight"] = tw
                 old["mark_price"] = px
                 changes.append(f"~{sym}({tw*100:+.0f}%)")
@@ -437,6 +481,7 @@ class TradFiShadowLedger:
                     turnover += ntl
                     fees += fee
                     closed.append(sym)
+                    self._record_trade(now_ms, sym, pos.get("leg", ""), "熔断平仓", pos.get("side", "long" if qty > 0 else "short"), qty, px, ntl, fee, realized, f"账户回撤熔断 -{dd_pct:.1f}%")
                 self.mark_to_market(prices, now_ms)
                 self.state["rebalances"].append({
                     "ts": now_ms,
@@ -492,12 +537,15 @@ class TradFiShadowLedger:
                     cooldowns[sym] = now_ms + STOP_COOLDOWN_MS
                     turnover += ntl
                     fees += fee
+                    p_side = pos.get("side", "long" if qty > 0 else "short")
                     if hit_stop:
                         stopped.append(sym)
                         changes.append(f"⛔盘中止损:{sym}(-{adv_pct:.1f}%)")
+                        self._record_trade(now_ms, sym, pos.get("leg", ""), "盘中止损", p_side, qty, px, ntl, fee, realized, f"逆向亏损 -{adv_pct:.1f}%")
                     else:
                         taken.append(sym)
                         changes.append(f"🎯盘中移动止盈:{sym}({fav_pct:+.1f}%/峰+{peak_fav:.1f}%)")
+                        self._record_trade(now_ms, sym, pos.get("leg", ""), "盘中移动止盈", p_side, qty, px, ntl, fee, realized, f"峰值+{peak_fav:.1f}%回撤至{fav_pct:+.1f}%")
         if stopped or taken:
             self.mark_to_market(prices, now_ms)
             self.state["rebalances"].append({
