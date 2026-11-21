@@ -1,7 +1,7 @@
-"""Pure-stdlib signal & portfolio engine for Binance TradFi M3b 4-Core Dual-Leg strategy.
+"""Pure-stdlib signal & portfolio engine for Binance TradFi M3b 3-Leg strategy.
 
 Architecture (verified causal OOS on 2026-04 ~ 2026-11):
-- Leg 1 (50% capital): US Stock 1x Perps Cross-Sectional 3-Factor (A4)
+- Leg 1 (40% capital): US Stock 1x Perps Cross-Sectional 3-Factor (A4)
     * Universe: 18 1x US stock/ETF perps (excludes 3x leveraged SOXL/SOXS).
     * Corporate Action Guard: any symbol with |daily_ret| >= 40% in the last 14 closed bars
       (e.g. SNDK 8-for-1 stock split) is masked out of signal eligibility for 14 days.
@@ -12,18 +12,22 @@ Architecture (verified causal OOS on 2026-04 ~ 2026-11):
     * Selection: top 30% Long, bottom 30% Short (min 2 per side, requires >= 6 eligible stocks).
     * Weighting: within-leg inverse-volatility (up to 14d std), single-name cap = 30% of leg gross.
     * 2-Phase Slicing: even-day slice + odd-day slice averaged 50/50 to eliminate phase luck.
-- Leg 2 (50% capital): 4 High-Liquidity Core Commodities S4 Swing (EMA5/20 + 5d Trailing Exit + RSI Extreme Half-Size)
+- Leg 2 (40% capital): 4 High-Liquidity Core Commodities S4 Swing (EMA5/20 + 5d Trailing Exit + RSI Extreme Half-Size)
     * Universe: XAUUSDT (Gold), XAGUSDT (Silver), CLUSDT (WTI Crude Oil), NATGASUSDT (NatGas).
     * Signal: EMA(5) vs EMA(20) sets direction; 5-day reverse-channel breakout exits to flat (0.0);
       RSI(14) <= 25 (short) or >= 75 (long) halves position size (0.5x) to guard against V-reversals.
     * Weighting: inverse-volatility (14d std) normalized across all valid commodities so flat/half-size
       exposure stays in cash; single-commodity cap = 40% of leg gross.
+- Leg 3 (20% capital): Oversold V-Bounce Long-Only (RSI(2) <= 5 & 3d drop >= 5%)
+    * Universe: liquid non-blocked symbols across US stocks + 4 core commodities.
+    * Entry: RSI(2) <= 5.0 and 3-day return <= -5.0% on closed daily bars, max 4 equal-weight slots.
+    * Exit: close >= MA(5), OR hold_days >= 3, OR adverse return <= -8.0%.
 """
 from __future__ import annotations
 
 import math
 from dataclasses import dataclass, field
-from typing import Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 DEFAULT_STOCK_UNIVERSE: List[str] = [
     "AAPLUSDT", "AMDUSDT", "AMZNUSDT", "ANTUSDT", "AVGOUSDT", "COINUSDT",
@@ -48,8 +52,9 @@ class DailyBar:
 @dataclass
 class StrategyConfig:
     gross_leverage: float = 3.0
-    stock_alloc: float = 0.50
-    comm_alloc: float = 0.50
+    stock_alloc: float = 0.40
+    comm_alloc: float = 0.40
+    vbounce_alloc: float = 0.20
     min_vol_usd: float = 5_000_000.0
     stock_min_bars: int = 7
     split_ret_threshold: float = 0.40
@@ -62,6 +67,13 @@ class StrategyConfig:
     comm_trail_days: int = 5
     comm_rsi_lo: float = 25.0
     comm_rsi_hi: float = 75.0
+    vbounce_rsi_period: int = 2
+    vbounce_rsi_max: float = 5.0
+    vbounce_drop3_min: float = -0.05
+    vbounce_max_pos: int = 4
+    vbounce_max_hold_days: int = 3
+    vbounce_stop_pct: float = 0.08
+    vbounce_ma_exit: int = 5
     stock_universe: List[str] = field(default_factory=lambda: list(DEFAULT_STOCK_UNIVERSE))
     comm_universe: List[str] = field(default_factory=lambda: list(DEFAULT_COMMODITY_UNIVERSE))
 
@@ -70,11 +82,12 @@ class StrategyConfig:
 class TargetPortfolio:
     asof_day_ms: int
     weights: Dict[str, float]  # symbol -> target weight as fraction of TOTAL account equity
-    legs: Dict[str, str]       # symbol -> "stock_a4" | "comm_ema"
+    legs: Dict[str, str]       # symbol -> "stock_a4" | "comm_ema" | "vbounce" | combo
     blocked_symbols: List[str]
     stock_scores: Dict[str, float]
     comm_signals: Dict[str, float]
     stock_phase_weights: Dict[str, Dict[str, float]]  # {"p0": {...}, "p1": {...}}
+    vbounce_positions: Dict[str, Dict[str, Any]] = field(default_factory=dict)
 
 
 def _std(xs: List[float]) -> float:
@@ -97,9 +110,9 @@ def _ema_series(vals: List[float], span: int) -> List[float]:
 
 
 def _rsi_latest(vals: List[float], period: int = 14) -> float:
-    if len(vals) < 8:
+    if len(vals) < period + 1:
         return 50.0
-    diffs = [vals[i] - vals[i - 1] for i in range(max(1, len(vals) - period), len(vals))]
+    diffs = [vals[i] - vals[i - 1] for i in range(len(vals) - period, len(vals))]
     if not diffs:
         return 50.0
     up = sum(d for d in diffs if d > 0.0) / len(diffs)
@@ -341,13 +354,96 @@ def compute_comm_ema_weights(
     return weights, signals
 
 
+def compute_vbounce_weights(
+    bars_map: Dict[str, List[DailyBar]],
+    cfg: StrategyConfig,
+    prev_vbounce_positions: Optional[Dict[str, Dict[str, Any]]] = None,
+) -> Tuple[Dict[str, float], Dict[str, Dict[str, Any]]]:
+    """Compute oversold V-bounce long-only leg weights (RSI(2) <= 5 & 3d drop >= 5%).
+
+    Exit any active slot when:
+      (a) close >= MA(vbounce_ma_exit), OR
+      (b) hold_days >= vbounce_max_hold_days, OR
+      (c) return from entry_price <= -vbounce_stop_pct.
+    """
+    if cfg.vbounce_alloc <= 0.0 or cfg.vbounce_max_pos <= 0:
+        return {}, {}
+
+    universe = sorted(set(cfg.stock_universe) | set(cfg.comm_universe))
+    min_bars = max(cfg.vbounce_ma_exit, cfg.vbounce_rsi_period + 1, 7)
+    eligible_bars: Dict[str, List[DailyBar]] = {}
+
+    for sym in universe:
+        if sym in LEVERAGED_BLACKLIST:
+            continue
+        bars = bars_map.get(sym)
+        if not bars or len(bars) < min_bars:
+            continue
+        _, is_blocked = _clean_returns_and_block(bars, cfg.split_ret_threshold, cfg.split_block_days)
+        if is_blocked:
+            continue
+        v_win = [b.quote_vol for b in bars[-7:]]
+        avg_v = sum(v_win) / len(v_win) if v_win else 0.0
+        if avg_v < cfg.min_vol_usd:
+            continue
+        eligible_bars[sym] = bars
+
+    next_positions: Dict[str, Dict[str, Any]] = {}
+    exited_today: set = set()
+    for sym, pos in (prev_vbounce_positions or {}).items():
+        bars = eligible_bars.get(sym)
+        if not bars:
+            exited_today.add(sym)
+            continue
+        entry_px = float(pos.get("entry_price") or 0.0)
+        if entry_px <= 0.0:
+            exited_today.add(sym)
+            continue
+        hold_days = int(pos.get("hold_days") or 0) + 1
+        closes = [b.close for b in bars]
+        cur = closes[-1]
+        ma_n = sum(closes[-cfg.vbounce_ma_exit:]) / cfg.vbounce_ma_exit
+        ret_from_entry = cur / entry_px - 1.0
+        if (
+            cur >= ma_n
+            or hold_days >= cfg.vbounce_max_hold_days
+            or ret_from_entry <= -cfg.vbounce_stop_pct
+        ):
+            exited_today.add(sym)
+            continue
+        next_positions[sym] = {"entry_price": entry_px, "hold_days": hold_days}
+
+    if len(next_positions) < cfg.vbounce_max_pos:
+        candidates: List[Tuple[float, float, str, float]] = []
+        for sym, bars in eligible_bars.items():
+            if sym in next_positions or sym in exited_today:
+                continue
+            closes = [b.close for b in bars]
+            if len(closes) < 4 or closes[-4] <= 0.0:
+                continue
+            rsi2 = _rsi_latest(closes, cfg.vbounce_rsi_period)
+            ret3 = closes[-1] / closes[-4] - 1.0
+            if rsi2 <= cfg.vbounce_rsi_max and ret3 <= cfg.vbounce_drop3_min:
+                candidates.append((rsi2, ret3, sym, closes[-1]))
+        candidates.sort(key=lambda x: (x[0], x[1], x[2]))
+        for _, _, sym, cur_close in candidates:
+            if len(next_positions) >= cfg.vbounce_max_pos:
+                break
+            next_positions[sym] = {"entry_price": cur_close, "hold_days": 0}
+
+    slot_w = cfg.gross_leverage / float(cfg.vbounce_max_pos)
+    weights = {sym: slot_w for sym in sorted(next_positions)}
+    return weights, next_positions
+
+
 def compute_m3b_target(
     bars_map: Dict[str, List[DailyBar]],
     cfg: StrategyConfig,
     prev_stock_phases: Optional[Dict[str, Dict[str, float]]] = None,
     day_index: Optional[int] = None,
+    prev_vbounce_positions: Optional[Dict[str, Dict[str, Any]]] = None,
 ) -> TargetPortfolio:
-    """Compute combined M3b 4-core dual-leg target portfolio (strictly causal on closed daily bars).
+    """Compute combined M3b 3-leg target portfolio (strictly causal on closed daily bars).
 
     For 2-phase slicing on the US Stock A4 leg:
     - If `prev_stock_phases` is None/empty (cold start), both p0 and p1 are initialized to today's A4 slice.
@@ -382,6 +478,7 @@ def compute_m3b_target(
             stock_w[s] = v
 
     comm_w, comm_signals = compute_comm_ema_weights(bars_map, cfg)
+    vbounce_w, next_vbounce_pos = compute_vbounce_weights(bars_map, cfg, prev_vbounce_positions)
 
     combined: Dict[str, float] = {}
     legs: Dict[str, str] = {}
@@ -391,6 +488,13 @@ def compute_m3b_target(
     for s, w in comm_w.items():
         combined[s] = combined.get(s, 0.0) + cfg.comm_alloc * w
         legs[s] = "comm_ema"
+    for s, w in vbounce_w.items():
+        combined[s] = combined.get(s, 0.0) + cfg.vbounce_alloc * w
+        legs[s] = f"{legs[s]}+vbounce" if s in legs else "vbounce"
+
+    for s in [k for k, v in combined.items() if abs(v) <= 1e-6]:
+        del combined[s]
+        legs.pop(s, None)
 
     return TargetPortfolio(
         asof_day_ms=asof_ms,
@@ -400,4 +504,5 @@ def compute_m3b_target(
         stock_scores=stock_scores,
         comm_signals=comm_signals,
         stock_phase_weights=phases,
+        vbounce_positions=next_vbounce_pos,
     )

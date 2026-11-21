@@ -189,7 +189,8 @@ async fn tradfi_status(State(state): State<AppState>) -> Response {
 
 fn tradfi_default_capital() -> f64 { 2000.0 }
 fn tradfi_default_lev() -> f64 { 3.0 }
-fn tradfi_default_stock_alloc() -> f64 { 0.50 }
+fn tradfi_default_stock_alloc() -> f64 { 0.40 }
+fn tradfi_default_vbounce_alloc() -> f64 { 0.20 }
 fn tradfi_default_min_bars() -> usize { 7 }
 fn tradfi_default_max_dd() -> f64 { 20.0 }
 fn tradfi_default_maker_wait() -> f64 { 8.0 }
@@ -202,6 +203,8 @@ struct TradFiConfig {
     gross_leverage: f64,
     #[serde(default = "tradfi_default_stock_alloc")]
     stock_alloc: f64,
+    #[serde(default = "tradfi_default_vbounce_alloc")]
+    vbounce_alloc: f64,
     #[serde(default = "tradfi_default_min_bars")]
     stock_min_bars: usize,
     #[serde(default = "tradfi_default_max_dd")]
@@ -230,6 +233,7 @@ impl Default for TradFiConfig {
             capital: tradfi_default_capital(),
             gross_leverage: tradfi_default_lev(),
             stock_alloc: tradfi_default_stock_alloc(),
+            vbounce_alloc: tradfi_default_vbounce_alloc(),
             stock_min_bars: tradfi_default_min_bars(),
             max_dd_pct: tradfi_default_max_dd(),
             maker_wait_sec: tradfi_default_maker_wait(),
@@ -311,6 +315,7 @@ fn tradfi_config_public_json(cfg: &TradFiConfig) -> serde_json::Value {
         "capital": cfg.capital,
         "gross_leverage": cfg.gross_leverage,
         "stock_alloc": cfg.stock_alloc,
+        "vbounce_alloc": cfg.vbounce_alloc,
         "stock_min_bars": cfg.stock_min_bars,
         "max_dd_pct": cfg.max_dd_pct,
         "maker_wait_sec": cfg.maker_wait_sec,
@@ -402,6 +407,7 @@ struct TradFiConfigBody {
     capital: Option<f64>,
     gross_leverage: Option<f64>,
     stock_alloc: Option<f64>,
+    vbounce_alloc: Option<f64>,
     stock_min_bars: Option<usize>,
     max_dd_pct: Option<f64>,
     maker_wait_sec: Option<f64>,
@@ -438,6 +444,15 @@ async fn tradfi_config_save(
             return (StatusCode::BAD_REQUEST, Json(json!({"ok": false, "error": "美股占比无效"}))).into_response();
         }
         cfg.stock_alloc = v.clamp(0.0, 1.0);
+    }
+    if let Some(v) = body.vbounce_alloc {
+        if !v.is_finite() {
+            return (StatusCode::BAD_REQUEST, Json(json!({"ok": false, "error": "超跌抄底占比无效"}))).into_response();
+        }
+        cfg.vbounce_alloc = v.clamp(0.0, 0.50);
+    }
+    if cfg.stock_alloc + cfg.vbounce_alloc > 1.0 {
+        cfg.vbounce_alloc = (1.0 - cfg.stock_alloc).max(0.0);
     }
     if let Some(v) = body.stock_min_bars {
         cfg.stock_min_bars = v.clamp(6, 30);

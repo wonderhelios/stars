@@ -2045,12 +2045,24 @@ function renderTradFi(d) {
   const days = Number(d.days_elapsed) || 0;
   const kpi = (label, value, detail, cls) =>
     `<div class="combine-kpi"><div class="combine-kpi-label">${label}</div><div class="combine-kpi-value ${cls || ""}">${value}</div>${detail ? `<div class="combine-kpi-detail">${detail}</div>` : ""}</div>`;
+  const tfLegBadge = (leg) => {
+    const s = String(leg || "");
+    if (s === "stock_a4") return '<span class="badge-mini ok">美股A4</span>';
+    if (s === "comm_ema") return '<span class="badge-mini warn">商品S4波段</span>';
+    if (s === "vbounce") return '<span class="badge-mini" style="background:rgba(56,189,248,.14);color:var(--cyan);border:1px solid rgba(56,189,248,.28)">超跌抄底</span>';
+    if (s === "stock_a4+vbounce") return '<span class="badge-mini ok">美股A4+抄底</span>';
+    if (s === "comm_ema+vbounce") return '<span class="badge-mini warn">商品S4+抄底</span>';
+    return '<span class="badge-mini mute">' + escapeHTML(s || "—") + '</span>';
+  };
+  const nStock = ps.filter(p => String(p.leg || "").startsWith("stock_a4")).length;
+  const nComm = ps.filter(p => String(p.leg || "").startsWith("comm_ema")).length;
+  const nVb = ps.filter(p => String(p.leg || "").includes("vbounce")).length;
   const m = $("tf-metrics");
   if (m) m.innerHTML =
     kpi("影子净值", "$" + fmt(eq, 2), "独立模拟账户 · 本金 $" + fmt(d.capital || 0, 0)) +
     kpi("累计收益", moneySigned(pnl), (pnlPct >= 0 ? "+" : "") + pnlPct.toFixed(2) + "%", pnl >= 0 ? "pos" : "neg") +
     kpi("已实现 / 浮盈", moneySigned(d.realized_pnl || 0), "浮动 " + moneySigned(d.unrealized_pnl || 0) + " · 资金费 " + moneySigned(d.total_funding || 0), (d.realized_pnl || 0) >= 0 ? "pos" : "neg") +
-    kpi("当前持仓", String(ps.length), "美股 " + ps.filter(p => p.leg === "stock_a4").length + " · 商品 " + ps.filter(p => p.leg === "comm_ema").length) +
+    kpi("当前持仓", String(ps.length), "美股 " + nStock + " · 商品 " + nComm + (nVb ? " · 抄底 " + nVb : "")) +
     kpi("毛敞口 / 净敞口", "$" + fmt(d.gross_notional || 0, 0), "净额 " + moneySigned(d.net_notional || 0) + " · 费用 −$" + fmt(d.total_fees || 0, 2)) +
     kpi("运行时间", days.toFixed(1) + " 天", "上次调仓 " + (d.last_rebalance_day || "—"));
   const state = $("tf-run-state");
@@ -2088,7 +2100,7 @@ function renderTradFi(d) {
           const isLong = p.side === "long";
           const u = Number(p.unrealized_pnl) || 0;
           const fu = Number(p.funding_usd) || 0;
-          const legLabel = p.leg === "stock_a4" ? '<span class="badge-mini ok">美股A4</span>' : '<span class="badge-mini warn">商品S4波段</span>';
+          const legLabel = tfLegBadge(p.leg);
           return `<tr><td><b>${escapeHTML(p.symbol)}</b></td><td>${legLabel}</td><td class="${isLong ? "pos" : "neg"}">${isLong ? "多" : "空"}</td><td>${((Number(p.target_weight) || 0) * 100).toFixed(1)}%</td><td>$${fmt(p.notional || 0, 0)}</td><td>${fmtCompact(p.entry_price || 0)}</td><td>${fmtCompact(p.mark_price || 0)}</td><td class="${fu >= 0 ? "pos" : "neg"}">${moneySigned(fu)}</td><td class="${u >= 0 ? "pos" : "neg"}">${moneySigned(u)}</td></tr>`;
         }).join("") + '</tbody></table></div>'
       : '<div class="empty">暂无持仓，等待每日 UTC 00:05 调仓或首次初始化。</div>';
@@ -2097,8 +2109,9 @@ function renderTradFi(d) {
   if ($("tf-config")) {
     const chips = [
       `总杠杆 ${fmt(cfg.gross_leverage || 3.0, 1)}x`,
-      `美股A4 ${Math.round(100 * (cfg.stock_alloc || 0.5))}%`,
-      `4核心商品S4 ${Math.round(100 * (cfg.comm_alloc || 0.5))}%`,
+      `美股A4 ${Math.round(100 * (cfg.stock_alloc ?? 0.4))}%`,
+      `4核心商品S4 ${Math.round(100 * (cfg.comm_alloc ?? 0.4))}%`,
+      `超跌抄底 ${Math.round(100 * (cfg.vbounce_alloc ?? 0.2))}%`,
       `新币冷启动 ≥ ${cfg.stock_min_bars || 7}d`,
       `盘中止损 -${fmt(cfg.pos_stop_pct ?? 15.0, 0)}%`,
       `移动止盈 +${fmt(cfg.trail_tp_activate_pct ?? 12.0, 0)}% / 回撤${fmt(cfg.trail_tp_callback_pct ?? 5.0, 0)}%`,
@@ -2116,7 +2129,7 @@ function renderTradFi(d) {
     $("tf-trades").innerHTML = trades.length
       ? '<div class="table-scroll"><table><thead><tr><th>时间 · UTC+8</th><th>标的</th><th>所属腿</th><th>动作</th><th>数量</th><th>成交价</th><th>名义</th><th>手续费</th><th>已实现盈亏</th><th>原因</th></tr></thead><tbody>' +
         trRows.map(t => {
-          const legLabel = t.leg === "stock_a4" ? '<span class="badge-mini ok">美股A4</span>' : '<span class="badge-mini warn">商品S4波段</span>';
+          const legLabel = tfLegBadge(t.leg);
           const actCls = /止损|熔断/.test(t.action || "") ? "neg" : /止盈/.test(t.action || "") ? "pos" : (t.side === "long" ? "pos" : "neg");
           const rp = t.realized_pnl;
           const pnlCell = rp == null ? '<span class="muted">—</span>' : `<span class="${rp >= 0 ? "pos" : "neg"}">${moneySigned(rp)}</span>`;
@@ -2141,7 +2154,8 @@ function tfConfigInto(c) {
   const set = (id, v) => { const el = $(id); if (el && document.activeElement !== el) el.value = v; };
   set("tf-capital", c.capital ?? 2000);
   set("tf-leverage", c.gross_leverage ?? 3.0);
-  set("tf-stock-alloc", Math.round((c.stock_alloc ?? 0.5) * 100));
+  set("tf-stock-alloc", Math.round((c.stock_alloc ?? 0.4) * 100));
+  set("tf-vbounce-alloc", Math.round((c.vbounce_alloc ?? 0.2) * 100));
   set("tf-min-bars", c.stock_min_bars ?? 7);
   set("tf-max-dd", c.max_dd_pct ?? 20);
   set("tf-maker-wait", c.maker_wait_sec ?? 8);
@@ -2209,6 +2223,7 @@ async function saveTradFiConfig() {
     capital: Number($("tf-capital").value),
     gross_leverage: Number($("tf-leverage").value),
     stock_alloc: Number($("tf-stock-alloc").value) / 100,
+    vbounce_alloc: Number($("tf-vbounce-alloc") ? $("tf-vbounce-alloc").value : 20) / 100,
     stock_min_bars: Number($("tf-min-bars").value),
     max_dd_pct: Number($("tf-max-dd").value),
     maker_wait_sec: Number($("tf-maker-wait").value),

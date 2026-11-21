@@ -225,7 +225,8 @@ class TestTradFiStrategy(unittest.TestCase):
             cp.write_text(json.dumps({
                 "capital": 5000.0,
                 "gross_leverage": 4.0,
-                "stock_alloc": 0.60,
+                "stock_alloc": 0.45,
+                "vbounce_alloc": 0.25,
                 "stock_min_bars": 8,
                 "api_key": "demo_key",
             }), encoding="utf-8")
@@ -239,8 +240,9 @@ class TestTradFiStrategy(unittest.TestCase):
             changed = sync_shadow_config_from_file(ledger, config_path=cp)
             self.assertTrue(changed)
             self.assertEqual(ledger.cfg.gross_leverage, 4.0)
-            self.assertAlmostEqual(ledger.cfg.stock_alloc, 0.60, places=4)
-            self.assertAlmostEqual(ledger.cfg.comm_alloc, 0.40, places=4)
+            self.assertAlmostEqual(ledger.cfg.stock_alloc, 0.45, places=4)
+            self.assertAlmostEqual(ledger.cfg.vbounce_alloc, 0.25, places=4)
+            self.assertAlmostEqual(ledger.cfg.comm_alloc, 0.30, places=4)
             self.assertEqual(ledger.cfg.stock_min_bars, 8)
             # Second sync with identical config should report no change
             self.assertFalse(sync_shadow_config_from_file(ledger, config_path=cp))
@@ -294,6 +296,47 @@ class TestTradFiStrategy(unittest.TestCase):
         self.assertIn("盘中止损", actions)
         self.assertIn("盘中移动止盈", actions)
         self.assertIn("熔断平仓", actions)
+
+    def test_vbounce_oversold_entry_exit_and_three_leg_blend(self) -> None:
+        from tradfi.strategy import compute_vbounce_weights
+
+        # Day 0: NVDA crashes 3 days in a row (-3% each -> ~-8.7% 3d drop, RSI(2)=0)
+        crash_px = [100.0] * 10 + [97.0, 94.0, 91.0]
+        bars_d0 = {"NVDAUSDT": _make_bars(crash_px)}
+        cfg = StrategyConfig(gross_leverage=2.0, stock_universe=["NVDAUSDT"], comm_universe=[])
+        self.assertAlmostEqual(cfg.stock_alloc, 0.40, places=4)
+        self.assertAlmostEqual(cfg.comm_alloc, 0.40, places=4)
+        self.assertAlmostEqual(cfg.vbounce_alloc, 0.20, places=4)
+
+        w0, pos0 = compute_vbounce_weights(bars_d0, cfg, prev_vbounce_positions=None)
+        self.assertIn("NVDAUSDT", w0)
+        self.assertAlmostEqual(w0["NVDAUSDT"], 2.0 / 4.0, places=4)
+        self.assertEqual(pos0["NVDAUSDT"]["hold_days"], 0)
+        self.assertAlmostEqual(pos0["NVDAUSDT"]["entry_price"], 91.0, places=4)
+
+        # Day 1: small bounce to 92.0 (still below MA5 ~94.8, hold_days=1 < 3) -> keep holding
+        bars_d1 = {"NVDAUSDT": _make_bars(crash_px + [92.0])}
+        w1, pos1 = compute_vbounce_weights(bars_d1, cfg, prev_vbounce_positions=pos0)
+        self.assertIn("NVDAUSDT", w1)
+        self.assertEqual(pos1["NVDAUSDT"]["hold_days"], 1)
+
+        # Day 2: sharp rebound above MA5 (99.0 >= MA5) -> exit cleanly
+        bars_d2 = {"NVDAUSDT": _make_bars(crash_px + [92.0, 99.0])}
+        w2, pos2 = compute_vbounce_weights(bars_d2, cfg, prev_vbounce_positions=pos1)
+        self.assertNotIn("NVDAUSDT", w2)
+        self.assertEqual(pos2, {})
+
+        # Stop-loss exit: -9% drop from entry (91 -> 82.5)
+        bars_stop = {"NVDAUSDT": _make_bars(crash_px + [82.5])}
+        w_stop, pos_stop = compute_vbounce_weights(bars_stop, cfg, prev_vbounce_positions=pos0)
+        self.assertNotIn("NVDAUSDT", w_stop)
+        self.assertEqual(pos_stop, {})
+
+        # Max hold days (3) exit
+        pos_old = {"NVDAUSDT": {"entry_price": 91.0, "hold_days": 2}}
+        w_exp, pos_exp = compute_vbounce_weights(bars_d1, cfg, prev_vbounce_positions=pos_old)
+        self.assertNotIn("NVDAUSDT", w_exp)
+        self.assertEqual(pos_exp, {})
 
 
 if __name__ == "__main__":

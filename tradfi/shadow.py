@@ -164,6 +164,7 @@ class TradFiShadowLedger:
                 "breaker_tripped": False,
                 "stop_cooldowns": {},  # symbol -> expire_ts_ms
                 "stock_phases": {"p0": {}, "p1": {}},
+                "vbounce_positions": {},
                 "blocked_symbols": [],
                 "positions": {},   # symbol -> dict
                 "history": [],     # [[ts_ms, equity], ...]
@@ -174,6 +175,7 @@ class TradFiShadowLedger:
                     "gross_leverage": self.cfg.gross_leverage,
                     "stock_alloc": self.cfg.stock_alloc,
                     "comm_alloc": self.cfg.comm_alloc,
+                    "vbounce_alloc": self.cfg.vbounce_alloc,
                     "stock_min_bars": self.cfg.stock_min_bars,
                     "comm_mode": "S4_swing",
                     "pos_stop_pct": POS_STOP_PCT_DEFAULT,
@@ -414,6 +416,7 @@ class TradFiShadowLedger:
                 changes.append(f"~{sym}({tw*100:+.0f}%)")
 
         self.state["stock_phases"] = target.stock_phase_weights
+        self.state["vbounce_positions"] = dict(target.vbounce_positions)
         self.state["blocked_symbols"] = list(target.blocked_symbols)
         day_str = time.strftime("%Y-%m-%d", time.gmtime(now_ms / 1000.0))
         self.state["last_rebalance_day"] = day_str
@@ -535,6 +538,8 @@ class TradFiShadowLedger:
                     self.state["realized_pnl"] = float(self.state["realized_pnl"]) + realized
                     self.state["total_fees"] = float(self.state["total_fees"]) + fee
                     cooldowns[sym] = now_ms + STOP_COOLDOWN_MS
+                    if isinstance(self.state.get("vbounce_positions"), dict):
+                        self.state["vbounce_positions"].pop(sym, None)
                     turnover += ntl
                     fees += fee
                     p_side = pos.get("side", "long" if qty > 0 else "short")
@@ -564,9 +569,15 @@ class TradFiShadowLedger:
 
     def snapshot(self) -> Dict[str, Any]:
         snap = dict(self.state)
+        def _leg_order(leg: str) -> int:
+            if leg.startswith("stock_a4"):
+                return 0
+            if leg.startswith("comm_ema"):
+                return 1
+            return 2
         pos_list = sorted(
             self.state["positions"].values(),
-            key=lambda p: (0 if p.get("leg") == "stock_a4" else 1, -float(p.get("notional") or 0.0)),
+            key=lambda p: (_leg_order(str(p.get("leg") or "")), -float(p.get("notional") or 0.0)),
         )
         snap["positions_list"] = pos_list
         return snap
@@ -607,7 +618,7 @@ def sync_shadow_config_from_file(ledger: TradFiShadowLedger, config_path: Path =
     """Sync non-secret strategy parameters from tradfi_config.json into the shadow daemon.
 
     Returns True if any portfolio-affecting parameter (gross_leverage, stock_alloc,
-    stock_min_bars) changed relative to the ledger's recorded config.
+    vbounce_alloc, stock_min_bars) changed relative to the ledger's recorded config.
     """
     data = _read_config_file(config_path)
     if not data:
@@ -615,14 +626,18 @@ def sync_shadow_config_from_file(ledger: TradFiShadowLedger, config_path: Path =
     c = ledger.state.setdefault("config", {})
     old_lev = float(c.get("gross_leverage", ledger.cfg.gross_leverage))
     old_sa = float(c.get("stock_alloc", ledger.cfg.stock_alloc))
+    old_va = float(c.get("vbounce_alloc", ledger.cfg.vbounce_alloc))
     old_mb = int(c.get("stock_min_bars", ledger.cfg.stock_min_bars))
     try:
         if "gross_leverage" in data:
             ledger.cfg.gross_leverage = max(1.0, min(5.0, float(data["gross_leverage"])))
-        if "stock_alloc" in data:
-            sa = max(0.0, min(1.0, float(data["stock_alloc"])))
-            ledger.cfg.stock_alloc = sa
-            ledger.cfg.comm_alloc = 1.0 - sa
+        sa = max(0.0, min(1.0, float(data.get("stock_alloc", ledger.cfg.stock_alloc))))
+        va = max(0.0, min(0.50, float(data.get("vbounce_alloc", ledger.cfg.vbounce_alloc))))
+        if sa + va > 1.0:
+            va = max(0.0, 1.0 - sa)
+        ledger.cfg.stock_alloc = sa
+        ledger.cfg.vbounce_alloc = va
+        ledger.cfg.comm_alloc = max(0.0, 1.0 - sa - va)
         if "stock_min_bars" in data:
             ledger.cfg.stock_min_bars = max(6, min(30, int(data["stock_min_bars"])))
         proxy_url = str(data.get("proxy_url") or "").strip()
@@ -632,6 +647,7 @@ def sync_shadow_config_from_file(ledger: TradFiShadowLedger, config_path: Path =
         c["gross_leverage"] = ledger.cfg.gross_leverage
         c["stock_alloc"] = ledger.cfg.stock_alloc
         c["comm_alloc"] = ledger.cfg.comm_alloc
+        c["vbounce_alloc"] = ledger.cfg.vbounce_alloc
         c["stock_min_bars"] = ledger.cfg.stock_min_bars
         if "max_dd_pct" in data:
             c["max_dd_pct"] = max(0.0, min(80.0, float(data["max_dd_pct"])))
@@ -642,6 +658,7 @@ def sync_shadow_config_from_file(ledger: TradFiShadowLedger, config_path: Path =
     return (
         abs(ledger.cfg.gross_leverage - old_lev) > 1e-6
         or abs(ledger.cfg.stock_alloc - old_sa) > 1e-6
+        or abs(ledger.cfg.vbounce_alloc - old_va) > 1e-6
         or ledger.cfg.stock_min_bars != old_mb
     )
 
@@ -682,12 +699,14 @@ def step_once(
                 ledger.cfg,
                 prev_stock_phases=ledger.state.get("stock_phases"),
                 day_index=day_idx,
+                prev_vbounce_positions=ledger.state.get("vbounce_positions"),
             )
             cooldowns = ledger.state.get("stop_cooldowns") or {}
             active_cool = {s for s, exp in cooldowns.items() if int(exp or 0) > now_ms}
             if active_cool:
                 for s in active_cool:
                     target.weights.pop(s, None)
+                    target.vbounce_positions.pop(s, None)
             if target.weights:
                 ledger.rebalance(target, prices, now_ms, fee_rate=FEE_RATE)
             else:

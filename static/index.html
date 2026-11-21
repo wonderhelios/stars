@@ -1539,9 +1539,9 @@
         <div class="panel">
           <div class="panel-head">
             <div>
-              <span class="panel-kicker">BINANCE TRADFI · M3B 4-CORE DUAL-LEG</span>
-              <h2>美股 + 商品双腿影子</h2>
-              <p class="sub">50% 美股 1x 横截面三因子 A4（7+14d 腿内逆波 + 7日新币冷启动 + 2 相位切片 + 拆股防护）+ 50% 金银油气 S4 顺势波段（EMA5/20 + 5日反转止盈 + RSI 极值半仓），默认 3.0x 总杠杆。</p>
+              <span class="panel-kicker">BINANCE TRADFI · M3B 3-LEG</span>
+              <h2>美股 + 商品 + 抄底三腿影子</h2>
+              <p class="sub">40% 美股 1x 横截面三因子 A4（7+14d + 2相位切片 + 拆股防护）+ 40% 金银油气 S4 顺势波段（EMA5/20 + 5日反转止盈 + RSI 极值半仓）+ 20% 极端超跌抄底（RSI(2)≤5 且 3日跌≥5%），默认 3.0x 总杠杆。</p>
             </div>
             <div class="actions">
               <span id="tf-run-state" class="combine-state"><i></i>读取中</span>
@@ -1552,11 +1552,12 @@
 
           <div class="tradfi-config-grid">
             <section class="setup-card">
-              <header><span class="setup-number">01</span><div><h3>资金与策略参数</h3><p>配置规划本金、总杠杆、双腿比例、冷启动天数与风控参数。</p></div></header>
+              <header><span class="setup-number">01</span><div><h3>资金与策略参数</h3><p>配置规划本金、总杠杆、三腿比例、冷启动天数与风控参数。</p></div></header>
               <div class="setup-fields">
                 <div class="field"><label for="tf-capital">规划本金 (USD)</label><input id="tf-capital" type="number" value="2000" min="50" max="10000000" step="100" /></div>
                 <div class="field"><label for="tf-leverage">目标总杠杆 (1x~5x)</label><input id="tf-leverage" type="number" value="3.0" min="1" max="5" step="0.5" /></div>
-                <div class="field"><label for="tf-stock-alloc">美股 A4 占比（%）</label><input id="tf-stock-alloc" type="number" value="50" min="0" max="100" step="5" /></div>
+                <div class="field"><label for="tf-stock-alloc">美股 A4 占比（%）</label><input id="tf-stock-alloc" type="number" value="40" min="0" max="100" step="5" /></div>
+                <div class="field"><label for="tf-vbounce-alloc">超跌抄底占比（%）</label><input id="tf-vbounce-alloc" type="number" value="20" min="0" max="50" step="5" /></div>
                 <div class="field"><label for="tf-min-bars">新币冷启动（天）</label><input id="tf-min-bars" type="number" value="7" min="6" max="30" step="1" /></div>
                 <div class="field"><label for="tf-max-dd">硬回撤熔断（%，0 关闭）</label><input id="tf-max-dd" type="number" value="20" min="0" max="80" step="1" /></div>
                 <div class="field"><label for="tf-maker-wait">Maker 等待（秒）</label><input id="tf-maker-wait" type="number" value="8" min="1" max="60" step="1" /></div>

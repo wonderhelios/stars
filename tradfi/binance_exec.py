@@ -350,7 +350,8 @@ def main() -> None:
     p.add_argument("--flatten", action="store_true", help="Close all open TradFi positions (reduce-only)")
     p.add_argument("--capital", type=float, default=None, help="Simulated equity in dry-run when API key absent")
     p.add_argument("--leverage", type=float, default=None, help="Total gross leverage (default 3.0x)")
-    p.add_argument("--stock-alloc", type=float, default=None, help="US Stock A4 leg allocation 0..1 (default 0.5)")
+    p.add_argument("--stock-alloc", type=float, default=None, help="US Stock A4 leg allocation 0..1 (default 0.4)")
+    p.add_argument("--vbounce-alloc", type=float, default=None, help="Oversold V-bounce leg allocation 0..0.5 (default 0.2)")
     p.add_argument("--stock-min-bars", type=int, default=None, help="Min daily bars for fast onboarding (default 7)")
     p.add_argument("--max-dd-pct", type=float, default=None, help="Hard peak-to-trough DD breaker pct (0=off)")
     p.add_argument("--maker-wait-sec", type=float, default=None, help="Seconds to wait for GTX Post-Only fill")
@@ -362,8 +363,13 @@ def main() -> None:
     file_cfg = load_tradfi_config(Path(args.config)) if args.config else {}
     capital = float(args.capital if args.capital is not None else file_cfg.get("capital", 2000.0))
     gross_lev = float(args.leverage if args.leverage is not None else file_cfg.get("gross_leverage", 3.0))
-    stock_alloc = float(args.stock_alloc if args.stock_alloc is not None else file_cfg.get("stock_alloc", 0.50))
+    stock_alloc = float(args.stock_alloc if args.stock_alloc is not None else file_cfg.get("stock_alloc", 0.40))
     stock_alloc = max(0.0, min(1.0, stock_alloc))
+    vbounce_alloc = float(args.vbounce_alloc if args.vbounce_alloc is not None else file_cfg.get("vbounce_alloc", 0.20))
+    vbounce_alloc = max(0.0, min(0.50, vbounce_alloc))
+    if stock_alloc + vbounce_alloc > 1.0:
+        vbounce_alloc = max(0.0, 1.0 - stock_alloc)
+    comm_alloc = max(0.0, 1.0 - stock_alloc - vbounce_alloc)
     stock_min_bars = int(args.stock_min_bars if args.stock_min_bars is not None else file_cfg.get("stock_min_bars", 7))
     max_dd_pct = float(args.max_dd_pct if args.max_dd_pct is not None else file_cfg.get("max_dd_pct", 20.0))
     maker_wait_sec = float(args.maker_wait_sec if args.maker_wait_sec is not None else file_cfg.get("maker_wait_sec", 8.0))
@@ -378,7 +384,8 @@ def main() -> None:
     cfg = StrategyConfig(
         gross_leverage=gross_lev,
         stock_alloc=stock_alloc,
-        comm_alloc=1.0 - stock_alloc,
+        comm_alloc=comm_alloc,
+        vbounce_alloc=vbounce_alloc,
         stock_min_bars=stock_min_bars,
     )
     all_syms = sorted(set(cfg.stock_universe) | set(cfg.comm_universe))
@@ -393,18 +400,22 @@ def main() -> None:
         api_secret = api_secret or str(kf_data.get("api_secret") or "").strip()
     client = BinanceFuturesClient(api_key, api_secret)
 
-    # Load persisted 2-phase stock state so live execution uses exact 2-phase slicing
+    # Load persisted 2-phase stock state and vbounce positions
     prev_phases = None
+    prev_vbounce = None
     if state_path.exists():
         try:
-            prev_phases = json.loads(state_path.read_text(encoding="utf-8")).get("stock_phases")
+            saved_state = json.loads(state_path.read_text(encoding="utf-8"))
+            prev_phases = saved_state.get("stock_phases")
+            prev_vbounce = saved_state.get("vbounce_positions")
         except Exception:
             prev_phases = None
+            prev_vbounce = None
 
     bars = fetch_closed_daily_bars(all_syms, limit=40)
     prices = fetch_mark_prices(all_syms)
     filters = client.exchange_filters(all_syms)
-    target = compute_m3b_target(bars, cfg, prev_stock_phases=prev_phases)
+    target = compute_m3b_target(bars, cfg, prev_stock_phases=prev_phases, prev_vbounce_positions=prev_vbounce)
 
     equity_source = "config_capital"
     if api_key and api_secret:
@@ -429,6 +440,8 @@ def main() -> None:
         "equity_source": equity_source,
         "gross_leverage": gross_lev,
         "stock_alloc": stock_alloc,
+        "comm_alloc": comm_alloc,
+        "vbounce_alloc": vbounce_alloc,
         "peak_equity": round(peak_eq, 2),
         "dd_pct": round(dd_pct, 2),
         "breaker_tripped": breaker_tripped,
@@ -446,10 +459,11 @@ def main() -> None:
                 client.ensure_cross_and_leverage(o.symbol, leverage=exch_lev)
             res = execute_order_maker_first(client, o, flt, maker_wait_sec=maker_wait_sec, taker_only=taker_only)
             summary["results"].append(res)
-        # Persist updated stock_phases after live rebalance
+        # Persist updated stock_phases and vbounce_positions after live rebalance
         try:
             saved = json.loads(state_path.read_text(encoding="utf-8")) if state_path.exists() else {}
             saved["stock_phases"] = target.stock_phase_weights
+            saved["vbounce_positions"] = target.vbounce_positions
             state_path.write_text(json.dumps(saved, ensure_ascii=False, indent=2), encoding="utf-8")
         except Exception:
             pass
