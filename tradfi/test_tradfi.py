@@ -300,19 +300,27 @@ class TestTradFiStrategy(unittest.TestCase):
     def test_vbounce_oversold_entry_exit_and_three_leg_blend(self) -> None:
         from tradfi.strategy import compute_vbounce_weights
 
-        # Day 0: NVDA crashes 3 days in a row (-3% each -> ~-8.7% 3d drop, RSI(2)=0)
-        crash_px = [100.0] * 10 + [97.0, 94.0, 91.0]
+        # Day 0: NVDA rises from 70 -> 100 over 57 days (MA60 ~85), then crashes 3 days (97, 94, 91 >= MA60)
+        uptrend_prefix = [70.0 + i * 0.55 for i in range(57)]
+        crash_px = uptrend_prefix + [97.0, 94.0, 91.0]
         bars_d0 = {"NVDAUSDT": _make_bars(crash_px)}
         cfg = StrategyConfig(gross_leverage=2.0, stock_universe=["NVDAUSDT"], comm_universe=[])
         self.assertAlmostEqual(cfg.stock_alloc, 0.40, places=4)
         self.assertAlmostEqual(cfg.comm_alloc, 0.40, places=4)
         self.assertAlmostEqual(cfg.vbounce_alloc, 0.20, places=4)
+        self.assertEqual(cfg.vbounce_trend_ma, 60)
 
         w0, pos0 = compute_vbounce_weights(bars_d0, cfg, prev_vbounce_positions=None)
         self.assertIn("NVDAUSDT", w0)
         self.assertAlmostEqual(w0["NVDAUSDT"], 2.0 / 4.0, places=4)
         self.assertEqual(pos0["NVDAUSDT"]["hold_days"], 0)
         self.assertAlmostEqual(pos0["NVDAUSDT"]["entry_price"], 91.0, places=4)
+
+        # Bear-market falling knife (below MA60) must be rejected by MA60 filter
+        bear_px = [140.0 - i * 0.6 for i in range(57)] + [97.0, 94.0, 91.0]
+        w_bear, pos_bear = compute_vbounce_weights({"NVDAUSDT": _make_bars(bear_px)}, cfg, prev_vbounce_positions=None)
+        self.assertEqual(w_bear, {})
+        self.assertEqual(pos_bear, {})
 
         # Day 1: small bounce to 92.0 (still below MA5 ~94.8, hold_days=1 < 3) -> keep holding
         bars_d1 = {"NVDAUSDT": _make_bars(crash_px + [92.0])}

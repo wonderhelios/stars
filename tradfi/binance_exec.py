@@ -412,7 +412,7 @@ def main() -> None:
             prev_phases = None
             prev_vbounce = None
 
-    bars = fetch_closed_daily_bars(all_syms, limit=40)
+    bars = fetch_closed_daily_bars(all_syms, limit=90)
     bars_4h = fetch_closed_4h_bars(list(cfg.comm_universe), limit=120)
     prices = fetch_mark_prices(all_syms)
     filters = client.exchange_filters(all_syms)

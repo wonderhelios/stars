@@ -79,6 +79,7 @@ class StrategyConfig:
     vbounce_max_hold_days: int = 3
     vbounce_stop_pct: float = 0.08
     vbounce_ma_exit: int = 5
+    vbounce_trend_ma: int = 60
     stock_universe: List[str] = field(default_factory=lambda: list(DEFAULT_STOCK_UNIVERSE))
     comm_universe: List[str] = field(default_factory=lambda: list(DEFAULT_COMMODITY_UNIVERSE))
 
@@ -490,6 +491,12 @@ def compute_vbounce_weights(
             closes = [b.close for b in bars]
             if len(closes) < 4 or closes[-4] <= 0.0:
                 continue
+            if cfg.vbounce_trend_ma > 0:
+                if len(closes) < cfg.vbounce_trend_ma:
+                    continue
+                trend_ma = sum(closes[-cfg.vbounce_trend_ma:]) / float(cfg.vbounce_trend_ma)
+                if closes[-1] < trend_ma:
+                    continue
             rsi2 = _rsi_latest(closes, cfg.vbounce_rsi_period)
             ret3 = closes[-1] / closes[-4] - 1.0
             if rsi2 <= cfg.vbounce_rsi_max and ret3 <= cfg.vbounce_drop3_min:

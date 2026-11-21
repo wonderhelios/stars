@@ -59,7 +59,7 @@ def _http_get_json(path: str, params: Optional[Dict[str, Any]] = None, timeout: 
     raise RuntimeError(f"GET {url} failed: {last_err}")
 
 
-def fetch_closed_daily_bars(symbols: List[str], limit: int = 40, now_ms: Optional[int] = None) -> Dict[str, List[DailyBar]]:
+def fetch_closed_daily_bars(symbols: List[str], limit: int = 90, now_ms: Optional[int] = None) -> Dict[str, List[DailyBar]]:
     """Fetch closed daily klines strictly before the current UTC day."""
     if now_ms is None:
         now_ms = int(time.time() * 1000)
@@ -736,7 +736,7 @@ def step_once(
         do_daily = force_rebalance or cfg_changed or should_rebalance_now(ledger, now_ms)
         do_4h = (not do_daily) and should_rebalance_4h_now(ledger, now_ms)
         if not risk["breaker_tripped"] and (do_daily or do_4h):
-            bars = fetch_closed_daily_bars(all_syms, limit=40, now_ms=now_ms)
+            bars = fetch_closed_daily_bars(all_syms, limit=90, now_ms=now_ms)
             bars_4h = fetch_closed_4h_bars(list(ledger.cfg.comm_universe), limit=120, now_ms=now_ms)
             day_idx = now_ms // 86_400_000
             target = compute_m3b_target(
