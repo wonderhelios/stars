@@ -86,6 +86,34 @@ def fetch_closed_daily_bars(symbols: List[str], limit: int = 40, now_ms: Optiona
     return out
 
 
+def fetch_closed_4h_bars(symbols: List[str], limit: int = 120, now_ms: Optional[int] = None) -> Dict[str, List[DailyBar]]:
+    """Fetch closed 4h klines strictly before the current 4h UTC bar."""
+    if now_ms is None:
+        now_ms = int(time.time() * 1000)
+    bar_ms = 4 * 3_600_000
+    cur_open_ms = (now_ms // bar_ms) * bar_ms
+    out: Dict[str, List[DailyBar]] = {}
+    for sym in symbols:
+        try:
+            rows = _http_get_json("/fapi/v1/klines", {"symbol": sym, "interval": "4h", "limit": limit})
+        except Exception:
+            continue
+        bars: List[DailyBar] = []
+        for r in rows:
+            try:
+                ot = int(r[0])
+                if ot >= cur_open_ms:
+                    continue
+                bars.append(DailyBar(open_time_ms=ot, close=float(r[4]), quote_vol=float(r[7])))
+            except (IndexError, TypeError, ValueError):
+                continue
+        bars.sort(key=lambda b: b.open_time_ms)
+        if bars:
+            out[sym] = bars
+        time.sleep(0.05)
+    return out
+
+
 def fetch_mark_prices(symbols: List[str]) -> Dict[str, float]:
     rows = _http_get_json("/fapi/v1/premiumIndex")
     want = set(symbols)
@@ -156,6 +184,7 @@ class TradFiShadowLedger:
                 "started_at": now_ms,
                 "last_update": now_ms,
                 "last_rebalance_day": None,
+                "last_rebalance_4h_slot": None,
                 "last_rebalance_ts": None,
                 "last_error": None,
                 "days_elapsed": 0.0,
@@ -176,8 +205,9 @@ class TradFiShadowLedger:
                     "stock_alloc": self.cfg.stock_alloc,
                     "comm_alloc": self.cfg.comm_alloc,
                     "vbounce_alloc": self.cfg.vbounce_alloc,
+                    "comm_4h_frac": self.cfg.comm_4h_frac,
                     "stock_min_bars": self.cfg.stock_min_bars,
-                    "comm_mode": "S4_swing",
+                    "comm_mode": "S4_daily+4h_dual",
                     "pos_stop_pct": POS_STOP_PCT_DEFAULT,
                     "trail_tp_activate_pct": TRAIL_TP_ACTIVATE_DEFAULT,
                     "trail_tp_callback_pct": TRAIL_TP_CALLBACK_DEFAULT,
@@ -593,6 +623,18 @@ def should_rebalance_now(ledger: TradFiShadowLedger, now_ms: int) -> bool:
     return gm.tm_hour > 0 or gm.tm_min >= REBAL_MINUTE_UTC
 
 
+def should_rebalance_4h_now(ledger: TradFiShadowLedger, now_ms: int) -> bool:
+    if ledger.cfg.comm_4h_frac <= 0.0:
+        return False
+    bar_ms = 4 * 3_600_000
+    slot = now_ms // bar_ms
+    last_slot = ledger.state.get("last_rebalance_4h_slot")
+    if last_slot is not None and int(last_slot) == slot:
+        return False
+    elapsed_min = (now_ms % bar_ms) / 60_000.0
+    return elapsed_min >= REBAL_MINUTE_UTC
+
+
 def _read_config_file(config_path: Path) -> Dict[str, Any]:
     if not config_path.exists():
         return {}
@@ -691,8 +733,11 @@ def step_once(
         # Intraday 5-minute risk guard (single-position hard stop + account DD breaker)
         risk = ledger.check_intraday_risk(prices, now_ms, fee_rate=FEE_RATE)
 
-        if not risk["breaker_tripped"] and (force_rebalance or cfg_changed or should_rebalance_now(ledger, now_ms)):
+        do_daily = force_rebalance or cfg_changed or should_rebalance_now(ledger, now_ms)
+        do_4h = (not do_daily) and should_rebalance_4h_now(ledger, now_ms)
+        if not risk["breaker_tripped"] and (do_daily or do_4h):
             bars = fetch_closed_daily_bars(all_syms, limit=40, now_ms=now_ms)
+            bars_4h = fetch_closed_4h_bars(list(ledger.cfg.comm_universe), limit=120, now_ms=now_ms)
             day_idx = now_ms // 86_400_000
             target = compute_m3b_target(
                 bars,
@@ -700,6 +745,8 @@ def step_once(
                 prev_stock_phases=ledger.state.get("stock_phases"),
                 day_index=day_idx,
                 prev_vbounce_positions=ledger.state.get("vbounce_positions"),
+                bars_4h_map=bars_4h,
+                freeze_daily_state=do_4h,
             )
             cooldowns = ledger.state.get("stop_cooldowns") or {}
             active_cool = {s for s, exp in cooldowns.items() if int(exp or 0) > now_ms}
@@ -711,6 +758,7 @@ def step_once(
                 ledger.rebalance(target, prices, now_ms, fee_rate=FEE_RATE)
             else:
                 ledger.mark_to_market(prices, now_ms)
+            ledger.state["last_rebalance_4h_slot"] = now_ms // (4 * 3_600_000)
 
         ledger.state["last_error"] = None
     except Exception as exc:

@@ -32,7 +32,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
-from tradfi.shadow import FAPI_BASE, fetch_closed_daily_bars, fetch_mark_prices
+from tradfi.shadow import FAPI_BASE, fetch_closed_4h_bars, fetch_closed_daily_bars, fetch_mark_prices
 from tradfi.strategy import StrategyConfig, TargetPortfolio, compute_m3b_target
 
 
@@ -413,9 +413,10 @@ def main() -> None:
             prev_vbounce = None
 
     bars = fetch_closed_daily_bars(all_syms, limit=40)
+    bars_4h = fetch_closed_4h_bars(list(cfg.comm_universe), limit=120)
     prices = fetch_mark_prices(all_syms)
     filters = client.exchange_filters(all_syms)
-    target = compute_m3b_target(bars, cfg, prev_stock_phases=prev_phases, prev_vbounce_positions=prev_vbounce)
+    target = compute_m3b_target(bars, cfg, prev_stock_phases=prev_phases, prev_vbounce_positions=prev_vbounce, bars_4h_map=bars_4h)
 
     equity_source = "config_capital"
     if api_key and api_secret:

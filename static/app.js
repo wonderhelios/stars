@@ -2110,7 +2110,7 @@ function renderTradFi(d) {
     const chips = [
       `总杠杆 ${fmt(cfg.gross_leverage || 3.0, 1)}x`,
       `美股A4 ${Math.round(100 * (cfg.stock_alloc ?? 0.4))}%`,
-      `4核心商品S4 ${Math.round(100 * (cfg.comm_alloc ?? 0.4))}%`,
+      `4核心商品双周期(日线S4+4h) ${Math.round(100 * (cfg.comm_alloc ?? 0.4))}%`,
       `超跌抄底 ${Math.round(100 * (cfg.vbounce_alloc ?? 0.2))}%`,
       `新币冷启动 ≥ ${cfg.stock_min_bars || 7}d`,
       `盘中止损 -${fmt(cfg.pos_stop_pct ?? 15.0, 0)}%`,

@@ -12,12 +12,11 @@ Architecture (verified causal OOS on 2026-04 ~ 2026-11):
     * Selection: top 30% Long, bottom 30% Short (min 2 per side, requires >= 6 eligible stocks).
     * Weighting: within-leg inverse-volatility (up to 14d std), single-name cap = 30% of leg gross.
     * 2-Phase Slicing: even-day slice + odd-day slice averaged 50/50 to eliminate phase luck.
-- Leg 2 (40% capital): 4 High-Liquidity Core Commodities S4 Swing (EMA5/20 + 5d Trailing Exit + RSI Extreme Half-Size)
+- Leg 2 (40% capital): 4 High-Liquidity Core Commodities Dual-Timeframe (50% Daily S4 + 50% 4h EMA12/48)
     * Universe: XAUUSDT (Gold), XAGUSDT (Silver), CLUSDT (WTI Crude Oil), NATGASUSDT (NatGas).
-    * Signal: EMA(5) vs EMA(20) sets direction; 5-day reverse-channel breakout exits to flat (0.0);
-      RSI(14) <= 25 (short) or >= 75 (long) halves position size (0.5x) to guard against V-reversals.
-    * Weighting: inverse-volatility (14d std) normalized across all valid commodities so flat/half-size
-      exposure stays in cash; single-commodity cap = 40% of leg gross.
+    * Daily sub-leg (50%): EMA(5/20) + 5-day reverse-channel exit + RSI(14) <=25/>=75 half-size.
+    * 4h sub-leg (50%): EMA(12/48) + 18-bar (3d) reverse-channel exit + RSI(14) <=25/>=75 half-size.
+    * Weighting: inverse-volatility normalized across all valid commodities; single-commodity cap = 40% of leg gross.
 - Leg 3 (20% capital): Oversold V-Bounce Long-Only (RSI(2) <= 5 & 3d drop >= 5%)
     * Universe: liquid non-blocked symbols across US stocks + 4 core commodities.
     * Entry: RSI(2) <= 5.0 and 3-day return <= -5.0% on closed daily bars, max 4 equal-weight slots.
@@ -67,6 +66,12 @@ class StrategyConfig:
     comm_trail_days: int = 5
     comm_rsi_lo: float = 25.0
     comm_rsi_hi: float = 75.0
+    comm_4h_frac: float = 0.50
+    comm_4h_ema_fast: int = 12
+    comm_4h_ema_slow: int = 48
+    comm_4h_trail_bars: int = 18
+    comm_4h_rsi_lo: float = 25.0
+    comm_4h_rsi_hi: float = 75.0
     vbounce_rsi_period: int = 2
     vbounce_rsi_max: float = 5.0
     vbounce_drop3_min: float = -0.05
@@ -354,6 +359,70 @@ def compute_comm_ema_weights(
     return weights, signals
 
 
+def compute_comm_4h_weights(
+    bars_4h_map: Dict[str, List[DailyBar]],
+    cfg: StrategyConfig,
+) -> Tuple[Dict[str, float], Dict[str, float]]:
+    """Compute 4-core commodity 4h fast-trend weights (EMA12/48 + 18-bar trailing exit + RSI half-size)."""
+    inv_vols: Dict[str, float] = {}
+    signals: Dict[str, float] = {}
+    min_bars = max(cfg.comm_4h_ema_slow, 50)
+
+    for sym in cfg.comm_universe:
+        bars = bars_4h_map.get(sym)
+        if not bars or len(bars) < min_bars:
+            continue
+        v_win = [b.quote_vol for b in bars[-42:]]
+        avg_daily_v = (sum(v_win) / len(v_win)) * 6.0 if v_win else 0.0
+        if avg_daily_v < cfg.min_vol_usd:
+            continue
+        rets, is_blocked = _clean_returns_and_block(bars, cfg.split_ret_threshold, cfg.split_block_days * 6)
+        if is_blocked or len(rets) < 42:
+            continue
+        closes = [b.close for b in bars]
+        ef = _ema_series(closes, cfg.comm_4h_ema_fast)[-1]
+        es = _ema_series(closes, cfg.comm_4h_ema_slow)[-1]
+        rsi14 = _rsi_latest(closes, 14)
+        cur = closes[-1]
+        trail_n = max(2, cfg.comm_4h_trail_bars)
+        prev_win = closes[-(trail_n + 1):-1]
+        hi_n = max(prev_win) if prev_win else cur
+        lo_n = min(prev_win) if prev_win else cur
+
+        if ef > es:
+            if cur < lo_n:
+                sig = 0.0
+            elif rsi14 >= cfg.comm_4h_rsi_hi:
+                sig = 0.5
+            else:
+                sig = 1.0
+        else:
+            if cur > hi_n:
+                sig = 0.0
+            elif rsi14 <= cfg.comm_4h_rsi_lo:
+                sig = -0.5
+            else:
+                sig = -1.0
+
+        vol = max(_std(rets[-84:]), 0.002)
+        inv_vols[sym] = 1.0 / vol
+        signals[sym] = sig
+
+    denom = sum(inv_vols.values())
+    if denom <= 0.0:
+        return {}, signals
+
+    cap = cfg.comm_cap_frac * cfg.gross_leverage
+    weights: Dict[str, float] = {}
+    for sym, iv in inv_vols.items():
+        sig = signals[sym]
+        if abs(sig) < 1e-9:
+            continue
+        w = cfg.gross_leverage * (sig * iv) / denom
+        weights[sym] = max(-cap, min(cap, w))
+    return weights, signals
+
+
 def compute_vbounce_weights(
     bars_map: Dict[str, List[DailyBar]],
     cfg: StrategyConfig,
@@ -442,12 +511,16 @@ def compute_m3b_target(
     prev_stock_phases: Optional[Dict[str, Dict[str, float]]] = None,
     day_index: Optional[int] = None,
     prev_vbounce_positions: Optional[Dict[str, Dict[str, Any]]] = None,
+    bars_4h_map: Optional[Dict[str, List[DailyBar]]] = None,
+    freeze_daily_state: bool = False,
 ) -> TargetPortfolio:
-    """Compute combined M3b 3-leg target portfolio (strictly causal on closed daily bars).
+    """Compute combined M3b 3-leg target portfolio (strictly causal on closed daily & 4h bars).
 
     For 2-phase slicing on the US Stock A4 leg:
     - If `prev_stock_phases` is None/empty (cold start), both p0 and p1 are initialized to today's A4 slice.
     - Otherwise, phase `day_index % 2` updates to today's fresh A4 slice while the other phase holds its prior slice.
+    - When `freeze_daily_state=True` (intraday 4h commodity-only refresh), `stock_phases` and `vbounce_positions`
+      stay frozen while the 4h commodity sub-leg updates.
     """
     asof_ms = 0
     for bars in bars_map.values():
@@ -461,8 +534,9 @@ def compute_m3b_target(
     if prev_stock_phases and (prev_stock_phases.get("p0") or prev_stock_phases.get("p1")):
         phases["p0"] = dict(prev_stock_phases.get("p0") or fresh_stock)
         phases["p1"] = dict(prev_stock_phases.get("p1") or fresh_stock)
-        active_key = f"p{day_index % 2}"
-        phases[active_key] = dict(fresh_stock)
+        if not freeze_daily_state:
+            active_key = f"p{day_index % 2}"
+            phases[active_key] = dict(fresh_stock)
     else:
         phases["p0"] = dict(fresh_stock)
         phases["p1"] = dict(fresh_stock)
@@ -477,8 +551,29 @@ def compute_m3b_target(
         if abs(v) > 1e-6:
             stock_w[s] = v
 
-    comm_w, comm_signals = compute_comm_ema_weights(bars_map, cfg)
-    vbounce_w, next_vbounce_pos = compute_vbounce_weights(bars_map, cfg, prev_vbounce_positions)
+    comm_daily_w, comm_signals = compute_comm_ema_weights(bars_map, cfg)
+    f4 = max(0.0, min(1.0, float(cfg.comm_4h_frac)))
+    if bars_4h_map and f4 > 0.0:
+        comm_4h_w, comm_4h_sigs = compute_comm_4h_weights(bars_4h_map, cfg)
+        if comm_4h_sigs:
+            comm_w: Dict[str, float] = {}
+            for s in sorted(set(comm_daily_w) | set(comm_4h_w)):
+                v = (1.0 - f4) * comm_daily_w.get(s, 0.0) + f4 * comm_4h_w.get(s, 0.0)
+                if abs(v) > 1e-6:
+                    comm_w[s] = v
+            for s in sorted(set(comm_signals) | set(comm_4h_sigs)):
+                comm_signals[s] = (1.0 - f4) * comm_signals.get(s, 0.0) + f4 * comm_4h_sigs.get(s, 0.0)
+        else:
+            comm_w = comm_daily_w
+    else:
+        comm_w = comm_daily_w
+
+    if freeze_daily_state and prev_vbounce_positions is not None:
+        next_vbounce_pos = {s: dict(p) for s, p in prev_vbounce_positions.items() if s not in blocked}
+        slot_w = (cfg.gross_leverage / float(cfg.vbounce_max_pos)) if (cfg.vbounce_alloc > 0.0 and cfg.vbounce_max_pos > 0) else 0.0
+        vbounce_w = {s: slot_w for s in sorted(next_vbounce_pos)} if slot_w > 0.0 else {}
+    else:
+        vbounce_w, next_vbounce_pos = compute_vbounce_weights(bars_map, cfg, prev_vbounce_positions)
 
     combined: Dict[str, float] = {}
     legs: Dict[str, str] = {}

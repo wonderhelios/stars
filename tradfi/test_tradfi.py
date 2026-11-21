@@ -338,6 +338,52 @@ class TestTradFiStrategy(unittest.TestCase):
         self.assertNotIn("NVDAUSDT", w_exp)
         self.assertEqual(pos_exp, {})
 
+    def test_comm_4h_dual_timeframe_and_freeze_daily_state(self) -> None:
+        from tradfi.strategy import compute_comm_4h_weights
+
+        panel = self._sample_panel()
+        # Construct 60 4h bars where XAUUSDT flips strongly UP on 4h while daily is still DOWN
+        up_4h = [100.0]
+        for i in range(59):
+            up_4h.append(up_4h[-1] * (1.006 if i % 2 == 0 else 0.997))
+        dn_4h = [100.0]
+        for i in range(59):
+            dn_4h.append(dn_4h[-1] * (0.994 if i % 2 == 0 else 1.002))
+        bars_4h = {
+            "XAUUSDT": _make_bars(up_4h, vol=10_000_000.0),
+            "CLUSDT": _make_bars(dn_4h, vol=10_000_000.0),
+            "NATGASUSDT": _make_bars(up_4h, vol=10_000_000.0),
+            "XAGUSDT": _make_bars(dn_4h, vol=10_000_000.0),
+        }
+        cfg = StrategyConfig(
+            gross_leverage=2.0,
+            stock_universe=[k for k in panel if k not in ("XAUUSDT", "XAGUSDT", "CLUSDT", "NATGASUSDT")],
+            comm_universe=["XAUUSDT", "XAGUSDT", "CLUSDT", "NATGASUSDT"],
+            comm_4h_frac=0.50,
+        )
+        w4, sig4 = compute_comm_4h_weights(bars_4h, cfg)
+        self.assertGreater(sig4["XAUUSDT"], 0.0)
+        self.assertLess(sig4["CLUSDT"], 0.0)
+        self.assertGreater(w4["XAUUSDT"], 0.0)
+
+        t_daily = compute_m3b_target(panel, cfg, day_index=10, bars_4h_map=None)
+        t_dual = compute_m3b_target(panel, cfg, day_index=10, bars_4h_map=bars_4h)
+        # XAU daily is short, 4h is long -> blended weight should be less short (higher) than pure daily
+        self.assertGreater(t_dual.weights.get("XAUUSDT", 0.0), t_daily.weights.get("XAUUSDT", 0.0))
+
+        # Intraday 4h refresh with freeze_daily_state=True must not mutate stock_phases or vbounce hold_days
+        t_4h_only = compute_m3b_target(
+            panel,
+            cfg,
+            prev_stock_phases=t_dual.stock_phase_weights,
+            day_index=11,
+            prev_vbounce_positions=t_dual.vbounce_positions,
+            bars_4h_map=bars_4h,
+            freeze_daily_state=True,
+        )
+        self.assertEqual(t_4h_only.stock_phase_weights, t_dual.stock_phase_weights)
+        self.assertEqual(t_4h_only.vbounce_positions, t_dual.vbounce_positions)
+
 
 if __name__ == "__main__":
     unittest.main()
