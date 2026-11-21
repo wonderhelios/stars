@@ -191,6 +191,7 @@ fn tradfi_default_capital() -> f64 { 2000.0 }
 fn tradfi_default_lev() -> f64 { 3.0 }
 fn tradfi_default_stock_alloc() -> f64 { 0.40 }
 fn tradfi_default_vbounce_alloc() -> f64 { 0.20 }
+fn tradfi_default_vol_target() -> f64 { 0.40 }
 fn tradfi_default_min_bars() -> usize { 7 }
 fn tradfi_default_max_dd() -> f64 { 20.0 }
 fn tradfi_default_maker_wait() -> f64 { 8.0 }
@@ -205,6 +206,8 @@ struct TradFiConfig {
     stock_alloc: f64,
     #[serde(default = "tradfi_default_vbounce_alloc")]
     vbounce_alloc: f64,
+    #[serde(default = "tradfi_default_vol_target")]
+    vol_target_ann: f64,
     #[serde(default = "tradfi_default_min_bars")]
     stock_min_bars: usize,
     #[serde(default = "tradfi_default_max_dd")]
@@ -234,6 +237,7 @@ impl Default for TradFiConfig {
             gross_leverage: tradfi_default_lev(),
             stock_alloc: tradfi_default_stock_alloc(),
             vbounce_alloc: tradfi_default_vbounce_alloc(),
+            vol_target_ann: tradfi_default_vol_target(),
             stock_min_bars: tradfi_default_min_bars(),
             max_dd_pct: tradfi_default_max_dd(),
             maker_wait_sec: tradfi_default_maker_wait(),
@@ -316,6 +320,7 @@ fn tradfi_config_public_json(cfg: &TradFiConfig) -> serde_json::Value {
         "gross_leverage": cfg.gross_leverage,
         "stock_alloc": cfg.stock_alloc,
         "vbounce_alloc": cfg.vbounce_alloc,
+        "vol_target_ann": cfg.vol_target_ann,
         "stock_min_bars": cfg.stock_min_bars,
         "max_dd_pct": cfg.max_dd_pct,
         "maker_wait_sec": cfg.maker_wait_sec,
@@ -408,6 +413,7 @@ struct TradFiConfigBody {
     gross_leverage: Option<f64>,
     stock_alloc: Option<f64>,
     vbounce_alloc: Option<f64>,
+    vol_target_ann: Option<f64>,
     stock_min_bars: Option<usize>,
     max_dd_pct: Option<f64>,
     maker_wait_sec: Option<f64>,
@@ -453,6 +459,12 @@ async fn tradfi_config_save(
     }
     if cfg.stock_alloc + cfg.vbounce_alloc > 1.0 {
         cfg.vbounce_alloc = (1.0 - cfg.stock_alloc).max(0.0);
+    }
+    if let Some(v) = body.vol_target_ann {
+        if !v.is_finite() {
+            return (StatusCode::BAD_REQUEST, Json(json!({"ok": false, "error": "目标年化波动无效"}))).into_response();
+        }
+        cfg.vol_target_ann = v.clamp(0.0, 2.0);
     }
     if let Some(v) = body.stock_min_bars {
         cfg.stock_min_bars = v.clamp(6, 30);

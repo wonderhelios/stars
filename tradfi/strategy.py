@@ -80,6 +80,10 @@ class StrategyConfig:
     vbounce_stop_pct: float = 0.08
     vbounce_ma_exit: int = 5
     vbounce_trend_ma: int = 60
+    vbounce_cash_sweep: bool = True
+    vol_target_ann: float = 0.40
+    vol_target_lookback: int = 14
+    vol_target_min_scale: float = 0.35
     stock_universe: List[str] = field(default_factory=lambda: list(DEFAULT_STOCK_UNIVERSE))
     comm_universe: List[str] = field(default_factory=lambda: list(DEFAULT_COMMODITY_UNIVERSE))
 
@@ -512,6 +516,35 @@ def compute_vbounce_weights(
     return weights, next_positions
 
 
+def _portfolio_ann_vol(
+    weights: Dict[str, float],
+    bars_map: Dict[str, List[DailyBar]],
+    lookback: int = 14,
+    split_threshold: float = 0.40,
+) -> float:
+    """Compute trailing realized annualized volatility of `weights` on closed daily bars."""
+    ret_by_day: Dict[int, float] = {}
+    for sym, w in weights.items():
+        if abs(w) < 1e-9:
+            continue
+        bars = bars_map.get(sym)
+        if not bars or len(bars) < 8:
+            continue
+        sub = bars[-(lookback + 1):]
+        for i in range(1, len(sub)):
+            c0, c1 = sub[i - 1].close, sub[i].close
+            if c0 > 0.0 and c1 > 0.0:
+                r = c1 / c0 - 1.0
+                if abs(r) >= split_threshold:
+                    r = 0.0
+                t = sub[i].open_time_ms
+                ret_by_day[t] = ret_by_day.get(t, 0.0) + w * r
+    series = [v for _, v in sorted(ret_by_day.items())[-lookback:]]
+    if len(series) < 7:
+        return 0.0
+    return _std(series) * math.sqrt(365.0)
+
+
 def compute_m3b_target(
     bars_map: Dict[str, List[DailyBar]],
     cfg: StrategyConfig,
@@ -582,17 +615,41 @@ def compute_m3b_target(
     else:
         vbounce_w, next_vbounce_pos = compute_vbounce_weights(bars_map, cfg, prev_vbounce_positions)
 
+    # Sweep idle vbounce allocation proportionally into stock_a4 & comm_ema
+    eff_stock_alloc = cfg.stock_alloc
+    eff_comm_alloc = cfg.comm_alloc
+    if cfg.vbounce_cash_sweep and cfg.vbounce_alloc > 0.0 and cfg.vbounce_max_pos > 0:
+        used_frac = min(1.0, len(vbounce_w) / float(cfg.vbounce_max_pos))
+        idle_alloc = cfg.vbounce_alloc * (1.0 - used_frac)
+        base_sum = eff_stock_alloc + eff_comm_alloc
+        if base_sum > 1e-9:
+            eff_stock_alloc += idle_alloc * (eff_stock_alloc / base_sum)
+            eff_comm_alloc += idle_alloc * (eff_comm_alloc / base_sum)
+
     combined: Dict[str, float] = {}
     legs: Dict[str, str] = {}
     for s, w in stock_w.items():
-        combined[s] = combined.get(s, 0.0) + cfg.stock_alloc * w
+        combined[s] = combined.get(s, 0.0) + eff_stock_alloc * w
         legs[s] = "stock_a4"
     for s, w in comm_w.items():
-        combined[s] = combined.get(s, 0.0) + cfg.comm_alloc * w
+        combined[s] = combined.get(s, 0.0) + eff_comm_alloc * w
         legs[s] = "comm_ema"
     for s, w in vbounce_w.items():
         combined[s] = combined.get(s, 0.0) + cfg.vbounce_alloc * w
         legs[s] = f"{legs[s]}+vbounce" if s in legs else "vbounce"
+
+    # Downside-only portfolio-level volatility targeting (never scales above 1.0x)
+    if cfg.vol_target_ann > 0.0 and combined:
+        pvol = _portfolio_ann_vol(
+            combined,
+            bars_map,
+            lookback=max(7, int(cfg.vol_target_lookback)),
+            split_threshold=cfg.split_ret_threshold,
+        )
+        if pvol > cfg.vol_target_ann:
+            scale = max(cfg.vol_target_min_scale, min(1.0, cfg.vol_target_ann / pvol))
+            for s in combined:
+                combined[s] *= scale
 
     for s in [k for k, v in combined.items() if abs(v) <= 1e-6]:
         del combined[s]

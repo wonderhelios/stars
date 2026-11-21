@@ -205,6 +205,8 @@ class TradFiShadowLedger:
                     "stock_alloc": self.cfg.stock_alloc,
                     "comm_alloc": self.cfg.comm_alloc,
                     "vbounce_alloc": self.cfg.vbounce_alloc,
+                    "vbounce_cash_sweep": self.cfg.vbounce_cash_sweep,
+                    "vol_target_ann": self.cfg.vol_target_ann,
                     "comm_4h_frac": self.cfg.comm_4h_frac,
                     "stock_min_bars": self.cfg.stock_min_bars,
                     "comm_mode": "S4_daily+4h_dual",
@@ -669,6 +671,7 @@ def sync_shadow_config_from_file(ledger: TradFiShadowLedger, config_path: Path =
     old_lev = float(c.get("gross_leverage", ledger.cfg.gross_leverage))
     old_sa = float(c.get("stock_alloc", ledger.cfg.stock_alloc))
     old_va = float(c.get("vbounce_alloc", ledger.cfg.vbounce_alloc))
+    old_vt = float(c.get("vol_target_ann", ledger.cfg.vol_target_ann))
     old_mb = int(c.get("stock_min_bars", ledger.cfg.stock_min_bars))
     try:
         if "gross_leverage" in data:
@@ -680,6 +683,8 @@ def sync_shadow_config_from_file(ledger: TradFiShadowLedger, config_path: Path =
         ledger.cfg.stock_alloc = sa
         ledger.cfg.vbounce_alloc = va
         ledger.cfg.comm_alloc = max(0.0, 1.0 - sa - va)
+        if "vol_target_ann" in data:
+            ledger.cfg.vol_target_ann = max(0.0, min(2.0, float(data["vol_target_ann"])))
         if "stock_min_bars" in data:
             ledger.cfg.stock_min_bars = max(6, min(30, int(data["stock_min_bars"])))
         proxy_url = str(data.get("proxy_url") or "").strip()
@@ -690,6 +695,8 @@ def sync_shadow_config_from_file(ledger: TradFiShadowLedger, config_path: Path =
         c["stock_alloc"] = ledger.cfg.stock_alloc
         c["comm_alloc"] = ledger.cfg.comm_alloc
         c["vbounce_alloc"] = ledger.cfg.vbounce_alloc
+        c["vbounce_cash_sweep"] = ledger.cfg.vbounce_cash_sweep
+        c["vol_target_ann"] = ledger.cfg.vol_target_ann
         c["stock_min_bars"] = ledger.cfg.stock_min_bars
         if "max_dd_pct" in data:
             c["max_dd_pct"] = max(0.0, min(80.0, float(data["max_dd_pct"])))
@@ -701,6 +708,7 @@ def sync_shadow_config_from_file(ledger: TradFiShadowLedger, config_path: Path =
         abs(ledger.cfg.gross_leverage - old_lev) > 1e-6
         or abs(ledger.cfg.stock_alloc - old_sa) > 1e-6
         or abs(ledger.cfg.vbounce_alloc - old_va) > 1e-6
+        or abs(ledger.cfg.vol_target_ann - old_vt) > 1e-6
         or ledger.cfg.stock_min_bars != old_mb
     )
 

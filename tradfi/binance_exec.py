@@ -352,6 +352,7 @@ def main() -> None:
     p.add_argument("--leverage", type=float, default=None, help="Total gross leverage (default 3.0x)")
     p.add_argument("--stock-alloc", type=float, default=None, help="US Stock A4 leg allocation 0..1 (default 0.4)")
     p.add_argument("--vbounce-alloc", type=float, default=None, help="Oversold V-bounce leg allocation 0..0.5 (default 0.2)")
+    p.add_argument("--vol-target-ann", type=float, default=None, help="Portfolio annualized vol target 0..2.0 (default 0.40, 0=off)")
     p.add_argument("--stock-min-bars", type=int, default=None, help="Min daily bars for fast onboarding (default 7)")
     p.add_argument("--max-dd-pct", type=float, default=None, help="Hard peak-to-trough DD breaker pct (0=off)")
     p.add_argument("--maker-wait-sec", type=float, default=None, help="Seconds to wait for GTX Post-Only fill")
@@ -370,6 +371,8 @@ def main() -> None:
     if stock_alloc + vbounce_alloc > 1.0:
         vbounce_alloc = max(0.0, 1.0 - stock_alloc)
     comm_alloc = max(0.0, 1.0 - stock_alloc - vbounce_alloc)
+    vol_target_ann = float(args.vol_target_ann if args.vol_target_ann is not None else file_cfg.get("vol_target_ann", 0.40))
+    vol_target_ann = max(0.0, min(2.0, vol_target_ann))
     stock_min_bars = int(args.stock_min_bars if args.stock_min_bars is not None else file_cfg.get("stock_min_bars", 7))
     max_dd_pct = float(args.max_dd_pct if args.max_dd_pct is not None else file_cfg.get("max_dd_pct", 20.0))
     maker_wait_sec = float(args.maker_wait_sec if args.maker_wait_sec is not None else file_cfg.get("maker_wait_sec", 8.0))
@@ -386,6 +389,7 @@ def main() -> None:
         stock_alloc=stock_alloc,
         comm_alloc=comm_alloc,
         vbounce_alloc=vbounce_alloc,
+        vol_target_ann=vol_target_ann,
         stock_min_bars=stock_min_bars,
     )
     all_syms = sorted(set(cfg.stock_universe) | set(cfg.comm_universe))

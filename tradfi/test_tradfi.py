@@ -392,6 +392,54 @@ class TestTradFiStrategy(unittest.TestCase):
         self.assertEqual(t_4h_only.stock_phase_weights, t_dual.stock_phase_weights)
         self.assertEqual(t_4h_only.vbounce_positions, t_dual.vbounce_positions)
 
+    def test_cash_sweep_and_portfolio_vol_target(self) -> None:
+        panel = self._sample_panel()
+        stocks = [k for k in panel if k not in ("XAUUSDT", "XAGUSDT", "CLUSDT", "NATGASUSDT")]
+        comms = ["XAUUSDT", "XAGUSDT", "CLUSDT", "NATGASUSDT"]
+
+        # Without cash sweep vs with cash sweep (no vbounce slots active -> 40/40 sweeps to 50/50)
+        cfg_no_sweep = StrategyConfig(
+            gross_leverage=2.0,
+            stock_universe=stocks,
+            comm_universe=comms,
+            vbounce_cash_sweep=False,
+            vol_target_ann=0.0,
+        )
+        cfg_sweep = StrategyConfig(
+            gross_leverage=2.0,
+            stock_universe=stocks,
+            comm_universe=comms,
+            vbounce_cash_sweep=True,
+            vol_target_ann=0.0,
+        )
+        t_no = compute_m3b_target(panel, cfg_no_sweep, day_index=10)
+        t_sw = compute_m3b_target(panel, cfg_sweep, day_index=10)
+        gross_no = sum(abs(v) for v in t_no.weights.values())
+        gross_sw = sum(abs(v) for v in t_sw.weights.values())
+        self.assertGreater(gross_sw, gross_no * 1.15)
+
+        # Strict vol target (e.g. 5% ann vol) must scale down gross weights on a volatile panel
+        vol_panel = dict(panel)
+        for s in comms:
+            px = 100.0
+            arr = []
+            for i in range(30):
+                px *= (1.035 if i % 2 == 0 else 0.968)
+                arr.append(px)
+            vol_panel[s] = _make_bars(arr)
+        t_sw_v = compute_m3b_target(vol_panel, cfg_sweep, day_index=10)
+        cfg_vt = StrategyConfig(
+            gross_leverage=2.0,
+            stock_universe=stocks,
+            comm_universe=comms,
+            vbounce_cash_sweep=True,
+            vol_target_ann=0.05,
+        )
+        t_vt = compute_m3b_target(vol_panel, cfg_vt, day_index=10)
+        gross_sw_v = sum(abs(v) for v in t_sw_v.weights.values())
+        gross_vt = sum(abs(v) for v in t_vt.weights.values())
+        self.assertLess(gross_vt, gross_sw_v * 0.90)
+
 
 if __name__ == "__main__":
     unittest.main()

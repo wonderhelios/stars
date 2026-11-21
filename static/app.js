@@ -2111,7 +2111,8 @@ function renderTradFi(d) {
       `总杠杆 ${fmt(cfg.gross_leverage || 3.0, 1)}x`,
       `美股A4 ${Math.round(100 * (cfg.stock_alloc ?? 0.4))}%`,
       `4核心商品双周期(日线S4+4h) ${Math.round(100 * (cfg.comm_alloc ?? 0.4))}%`,
-      `超跌抄底 ${Math.round(100 * (cfg.vbounce_alloc ?? 0.2))}%`,
+      `超跌抄底 ${Math.round(100 * (cfg.vbounce_alloc ?? 0.2))}%（闲置回流）`,
+      (cfg.vol_target_ann ?? 0.4) > 0 ? `目标年化波动 ${Math.round(100 * (cfg.vol_target_ann ?? 0.4))}%` : `目标年化波动 关闭`,
       `新币冷启动 ≥ ${cfg.stock_min_bars || 7}d`,
       `盘中止损 -${fmt(cfg.pos_stop_pct ?? 15.0, 0)}%`,
       `移动止盈 +${fmt(cfg.trail_tp_activate_pct ?? 12.0, 0)}% / 回撤${fmt(cfg.trail_tp_callback_pct ?? 5.0, 0)}%`,
@@ -2156,6 +2157,7 @@ function tfConfigInto(c) {
   set("tf-leverage", c.gross_leverage ?? 3.0);
   set("tf-stock-alloc", Math.round((c.stock_alloc ?? 0.4) * 100));
   set("tf-vbounce-alloc", Math.round((c.vbounce_alloc ?? 0.2) * 100));
+  set("tf-vol-target", Math.round((c.vol_target_ann ?? 0.4) * 100));
   set("tf-min-bars", c.stock_min_bars ?? 7);
   set("tf-max-dd", c.max_dd_pct ?? 20);
   set("tf-maker-wait", c.maker_wait_sec ?? 8);
@@ -2224,6 +2226,7 @@ async function saveTradFiConfig() {
     gross_leverage: Number($("tf-leverage").value),
     stock_alloc: Number($("tf-stock-alloc").value) / 100,
     vbounce_alloc: Number($("tf-vbounce-alloc") ? $("tf-vbounce-alloc").value : 20) / 100,
+    vol_target_ann: Number($("tf-vol-target") ? $("tf-vol-target").value : 40) / 100,
     stock_min_bars: Number($("tf-min-bars").value),
     max_dd_pct: Number($("tf-max-dd").value),
     maker_wait_sec: Number($("tf-maker-wait").value),
