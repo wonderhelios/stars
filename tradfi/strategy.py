@@ -98,6 +98,7 @@ class TargetPortfolio:
     comm_signals: Dict[str, float]
     stock_phase_weights: Dict[str, Dict[str, float]]  # {"p0": {...}, "p1": {...}}
     vbounce_positions: Dict[str, Dict[str, Any]] = field(default_factory=dict)
+    vol_scale: float = 1.0
 
 
 def _std(xs: List[float]) -> float:
@@ -553,14 +554,15 @@ def compute_m3b_target(
     prev_vbounce_positions: Optional[Dict[str, Dict[str, Any]]] = None,
     bars_4h_map: Optional[Dict[str, List[DailyBar]]] = None,
     freeze_daily_state: bool = False,
+    prev_vol_scale: Optional[float] = None,
 ) -> TargetPortfolio:
     """Compute combined M3b 3-leg target portfolio (strictly causal on closed daily & 4h bars).
 
     For 2-phase slicing on the US Stock A4 leg:
     - If `prev_stock_phases` is None/empty (cold start), both p0 and p1 are initialized to today's A4 slice.
     - Otherwise, phase `day_index % 2` updates to today's fresh A4 slice while the other phase holds its prior slice.
-    - When `freeze_daily_state=True` (intraday 4h commodity-only refresh), `stock_phases` and `vbounce_positions`
-      stay frozen while the 4h commodity sub-leg updates.
+    - When `freeze_daily_state=True` (intraday 4h commodity-only refresh), `stock_phases`, `vbounce_positions`,
+      and `vol_scale` stay frozen while the 4h commodity sub-leg updates.
     """
     asof_ms = 0
     for bars in bars_map.values():
@@ -639,17 +641,22 @@ def compute_m3b_target(
         legs[s] = f"{legs[s]}+vbounce" if s in legs else "vbounce"
 
     # Downside-only portfolio-level volatility targeting (never scales above 1.0x)
+    vol_scale = 1.0
     if cfg.vol_target_ann > 0.0 and combined:
-        pvol = _portfolio_ann_vol(
-            combined,
-            bars_map,
-            lookback=max(7, int(cfg.vol_target_lookback)),
-            split_threshold=cfg.split_ret_threshold,
-        )
-        if pvol > cfg.vol_target_ann:
-            scale = max(cfg.vol_target_min_scale, min(1.0, cfg.vol_target_ann / pvol))
+        if freeze_daily_state and prev_vol_scale is not None:
+            vol_scale = max(cfg.vol_target_min_scale, min(1.0, float(prev_vol_scale)))
+        else:
+            pvol = _portfolio_ann_vol(
+                combined,
+                bars_map,
+                lookback=max(7, int(cfg.vol_target_lookback)),
+                split_threshold=cfg.split_ret_threshold,
+            )
+            if pvol > cfg.vol_target_ann:
+                vol_scale = max(cfg.vol_target_min_scale, min(1.0, cfg.vol_target_ann / pvol))
+        if vol_scale < 1.0:
             for s in combined:
-                combined[s] *= scale
+                combined[s] *= vol_scale
 
     for s in [k for k, v in combined.items() if abs(v) <= 1e-6]:
         del combined[s]
@@ -664,4 +671,5 @@ def compute_m3b_target(
         comm_signals=comm_signals,
         stock_phase_weights=phases,
         vbounce_positions=next_vbounce_pos,
+        vol_scale=vol_scale,
     )

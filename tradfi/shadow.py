@@ -40,6 +40,8 @@ TRAIL_TP_ACTIVATE_DEFAULT = float(os.environ.get("STARS_TRADFI_TRAIL_ACT", "12.0
 TRAIL_TP_CALLBACK_DEFAULT = float(os.environ.get("STARS_TRADFI_TRAIL_CB", "5.0"))  # lock profit on 5% pullback from peak
 MAX_DD_PCT_DEFAULT = float(os.environ.get("STARS_TRADFI_MAX_DD_PCT", "20.0"))  # 20% account hard DD breaker
 STOP_COOLDOWN_MS = 24 * 3_600_000
+REBAL_MIN_EQUITY_FRAC = 0.015  # 1.5% equity deadband for same-side resizes
+REBAL_MIN_REL_CHANGE = 0.10    # 10% relative position change deadband for same-side resizes
 
 
 def _http_get_json(path: str, params: Optional[Dict[str, Any]] = None, timeout: int = 20) -> Any:
@@ -194,6 +196,7 @@ class TradFiShadowLedger:
                 "stop_cooldowns": {},  # symbol -> expire_ts_ms
                 "stock_phases": {"p0": {}, "p1": {}},
                 "vbounce_positions": {},
+                "vol_scale": 1.0,
                 "blocked_symbols": [],
                 "positions": {},   # symbol -> dict
                 "history": [],     # [[ts_ms, equity], ...]
@@ -358,11 +361,17 @@ class TradFiShadowLedger:
             delta_qty = target_qty - old_qty
             delta_notional = abs(delta_qty * px)
 
-            # Skip tiny dust adjustments (< $15) unless closing completely
-            if abs(target_qty) > 1e-12 and delta_notional < 15.0:
-                if old:
+            # Deadband: skip tiny dust opens (< $15) and minor same-side resizes
+            # (never blocks full closes or side flips)
+            if old is not None and old_qty * target_qty > 0.0:
+                old_notional = abs(old_qty * px)
+                rel_change = delta_notional / max(old_notional, 1e-9)
+                min_resize_usd = max(15.0, equity * REBAL_MIN_EQUITY_FRAC)
+                if delta_notional < min_resize_usd or rel_change < REBAL_MIN_REL_CHANGE:
                     old["leg"] = target.legs.get(sym, old.get("leg", ""))
                     old["target_weight"] = tw
+                    continue
+            elif abs(target_qty) > 1e-12 and delta_notional < 15.0:
                 continue
 
             fee = delta_notional * fee_rate
@@ -449,6 +458,7 @@ class TradFiShadowLedger:
 
         self.state["stock_phases"] = target.stock_phase_weights
         self.state["vbounce_positions"] = dict(target.vbounce_positions)
+        self.state["vol_scale"] = float(target.vol_scale)
         self.state["blocked_symbols"] = list(target.blocked_symbols)
         day_str = time.strftime("%Y-%m-%d", time.gmtime(now_ms / 1000.0))
         self.state["last_rebalance_day"] = day_str
@@ -755,6 +765,7 @@ def step_once(
                 prev_vbounce_positions=ledger.state.get("vbounce_positions"),
                 bars_4h_map=bars_4h,
                 freeze_daily_state=do_4h,
+                prev_vol_scale=ledger.state.get("vol_scale"),
             )
             cooldowns = ledger.state.get("stop_cooldowns") or {}
             active_cool = {s for s, exp in cooldowns.items() if int(exp or 0) > now_ms}

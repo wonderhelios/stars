@@ -439,6 +439,132 @@ class TestTradFiStrategy(unittest.TestCase):
         gross_sw_v = sum(abs(v) for v in t_sw_v.weights.values())
         gross_vt = sum(abs(v) for v in t_vt.weights.values())
         self.assertLess(gross_vt, gross_sw_v * 0.90)
+        self.assertLess(t_vt.vol_scale, 1.0)
+
+    def test_4h_refresh_freezes_vol_scale(self) -> None:
+        panel = self._sample_panel()
+        stocks = [k for k in panel if k not in ("XAUUSDT", "XAGUSDT", "CLUSDT", "NATGASUSDT")]
+        comms = ["XAUUSDT", "XAGUSDT", "CLUSDT", "NATGASUSDT"]
+
+        # Make commodities volatile so daily vol_scale < 1.0
+        vol_panel = dict(panel)
+        for s in comms:
+            px = 100.0
+            arr = []
+            for i in range(30):
+                px *= (1.035 if i % 2 == 0 else 0.968)
+                arr.append(px)
+            vol_panel[s] = _make_bars(arr)
+
+        up_4h = [100.0]
+        dn_4h = [100.0]
+        for i in range(59):
+            up_4h.append(up_4h[-1] * (1.006 if i % 2 == 0 else 0.997))
+            dn_4h.append(dn_4h[-1] * (0.994 if i % 2 == 0 else 1.002))
+        bars_4h_a = {
+            "XAUUSDT": _make_bars(up_4h, vol=10_000_000.0),
+            "CLUSDT": _make_bars(dn_4h, vol=10_000_000.0),
+            "NATGASUSDT": _make_bars(up_4h, vol=10_000_000.0),
+            "XAGUSDT": _make_bars(dn_4h, vol=10_000_000.0),
+        }
+        bars_4h_b = {
+            "XAUUSDT": _make_bars(dn_4h, vol=10_000_000.0),
+            "CLUSDT": _make_bars(up_4h, vol=10_000_000.0),
+            "NATGASUSDT": _make_bars(dn_4h, vol=10_000_000.0),
+            "XAGUSDT": _make_bars(up_4h, vol=10_000_000.0),
+        }
+
+        cfg = StrategyConfig(
+            gross_leverage=2.0,
+            stock_universe=stocks,
+            comm_universe=comms,
+            comm_4h_frac=0.50,
+            vol_target_ann=0.05,
+        )
+        t_daily = compute_m3b_target(vol_panel, cfg, day_index=10, bars_4h_map=bars_4h_a)
+        self.assertLess(t_daily.vol_scale, 1.0)
+
+        # Intraday 4h refresh with flipped 4h commodity bars must keep vol_scale and stock weights identical
+        t_4h = compute_m3b_target(
+            vol_panel,
+            cfg,
+            prev_stock_phases=t_daily.stock_phase_weights,
+            day_index=10,
+            prev_vbounce_positions=t_daily.vbounce_positions,
+            bars_4h_map=bars_4h_b,
+            freeze_daily_state=True,
+            prev_vol_scale=t_daily.vol_scale,
+        )
+        self.assertAlmostEqual(t_4h.vol_scale, t_daily.vol_scale, places=9)
+        for s in stocks:
+            self.assertAlmostEqual(t_4h.weights.get(s, 0.0), t_daily.weights.get(s, 0.0), places=9)
+
+    def test_same_side_resize_deadband_shadow_and_live(self) -> None:
+        from tradfi.strategy import TargetPortfolio
+
+        prices = {"NVDAUSDT": 100.0, "PLTRUSDT": 50.0, "XAUUSDT": 2000.0, "TSLAUSDT": 200.0}
+        filters = {s: SymbolFilters(s, 0.001, 0.001, 0.01, 5.0) for s in prices}
+        now_ms = 1_763_600_000_000
+        ledger = TradFiShadowLedger(cfg=StrategyConfig(gross_leverage=3.0), capital=6000.0)
+
+        t0 = TargetPortfolio(
+            asof_day_ms=now_ms,
+            weights={"NVDAUSDT": 0.20, "PLTRUSDT": -0.20, "XAUUSDT": 0.25},
+            legs={"NVDAUSDT": "stock_a4", "PLTRUSDT": "stock_a4", "XAUUSDT": "comm_ema"},
+            blocked_symbols=[],
+            stock_scores={},
+            comm_signals={},
+            stock_phase_weights={"p0": {}, "p1": {}},
+            vol_scale=0.68,
+        )
+        ledger.rebalance(t0, prices, now_ms, fee_rate=0.0002)
+        self.assertAlmostEqual(ledger.state["vol_scale"], 0.68, places=6)
+        trades_after_open = len(ledger.state["trades"])
+        fees_after_open = ledger.state["total_fees"]
+
+        # Micro same-side resize: NVDA 0.20->0.194 ($36 < $90 & 3% < 10%), PLTR -0.20->-0.21 ($60 < $90 & 5% < 10%)
+        # XAU 0.25->0.265 ($90 >= 1.5% eq, but 6% < 10% relative) -> all 3 should be skipped!
+        t_micro = TargetPortfolio(
+            asof_day_ms=now_ms,
+            weights={"NVDAUSDT": 0.194, "PLTRUSDT": -0.21, "XAUUSDT": 0.265},
+            legs={"NVDAUSDT": "stock_a4", "PLTRUSDT": "stock_a4", "XAUUSDT": "comm_ema"},
+            blocked_symbols=[],
+            stock_scores={},
+            comm_signals={},
+            stock_phase_weights={"p0": {}, "p1": {}},
+            vol_scale=0.68,
+        )
+        rec_micro = ledger.rebalance(t_micro, prices, now_ms + 3600_000, fee_rate=0.0002)
+        self.assertEqual(rec_micro["turnover_usd"], 0.0)
+        self.assertEqual(len(ledger.state["trades"]), trades_after_open)
+        self.assertAlmostEqual(ledger.state["total_fees"], fees_after_open, places=8)
+
+        # Matching live executor deadband must also produce 0 orders for micro resizes
+        cur_pos = {s: p["qty"] for s, p in ledger.state["positions"].items()}
+        live_micro_orders = build_rebalance_orders(6000.0, cur_pos, t_micro, prices, filters)
+        self.assertEqual(live_micro_orders, [])
+
+        # Large resize (NVDA 0.20->0.25, +25% rel & $300), side flip (PLTR -0.20->+0.15),
+        # full close (XAU -> 0), and new open (TSLA -> +0.10) must all execute!
+        t_real = TargetPortfolio(
+            asof_day_ms=now_ms,
+            weights={"NVDAUSDT": 0.25, "PLTRUSDT": 0.15, "TSLAUSDT": 0.10},
+            legs={"NVDAUSDT": "stock_a4", "PLTRUSDT": "stock_a4", "TSLAUSDT": "stock_a4"},
+            blocked_symbols=[],
+            stock_scores={},
+            comm_signals={},
+            stock_phase_weights={"p0": {}, "p1": {}},
+            vol_scale=0.68,
+        )
+        live_real_orders = build_rebalance_orders(6000.0, cur_pos, t_real, prices, filters)
+        self.assertEqual({o.symbol for o in live_real_orders}, {"NVDAUSDT", "PLTRUSDT", "XAUUSDT", "TSLAUSDT"})
+
+        rec_real = ledger.rebalance(t_real, prices, now_ms + 7200_000, fee_rate=0.0002)
+        self.assertGreater(rec_real["turnover_usd"], 0.0)
+        self.assertNotIn("XAUUSDT", ledger.state["positions"])
+        self.assertIn("TSLAUSDT", ledger.state["positions"])
+        self.assertEqual(ledger.state["positions"]["PLTRUSDT"]["side"], "long")
+        self.assertAlmostEqual(ledger.state["positions"]["NVDAUSDT"]["notional"], 0.25 * ledger.state["equity"], delta=5.0)
 
 
 if __name__ == "__main__":

@@ -237,6 +237,8 @@ def build_rebalance_orders(
     filters: Dict[str, SymbolFilters],
     min_trade_usd: float = 20.0,
     flatten: bool = False,
+    min_rebal_equity_frac: float = 0.015,
+    min_rebal_rel_change: float = 0.10,
 ) -> List[PlannedOrder]:
     """Compute exact diff orders (closes/reduces first, then opens/increases)."""
     syms = sorted(set(current_pos.keys()) | ({} if flatten else set(target.weights.keys())))
@@ -255,7 +257,14 @@ def build_rebalance_orders(
 
         notional = abs(delta * px)
         closing_completely = abs(tgt_qty) < 1e-12 and abs(cur_qty) > 1e-12
-        if not closing_completely and notional < max(min_trade_usd, flt.min_notional):
+        same_side_resize = (not flatten) and (cur_qty * tgt_qty > 0.0)
+        if same_side_resize:
+            old_notional = abs(cur_qty * px)
+            rel_change = notional / max(old_notional, 1e-9)
+            min_resize_usd = max(min_trade_usd, flt.min_notional, equity * min_rebal_equity_frac)
+            if notional < min_resize_usd or rel_change < min_rebal_rel_change:
+                continue
+        elif not closing_completely and notional < max(min_trade_usd, flt.min_notional):
             continue
 
         qty = round_step(abs(delta), flt.step_size)
@@ -469,6 +478,7 @@ def main() -> None:
             saved = json.loads(state_path.read_text(encoding="utf-8")) if state_path.exists() else {}
             saved["stock_phases"] = target.stock_phase_weights
             saved["vbounce_positions"] = target.vbounce_positions
+            saved["vol_scale"] = float(target.vol_scale)
             state_path.write_text(json.dumps(saved, ensure_ascii=False, indent=2), encoding="utf-8")
         except Exception:
             pass
