@@ -426,7 +426,7 @@ def main() -> None:
             prev_vbounce = None
 
     bars = fetch_closed_daily_bars(all_syms, limit=90)
-    bars_4h = fetch_closed_4h_bars(list(cfg.comm_universe), limit=120)
+    bars_4h = fetch_closed_4h_bars(list(cfg.comm_universe), limit=120) if cfg.comm_4h_frac > 0.0 else None
     prices = fetch_mark_prices(all_syms)
     filters = client.exchange_filters(all_syms)
     target = compute_m3b_target(bars, cfg, prev_stock_phases=prev_phases, prev_vbounce_positions=prev_vbounce, bars_4h_map=bars_4h)

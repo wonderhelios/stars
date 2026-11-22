@@ -212,7 +212,7 @@ class TradFiShadowLedger:
                     "vol_target_ann": self.cfg.vol_target_ann,
                     "comm_4h_frac": self.cfg.comm_4h_frac,
                     "stock_min_bars": self.cfg.stock_min_bars,
-                    "comm_mode": "S4_daily+4h_dual",
+                    "comm_mode": "S4_daily+4h_dual" if self.cfg.comm_4h_frac > 0.0 else "S4_daily",
                     "pos_stop_pct": POS_STOP_PCT_DEFAULT,
                     "trail_tp_activate_pct": TRAIL_TP_ACTIVATE_DEFAULT,
                     "trail_tp_callback_pct": TRAIL_TP_CALLBACK_DEFAULT,
@@ -682,6 +682,7 @@ def sync_shadow_config_from_file(ledger: TradFiShadowLedger, config_path: Path =
     old_sa = float(c.get("stock_alloc", ledger.cfg.stock_alloc))
     old_va = float(c.get("vbounce_alloc", ledger.cfg.vbounce_alloc))
     old_vt = float(c.get("vol_target_ann", ledger.cfg.vol_target_ann))
+    old_f4 = float(c.get("comm_4h_frac", ledger.cfg.comm_4h_frac))
     old_mb = int(c.get("stock_min_bars", ledger.cfg.stock_min_bars))
     try:
         if "gross_leverage" in data:
@@ -695,6 +696,8 @@ def sync_shadow_config_from_file(ledger: TradFiShadowLedger, config_path: Path =
         ledger.cfg.comm_alloc = max(0.0, 1.0 - sa - va)
         if "vol_target_ann" in data:
             ledger.cfg.vol_target_ann = max(0.0, min(2.0, float(data["vol_target_ann"])))
+        if "comm_4h_frac" in data:
+            ledger.cfg.comm_4h_frac = max(0.0, min(1.0, float(data["comm_4h_frac"])))
         if "stock_min_bars" in data:
             ledger.cfg.stock_min_bars = max(6, min(30, int(data["stock_min_bars"])))
         proxy_url = str(data.get("proxy_url") or "").strip()
@@ -707,6 +710,8 @@ def sync_shadow_config_from_file(ledger: TradFiShadowLedger, config_path: Path =
         c["vbounce_alloc"] = ledger.cfg.vbounce_alloc
         c["vbounce_cash_sweep"] = ledger.cfg.vbounce_cash_sweep
         c["vol_target_ann"] = ledger.cfg.vol_target_ann
+        c["comm_4h_frac"] = ledger.cfg.comm_4h_frac
+        c["comm_mode"] = "S4_daily+4h_dual" if ledger.cfg.comm_4h_frac > 0.0 else "S4_daily"
         c["stock_min_bars"] = ledger.cfg.stock_min_bars
         if "max_dd_pct" in data:
             c["max_dd_pct"] = max(0.0, min(80.0, float(data["max_dd_pct"])))
@@ -719,6 +724,7 @@ def sync_shadow_config_from_file(ledger: TradFiShadowLedger, config_path: Path =
         or abs(ledger.cfg.stock_alloc - old_sa) > 1e-6
         or abs(ledger.cfg.vbounce_alloc - old_va) > 1e-6
         or abs(ledger.cfg.vol_target_ann - old_vt) > 1e-6
+        or abs(ledger.cfg.comm_4h_frac - old_f4) > 1e-6
         or ledger.cfg.stock_min_bars != old_mb
     )
 
@@ -755,7 +761,7 @@ def step_once(
         do_4h = (not do_daily) and should_rebalance_4h_now(ledger, now_ms)
         if not risk["breaker_tripped"] and (do_daily or do_4h):
             bars = fetch_closed_daily_bars(all_syms, limit=90, now_ms=now_ms)
-            bars_4h = fetch_closed_4h_bars(list(ledger.cfg.comm_universe), limit=120, now_ms=now_ms)
+            bars_4h = fetch_closed_4h_bars(list(ledger.cfg.comm_universe), limit=120, now_ms=now_ms) if ledger.cfg.comm_4h_frac > 0.0 else None
             day_idx = now_ms // 86_400_000
             target = compute_m3b_target(
                 bars,

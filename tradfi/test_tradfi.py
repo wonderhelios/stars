@@ -206,6 +206,7 @@ class TestTradFiStrategy(unittest.TestCase):
         )
         self.assertEqual(cfg.gross_leverage, 3.0)
         self.assertEqual(cfg.stock_min_bars, 7)
+        self.assertEqual(cfg.comm_4h_frac, 0.0)
         w, scores, _ = compute_stock_a4_slice(panel, cfg)
         self.assertIn("ANTUSDT", scores)
         self.assertNotIn("IGVUSDT", scores)

@@ -66,7 +66,7 @@ class StrategyConfig:
     comm_trail_days: int = 5
     comm_rsi_lo: float = 25.0
     comm_rsi_hi: float = 75.0
-    comm_4h_frac: float = 0.50
+    comm_4h_frac: float = 0.0
     comm_4h_ema_fast: int = 12
     comm_4h_ema_slow: int = 48
     comm_4h_trail_bars: int = 18
