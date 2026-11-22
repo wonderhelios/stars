@@ -64,6 +64,10 @@ pub struct LiveConfig {
     /// 止损后的冷却天数（冷却期内不许再开同向仓 ✗）。
     #[serde(default = "d_stop_cool")]
     pub stop_cooldown_days: i64,
+    /// 单币目标名义占账户净值的上限（0 = 关闭，默认 0.20 = 20%）。
+    /// 作用在 vol_target 缩放后的最终目标权重上，超限部分在同侧其他币间等杠杆再分配。
+    #[serde(default = "d_max_single_weight")]
+    pub max_single_weight: f64,
     pub key_path: String,
     pub target_positions: usize,
     pub leverage: f64,
@@ -131,6 +135,7 @@ impl Default for LiveConfig {
             vol_band: d_vol_band(),
             position_stop_pct: d_stop_pct(),
             stop_cooldown_days: d_stop_cool(),
+            max_single_weight: d_max_single_weight(),
             armed: false,
             auto_run: false,
         }
@@ -185,6 +190,7 @@ impl LiveConfig {
             dd_weight: self.dd_weight,
             upfrac_weight: self.upfrac_weight,
             take_profit_pct: self.take_profit_pct,
+            max_single_weight: self.max_single_weight,
             ..Default::default()
         }
     }
@@ -240,6 +246,10 @@ fn d_stop_pct() -> f64 {
 
 fn d_stop_cool() -> i64 {
     5
+}
+
+fn d_max_single_weight() -> f64 {
+    0.20
 }
 
 #[derive(Clone, Serialize, Deserialize, Default)]
@@ -1260,6 +1270,24 @@ pub async fn run(
         }
     }
 
+    // ④ 单币目标权重上限（作用在 vol_target 缩放和止损归一化之后的最终目标权重上）
+    let mut cap_lines: Vec<String> = Vec::new();
+    if cfg.max_single_weight > 0.0 {
+        let clipped = trader::cap_weights_same_side(
+            &mut weights,
+            cfg.max_single_weight,
+            cfg.margin_buffer,
+            cfg.effective_leverage(),
+        );
+        if !clipped.is_empty() {
+            cap_lines.push(format!(
+                "单币上限 {:.0}%：截断 {} 并在同侧等杠杆再分配",
+                cfg.max_single_weight * 100.0,
+                clipped.join(" ")
+            ));
+        }
+    }
+
     let plan = trader::build_plan(&weights, &acct, markets, &mids, &tc, None);
 
     let mut plan_lines = vec![format!(
@@ -1274,6 +1302,7 @@ pub async fn run(
     )];
     plan_lines.extend(vol_lines.clone());
     plan_lines.extend(stop_lines.clone());
+    plan_lines.extend(cap_lines.clone());
     // 被止损的币 ✗ build_plan 一律标成"掉出名单平仓"✗ 这里改写成本来的原因 ✓
     for coin in stopped_now.iter().map(|(c, _)| c.as_str()) {
         for line in plan_lines.iter_mut() {
@@ -2151,6 +2180,7 @@ mod config_parity_tests {
             dd_weight: 1.0,
             upfrac_weight: 0.8,
             take_profit_pct: 0.1,
+            max_single_weight: 0.18,
             ..LiveConfig::default()
         };
         let tc = cfg.trade_config();
@@ -2166,6 +2196,7 @@ mod config_parity_tests {
         assert_eq!(tc.dd_weight, 1.0, "dd_weight 没传（三因子 UI 会失效）");
         assert_eq!(tc.upfrac_weight, 0.8, "upfrac_weight 没传（三因子 UI 会失效）");
         assert_eq!(tc.take_profit_pct, 0.1, "take_profit_pct 没传（止盈会失效）");
+        assert_eq!(tc.max_single_weight, 0.18, "max_single_weight 没传");
     }
 }
 

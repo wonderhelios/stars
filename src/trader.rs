@@ -73,6 +73,9 @@ pub struct TradeConfig {
     pub momentum_weight: f64,
     /// 分腿逆波动率加权（1/σ_20d，截断到 [0.01, 0.25] 并分别归一化多空两腿各占 0.5）。
     pub inv_vol: bool,
+    /// 单币目标名义占账户净值的上限（0 = 关闭，0.20 = 单币不超过净值的 20%）。
+    /// 作用在 vol_target 缩放后的最终目标权重上，超限部分在同侧其他未封顶币间等杠杆再分配。
+    pub max_single_weight: f64,
 }
 
 impl TradeConfig {
@@ -110,6 +113,7 @@ impl Default for TradeConfig {
             dd_weight: 0.0,
             upfrac_weight: 0.0,
             inv_vol: false,
+            max_single_weight: 0.0,
         }
     }
 }
@@ -612,6 +616,71 @@ pub fn slice_of(coin: &str, slices: u32) -> u32 {
 }
 
 /// Build the order list. `mids` must contain every coin we intend to trade.
+/// 将目标权重截断到单币上限，并把超限部分在同侧（多头或空头）其他未封顶币间等杠杆水满再分配。
+///
+/// `weights` 的口径：`|w_i| * margin_buffer * leverage = 单币目标名义 / 账户净值`。
+/// 因此 `max_single_weight`（占净值比例，如 0.20）折算到权重空间为
+/// `max_w = max_single_weight / (margin_buffer * leverage)`。
+/// 该函数是幂等的，返回被截断过的币种列表（供计划日志展示）。
+pub fn cap_weights_same_side(
+    weights: &mut [(String, f64)],
+    max_single_weight: f64,
+    margin_buffer: f64,
+    leverage: f64,
+) -> Vec<String> {
+    let gross_mult = margin_buffer * leverage;
+    if !max_single_weight.is_finite()
+        || max_single_weight <= 0.0
+        || !gross_mult.is_finite()
+        || gross_mult <= 1e-12
+    {
+        return Vec::new();
+    }
+    let max_w = max_single_weight / gross_mult;
+    let mut clipped: Vec<String> = Vec::new();
+
+    for is_long in [true, false] {
+        let sign = if is_long { 1.0 } else { -1.0 };
+        let mut rem: Vec<usize> = weights
+            .iter()
+            .enumerate()
+            .filter(|(_, (_, w))| if is_long { *w > 1e-12 } else { *w < -1e-12 })
+            .map(|(i, _)| i)
+            .collect();
+        if rem.is_empty() {
+            continue;
+        }
+        let mut rem_target: f64 = rem.iter().map(|&i| weights[i].1.abs()).sum();
+        loop {
+            let rem_sum: f64 = rem.iter().map(|&i| weights[i].1.abs()).sum();
+            if rem.is_empty() || rem_sum <= 1e-12 || rem_target <= 1e-12 {
+                break;
+            }
+            let scale = rem_target / rem_sum;
+            let over: Vec<usize> = rem
+                .iter()
+                .copied()
+                .filter(|&i| weights[i].1.abs() * scale > max_w + 1e-12)
+                .collect();
+            if over.is_empty() {
+                for &i in &rem {
+                    weights[i].1 = sign * (weights[i].1.abs() * scale);
+                }
+                break;
+            }
+            for &i in &over {
+                weights[i].1 = sign * max_w;
+                if !clipped.contains(&weights[i].0) {
+                    clipped.push(weights[i].0.clone());
+                }
+                rem_target = (rem_target - max_w).max(0.0);
+            }
+            rem.retain(|i| !over.contains(i));
+        }
+    }
+    clipped
+}
+
 #[allow(clippy::too_many_arguments)]
 pub fn build_plan(
     weights: &[(String, f64)],
@@ -625,6 +694,16 @@ pub fn build_plan(
     // Deploy only part of the equity so fees and adverse fills cannot push the
     // book past the margin limit mid-run.
     let deployable = equity * cfg.margin_buffer;
+    let mut capped_weights = weights.to_vec();
+    if cfg.max_single_weight > 0.0 {
+        cap_weights_same_side(
+            &mut capped_weights,
+            cfg.max_single_weight,
+            cfg.margin_buffer,
+            cfg.leverage,
+        );
+    }
+    let weights = capped_weights.as_slice();
     // 权重已归一化到 Σ|w| = 1，所以直接按权重缩放名义即可。
     let per_coin = if weights.is_empty() {
         0.0
@@ -737,10 +816,33 @@ pub fn build_plan(
         } else {
             wanted.get(coin).map(|w| w.0).unwrap_or(0.0)
         };
+        let single_over_cap = cfg.max_single_weight > 0.0
+            && equity > 0.0
+            && cur.abs() * mid > equity * cfg.max_single_weight * 1.02;
         let flip = cur * target < 0.0;
         if target == 0.0 || flip {
             if !in_today {
-                continue; // 平仓仍按档位错峰
+                // 不在今天档位：若单币本身已超净值上限，先越过错峰把它减回上限，避免高集中度拖延多日。
+                if single_over_cap {
+                    let cap_sz = round_size(equity * cfg.max_single_weight / mid, m.sz_decimals);
+                    let cap_target = if cur > 0.0 { cap_sz } else { -cap_sz };
+                    let trim = round_size((cur.abs() - cap_sz).max(0.0), m.sz_decimals);
+                    let dnotional = trim * mid;
+                    if dnotional >= cfg.min_order_usd {
+                        opens.push(Order {
+                            coin: coin.clone(),
+                            buy: cur < 0.0,
+                            reduce_only: true,
+                            target: cap_target,
+                            size: trim,
+                            mid: *mid,
+                            sz_decimals: m.sz_decimals,
+                            notional: dnotional,
+                            reason: "单币超限减仓".into(),
+                        });
+                    }
+                }
+                continue; // 完整平仓仍按档位错峰
             }
             let size = round_size(cur.abs(), m.sz_decimals);
             // **平仓只用绝对下限，不用按净值比例算的门槛。**
@@ -776,7 +878,8 @@ pub fn build_plan(
         } else {
             let delta = target - cur;
             let reducing = cur * delta < 0.0;
-            if !in_today && !(over_cap && reducing) {
+            let force_reduce = (over_cap || single_over_cap) && reducing;
+            if !in_today && !force_reduce {
                 continue; // 不在今天档位：只有「超限 + 减仓」才破例
             }
             let dsize = round_size(delta.abs(), m.sz_decimals);
@@ -784,7 +887,7 @@ pub fn build_plan(
             // 复利门槛用「该仓自身的目标名义」算比例带，而不是全组合平均值：
             // 小仓位过去被平均值抬高门槛，长期跟不上净值增长。
             let pos_target = (cur + delta).abs() * mid;
-            let threshold = if over_cap && reducing {
+            let threshold = if force_reduce {
                 // 超限减仓：只保留交易所绝对下限，不受比例门槛/调仓带限制。
                 cfg.min_order_usd
             } else {
@@ -806,6 +909,8 @@ pub fn build_plan(
                     // 空头买回是减仓、空头继续卖才是加仓。
                     reason: if cur * delta > 0.0 {
                         "加仓到目标".into()
+                    } else if single_over_cap {
+                        "单币超限减仓".into()
                     } else {
                         "减仓到目标".into()
                     },
@@ -1565,5 +1670,89 @@ mod close_threshold_tests {
         let pos_notional = 46.0;
         assert!(pos_notional < cfg.effective_min_order_usd(equity), "前提：它低于比例门槛");
         assert!(pos_notional >= cfg.min_order_usd, "且高于绝对下限 → 平仓判定应通过");
+    }
+
+    #[test]
+    fn cap_weights_same_side_waterfills_excess_and_is_idempotent() {
+        // margin_buffer * leverage = 0.9 * 3.0 = 2.7; max_single_weight = 0.20 => max_w = 0.20 / 2.7
+        // 多头合计 0.35 + 0.10 + 0.05 = 0.50（其中 A 占 0.35*2.7 = 94.5% > 20%）
+        // 实际上 3 个多头总和 0.50*2.7=1.35x > 3*0.20=0.60x，换个能被同侧吸收的例子：
+        // 多头 5 币，总权重 0.30（=0.81x < 5*0.20=1.00x）：A=0.14(37.8%), B=0.06, C=0.04, D=0.04, E=0.02
+        let mut w = vec![
+            ("A".to_string(), 0.14),
+            ("B".to_string(), 0.06),
+            ("C".to_string(), 0.04),
+            ("D".to_string(), 0.04),
+            ("E".to_string(), 0.02),
+            ("S1".to_string(), -0.05),
+            ("S2".to_string(), -0.05),
+        ];
+        let long_before: f64 = w.iter().filter(|(_, v)| *v > 0.0).map(|(_, v)| *v).sum();
+        let short_before: f64 = w.iter().filter(|(_, v)| *v < 0.0).map(|(_, v)| v.abs()).sum();
+        let clipped = cap_weights_same_side(&mut w, 0.20, 0.9, 3.0);
+        assert!(clipped.contains(&"A".to_string()), "A 应被截断: {clipped:?}");
+        let max_w = 0.20 / 2.7;
+        for (c, v) in &w {
+            assert!(v.abs() <= max_w + 1e-9, "{c} 截断后仍超限: {}", v.abs() * 2.7);
+        }
+        let long_after: f64 = w.iter().filter(|(_, v)| *v > 0.0).map(|(_, v)| *v).sum();
+        let short_after: f64 = w.iter().filter(|(_, v)| *v < 0.0).map(|(_, v)| v.abs()).sum();
+        assert!((long_after - long_before).abs() < 1e-9, "多头总权重应保持不变: {long_after} vs {long_before}");
+        assert!((short_after - short_before).abs() < 1e-9, "空头总权重不应受影响");
+        // 幂等性
+        let snapshot = w.clone();
+        let clipped2 = cap_weights_same_side(&mut w, 0.20, 0.9, 3.0);
+        assert!(clipped2.is_empty(), "二次调用不应再截断: {clipped2:?}");
+        for ((c1, v1), (c2, v2)) in w.iter().zip(snapshot.iter()) {
+            assert_eq!(c1, c2);
+            assert!((v1 - v2).abs() < 1e-12, "{c1} 幂等性偏差: {v1} vs {v2}");
+        }
+    }
+
+    #[test]
+    fn single_over_cap_trims_non_slot_position_immediately() {
+        let cfg = TradeConfig {
+            rebalance_slices: 3,
+            max_single_weight: 0.20,
+            ..TradeConfig::default()
+        };
+        let day = (std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_millis() as i64
+            / 86_400_000) as u32;
+        let candidates = ["BTC", "ETH", "SOL", "DOGE", "ARB", "HYPE"];
+        let non_slots: Vec<&str> = candidates
+            .iter()
+            .copied()
+            .filter(|c| (day + slice_of(c, 3)) % 3 != 0)
+            .collect();
+        assert!(non_slots.len() >= 2, "需要至少 2 个不在今日档位的币");
+        let over_coin = non_slots[0];
+        let ok_coin = non_slots[1];
+        // 净值 $5000，20% 上限 = $1000；over_coin 当前持仓 $1650 (33%)，ok_coin 当前持仓 $500 (10%)
+        // 总敞口 $2150 < 2.7x * $5000，不会触发总敞口 over_cap，纯粹检验单币超限越过错峰。
+        let mut positions = HashMap::new();
+        positions.insert(over_coin.to_string(), crate::exchange::Pos { size: 16.5, entry_px: 100.0, ..Default::default() });
+        positions.insert(ok_coin.to_string(), crate::exchange::Pos { size: 5.0, entry_px: 100.0, ..Default::default() });
+        let acct = Acct { equity: 5000.0, positions };
+        let markets: HashMap<String, MarketInfo> = candidates
+            .iter()
+            .map(|c| (c.to_string(), MarketInfo { sz_decimals: 2, max_leverage: 10 }))
+            .collect();
+        let mids: HashMap<String, f64> = candidates.iter().map(|c| (c.to_string(), 100.0)).collect();
+        // 目标权重里 over_coin 原本偏大（会被截到 20% = $1000），ok_coin 目标 15%（非今日档位应不动）
+        let weights = vec![
+            (over_coin.to_string(), 0.12),
+            (ok_coin.to_string(), 0.05),
+        ];
+        let plan = build_plan(&weights, &acct, &markets, &mids, &cfg, None);
+        let over_order = plan.orders.iter().find(|o| o.coin == over_coin);
+        assert!(over_order.is_some(), "超限单币 {over_coin} 即使不在今日档位也应立即减仓");
+        let o = over_order.unwrap();
+        assert!(o.reduce_only && !o.buy, "减多头必须是 reduce_only 卖出");
+        assert_eq!(o.reason, "单币超限减仓");
+        assert!((o.target - 10.0).abs() < 0.05, "目标仓位应截到 20% ($1000 = 10.0)，实际 {}", o.target);
+        assert!(!plan.orders.iter().any(|o| o.coin == ok_coin), "未超限的非今日档位币 {ok_coin} 不应调仓");
     }
 }

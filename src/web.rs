@@ -1085,6 +1085,7 @@ struct LiveConfigBody {
     vol_band: Option<f64>,
     position_stop_pct: Option<f64>,
     stop_cooldown_days: Option<i64>,
+    max_single_weight: Option<f64>,
     account: Option<String>,
     vault_address: Option<String>,
     ml_vault_address: Option<String>,
@@ -1210,6 +1211,12 @@ async fn live_config(
             return (StatusCode::BAD_REQUEST, Json(json!({"ok": false, "error": "冷却天数必须在 0~60"}))).into_response();
         }
         c.stop_cooldown_days = v;
+    }
+    if let Some(v) = body.max_single_weight {
+        if !(0.0..=1.0).contains(&v) {
+            return (StatusCode::BAD_REQUEST, Json(json!({"ok": false, "error": "单币上限必须在 0~100%（0 = 关闭）"}))).into_response();
+        }
+        c.max_single_weight = v;
     }
     if let Some(v) = body.armed {
         c.armed = v;
