@@ -1276,7 +1276,7 @@ pub async fn run(
         let clipped = trader::cap_weights_same_side(
             &mut weights,
             cfg.max_single_weight,
-            cfg.margin_buffer,
+            cfg.margin_buffer * applied_k.unwrap_or(1.0),
             cfg.effective_leverage(),
         );
         if !clipped.is_empty() {
@@ -1288,7 +1288,15 @@ pub async fn run(
         }
     }
 
-    let plan = trader::build_plan(&weights, &acct, markets, &mids, &tc, None);
+    let plan = trader::build_plan_scaled(
+        &weights,
+        &acct,
+        markets,
+        &mids,
+        &tc,
+        None,
+        applied_k.unwrap_or(1.0),
+    );
 
     let mut plan_lines = vec![format!(
         "流动宇宙 {} 币 · 多头腿 {} · 空头腿 {} · 账户净值 ${:.2} · 每仓 ${:.2} · 杠杆 {:.0}x · 缓冲 {:.0}%",
