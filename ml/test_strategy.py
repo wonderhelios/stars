@@ -74,6 +74,27 @@ class StrategyTests(unittest.TestCase):
         self.assertNotIn("C11", selected["short"])
         self.assertIn("C06", selected["short"])
 
+    def test_excess_buffer_positions_are_trimmed_and_dust_does_not_block(self):
+        # 多空各有 9 个缓冲内旧仓：保留各自排名最强的 8 个，不能再拒绝调仓。
+        current = {f"C{i:02d}": 0.001 for i in range(15, 24)}
+        current.update({f"C{i:02d}": -0.001 for i in range(0, 9)})
+        selected = fixed_weight_selection(self.scores, self.coins, self.config, current)
+        self.assertEqual(selected["long"], [f"C{i:02d}" for i in range(23, 15, -1)])
+        self.assertEqual(selected["short"], [f"C{i:02d}" for i in range(0, 8)])
+        self.assertNotIn("C15", selected["weights"])
+        self.assertNotIn("C08", selected["weights"])
+
+        # 被裁掉的旧仓低于 $10，订单层仍可跳过；不得反过来卡死目标生成。
+        orders = build_orders(
+            selected["weights"], current,
+            {coin: i for i, coin in enumerate(self.coins)},
+            {coin: 0 for coin in self.coins}, equity=800.0,
+            mids={coin: "1" for coin in self.coins},
+        )
+        self.assertEqual(len(orders), 16)
+        self.assertNotIn(15, {order["a"] for order in orders})
+        self.assertNotIn(8, {order["a"] for order in orders})
+
 
 class UnifiedEquityTests(unittest.TestCase):
     @unittest.mock.patch("place.info_post")

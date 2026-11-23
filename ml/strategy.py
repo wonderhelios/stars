@@ -123,7 +123,11 @@ def ordered_feature_names():
 
 
 def fixed_weight_selection(scores, coins, config, current_positions=None):
-    """保留排名仍在 buffer11 内的旧仓，再按 score 排名补齐 8 多 8 空。"""
+    """保留 buffer11 内最强的目标仓，再按 score 排名补齐 8 多 8 空。
+
+    缓冲内旧仓超过 8 个时，只保留排名最强的 8 个，其余照常进入平仓目标。
+    低于交易所最小订单额的旧仓可能暂时平不掉，但不能因此卡死后续调仓。
+    """
     scores = np.asarray(scores, dtype=float)
     coins = np.asarray(coins).astype(str)
     if len(scores) < max(int(config["min_universe"]),
@@ -139,12 +143,11 @@ def fixed_weight_selection(scores, coins, config, current_positions=None):
     exit_rank = int(config["exit_rank"])
     long_n, short_n = int(config["long_n"]), int(config["short_n"])
     longs = sorted((c for c, size in current_positions.items()
-                    if float(size) > 0 and rank.get(c, n + 1) <= exit_rank), key=rank.get)
+                    if float(size) > 0 and rank.get(c, n + 1) <= exit_rank),
+                   key=rank.get)[:long_n]
     shorts = sorted((c for c, size in current_positions.items()
                      if float(size) < 0 and rank.get(c, 0) >= n - exit_rank + 1),
-                    key=rank.get, reverse=True)
-    if len(longs) > long_n or len(shorts) > short_n:
-        raise ValueError("当前单边持仓超过目标数量，无法应用 buffer11")
+                    key=rank.get, reverse=True)[:short_n]
     for coin in ranked:
         if len(longs) == long_n:
             break
