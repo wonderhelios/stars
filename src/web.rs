@@ -43,6 +43,8 @@ pub struct AppState {
     pub intraday_path: Arc<std::path::PathBuf>,
     /// 币安 TradFi 双腿（美股 A4 + 金银油气 EMA5/20）前向影子账本。
     pub tradfi_path: Arc<std::path::PathBuf>,
+    /// 币安核心 10 标的 1h 顺势 SFP 快速波段前向影子账本。
+    pub fastswing_path: Arc<std::path::PathBuf>,
 }
 
 #[derive(Clone, Default)]
@@ -94,6 +96,7 @@ pub fn router(state: AppState) -> Router {
         .route("/api/hlcarry/params", post(hlcarry_params))
         .route("/api/intraday", get(intraday_status))
         .route("/api/tradfi", get(tradfi_status))
+        .route("/api/fastswing", get(fastswing_status))
         .route("/api/tradfi/config", get(tradfi_config_get).post(tradfi_config_save))
         .route("/api/tradfi/shadow/rebalance", post(tradfi_shadow_rebalance))
         .route("/api/tradfi/shadow/reset", post(tradfi_shadow_reset))
@@ -184,6 +187,16 @@ async fn tradfi_status(State(state): State<AppState>) -> Response {
             Err(e) => (StatusCode::INTERNAL_SERVER_ERROR, Json(json!({"error":format!("TradFi 影子账本损坏: {e}")}))).into_response(),
         },
         Err(e) => (StatusCode::SERVICE_UNAVAILABLE, Json(json!({"error":format!("TradFi 影子尚未启动: {e}")}))).into_response(),
+    }
+}
+
+async fn fastswing_status(State(state): State<AppState>) -> Response {
+    match tokio::fs::read(&*state.fastswing_path).await {
+        Ok(bytes) => match serde_json::from_slice::<serde_json::Value>(&bytes) {
+            Ok(value) => Json(value).into_response(),
+            Err(e) => (StatusCode::INTERNAL_SERVER_ERROR, Json(json!({"error":format!("快速波段影子账本损坏: {e}")}))).into_response(),
+        },
+        Err(e) => (StatusCode::SERVICE_UNAVAILABLE, Json(json!({"error":format!("快速波段影子尚未启动: {e}")}))).into_response(),
     }
 }
 
@@ -1816,6 +1829,7 @@ mod live_routes_tests {
             auth_token: None,
             intraday_path: Arc::new(root.join("intraday.json")),
             tradfi_path: Arc::new(root.join("tradfi.json")),
+            fastswing_path: Arc::new(root.join("fastswing.json")),
         };
         let app = router(base.clone());
         let response = app.clone().oneshot(Request::builder().uri("/").body(Body::empty()).unwrap()).await.unwrap();
@@ -1864,6 +1878,7 @@ mod live_routes_tests {
             auth_token: None,
             intraday_path: Arc::new(root.join("intraday.json")),
             tradfi_path: Arc::new(root.join("tradfi.json")),
+            fastswing_path: Arc::new(root.join("fastswing.json")),
         };
         let app = router(base.clone());
         // 资金矩阵：保存 → 持久化 → 拒绝对负数。

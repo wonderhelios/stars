@@ -188,6 +188,8 @@ let cbPosPage = 0;
 let cbSigPage = 0;
 let cbTradePage = 0;
 let tfTradePage = 0;
+let fsTradePage = 0;
+let fsSigPage = 0;
 
 // 通用分页条；点击由全局委托处理
 
@@ -221,6 +223,12 @@ document.addEventListener("click", (e) => {
   } else if (key === "tftr") {
     tfTradePage = Math.max(0, to);
     if (lastTradFiData) renderTradFi(lastTradFiData);
+  } else if (key === "fstr") {
+    fsTradePage = Math.max(0, to);
+    if (lastFastSwingData) renderFastSwing(lastFastSwingData);
+  } else if (key === "fssig") {
+    fsSigPage = Math.max(0, to);
+    if (lastFastSwingData) renderFastSwing(lastFastSwingData);
   }
 });
 
@@ -237,8 +245,10 @@ let liveBusy = false;
 // 早期调用的 renderMonitor 会踩到 TDZ（Cannot access before initialization）✗
 let lastCombineData = null;
 let lastTradFiData = null;
+let lastFastSwingData = null;
 let cbRange = "all";
 let tfRange = "all";
+let fsRange = "all";
 let cbLeg = "mom";
 let lastHealth = null;
 let liveFetchedAt = 0;
@@ -1715,6 +1725,9 @@ document.querySelectorAll('.nav button[data-view="combine"]').forEach((b) => {
 document.querySelectorAll('.nav button[data-view="tradfi"]').forEach((b) => {
   b.addEventListener("click", () => refreshTradFi());
 });
+document.querySelectorAll('.nav button[data-view="fastswing"]').forEach((b) => {
+  b.addEventListener("click", () => refreshFastSwing());
+});
 const cbLegTabs = $("cb-leg-tabs");
 if (cbLegTabs) {
   cbLegTabs.addEventListener("click", (event) => {
@@ -1740,6 +1753,8 @@ if (combineRefreshButton) combineRefreshButton.addEventListener("click", () => r
 setInterval(() => {
   const v = $("view-combine");
   if (v && v.classList.contains("active")) refreshCombine();
+  const fs = $("view-fastswing");
+  if (fs && fs.classList.contains("active")) refreshFastSwing();
 }, 15000);
 
 // 启动：首次拉取 + 周期轮询。
@@ -2391,6 +2406,137 @@ if (tfChartTabs) {
   });
 }
 
+function renderFastSwing(d) {
+  d = d || {};
+  const cfg = d.config || {};
+  const ps = Array.isArray(d.positions_list) ? d.positions_list : Object.values(d.positions || {});
+  const pends = Array.isArray(d.pending_list) ? d.pending_list : Object.values(d.pending || {});
+  const eq = Number(d.equity) || 0;
+  const pnl = Number(d.pnl) || 0;
+  const pnlPct = Number(d.pnl_pct) || 0;
+  const days = Number(d.days_elapsed) || 0;
+  const kpi = (label, value, detail, cls) =>
+    `<div class="combine-kpi"><div class="combine-kpi-label">${label}</div><div class="combine-kpi-value ${cls || ""}">${value}</div>${detail ? `<div class="combine-kpi-detail">${detail}</div>` : ""}</div>`;
+  const m = $("fs-metrics");
+  if (m) m.innerHTML =
+    kpi("影子净值", "$" + fmt(eq, 2), "独立模拟账户 · 本金 $" + fmt(d.capital || 0, 0)) +
+    kpi("累计收益", moneySigned(pnl), (pnlPct >= 0 ? "+" : "") + pnlPct.toFixed(2) + "%", pnl >= 0 ? "pos" : "neg") +
+    kpi("已实现 / 浮盈", moneySigned(d.realized_pnl || 0), "浮动 " + moneySigned(d.unrealized_pnl || 0) + " · 费用 −$" + fmt(d.total_fees || 0, 2), (d.realized_pnl || 0) >= 0 ? "pos" : "neg") +
+    kpi("持仓 / 挂单", `${ps.length} / ${pends.length}`, "毛敞口 $" + fmt(d.gross_notional || 0, 0) + " · 净额 " + moneySigned(d.net_notional || 0)) +
+    kpi("胜率 / 盈利因子", (Number(d.win_rate) || 0).toFixed(1) + "%", `PF ${(Number(d.profit_factor) || 0).toFixed(2)} · ${(d.trades || []).length} 笔已平仓`) +
+    kpi("最大回撤 / 运行", (Number(d.max_dd_pct) || 0).toFixed(2) + "%", `${days.toFixed(1)} 天 · 资金费 ${moneySigned(d.total_funding || 0)}`, (Number(d.max_dd_pct) || 0) > 15 ? "neg" : "");
+  const state = $("fs-run-state");
+  const fresh = Number.isFinite(d.last_update) && Date.now() - d.last_update < 300000;
+  if (state) {
+    state.className = "combine-state " + (d.running && fresh ? "is-running" : "is-stopped");
+    state.innerHTML = `<i></i>${d.running && fresh ? "影子运行中" : "数据过期 / 未启动"}`;
+  }
+  const st = $("fs-status");
+  if (st) {
+    st.textContent = d.last_error ? "最近采集异常：" + d.last_error : "";
+    st.hidden = !d.last_error;
+  }
+  const h = (d.history || []).filter(p => Array.isArray(p) && Number.isFinite(p[0]) && Number.isFinite(p[1]));
+  if (h.length) {
+    const obs = h.map(p => ({ ts: p[0], equity: p[1] }));
+    let pts = equityWindow(obs, fsRange, Date.now()).points.map(p => [p.ts, p.equity]);
+    if (pts.length < 3 && fsRange !== "all") pts = h.slice(-3);
+    renderEquityChart("fs-chart", withNow(pts, eq), "快速波段影子权益曲线", undefined, undefined, undefined,
+      { equityLabel: "影子净值 · 最新", changeLabel: "记录区间变化", legendName: "顺势 SFP 快速波段", useBjTime: true });
+  } else if ($("fs-chart")) {
+    $("fs-chart").innerHTML = '<div class="empty">等待第一个前向净值点</div>';
+  }
+  if ($("fs-position-count")) $("fs-position-count").textContent = `${ps.length} 个持仓 · 毛敞口 $${fmt(d.gross_notional || 0, 0)}`;
+  const posEl = $("fs-positions");
+  if (posEl) {
+    posEl.innerHTML = ps.length
+      ? '<div class="table-scroll"><table><thead><tr><th>标的</th><th>方向</th><th>档位</th><th>名义</th><th>入场均价</th><th>现价</th><th>止损价 / TP1价</th><th>TP1状态</th><th>浮盈</th></tr></thead><tbody>' +
+        ps.map(p => {
+          const isLong = Number(p.side) === 1;
+          const u = Number(p.unrealized_pnl) || 0;
+          const tpTag = p.tp1_hit ? '<span class="badge-mini ok">75%已落袋·保本跟踪</span>' : '<span class="badge-mini mute">待触及TP1</span>';
+          return `<tr><td><b>${escapeHTML(p.symbol)}</b></td><td class="${isLong ? "pos" : "neg"}">${isLong ? "多" : "空"}</td><td>${p.filled_tiers || 1}/3</td><td>$${fmt(p.notional || 0, 0)}</td><td>${fmtCompact(p.avg_entry || 0)}</td><td>${fmtCompact(p.mark_price || 0)}</td><td>${fmtCompact(p.cur_sl || 0)} / ${fmtCompact(p.tp1_price || 0)}</td><td>${tpTag}</td><td class="${u >= 0 ? "pos" : "neg"}">${moneySigned(u)}</td></tr>`;
+        }).join("") + '</tbody></table></div>'
+      : '<div class="empty">当前空仓，等待 1h 顺势 SFP 插针回踩信号。</div>';
+  }
+  if ($("fs-config")) {
+    const chips = [
+      `核心 ${(cfg.symbols || []).length || 10} 标的`,
+      `极值回看 ${cfg.lookback_hours || 24}h`,
+      `顺势过滤 EMA${cfg.ema_period || 168}`,
+      `TP1 ${fmt(cfg.tp1_atr || 1.5, 1)}×ATR (${Math.round(100 * (cfg.tp1_frac || 0.75))}%)`,
+      `尾仓移动 ${fmt(cfg.trail_atr || 1.2, 1)}×ATR`,
+      `单笔 ${fmt(cfg.slot_leverage || 2.0, 1)}x / 上限 ${fmt(cfg.max_gross_leverage || 6.0, 1)}x`,
+      `最长持仓 ${cfg.max_hold_hours || 48}h`,
+      `费用 Maker ${fmt(cfg.maker_fee_bp || 2.0, 1)}bp / Taker ${fmt(cfg.taker_fee_bp || 5.0, 1)}bp`,
+    ];
+    $("fs-config").innerHTML = chips.map(x => `<span>${x}</span>`).join("");
+  }
+  if ($("fs-pending-count")) $("fs-pending-count").textContent = `${pends.length} 组挂单队列`;
+  const pendEl = $("fs-pending");
+  if (pendEl) {
+    pendEl.innerHTML = pends.length
+      ? '<div class="table-scroll"><table><thead><tr><th>标的</th><th>方向</th><th>1:2:3 挂单三档价</th><th>已成交 / 目标</th><th>硬止损</th><th>过期时间 · UTC+8</th></tr></thead><tbody>' +
+        pends.map(p => {
+          const isLong = Number(p.side) === 1;
+          const lvls = (p.levels || []).map((lv, i) => `${(p.filled || [])[i] ? "✓" : ""}${fmtCompact(lv)}`).join(" / ");
+          return `<tr><td><b>${escapeHTML(p.symbol)}</b></td><td class="${isLong ? "pos" : "neg"}">${isLong ? "多" : "空"}</td><td>${lvls}</td><td>$${fmt(p.filled_notional || 0, 0)} / $${fmt(p.max_notional || 0, 0)}</td><td>${fmtCompact(p.sl_price || 0)}</td><td class="muted">${p.expire_ts ? ts2bj(p.expire_ts) : "—"}</td></tr>`;
+        }).join("") + '</tbody></table></div>'
+      : '<div class="empty">当前无待成交挂单。</div>';
+  }
+  const sigs = (d.signals || []).slice().reverse();
+  if ($("fs-signals")) {
+    const sigPages = Math.max(1, Math.ceil(sigs.length / CB_PAGE_SIZE));
+    if (fsSigPage > sigPages - 1) fsSigPage = 0;
+    const sigRows = sigs.slice(fsSigPage * CB_PAGE_SIZE, (fsSigPage + 1) * CB_PAGE_SIZE);
+    $("fs-signals").innerHTML = sigs.length
+      ? '<div class="table-scroll"><table><thead><tr><th>时间 · UTC+8</th><th>标的</th><th>方向</th><th>收盘价</th><th>ATR(24)</th><th>EMA(168)</th><th>处理</th></tr></thead><tbody>' +
+        sigRows.map(s => `<tr><td class="muted">${ts2bj(s.ts)}</td><td><b>${escapeHTML(s.symbol)}</b></td><td class="${s.side === "long" ? "pos" : "neg"}">${s.side === "long" ? "多" : "空"}</td><td>${fmtCompact(s.price || 0)}</td><td>${fmtCompact(s.atr || 0)}</td><td>${fmtCompact(s.ema || 0)}</td><td class="${s.accepted ? "pos" : "muted"}">${escapeHTML(s.reason || "")}</td></tr>`).join("") +
+        '</tbody></table></div>' + (sigs.length > CB_PAGE_SIZE ? pager("fssig", sigs.length, fsSigPage, CB_PAGE_SIZE) : "")
+      : '<div class="empty">尚无信号记录，每小时整点收盘后自动扫描核心 10 标的。</div>';
+  }
+  const trades = (d.trades || []).slice().reverse();
+  if ($("fs-trades")) {
+    const trPages = Math.max(1, Math.ceil(trades.length / TF_TRADE_PAGE_SIZE));
+    if (fsTradePage > trPages - 1) fsTradePage = 0;
+    const trRows = trades.slice(fsTradePage * TF_TRADE_PAGE_SIZE, (fsTradePage + 1) * TF_TRADE_PAGE_SIZE);
+    $("fs-trades").innerHTML = trades.length
+      ? '<div class="table-scroll"><table><thead><tr><th>平仓时间 · UTC+8</th><th>标的</th><th>方向</th><th>均价 / 平仓</th><th>档位</th><th>名义</th><th>持仓</th><th>净盈亏</th><th>原因</th></tr></thead><tbody>' +
+        trRows.map(t => {
+          const isLong = t.side === "long";
+          const np = Number(t.net_pnl) || 0;
+          return `<tr><td class="muted">${ts2bj(t.exit_ts)}</td><td><b>${escapeHTML(t.symbol)}</b></td><td class="${isLong ? "pos" : "neg"}">${isLong ? "多" : "空"}</td><td>${fmtCompact(t.avg_entry || 0)} / ${fmtCompact(t.exit_price || 0)}</td><td>${t.filled_tiers || 1}/3</td><td>$${fmt(t.init_notional || 0, 0)}</td><td>${fmt(t.hold_hours || 0, 1)}h</td><td class="${np >= 0 ? "pos" : "neg"}">${moneySigned(np)}</td><td class="muted">${escapeHTML(t.reason || "—")}</td></tr>`;
+        }).join("") + '</tbody></table></div>' + (trades.length > TF_TRADE_PAGE_SIZE ? pager("fstr", trades.length, fsTradePage, TF_TRADE_PAGE_SIZE) : "")
+      : '<div class="empty">暂无已平仓模拟成交。</div>';
+  }
+}
+
+async function refreshFastSwing() {
+  try {
+    const d = await fetchJSONRetry("/api/fastswing", {}, 15000);
+    lastFastSwingData = d;
+    renderFastSwing(d);
+  } catch (e) {
+    const st = $("fs-status");
+    if (st) {
+      st.textContent = "读取快速波段影子失败：" + ((e && e.message) || e);
+      st.hidden = false;
+    }
+  }
+}
+
+if ($("fs-refresh")) $("fs-refresh").addEventListener("click", () => refreshFastSwing());
+const fsChartTabs = $("fs-chart-tabs");
+if (fsChartTabs) {
+  fsChartTabs.addEventListener("click", (event) => {
+    const btn = event.target.closest("button[data-range]");
+    if (!btn) return;
+    fsRange = btn.dataset.range;
+    fsChartTabs.querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", String(b === btn)));
+    if (lastFastSwingData) renderFastSwing(lastFastSwingData);
+  });
+}
+
 function renderEquityChart(id, history, aria, compare, third, fourth, summaryLabels) {
   const el = $(id);
   if (!el) return;
@@ -2481,9 +2627,10 @@ if (typeof ResizeObserver !== "undefined") {
       if (target.id === "mo-chart" && lastLiveData) renderMonitorChart(lastLiveData);
       if (target.id === "hc-chart" && lastHlCarryData) renderHlCarry(lastHlCarryData);
       if (target.id === "tf-chart" && lastTradFiData) renderTradFi(lastTradFiData);
+      if (target.id === "fs-chart" && lastFastSwingData) renderFastSwing(lastFastSwingData);
     }
   });
-  ["mo-chart", "hc-chart", "tf-chart"].forEach(id => {
+  ["mo-chart", "hc-chart", "tf-chart", "fs-chart"].forEach(id => {
     const chart = $(id);
     if (chart) chartResize.observe(chart);
   });

@@ -46,6 +46,8 @@ async fn main() -> anyhow::Result<()> {
         .unwrap_or_else(|_| "/var/lib/stars/intraday_shadow.json".to_string());
     let tradfi_path = std::env::var("STARS_TRADFI")
         .unwrap_or_else(|_| "/var/lib/stars/tradfi_shadow.json".to_string());
+    let fastswing_path = std::env::var("STARS_FASTSWING")
+        .unwrap_or_else(|_| "/var/lib/stars/fastswing_shadow.json".to_string());
 
     // ===== trade subcommand (live execution) =====
     let args: Vec<String> = std::env::args().collect();
@@ -78,6 +80,7 @@ async fn main() -> anyhow::Result<()> {
         hlcarry_path: Arc::new(std::path::PathBuf::from(&hlcarry_path)),
         intraday_path: Arc::new(std::path::PathBuf::from(&intraday_path)),
         tradfi_path: Arc::new(std::path::PathBuf::from(&tradfi_path)),
+        fastswing_path: Arc::new(std::path::PathBuf::from(&fastswing_path)),
     };
 
     // ===== HL 单账户 carry 影子：每 5 分钟推进一步 =====

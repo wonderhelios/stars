@@ -1,0 +1,23 @@
+[Unit]
+Description=stars Binance Core-10 1h Trend-Filtered SFP Fast-Swing shadow (public data only)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/stars
+ExecStart=/root/miniconda3/envs/ml/bin/python -m fastswing.shadow
+Restart=always
+RestartSec=15
+Environment=STARS_FASTSWING=/var/lib/stars/fastswing_shadow.json
+Environment=STARS_FASTSWING_CAPITAL=5000
+Environment=STARS_FASTSWING_SLOT_LEV=2.0
+Environment=STARS_FASTSWING_MAX_GROSS=6.0
+Environment=STARS_FASTSWING_POLL_SEC=60
+Environment=PYTHONUNBUFFERED=1
+# 如服务器访问币安需要代理，在此设置 HTTPS_PROXY；影子进程不要配置任何交易密钥。
+NoNewPrivileges=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

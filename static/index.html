@@ -1045,7 +1045,7 @@
           bottom: 0;
           z-index: 100;
           display: grid;
-          grid-template-columns: repeat(5, minmax(0, 1fr));
+          grid-template-columns: repeat(6, minmax(0, 1fr));
           gap: 4px;
           padding: 6px 6px calc(6px + env(safe-area-inset-bottom, 0px));
           overflow: visible;
@@ -1196,6 +1196,7 @@
         <button data-view="hlcarry"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg><span>基差影子</span></button>
         <button data-view="combine"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 18l5-6 4 3 7-9"/><circle cx="4" cy="18" r="1.6"/><circle cx="20" cy="6" r="1.6"/></svg><span>日内影子</span></button>
         <button data-view="tradfi"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg><span>美股商品</span></button>
+        <button data-view="fastswing"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M13 2L4 14h7l-1 8 9-12h-7l1-8z"/></svg><span>快速波段</span></button>
       </nav>
       <div class="status-pill">
         <span class="led" id="led"></span>
@@ -1637,6 +1638,60 @@
           <div class="content-card">
             <div class="panel-head"><div><span class="section-eyebrow">REBALANCE LOG</span><h2>最近每日调仓记录（UTC 00:05）</h2></div></div>
             <div id="tf-rebalances"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ 币安核心 10 标的顺势 SFP 快速波段影子 ============ -->
+      <section id="view-fastswing" class="view">
+        <div class="panel">
+          <div class="panel-head">
+            <div>
+              <span class="panel-kicker">BINANCE CORE-10 · 1H TREND-FILTERED SFP</span>
+              <h2>快速波段影子 · 顺势 SFP 插针反转</h2>
+              <p class="sub">核心 10 标的（SOXL / SNDK / NVDA / INTC / TSLA / MSTR / COIN / XAU / XAG / CL）· 1h 刺穿 24h 极值收回 + EMA168 顺势过滤 · 1:2:3 Maker 挂单 · 75% 1.5x ATR 止盈 + 25% 推保本移动止盈 · 单笔 2x 固定名义（纯前向模拟，绝不发真单）。</p>
+            </div>
+            <div class="actions">
+              <span id="fs-run-state" class="combine-state"><i></i>读取中</span>
+              <button class="btn ghost" id="fs-refresh" type="button">刷新数据</button>
+            </div>
+          </div>
+          <div id="fs-status" class="warn-banner" hidden></div>
+          <section class="combine-overview" id="fs-metrics" aria-label="快速波段影子表现"></section>
+          <div class="content-card equity-card">
+            <div class="panel-head monitor-section-head">
+              <div><span class="section-eyebrow">PERFORMANCE</span><h2>快速波段影子盈亏曲线</h2></div>
+              <div class="segmented" id="fs-chart-tabs" role="group" aria-label="快速波段时间区间">
+                <button type="button" data-range="day" aria-pressed="false">日</button>
+                <button type="button" data-range="week" aria-pressed="false">周</button>
+                <button type="button" data-range="month" aria-pressed="false">月</button>
+                <button type="button" data-range="all" aria-pressed="true">全部</button>
+              </div>
+            </div>
+            <div class="chart" id="fs-chart"></div>
+          </div>
+          <div class="content-card">
+            <div class="panel-head monitor-section-head">
+              <div><span class="section-eyebrow">ACTIVE POSITIONS</span><h2>当前持仓</h2></div>
+              <span id="fs-position-count" class="muted sm"></span>
+            </div>
+            <div id="fs-positions"></div>
+            <div id="fs-config" class="combine-config"></div>
+          </div>
+          <div class="content-card">
+            <div class="panel-head monitor-section-head">
+              <div><span class="section-eyebrow">RESTING MAKER ORDERS</span><h2>待成交 1:2:3 挂单队列（6h 有效）</h2></div>
+              <span id="fs-pending-count" class="muted sm"></span>
+            </div>
+            <div id="fs-pending"></div>
+          </div>
+          <div class="content-card">
+            <div class="panel-head"><div><span class="section-eyebrow">SIGNAL LOG</span><h2>最近 1h SFP 信号记录</h2></div></div>
+            <div id="fs-signals"></div>
+          </div>
+          <div class="content-card">
+            <div class="panel-head"><div><span class="section-eyebrow">CLOSED TRADES</span><h2>已平仓模拟成交</h2></div></div>
+            <div id="fs-trades"></div>
           </div>
         </div>
       </section>
