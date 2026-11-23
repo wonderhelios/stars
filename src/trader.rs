@@ -496,16 +496,28 @@ impl FactorPanel {
     }
 }
 
-/// 净敞口保护：市场中性组合在止盈/手动平仓/强平之后会变成单边。
-///
-/// 只做【减仓】把净敞口拉回 ≈0（把偏多的那条腿按名义比例减掉），不新增任何
-/// 开仓，所以不会放大风险。返回的订单全部 `reduce_only`。
+/// 净敞口保护：只做减仓，不新增开仓。没有目标权重时按同侧仓位比例分摊，
+/// 并始终按币名排序，避免 HashMap 随机顺序导致同一账户每次砍掉不同的币。
 pub fn neutralize_orders(
     acct: &Acct,
     markets: &std::collections::HashMap<String, MarketInfo>,
     mids: &std::collections::HashMap<String, f64>,
     tolerance: f64,
     min_order_usd: f64,
+) -> Vec<Order> {
+    neutralize_orders_with_targets(acct, markets, mids, tolerance, min_order_usd, None)
+}
+
+/// 目标感知的中性化：先按各币「当前名义 − 同向目标名义」的超额比例减仓；
+/// 若仍不够，再按剩余仓位比例分摊。目标名义为带符号的美元名义。
+/// 这样恢复市场中性时，不会无差别地把刚调到目标附近的仓位整笔清零。
+pub fn neutralize_orders_with_targets(
+    acct: &Acct,
+    markets: &std::collections::HashMap<String, MarketInfo>,
+    mids: &std::collections::HashMap<String, f64>,
+    tolerance: f64,
+    min_order_usd: f64,
+    target_notionals: Option<&std::collections::HashMap<String, f64>>,
 ) -> Vec<Order> {
     let mut long_n = 0.0;
     let mut short_n = 0.0;
@@ -527,29 +539,46 @@ pub fn neutralize_orders(
         return Vec::new();
     }
     let reduce_longs = net > 0.0;
+    let side_sign = if reduce_longs { 1.0 } else { -1.0 };
+    let mut coins: Vec<String> = acct
+        .positions
+        .iter()
+        .filter(|(_, p)| (p.size > 0.0) == reduce_longs)
+        .map(|(c, _)| c.clone())
+        .collect();
+    coins.sort();
+    let mut remaining: std::collections::HashMap<String, f64> = coins
+        .iter()
+        .filter_map(|c| {
+            let p = acct.positions.get(c)?;
+            let mid = mids.get(c)?;
+            Some((c.clone(), p.size.abs() * mid))
+        })
+        .collect();
     let mut budget = net.abs();
     let mut out: Vec<Order> = Vec::new();
-    for (c, p) in acct.positions.iter() {
-        if budget < min_order_usd {
-            break;
+    let mut reduce = |coin: &str,
+                      want: f64,
+                      remaining: &mut std::collections::HashMap<String, f64>,
+                      budget: f64|
+     -> f64 {
+        if budget < min_order_usd || want <= 0.0 {
+            return budget;
         }
-        if (p.size > 0.0) != reduce_longs {
-            continue;
-        }
-        let (Some(&mid), Some(m)) = (mids.get(c), markets.get(c)) else {
-            continue;
-        };
+        let Some(p) = acct.positions.get(coin) else { return budget };
+        let (Some(&mid), Some(m)) = (mids.get(coin), markets.get(coin)) else { return budget };
         if !mid.is_finite() || mid <= 0.0 {
-            continue;
+            return budget;
         }
-        let take = (p.size.abs() * mid).min(budget);
+        let available = remaining.get(coin).copied().unwrap_or(0.0);
+        let take = available.min(want).min(budget);
         let size = round_size(take / mid, m.sz_decimals);
         if size * mid < min_order_usd {
-            continue;
+            return budget;
         }
         let target = p.size - p.size.signum() * size;
         out.push(Order {
-            coin: c.clone(),
+            coin: coin.to_string(),
             buy: p.size < 0.0,
             reduce_only: true,
             target,
@@ -559,9 +588,72 @@ pub fn neutralize_orders(
             notional: size * mid,
             reason: "净敞口中性化".into(),
         });
-        budget -= size * mid;
+        remaining.insert(coin.to_string(), (available - size * mid).max(0.0));
+        (budget - size * mid).max(0.0)
+    };
+
+    // 第一阶段：只减超出模型目标的部分，并按超额比例分配。
+    if let Some(targets) = target_notionals {
+        let mut excess: Vec<(String, f64)> = Vec::new();
+        for c in &coins {
+            let cur = remaining.get(c).copied().unwrap_or(0.0);
+            let signed_target = targets.get(c).copied().unwrap_or(0.0);
+            let same_side_target = if signed_target * side_sign > 0.0 {
+                signed_target.abs().min(cur)
+            } else {
+                0.0
+            };
+            let x = (cur - same_side_target).max(0.0);
+            if x > 1e-9 {
+                excess.push((c.clone(), x));
+            }
+        }
+        let total: f64 = excess.iter().map(|(_, x)| *x).sum();
+        if total > 1e-9 {
+            let pass_budget = budget;
+            for (c, x) in excess {
+                let allocation = if pass_budget < total { pass_budget * x / total } else { x };
+                budget = reduce(&c, allocation, &mut remaining, budget);
+            }
+        }
     }
-    out
+
+    // 第二阶段：超额部分仍不足时，按剩余名义比例分摊，不随机整币清仓。
+    let leg_remaining: f64 = remaining.values().sum();
+    if leg_remaining > 1e-9 {
+        let pass_budget = budget;
+        for c in &coins {
+            let cur = remaining.get(c).copied().unwrap_or(0.0);
+            budget = reduce(c, pass_budget * cur / leg_remaining, &mut remaining, budget);
+        }
+    }
+    // 数量向下取整可能留下小额预算。这里保留这个误差，不再按币名把余量
+    // 集中压给某一个仓，否则会破坏上面的比例分摊并可能整币清零。
+
+    // 同一币可能先减超额、再参与比例分摊。聚合成每币一笔，避免重复手续费，
+    // 并让 target 表示全部中性化订单执行后的最终仓位。
+    let mut sizes: BTreeMap<String, f64> = BTreeMap::new();
+    for order in out {
+        *sizes.entry(order.coin).or_insert(0.0) += order.size;
+    }
+    sizes
+        .into_iter()
+        .filter_map(|(coin, size)| {
+            let p = acct.positions.get(&coin)?;
+            let (&mid, m) = (mids.get(&coin)?, markets.get(&coin)?);
+            Some(Order {
+                coin,
+                buy: p.size < 0.0,
+                reduce_only: true,
+                target: p.size - p.size.signum() * size,
+                size,
+                mid,
+                sz_decimals: m.sz_decimals,
+                notional: size * mid,
+                reason: "净敞口中性化".into(),
+            })
+        })
+        .collect()
 }
 
 /// 判定哪些交易日的数据是完整的：当天有数据的币数 ≥ 最近 60 天最大覆盖数的 60%。
@@ -1362,6 +1454,64 @@ mod tests {
         assert_eq!(o.len(), 1);
         assert_eq!(o[0].coin, "B");
         assert!(o[0].buy, "减空头必须是买入");
+    }
+
+    #[test]
+    fn neutralize_is_deterministic_and_respects_targets() {
+        let markets: HashMap<String, MarketInfo> = ["A", "B", "C"]
+            .iter()
+            .map(|c| (c.to_string(), MarketInfo { sz_decimals: 2, max_leverage: 5 }))
+            .collect();
+        let mids: HashMap<String, f64> = ["A", "B", "C"]
+            .iter()
+            .map(|c| (c.to_string(), 100.0))
+            .collect();
+        let mut acct = Acct { equity: 3000.0, positions: Default::default() };
+        acct.positions.insert("A".into(), crate::exchange::Pos { size: 10.0, entry_px: 100.0, ..Default::default() });
+        acct.positions.insert("B".into(), crate::exchange::Pos { size: 10.0, entry_px: 100.0, ..Default::default() });
+        acct.positions.insert("C".into(), crate::exchange::Pos { size: -15.0, entry_px: 100.0, ..Default::default() });
+        let targets = HashMap::from([
+            ("A".to_string(), 500.0),
+            ("B".to_string(), 1000.0),
+            ("C".to_string(), -1500.0),
+        ]);
+        let orders = neutralize_orders_with_targets(&acct, &markets, &mids, 0.02, 10.0, Some(&targets));
+        assert_eq!(orders.len(), 1);
+        assert_eq!(orders[0].coin, "A", "应优先削减超出目标的 A");
+        assert!((orders[0].notional - 500.0).abs() < 1e-9);
+        assert!((orders[0].target - 5.0).abs() < 1e-9, "A 应保留到目标 500");
+
+        // 没有目标时，净多头 500 由两个等额仓位各承担 250，顺序固定且不随机清零。
+        let fallback = neutralize_orders(&acct, &markets, &mids, 0.02, 10.0);
+        assert_eq!(fallback.iter().map(|o| o.coin.as_str()).collect::<Vec<_>>(), vec!["A", "B"]);
+        assert!(fallback.iter().all(|o| (o.notional - 250.0).abs() <= 1.0));
+        assert!(fallback.iter().all(|o| o.target.abs() > 0.0));
+    }
+
+    #[test]
+    fn neutralize_large_imbalance_spreads_instead_of_zeroing_winners() {
+        let markets: HashMap<String, MarketInfo> = ["VVV", "HYPE", "BTC"]
+            .iter()
+            .map(|c| (c.to_string(), MarketInfo { sz_decimals: 2, max_leverage: 5 }))
+            .collect();
+        let mids: HashMap<String, f64> = ["VVV", "HYPE", "BTC"]
+            .iter()
+            .map(|c| (c.to_string(), 100.0))
+            .collect();
+        let mut acct = Acct { equity: 5000.0, positions: Default::default() };
+        acct.positions.insert("VVV".into(), crate::exchange::Pos { size: 10.0, entry_px: 80.0, ..Default::default() });
+        acct.positions.insert("HYPE".into(), crate::exchange::Pos { size: 10.0, entry_px: 80.0, ..Default::default() });
+        acct.positions.insert("BTC".into(), crate::exchange::Pos { size: -5.0, entry_px: 100.0, ..Default::default() });
+        let targets = HashMap::from([
+            ("VVV".to_string(), 900.0),
+            ("HYPE".to_string(), 900.0),
+            ("BTC".to_string(), -500.0),
+        ]);
+        let orders = neutralize_orders_with_targets(&acct, &markets, &mids, 0.02, 10.0, Some(&targets));
+        assert_eq!(orders.len(), 2);
+        assert!(orders.iter().all(|o| o.target.abs() > 0.0), "大额不平衡也应分摊，不能清零 VVV/HYPE");
+        let reduced: f64 = orders.iter().map(|o| o.notional).sum();
+        assert!((reduced - 1500.0).abs() <= 2.0, "仅允许数量向下取整的误差");
     }
 
     #[test]

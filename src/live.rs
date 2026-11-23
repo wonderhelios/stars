@@ -1417,6 +1417,64 @@ pub async fn run(
     }
     let aborted = outcome.aborted;
     let executed = outcome.orders;
+
+    // 三档错峰可能在调仓后留下暂时净敞口。立即按最终目标权重做中性化，
+    // 不再等后台任务用无目标、随机顺序的方式整笔砍仓。
+    if live && !aborted {
+        match exec.account().await {
+            Ok(after) => {
+                let target_notionals: HashMap<String, f64> = weights
+                    .iter()
+                    .map(|(c, w)| {
+                        (c.clone(), w * plan.equity * cfg.margin_buffer * cfg.effective_leverage())
+                    })
+                    .collect();
+                let neutral = trader::neutralize_orders_with_targets(
+                    &after,
+                    markets,
+                    &mids,
+                    0.02,
+                    10.0,
+                    Some(&target_notionals),
+                );
+                for o in neutral {
+                    let entry_px = after.positions.get(&o.coin).map(|p| p.entry_px);
+                    let result = match exec
+                        .ioc(&o.coin, o.buy, true, o.size, o.mid, cfg.slippage, o.sz_decimals)
+                        .await
+                    {
+                        Ok(st) => format!("{st:?}"),
+                        Err(e) => format!("中性化下单失败: {e}"),
+                    };
+                    plan_lines.push(format!(
+                        "{} {} 只减仓 {:.6} @≈{:.6} (${:.2}) · 目标感知中性化",
+                        if o.buy { "买入" } else { "卖出" },
+                        o.coin,
+                        o.size,
+                        o.mid,
+                        o.notional,
+                    ));
+                    records.push(LiveRecord {
+                        pnl: None,
+                        tid: None,
+                        ts: now_ms_pub(),
+                        coin: o.coin.clone(),
+                        side: if o.buy { "买".into() } else { "卖".into() },
+                        action: "目标感知中性化".into(),
+                        size: o.size,
+                        price: o.mid,
+                        notional: o.notional,
+                        result,
+                        live: true,
+                        entry_px,
+                        reduce_only: true,
+                    });
+                }
+            }
+            Err(e) => plan_lines.push(format!("注意: 调仓后重读账户失败，跳过中性化: {e}")),
+        }
+    }
+
     let mut tp_ref_out: HashMap<String, f64> = HashMap::new();
     let mut tp_oids_out: Vec<u64> = Vec::new();
     if live && !aborted {
