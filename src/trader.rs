@@ -619,8 +619,8 @@ pub fn slice_of(coin: &str, slices: u32) -> u32 {
 /// 将目标权重截断到单币上限，并把超限部分在同侧（多头或空头）其他未封顶币间等杠杆水满再分配。
 ///
 /// `weights` 的口径：`|w_i| * margin_buffer * leverage = 单币目标名义 / 账户净值`。
-/// 若调用方已把波动率系数乘入 `weights`，必须把同一个系数乘进 `margin_buffer`，
-/// 否则上限会再次被系数缩小（例如 20% 在 k=0.52 时错误变成 10.4%）。
+/// 波动率系数已经乘在 `weights` 里，订单金额也只直接使用这份最终权重；
+/// 换算上限和计算订单时都不能再额外乘一次波动率系数。
 /// 因此 `max_single_weight`（占净值比例，如 0.20）折算到权重空间为
 /// `max_w = max_single_weight / (margin_buffer * leverage)`。
 /// 该函数是幂等的，返回被截断过的币种列表（供计划日志展示）。
@@ -692,21 +692,6 @@ pub fn build_plan(
     cfg: &TradeConfig,
     equity_override: Option<f64>,
 ) -> Plan {
-    build_plan_scaled(weights, acct, markets, mids, cfg, equity_override, 1.0)
-}
-
-/// `weight_scale` 是已经乘入目标权重的波动率系数；只用于换算单币上限。
-/// 下单名义仍直接使用缩放后的权重，不能再乘一次系数。
-#[allow(clippy::too_many_arguments)]
-pub fn build_plan_scaled(
-    weights: &[(String, f64)],
-    acct: &Acct,
-    markets: &HashMap<String, MarketInfo>,
-    mids: &HashMap<String, f64>,
-    cfg: &TradeConfig,
-    equity_override: Option<f64>,
-    weight_scale: f64,
-) -> Plan {
     let equity = equity_override.unwrap_or(acct.equity);
     // Deploy only part of the equity so fees and adverse fills cannot push the
     // book past the margin limit mid-run.
@@ -716,7 +701,7 @@ pub fn build_plan_scaled(
         cap_weights_same_side(
             &mut capped_weights,
             cfg.max_single_weight,
-            cfg.margin_buffer * weight_scale.max(0.0),
+            cfg.margin_buffer,
             cfg.leverage,
         );
     }
@@ -1727,32 +1712,33 @@ mod close_threshold_tests {
     }
 
     #[test]
-    fn vol_scaled_cap_is_exactly_twenty_percent_of_equity() {
-        // 权重已乘入 k=0.52；上限换算也必须包含 k，不能把 20% 再缩成 10.4%。
+    fn post_vol_target_cap_uses_actual_order_weight_space() {
+        // 这些权重已经乘入 k=0.52。订单名义 = weight * 0.9 * 3 * equity，
+        // 不能再乘一次 k；0.074 对应约 20%，0.077 对应约 20.8%。
         let k = 0.52;
         let mut w = vec![
-            ("VVV".to_string(), 0.20),
-            ("XPL".to_string(), 0.15),
-            ("XMR".to_string(), 0.08),
-            ("NEAR".to_string(), 0.04),
-            ("ZRO".to_string(), 0.03),
-            ("BTC".to_string(), -0.25),
-            ("ETH".to_string(), -0.25),
+            ("VVV".to_string(), 0.30 * k),
+            ("XPL".to_string(), 0.20 * k),
+            ("XMR".to_string(), 0.08 * k),
+            ("NEAR".to_string(), 0.04 * k),
+            ("ZRO".to_string(), 0.03 * k),
+            ("BTC".to_string(), -0.25 * k),
+            ("ETH".to_string(), -0.25 * k),
         ];
         let long_before: f64 = w.iter().filter(|(_, v)| *v > 0.0).map(|(_, v)| *v).sum();
-        let clipped = cap_weights_same_side(&mut w, 0.20, 0.9 * k, 3.0);
+        let clipped = cap_weights_same_side(&mut w, 0.20, 0.9, 3.0);
         assert!(clipped.contains(&"VVV".to_string()));
         assert!(clipped.contains(&"XPL".to_string()));
         let long_after: f64 = w.iter().filter(|(_, v)| *v > 0.0).map(|(_, v)| *v).sum();
         assert!((long_after - long_before).abs() < 1e-12, "同侧总杠杆必须不变");
         for (coin, weight) in &w {
-            let equity_frac = weight.abs() * 0.9 * 3.0 * k;
+            let equity_frac = weight.abs() * 0.9 * 3.0;
             assert!(equity_frac <= 0.20 + 1e-12, "{coin} 最终目标仍超限: {equity_frac}");
         }
         let vvv = w.iter().find(|(c, _)| c == "VVV").unwrap().1;
-        assert!((vvv * 0.9 * 3.0 * k - 0.20).abs() < 1e-12, "VVV 应恰好封顶 20%");
+        assert!((vvv * 0.9 * 3.0 - 0.20).abs() < 1e-12, "VVV 应恰好封顶 20%");
         let snapshot = w.clone();
-        assert!(cap_weights_same_side(&mut w, 0.20, 0.9 * k, 3.0).is_empty(), "相同缩放下必须幂等");
+        assert!(cap_weights_same_side(&mut w, 0.20, 0.9, 3.0).is_empty(), "必须幂等");
         assert_eq!(w, snapshot);
     }
 
