@@ -231,16 +231,18 @@ def build_orders(target: dict, current: dict, idx: dict, decimals: dict, equity:
         # 目标数量 = 带符号权重 × 净值 / 价格；不在目标里 = 0（平仓）。
         target_size = float(target.get(coin, 0.0)) * equity / px
         delta = target_size - cur_size
-        if abs(delta) * px < 10:  # 小于 $10 不调
+        if abs(delta) * px < MIN_NOTIONAL_USD:  # 差额小于 $10 不调
             continue
         buy = delta > 0  # 买 = 加多/减空
         # Ioc 吃单价：买单上浮、卖单下浮在 slippage 内；再按 tick size 格式化
         aggressive = px * (1.0 + SLIPPAGE) if buy else px * (1.0 - SLIPPAGE)
         price_str = fmt_price(aggressive, dec, round_up=not buy)
         size_str = round_sz(abs(delta), dec)
-        # 数量为 0 的跳过（价格太高时可能四舍五入到 0）
+        # 数量和价格格式化后必须再次校验交易所最小名义。不得为了凑 $10
+        # 自动放大数量；小额调整跳过即可，不能发送必然可能被拒的订单。
         try:
-            if float(size_str) <= 0:
+            rounded_size = float(size_str)
+            if rounded_size <= 0 or rounded_size * float(price_str) < MIN_NOTIONAL_USD:
                 continue
         except ValueError:
             continue

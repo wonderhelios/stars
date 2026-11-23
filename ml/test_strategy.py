@@ -137,6 +137,14 @@ class OrderTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             build_orders({"A": np.nan}, {}, {"A": 0}, {}, 1000.0, mids={"A": "1"})
 
+    def test_rounded_order_below_minimum_is_skipped(self):
+        # 复现 ZEC 边界：取整前差额约 $10.05，但 0.01 ZEC 的最终订单仅约 $8.36。
+        orders = build_orders(
+            {"ZEC": 1 / 8}, {"ZEC": 0.27}, {"ZEC": 0}, {"ZEC": 2},
+            equity=1734.0, mids={"ZEC": "840"},
+        )
+        self.assertEqual(orders, [])
+
 
 if __name__ == "__main__":
     unittest.main()
