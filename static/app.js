@@ -2484,6 +2484,38 @@ function renderFastSwing(d) {
         }).join("") + '</tbody></table></div>'
       : '<div class="empty">当前无待成交挂单。</div>';
   }
+  const diagEl = $("fs-diagnostics");
+  if (diagEl) {
+    const unfilled = (Number(d.unfilled_expired) || 0) + (Number(d.unfilled_runaway) || 0);
+    diagEl.innerHTML = [
+      metric("已扫描闭合K线", fmt(d.scanned_bars || 0, 0)),
+      metric("原始插针", fmt(d.raw_sweeps || 0, 0)),
+      metric("影线不足", fmt(d.wick_rejected || 0, 0)),
+      metric("EMA趋势拒绝", fmt(d.ema_rejected || 0, 0)),
+      metric("完整信号", `${fmt(d.complete_signals || 0, 0)} / 接受 ${fmt(d.accepted_signals || 0, 0)}`),
+      metric("挂单未成交", `${unfilled}（跑远 ${fmt(d.unfilled_runaway || 0, 0)} / 到期 ${fmt(d.unfilled_expired || 0, 0)}）`),
+    ].join("");
+    const ls = d.last_scan || {};
+    if ($("fs-last-scan")) $("fs-last-scan").textContent = ls.bar_ms
+      ? `最近扫描 ${ts2bj(ls.bar_ms)} · 原始 ${ls.raw_sweeps || 0} / 完整 ${ls.complete_signals || 0}`
+      : "等待首次整点扫描";
+    const events = (d.recent_events || []).slice().reverse().slice(0, 30);
+    const stageNames = {
+      raw_sweep: "原始插针",
+      wick_rejected: "影线不足",
+      ema_rejected: "EMA拒绝",
+      split_rejected: "异常跳空",
+      complete_signal: "完整信号",
+      signal_rejected: "信号未接受",
+      unfilled_runaway: "跑远取消",
+      unfilled_expired: "到期未成交",
+    };
+    $("fs-diag-events").innerHTML = events.length
+      ? '<div class="table-scroll"><table><thead><tr><th>时间 · UTC+8</th><th>标的</th><th>方向</th><th>影线/ATR</th><th>阶段</th><th>说明</th></tr></thead><tbody>' +
+        events.map(e => `<tr><td class="muted">${ts2bj(e.bar_ts || e.ts)}</td><td><b>${escapeHTML(e.symbol || "")}</b></td><td class="${e.side === "long" ? "pos" : "neg"}">${e.side === "long" ? "多" : "空"}</td><td>${e.wick_atr == null ? "—" : fmt(e.wick_atr, 2)}</td><td>${stageNames[e.stage] || escapeHTML(e.stage || "—")}</td><td class="muted">${escapeHTML(e.reason || "")}</td></tr>`).join("") +
+        '</tbody></table></div>'
+      : '<div class="empty">部署后尚未出现原始插针或未成交挂单事件。</div>';
+  }
   const sigs = (d.signals || []).slice().reverse();
   if ($("fs-signals")) {
     const sigPages = Math.max(1, Math.ceil(sigs.length / CB_PAGE_SIZE));
@@ -2945,6 +2977,7 @@ function renderHlCarry(d) {
     ["hc-p-maxw", Number.isFinite(p.max_leg_weight) ? p.max_leg_weight * 100 : null, 0],
     ["hc-p-payback", p.payback_days, 0],
     ["hc-p-minhold", p.min_hold_hours, 0],
+    ["hc-p-minbasis", p.min_entry_basis_bp, 0],
     ["hc-p-basistp", p.basis_take_profit_bp, 0],
   ];
   for (const [id, val, digits] of pf) {
@@ -3191,6 +3224,7 @@ if (hcParamsBtn)
       max_leg_weight: maxw == null ? null : maxw / 100,
       payback_days: num("hc-p-payback"),
       min_hold_hours: num("hc-p-minhold"),
+      min_entry_basis_bp: num("hc-p-minbasis"),
       basis_take_profit_bp: num("hc-p-basistp"),
     };
     // null 表示"没填"，服务端会保留原值

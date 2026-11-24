@@ -4,8 +4,9 @@ from __future__ import annotations
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
-from fastswing.shadow import FastSwingShadowLedger, HOUR_MS
+from fastswing.shadow import FastSwingShadowLedger, HOUR_MS, step_once
 from fastswing.strategy import (
     Bar1h,
     FastSwingConfig,
@@ -158,6 +159,58 @@ class TestFastSwingShadowLedger(unittest.TestCase):
             reloaded = FastSwingShadowLedger.load(p, cfg=cfg)
             self.assertEqual(len(reloaded.state["trades"]), 1)
             self.assertAlmostEqual(reloaded.state["equity"], ledger.state["equity"], places=4)
+
+
+class TestFastSwingDiagnostics(unittest.TestCase):
+    def test_ema_rejection_is_counted_once_per_closed_bar(self) -> None:
+        cfg = FastSwingConfig(symbols=("SOXLUSDT",))
+        source = _make_uptrend_bars(200, 200.0, -0.3)
+        t0 = (source[0].open_time_ms // HOUR_MS) * HOUR_MS
+        bars = [
+            Bar1h(t0 + i * HOUR_MS, b.open, b.high, b.low, b.close, b.volume)
+            for i, b in enumerate(source)
+        ]
+        prev_low = min(b.low for b in bars[-24:])
+        last = bars[-1]
+        bars.append(Bar1h(
+            last.open_time_ms + HOUR_MS,
+            last.close,
+            last.close + 0.2,
+            prev_low - 3.0,
+            prev_low + 0.5,
+            5000.0,
+        ))
+        now = bars[-1].open_time_ms + HOUR_MS + 600_000
+        ledger = FastSwingShadowLedger(cfg=cfg, capital=5000.0)
+        with tempfile.TemporaryDirectory() as td, \
+                patch("fastswing.shadow.fetch_mark_prices", return_value={"SOXLUSDT": bars[-1].close}), \
+                patch("fastswing.shadow.fetch_closed_1h_bars", return_value={"SOXLUSDT": bars}):
+            step_once(ledger, Path(td) / "state.json", now_ms=now)
+            step_once(ledger, Path(td) / "state.json", now_ms=now)
+        self.assertEqual(ledger.state["scanned_bars"], 1)
+        self.assertEqual(ledger.state["raw_sweeps"], 1)
+        self.assertEqual(ledger.state["ema_rejected"], 1)
+        self.assertEqual(ledger.state["wick_rejected"], 0)
+        self.assertEqual(ledger.state["complete_signals"], 0)
+        self.assertEqual(ledger.state["recent_events"][-1]["stage"], "ema_rejected")
+
+    def test_unfilled_expiry_has_persistent_outcome(self) -> None:
+        now = 1_700_000_000_000
+        ledger = FastSwingShadowLedger(capital=5000.0)
+        ledger.state["pending"]["SOXLUSDT"] = {
+            "side": 1,
+            "sig_close": 100.0,
+            "sig_atr": 1.0,
+            "filled_qty": 0.0,
+            "levels": [99.0, 98.0, 97.0],
+            "filled": [False, False, False],
+            "expire_ts": now,
+        }
+        ledger.process_pending_and_positions({"SOXLUSDT": 100.0}, {}, {}, now)
+        self.assertEqual(ledger.state["unfilled_expired"], 1)
+        self.assertEqual(ledger.state["unfilled_runaway"], 0)
+        self.assertEqual(ledger.state["recent_events"][-1]["stage"], "unfilled_expired")
+        self.assertFalse(ledger.state["pending"])
 
 
 if __name__ == "__main__":

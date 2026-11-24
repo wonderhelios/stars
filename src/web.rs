@@ -1571,6 +1571,7 @@ struct HlCarryParamsBody {
     payback_days: Option<f64>,
     min_hold_hours: Option<f64>,
     basis_take_profit_bp: Option<f64>,
+    min_entry_basis_bp: Option<f64>,
 }
 
 /// 改选币/换仓参数。只改规则，不动当前持仓——下一次评估才生效。
@@ -1600,6 +1601,9 @@ async fn hlcarry_params(
     }
     if let Some(v) = body.basis_take_profit_bp {
         st.params.basis_take_profit_bp = v;
+    }
+    if let Some(v) = body.min_entry_basis_bp {
+        st.params.min_entry_basis_bp = v;
     }
     st.params = st.params.clone().sanitized();
     if let Err(e) = st.save(&state.hlcarry_path) {

@@ -39,6 +39,24 @@ TIER_WEIGHTS: Tuple[float, float, float] = (1.0 / 6.0, 2.0 / 6.0, 3.0 / 6.0)
 HOUR_MS = 3_600_000
 
 
+def _new_diagnostics() -> Dict[str, Any]:
+    """Counters start at deployment; old ledgers load without resetting equity."""
+    return {
+        "scanned_bars": 0,
+        "raw_sweeps": 0,
+        "wick_rejected": 0,
+        "ema_rejected": 0,
+        "split_rejected": 0,
+        "complete_signals": 0,
+        "accepted_signals": 0,
+        "rejected_signals": 0,
+        "unfilled_expired": 0,
+        "unfilled_runaway": 0,
+        "last_scan": {},
+        "recent_events": [],
+    }
+
+
 def _http_get_json(path: str, params: Optional[Dict[str, Any]] = None, timeout: int = 20) -> Any:
     url = f"{FAPI_BASE}{path}"
     if params:
@@ -201,6 +219,28 @@ class FastSwingShadowLedger:
                     "taker_fee_bp": round(self.cfg.taker_fee * 10_000.0, 2),
                 },
             }
+        for key, value in _new_diagnostics().items():
+            self.state.setdefault(key, value)
+
+    def _diag_event(self, event: Dict[str, Any]) -> None:
+        events = self.state["recent_events"]
+        events.append(event)
+        if len(events) > 200:
+            del events[:-200]
+
+    def _scan_geometry(self, bars: List[Bar1h], atr: float) -> Tuple[int, float]:
+        """Return the same long-first raw sweep side and wick/ATR as the signal."""
+        b = bars[-1]
+        window = bars[-self.cfg.lookback_hours - 1 : -1]
+        prev_low = min(x.low for x in window)
+        prev_high = max(x.high for x in window)
+        lower = min(b.open, b.close) - b.low
+        upper = b.high - max(b.open, b.close)
+        if b.low < prev_low and b.close > prev_low:
+            return 1, lower / atr if atr > 0 else 0.0
+        if b.high > prev_high and b.close < prev_high:
+            return -1, upper / atr if atr > 0 else 0.0
+        return 0, 0.0
 
     @classmethod
     def load(
@@ -506,6 +546,14 @@ class FastSwingShadowLedger:
                 runaway_px = float(pend["sig_close"]) + side * self.cfg.tp1_atr * float(pend["sig_atr"])
                 ran_away = (side == 1 and check_high >= runaway_px) or (side == -1 and check_low <= runaway_px)
                 if ran_away:
+                    self.state["unfilled_runaway"] += 1
+                    self._diag_event({
+                        "ts": now_ms,
+                        "symbol": sym,
+                        "side": "long" if side == 1 else "short",
+                        "stage": "unfilled_runaway",
+                        "reason": "价格达到TP1距离，未成交挂单取消",
+                    })
                     del self.state["pending"][sym]
                     continue
 
@@ -606,6 +654,14 @@ class FastSwingShadowLedger:
                     continue
 
             if now_ms >= int(pend["expire_ts"]):
+                self.state["unfilled_expired"] += 1
+                self._diag_event({
+                    "ts": now_ms,
+                    "symbol": sym,
+                    "side": "long" if side == 1 else "short",
+                    "stage": "unfilled_expired",
+                    "reason": "6小时到期，三档限价均未成交",
+                })
                 del self.state["pending"][sym]
 
         self.mark_to_market(prices, now_ms)
@@ -668,13 +724,57 @@ def step_once(
         ledger.process_pending_and_positions(prices, latest_bars, atr_map, now_ms)
 
         if need_scan and bars_by_sym:
+            scan = {
+                "bar_ms": last_closed_hour_ms,
+                "ts": now_ms,
+                "scanned_bars": 0,
+                "raw_sweeps": 0,
+                "wick_rejected": 0,
+                "ema_rejected": 0,
+                "split_rejected": 0,
+                "complete_signals": 0,
+            }
             for sym in syms:
                 blist = bars_by_sym.get(sym)
                 if not blist or blist[-1].open_time_ms < last_closed_hour_ms:
                     continue
+                ledger.state["scanned_bars"] += 1
+                scan["scanned_bars"] += 1
+                side, wick_atr = ledger._scan_geometry(blist, atr_map.get(sym, 0.0))
+                if side:
+                    ledger.state["raw_sweeps"] += 1
+                    scan["raw_sweeps"] += 1
                 sig, reason = detect_sfp_signal(sym, blist, ledger.cfg)
-                if sig is not None:
-                    ledger.enqueue_signal(sig, now_ms, prices)
+                stage = ""
+                if "拆股" in reason:
+                    ledger.state["split_rejected"] += 1
+                    scan["split_rejected"] += 1
+                    stage = "split_rejected"
+                elif sig is None and side and wick_atr < ledger.cfg.wick_atr_min:
+                    ledger.state["wick_rejected"] += 1
+                    scan["wick_rejected"] += 1
+                    stage = "wick_rejected"
+                elif "逆EMA" in reason:
+                    ledger.state["ema_rejected"] += 1
+                    scan["ema_rejected"] += 1
+                    stage = "ema_rejected"
+                elif sig is not None:
+                    ledger.state["complete_signals"] += 1
+                    scan["complete_signals"] += 1
+                    accepted = ledger.enqueue_signal(sig, now_ms, prices)
+                    ledger.state["accepted_signals" if accepted else "rejected_signals"] += 1
+                    stage = "complete_signal" if accepted else "signal_rejected"
+                if side:
+                    ledger._diag_event({
+                        "ts": now_ms,
+                        "bar_ts": blist[-1].open_time_ms,
+                        "symbol": sym,
+                        "side": "long" if side == 1 else "short",
+                        "stage": stage or "raw_sweep",
+                        "reason": reason,
+                        "wick_atr": round(wick_atr, 3),
+                    })
+            ledger.state["last_scan"] = scan
             ledger.state["last_scanned_bar_ms"] = last_closed_hour_ms
 
         ledger.state["last_error"] = None

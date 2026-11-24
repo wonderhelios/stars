@@ -49,6 +49,9 @@ pub struct Params {
     /// 相对入场基差收敛多少 bp 就止盈该腿；0 表示关闭。
     #[serde(default = "d_basis_take_profit")]
     pub basis_take_profit_bp: f64,
+    /// 新开/补仓时 perp/spot 至少升水多少 bp；0 表示关闭基差入场过滤。
+    #[serde(default = "d_min_entry_basis")]
+    pub min_entry_basis_bp: f64,
 }
 
 fn d_min_hold() -> f64 {
@@ -57,6 +60,10 @@ fn d_min_hold() -> f64 {
 
 fn d_basis_take_profit() -> f64 {
     50.0
+}
+
+fn d_min_entry_basis() -> f64 {
+    20.0
 }
 
 impl Default for Params {
@@ -69,6 +76,7 @@ impl Default for Params {
             payback_days: 90.0,
             min_hold_hours: 48.0,
             basis_take_profit_bp: 50.0,
+            min_entry_basis_bp: 20.0,
         }
     }
 }
@@ -83,6 +91,7 @@ impl Params {
             payback_days: self.payback_days.clamp(1.0, 365.0),
             min_hold_hours: self.min_hold_hours.clamp(0.0, 720.0),
             basis_take_profit_bp: self.basis_take_profit_bp.clamp(0.0, 2_000.0),
+            min_entry_basis_bp: self.min_entry_basis_bp.clamp(0.0, 2_000.0),
         }
     }
 }
@@ -100,6 +109,8 @@ pub struct Candidate {
     pub funding_ann: f64,
     /// 现货 24h 成交额（USD）。
     pub spot_volume: f64,
+    /// 当前 perp/spot 升水（bp）；买现货空永续需要从更高升水向下收敛。
+    pub basis_bp: f64,
 }
 
 /// 目标持仓：币、现货对、目标权重。
@@ -111,18 +122,29 @@ pub struct Target {
     pub funding_ann: f64,
 }
 
-/// 从全市场挑候选：现货够厚 + 资金费过门槛，按资金费从高到低取前 K。
+/// 从全市场挑候选：现货够厚 + 资金费与入场基差都过门槛，按资金费取前 K。
 pub fn select_candidates(market: &Market, params: &Params) -> Vec<Candidate> {
     let mut out: Vec<Candidate> = market
         .latched
         .iter()
         .filter(|l| l.spot_volume >= params.min_spot_volume_usd)
         .filter(|l| l.funding_ann > params.min_funding_ann_pct)
-        .map(|l| Candidate {
-            coin: l.coin.clone(),
-            spot: l.spot.clone(),
-            funding_ann: l.funding_ann,
-            spot_volume: l.spot_volume,
+        .filter_map(|l| {
+            let q = market.quote(&l.coin, &l.spot)?;
+            if !(q.spot > 0.0 && q.perp > 0.0) {
+                return None;
+            }
+            let basis_bp = (q.perp - q.spot) / q.spot * 10_000.0;
+            if basis_bp < params.min_entry_basis_bp {
+                return None;
+            }
+            Some(Candidate {
+                coin: l.coin.clone(),
+                spot: l.spot.clone(),
+                funding_ann: l.funding_ann,
+                spot_volume: l.spot_volume,
+                basis_bp,
+            })
         })
         .collect();
     out.sort_by(|a, b| {
@@ -429,7 +451,7 @@ impl HlCarryState {
         // 先立当日的基线，再建仓——否则开仓手续费会落在基线之前。
         self.roll_daily(now);
         if !self.reopen(market, now) {
-            self.log(now, "没有满足条件的标的（现货成交额 / 资金费门槛）".into());
+            self.log(now, "没有满足条件的标的（现货成交额 / 资金费 / 入场基差门槛）".into());
         }
     }
 
@@ -464,6 +486,10 @@ impl HlCarryState {
         };
         let notional = equity * t.weight;
         if notional <= 0.0 || q.spot <= 0.0 || q.perp <= 0.0 {
+            return false;
+        }
+        let entry_basis_bp = (q.perp - q.spot) / q.spot * 10_000.0;
+        if entry_basis_bp < self.params.min_entry_basis_bp {
             return false;
         }
         let fee = notional * ROUND_TRIP_FEE_BP / 10_000.0;
@@ -1106,7 +1132,9 @@ mod tests {
     fn market(rows: &[(&str, &str, f64, f64, f64)]) -> Market {
         let mut m = Market::default();
         for (coin, spot, fh, vol, px) in rows {
-            m.perp_mid.insert(coin.to_string(), *px);
+            // 测试默认给 100bp 升水，聚焦原有资金费逻辑；基差测试再覆盖价格。
+            let perp = *px * 1.01;
+            m.perp_mid.insert(coin.to_string(), perp);
             m.spot_mid.insert(spot.to_string(), *px);
             m.funding.insert(coin.to_string(), *fh);
             m.spot_volume.insert(spot.to_string(), *vol);
@@ -1118,6 +1146,34 @@ mod tests {
             });
         }
         m
+    }
+
+    #[test]
+    fn entry_basis_filter_rejects_discount_even_with_high_funding() {
+        let p = Params::default();
+        let mut m = market(&[
+            ("AAA", "@1", 0.001_0, 5e6, 10.0),
+            ("BBB", "@2", 0.000_2, 5e6, 10.0),
+            ("CCC", "@3", 0.000_1, 5e6, 10.0),
+        ]);
+        m.perp_mid.insert("AAA".into(), 9.99);  // -10bp：资金费最高也拒绝
+        m.perp_mid.insert("BBB".into(), 10.05); // +50bp：允许
+        m.perp_mid.insert("CCC".into(), 10.0);  // 0bp：低于默认20bp
+        let selected = select_candidates(&m, &p);
+        assert_eq!(selected.len(), 1);
+        assert_eq!(selected[0].coin, "BBB");
+        assert!((selected[0].basis_bp - 50.0).abs() < 1e-8);
+
+        let mut st = HlCarryState::default();
+        st.open(1000.0, &m, 1);
+        assert_eq!(st.legs.len(), 1);
+        assert_eq!(st.legs[0].coin, "BBB");
+        let legacy: Params = serde_json::from_str(r#"{
+            "top_k":5,"min_funding_ann_pct":3.0,"min_spot_volume_usd":1000000.0,
+            "max_leg_weight":0.4,"payback_days":90.0,"min_hold_hours":48.0,
+            "basis_take_profit_bp":50.0
+        }"#).unwrap();
+        assert_eq!(legacy.min_entry_basis_bp, 20.0, "旧状态缺字段时应使用新默认值");
     }
 
     #[test]
@@ -1488,11 +1544,16 @@ mod tests {
 
     #[test]
     fn basis_take_profit_closes_only_triggered_leg_during_lock() {
-        let mut st = HlCarryState::default();
-        let m0 = market(&[
+        let mut st = HlCarryState {
+            params: Params { min_entry_basis_bp: 0.0, ..Params::default() },
+            ..HlCarryState::default()
+        };
+        let mut m0 = market(&[
             ("AAA", "@1", 0.000_2, 5e6, 100.0),
             ("BBB", "@2", 0.000_2, 5e6, 100.0),
         ]);
+        m0.perp_mid.insert("AAA".into(), 100.0);
+        m0.perp_mid.insert("BBB".into(), 100.0);
         st.open(1000.0, &m0, 1_000_000);
         let mut m1 = market(&[
             ("AAA", "@1", 0.000_2, 5e6, 100.0),
@@ -1524,7 +1585,8 @@ mod tests {
         let mut m0 = market(&[("AAA", "@1", 0.000_2, 5e6, 100.0)]);
         m0.perp_mid.insert("AAA".into(), 102.0);
         st.open(1000.0, &m0, 1_000_000);
-        let m1 = market(&[("AAA", "@1", 0.000_2, 5e6, 100.0)]);
+        let mut m1 = market(&[("AAA", "@1", 0.000_2, 5e6, 100.0)]);
+        m1.perp_mid.insert("AAA".into(), 100.0);
         st.step(&m1, 1_000_000 + 3_600_000);
         let expected = ((100.0 / 100.0) / (102.0 / 100.0) - 1.0) * 10_000.0;
         assert!((st.legs[0].basis_move_bp - expected).abs() < 1e-8);

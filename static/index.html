@@ -1449,8 +1449,10 @@
                 <div class="field"><label for="hc-p-maxw">单腿权重上限（%）</label><input id="hc-p-maxw" type="number" min="5" max="100" step="5" /></div>
                 <div class="field"><label for="hc-p-payback">换仓回本天数</label><input id="hc-p-payback" type="number" min="1" max="365" step="1" /></div>
                 <div class="field"><label for="hc-p-minhold">资金费轮动锁（小时）</label><input id="hc-p-minhold" type="number" min="0" max="720" step="12" /></div>
+                <div class="field"><label for="hc-p-minbasis">最低入场基差（bp，0 关闭）</label><input id="hc-p-minbasis" type="number" min="0" max="2000" step="5" /></div>
                 <div class="field"><label for="hc-p-basistp">基差止盈（bp，0 关闭）</label><input id="hc-p-basistp" type="number" min="0" max="2000" step="10" /></div>
               </div>
+              <p class="note">默认要求永续相对现货升水至少 20bp 才允许新开或补仓，给约 10.88bp 往返成本预留收敛空间；不会因此强平现有持仓。</p>
               <p class="note">基差止盈按 perp/spot 相对入场时的变化计算，不受资金费轮动锁限制；止盈只平触发腿。</p>
               <p class="note" id="hc-params-status"></p>
             </div>
@@ -1684,6 +1686,14 @@
               <span id="fs-pending-count" class="muted sm"></span>
             </div>
             <div id="fs-pending"></div>
+          </div>
+          <div class="content-card">
+            <div class="panel-head monitor-section-head">
+              <div><span class="section-eyebrow">SIGNAL FUNNEL</span><h2>为什么交易 / 为什么没有交易</h2><p class="note">部署后累计；无原始插针的普通 K 线只计入扫描数，不刷屏。</p></div>
+              <span id="fs-last-scan" class="muted sm"></span>
+            </div>
+            <div class="metrics" id="fs-diagnostics"></div>
+            <div id="fs-diag-events"></div>
           </div>
           <div class="content-card">
             <div class="panel-head"><div><span class="section-eyebrow">SIGNAL LOG</span><h2>最近 1h SFP 信号记录</h2></div></div>
