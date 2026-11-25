@@ -708,6 +708,21 @@ function renderExecDaily(d) {
 // 实盘监控的策略切换：all=全部账户合计，momentum=动量，ml=ML。
 let currentStrategy = 'all';
 
+function renderStrategyShares(d) {
+  const root = $('mo-strategy-tabs');
+  if (!root) return;
+  const mom = Number(d.equity);
+  const ml = d.ml_account && !d.ml_account.error ? Number(d.ml_account.equity) : NaN;
+  const total = Number.isFinite(mom) && Number.isFinite(ml) && mom + ml > 0 ? mom + ml : NaN;
+  for (const strategy of ['momentum', 'ml']) {
+    const btn = root.querySelector(`[data-strategy="${strategy}"]`);
+    if (!btn) continue;
+    const label = strategy === 'momentum' ? '动量策略' : 'ML 策略';
+    const share = Number.isFinite(total) ? (strategy === 'momentum' ? mom : ml) / total * 100 : NaN;
+    btn.textContent = Number.isFinite(share) ? `${label} (${fmt(share, 1)}%)` : label;
+  }
+}
+
 function renderTotal(d) {
   const el = $('mo-total');
   const band = $('mo-overview-band');
@@ -991,6 +1006,7 @@ async function mlReset() {
 function renderMonitor(d) {
   if (!d) return;
   lastLiveData = d;
+  renderStrategyShares(d);
   renderTotal(d);
   bindStrategyTabs();
   bindMlPlanButtons();
