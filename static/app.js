@@ -1481,7 +1481,10 @@ function mergeHistory(a, b) {
       const bp = bBuckets.get(h);
       if (bp) {
         const sync = Math.abs(ap.ts - bp.ts) <= 120000;
-        out.push({ ts: Math.max(ap.ts, bp.ts), equity: ap.equity + bp.equity, sync });
+        // 外部出入金记录在动量账本，必须用动量快照自己的时间判断现金流是否到账。
+        // 若取 max(ap.ts, bp.ts)，旧动量 + 新 ML 的合并点会被误判到入金之后，
+        // 在策略盈亏里凭空多扣一次入金（$6,000 入金曾造成 −$5,934 假跳水）。
+        out.push({ ts: ap.ts, equity: ap.equity + bp.equity, sync });
       }
     }
   }
