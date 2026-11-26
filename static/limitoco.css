@@ -795,7 +795,8 @@ html[data-theme="light"] .lo-title {
 .lo-feed-tag.SIGNAL { background: var(--lo-cyan-soft); color: var(--lo-cyan); }
 .lo-feed-tag.FILL, .lo-feed-tag.START { background: var(--lo-gold-soft); color: var(--lo-gold); }
 .lo-feed-tag.TP { background: var(--lo-jade-soft); color: var(--lo-jade); }
-.lo-feed-tag.SL, .lo-feed-tag.FILL_BAR_SL, .lo-feed-tag.BREAKER, .lo-feed-tag.ERROR { background: var(--lo-rose-soft); color: var(--lo-rose); }
+.lo-feed-tag.SL, .lo-feed-tag.FILL_BAR_SL, .lo-feed-tag.BREAKER, .lo-feed-tag.ERROR, .lo-feed-tag.GTX_REJECT { background: var(--lo-rose-soft); color: var(--lo-rose); }
+.lo-feed-tag.RUNAWAY { background: var(--lo-gold-soft); color: var(--lo-gold); }
 
 .lo-empty {
   padding: 24px 16px;

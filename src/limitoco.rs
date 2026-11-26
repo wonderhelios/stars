@@ -1339,6 +1339,7 @@ impl LimitOcoState {
         equity
     }
 
+    #[cfg(test)]
     pub fn process_closed_bar(
         &mut self,
         bar_ts: i64,
@@ -1346,6 +1347,18 @@ impl LimitOcoState {
         funding_by_sym: &HashMap<String, Vec<(i64, f64)>>,
         asset_class_by_sym: &HashMap<String, String>,
         live_marks: Option<&HashMap<String, f64>>,
+    ) {
+        self.process_closed_bar_with_opts(bar_ts, bars_by_sym, funding_by_sym, asset_class_by_sym, live_marks, true);
+    }
+
+    pub fn process_closed_bar_with_opts(
+        &mut self,
+        bar_ts: i64,
+        bars_by_sym: &HashMap<String, Vec<Bar1h>>,
+        funding_by_sym: &HashMap<String, Vec<(i64, f64)>>,
+        asset_class_by_sym: &HashMap<String, String>,
+        live_marks: Option<&HashMap<String, f64>>,
+        allow_new_signals: bool,
     ) {
         self.roll_daily_breaker(bar_ts);
         let bar_close_ms = bar_ts + HOUR_MS;
@@ -1622,7 +1635,9 @@ impl LimitOcoState {
         self.universe.top80_preview = preview;
         self.funnel.bars_scanned += top_liquid.len() as u64;
 
-        if self.daily_breaker_active {
+        if !allow_new_signals {
+            // 冷启动距上根整点收盘已过久，或历史补扫阶段：仅更新 BTC 罗盘与 Top-80，不回溯挂陈旧单
+        } else if self.daily_breaker_active {
             self.funnel.breaker_skipped += 1;
         } else if self.positions.len() < self.config.max_total_positions {
             // Sleeve A
@@ -1658,8 +1673,10 @@ impl LimitOcoState {
                         break;
                     }
                     if !self.pending.contains_key(&sig.symbol) {
-                        self.place_pending(sig, bar_close_ms);
-                        self.funnel.a_placed += 1;
+                        let lm = live_marks.and_then(|m| m.get(&sig.symbol).copied());
+                        if self.place_pending(sig, bar_close_ms, lm) {
+                            self.funnel.a_placed += 1;
+                        }
                     }
                 }
             }
@@ -1696,8 +1713,10 @@ impl LimitOcoState {
                         break;
                     }
                     if !self.pending.contains_key(&sig.symbol) {
-                        self.place_pending(sig, bar_close_ms);
-                        self.funnel.b_placed += 1;
+                        let lm = live_marks.and_then(|m| m.get(&sig.symbol).copied());
+                        if self.place_pending(sig, bar_close_ms, lm) {
+                            self.funnel.b_placed += 1;
+                        }
                     }
                 }
             }
@@ -1707,7 +1726,34 @@ impl LimitOcoState {
         self.recompute_stats(live_marks.unwrap_or(&bar_closes), bar_close_ms, true);
     }
 
-    fn place_pending(&mut self, sig: SignalOrder, ts_ms: i64) {
+    /// 挂出纯 Maker GTX 限价单；若传入实时标记价 `live_mark`，严格校验 Post-Only 被动性
+    ///（做多挂单价必须严格低于现价，做空挂单价必须严格高于现价，否则按币安 GTX 规则拒单）。
+    fn place_pending(&mut self, sig: SignalOrder, ts_ms: i64, live_mark: Option<f64>) -> bool {
+        if let Some(mp) = live_mark.filter(|&v| v > 0.0) {
+            let violates_gtx = (sig.side == 1 && sig.limit_px >= mp * 0.9998)
+                || (sig.side == -1 && sig.limit_px <= mp * 1.0002);
+            if violates_gtx {
+                let side_cn = if sig.side == 1 { "做多买单" } else { "做空卖单" };
+                self.log_event(
+                    ts_ms,
+                    "GTX_REJECT",
+                    &sig.symbol,
+                    &sig.sleeve,
+                    format!(
+                        "[{}] {} {} GTX 拒单：挂单价 {:.6} 已不满足被动挂单条件（当前市价 {:.6}）",
+                        sig.sleeve, sig.symbol, side_cn, sig.limit_px, mp
+                    ),
+                );
+                return false;
+            }
+        }
+
+        let mark_px = live_mark.filter(|&v| v > 0.0).unwrap_or(sig.signal_close);
+        let dist_pct = if sig.side == 1 {
+            (mark_px - sig.limit_px) / mark_px.max(1e-12) * 100.0
+        } else {
+            (sig.limit_px - mark_px) / mark_px.max(1e-12) * 100.0
+        };
         let side_cn = if sig.side == 1 { "挂买单" } else { "挂卖单" };
         self.log_event(
             ts_ms,
@@ -1715,11 +1761,13 @@ impl LimitOcoState {
             &sig.symbol,
             &sig.sleeve,
             format!(
-                "[{}] {} {} GTX @ {:.6} · SL -{:.1}% / TP +{:.1}% ({})",
+                "[{}] {} {} GTX @ {:.6}（现价 {:.6}，距成交 +{:.2}%）· SL -{:.1}% / TP +{:.1}% ({})",
                 sig.sleeve,
                 sig.symbol,
                 side_cn,
                 sig.limit_px,
+                mark_px,
+                dist_pct,
                 sig.sl_pct * 100.0,
                 sig.tp_pct * 100.0,
                 sig.reason
@@ -1732,8 +1780,8 @@ impl LimitOcoState {
                 symbol: sig.symbol,
                 side: sig.side,
                 limit_px: sig.limit_px,
-                mark_px: sig.signal_close,
-                dist_to_fill_pct: (sig.signal_close - sig.limit_px).abs() / sig.signal_close.max(1e-12) * 100.0,
+                mark_px,
+                dist_to_fill_pct: dist_pct,
                 sl_px: sig.sl_px,
                 tp_px: sig.tp_px,
                 sl_pct: sig.sl_pct * 100.0,
@@ -1747,6 +1795,178 @@ impl LimitOcoState {
                 reason: sig.reason,
             },
         );
+        true
+    }
+
+    /// 60 秒实时盘中盯市推进：已挂在盘口的 GTX 限价单一旦被实时市价穿越即刻成交转持仓；
+    /// 已持仓位一旦触及硬止损 SL 或 Maker 止盈 TP 即刻平仓落袋，无需干等到下一个整点。
+    pub fn process_intrabar_marks(
+        &mut self,
+        mark_prices: &HashMap<String, f64>,
+        asset_class_by_sym: &HashMap<String, String>,
+        ts_ms: i64,
+    ) {
+        self.roll_daily_breaker(ts_ms);
+
+        // 1. 持仓实时触发 SL / TP（硬止损优先）
+        let open_syms: Vec<String> = self.positions.keys().cloned().collect();
+        for sym in open_syms {
+            let Some(&px) = mark_prices.get(&sym).filter(|&&v| v > 0.0) else {
+                continue;
+            };
+            let mut pos = match self.positions.remove(&sym) {
+                Some(p) => p,
+                None => continue,
+            };
+            if (pos.side == 1 && px <= pos.sl_px) || (pos.side == -1 && px >= pos.sl_px) {
+                let fill_px = if (pos.side == 1 && px < pos.sl_px) || (pos.side == -1 && px > pos.sl_px) {
+                    px
+                } else {
+                    pos.sl_px
+                };
+                let pnl_p = pos.qty * if pos.side == 1 { fill_px - pos.entry_px } else { pos.entry_px - fill_px };
+                let fee = pos.qty * fill_px * self.config.sl_cost;
+                self.record_closed_trade(ts_ms, &pos, fill_px, fee, pnl_p, "SL");
+                continue;
+            }
+            if (pos.side == 1 && px >= pos.tp_px * (1.0 + self.config.tp_pen))
+                || (pos.side == -1 && px <= pos.tp_px * (1.0 - self.config.tp_pen))
+            {
+                let pnl_p = pos.qty * if pos.side == 1 { pos.tp_px - pos.entry_px } else { pos.entry_px - pos.tp_px };
+                let fee = pos.qty * pos.tp_px * self.config.maker_fee;
+                self.record_closed_trade(ts_ms, &pos, pos.tp_px, fee, pnl_p, "TP");
+                continue;
+            }
+            pos.mark_px = px;
+            self.positions.insert(sym, pos);
+        }
+
+        let equity = self.recompute_stats(mark_prices, ts_ms, false);
+        let mut gross_notional = self.gross_notional;
+
+        // 2. 已挂在盘口的 GTX 挂单：市价穿透挂单价即刻成交，或先触及 TP 则逃逸撤单
+        let mut pend_order: Vec<(String, f64)> = self.pending.iter().map(|(s, p)| (s.clone(), p.score)).collect();
+        pend_order.sort_by(|a, b| b.1.partial_cmp(&a.1).unwrap_or(std::cmp::Ordering::Equal).then_with(|| a.0.cmp(&b.0)));
+
+        for (sym, _) in pend_order {
+            let Some(&px) = mark_prices.get(&sym).filter(|&&v| v > 0.0) else {
+                continue;
+            };
+            let pend = match self.pending.remove(&sym) {
+                Some(p) => p,
+                None => continue,
+            };
+            let lim = pend.limit_px;
+            let ran_away = (pend.side == 1 && px >= pend.tp_px) || (pend.side == -1 && px <= pend.tp_px);
+            let filled = (pend.side == 1 && px <= lim * (1.0 - self.config.entry_pen))
+                || (pend.side == -1 && px >= lim * (1.0 + self.config.entry_pen));
+
+            if filled {
+                let slv_pos_n = self.positions.values().filter(|p| p.sleeve == pend.sleeve).count();
+                let slv_same_n = self
+                    .positions
+                    .values()
+                    .filter(|p| p.sleeve == pend.sleeve && p.side == pend.side)
+                    .count();
+                let (slv_max, slv_ss_max) = if pend.sleeve == "A" {
+                    (self.config.sleeve_a_max_pos, self.config.sleeve_a_max_same_side)
+                } else {
+                    (self.config.sleeve_b_max_pos, self.config.sleeve_b_max_same_side)
+                };
+                if self.daily_breaker_active
+                    || self.positions.len() >= self.config.max_total_positions
+                    || slv_pos_n >= slv_max
+                    || slv_same_n >= slv_ss_max
+                    || equity <= 0.0
+                    || self.positions.contains_key(&sym)
+                {
+                    continue;
+                }
+                let sl_dist = (lim - pend.sl_px).abs() / lim;
+                if sl_dist < self.config.min_sl_pct || sl_dist > self.config.max_sl_pct {
+                    continue;
+                }
+                let size_base = if self.config.compounding { equity } else { self.capital };
+                let risk_usd = size_base * self.config.risk_per_trade;
+                let notional = (risk_usd / sl_dist).min(size_base * self.config.max_pos_lev);
+                if gross_notional + notional > equity * self.config.max_total_gross_lev {
+                    continue;
+                }
+
+                let qty = notional / lim;
+                let efee = notional * self.config.maker_fee;
+                self.cash -= efee;
+                self.total_fees += efee;
+                self.funnel.filled += 1;
+
+                let tp_pct = (pend.tp_px - lim).abs() / lim * 100.0;
+                let pos_obj = OpenPosition {
+                    sleeve: pend.sleeve.clone(),
+                    symbol: sym.clone(),
+                    asset_class: asset_class_by_sym.get(&sym).cloned().unwrap_or_else(|| "crypto".into()),
+                    side: pend.side,
+                    entry_ts: ts_ms,
+                    last_fund_ts: ts_ms,
+                    entry_px: lim,
+                    mark_px: px,
+                    qty,
+                    notional,
+                    risk_usd: notional * sl_dist,
+                    sl_px: pend.sl_px,
+                    tp_px: pend.tp_px,
+                    sl_pct: sl_dist * 100.0,
+                    tp_pct,
+                    max_hold_bars: pend.max_hold_bars,
+                    max_hold_hours: pend.max_hold_bars,
+                    hold_bars: 0,
+                    hold_hours: 0,
+                    fee_usd: efee,
+                    funding_usd: 0.0,
+                    unreal_pnl: 0.0,
+                    unreal_r: 0.0,
+                    progress_pct: 0.0,
+                    reason: pend.reason.clone(),
+                };
+
+                if (pend.side == 1 && px <= pend.sl_px) || (pend.side == -1 && px >= pend.sl_px) {
+                    let pnl_p = qty * if pend.side == 1 { pend.sl_px - lim } else { lim - pend.sl_px };
+                    let sfee = qty * pend.sl_px * self.config.sl_cost;
+                    self.record_closed_trade(ts_ms, &pos_obj, pend.sl_px, sfee, pnl_p, "FILL_BAR_SL");
+                    continue;
+                }
+
+                gross_notional += notional;
+                let side_cn = if pend.side == 1 { "做多" } else { "做空" };
+                self.log_event(
+                    ts_ms,
+                    "FILL",
+                    &sym,
+                    &pend.sleeve,
+                    format!(
+                        "[{}] {} {} 盘中 Maker 成交 @ {:.6}（市价 {:.6}）· 名义 ${:.0} · SL {:.6} / TP {:.6}",
+                        pend.sleeve, sym, side_cn, lim, px, notional, pend.sl_px, pend.tp_px
+                    ),
+                );
+                self.positions.insert(sym, pos_obj);
+                continue;
+            }
+
+            if ran_away {
+                self.funnel.runaway += 1;
+                self.log_event(
+                    ts_ms,
+                    "RUNAWAY",
+                    &sym,
+                    &pend.sleeve,
+                    format!("[{}] {} 市价 {:.6} 已直接触及止盈位 {:.6}，撤销未成交挂单", pend.sleeve, sym, px, pend.tp_px),
+                );
+                continue;
+            }
+
+            self.pending.insert(sym, pend);
+        }
+
+        self.recompute_stats(mark_prices, ts_ms, false);
     }
 }
 
@@ -2166,16 +2386,41 @@ pub async fn step_once(
                         },
                     };
                 }
-                state.roll_daily_breaker(now);
-                state.recompute_stats(&mark_prices, now, false);
+                state.process_intrabar_marks(&mark_prices, &cache.eligible, now);
             } else {
-                for bts in bars_to_run {
-                    state.process_closed_bar(bts, &bars_by_sym, &funding_by_sym, &cache.eligible, Some(&mark_prices));
+                const LIVE_SIGNAL_WINDOW_MS: i64 = 10 * 60_000;
+                let was_cold = state.last_bar_ms == 0;
+                for &bts in &bars_to_run {
+                    let age_since_close = now - (bts + HOUR_MS);
+                    let is_latest = bts == latest_closed_bar_ts;
+                    let allow_new = is_latest && age_since_close <= LIVE_SIGNAL_WINDOW_MS;
+                    state.process_closed_bar_with_opts(
+                        bts,
+                        &bars_by_sym,
+                        &funding_by_sym,
+                        &cache.eligible,
+                        Some(&mark_prices),
+                        allow_new,
+                    );
+                    if was_cold && is_latest && !allow_new {
+                        let mins = (age_since_close / 60_000).max(1);
+                        state.log_event(
+                            now,
+                            "INIT",
+                            "",
+                            "",
+                            format!(
+                                "冷启动行情与 Top-{} 标的池已同步（距上根 1h 收盘已 {} 分钟，跳过陈旧信号，等待下根整点收盘后挂新单）",
+                                state.universe.liquid_count, mins
+                            ),
+                        );
+                    }
                 }
+                state.process_intrabar_marks(&mark_prices, &cache.eligible, now);
             }
         } else {
-            state.roll_daily_breaker(now);
-            state.recompute_stats(&mark_prices, now, false);
+            let cache = MarketDataCache::load(&cache_path);
+            state.process_intrabar_marks(&mark_prices, &cache.eligible, now);
         }
 
         state.last_error = None;
@@ -2466,5 +2711,100 @@ mod tests {
         assert!(st.daily_breaker_active);
         st.roll_daily_breaker(b352_ts + 2 * DAY_MS);
         assert!(!st.daily_breaker_active);
+    }
+
+    #[test]
+    fn gtx_passivity_rejects_impossible_post_only_orders() {
+        let mut st = LimitOcoState::new_with_config(LimitOcoConfig::default(), 1_735_689_600_000);
+        // Short signal @ 0.045752 when live market is already 0.046100 -> MUST be rejected (GTX Sell must be > mark!)
+        let short_sig = SignalOrder {
+            sleeve: "B".into(),
+            symbol: "SKYUSDT".into(),
+            side: -1,
+            limit_px: 0.045752,
+            sl_px: 0.048928,
+            tp_px: 0.040988,
+            expire_bars: 12,
+            max_hold_bars: 96,
+            score: 0.126,
+            sl_pct: 0.069,
+            tp_pct: 0.104,
+            signal_close: 0.04554,
+            atr24: 0.00106,
+            funding_rate: 0.00005,
+            reason: "test".into(),
+        };
+        assert!(!st.place_pending(short_sig.clone(), 1_735_689_600_000, Some(0.0461)));
+        assert!(st.pending.is_empty());
+        assert_eq!(st.events.last().unwrap().kind, "GTX_REJECT");
+
+        // Same Short signal @ 0.045752 when live market is 0.04550 (below ask) -> ACCEPTED!
+        assert!(st.place_pending(short_sig, 1_735_689_600_000, Some(0.04550)));
+        assert!(st.pending.contains_key("SKYUSDT"));
+        assert!(st.pending["SKYUSDT"].dist_to_fill_pct > 0.0);
+
+        // Long signal @ 100.0 when live market is already 99.5 -> MUST be rejected (GTX Buy must be < mark!)
+        let long_sig = SignalOrder {
+            sleeve: "A".into(),
+            symbol: "ETHUSDT".into(),
+            side: 1,
+            limit_px: 100.0,
+            sl_px: 95.0,
+            tp_px: 111.0,
+            expire_bars: 12,
+            max_hold_bars: 168,
+            score: 2.0,
+            sl_pct: 0.05,
+            tp_pct: 0.11,
+            signal_close: 100.5,
+            atr24: 1.4,
+            funding_rate: 0.0,
+            reason: "test".into(),
+        };
+        assert!(!st.place_pending(long_sig, 1_735_689_600_000, Some(99.5)));
+        assert!(!st.pending.contains_key("ETHUSDT"));
+    }
+
+    #[test]
+    fn intrabar_marks_fill_resting_gtx_and_close_oco_immediately() {
+        let mut st = LimitOcoState::new_with_config(LimitOcoConfig::default(), 1_735_689_600_000);
+        let sig = SignalOrder {
+            sleeve: "B".into(),
+            symbol: "SKYUSDT".into(),
+            side: -1,
+            limit_px: 0.045752,
+            sl_px: 0.048928,
+            tp_px: 0.040988,
+            expire_bars: 12,
+            max_hold_bars: 96,
+            score: 0.126,
+            sl_pct: 0.0694,
+            tp_pct: 0.1041,
+            signal_close: 0.04554,
+            atr24: 0.00106,
+            funding_rate: 0.00005,
+            reason: "test".into(),
+        };
+        // Legitimately placed at 01:00 while mark was 0.04554 (below sell limit)
+        assert!(st.place_pending(sig, 1_735_689_600_000, Some(0.04554)));
+        assert!(st.pending.contains_key("SKYUSDT"));
+
+        // 15 minutes later mark rises to 0.0461 -> fills immediately into active short position!
+        let mut marks = HashMap::new();
+        marks.insert("SKYUSDT".into(), 0.0461);
+        let mut ac = HashMap::new();
+        ac.insert("SKYUSDT".into(), "crypto".into());
+        st.process_intrabar_marks(&marks, &ac, 1_735_689_600_000 + 15 * 60_000);
+        assert!(!st.pending.contains_key("SKYUSDT"));
+        assert!(st.positions.contains_key("SKYUSDT"));
+        assert!((st.positions["SKYUSDT"].entry_px - 0.045752).abs() < 1e-9);
+
+        // Later mark drops to 0.04090 (< tp_px * 0.9998) -> TP triggers immediately!
+        marks.insert("SKYUSDT".into(), 0.04090);
+        st.process_intrabar_marks(&marks, &ac, 1_735_689_600_000 + 45 * 60_000);
+        assert!(!st.positions.contains_key("SKYUSDT"));
+        assert_eq!(st.trades.len(), 1);
+        assert_eq!(st.trades[0].reason, "TP");
+        assert!(st.trades[0].r_mult > 1.4);
     }
 }
