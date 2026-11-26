@@ -45,6 +45,10 @@ pub struct AppState {
     pub tradfi_path: Arc<std::path::PathBuf>,
     /// 币安核心 10 标的 1h 顺势 SFP 快速波段前向影子账本。
     pub fastswing_path: Arc<std::path::PathBuf>,
+    /// 币安 USD-M A+B 纯限价 OCO 影子状态（纯 Rust 引擎）。
+    pub limitoco: Arc<Mutex<crate::limitoco::LimitOcoState>>,
+    pub limitoco_path: Arc<std::path::PathBuf>,
+    pub limitoco_gate: Arc<tokio::sync::Mutex<()>>,
 }
 
 #[derive(Clone, Default)]
@@ -70,6 +74,8 @@ pub fn router(state: AppState) -> Router {
     Router::new()
         .route("/", get(index_html))
         .route("/app.js", get(app_js))
+        .route("/limitoco.css", get(limitoco_css))
+        .route("/limitoco.js", get(limitoco_js))
         .route("/api/health", get(health))
         .route("/api/status", get(status))
         .route("/api/live", get(live_status))
@@ -103,6 +109,12 @@ pub fn router(state: AppState) -> Router {
         .route("/api/tradfi/plan", post(tradfi_plan))
         .route("/api/tradfi/execute", post(tradfi_execute))
         .route("/api/tradfi/flatten", post(tradfi_flatten))
+        .route("/api/limitoco", get(limitoco_status))
+        .route("/api/limitoco/config", get(limitoco_config_get).post(limitoco_config_save))
+        .route("/api/limitoco/start", post(limitoco_start))
+        .route("/api/limitoco/stop", post(limitoco_stop))
+        .route("/api/limitoco/step", post(limitoco_step))
+        .route("/api/limitoco/reset", post(limitoco_reset))
         .layer(axum::middleware::from_fn({
             let token = state.auth_token.clone();
             move |req: axum::http::Request<axum::body::Body>, next: axum::middleware::Next| {
@@ -145,6 +157,8 @@ async fn require_auth(
 
 const INDEX_HTML: &str = include_str!("../static/index.html");
 const APP_JS: &str = include_str!("../static/app.js");
+const LIMITOCO_CSS: &str = include_str!("../static/limitoco.css");
+const LIMITOCO_JS: &str = include_str!("../static/limitoco.js");
 
 async fn index_html() -> impl IntoResponse {
     (
@@ -163,6 +177,26 @@ async fn app_js() -> impl IntoResponse {
             (header::CACHE_CONTROL, "no-cache, no-store, must-revalidate"),
         ],
         APP_JS,
+    )
+}
+
+async fn limitoco_css() -> impl IntoResponse {
+    (
+        [
+            (header::CONTENT_TYPE, "text/css; charset=utf-8"),
+            (header::CACHE_CONTROL, "no-cache, no-store, must-revalidate"),
+        ],
+        LIMITOCO_CSS,
+    )
+}
+
+async fn limitoco_js() -> impl IntoResponse {
+    (
+        [
+            (header::CONTENT_TYPE, "text/javascript; charset=utf-8"),
+            (header::CACHE_CONTROL, "no-cache, no-store, must-revalidate"),
+        ],
+        LIMITOCO_JS,
     )
 }
 
@@ -198,6 +232,251 @@ async fn fastswing_status(State(state): State<AppState>) -> Response {
         },
         Err(e) => (StatusCode::SERVICE_UNAVAILABLE, Json(json!({"error":format!("快速波段影子尚未启动: {e}")}))).into_response(),
     }
+}
+
+// ---------------------------------------------------------------------------
+// 币安 A+B 纯限价 OCO 影子接口（纯 Rust 引擎）
+// ---------------------------------------------------------------------------
+
+async fn limitoco_status(State(state): State<AppState>) -> Response {
+    let snap = state.limitoco.lock().await.clone();
+    Json(snap).into_response()
+}
+
+async fn limitoco_config_get(State(state): State<AppState>) -> Response {
+    let cfg = state.limitoco.lock().await.config.clone();
+    Json(json!({
+        "ok": true,
+        "config": cfg,
+        "tier_presets": crate::limitoco::tier_presets(),
+    }))
+    .into_response()
+}
+
+#[derive(serde::Deserialize)]
+struct LimitOcoConfigBody {
+    running: Option<bool>,
+    capital: Option<f64>,
+    risk_tier: Option<String>,
+    risk_per_trade: Option<f64>,
+    max_pos_lev: Option<f64>,
+    max_total_gross_lev: Option<f64>,
+    compounding: Option<bool>,
+    max_total_positions: Option<usize>,
+    sleeve_a_max_pos: Option<usize>,
+    sleeve_a_max_same_side: Option<usize>,
+    sleeve_b_max_pos: Option<usize>,
+    sleeve_b_max_same_side: Option<usize>,
+    max_sl_pct: Option<f64>,
+    cooldown_hours: Option<i64>,
+    daily_loss_limit_r: Option<f64>,
+    top_n_liquid: Option<usize>,
+    min_daily_vol_usd: Option<f64>,
+    enabled_a: Option<bool>,
+    enabled_b: Option<bool>,
+    proxy_url: Option<String>,
+}
+
+async fn limitoco_config_save(
+    State(state): State<AppState>,
+    Json(body): Json<LimitOcoConfigBody>,
+) -> Response {
+    let mut guard = state.limitoco.lock().await;
+    let previous = guard.clone();
+    let mut cfg = guard.config.clone();
+
+    if let Some(ref tier) = body.risk_tier {
+        cfg.apply_tier_preset(tier);
+    }
+    if let Some(v) = body.capital {
+        if !v.is_finite() || v < 100.0 {
+            return (
+                StatusCode::BAD_REQUEST,
+                Json(json!({"ok": false, "error": "初始本金须 >= 100 USDT"})),
+            )
+                .into_response();
+        }
+        cfg.capital = v;
+    }
+    if let Some(v) = body.risk_per_trade {
+        if !v.is_finite() || v <= 0.0 {
+            return (
+                StatusCode::BAD_REQUEST,
+                Json(json!({"ok": false, "error": "单笔风险比例无效"})),
+            )
+                .into_response();
+        }
+        cfg.risk_per_trade = v;
+    }
+    if let Some(v) = body.max_pos_lev {
+        if !v.is_finite() || v <= 0.0 {
+            return (
+                StatusCode::BAD_REQUEST,
+                Json(json!({"ok": false, "error": "单仓杠杆上限无效"})),
+            )
+                .into_response();
+        }
+        cfg.max_pos_lev = v;
+    }
+    if let Some(v) = body.max_total_gross_lev {
+        if !v.is_finite() || v <= 0.0 {
+            return (
+                StatusCode::BAD_REQUEST,
+                Json(json!({"ok": false, "error": "组合总杠杆上限无效"})),
+            )
+                .into_response();
+        }
+        cfg.max_total_gross_lev = v;
+    }
+    if let Some(v) = body.compounding { cfg.compounding = v; }
+    if let Some(v) = body.max_total_positions { cfg.max_total_positions = v; }
+    if let Some(v) = body.sleeve_a_max_pos { cfg.sleeve_a_max_pos = v; }
+    if let Some(v) = body.sleeve_a_max_same_side { cfg.sleeve_a_max_same_side = v; }
+    if let Some(v) = body.sleeve_b_max_pos { cfg.sleeve_b_max_pos = v; }
+    if let Some(v) = body.sleeve_b_max_same_side { cfg.sleeve_b_max_same_side = v; }
+    if let Some(v) = body.max_sl_pct { cfg.max_sl_pct = v; }
+    if let Some(v) = body.cooldown_hours { cfg.cooldown_hours = v; }
+    if let Some(v) = body.daily_loss_limit_r { cfg.daily_loss_limit_r = v; }
+    if let Some(v) = body.top_n_liquid { cfg.top_n_liquid = v; }
+    if let Some(v) = body.min_daily_vol_usd { cfg.min_daily_vol_usd = v; }
+    if let Some(v) = body.enabled_a { cfg.enabled_a = v; }
+    if let Some(v) = body.enabled_b { cfg.enabled_b = v; }
+    if let Some(v) = body.running { cfg.running = v; }
+    if let Some(v) = body.proxy_url { cfg.proxy_url = v; }
+
+    cfg.sanitize();
+    let now = crate::limitoco::now_ms();
+    // 尚未开单且未跑过历史时，改本金直接同步账本初始权益，体验更自然
+    let untouched = guard.trades.is_empty() && guard.positions.is_empty() && guard.pending.is_empty() && guard.last_bar_ms == 0;
+    if untouched && (guard.capital - cfg.capital).abs() > 1e-6 {
+        *guard = crate::limitoco::LimitOcoState::new_with_config(cfg.clone(), now);
+    } else {
+        guard.sync_config(cfg.clone(), now);
+        guard.log_event(
+            now,
+            "CONFIG",
+            "",
+            "",
+            format!(
+                "更新策略参数 · 档位 {} ({:.1}%R) · 单仓上限 {:.1}x / 总杠杆 {:.1}x · 复利{} · SL<={:.0}%",
+                cfg.risk_tier,
+                cfg.risk_per_trade * 100.0,
+                cfg.max_pos_lev,
+                cfg.max_total_gross_lev,
+                if cfg.compounding { "开" } else { "关" },
+                cfg.max_sl_pct * 100.0
+            ),
+        );
+    }
+    if let Err(e) = guard.save(&state.limitoco_path) {
+        *guard = previous;
+        return (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(json!({"ok": false, "error": format!("保存 Limit-OCO 配置失败: {e}")})),
+        )
+            .into_response();
+    }
+    Json(json!({
+        "ok": true,
+        "config": guard.config,
+        "state": &*guard,
+    }))
+    .into_response()
+}
+
+async fn limitoco_start(State(state): State<AppState>) -> Response {
+    let _gate = match state.limitoco_gate.try_lock() {
+        Ok(g) => g,
+        Err(_) => {
+            return (
+                StatusCode::CONFLICT,
+                Json(json!({"ok": false, "error": "影子引擎正在扫描行情，请稍后再试"})),
+            )
+                .into_response()
+        }
+    };
+    let mut snapshot = {
+        let mut g = state.limitoco.lock().await;
+        let now = crate::limitoco::now_ms();
+        g.config.running = true;
+        g.running = true;
+        g.status_text = "启动并首次扫描中…".into();
+        g.log_event(now, "START", "", "", "启动币安 A+B Limit-OCO 影子引擎".into());
+        let _ = g.save(&state.limitoco_path);
+        g.clone()
+    };
+    crate::limitoco::step_once(&mut snapshot, &state.limitoco_path, true).await;
+    let mut g = state.limitoco.lock().await;
+    let latest_cfg = g.config.clone();
+    *g = snapshot;
+    g.sync_config(latest_cfg, crate::limitoco::now_ms());
+    let _ = g.save(&state.limitoco_path);
+    Json(json!({"ok": true, "state": &*g})).into_response()
+}
+
+async fn limitoco_stop(State(state): State<AppState>) -> Response {
+    let mut g = state.limitoco.lock().await;
+    let now = crate::limitoco::now_ms();
+    g.config.running = false;
+    g.running = false;
+    g.status_text = "已暂停".into();
+    g.log_event(now, "STOP", "", "", "暂停币安 A+B Limit-OCO 影子引擎".into());
+    if let Err(e) = g.save(&state.limitoco_path) {
+        return (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(json!({"ok": false, "error": format!("保存状态失败: {e}")})),
+        )
+            .into_response();
+    }
+    Json(json!({"ok": true, "state": &*g})).into_response()
+}
+
+async fn limitoco_step(State(state): State<AppState>) -> Response {
+    let _gate = match state.limitoco_gate.try_lock() {
+        Ok(g) => g,
+        Err(_) => {
+            return (
+                StatusCode::CONFLICT,
+                Json(json!({"ok": false, "error": "影子引擎正在扫描中，请稍候"})),
+            )
+                .into_response()
+        }
+    };
+    let mut snapshot = state.limitoco.lock().await.clone();
+    crate::limitoco::step_once(&mut snapshot, &state.limitoco_path, true).await;
+    let mut g = state.limitoco.lock().await;
+    if g.started_at == snapshot.started_at {
+        let latest_cfg = g.config.clone();
+        *g = snapshot;
+        g.sync_config(latest_cfg, crate::limitoco::now_ms());
+        let _ = g.save(&state.limitoco_path);
+    }
+    Json(json!({"ok": true, "state": &*g})).into_response()
+}
+
+async fn limitoco_reset(State(state): State<AppState>) -> Response {
+    let _gate = match state.limitoco_gate.try_lock() {
+        Ok(g) => g,
+        Err(_) => {
+            return (
+                StatusCode::CONFLICT,
+                Json(json!({"ok": false, "error": "影子引擎正在扫描中，请稍后再重置"})),
+            )
+                .into_response()
+        }
+    };
+    let mut g = state.limitoco.lock().await;
+    let cfg = g.config.clone();
+    let now = crate::limitoco::now_ms();
+    *g = crate::limitoco::LimitOcoState::new_with_config(cfg, now);
+    if let Err(e) = g.save(&state.limitoco_path) {
+        return (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(json!({"ok": false, "error": format!("重置保存失败: {e}")})),
+        )
+            .into_response();
+    }
+    Json(json!({"ok": true, "state": &*g})).into_response()
 }
 
 fn tradfi_default_capital() -> f64 { 2000.0 }
@@ -1834,6 +2113,9 @@ mod live_routes_tests {
             intraday_path: Arc::new(root.join("intraday.json")),
             tradfi_path: Arc::new(root.join("tradfi.json")),
             fastswing_path: Arc::new(root.join("fastswing.json")),
+            limitoco: Arc::new(Mutex::new(crate::limitoco::LimitOcoState::default())),
+            limitoco_path: Arc::new(root.join("limitoco.json")),
+            limitoco_gate: Arc::new(Mutex::new(())),
         };
         let app = router(base.clone());
         let response = app.clone().oneshot(Request::builder().uri("/").body(Body::empty()).unwrap()).await.unwrap();
@@ -1883,6 +2165,9 @@ mod live_routes_tests {
             intraday_path: Arc::new(root.join("intraday.json")),
             tradfi_path: Arc::new(root.join("tradfi.json")),
             fastswing_path: Arc::new(root.join("fastswing.json")),
+            limitoco: Arc::new(Mutex::new(crate::limitoco::LimitOcoState::default())),
+            limitoco_path: Arc::new(root.join("limitoco.json")),
+            limitoco_gate: Arc::new(Mutex::new(())),
         };
         let app = router(base.clone());
         // 资金矩阵：保存 → 持久化 → 拒绝对负数。
@@ -1914,6 +2199,71 @@ mod live_routes_tests {
         assert_eq!(v["capital_alloc"]["momentum_usd"], 3500.0);
         assert_eq!(v["capital_alloc"]["carry_usd"], 1000.0);
         assert_eq!(v["capital_alloc"]["hunting_usd"], 500.0);
+        drop(app); drop(base);
+        std::fs::remove_dir_all(root).unwrap();
+    }
+
+    #[tokio::test]
+    async fn limitoco_config_and_control_routes_round_trip() {
+        let root = std::env::temp_dir().join(format!("stars-limitoco-{}", uuid::Uuid::new_v4()));
+        std::fs::create_dir_all(&root).unwrap();
+        let base = AppState {
+            store: Arc::new(Store::open(&root.join("hl.sqlite")).unwrap()),
+            live: Arc::new(Mutex::new(crate::live::LiveState::default())),
+            live_path: Arc::new(root.join("hl.json")),
+            meta: Arc::new(Mutex::new(MetaCache::default())),
+            refresh: Arc::new(Mutex::new(RefreshStatus::default())),
+            http: reqwest::Client::new(),
+            exec_gate: Arc::new(Mutex::new(())),
+            run_gate: Arc::new(Mutex::new(())),
+            hlcarry: Arc::new(Mutex::new(crate::hlcarry::HlCarryState::default())),
+            hlcarry_path: Arc::new(root.join("hlcarry.json")),
+            auth_token: None,
+            intraday_path: Arc::new(root.join("intraday.json")),
+            tradfi_path: Arc::new(root.join("tradfi.json")),
+            fastswing_path: Arc::new(root.join("fastswing.json")),
+            limitoco: Arc::new(Mutex::new(crate::limitoco::LimitOcoState::default())),
+            limitoco_path: Arc::new(root.join("limitoco.json")),
+            limitoco_gate: Arc::new(Mutex::new(())),
+        };
+        let app = router(base.clone());
+
+        // Default config is 1.5x (1.2%R, max_sl=14%)
+        let resp = app.clone().oneshot(Request::builder().uri("/api/limitoco").body(Body::empty()).unwrap()).await.unwrap();
+        assert_eq!(resp.status(), StatusCode::OK);
+        let bytes = axum::body::to_bytes(resp.into_body(), 1024 * 1024).await.unwrap();
+        let v: serde_json::Value = serde_json::from_slice(&bytes).unwrap();
+        assert_eq!(v["config"]["risk_tier"], "1.5x");
+        assert_eq!(v["config"]["risk_per_trade"], 0.012);
+        assert_eq!(v["config"]["max_sl_pct"], 0.14);
+
+        // Save updated capital + 2.0x tier
+        let req = Request::builder().method("POST").uri("/api/limitoco/config")
+            .header("content-type", "application/json")
+            .body(Body::from(r#"{"capital":25000,"risk_tier":"2.0x","compounding":true,"proxy_url":"http://127.0.0.1:7897"}"#)).unwrap();
+        let resp = app.clone().oneshot(req).await.unwrap();
+        assert_eq!(resp.status(), StatusCode::OK);
+        {
+            let st = base.limitoco.lock().await;
+            assert_eq!(st.capital, 25000.0);
+            assert_eq!(st.equity, 25000.0);
+            assert_eq!(st.config.risk_tier, "2.0x");
+            assert_eq!(st.config.risk_per_trade, 0.016);
+            assert_eq!(st.config.max_pos_lev, 3.0);
+            assert_eq!(st.config.proxy_url, "http://127.0.0.1:7897");
+        }
+        assert!(base.limitoco_path.exists());
+
+        // Stop & Reset routes
+        let resp = app.clone().oneshot(Request::builder().method("POST").uri("/api/limitoco/stop").body(Body::empty()).unwrap()).await.unwrap();
+        assert_eq!(resp.status(), StatusCode::OK);
+        let resp = app.clone().oneshot(Request::builder().method("POST").uri("/api/limitoco/reset").body(Body::empty()).unwrap()).await.unwrap();
+        assert_eq!(resp.status(), StatusCode::OK);
+
+        // Serve artistic frontend assets
+        assert_eq!(app.clone().oneshot(Request::builder().uri("/limitoco.css").body(Body::empty()).unwrap()).await.unwrap().status(), StatusCode::OK);
+        assert_eq!(app.clone().oneshot(Request::builder().uri("/limitoco.js").body(Body::empty()).unwrap()).await.unwrap().status(), StatusCode::OK);
+
         drop(app); drop(base);
         std::fs::remove_dir_all(root).unwrap();
     }

@@ -4,6 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>stars · 量化策略控制台</title>
+    <link rel="stylesheet" href="/limitoco.css" />
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='bg' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0%25' stop-color='%23101826'/%3E%3Cstop offset='100%25' stop-color='%2307090e'/%3E%3C/linearGradient%3E%3ClinearGradient id='g' x1='0' y1='1' x2='1' y2='0'%3E%3Cstop offset='0%25' stop-color='%2310b981'/%3E%3Cstop offset='100%25' stop-color='%2338bdf8'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect x='2' y='2' width='60' height='60' rx='16' fill='url(%23bg)' stroke='url(%23g)' stroke-opacity='.5' stroke-width='2.5'/%3E%3Cpath d='M13 43 L25 34 L34 38 L49 18' fill='none' stroke='url(%23g)' stroke-width='4.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M44 13 L45.9 18.1 L51 20 L45.9 21.9 L44 27 L42.1 21.9 L37 20 L42.1 18.1 Z' fill='%2334d399'/%3E%3C/svg%3E" />
     <style>
       :root {
@@ -1197,6 +1198,9 @@
         <button data-view="combine"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 18l5-6 4 3 7-9"/><circle cx="4" cy="18" r="1.6"/><circle cx="20" cy="6" r="1.6"/></svg><span>日内影子</span></button>
         <button data-view="tradfi"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg><span>美股商品</span></button>
         <button data-view="fastswing"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M13 2L4 14h7l-1 8 9-12h-7l1-8z"/></svg><span>快速波段</span></button>
+        <div class="nav-section-label">币安限价 OCO</div>
+        <button data-view="limitoco-monitor"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/><path d="M16.5 4.5l2 2"/></svg><span>限价监控</span></button>
+        <button data-view="limitoco-settings"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9L12 3z"/><circle cx="12" cy="12" r="3"/></svg><span>限价设置</span></button>
       </nav>
       <div class="status-pill">
         <span class="led" id="led"></span>
@@ -1706,6 +1710,255 @@
         </div>
       </section>
 
+      <!-- ============ 币安 A+B Limit-OCO · 监控页面 ============ -->
+      <section id="view-limitoco-monitor" class="view">
+        <div class="lo-stage">
+          <div class="lo-hero">
+            <div>
+              <div class="lo-eyebrow">
+                <span class="lo-eyebrow-pill">PURE RUST ENGINE</span>
+                <span>BINANCE USD-M · TOP-80 DYNAMIC · A+B LIMIT-OCO</span>
+              </div>
+              <h1 class="lo-title">双轨限价 · 实时观测台</h1>
+              <p class="lo-subtitle">纯 Maker GTX 挂单进场 · 固定 OCO 硬止损止盈落袋 · 加密 + 大宗商品 24h 动态 Top-80（自动排除美股跳空合约，默认 1.5x 复利档位，仅前向影子模拟）。</p>
+            </div>
+            <div class="lo-hero-actions">
+              <div id="lo-orb-pill" class="lo-orb-pill"><span class="lo-orb"></span><span>读取中…</span></div>
+              <div id="lo-countdown" class="lo-countdown">距下根1h收盘 --:--</div>
+              <button type="button" class="lo-btn cyan" id="lo-mon-step">立即扫描</button>
+              <button type="button" class="lo-btn" id="lo-mon-refresh">刷新</button>
+              <button type="button" class="lo-btn gold" data-open-view="limitoco-settings">参数与启停</button>
+            </div>
+          </div>
+
+          <div id="lo-mon-banner" class="lo-banner" hidden></div>
+          <div id="lo-kpis" class="lo-kpi-grid"></div>
+
+          <div class="lo-main-grid">
+            <div class="lo-card">
+              <div class="lo-card-head">
+                <div>
+                  <div class="lo-card-kicker">EQUITY &amp; LEVERAGE RIBBON</div>
+                  <h2 class="lo-card-title">实时净值与杠杆双层曲线</h2>
+                </div>
+                <div class="lo-seg" id="lo-chart-tabs" role="group">
+                  <button type="button" data-range="day" aria-pressed="false">24H</button>
+                  <button type="button" data-range="week" aria-pressed="false">7D</button>
+                  <button type="button" data-range="month" aria-pressed="false">30D</button>
+                  <button type="button" data-range="all" aria-pressed="true">ALL</button>
+                </div>
+              </div>
+              <div class="lo-chart-wrap" id="lo-chart"></div>
+            </div>
+
+            <div class="lo-card">
+              <div class="lo-card-head">
+                <div>
+                  <div class="lo-card-kicker">DUAL-SLEEVE TELEMETRY</div>
+                  <h2 class="lo-card-title">A / B 双引擎实时归因</h2>
+                </div>
+              </div>
+              <div id="lo-sleeves" class="lo-sleeve-stack"></div>
+            </div>
+          </div>
+
+          <div class="lo-card">
+            <div class="lo-card-head">
+              <div>
+                <div class="lo-card-kicker">ACTIVE POSITIONS · OCO BRACKET RAILS</div>
+                <h2 class="lo-card-title">当前持仓与止盈止损轨道</h2>
+              </div>
+              <span id="lo-pos-count" style="font-family:var(--lo-mono);font-size:12px;color:var(--lo-ink-2)"></span>
+            </div>
+            <div id="lo-positions"></div>
+          </div>
+
+          <div class="lo-card">
+            <div class="lo-card-head">
+              <div>
+                <div class="lo-card-kicker">RESTING MAKER QUEUE · GTX POST-ONLY</div>
+                <h2 class="lo-card-title">待成交限价挂单队列（12h 有效）</h2>
+              </div>
+              <span id="lo-pend-count" style="font-family:var(--lo-mono);font-size:12px;color:var(--lo-ink-2)"></span>
+            </div>
+            <div id="lo-pending"></div>
+          </div>
+
+          <div class="lo-two-col">
+            <div class="lo-card">
+              <div class="lo-card-head">
+                <div>
+                  <div class="lo-card-kicker">UNIVERSE &amp; SIGNAL FUNNEL</div>
+                  <h2 class="lo-card-title">动态 Top-80 标的池与信号漏斗</h2>
+                </div>
+              </div>
+              <div id="lo-uni-meta" style="font-family:var(--lo-mono);font-size:11.5px;color:var(--lo-ink-2)"></div>
+              <div id="lo-tickers" class="lo-ticker-strip"></div>
+              <div id="lo-funnel" class="lo-funnel-grid"></div>
+            </div>
+
+            <div class="lo-card">
+              <div class="lo-card-head">
+                <div>
+                  <div class="lo-card-kicker">RUST ENGINE ACTIVITY STREAM</div>
+                  <h2 class="lo-card-title">实时执行与风控日志</h2>
+                </div>
+              </div>
+              <div id="lo-events" class="lo-feed"></div>
+            </div>
+          </div>
+
+          <div class="lo-card">
+            <div class="lo-card-head">
+              <div>
+                <div class="lo-card-kicker">REALIZED LEDGER</div>
+                <h2 class="lo-card-title">已平仓落袋成交记录</h2>
+              </div>
+              <div class="lo-seg" id="lo-trade-tabs" role="group">
+                <button type="button" data-slv="all" aria-pressed="true">全部</button>
+                <button type="button" data-slv="A" aria-pressed="false">策略 A</button>
+                <button type="button" data-slv="B" aria-pressed="false">策略 B</button>
+              </div>
+            </div>
+            <div id="lo-trades"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ 币安 A+B Limit-OCO · 设置页面 ============ -->
+      <section id="view-limitoco-settings" class="view">
+        <div class="lo-stage">
+          <div class="lo-hero">
+            <div>
+              <div class="lo-eyebrow">
+                <span class="lo-eyebrow-pill">COMMAND CONSOLE</span>
+                <span>CAPITAL · LEVERAGE · RISK TIER · IGNITION</span>
+              </div>
+              <h1 class="lo-title">双轨限价 · 策略设置与启停</h1>
+              <p class="lo-subtitle">配置影子本金、风险杠杆档位与热币止损上限，一键启动或暂停纯 Rust 后台行情引擎。所有修改仅作用于本独立模块，绝不影响现有 Hyperliquid 实盘。</p>
+            </div>
+            <div class="lo-hero-actions">
+              <div id="lo-set-orb" class="lo-orb-pill"><span class="lo-orb"></span><span>读取中…</span></div>
+              <button type="button" class="lo-btn" data-open-view="limitoco-monitor">返回监控台</button>
+            </div>
+          </div>
+
+          <div id="lo-set-banner" class="lo-banner" hidden></div>
+
+          <!-- Ignition Control Deck -->
+          <div class="lo-ignition-deck">
+            <div class="lo-ignition-info">
+              <h3>影子引擎启停控制台</h3>
+              <p>启动后 Rust 后台每 60 秒自动盯市、每整点扫描币安 Top-80 已收盘 1h K 线并模拟纯 Maker 挂单与 OCO 止盈止损。</p>
+            </div>
+            <div class="lo-ignition-btns">
+              <button type="button" class="lo-btn gold lg" id="lo-btn-start">▶ 启动影子引擎</button>
+              <button type="button" class="lo-btn danger lg" id="lo-btn-stop" hidden>⏸ 暂停影子引擎</button>
+              <button type="button" class="lo-btn cyan" id="lo-btn-step">立即扫描一步</button>
+              <button type="button" class="lo-btn danger" id="lo-btn-reset">按新本金重置账本</button>
+            </div>
+          </div>
+
+          <!-- Risk & Leverage Tier Gallery -->
+          <div class="lo-card">
+            <div class="lo-card-head">
+              <div>
+                <div class="lo-card-kicker">RISK &amp; LEVERAGE PRESETS · 23M BACKTEST CALIBRATED</div>
+                <h2 class="lo-card-title">选择风险杠杆档位（默认 1.5x 甜点档）</h2>
+              </div>
+              <input type="hidden" id="lo-f-tier" value="1.5x" />
+            </div>
+            <div id="lo-tiers" class="lo-tier-grid"></div>
+            <div id="lo-sim-strip" class="lo-sim-strip"></div>
+          </div>
+
+          <!-- Precision Parameter Matrix -->
+          <div class="lo-form-grid">
+            <div class="lo-card">
+              <div class="lo-card-kicker">01 · CAPITAL &amp; LEVERAGE</div>
+              <h2 class="lo-card-title">本金与杠杆配置</h2>
+              <div class="lo-field">
+                <label for="lo-f-capital">初始影子本金 (USDT)<small>≥ 100</small></label>
+                <input id="lo-f-capital" type="number" step="500" min="100" value="10000" />
+              </div>
+              <div class="lo-field">
+                <label for="lo-f-rpt">单笔止损风险 1R (%)<small>1.5x = 1.2%</small></label>
+                <input id="lo-f-rpt" type="number" step="0.1" min="0.2" max="5.0" value="1.20" />
+              </div>
+              <div class="lo-field">
+                <label for="lo-f-poslev">单仓最大名义杠杆 (x)<small>默认 2.2x</small></label>
+                <input id="lo-f-poslev" type="number" step="0.1" min="0.5" max="10" value="2.2" />
+              </div>
+              <div class="lo-field">
+                <label for="lo-f-grosslev">组合总杠杆上限 (x)<small>默认 6.0x</small></label>
+                <input id="lo-f-grosslev" type="number" step="0.5" min="1.0" max="20" value="6.0" />
+              </div>
+              <div class="lo-switch-row">
+                <div><span>启用复利滚存 (Compounding)</span><small>开启后每笔 1R 随当前实时净值自动缩放</small></div>
+                <label class="lo-switch"><input id="lo-f-compound" type="checkbox" checked /><i></i></label>
+              </div>
+            </div>
+
+            <div class="lo-card">
+              <div class="lo-card-kicker">02 · RISK GUARDRAILS</div>
+              <h2 class="lo-card-title">风控护栏与双腿开关</h2>
+              <div class="lo-field">
+                <label for="lo-f-maxsl">单笔最大止损上限 (%)<small>默认 14% 热币弹性</small></label>
+                <input id="lo-f-maxsl" type="number" step="1" min="4" max="25" value="14.0" />
+              </div>
+              <div class="lo-field">
+                <label for="lo-f-cool">平仓后单币冷却时长 (h)<small>Fix2 默认 72h</small></label>
+                <input id="lo-f-cool" type="number" step="6" min="0" max="240" value="72" />
+              </div>
+              <div class="lo-field">
+                <label for="lo-f-breaker">UTC 日内熔断线 (R)<small>默认 3.0R，0=关闭</small></label>
+                <input id="lo-f-breaker" type="number" step="0.5" min="0" max="20" value="3.0" />
+              </div>
+              <div class="lo-switch-row">
+                <div><span>策略 A · 7d 趋势突破</span><small>最多 3 仓 · 做多需 BTC &gt; EMA336</small></div>
+                <label class="lo-switch"><input id="lo-f-ena" type="checkbox" checked /><i></i></label>
+              </div>
+              <div class="lo-switch-row">
+                <div><span>策略 B · 3d 反弹急拉做空</span><small>最多 2 仓 · 空头趋势高胜率收割</small></div>
+                <label class="lo-switch"><input id="lo-f-enb" type="checkbox" checked /><i></i></label>
+              </div>
+            </div>
+
+            <div class="lo-card">
+              <div class="lo-card-kicker">03 · UNIVERSE &amp; NETWORK</div>
+              <h2 class="lo-card-title">动态标的池与代理</h2>
+              <div class="lo-field">
+                <label for="lo-f-maxpos">组合最大并发持仓数<small>默认 5 仓</small></label>
+                <input id="lo-f-maxpos" type="number" step="1" min="1" max="12" value="5" />
+              </div>
+              <div class="lo-field">
+                <label for="lo-f-topn">动态成交额 Top-N 标的数<small>默认 Top-80</small></label>
+                <input id="lo-f-topn" type="number" step="5" min="20" max="150" value="80" />
+              </div>
+              <div class="lo-field">
+                <label for="lo-f-minvol">7日日均成交额门槛 ($M)<small>默认 $15M</small></label>
+                <input id="lo-f-minvol" type="number" step="5" min="1" max="200" value="15" />
+              </div>
+              <div class="lo-field">
+                <label for="lo-f-proxy">币安行情代理 URL（可选）<small>直连留空</small></label>
+                <input id="lo-f-proxy" type="text" placeholder="例如 http://127.0.0.1:7897" />
+              </div>
+              <div style="font-size:11.5px;color:var(--lo-muted);line-height:1.55">
+                标的池自动纳入加密永续与 24h 大宗商品（XAU / XAG / CL / BZ / NATGAS / COPPER），自动排除美股跳空永续与稳定币。
+              </div>
+            </div>
+          </div>
+
+          <div class="lo-save-bar">
+            <span style="font-size:12px;color:var(--lo-ink-2)">提示：未开单前修改「初始本金」将自动同步账户净值；已有持仓时请使用「按新本金重置账本」重新记账。</span>
+            <div style="display:flex;gap:10px;flex-wrap:wrap">
+              <button type="button" class="lo-btn" id="lo-btn-defaults">恢复 1.5x 默认</button>
+              <button type="button" class="lo-btn gold" id="lo-btn-save">保存策略配置</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
     </main>
 
     <div id="auth-overlay" class="auth-overlay" hidden>
@@ -1718,5 +1971,6 @@
       </div>
     </div>
     <script src="/app.js"></script>
+    <script src="/limitoco.js"></script>
   </body>
 </html>

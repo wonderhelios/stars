@@ -2,6 +2,7 @@ mod exchange;
 mod hlcarry;
 mod health;
 mod hl;
+mod limitoco;
 mod live;
 mod momentum;
 mod store;
@@ -48,6 +49,8 @@ async fn main() -> anyhow::Result<()> {
         .unwrap_or_else(|_| "/var/lib/stars/tradfi_shadow.json".to_string());
     let fastswing_path = std::env::var("STARS_FASTSWING")
         .unwrap_or_else(|_| "/var/lib/stars/fastswing_shadow.json".to_string());
+    let limitoco_path = std::env::var("STARS_LIMITOCO")
+        .unwrap_or_else(|_| "/var/lib/stars/limitoco_shadow.json".to_string());
 
     // ===== trade subcommand (live execution) =====
     let args: Vec<String> = std::env::args().collect();
@@ -60,6 +63,7 @@ async fn main() -> anyhow::Result<()> {
     let hl_live = live::LiveState::load(std::path::Path::new(&live_path));
     let live = Arc::new(Mutex::new(hl_live));
     let hlcarry = Arc::new(Mutex::new(crate::hlcarry::HlCarryState::load(std::path::Path::new(&hlcarry_path))));
+    let limitoco = Arc::new(Mutex::new(crate::limitoco::LimitOcoState::load(std::path::Path::new(&limitoco_path))));
     let meta = Arc::new(Mutex::new(MetaCache::default()));
     let refresh = Arc::new(Mutex::new(RefreshStatus::default()));
 
@@ -81,7 +85,36 @@ async fn main() -> anyhow::Result<()> {
         intraday_path: Arc::new(std::path::PathBuf::from(&intraday_path)),
         tradfi_path: Arc::new(std::path::PathBuf::from(&tradfi_path)),
         fastswing_path: Arc::new(std::path::PathBuf::from(&fastswing_path)),
+        limitoco: limitoco.clone(),
+        limitoco_path: Arc::new(std::path::PathBuf::from(&limitoco_path)),
+        limitoco_gate: std::sync::Arc::new(tokio::sync::Mutex::new(())),
     };
+
+    // ===== 币安 A+B Limit-OCO 影子引擎：每 60 秒推进（仅当 running=true 时运行）=====
+    {
+        let st = state.clone();
+        tokio::spawn(async move {
+            loop {
+                tokio::time::sleep(Duration::from_secs(60)).await;
+                let should_run = st.limitoco.lock().await.config.running;
+                if !should_run {
+                    continue;
+                }
+                let Ok(_gate) = st.limitoco_gate.try_lock() else {
+                    continue;
+                };
+                let mut snapshot = st.limitoco.lock().await.clone();
+                crate::limitoco::step_once(&mut snapshot, &st.limitoco_path, false).await;
+                let mut guard = st.limitoco.lock().await;
+                if guard.started_at == snapshot.started_at {
+                    let latest_cfg = guard.config.clone();
+                    *guard = snapshot;
+                    guard.sync_config(latest_cfg, crate::limitoco::now_ms());
+                    let _ = guard.save(&st.limitoco_path);
+                }
+            }
+        });
+    }
 
     // ===== HL 单账户 carry 影子：每 5 分钟推进一步 =====
     //
