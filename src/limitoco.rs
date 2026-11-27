@@ -1,4 +1,4 @@
-//! 币安 USD-M 永续 A+B 双引擎纯限价 OCO 影子引擎（`Dyn_Top80 + Fix 1+2`，默认 1.5x 档位）。
+//! 币安 USD-M 永续 A+B 双引擎纯限价 OCO 影子引擎（`V2_UltraWR · Dyn_Top80 + Fix 1+2`，默认 1.5x 档位）。
 //!
 //! 纯 Rust 实现，零外部运行依赖，只读币安公开行情接口（绝不发真实下单请求）：
 //!   - `/fapi/v1/exchangeInfo`（缓存 6h，自动区分加密/大宗商品并剔除美股永续与稳定币）
@@ -7,16 +7,16 @@
 //!   - `/fapi/v1/premiumIndex`（实时标记价与资金费率，每 60s 盯市）
 //!   - `/fapi/v1/fundingRate`（严格 `< bar_close` 已结算资金费率 + 持仓真实资金费现金流）
 //!
-//! 策略核心参数（与 23 个月回测 & 锁死 OOS 100% 对齐）：
+//! 策略核心参数（与 35 个月跨牛熊回测 & 2024 盲测牛市 100% 对齐，高胜率 52.4% / 中位持仓 12h / 3 年最大连亏仅 8 笔）：
 //!   - 标的池：加密货币 + 大宗商品（金银油气铜），排除美股永续；每整点动态取 7 日日均成交额 Top-80（>= $15M），排除 72h 内单小时振幅 >= 35% 标的
 //!   - 策略 A（7d 趋势突破，最多 3 仓 / 同向最多 2 仓 / 冷却 72h）：
 //!     - 168h 通道新突破 + 放量 >= 1.3x 24h 均量
 //!     - 做多：个币 & BTC 均 > EMA168 且 > EMA336，且资金费 <= +0.5bp
 //!     - 做空：个币 & BTC 均 < EMA168，且资金费 >= 0
-//!     - 纯 Maker GTX 限价 `close ∓ 0.15*ATR24`（12h 过期）；SL `3.5*ATR24`（0.5%~14%），TP `2.2R`，最长持仓 `168h`
+//!     - 纯 Maker GTX 限价 `close ∓ 0.15*ATR24`（12h 过期）；SL `2.8*ATR24`（0.5%~14%），TP `1.2R`，最长持仓 `168h`
 //!   - 策略 B（空头反弹急拉做空，最多 2 仓 / 仅做空 / 冷却 72h）：
 //!     - `close < EMA336` + 72h 涨幅 >= +6% + 因果日线采样 `RSI(2) >= 90` + 资金费 >= -2bp
-//!     - 纯 Maker GTX 挂卖 `close + 0.20*ATR24`（12h 过期）；SL `3.0*ATR24`（0.5%~14%），TP `1.5R`，最长持仓 `96h`
+//!     - 纯 Maker GTX 挂卖 `close + 0.20*ATR24`（12h 过期）；SL `2.7*ATR24`（0.5%~14%），TP `0.9R`，最长持仓 `96h`
 //!   - 全局风控：总计最多 5 仓、默认 1.5x 档位（单笔 1.2%R 复利，单仓上限 2.2x，总杠杆上限 6.0x）、日内 UTC 已实现亏损 `-3R` 自动熔断。
 
 use anyhow::{Context, Result};
@@ -31,7 +31,8 @@ use tokio::task::JoinSet;
 
 pub const HOUR_MS: i64 = 3_600_000;
 pub const DAY_MS: i64 = 86_400_000;
-pub const STRATEGY_ID: &str = "binance_limit_oco_ab_v1";
+pub const STRATEGY_ID: &str = "binance_limit_oco_ab_v2_ultrawr";
+pub const ENGINE_VERSION: &str = "v2.0-rust-ultrawr-dyn80-sl14";
 const FAPI_BASE_DEFAULT: &str = "https://fapi.binance.com";
 const MAX_BARS_CACHE: usize = 440;
 const COLD_FETCH_LIMIT: usize = 400;
@@ -99,7 +100,8 @@ pub struct RiskTierPreset {
     pub max_pos_lev: f64,
     pub max_total_gross_lev: f64,
     pub bt_ann_pct: f64,
-    pub bt_ret_23m_pct: f64,
+    #[serde(alias = "bt_ret_23m_pct")]
+    pub bt_ret_35m_pct: f64,
     pub bt_max_dd_pct: f64,
     pub bt_worst_day_pct: f64,
     pub bt_sharpe: f64,
@@ -113,11 +115,11 @@ pub fn tier_presets() -> Vec<RiskTierPreset> {
             risk_per_trade: 0.008,
             max_pos_lev: 1.5,
             max_total_gross_lev: 4.5,
-            bt_ann_pct: 55.3,
-            bt_ret_23m_pct: 127.3,
-            bt_max_dd_pct: 18.7,
-            bt_worst_day_pct: -5.9,
-            bt_sharpe: 1.66,
+            bt_ann_pct: 72.7,
+            bt_ret_35m_pct: 368.0,
+            bt_max_dd_pct: 15.5,
+            bt_worst_day_pct: -5.1,
+            bt_sharpe: 1.91,
         },
         RiskTierPreset {
             id: "1.5x".into(),
@@ -125,11 +127,11 @@ pub fn tier_presets() -> Vec<RiskTierPreset> {
             risk_per_trade: 0.012,
             max_pos_lev: 2.2,
             max_total_gross_lev: 6.0,
-            bt_ann_pct: 87.8,
-            bt_ret_23m_pct: 223.8,
-            bt_max_dd_pct: 26.9,
-            bt_worst_day_pct: -8.8,
-            bt_sharpe: 1.67,
+            bt_ann_pct: 120.1,
+            bt_ret_35m_pct: 828.6,
+            bt_max_dd_pct: 22.4,
+            bt_worst_day_pct: -7.6,
+            bt_sharpe: 1.92,
         },
         RiskTierPreset {
             id: "2.0x".into(),
@@ -137,11 +139,11 @@ pub fn tier_presets() -> Vec<RiskTierPreset> {
             risk_per_trade: 0.016,
             max_pos_lev: 3.0,
             max_total_gross_lev: 8.0,
-            bt_ann_pct: 122.5,
-            bt_ret_23m_pct: 344.4,
-            bt_max_dd_pct: 34.5,
-            bt_worst_day_pct: -11.7,
-            bt_sharpe: 1.67,
+            bt_ann_pct: 175.0,
+            bt_ret_35m_pct: 1641.1,
+            bt_max_dd_pct: 29.0,
+            bt_worst_day_pct: -10.1,
+            bt_sharpe: 1.93,
         },
         RiskTierPreset {
             id: "2.5x".into(),
@@ -149,11 +151,11 @@ pub fn tier_presets() -> Vec<RiskTierPreset> {
             risk_per_trade: 0.020,
             max_pos_lev: 3.5,
             max_total_gross_lev: 9.0,
-            bt_ann_pct: 158.5,
-            bt_ret_23m_pct: 487.6,
-            bt_max_dd_pct: 41.4,
-            bt_worst_day_pct: -14.5,
-            bt_sharpe: 1.67,
+            bt_ann_pct: 236.3,
+            bt_ret_35m_pct: 2973.7,
+            bt_max_dd_pct: 35.1,
+            bt_worst_day_pct: -12.5,
+            bt_sharpe: 1.93,
         },
     ]
 }
@@ -575,7 +577,7 @@ impl LimitOcoState {
         );
         let mut st = Self {
             strategy: STRATEGY_ID.into(),
-            version: "v1.0-rust-dyn80-fix12-sl14".into(),
+            version: ENGINE_VERSION.into(),
             running: cfg.running,
             status_text: if cfg.running { "运行中".into() } else { "待启动".into() },
             capital: cap,
@@ -641,6 +643,8 @@ impl LimitOcoState {
         if let Ok(bytes) = std::fs::read(path) {
             if let Ok(mut st) = serde_json::from_slice::<Self>(&bytes) {
                 st.config.sanitize();
+                st.strategy = STRATEGY_ID.into();
+                st.version = ENGINE_VERSION.into();
                 st.tier_presets = tier_presets();
                 return st;
             }
@@ -929,8 +933,8 @@ pub fn detect_sleeve_a(
 ) -> (Option<SignalOrder>, &'static str) {
     const LOOKBACK: usize = 168;
     const LIMIT_ATR: f64 = 0.15;
-    const SL_ATR: f64 = 3.5;
-    const TP_RR: f64 = 2.2;
+    const SL_ATR: f64 = 2.8;
+    const TP_RR: f64 = 1.2;
     const VOL_MULT: f64 = 1.3;
 
     if idx < 340 || idx >= bars.len() {
@@ -1035,8 +1039,8 @@ pub fn detect_sleeve_b(
     const RIP_PCT: f64 = 0.06;
     const RSI2_MIN: f64 = 90.0;
     const LIMIT_ATR: f64 = 0.20;
-    const SL_ATR: f64 = 3.0;
-    const TP_RR: f64 = 1.5;
+    const SL_ATR: f64 = 2.7;
+    const TP_RR: f64 = 0.9;
 
     if idx < 340 || idx >= bars.len() {
         return (None, "warmup");
@@ -2579,7 +2583,7 @@ mod tests {
         assert_eq!(tag_ok, "ok");
         let s = sig_ok.unwrap();
         assert_eq!(s.side, 1);
-        assert!((s.tp_pct / s.sl_pct - 2.2).abs() < 1e-6);
+        assert!((s.tp_pct / s.sl_pct - 1.2).abs() < 1e-6);
 
         // Sleeve B ShortRip: downtrend (< EMA336) + 72h +10% rip + RSI2=100
         let mut b_closes: Vec<f64> = (0..300).map(|i| 200.0 - 0.25 * (i as f64)).collect();
@@ -2593,7 +2597,7 @@ mod tests {
         assert_eq!(tag_b, "ok");
         let sb = sig_b.unwrap();
         assert_eq!(sb.side, -1);
-        assert!((sb.tp_pct / sb.sl_pct - 1.5).abs() < 1e-6);
+        assert!((sb.tp_pct / sb.sl_pct - 0.9).abs() < 1e-6);
     }
 
     #[test]

@@ -288,7 +288,7 @@
             <span class="lo-sleeve-tag a">SLEEVE A · 7d 趋势突破</span>
             <div class="lo-slot-pips" title="持仓槽位 ${a.open}/${a.max}">${pips(a.open, a.max, "on-a")}</div>
           </div>
-          <div style="font-size:11.5px;color:var(--lo-ink-2)">168h 放量突破 · BTC &gt; EMA336 做多护栏 · 止损 3.5ATR / 止盈 2.2R · 挂单 ${a.pending} 笔</div>
+          <div style="font-size:11.5px;color:var(--lo-ink-2)">168h 放量突破 · BTC &gt; EMA336 做多护栏 · 止损 2.8ATR / 止盈 1.2R · 挂单 ${a.pending} 笔</div>
           <div class="lo-sleeve-metrics">
             <div class="lo-sm-item"><span>持仓/上限</span><strong>${a.open}/${a.max}</strong></div>
             <div class="lo-sm-item"><span>净贡献 R</span><strong class="${a.sum_r >= 0 ? "lo-pos" : "lo-neg"}">${a.sum_r >= 0 ? "+" : ""}${fmtNum(a.sum_r, 2)}R</strong></div>
@@ -301,7 +301,7 @@
             <span class="lo-sleeve-tag b">SLEEVE B · 3d 反弹急拉做空</span>
             <div class="lo-slot-pips" title="持仓槽位 ${b.open}/${b.max}">${pips(b.open, b.max, "on-b")}</div>
           </div>
-          <div style="font-size:11.5px;color:var(--lo-ink-2)">空头趋势 (&lt; EMA336) 72h +6% 急拉 · 日RSI2≥90 · 止损 3.0ATR / 止盈 1.5R · 挂单 ${b.pending} 笔</div>
+          <div style="font-size:11.5px;color:var(--lo-ink-2)">空头趋势 (&lt; EMA336) 72h +6% 急拉 · 日RSI2≥90 · 止损 2.7ATR / 止盈 0.9R · 挂单 ${b.pending} 笔</div>
           <div class="lo-sleeve-metrics">
             <div class="lo-sm-item"><span>持仓/上限</span><strong>${b.open}/${b.max}</strong></div>
             <div class="lo-sm-item"><span>净贡献 R</span><strong class="${b.sum_r >= 0 ? "lo-pos" : "lo-neg"}">${b.sum_r >= 0 ? "+" : ""}${fmtNum(b.sum_r, 2)}R</strong></div>
@@ -501,7 +501,7 @@
           </div>
           <div class="lo-tier-r">${(p.risk_per_trade * 100).toFixed(1)}%R <span style="font-size:12px;color:var(--lo-ink-2);font-weight:500">/ 单仓 ${p.max_pos_lev}x · 总 ${p.max_total_gross_lev}x</span></div>
           <div class="lo-tier-stats">
-            <span>23月收益 <b>+${p.bt_ret_23m_pct}%</b></span>
+            <span>35月收益 <b>+${p.bt_ret_35m_pct ?? p.bt_ret_23m_pct}%</b></span>
             <span>年化 <b>+${p.bt_ann_pct}%</b></span>
             <span>最大回撤 <b>-${p.bt_max_dd_pct}%</b></span>
             <span>最差单日 <b>${p.bt_worst_day_pct}%</b></span>
@@ -558,8 +558,8 @@
     const oneR = cap * rpt;
     el.innerHTML = `
       <div class="lo-sim-cell"><span>单笔止损额 (1R)</span><strong class="lo-gold">${fmtMoney(oneR)}</strong></div>
-      <div class="lo-sim-cell"><span>策略A 止盈目标 (2.2R)</span><strong class="lo-pos">+${fmtMoney(oneR * 2.2)}</strong></div>
-      <div class="lo-sim-cell"><span>策略B 止盈目标 (1.5R)</span><strong class="lo-cyan">+${fmtMoney(oneR * 1.5)}</strong></div>
+      <div class="lo-sim-cell"><span>策略A 止盈目标 (1.2R)</span><strong class="lo-pos">+${fmtMoney(oneR * 1.2)}</strong></div>
+      <div class="lo-sim-cell"><span>策略B 止盈目标 (0.9R)</span><strong class="lo-cyan">+${fmtMoney(oneR * 0.9)}</strong></div>
       <div class="lo-sim-cell"><span>单仓 / 总名义上限</span><strong>${fmtMoney(cap * posLev)} / ${fmtMoney(cap * grossLev)}</strong></div>
       <div class="lo-sim-cell"><span>日内熔断线 (-${fmtNum(brkR, 1)}R)</span><strong class="lo-neg">-${fmtMoney(oneR * brkR)}</strong></div>
     `;
