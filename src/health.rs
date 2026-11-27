@@ -106,17 +106,9 @@ fn zscore_inplace(vals: &mut [f64]) {
     }
 }
 
-/// 兼容旧调用签名（默认 F1 + $10M）
-pub fn compute(
-    panel: &[crate::momentum::PanelEntry],
-    equity: &[(i64, f64)],
-) -> Health {
-    compute_with_params(panel, equity, &HealthParams::default())
-}
-
 /// 用日线面板 + TWR 净值指数 + 实盘因子配置算健康度。
 pub fn compute_with_params(
-    panel: &[crate::momentum::PanelEntry],
+    panel: &[crate::store::PanelEntry],
     equity: &[(i64, f64)],
     params: &HealthParams,
 ) -> Health {

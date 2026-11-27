@@ -6,6 +6,13 @@ use rusqlite::Connection;
 use std::path::Path;
 use std::sync::Mutex;
 
+/// Per-coin daily candle series used by factor ranking and health telemetry.
+#[derive(Debug, Clone)]
+pub struct PanelEntry {
+    pub coin: String,
+    pub candles: Vec<Candle>,
+}
+
 pub struct Store {
     conn: Mutex<Connection>,
 }
