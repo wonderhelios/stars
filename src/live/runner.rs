@@ -1,8 +1,8 @@
 //! Live account snapshots, daily momentum rebalance runner, volatility sizing, and equity recorder.
 
 use super::{
-    adjusted_history, cancel_our_take_profits, daily_execution, index_history, ml_index_history,
-    now_ms_pub, place_take_profits, CapitalBaseline, EquityPoint, LivePosition,
+    adjusted_history, cancel_our_take_profits, daily_execution, index_history, ml_adjusted_history,
+    ml_index_history, now_ms_pub, place_take_profits, CapitalBaseline, EquityPoint, LivePosition,
     LiveRecord, LiveSnapshot, LiveState, MlAccountSnapshot,
 };
 use crate::exchange::{Exec, MarketInfo};
@@ -109,6 +109,8 @@ pub async fn snapshot(
         ml_net_deposit: state.ml_capital_flows.iter().filter(|f| f.amount.is_finite()).map(|f| f.amount).sum(),
         mom_index_history: index_history(state),
         ml_index_history: ml_index_history(state),
+        mom_pnl_history: adjusted_history(state),
+        ml_pnl_history: ml_adjusted_history(state),
         records: state.records.clone(),
         last_run_at: state.last_run_at,
         last_plan: state.last_plan.clone(),

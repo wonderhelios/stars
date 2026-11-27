@@ -114,6 +114,8 @@ pub(super) async fn live_status(State(state): State<AppState>) -> Response {
         snap.ml_net_deposit = current.ml_capital_flows.iter().filter(|f| f.amount.is_finite()).map(|f| f.amount).sum();
         snap.mom_index_history = crate::live::index_history(&current);
         snap.ml_index_history = crate::live::ml_index_history(&current);
+        snap.mom_pnl_history = crate::live::adjusted_history(&current);
+        snap.ml_pnl_history = crate::live::ml_adjusted_history(&current);
     }
     // 健康指标（红黄绿）：按实盘 3 因子 + TWR 净值指数计算
     let (scorecard, health_summary) = {

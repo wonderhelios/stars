@@ -211,6 +211,52 @@ pub fn ml_index_history(state: &LiveState) -> Vec<(i64, f64)> {
     out
 }
 
+/// ML 子账户策略盈亏曲线（+/- USD，剔除出入金及未补录的瞬时大额划转，起点 = $0）。
+pub fn ml_adjusted_history(state: &LiveState) -> Vec<(i64, f64)> {
+    let mut flows: Vec<(i64, f64)> = state
+        .ml_capital_flows
+        .iter()
+        .filter(|f| f.amount.is_finite() && f.amount != 0.0)
+        .map(|f| (f.effective_ts.unwrap_or(f.ts), f.amount))
+        .collect();
+    flows.sort_by_key(|(ts, _)| *ts);
+    let mut pts: Vec<_> = state
+        .ml_history
+        .iter()
+        .filter(|p| p.equity.is_finite() && p.equity > 0.0)
+        .collect();
+    pts.sort_by_key(|p| p.ts);
+    let Some(first) = pts.first() else {
+        return Vec::new();
+    };
+    let base = first.equity;
+    let mut out = Vec::with_capacity(pts.len());
+    let mut cum_flow = 0.0f64;
+    let mut fi = 0usize;
+    let mut prev: Option<(i64, f64)> = None;
+    for p in pts {
+        let mut had_explicit = false;
+        while fi < flows.len() && flows[fi].0 <= p.ts {
+            cum_flow += flows[fi].1;
+            had_explicit = true;
+            fi += 1;
+        }
+        if let Some((pts_prev, pe)) = prev {
+            if !had_explicit && pe > 0.0 {
+                let ratio = p.equity / pe;
+                let dt_ms = (p.ts - pts_prev).max(0);
+                if dt_ms <= 2 * 3_600_000 && (ratio - 1.0).abs() > 0.15 {
+                    // 未补录的外部划转：吸收这一步净值跳变，保持盈亏曲线连续
+                    cum_flow += p.equity - pe;
+                }
+            }
+        }
+        prev = Some((p.ts, p.equity));
+        out.push((p.ts, p.equity - base - cum_flow));
+    }
+    out
+}
+
 /// 五项健康指标（供前端红黄绿显示）。
 ///
 /// 每项都带 status: green / yellow / red / unknown（样本不足）。

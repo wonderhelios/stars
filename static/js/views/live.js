@@ -32,18 +32,31 @@ function twrSummary(idxHist) {
   };
 }
 
-function combinedHistory(momHist, mlHist) {
-  if (!Array.isArray(momHist) || !momHist.length) return [];
-  const mlPts = (mlHist || []).filter((p) => Number.isFinite(p.equity) && p.equity > 0);
+function mergePnlSeries(momPnl, mlPnl) {
+  const a = (momPnl || []).filter((p) => Number.isFinite(p[0]) && Number.isFinite(p[1]));
+  const b = (mlPnl || []).filter((p) => Number.isFinite(p[0]) && Number.isFinite(p[1]));
+  if (!a.length) return b.map(([ts, val]) => ({ ts, val }));
   let j = 0;
-  const out = [];
-  for (const p of momHist) {
-    if (!Number.isFinite(p.equity) || p.equity <= 0) continue;
-    while (j + 1 < mlPts.length && mlPts[j + 1].ts <= p.ts) j++;
-    const mlEq = mlPts.length && mlPts[0].ts <= p.ts ? mlPts[j].equity : 0;
-    out.push({ ts: p.ts, val: p.equity + mlEq });
-  }
-  return out;
+  return a.map(([ts, mv]) => {
+    while (j + 1 < b.length && b[j + 1][0] <= ts) j++;
+    const mlv = b.length && b[0][0] <= ts ? b[j][1] : 0;
+    return { ts, val: mv + mlv };
+  });
+}
+
+function mergeTwrSeries(momIdx, mlIdx, momW, mlW) {
+  const a = (momIdx || []).filter((p) => Number.isFinite(p[0]) && Number.isFinite(p[1]));
+  const b = (mlIdx || []).filter((p) => Number.isFinite(p[0]) && Number.isFinite(p[1]));
+  if (!a.length) return b.map(([ts, v]) => ({ ts, val: (v - 1) * 100 }));
+  let j = 0;
+  return a.map(([ts, mv]) => {
+    while (j + 1 < b.length && b[j + 1][0] <= ts) j++;
+    const hasMl = b.length && b[0][0] <= ts;
+    const mlv = hasMl ? b[j][1] : 1.0;
+    const wSum = hasMl ? (momW + mlW) : momW;
+    const idx = wSum > 0 ? ((hasMl ? momW * mv + mlW * mlv : momW * mv) / wSum) : mv;
+    return { ts, val: (idx - 1) * 100 };
+  });
 }
 
 export function createLiveView() {
@@ -51,6 +64,7 @@ export function createLiveView() {
   let data = null;
   let subtab = "monitor"; // monitor | positions | ledger | settings
   let scope = "all"; // all | mom | ml
+  let chartUnit = "usd"; // usd (+/- $) | pct (% TWR)
   let range = "all";
   let showDust = false;
   let mlPlanOut = "";
@@ -129,83 +143,123 @@ export function createLiveView() {
 
     const momTwr = twrSummary(d.mom_index_history);
     const mlTwr = twrSummary(d.ml_index_history);
+    const momPnlArr = d.mom_pnl_history || [];
+    const mlPnlArr = d.ml_pnl_history || [];
+    const momStratPnl = momPnlArr.length ? momPnlArr[momPnlArr.length - 1][1] : null;
+    const mlStratPnl = mlPnlArr.length ? mlPnlArr[mlPnlArr.length - 1][1] : null;
+    const combStratPnl = (momStratPnl ?? 0) + (mlStratPnl ?? 0);
     const momBase = (Number(d.start_equity) || 0) + (Number(d.net_deposit) || 0);
-    const momStratPnl = momBase > 0 ? momEq - momBase : null;
 
-    let kpisHtml = "";
+    const totEq = momEq + mlEq;
+    const momShare = totEq > 0 ? (momEq / totEq) * 100 : 100;
+    const mlShare = totEq > 0 ? (mlEq / totEq) * 100 : 0;
+
+    let heroHtml = "";
     if (scope === "all") {
-      const totEq = momEq + mlEq;
       const totGross = momGross + mlGross;
       const totNet = (Number(d.net_notional) || 0) + mlNet;
-      kpisHtml = `
-        <div class="kpi">
-          <div class="kpi-top"><span>合并总净值</span><small>动量 + ML</small></div>
-          <div class="kpi-val">${fmtUsd(totEq)}</div>
-          <div class="kpi-sub"><span>动量 ${fmtUsd(momEq, 0)}</span><span>ML ${fmtUsd(mlEq, 0)}</span></div>
-        </div>
-        <div class="kpi">
-          <div class="kpi-top"><span>动量 TWR / ML TWR</span><small>已剔除划转</small></div>
-          <div class="kpi-val ${signCls(momTwr.ret)}">${fmtPct(momTwr.ret, 2, true)}</div>
-          <div class="kpi-sub"><span>ML TWR <b class="${signCls(mlTwr.ret)}">${fmtPct(mlTwr.ret, 2, true)}</b></span><span>动量盈亏 ${momStratPnl != null ? fmtSignedUsd(momStratPnl, 0) : "—"}</span></div>
-        </div>
-        <div class="kpi">
-          <div class="kpi-top"><span>合并总杠杆 / 净敞口</span><small>${momPos.length + mlPos.length} 活跃仓</small></div>
-          <div class="kpi-val">${totEq > 0 ? `${fmtNum(totGross / totEq, 2)}x` : "—"}</div>
-          <div class="kpi-sub"><span>总名义 ${fmtUsd(totGross, 0)}</span><span>净 ${fmtSignedUsd(totNet, 0)}</span></div>
-        </div>
-        <div class="kpi">
-          <div class="kpi-top"><span>当前回撤 / 历史最大</span><small>基于 TWR</small></div>
-          <div class="kpi-val">${fmtPct(momTwr.curDd, 2)}</div>
-          <div class="kpi-sub"><span>动量最大 ${fmtPct(momTwr.maxDd, 2)}</span><span>ML 当前 ${fmtPct(mlTwr.curDd, 2)}</span></div>
-        </div>
+      heroHtml = `
+        <section class="hero-banner">
+          <div class="hero-primary">
+            <span class="hero-label">ALL LIVE ACCOUNTS · 动量 + ML</span>
+            <div class="hero-value">${fmtUsd(totEq)}</div>
+            <div class="hero-delta">
+              <span class="pill ${signCls(combStratPnl)}">累计盈亏 ${fmtSignedUsd(combStratPnl)}</span>
+              <span class="muted" style="font-size:11.5px;font-weight:500">已剔除出入金</span>
+            </div>
+          </div>
+          <div class="hero-cell">
+            <span class="hero-label">动量 TWR / 盈亏</span>
+            <div class="hero-cell-val ${signCls(momTwr.ret)}">${fmtPct(momTwr.ret, 2, true)}</div>
+            <div class="hero-cell-sub"><span>${fmtUsd(momEq, 0)}</span><span class="${signCls(momStratPnl)}">${momStratPnl != null ? fmtSignedUsd(momStratPnl, 0) : "—"}</span></div>
+          </div>
+          <div class="hero-cell">
+            <span class="hero-label">ML TWR / 盈亏</span>
+            <div class="hero-cell-val ${signCls(mlTwr.ret)}">${fmtPct(mlTwr.ret, 2, true)}</div>
+            <div class="hero-cell-sub"><span>${fmtUsd(mlEq, 0)}</span><span class="${signCls(mlStratPnl)}">${mlStratPnl != null ? fmtSignedUsd(mlStratPnl, 0) : "—"}</span></div>
+          </div>
+          <div class="hero-cell">
+            <span class="hero-label">合并杠杆 / 回撤</span>
+            <div class="hero-cell-val">${totEq > 0 ? `${fmtNum(totGross / totEq, 2)}x` : "—"}</div>
+            <div class="hero-cell-sub"><span>净 ${fmtSignedUsd(totNet, 0)}</span><span>当前回撤 ${fmtPct(momTwr.curDd, 2)}</span></div>
+          </div>
+          <div class="hero-alloc">
+            <div class="bar-track">
+              <div class="bar-fill" style="width:${momShare.toFixed(1)}%;background:linear-gradient(90deg,#059669,#34d399)"></div>
+              <div class="bar-fill" style="width:${mlShare.toFixed(1)}%;background:linear-gradient(90deg,#0284c7,#38bdf8)"></div>
+            </div>
+            <div class="hero-alloc-legend">
+              <span>动量 ${momShare.toFixed(1)}% (${momPos.length} 仓)</span>
+              <span>ML ${mlShare.toFixed(1)}% (${mlPos.length} 仓)</span>
+            </div>
+          </div>
+        </section>
       `;
     } else if (scope === "mom") {
-      kpisHtml = `
-        <div class="kpi">
-          <div class="kpi-top"><span>动量账户净值</span><small>${shortAddr(d.account)}</small></div>
-          <div class="kpi-val">${fmtUsd(momEq)}</div>
-          <div class="kpi-sub"><span>起点+净入金 ${fmtUsd(momBase, 0)}</span><span class="${signCls(momStratPnl)}">${momStratPnl != null ? fmtSignedUsd(momStratPnl) : "—"}</span></div>
-        </div>
-        <div class="kpi">
-          <div class="kpi-top"><span>动量 TWR 收益</span><small>剔除出入金</small></div>
-          <div class="kpi-val ${signCls(momTwr.ret)}">${fmtPct(momTwr.ret, 2, true)}</div>
-          <div class="kpi-sub"><span>持仓浮盈 <b class="${signCls(d.cumulative_pnl)}">${fmtSignedUsd(d.cumulative_pnl)}</b></span><span>日胜率 ${d.win_rate_days != null ? `${fmtNum(d.win_rate_days, 1)}%` : "—"}</span></div>
-        </div>
-        <div class="kpi">
-          <div class="kpi-top"><span>杠杆与波动目标</span><small>${momPos.length} 活跃仓</small></div>
-          <div class="kpi-val">${momEq > 0 ? `${fmtNum(momGross / momEq, 2)}x` : "—"}</div>
-          <div class="kpi-sub"><span>净敞口 ${fmtSignedUsd(d.net_notional, 0)}</span><span>日波动 ${d.vol_now?.pct != null ? `${fmtNum(d.vol_now.pct, 2)}%` : "—"} / ${fmtNum(d.vol_now?.target_pct || 0, 1)}%</span></div>
-        </div>
-        <div class="kpi">
-          <div class="kpi-top"><span>当前回撤 / 最大回撤</span><small>强平缓冲 ${fmtPct(d.liq_buffer_pct, 1)}</small></div>
-          <div class="kpi-val">${fmtPct(momTwr.curDd, 2)}</div>
-          <div class="kpi-sub"><span>历史最大 ${fmtPct(momTwr.maxDd, 2)}</span><span>最近强平 ${d.nearest_liq_pct != null ? fmtPct(d.nearest_liq_pct, 1) : "—"}</span></div>
-        </div>
+      heroHtml = `
+        <section class="hero-banner">
+          <div class="hero-primary">
+            <span class="hero-label">MOMENTUM ACCOUNT · ${shortAddr(d.account)}</span>
+            <div class="hero-value">${fmtUsd(momEq)}</div>
+            <div class="hero-delta">
+              <span class="pill ${signCls(momStratPnl)}">策略盈亏 ${momStratPnl != null ? fmtSignedUsd(momStratPnl) : "—"}</span>
+              <span class="${signCls(momTwr.ret)}">TWR ${fmtPct(momTwr.ret, 2, true)}</span>
+            </div>
+          </div>
+          <div class="hero-cell">
+            <span class="hero-label">持仓浮盈 / 净投入</span>
+            <div class="hero-cell-val ${signCls(d.cumulative_pnl)}">${fmtSignedUsd(d.cumulative_pnl)}</div>
+            <div class="hero-cell-sub"><span>本金+净入 ${fmtUsd(momBase, 0)}</span><span>日胜率 ${d.win_rate_days != null ? `${fmtNum(d.win_rate_days, 1)}%` : "—"}</span></div>
+          </div>
+          <div class="hero-cell">
+            <span class="hero-label">杠杆与日波动</span>
+            <div class="hero-cell-val">${momEq > 0 ? `${fmtNum(momGross / momEq, 2)}x` : "—"}</div>
+            <div class="hero-cell-sub"><span>${momPos.length} 仓 · 净 ${fmtSignedUsd(d.net_notional, 0)}</span><span>波动 ${d.vol_now?.pct != null ? `${fmtNum(d.vol_now.pct, 2)}%` : "—"}</span></div>
+          </div>
+          <div class="hero-cell">
+            <span class="hero-label">当前 / 最大回撤</span>
+            <div class="hero-cell-val">${fmtPct(momTwr.curDd, 2)}</div>
+            <div class="hero-cell-sub"><span>最大 ${fmtPct(momTwr.maxDd, 2)}</span><span>缓冲 ${fmtPct(d.liq_buffer_pct, 1)}</span></div>
+          </div>
+        </section>
       `;
     } else {
-      kpisHtml = `
-        <div class="kpi">
-          <div class="kpi-top"><span>ML 子账户净值</span><small>${shortAddr(d.ml_account?.account)}</small></div>
-          <div class="kpi-val">${fmtUsd(mlEq)}</div>
-          <div class="kpi-sub"><span>净入金记录 ${fmtSignedUsd(d.ml_net_deposit || 0, 0)}</span><span>${d.ml_account?.error ? "异常" : "正常"}</span></div>
-        </div>
-        <div class="kpi">
-          <div class="kpi-top"><span>ML TWR 收益</span><small>自动跳过划转阶跃</small></div>
-          <div class="kpi-val ${signCls(mlTwr.ret)}">${fmtPct(mlTwr.ret, 2, true)}</div>
-          <div class="kpi-sub"><span>当前浮盈 <b class="${signCls(mlUpnl)}">${fmtSignedUsd(mlUpnl)}</b></span></div>
-        </div>
-        <div class="kpi">
-          <div class="kpi-top"><span>ML 杠杆与净敞口</span><small>${mlPos.length} 活跃仓</small></div>
-          <div class="kpi-val">${mlEq > 0 ? `${fmtNum(mlGross / mlEq, 2)}x` : "—"}</div>
-          <div class="kpi-sub"><span>总名义 ${fmtUsd(mlGross, 0)}</span><span>净 ${fmtSignedUsd(mlNet, 0)}</span></div>
-        </div>
-        <div class="kpi">
-          <div class="kpi-top"><span>当前回撤 / 最大回撤</span><small>基于 ML TWR</small></div>
-          <div class="kpi-val">${fmtPct(mlTwr.curDd, 2)}</div>
-          <div class="kpi-sub"><span>历史最大 ${fmtPct(mlTwr.maxDd, 2)}</span></div>
-        </div>
+      heroHtml = `
+        <section class="hero-banner">
+          <div class="hero-primary">
+            <span class="hero-label">ML SUB-ACCOUNT · ${shortAddr(d.ml_account?.account)}</span>
+            <div class="hero-value">${fmtUsd(mlEq)}</div>
+            <div class="hero-delta">
+              <span class="pill ${signCls(mlStratPnl)}">策略盈亏 ${mlStratPnl != null ? fmtSignedUsd(mlStratPnl) : "—"}</span>
+              <span class="${signCls(mlTwr.ret)}">TWR ${fmtPct(mlTwr.ret, 2, true)}</span>
+            </div>
+          </div>
+          <div class="hero-cell">
+            <span class="hero-label">当前持仓浮盈</span>
+            <div class="hero-cell-val ${signCls(mlUpnl)}">${fmtSignedUsd(mlUpnl)}</div>
+            <div class="hero-cell-sub"><span>已登记净入 ${fmtSignedUsd(d.ml_net_deposit || 0, 0)}</span></div>
+          </div>
+          <div class="hero-cell">
+            <span class="hero-label">杠杆与净敞口</span>
+            <div class="hero-cell-val">${mlEq > 0 ? `${fmtNum(mlGross / mlEq, 2)}x` : "—"}</div>
+            <div class="hero-cell-sub"><span>${mlPos.length} 活跃仓</span><span>净 ${fmtSignedUsd(mlNet, 0)}</span></div>
+          </div>
+          <div class="hero-cell">
+            <span class="hero-label">当前 / 最大回撤</span>
+            <div class="hero-cell-val">${fmtPct(mlTwr.curDd, 2)}</div>
+            <div class="hero-cell-sub"><span>历史最大 ${fmtPct(mlTwr.maxDd, 2)}</span></div>
+          </div>
+        </section>
       `;
     }
+
+    const activeHeadline =
+      chartUnit === "usd"
+        ? (scope === "all" ? combStratPnl : scope === "mom" ? momStratPnl : mlStratPnl)
+        : (scope === "all"
+            ? (momTwr.ret != null && mlTwr.ret != null && totEq > 0 ? (momEq * momTwr.ret + mlEq * mlTwr.ret) / totEq : momTwr.ret)
+            : scope === "mom" ? momTwr.ret : mlTwr.ret);
+    const activeHeadlineTxt = chartUnit === "usd" ? fmtSignedUsd(activeHeadline) : fmtPct(activeHeadline, 2, true);
 
     const sc = Array.isArray(d.scorecard) ? d.scorecard : [];
     const scHtml = sc
@@ -232,21 +286,37 @@ export function createLiveView() {
       .join("");
 
     const planLines = Array.isArray(d.last_plan) ? d.last_plan : [];
+    const chartTitle =
+      scope === "all"
+        ? (chartUnit === "usd" ? "全部账户真实策略盈亏（± USD · 已剔除出入金）" : "全部账户加权 TWR 收益率（%）")
+        : scope === "mom"
+          ? (chartUnit === "usd" ? "动量策略真实盈亏（± USD · 已剔除出入金）" : "动量策略 TWR 累计收益率（%）")
+          : (chartUnit === "usd" ? "ML 策略真实盈亏（± USD · 已剔除划转）" : "ML 策略 TWR 累计收益率（%）");
 
     body.innerHTML = `
-      <div class="grid-4">${kpisHtml}</div>
+      ${heroHtml}
 
       <div class="card">
         <div class="card-head">
           <div class="card-title-group">
-            <span class="eyebrow">${scope === "all" ? "COMBINED EQUITY" : "TIME-WEIGHTED RETURN (TWR)"}</span>
-            <h2 class="card-title">${scope === "all" ? "全部账户合并净值曲线" : scope === "mom" ? "动量策略 TWR 累计收益率" : "ML 策略 TWR 累计收益率（已剔除划转）"}</h2>
+            <span class="eyebrow">${chartUnit === "usd" ? "CASHFLOW-ADJUSTED PNL" : "TIME-WEIGHTED RETURN"}</span>
+            <h2 class="card-title">${chartTitle}</h2>
+            <div class="chart-headline">
+              <span class="chart-big-num ${signCls(activeHeadline)}">${activeHeadlineTxt}</span>
+              <span class="muted mono" style="font-size:11.5px">零线之上为盈利 · 之下为亏损</span>
+            </div>
           </div>
-          <div class="seg" id="lv-range">
-            <button type="button" data-r="24h" class="${range === "24h" ? "active" : ""}">24H</button>
-            <button type="button" data-r="7d" class="${range === "7d" ? "active" : ""}">7D</button>
-            <button type="button" data-r="30d" class="${range === "30d" ? "active" : ""}">30D</button>
-            <button type="button" data-r="all" class="${range === "all" ? "active" : ""}">ALL</button>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+            <div class="seg" id="lv-unit">
+              <button type="button" data-u="usd" class="${chartUnit === "usd" ? "active" : ""}">± 盈亏 ($)</button>
+              <button type="button" data-u="pct" class="${chartUnit === "pct" ? "active" : ""}">TWR (%)</button>
+            </div>
+            <div class="seg" id="lv-range">
+              <button type="button" data-r="24h" class="${range === "24h" ? "active" : ""}">24H</button>
+              <button type="button" data-r="7d" class="${range === "7d" ? "active" : ""}">7D</button>
+              <button type="button" data-r="30d" class="${range === "30d" ? "active" : ""}">30D</button>
+              <button type="button" data-r="all" class="${range === "all" ? "active" : ""}">ALL</button>
+            </div>
           </div>
         </div>
         <div class="chart-box" id="lv-chart"></div>
@@ -259,7 +329,7 @@ export function createLiveView() {
               <span class="eyebrow">REAL-TIME HEALTH SCORECARD</span>
               <h2 class="card-title">策略四维体检（实盘 3 因子 + TWR 回撤）</h2>
             </div>
-            <span class="muted mono" style="font-size:11px">上次运行 ${fmtBj(d.last_run_at)}</span>
+            <span class="muted mono" style="font-size:11.5px">上次运行 ${fmtBj(d.last_run_at)}</span>
           </div>
           <div class="score-grid">${scHtml}</div>
         </div>
@@ -281,6 +351,12 @@ export function createLiveView() {
       </div>
     `;
 
+    body.querySelectorAll("#lv-unit button").forEach((b) => {
+      b.addEventListener("click", () => {
+        chartUnit = b.dataset.u;
+        renderMonitor(body, d);
+      });
+    });
     body.querySelectorAll("#lv-range button").forEach((b) => {
       b.addEventListener("click", () => {
         range = b.dataset.r;
@@ -289,26 +365,25 @@ export function createLiveView() {
     });
 
     const chartEl = document.getElementById("lv-chart");
-    if (scope === "all") {
-      const pts = filterRange(combinedHistory(d.history, d.ml_history), range);
-      renderLineChart(chartEl, pts, {
-        formatY: (v) => `$${Math.round(v).toLocaleString("en-US")}`,
-        formatTip: (v) => fmtUsd(v),
-      });
-    } else if (scope === "mom") {
-      const pts = filterRange((d.mom_index_history || []).map(([ts, v]) => ({ ts, val: (v - 1) * 100 })), range);
-      renderLineChart(chartEl, pts, {
+    if (chartUnit === "usd") {
+      let raw = [];
+      if (scope === "all") raw = mergePnlSeries(d.mom_pnl_history, d.ml_pnl_history);
+      else if (scope === "mom") raw = (d.mom_pnl_history || []).map(([ts, val]) => ({ ts, val }));
+      else raw = (d.ml_pnl_history || []).map(([ts, val]) => ({ ts, val }));
+      renderLineChart(chartEl, filterRange(raw, range), {
         zeroLine: 0,
-        formatY: (v) => `${v >= 0 ? "+" : ""}${v.toFixed(1)}%`,
-        formatTip: (v) => `动量 TWR ${v >= 0 ? "+" : ""}${v.toFixed(2)}%`,
+        formatY: (v) => fmtSignedUsd(v, 0),
+        formatTip: (v) => `策略盈亏 ${fmtSignedUsd(v)}`,
       });
     } else {
-      const pts = filterRange((d.ml_index_history || []).map(([ts, v]) => ({ ts, val: (v - 1) * 100 })), range);
-      renderLineChart(chartEl, pts, {
+      let raw = [];
+      if (scope === "all") raw = mergeTwrSeries(d.mom_index_history, d.ml_index_history, momEq, mlEq);
+      else if (scope === "mom") raw = (d.mom_index_history || []).map(([ts, v]) => ({ ts, val: (v - 1) * 100 }));
+      else raw = (d.ml_index_history || []).map(([ts, v]) => ({ ts, val: (v - 1) * 100 }));
+      renderLineChart(chartEl, filterRange(raw, range), {
         zeroLine: 0,
-        color: "#38bdf8",
         formatY: (v) => `${v >= 0 ? "+" : ""}${v.toFixed(1)}%`,
-        formatTip: (v) => `ML TWR ${v >= 0 ? "+" : ""}${v.toFixed(2)}%`,
+        formatTip: (v) => `TWR ${v >= 0 ? "+" : ""}${v.toFixed(2)}%`,
       });
     }
 

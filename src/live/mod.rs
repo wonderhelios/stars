@@ -8,7 +8,7 @@ mod orders;
 mod runner;
 mod state;
 
-pub use metrics::{adjusted_history, daily_execution, index_history, ml_index_history, scorecard};
+pub use metrics::{adjusted_history, daily_execution, index_history, ml_adjusted_history, ml_index_history, scorecard};
 pub use orders::{cancel_our_take_profits, place_take_profits, rebuild_cross, reconcile_fills, refresh_take_profits};
 #[cfg(test)]
 use orders::take_profit_order;

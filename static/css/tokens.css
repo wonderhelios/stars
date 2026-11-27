@@ -1,46 +1,56 @@
 :root {
-  /* Institutional Dark Terminal Palette (Linear / Bloomberg inspired) */
-  --bg: #0a0c10;
-  --bg-sidebar: #0d1016;
-  --surface: #11151c;
-  --surface-2: #171c26;
-  --surface-hover: #1c2230;
-  --surface-active: #222938;
+  /* Obsidian Slate + Emerald / Sky / Warm Amber — Refined Institutional Fintech Palette */
+  --bg: #070a0f;
+  --bg-glow: radial-gradient(900px 420px at 18% -8%, rgba(16, 185, 129, 0.08), transparent 62%),
+             radial-gradient(760px 380px at 88% -12%, rgba(56, 189, 248, 0.06), transparent 60%);
+  --bg-sidebar: #0a0e16;
 
-  --border: rgba(255, 255, 255, 0.075);
-  --border-strong: rgba(255, 255, 255, 0.14);
-  --border-focus: rgba(56, 189, 248, 0.55);
+  --surface: linear-gradient(180deg, #121824 0%, #0e131d 100%);
+  --surface-solid: #111722;
+  --surface-2: #161e2e;
+  --surface-hover: rgba(255, 255, 255, 0.045);
+  --surface-active: rgba(255, 255, 255, 0.08);
 
-  --ink: #f1f5f9;
+  --border: rgba(148, 163, 184, 0.11);
+  --border-strong: rgba(148, 163, 184, 0.22);
+  --border-focus: rgba(52, 211, 153, 0.55);
+  --specular: inset 0 1px 0 rgba(255, 255, 255, 0.055);
+  --shadow-card: 0 10px 28px rgba(0, 0, 0, 0.36), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  --shadow-hero: 0 18px 42px rgba(0, 0, 0, 0.48), inset 0 1px 0 rgba(255, 255, 255, 0.075);
+
+  --ink: #f8fafc;
   --ink-2: #94a3b8;
   --ink-3: #64748b;
 
-  /* Semantic accents — restrained, high-contrast */
-  --pos: #22c55e;
-  --pos-bg: rgba(34, 197, 94, 0.11);
-  --pos-bd: rgba(34, 197, 94, 0.28);
+  /* Refined semantic colors */
+  --pos: #34d399;
+  --pos-strong: #10b981;
+  --pos-bg: rgba(16, 185, 129, 0.13);
+  --pos-bd: rgba(52, 211, 153, 0.28);
 
-  --neg: #ef4444;
-  --neg-bg: rgba(239, 68, 68, 0.11);
-  --neg-bd: rgba(239, 68, 68, 0.28);
+  --neg: #fb7185;
+  --neg-strong: #f43f5e;
+  --neg-bg: rgba(244, 63, 94, 0.13);
+  --neg-bd: rgba(251, 113, 133, 0.28);
 
-  --warn: #f59e0b;
-  --warn-bg: rgba(245, 158, 11, 0.11);
-  --warn-bd: rgba(245, 158, 11, 0.28);
+  --warn: #fbbf24;
+  --warn-bg: rgba(245, 158, 11, 0.13);
+  --warn-bd: rgba(251, 191, 36, 0.28);
 
   --info: #38bdf8;
-  --info-bg: rgba(56, 189, 248, 0.11);
+  --info-bg: rgba(56, 189, 248, 0.13);
   --info-bd: rgba(56, 189, 248, 0.28);
 
-  --accent: #e2e8f0;
-  --accent-ink: #090b0f;
+  --accent: #10b981;
+  --accent-bright: #34d399;
+  --accent-ink: #03221a;
 
   --font-sans: -apple-system, BlinkMacSystemFont, "Inter", "SF Pro Text", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
   --font-mono: "JetBrains Mono", "SF Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 
-  --radius-sm: 6px;
-  --radius: 8px;
-  --radius-lg: 10px;
-  --sidebar-w: 224px;
-  --topbar-h: 48px;
+  --radius-sm: 8px;
+  --radius: 12px;
+  --radius-lg: 16px;
+  --sidebar-w: 232px;
+  --topbar-h: 56px;
 }

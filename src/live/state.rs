@@ -523,6 +523,12 @@ pub struct LiveSnapshot {
     /// ML 账户 TWR 净值指数（起点 = 1.0，跳过已记录流水及未登记的瞬时大额划转阶跃）。
     #[serde(default)]
     pub ml_index_history: Vec<(i64, f64)>,
+    /// 动量账户策略累计盈亏（+/- USD，剔除本金与出入金）。
+    #[serde(default)]
+    pub mom_pnl_history: Vec<(i64, f64)>,
+    /// ML 账户策略累计盈亏（+/- USD，剔除本金与划转）。
+    #[serde(default)]
+    pub ml_pnl_history: Vec<(i64, f64)>,
     pub records: Vec<LiveRecord>,
     pub last_run_at: Option<i64>,
     pub last_plan: Vec<String>,
