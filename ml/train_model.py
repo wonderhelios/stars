@@ -1,4 +1,10 @@
-"""训练冻结 close1/close3/close5 等权集成并导出无 LightGBM 依赖的 JSON。"""
+"""训练季度扩展 close1/close3/close5/close7 等权集成并导出无 LightGBM 依赖的 JSON。
+
+严格零泄漏约束：
+  - 每个周期 h 仅允许满足 row_date >= train_start 且 row_date <= train_end 且
+    label_end_date (date[day_idx + h]) <= train_end 的样本进入训练与验证；
+  - 内部 80/20 时序切分严格满足 train: label_end < split、valid: row_date >= split。
+"""
 from pathlib import Path
 import argparse
 import datetime
@@ -60,6 +66,42 @@ def pct_cs_labels(forward, members):
     return labels
 
 
+def horizon_eligible_split(ts, row_days, row_labels, horizon, train_start, train_end, min_days=100):
+    """为单个预测周期 h 构造严格零泄漏的 train/valid 掩码。
+
+    硬约束：
+      1. row_date >= train_start 且 row_date <= train_end
+      2. row_days + horizon < len(ts) 且 ts[row_days + horizon] <= train_end（label_end <= train_end）
+      3. train_mask: label_end < split，valid_mask: row_date >= split（训练/验证零重叠）
+    """
+    n = len(ts)
+    horizon = int(horizon)
+    row_dates = ts[row_days]
+    train_start64 = np.datetime64(str(train_start), "D")
+    train_end64 = np.datetime64(str(train_end), "D")
+
+    valid_horizon = (row_days + horizon) < n
+    label_end_idx = np.minimum(row_days + horizon, n - 1)
+    label_end = ts[label_end_idx]
+
+    eligible = (
+        (row_dates >= train_start64)
+        & (row_dates <= train_end64)
+        & valid_horizon
+        & (label_end <= train_end64)
+        & np.isfinite(row_labels)
+    )
+    unique = np.unique(row_dates[eligible])
+    if len(unique) < min_days:
+        raise ValueError(f"周期 h={horizon} 在训练窗口 {train_start}..{train_end} 内有效日不足 ({len(unique)} < {min_days})")
+    split = unique[len(unique) * 4 // 5]
+    train_mask = eligible & (label_end < split)
+    valid_mask = eligible & (row_dates >= split)
+    if not train_mask.any() or not valid_mask.any():
+        raise ValueError(f"周期 h={horizon} 训练集或验证集为空")
+    return eligible, train_mask, valid_mask, split, label_end
+
+
 def load_training_data(features_path, names):
     keys = ["F_" + name for name in names]
     with np.load(str(features_path)) as d:
@@ -89,12 +131,14 @@ def load_training_data(features_path, names):
     return ts, members, rows, x, close, cached_labels, cached_forward
 
 
-def train_model(features_path, output_path, config):
+def train_model(features_path, output_path, config, train_end=None):
     names = ordered_feature_names()
     ts, members, rows, x, close, cached_labels, cached_forward = load_training_data(features_path, names)
     n, k = members.shape
     row_days = rows // k
     row_dates = ts[row_days]
+    train_start_str = str(config["train_start"])
+    train_end_str = str(train_end or config["train_end"])
     params = {key: value for key, value in config["lightgbm"].items()
               if key not in ("num_boost_round", "early_stopping_rounds")}
     components, reports = [], {}
@@ -102,7 +146,7 @@ def train_model(features_path, output_path, config):
     for spec in config["ensemble_components"]:
         horizon = int(spec["horizon"])
         forward = np.full((n, k), np.nan, dtype=float)
-        forward[:-horizon] = close[horizon:] / close[:-horizon] - 1
+        forward[:-horizon] = close[horizon:] / close[:-horizon] - 1.0
         labels = pct_cs_labels(forward, members)
         if horizon == 3:
             valid = np.isfinite(cached_labels) & np.isfinite(labels)
@@ -113,19 +157,10 @@ def train_model(features_path, output_path, config):
                 raise ValueError("重建 close3 前向收益与 features.npz 缓存不一致")
 
         row_labels = labels.reshape(-1)[rows]
-        eligible = ((row_dates >= np.datetime64(config["train_start"], "D"))
-                    & (row_dates <= np.datetime64(config["train_end"], "D"))
-                    & np.isfinite(row_labels))
-        unique = np.unique(row_dates[eligible])
-        if len(unique) < 100:
-            raise ValueError("冻结窗口内有效训练日不足")
-        split = unique[len(unique) * 4 // 5]
-        label_end = ts[np.minimum(row_days + horizon, n - 1)]
-        train_mask = eligible & (label_end < split)
-        valid_mask = eligible & (row_dates >= split)
+        eligible, train_mask, valid_mask, split, label_end = horizon_eligible_split(
+            ts, row_days, row_labels, horizon, train_start_str, train_end_str,
+        )
         train_rows, valid_rows = np.flatnonzero(train_mask), np.flatnonzero(valid_mask)
-        if not len(train_rows) or not len(valid_rows):
-            raise ValueError("训练集或验证集为空")
 
         train = None
         for offset in range(0, len(names), 16):
@@ -156,10 +191,16 @@ def train_model(features_path, output_path, config):
             raise ValueError("JSON 推理与 LightGBM 不一致: %.3g" % error)
 
         report = {
-            "horizon": horizon, "weight": float(spec["weight"]),
-            "split": str(split), "train_rows": int(train_mask.sum()),
-            "validation_rows": int(valid_mask.sum()), "trees": int(booster.best_iteration),
-            "feature_count": len(names), "json_max_error": error,
+            "horizon": horizon,
+            "weight": float(spec["weight"]),
+            "split": str(split),
+            "max_row_date": str(row_dates[eligible].max()),
+            "max_label_end_date": str(label_end[eligible].max()),
+            "train_rows": int(train_mask.sum()),
+            "validation_rows": int(valid_mask.sum()),
+            "trees": int(booster.best_iteration),
+            "feature_count": len(names),
+            "json_max_error": error,
             **validation_metrics(expected, forward.reshape(-1)[rows][valid_mask], row_dates[valid_mask]),
         }
         components.append(component)
@@ -167,18 +208,22 @@ def train_model(features_path, output_path, config):
         print(json.dumps(report, ensure_ascii=False), flush=True)
 
     model = {
-        "format_version": 4,
+        "format_version": int(config["format_version"]),
         "strategy_id": config["strategy_id"],
-        "model": "fixed_h135_equal",
-        "train_start": config["train_start"],
-        "train_end": config["train_end"],
-        "retrain_frequency": "frozen",
+        "model": config["label"],
+        "horizons": [int(c["horizon"]) for c in components],
+        "train_start": train_start_str,
+        "train_end": train_end_str,
+        "retrain_frequency": config["retrain_frequency"],
         "trained_at": utc_now_iso(),
         "feature_names": names,
         "components": components,
         "training": reports,
         "gross_leverage": float(config["gross_leverage"]),
-        "volatility_target": None,
+        "max_leverage": float(config.get("max_leverage", config["gross_leverage"])),
+        "volatility_target": float(config.get("vol_target") or 0.0),
+        "drift_band": float(config.get("drift_band", 0.0)),
+        "exit_rank": int(config["exit_rank"]),
     }
     validate_model(model, config)
     output_path = Path(output_path)
@@ -186,8 +231,11 @@ def train_model(features_path, output_path, config):
     with open(temporary, "w", encoding="utf-8") as f:
         json.dump(model, f, ensure_ascii=False, separators=(",", ":"))
     temporary.replace(output_path)
-    print("导出冻结三周期集成 %s（%s）" % (
-        output_path, ", ".join(f"{c['name']}={len(c['trees'])}棵" for c in components)), flush=True)
+    print("导出 %s 集成 %s（%s，train=%s..%s）" % (
+        config["retrain_frequency"], output_path,
+        ", ".join(f"{c['name']}={len(c['trees'])}棵" for c in components),
+        train_start_str, train_end_str,
+    ), flush=True)
     return model
 
 
@@ -196,8 +244,9 @@ def main():
     parser.add_argument("--features", default=str(BASE / "features.npz"))
     parser.add_argument("--output", default=str(BASE / "model.json"))
     parser.add_argument("--config", default=str(BASE / "strategy_config.json"))
+    parser.add_argument("--train-end", default=None, help="覆盖训练截止日期 YYYY-MM-DD（默认读 strategy_config.json）")
     args = parser.parse_args()
-    train_model(args.features, args.output, load_config(args.config))
+    train_model(args.features, args.output, load_config(args.config), train_end=args.train_end)
 
 
 if __name__ == "__main__":

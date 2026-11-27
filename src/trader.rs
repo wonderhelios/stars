@@ -43,18 +43,20 @@ pub struct TradeConfig {
     /// 有效门槛 = max(min_order_usd, 净值 × min_order_pct)。
     /// 保留绝对下限是因为交易所本身有最小下单量，比例不能低于它。
     pub min_order_pct: f64,
-    /// skip adjustments smaller than this share of the target notional
-    pub rebalance_band: f64,
+    /// 平滑 EMA 调仓系数（0.1~1.0；1.0 = 一步到位）。仅当 `rebalance_slices == 1` 时生效。
+    pub ema_alpha: f64,
+    /// skip adjustments smaller than this share of the target notional (`rebal_band`, 0.0~0.50)
+    pub rebal_band: f64,
+    /// 总敞口硬上限（账户净值倍数，如 2.8 = 2.8x 净值），防止低波动时 `vol_k` 放大杠杆超限。
+    pub hard_gross_cap: f64,
     /// fraction of equity actually deployed, leaving room for fees and slippage
     pub margin_buffer: f64,
     /// 每仓最小名义：低于此值的币会被剔除，否则仓位太小无法跟随复利
     pub min_position_usd: f64,
-    /// 错峰调仓的档数。每个币每 N 天轮到一次，而不是每天全量调。
-    ///
-    /// 实测（相位平均、两个子区间均通过）：换手 29%→13%，成本 16.2%→7.3%，
-    /// Sharpe 1.62→1.79，弱势区间 0.37→0.73。信号是 14 日动量，滞后几天
-    /// 对它的影响远小于省下的成本。
+    /// 错峰调仓的档数。每个币每 N 天轮到一次，而不是每天全量调。1 = 每日平滑/全量调仓。
     pub rebalance_slices: u32,
+    /// 单币止损幅度（相对持仓成本，0 = 关闭）。触发时无论是否错峰/EMA 均立即平仓。
+    pub position_stop_pct: f64,
     /// 止盈幅度（相对【持仓成本】）。0 = 不启用。调仓时会先把已经达到
     /// 成本的 (1+tp) 的仓位按「止盈」平掉，未达到的由交易所的限价止盈单负责。
     pub take_profit_pct: f64,
@@ -97,17 +99,20 @@ impl Default for TradeConfig {
     fn default() -> Self {
         Self {
             lookback: 14,
-            top_frac: 0.2,
+            top_frac: 0.30,
             min_vol_usd: 5_000_000.0,
             leverage: 3.0,
             target_positions: 5,
             slippage: 0.005,
             min_order_usd: 10.0,
-            min_order_pct: 0.0,
-            rebalance_band: 0.02,
+            min_order_pct: 0.005,
+            ema_alpha: 0.50,
+            rebal_band: 0.05,
+            hard_gross_cap: 2.8,
             margin_buffer: 0.90,
             min_position_usd: 15.0,
-            rebalance_slices: 3,
+            rebalance_slices: 1,
+            position_stop_pct: 0.0,
             momentum_weight: 0.5,
             take_profit_pct: 0.0,
             dd_weight: 0.0,
@@ -772,7 +777,62 @@ pub fn cap_weights_same_side(
             rem.retain(|i| !over.contains(i));
         }
     }
+
+    // 若某条腿因币数偏少全部打满上限，导致多空总权重不再相等，
+    // 将较重的一侧等比例缩放到与较轻一侧相等，严格保持目标组合美元中性（sum(w) ≈ 0）。
+    let long_sum: f64 = weights.iter().filter(|(_, w)| *w > 1e-12).map(|(_, w)| *w).sum();
+    let short_sum: f64 = weights
+        .iter()
+        .filter(|(_, w)| *w < -1e-12)
+        .map(|(_, w)| w.abs())
+        .sum();
+    if long_sum > 1e-12 && short_sum > 1e-12 && (long_sum - short_sum).abs() > 1e-12 {
+        let target_leg = long_sum.min(short_sum);
+        if long_sum > short_sum {
+            let scale = target_leg / long_sum;
+            for (_, w) in weights.iter_mut() {
+                if *w > 1e-12 {
+                    *w *= scale;
+                }
+            }
+        } else {
+            let scale = target_leg / short_sum;
+            for (_, w) in weights.iter_mut() {
+                if *w < -1e-12 {
+                    *w *= scale;
+                }
+            }
+        }
+    }
     clipped
+}
+
+/// 若权重组合的目标毛杠杆超过 `hard_gross_cap`（占账户净值倍数，如 2.8x），
+/// 等比例缩小所有权重并返回 `(raw_gross_lev, scale)`，确保目标组合永远不超过硬杠杆上限。
+pub fn apply_hard_gross_cap(
+    weights: &mut [(String, f64)],
+    margin_buffer: f64,
+    leverage: f64,
+    hard_gross_cap: f64,
+) -> Option<(f64, f64)> {
+    let gross_mult = margin_buffer * leverage;
+    if !hard_gross_cap.is_finite()
+        || hard_gross_cap <= 0.0
+        || !gross_mult.is_finite()
+        || gross_mult <= 1e-12
+    {
+        return None;
+    }
+    let raw_gross_lev = weights.iter().map(|(_, w)| w.abs()).sum::<f64>() * gross_mult;
+    if raw_gross_lev > hard_gross_cap + 1e-9 {
+        let scale = hard_gross_cap / raw_gross_lev;
+        for (_, w) in weights.iter_mut() {
+            *w *= scale;
+        }
+        Some((raw_gross_lev, scale))
+    } else {
+        None
+    }
 }
 
 #[allow(clippy::too_many_arguments)]
@@ -788,7 +848,26 @@ pub fn build_plan(
     // Deploy only part of the equity so fees and adverse fills cannot push the
     // book past the margin limit mid-run.
     let deployable = equity * cfg.margin_buffer;
+    let target_gross = deployable * cfg.leverage;
+    let hard_cap = if cfg.hard_gross_cap.is_finite() && cfg.hard_gross_cap > 0.0 && equity > 0.0 {
+        equity * cfg.hard_gross_cap
+    } else {
+        f64::INFINITY
+    };
+
     let mut capped_weights = weights.to_vec();
+    let hard_cap_note = apply_hard_gross_cap(
+        &mut capped_weights,
+        cfg.margin_buffer,
+        cfg.leverage,
+        cfg.hard_gross_cap,
+    )
+    .map(|(raw_lev, scale)| {
+        format!(
+            "目标总敞口 {:.2}x 触发硬上限 {:.2}x，等比例缩放 ×{:.3}",
+            raw_lev, cfg.hard_gross_cap, scale
+        )
+    });
     if cfg.max_single_weight > 0.0 {
         cap_weights_same_side(
             &mut capped_weights,
@@ -798,11 +877,11 @@ pub fn build_plan(
         );
     }
     let weights = capped_weights.as_slice();
-    // 权重已归一化到 Σ|w| = 1，所以直接按权重缩放名义即可。
+    // 权重已归一化到 Σ|w| = 1（或已乘入 vol_k），直接按权重缩放名义即可。
     let per_coin = if weights.is_empty() {
         0.0
     } else {
-        deployable * cfg.leverage / weights.len() as f64
+        target_gross / weights.len() as f64
     };
     let long_leg: Vec<String> = weights
         .iter()
@@ -827,30 +906,43 @@ pub fn build_plan(
             .collect(),
         ..Default::default()
     };
+    if let Some(note) = hard_cap_note {
+        plan.notes.push(note);
+    }
 
-    // 总敞口硬上限：净值下跌时仓位不缩，杠杆会被动爬高（实测 2.7x → 3.0x），
-    // 把保证金缓冲吃光。超过目标 2% 就进入「强制减仓」模式：减仓不受错峰档位
-    // 和 2% 调仓带限制（否则 3 档错峰要拖 3 天，暴跌时敞口一直偏高）。
-    let target_gross = deployable * cfg.leverage;
+    // 总敞口保护：把目标毛敞口按 Σ|w|（已包含 vol_k）和硬杠杆上限共同折算，
+    // 超过 desired_gross 2% 就进入「强制减仓」模式：减仓不受错峰、EMA 和调仓带限制。
+    let weights_gross: f64 = weights.iter().map(|(_, w)| w.abs()).sum();
+    let desired_gross = (target_gross * weights_gross).min(hard_cap);
     let cur_gross: f64 = acct
         .positions
         .iter()
         .filter_map(|(c, p)| mids.get(c).map(|mid| p.size.abs() * mid))
         .sum();
-    let over_cap = target_gross > 0.0 && cur_gross > target_gross * 1.02;
+    let over_cap = desired_gross > 0.0 && cur_gross > desired_gross * 1.02;
     if over_cap && equity > 0.0 {
         plan.notes.push(format!(
             "总敞口 {:.2}x 超过目标 {:.2}x，本次强制减仓（不受错峰限制）",
             cur_gross / equity,
-            target_gross / equity
+            desired_gross / equity
         ));
     }
 
-    // 错峰调仓：今天只对属于本档的币下单，其余保持现状。
-    //
-    // 注意 wanted 里必须保留全部目标权重 —— 否则不在本档的持仓会被当成
-    // 「目标为 0」而平掉，那就不是在错峰，而是在随机清仓。
+    // 错峰调仓与平滑 EMA 调仓：
+    // - slices > 1 时按币名哈希分档，每天只调属于本档的币；
+    // - slices == 1 且 ema_alpha < 1.0 时按 w_exec = w_cur + ema_alpha * (w_target - w_cur) 平滑收敛。
     let slices = cfg.rebalance_slices.max(1);
+    let ema_alpha = if cfg.ema_alpha.is_finite() {
+        cfg.ema_alpha.clamp(0.1, 1.0)
+    } else {
+        1.0
+    };
+    let ema_active = slices == 1 && ema_alpha < 1.0 - 1e-9;
+    let rebal_band = if cfg.rebal_band.is_finite() {
+        cfg.rebal_band.clamp(0.0, 0.50)
+    } else {
+        0.0
+    };
     let day_no = (std::time::SystemTime::now()
         .duration_since(std::time::UNIX_EPOCH)
         .map(|d| d.as_millis() as i64)
@@ -879,9 +971,10 @@ pub fn build_plan(
         }
     }
 
-    // 1) close positions that are gone or must flip side
+    // 1) close positions that are gone, stopped, took profit, or must flip side
     let mut closes: Vec<Order> = Vec::new();
     let mut opens: Vec<Order> = Vec::new();
+    let mut blocked_reopen: std::collections::HashSet<String> = std::collections::HashSet::new();
     for (coin, pos) in acct.positions.iter() {
         let cur = pos.size;
         if cur.abs() < 1e-12 {
@@ -897,7 +990,16 @@ pub fn build_plan(
             plan.notes.push(format!("{coin}: 缺市场元数据"));
             continue;
         };
-        let tp_hit = cfg.take_profit_pct > 0.0
+        let stop_hit = cfg.position_stop_pct > 0.0
+            && pos.entry_px > 0.0
+            && pos.entry_px.is_finite()
+            && {
+                let ret = mid / pos.entry_px - 1.0;
+                let r = if cur > 0.0 { ret } else { -ret };
+                r < -cfg.position_stop_pct
+            };
+        let tp_hit = !stop_hit
+            && cfg.take_profit_pct > 0.0
             && pos.entry_px > 0.0
             && pos.entry_px.is_finite()
             && {
@@ -905,17 +1007,50 @@ pub fn build_plan(
                 let r = if cur > 0.0 { ret } else { -ret };
                 r >= cfg.take_profit_pct
             };
-        let target = if tp_hit {
-            0.0 // 已到止盈线：本次直接平掉（次日调仓若仍在目标里会重新开）
+        let raw_target = if stop_hit || tp_hit {
+            blocked_reopen.insert(coin.clone());
+            0.0 // 止损/止盈：本次直接平掉且当次禁止在开仓循环里反手重开
         } else {
             wanted.get(coin).map(|w| w.0).unwrap_or(0.0)
         };
         let single_over_cap = cfg.max_single_weight > 0.0
             && equity > 0.0
             && cur.abs() * mid > equity * cfg.max_single_weight * 1.02;
+        let force_reduce_raw = (over_cap || single_over_cap)
+            && (raw_target == 0.0
+                || cur * raw_target < 0.0
+                || (cur * raw_target > 0.0 && raw_target.abs() < cur.abs()));
+
+        // 平滑 EMA 目标：止损/止盈/强制减仓直接走 raw_target；否则按 cur + alpha*(raw_target - cur) 收敛。
+        // 掉出名单（raw_target == 0）若剩余名义过小（残尘）则直接全平，不留不可平残仓。
+        let target = if stop_hit || tp_hit || !ema_active || force_reduce_raw {
+            raw_target
+        } else {
+            let blended = cur + ema_alpha * (raw_target - cur);
+            if raw_target == 0.0 {
+                let dust_floor = cfg
+                    .effective_min_order_usd(acct.equity)
+                    .max(cfg.min_order_usd * 2.0);
+                if blended.abs() * mid < dust_floor {
+                    0.0
+                } else {
+                    blended
+                }
+            } else if cur * raw_target < 0.0 {
+                if blended.abs() * mid < cfg.min_order_usd {
+                    0.0
+                } else {
+                    blended
+                }
+            } else {
+                blended
+            }
+        };
+
         let flip = cur * target < 0.0;
         if target == 0.0 || flip {
-            if !in_today {
+            // 单币止损必须无视错峰档位立即平仓，避免仓位被冻结在 !in_today 档位
+            if !in_today && !stop_hit {
                 // 不在今天档位：若单币本身已超净值上限，先越过错峰把它减回上限，避免高集中度拖延多日。
                 if single_over_cap {
                     let cap_sz = round_size(equity * cfg.max_single_weight / mid, m.sz_decimals);
@@ -940,13 +1075,6 @@ pub fn build_plan(
             }
             let size = round_size(cur.abs(), m.sz_decimals);
             // **平仓只用绝对下限，不用按净值比例算的门槛。**
-            //
-            // 真实事故：把「最小下单额占净值 %」设成 1.7% 后（$3,104 净值 → 门槛 $52.76），
-            // 账上 4 个约 $45~47 的小仓位【既不在目标名单里、又平不掉】，
-            // 永远挂在那儿占着保证金和敞口。
-            //
-            // 比例门槛的用途是压制小额调仓的 churn；平仓是【降风险】，
-            // 只要超过交易所的最小下单额（绝对下限）就必须允许。
             if size * mid >= cfg.min_order_usd {
                 closes.push(Order {
                     coin: coin.clone(),
@@ -957,7 +1085,9 @@ pub fn build_plan(
                     mid: *mid,
                     sz_decimals: m.sz_decimals,
                     notional: size * mid,
-                    reason: if flip {
+                    reason: if stop_hit {
+                        "单币止损平仓".into()
+                    } else if flip {
                         "反手平仓".into()
                     } else if tp_hit {
                         "止盈平仓".into()
@@ -973,38 +1103,36 @@ pub fn build_plan(
             let delta = target - cur;
             let reducing = cur * delta < 0.0;
             let force_reduce = (over_cap || single_over_cap) && reducing;
+            let closing_decay = ema_active && raw_target == 0.0 && reducing;
             if !in_today && !force_reduce {
                 continue; // 不在今天档位：只有「超限 + 减仓」才破例
             }
             let dsize = round_size(delta.abs(), m.sz_decimals);
             let dnotional = dsize * mid;
-            // 复利门槛用「该仓自身的目标名义」算比例带，而不是全组合平均值：
-            // 小仓位过去被平均值抬高门槛，长期跟不上净值增长。
-            let pos_target = (cur + delta).abs() * mid;
-            let threshold = if force_reduce {
-                // 超限减仓：只保留交易所绝对下限，不受比例门槛/调仓带限制。
+            let pos_target = raw_target.abs() * mid;
+            let threshold = if force_reduce || closing_decay {
+                // 超限减仓或掉出名单的平滑减仓：只保留交易所绝对下限，不受调仓带限制。
                 cfg.min_order_usd
             } else {
-                cfg.effective_min_order_usd(acct.equity).max(pos_target * cfg.rebalance_band)
+                cfg.effective_min_order_usd(acct.equity)
+                    .max(pos_target * rebal_band)
             };
             if dnotional >= threshold {
                 opens.push(Order {
                     coin: coin.clone(),
                     buy: delta > 0.0,
-                    // 只有「delta 与原仓位反向」才是减仓。之前用 |delta| < |cur|
-                    // 判断，会把「加仓」误标成只减仓，实盘会被交易所拒绝。
                     reduce_only: cur * delta < 0.0,
                     target,
                     size: dsize,
                     mid: *mid,
                     sz_decimals: m.sz_decimals,
                     notional: dnotional,
-                    // 文案要看「相对原仓位是增还是减」，而不是买/卖方向：
-                    // 空头买回是减仓、空头继续卖才是加仓。
                     reason: if cur * delta > 0.0 {
                         "加仓到目标".into()
                     } else if single_over_cap {
                         "单币超限减仓".into()
+                    } else if closing_decay {
+                        "掉出名单平滑减仓".into()
                     } else {
                         "减仓到目标".into()
                     },
@@ -1049,8 +1177,11 @@ pub fn build_plan(
         plan.notes.push(msg);
     }
 
-    // 2) open positions that are missing entirely
-    for (coin, (target, is_long)) in wanted.iter() {
+    // 2) open positions that are missing entirely (or flipped across zero)
+    for (coin, (raw_target, is_long)) in wanted.iter() {
+        if blocked_reopen.contains(coin) {
+            continue; // 本次刚触发止损/止盈平仓，绝不在同一计划里立即反手重开
+        }
         if over_cap {
             continue; // 先减仓回到上限以内，再考虑新仓
         }
@@ -1058,23 +1189,29 @@ pub fn build_plan(
             continue; // 新仓位也等轮到它那一档再开
         }
         let cur = acct.positions.get(coin).map(|p| p.size).unwrap_or(0.0);
-        let flip = cur * target < 0.0;
+        let exec_target = if ema_active {
+            cur + ema_alpha * (*raw_target - cur)
+        } else {
+            *raw_target
+        };
+        let flip = cur * exec_target < 0.0;
         // A flip is handled by the close above; reopen here once it is flat.
         if cur.abs() < 1e-12 || flip {
             let Some(mid) = mids.get(coin) else { continue };
             let Some(m) = markets.get(coin) else { continue };
-            let size = round_size(target.abs(), m.sz_decimals);
+            let size = round_size(exec_target.abs(), m.sz_decimals);
             if size * mid >= cfg.effective_min_order_usd(acct.equity) {
+                let open_long = exec_target > 0.0 || (exec_target == 0.0 && *is_long);
                 opens.push(Order {
                     coin: coin.clone(),
-                    buy: *is_long,
+                    buy: open_long,
                     reduce_only: false,
-                    target: if *is_long { size } else { -size },
+                    target: if open_long { size } else { -size },
                     size,
                     mid: *mid,
                     sz_decimals: m.sz_decimals,
                     notional: size * mid,
-                    reason: if *is_long { "开多".into() } else { "开空".into() },
+                    reason: if open_long { "开多".into() } else { "开空".into() },
                 });
             }
         }
@@ -1356,7 +1493,7 @@ mod tests {
         let weights = |mw: f64| {
             let cfg = TradeConfig { momentum_weight: mw, ..base.clone() };
             let (w, _) = target_weights(&panel, &cfg, 1000.0, i64::MAX);
-            let mut m: std::collections::HashMap<String, f64> = w.into_iter().collect();
+            let m: std::collections::HashMap<String, f64> = w.into_iter().collect();
             let gross: f64 = m.values().map(|x| x.abs()).sum();
             assert!((gross - 1.0).abs() < 1e-9, "mw={mw} 的 Σ|w| 必须是 1，实际 {gross}");
             m
@@ -1566,10 +1703,6 @@ mod tests {
         // 实盘会选出与回测完全不同的组合。用 now 卡在最后一根中间来验证。
         const DAY: i64 = 86_400_000;
         let panel = synthetic();
-        let cfg = TradeConfig {
-            min_position_usd: 0.0,
-            ..Default::default()
-        };
         let fp = FactorPanel::build(&panel);
         let last = *fp.ts.last().unwrap();
         let i = fp.last_closed_index(last + DAY / 2);
@@ -1693,14 +1826,14 @@ mod slice_plan_tests {
         // 用真实币名。之前用 AAA/BBB/CCC —— 同字母重复三遍的字节和都是 3 的
         // 倍数，会全挤在同一档，测试因此"今天一个币都没有"而假失败。
         let held = ["BTC", "ETH", "SOL", "DOGE", "ARB", "HYPE"];
+        // Σ|w| = 1.0 → 目标总敞口 2700（2.7x），当前名义 6×300 = 1800 < 2700，不触发超限强制减仓。
         let weights: Vec<(String, f64)> = vec![
-            ("BTC".into(), 0.2),
-            ("ETH".into(), -0.2),
-            ("SOL".into(), 0.2),
+            ("BTC".into(), 0.35),
+            ("ETH".into(), -0.50),
+            ("SOL".into(), 0.15),
         ];
         let acct = Acct {
             equity: 1000.0,
-            // 名义 6×300 = 1800 < 目标 2700（2.7x），不会触发超限强制减仓。
             positions: held.iter().map(|c| mk(c, 3.0)).collect(),
         };
         let markets: HashMap<String, MarketInfo> = held.iter().map(|c| market(c)).collect();
@@ -1827,17 +1960,18 @@ mod close_threshold_tests {
     #[test]
     fn cap_weights_same_side_waterfills_excess_and_is_idempotent() {
         // margin_buffer * leverage = 0.9 * 3.0 = 2.7; max_single_weight = 0.20 => max_w = 0.20 / 2.7
-        // 多头合计 0.35 + 0.10 + 0.05 = 0.50（其中 A 占 0.35*2.7 = 94.5% > 20%）
-        // 实际上 3 个多头总和 0.50*2.7=1.35x > 3*0.20=0.60x，换个能被同侧吸收的例子：
-        // 多头 5 币，总权重 0.30（=0.81x < 5*0.20=1.00x）：A=0.14(37.8%), B=0.06, C=0.04, D=0.04, E=0.02
+        // 多头 5 币总权重 0.30（=0.81x < 5*0.20=1.00x），空头 5 币总权重 -0.30（美元中性）
         let mut w = vec![
             ("A".to_string(), 0.14),
             ("B".to_string(), 0.06),
             ("C".to_string(), 0.04),
             ("D".to_string(), 0.04),
             ("E".to_string(), 0.02),
-            ("S1".to_string(), -0.05),
-            ("S2".to_string(), -0.05),
+            ("S1".to_string(), -0.06),
+            ("S2".to_string(), -0.06),
+            ("S3".to_string(), -0.06),
+            ("S4".to_string(), -0.06),
+            ("S5".to_string(), -0.06),
         ];
         let long_before: f64 = w.iter().filter(|(_, v)| *v > 0.0).map(|(_, v)| *v).sum();
         let short_before: f64 = w.iter().filter(|(_, v)| *v < 0.0).map(|(_, v)| v.abs()).sum();
@@ -1851,6 +1985,7 @@ mod close_threshold_tests {
         let short_after: f64 = w.iter().filter(|(_, v)| *v < 0.0).map(|(_, v)| v.abs()).sum();
         assert!((long_after - long_before).abs() < 1e-9, "多头总权重应保持不变: {long_after} vs {long_before}");
         assert!((short_after - short_before).abs() < 1e-9, "空头总权重不应受影响");
+        assert!((long_after - short_after).abs() < 1e-9, "多空必须保持中性");
         // 幂等性
         let snapshot = w.clone();
         let clipped2 = cap_weights_same_side(&mut w, 0.20, 0.9, 3.0);
@@ -1859,6 +1994,38 @@ mod close_threshold_tests {
             assert_eq!(c1, c2);
             assert!((v1 - v2).abs() < 1e-12, "{c1} 幂等性偏差: {v1} vs {v2}");
         }
+    }
+
+    #[test]
+    fn cap_weights_same_side_mirror_scales_heavier_side_to_stay_neutral() {
+        // 多头只有 4 币（4 * 20% = 80% 净值上限），空头有 7 币（7 * 20% = 140% 可容纳 135%）。
+        // 截断后多头打满上限 = 4 * max_w，空头必须按比例缩到与多头相等，严格保持 sum(w) ≈ 0。
+        let mut w = vec![
+            ("L1".to_string(), 0.15),
+            ("L2".to_string(), 0.15),
+            ("L3".to_string(), 0.10),
+            ("L4".to_string(), 0.10),
+            ("S1".to_string(), -0.08),
+            ("S2".to_string(), -0.07),
+            ("S3".to_string(), -0.07),
+            ("S4".to_string(), -0.07),
+            ("S5".to_string(), -0.07),
+            ("S6".to_string(), -0.07),
+            ("S7".to_string(), -0.07),
+        ];
+        let _clipped = cap_weights_same_side(&mut w, 0.20, 0.9, 3.0);
+        let max_w = 0.20 / 2.7;
+        for (c, v) in &w {
+            assert!(v.abs() <= max_w + 1e-12, "{c} 超过单币上限: {v}");
+        }
+        let net: f64 = w.iter().map(|(_, v)| *v).sum();
+        assert!(net.abs() < 1e-12, "多空打满不对称时必须镜像缩放保持美元中性，实际 net={net}");
+        let long_sum: f64 = w.iter().filter(|(_, v)| *v > 0.0).map(|(_, v)| *v).sum();
+        assert!((long_sum - 4.0 * max_w).abs() < 1e-12);
+        // 幂等性
+        let snap = w.clone();
+        assert!(cap_weights_same_side(&mut w, 0.20, 0.9, 3.0).is_empty());
+        assert_eq!(w, snap);
     }
 
     #[test]
@@ -1872,8 +2039,11 @@ mod close_threshold_tests {
             ("XMR".to_string(), 0.08 * k),
             ("NEAR".to_string(), 0.04 * k),
             ("ZRO".to_string(), 0.03 * k),
-            ("BTC".to_string(), -0.25 * k),
-            ("ETH".to_string(), -0.25 * k),
+            ("BTC".to_string(), -0.15 * k),
+            ("ETH".to_string(), -0.15 * k),
+            ("SOL".to_string(), -0.15 * k),
+            ("ARB".to_string(), -0.10 * k),
+            ("DOGE".to_string(), -0.10 * k),
         ];
         let long_before: f64 = w.iter().filter(|(_, v)| *v > 0.0).map(|(_, v)| *v).sum();
         let clipped = cap_weights_same_side(&mut w, 0.20, 0.9, 3.0);
@@ -1890,6 +2060,188 @@ mod close_threshold_tests {
         let snapshot = w.clone();
         assert!(cap_weights_same_side(&mut w, 0.20, 0.9, 3.0).is_empty(), "必须幂等");
         assert_eq!(w, snapshot);
+    }
+
+    #[test]
+    fn over_cap_respects_vol_k_and_hard_gross_cap() {
+        let coins = ["BTC", "ETH", "SOL", "DOGE"];
+        let markets: HashMap<String, MarketInfo> = coins
+            .iter()
+            .map(|c| (c.to_string(), MarketInfo { sz_decimals: 2, max_leverage: 10 }))
+            .collect();
+        let mids: HashMap<String, f64> = coins.iter().map(|c| (c.to_string(), 100.0)).collect();
+
+        // 1) vol_k = 0.50 → desired_gross = 0.50 * 2.7x = 1.35x; cur_gross = 2.0x > 1.35x * 1.02 → 必须触发 over_cap
+        let cfg_low_vol = TradeConfig {
+            rebalance_slices: 3,
+            ema_alpha: 1.0,
+            hard_gross_cap: 2.8,
+            ..TradeConfig::default()
+        };
+        let w_half = vec![
+            ("BTC".into(), 0.125),
+            ("ETH".into(), 0.125),
+            ("SOL".into(), -0.125),
+            ("DOGE".into(), -0.125),
+        ];
+        let mut pos = HashMap::new();
+        for c in &coins {
+            pos.insert(
+                c.to_string(),
+                crate::exchange::Pos { size: if *c == "BTC" || *c == "ETH" { 5.0 } else { -5.0 }, entry_px: 100.0, ..Default::default() },
+            );
+        }
+        let acct = Acct { equity: 1000.0, positions: pos };
+        let plan_down = build_plan(&w_half, &acct, &markets, &mids, &cfg_low_vol, None);
+        assert!(
+            plan_down.notes.iter().any(|n| n.contains("强制减仓")),
+            "vol_k=0.5 且当前 2.0x 应触发强制减仓: {:?}",
+            plan_down.notes
+        );
+
+        // 2) vol_k = 1.50（原始 4.05x）必须被 hard_gross_cap = 2.8x 压回 <= 2.8x，绝不飙到 3.96x
+        let cfg_cap = TradeConfig {
+            rebalance_slices: 1,
+            ema_alpha: 1.0,
+            hard_gross_cap: 2.8,
+            ..TradeConfig::default()
+        };
+        let w_big = vec![
+            ("BTC".into(), 0.375),
+            ("ETH".into(), 0.375),
+            ("SOL".into(), -0.375),
+            ("DOGE".into(), -0.375),
+        ];
+        let empty = Acct { equity: 10000.0, positions: HashMap::new() };
+        let plan_cap = build_plan(&w_big, &empty, &markets, &mids, &cfg_cap, None);
+        assert!(
+            plan_cap.gross_notional <= 10000.0 * 2.8 + 1e-6,
+            "目标总名义不得超过 hard_gross_cap=2.8x，实际 {}",
+            plan_cap.gross_notional
+        );
+        let open_sum: f64 = plan_cap.orders.iter().map(|o| o.notional).sum();
+        assert!(
+            open_sum <= 10000.0 * 2.8 + 1e-6,
+            "实际计划开仓总额不得超过 2.8x，实际 {open_sum}"
+        );
+    }
+
+    #[test]
+    fn ema_rebalance_blends_targets_and_skips_within_rebal_band() {
+        let cfg = TradeConfig {
+            rebalance_slices: 1,
+            ema_alpha: 0.50,
+            rebal_band: 0.05,
+            min_order_usd: 10.0,
+            min_order_pct: 0.005,
+            hard_gross_cap: 2.8,
+            ..TradeConfig::default()
+        };
+        let coins = ["BTC", "ETH", "SOL", "DOGE"];
+        let markets: HashMap<String, MarketInfo> = coins
+            .iter()
+            .map(|c| (c.to_string(), MarketInfo { sz_decimals: 2, max_leverage: 10 }))
+            .collect();
+        let mids: HashMap<String, f64> = coins.iter().map(|c| (c.to_string(), 100.0)).collect();
+        // equity = 10000, deployable*lev = 27000
+        // BTC target = 0.25 -> $6750 (67.5), cur = 67.0 ($6700): diff $50, ema diff $25 < 5%*$6750=$337.5 -> 跳过
+        // ETH target = 0.25 -> $6750 (67.5), cur = 0 -> EMA 开一半 = 33.75 ($3375)
+        // SOL target = -0.25 -> -$6750 (-67.5), cur = -40.0 -> EMA blend = -53.75, delta = -13.75 ($1375 >= $337.5)
+        // DOGE target = 0 (dropped), cur = -30.0 ($3000) -> EMA blend = -15.0 (平滑减仓 15.0)
+        let mut pos = HashMap::new();
+        pos.insert("BTC".into(), crate::exchange::Pos { size: 67.0, entry_px: 100.0, ..Default::default() });
+        pos.insert("SOL".into(), crate::exchange::Pos { size: -40.0, entry_px: 100.0, ..Default::default() });
+        pos.insert("DOGE".into(), crate::exchange::Pos { size: -30.0, entry_px: 100.0, ..Default::default() });
+        let acct = Acct { equity: 10000.0, positions: pos };
+        let weights = vec![
+            ("BTC".into(), 0.25),
+            ("ETH".into(), 0.25),
+            ("SOL".into(), -0.25),
+        ];
+        let plan = build_plan(&weights, &acct, &markets, &mids, &cfg, None);
+        assert!(plan.orders.iter().all(|o| o.coin != "BTC"), "BTC 在 5% rebal_band 内应跳过");
+        let eth = plan.orders.iter().find(|o| o.coin == "ETH").expect("ETH 应开半仓");
+        assert!((eth.size - 33.75).abs() < 0.05, "ETH EMA=0.5 应开 33.75，实际 {}", eth.size);
+        let sol = plan.orders.iter().find(|o| o.coin == "SOL").expect("SOL 应平滑加空");
+        assert!((sol.size - 13.75).abs() < 0.05, "SOL EMA=0.5 应加空 13.75，实际 {}", sol.size);
+        let doge = plan.orders.iter().find(|o| o.coin == "DOGE").expect("DOGE 掉出名单应平滑减仓");
+        assert!(doge.reduce_only && doge.buy);
+        assert!((doge.size - 15.0).abs() < 0.05, "DOGE EMA=0.5 应先减半 15.0，实际 {}", doge.size);
+    }
+
+    #[test]
+    fn position_stop_closes_even_when_not_in_today_slice() {
+        let cfg = TradeConfig {
+            rebalance_slices: 3,
+            position_stop_pct: 0.20,
+            ..TradeConfig::default()
+        };
+        let day = (std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_millis() as i64
+            / 86_400_000) as u32;
+        let candidates = ["BTC", "ETH", "SOL", "DOGE", "ARB", "HYPE"];
+        let non_slot = candidates
+            .iter()
+            .copied()
+            .find(|c| (day + slice_of(c, 3)) % 3 != 0)
+            .expect("必须存在不在今日档位的币");
+        let mut pos = HashMap::new();
+        // 多头成本 100，现价 70 → 浮亏 -30% < -20%，即使不在今日档位也必须立刻全平
+        pos.insert(
+            non_slot.to_string(),
+            crate::exchange::Pos { size: 5.0, entry_px: 100.0, ..Default::default() },
+        );
+        let acct = Acct { equity: 5000.0, positions: pos };
+        let markets: HashMap<String, MarketInfo> = candidates
+            .iter()
+            .map(|c| (c.to_string(), MarketInfo { sz_decimals: 2, max_leverage: 10 }))
+            .collect();
+        let mids: HashMap<String, f64> = candidates
+            .iter()
+            .map(|c| (c.to_string(), if *c == non_slot { 70.0 } else { 100.0 }))
+            .collect();
+        let weights = vec![("BTC".into(), 0.5), ("ETH".into(), -0.5)];
+        let plan = build_plan(&weights, &acct, &markets, &mids, &cfg, None);
+        let stop_order = plan
+            .orders
+            .iter()
+            .find(|o| o.coin == non_slot)
+            .expect("触发单币止损的币即使不在今日档位也必须平仓");
+        assert!(stop_order.reduce_only && !stop_order.buy);
+        assert_eq!(stop_order.target, 0.0);
+        assert_eq!(stop_order.reason, "单币止损平仓");
+    }
+
+    #[test]
+    fn stop_or_tp_hit_does_not_reopen_opposite_side_in_same_plan() {
+        let cfg = TradeConfig {
+            rebalance_slices: 1,
+            ema_alpha: 1.0,
+            position_stop_pct: 0.20,
+            take_profit_pct: 0.15,
+            ..TradeConfig::default()
+        };
+        let mut pos = HashMap::new();
+        // BTC 做多浮亏 -30%（触发 stop_hit），而 wanted 目标里 BTC 翻空
+        pos.insert("BTC".into(), crate::exchange::Pos { size: 5.0, entry_px: 100.0, ..Default::default() });
+        // ETH 做多浮盈 +25%（触发 tp_hit），而 wanted 目标里 ETH 翻空
+        pos.insert("ETH".into(), crate::exchange::Pos { size: 5.0, entry_px: 100.0, ..Default::default() });
+        let acct = Acct { equity: 5000.0, positions: pos };
+        let markets: HashMap<String, MarketInfo> = ["BTC", "ETH"]
+            .iter()
+            .map(|c| (c.to_string(), MarketInfo { sz_decimals: 2, max_leverage: 10 }))
+            .collect();
+        let mids: HashMap<String, f64> = HashMap::from([("BTC".into(), 70.0), ("ETH".into(), 125.0)]);
+        let weights = vec![("BTC".into(), -0.5), ("ETH".into(), -0.5)];
+        let plan = build_plan(&weights, &acct, &markets, &mids, &cfg, None);
+        let btc_orders: Vec<_> = plan.orders.iter().filter(|o| o.coin == "BTC").collect();
+        let eth_orders: Vec<_> = plan.orders.iter().filter(|o| o.coin == "ETH").collect();
+        assert_eq!(btc_orders.len(), 1, "止损币不得在同一计划里立即反手开仓: {btc_orders:?}");
+        assert!(btc_orders[0].reduce_only && btc_orders[0].reason == "单币止损平仓");
+        assert_eq!(eth_orders.len(), 1, "止盈币不得在同一计划里立即反手开仓: {eth_orders:?}");
+        assert!(eth_orders[0].reduce_only && eth_orders[0].reason == "止盈平仓");
     }
 
     #[test]

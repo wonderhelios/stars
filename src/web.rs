@@ -1107,10 +1107,10 @@ async fn ml_plan(State(state): State<AppState>) -> Response {
     };
     let target = plan.get("target").cloned().unwrap_or(json!({}));
     if target.get("preview_without_current_positions").and_then(|v| v.as_bool()) != Some(false)
-        || target.get("buffer").and_then(|v| v.as_i64()) != Some(11)
+        || !target.get("buffer").and_then(|v| v.as_i64()).is_some_and(|b| b > 0)
     {
         return (StatusCode::INTERNAL_SERVER_ERROR,
-            Json(json!({"ok": false, "error": "调仓计划缺少真实持仓 buffer11，拒绝展示"})))
+            Json(json!({"ok": false, "error": "调仓计划缺少真实持仓 buffer 配置，拒绝展示"})))
             .into_response();
     }
     Json(json!({
@@ -1121,10 +1121,162 @@ async fn ml_plan(State(state): State<AppState>) -> Response {
     .into_response()
 }
 
+#[derive(serde::Deserialize, Default)]
+struct MlExecuteBody {
+    #[serde(default)]
+    ioc_only: Option<bool>,
+}
+
+#[derive(Clone, Debug, PartialEq)]
+struct MlExecLeg {
+    coin: String,
+    buy: bool,
+    size: f64,
+    mid: f64,
+    sz_dec: i32,
+    reduce_only: bool,
+    action: String,
+}
+
+fn parse_json_f64(v: Option<&serde_json::Value>) -> f64 {
+    match v {
+        Some(x) => x
+            .as_f64()
+            .or_else(|| x.as_str().and_then(|s| s.parse::<f64>().ok()))
+            .unwrap_or(0.0),
+        None => 0.0,
+    }
+}
+
+/// 将 `place.py` 输出的订单拆分为两阶段：
+/// 1) `closes`（先执行，强制 `reduce_only=true`，含减仓与反手平旧仓部分）；
+/// 2) `opens`（后执行，设全仓杠杆后再发，`reduce_only=false`，含新开/加仓/反手开新仓）。
+fn plan_ml_execution_phases(
+    raw_orders: &[serde_json::Value],
+    acct: &crate::exchange::Acct,
+    markets: &std::collections::HashMap<String, crate::exchange::MarketInfo>,
+    mids: &std::collections::HashMap<String, f64>,
+) -> (Vec<MlExecLeg>, Vec<MlExecLeg>, Vec<serde_json::Value>) {
+    let mut sim_pos: std::collections::HashMap<String, f64> = acct
+        .positions
+        .iter()
+        .map(|(c, p)| (c.clone(), p.size))
+        .collect();
+    let mut closes = Vec::new();
+    let mut opens = Vec::new();
+    let mut invalid = Vec::new();
+
+    for o in raw_orders {
+        let coin = o.get("coin").and_then(|v| v.as_str()).unwrap_or("").trim();
+        let buy = o.get("buy").and_then(|v| v.as_bool()).unwrap_or(false);
+        let size = parse_json_f64(o.get("size"));
+        let fallback_px = {
+            let m = parse_json_f64(o.get("mid"));
+            if m.is_finite() && m > 0.0 {
+                m
+            } else {
+                parse_json_f64(o.get("price"))
+            }
+        };
+        let live_mid = mids
+            .get(coin)
+            .copied()
+            .filter(|p| p.is_finite() && *p > 0.0)
+            .unwrap_or(fallback_px);
+        if coin.is_empty() || !size.is_finite() || size <= 0.0 || !live_mid.is_finite() || live_mid <= 0.0 {
+            invalid.push(json!({"coin": coin, "ok": false, "error": "参数无效"}));
+            continue;
+        }
+        let sz_dec = markets.get(coin).map(|m| m.sz_decimals).unwrap_or(5);
+        let explicit_ro = o.get("reduce_only").and_then(|v| v.as_bool());
+        let action_hint = o
+            .get("action")
+            .and_then(|v| v.as_str())
+            .unwrap_or("")
+            .to_string();
+        let cur = sim_pos.get(coin).copied().unwrap_or(0.0);
+        let reducing_dir = (cur > 1e-12 && !buy) || (cur < -1e-12 && buy);
+
+        if explicit_ro == Some(true) {
+            let sz = crate::exchange::round_size(size, sz_dec);
+            if sz > 0.0 {
+                closes.push(MlExecLeg {
+                    coin: coin.to_string(),
+                    buy,
+                    size: sz,
+                    mid: live_mid,
+                    sz_dec,
+                    reduce_only: true,
+                    action: if action_hint.is_empty() { "reduce".into() } else { action_hint },
+                });
+                sim_pos.insert(coin.to_string(), cur + if buy { sz } else { -sz });
+            }
+            continue;
+        }
+
+        if reducing_dir {
+            let close_sz = crate::exchange::round_size(size.min(cur.abs()), sz_dec);
+            let open_sz = crate::exchange::round_size((size - cur.abs()).max(0.0), sz_dec);
+            if close_sz > 0.0 {
+                let is_full = close_sz + 1e-12 >= cur.abs();
+                closes.push(MlExecLeg {
+                    coin: coin.to_string(),
+                    buy,
+                    size: close_sz,
+                    mid: live_mid,
+                    sz_dec,
+                    reduce_only: true,
+                    action: if open_sz > 0.0 {
+                        "flip_close".into()
+                    } else if is_full {
+                        "close".into()
+                    } else {
+                        "reduce".into()
+                    },
+                });
+            }
+            if open_sz > 0.0 {
+                opens.push(MlExecLeg {
+                    coin: coin.to_string(),
+                    buy,
+                    size: open_sz,
+                    mid: live_mid,
+                    sz_dec,
+                    reduce_only: false,
+                    action: "flip_open".into(),
+                });
+            }
+            sim_pos.insert(coin.to_string(), cur + if buy { size } else { -size });
+        } else {
+            let sz = crate::exchange::round_size(size, sz_dec);
+            if sz > 0.0 {
+                opens.push(MlExecLeg {
+                    coin: coin.to_string(),
+                    buy,
+                    size: sz,
+                    mid: live_mid,
+                    sz_dec,
+                    reduce_only: false,
+                    action: if !action_hint.is_empty() {
+                        action_hint
+                    } else if cur.abs() > 1e-12 {
+                        "increase".into()
+                    } else {
+                        "open".into()
+                    },
+                });
+                sim_pos.insert(coin.to_string(), cur + if buy { sz } else { -sz });
+            }
+        }
+    }
+
+    (closes, opens, invalid)
+}
+
 /// ML 策略的「执行调仓」：Python 只算 orders（不下单），Rust 用已验证的签名下单。
-/// 为什么不让 Python 签名：Python 复现 Rust SDK 的 msgpack 序列化有细微差异 ✗
-/// HL 会恢复出错误地址（does not exist）✗ 所以签名交给 Rust。
-async fn ml_execute(State(state): State<AppState>) -> Response {
+/// 顺序：先平仓/减仓（`reduce_only=true`）→ 显式设置全仓杠杆（min(max_lev, 5x)）→ 再开仓/加仓，
+/// 默认走 `maker_then_ioc`（支持可选 `{"ioc_only": true}` 逃生舱）。
+async fn ml_execute(State(state): State<AppState>, body: axum::body::Bytes) -> Response {
     let _gate = match state.exec_gate.try_lock() {
         Ok(g) => g,
         Err(_) => {
@@ -1133,6 +1285,13 @@ async fn ml_execute(State(state): State<AppState>) -> Response {
                 .into_response();
         }
     };
+    let req_body: MlExecuteBody = if body.iter().all(|b| b.is_ascii_whitespace()) {
+        MlExecuteBody::default()
+    } else {
+        serde_json::from_slice(&body).unwrap_or_default()
+    };
+    let ioc_only = req_body.ioc_only.unwrap_or(false);
+
     let cfg = state.live.lock().await.config.clone();
     let ml_addr = match cfg.ml_vault_address.as_deref() {
         Some(a) if !a.is_empty() => a.to_string(),
@@ -1180,27 +1339,134 @@ async fn ml_execute(State(state): State<AppState>) -> Response {
                 Json(json!({"ok": false, "error": format!("读取市场信息失败: {e}")}))).into_response();
         }
     };
-
-    let mut results = Vec::new();
-    let mut errors = 0;
-    for o in &orders {
-        let coin = o.get("coin").and_then(|v| v.as_str()).unwrap_or("");
-        let buy = o.get("buy").and_then(|v| v.as_bool()).unwrap_or(false);
-        let size: f64 = o.get("size").and_then(|v| v.as_str()).and_then(|v| v.parse().ok()).unwrap_or(0.0);
-        let price: f64 = o.get("price").and_then(|v| v.as_str()).and_then(|v| v.parse().ok()).unwrap_or(0.0);
-        if coin.is_empty() || size <= 0.0 || price <= 0.0 {
-            results.push(json!({"coin": coin, "ok": false, "error": "参数无效"}));
-            errors += 1;
-            continue;
+    let acct = match exec.account().await {
+        Ok(a) => a,
+        Err(e) => {
+            return (StatusCode::INTERNAL_SERVER_ERROR,
+                Json(json!({"ok": false, "error": format!("读取 ML 账户持仓失败: {e}")}))).into_response();
         }
-        let sz_dec = markets.get(coin).map(|m| m.sz_decimals).unwrap_or(5);
-        // price 已是 place.py 算好的含滑点 Ioc 限价 ✗ mid 直接传 price + slippage=0
-        match exec.ioc(coin, buy, false, size, price, 0.0, sz_dec).await {
-            Ok(st) => results.push(json!({"coin": coin, "buy": buy, "size": size, "status": format!("{st:?}")})),
-            Err(e) => { results.push(json!({"coin": coin, "ok": false, "error": format!("{e}")})); errors += 1; }
+    };
+    let mids = exec.all_mids().await.unwrap_or_default();
+    let (closes, opens, invalid) = plan_ml_execution_phases(&orders, &acct, &markets, &mids);
+
+    let mut results = invalid;
+    let mut errors = results.len();
+    let mut leverage_notes: Vec<String> = Vec::new();
+
+    // 阶段 1：先执行全部平仓与减仓（reduce_only = true）
+    for leg in &closes {
+        let res = if ioc_only {
+            exec.ioc(&leg.coin, leg.buy, true, leg.size, leg.mid, cfg.slippage, leg.sz_dec)
+                .await
+                .map(|st| crate::exchange::describe(&st))
+        } else {
+            exec.maker_then_ioc(&leg.coin, leg.buy, true, leg.size, leg.mid, cfg.slippage, leg.sz_dec, 12)
+                .await
+        };
+        match res {
+            Ok(st) => results.push(json!({
+                "coin": leg.coin,
+                "buy": leg.buy,
+                "size": leg.size,
+                "reduce_only": true,
+                "action": leg.action,
+                "status": st,
+            })),
+            Err(e) => {
+                results.push(json!({
+                    "coin": leg.coin,
+                    "buy": leg.buy,
+                    "size": leg.size,
+                    "reduce_only": true,
+                    "action": leg.action,
+                    "ok": false,
+                    "error": format!("{e}"),
+                }));
+                errors += 1;
+            }
+        }
+        tokio::time::sleep(std::time::Duration::from_millis(150)).await;
+    }
+
+    // 阶段 2：重读账户并为即将开仓/加仓的币显式设置全仓杠杆（min(max_leverage, 5x)）
+    if !opens.is_empty() {
+        let after = exec.account().await.unwrap_or(acct);
+        let mut open_coins: Vec<String> = opens.iter().map(|o| o.coin.clone()).collect();
+        open_coins.sort();
+        open_coins.dedup();
+        for coin in &open_coins {
+            // 已有逐仓仓位时 HL 不允许原地切模式，仅对空仓或已是全仓的币设杠杆
+            let can_set = after
+                .positions
+                .get(coin)
+                .map(|p| p.size.abs() <= 1e-12 || p.is_cross)
+                .unwrap_or(true);
+            if !can_set {
+                leverage_notes.push(format!("{coin}: 仍有逐仓持仓，跳过全仓杠杆设置"));
+                continue;
+            }
+            let max_lev = markets.get(coin).map(|m| m.max_leverage).unwrap_or(5);
+            let lev = 5u32.min(max_lev.max(1)).max(1);
+            if let Err(e) = exec.set_leverage(coin, lev).await {
+                leverage_notes.push(format!("{coin}: 设置 {lev}x 全仓杠杆失败: {e}"));
+            }
+            tokio::time::sleep(std::time::Duration::from_millis(120)).await;
         }
     }
-    Json(json!({"ok": errors == 0, "errors": errors, "results": results})).into_response()
+
+    // 阶段 3：刷新实时 mid 后执行开仓与加仓（reduce_only = false）
+    let fresh_mids = if !opens.is_empty() {
+        exec.all_mids().await.unwrap_or(mids)
+    } else {
+        mids
+    };
+    for leg in &opens {
+        let live_mid = fresh_mids
+            .get(&leg.coin)
+            .copied()
+            .filter(|p| p.is_finite() && *p > 0.0)
+            .unwrap_or(leg.mid);
+        let res = if ioc_only {
+            exec.ioc(&leg.coin, leg.buy, false, leg.size, live_mid, cfg.slippage, leg.sz_dec)
+                .await
+                .map(|st| crate::exchange::describe(&st))
+        } else {
+            exec.maker_then_ioc(&leg.coin, leg.buy, false, leg.size, live_mid, cfg.slippage, leg.sz_dec, 12)
+                .await
+        };
+        match res {
+            Ok(st) => results.push(json!({
+                "coin": leg.coin,
+                "buy": leg.buy,
+                "size": leg.size,
+                "reduce_only": false,
+                "action": leg.action,
+                "status": st,
+            })),
+            Err(e) => {
+                results.push(json!({
+                    "coin": leg.coin,
+                    "buy": leg.buy,
+                    "size": leg.size,
+                    "reduce_only": false,
+                    "action": leg.action,
+                    "ok": false,
+                    "error": format!("{e}"),
+                }));
+                errors += 1;
+            }
+        }
+        tokio::time::sleep(std::time::Duration::from_millis(150)).await;
+    }
+
+    Json(json!({
+        "ok": errors == 0,
+        "errors": errors,
+        "mode": if ioc_only { "ioc_only" } else { "maker_then_ioc" },
+        "leverage_notes": leverage_notes,
+        "results": results,
+    }))
+    .into_response()
 }
 
 /// 清空 ML 子账户 B 的净值历史 ✗ 不动动量的记录。
@@ -1394,6 +1660,9 @@ struct LiveConfigBody {
     min_order_pct: Option<f64>,
     take_profit_pct: Option<f64>,
     rebalance_slices: Option<u32>,
+    ema_alpha: Option<f64>,
+    rebal_band: Option<f64>,
+    hard_gross_cap: Option<f64>,
     momentum_weight: Option<f64>,
     dd_weight: Option<f64>,
     upfrac_weight: Option<f64>,
@@ -1469,6 +1738,24 @@ async fn live_config(
     }
     if let Some(v) = body.rebalance_slices {
         c.rebalance_slices = v.clamp(1, 10);
+    }
+    if let Some(v) = body.ema_alpha {
+        if !v.is_finite() {
+            return (StatusCode::BAD_REQUEST, Json(json!({"ok": false, "error": "EMA 系数无效"}))).into_response();
+        }
+        c.ema_alpha = v.clamp(0.1, 1.0);
+    }
+    if let Some(v) = body.rebal_band {
+        if !v.is_finite() {
+            return (StatusCode::BAD_REQUEST, Json(json!({"ok": false, "error": "调仓死区无效"}))).into_response();
+        }
+        c.rebal_band = v.clamp(0.0, 0.50);
+    }
+    if let Some(v) = body.hard_gross_cap {
+        if !v.is_finite() || v <= 0.0 {
+            return (StatusCode::BAD_REQUEST, Json(json!({"ok": false, "error": "硬杠杆上限必须为正数"}))).into_response();
+        }
+        c.hard_gross_cap = v.clamp(0.5, 5.0);
     }
     if let Some(v) = body.take_profit_pct {
         c.take_profit_pct = v.clamp(0.0, 0.5);
@@ -2122,10 +2409,20 @@ mod live_routes_tests {
         assert_eq!(response.status(), StatusCode::OK);
         assert_eq!(app.clone().oneshot(Request::builder().uri("/api/points").body(Body::empty()).unwrap()).await.unwrap().status(), StatusCode::NOT_FOUND);
         let request = Request::builder().method("POST").uri("/api/live/config")
-            .header("content-type", "application/json").body(Body::from(r#"{"lookback":21,"target_positions":4}"#)).unwrap();
+            .header("content-type", "application/json").body(Body::from(r#"{"lookback":21,"target_positions":4,"ema_alpha":0.4,"rebal_band":0.08,"hard_gross_cap":2.6}"#)).unwrap();
         let response = app.clone().oneshot(request).await.unwrap();
         assert_eq!(response.status(), StatusCode::OK);
         assert_eq!(base.live.lock().await.config.lookback, 21);
+        assert!((base.live.lock().await.config.ema_alpha - 0.4).abs() < 1e-9);
+        assert!((base.live.lock().await.config.rebal_band - 0.08).abs() < 1e-9);
+        assert!((base.live.lock().await.config.hard_gross_cap - 2.6).abs() < 1e-9);
+        // 超界参数应安全截断
+        let clamp_req = Request::builder().method("POST").uri("/api/live/config")
+            .header("content-type", "application/json").body(Body::from(r#"{"ema_alpha":0.01,"rebal_band":0.99,"hard_gross_cap":99.0}"#)).unwrap();
+        assert_eq!(app.clone().oneshot(clamp_req).await.unwrap().status(), StatusCode::OK);
+        assert_eq!(base.live.lock().await.config.ema_alpha, 0.1);
+        assert_eq!(base.live.lock().await.config.rebal_band, 0.5);
+        assert_eq!(base.live.lock().await.config.hard_gross_cap, 5.0);
         assert!(!base.live.lock().await.config.armed);
         assert!(base.live_path.exists());
         let failing = AppState { live_path: Arc::new(root.clone()), ..base.clone() };
@@ -2266,5 +2563,49 @@ mod live_routes_tests {
 
         drop(app); drop(base);
         std::fs::remove_dir_all(root).unwrap();
+    }
+
+    #[test]
+    fn ml_execution_phases_put_closes_first_and_split_flips() {
+        let mut acct = crate::exchange::Acct { equity: 2000.0, positions: Default::default() };
+        acct.positions.insert("CLOSE_ME".into(), crate::exchange::Pos { size: 5.0, entry_px: 100.0, ..Default::default() });
+        acct.positions.insert("REDUCE_SHORT".into(), crate::exchange::Pos { size: -10.0, entry_px: 50.0, ..Default::default() });
+        acct.positions.insert("FLIP_L2S".into(), crate::exchange::Pos { size: 4.0, entry_px: 20.0, ..Default::default() });
+        let markets: std::collections::HashMap<String, crate::exchange::MarketInfo> =
+            ["CLOSE_ME", "REDUCE_SHORT", "FLIP_L2S", "NEW_LONG"]
+                .iter()
+                .map(|c| (c.to_string(), crate::exchange::MarketInfo { sz_decimals: 2, max_leverage: 10 }))
+                .collect();
+        let mids: std::collections::HashMap<String, f64> = [
+            ("CLOSE_ME", 101.0),
+            ("REDUCE_SHORT", 49.0),
+            ("FLIP_L2S", 21.0),
+            ("NEW_LONG", 15.0),
+        ]
+        .iter()
+        .map(|(c, p)| (c.to_string(), *p))
+        .collect();
+
+        // 即使输入顺序先开后平，plan_ml_execution_phases 也必须先平/减仓再开仓，且反手拆成 reduce_only 平旧仓 + 开新仓
+        let raw_orders = vec![
+            json!({"coin": "NEW_LONG", "buy": true, "size": "10", "price": "15.1"}),
+            json!({"coin": "FLIP_L2S", "buy": false, "size": "9", "price": "20.9"}),
+            json!({"coin": "CLOSE_ME", "buy": false, "size": "5", "price": "100.5", "reduce_only": true, "action": "close"}),
+            json!({"coin": "REDUCE_SHORT", "buy": true, "size": "4", "price": "49.2"}),
+        ];
+        let (closes, opens, invalid) = plan_ml_execution_phases(&raw_orders, &acct, &markets, &mids);
+        assert!(invalid.is_empty());
+        assert_eq!(closes.len(), 3, "应有 3 笔只减仓单（平仓+减空+反手平旧仓）: {closes:?}");
+        assert!(closes.iter().all(|c| c.reduce_only), "阶段 1 必须全部 reduce_only=true");
+        assert_eq!(opens.len(), 2, "应有 2 笔开仓单（新开+反手开新仓）: {opens:?}");
+        assert!(opens.iter().all(|o| !o.reduce_only), "阶段 2 必须全部 reduce_only=false");
+
+        let flip_close = closes.iter().find(|c| c.coin == "FLIP_L2S").unwrap();
+        let flip_open = opens.iter().find(|o| o.coin == "FLIP_L2S").unwrap();
+        assert!((flip_close.size - 4.0).abs() < 1e-9);
+        assert!((flip_open.size - 5.0).abs() < 1e-9);
+        // 必须使用实时 mid，而非 place.py 的含滑点 price
+        assert_eq!(flip_close.mid, 21.0);
+        assert_eq!(opens.iter().find(|o| o.coin == "NEW_LONG").unwrap().mid, 15.0);
     }
 }

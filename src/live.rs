@@ -83,13 +83,18 @@ pub struct LiveConfig {
     /// （每天微调一堆）。这解释了不同账号的调仓频率差异。
     /// 设成比例之后，两边的**执行粒度**才可比。
     pub min_order_pct: f64,
-    /// 错峰调仓档数：每个币每 N 天轮到一次。1 = 每日全量。
-    ///
-    /// 实测（相位平均 + 两个子区间均通过）：换手 29%→13%、成本 16.2%→7.3%、
-    /// Sharpe 1.62→1.79，弱势区间 0.37→0.73。信号是 14 日动量，滞后几天对它
-    /// 的影响远小于省下的成本。
+    /// 错峰调仓档数：每个币每 N 天轮到一次。1 = 每日平滑/全量调仓（C3 默认 1）。
     #[serde(default = "default_slices")]
     pub rebalance_slices: u32,
+    /// 平滑 EMA 调仓系数（0.1~1.0；1.0 = 一步到位）。仅当 `rebalance_slices == 1` 时生效。
+    #[serde(default = "d_ema_alpha")]
+    pub ema_alpha: f64,
+    /// 同向微调忽略死区（占目标名义比例，0.0~0.50，默认 0.05 = 5%）。
+    #[serde(default = "d_rebal_band")]
+    pub rebal_band: f64,
+    /// 总敞口硬上限（占账户净值倍数，默认 2.8 = 2.8x），防止低波动时 `vol_k` 放大超限。
+    #[serde(default = "d_hard_gross_cap")]
+    pub hard_gross_cap: f64,
     /// 止盈幅度（相对调仓时的中间价）。0 = 不挂止盈单。
     #[serde(default = "default_tp")]
     pub take_profit_pct: f64,
@@ -123,11 +128,14 @@ impl Default for LiveConfig {
             margin_buffer: 0.90,
             slippage: 0.005,
             lookback: 14,
-            top_frac: 0.2,
+            top_frac: 0.30,
             min_vol_usd: 5_000_000.0,
-            min_order_pct: 0.0,
+            min_order_pct: 0.005,
             take_profit_pct: 0.0,
-            rebalance_slices: 3,
+            rebalance_slices: default_slices(),
+            ema_alpha: d_ema_alpha(),
+            rebal_band: d_rebal_band(),
+            hard_gross_cap: d_hard_gross_cap(),
             momentum_weight: default_momentum_weight(),
             dd_weight: 0.0,
             upfrac_weight: 0.0,
@@ -143,8 +151,20 @@ impl Default for LiveConfig {
 }
 
 fn default_slices() -> u32 {
-    // 实测最佳：换手 29%→13%，Sharpe 1.62→1.79，两个子区间均改善。
-    3
+    // Phase 2 C3 默认：每日 EMA 平滑调仓（slices=1, ema_alpha=0.50）消除错峰相位运气与中性化互搏。
+    1
+}
+
+fn d_ema_alpha() -> f64 {
+    0.50
+}
+
+fn d_rebal_band() -> f64 {
+    0.05
+}
+
+fn d_hard_gross_cap() -> f64 {
+    2.8
 }
 
 fn default_momentum_weight() -> f64 {
@@ -183,9 +203,13 @@ impl LiveConfig {
             slippage: self.slippage,
             margin_buffer: self.margin_buffer,
             min_order_pct: self.min_order_pct,
-            // 这里漏掉过 rebalance_slices：`..Default::default()` 会静默用默认值 3，
-            // 界面上改成 1 也毫无作用。下面有 field_parity 测试守着。
+            ema_alpha: self.ema_alpha.clamp(0.1, 1.0),
+            rebal_band: self.rebal_band.clamp(0.0, 0.50),
+            hard_gross_cap: self.hard_gross_cap.clamp(0.5, 5.0),
+            // 这里漏掉过 rebalance_slices：`..Default::default()` 会静默用默认值，
+            // 下面有 field_parity 测试守着。
             rebalance_slices: self.rebalance_slices,
+            position_stop_pct: self.position_stop_pct.clamp(0.0, 0.9),
             momentum_weight: self.momentum_weight,
             dd_weight: self.dd_weight,
             upfrac_weight: self.upfrac_weight,
@@ -241,7 +265,7 @@ fn d_vol_target() -> f64 {
 }
 
 fn d_stop_pct() -> f64 {
-    0.25
+    0.0
 }
 
 fn d_stop_cool() -> i64 {
@@ -1133,7 +1157,8 @@ pub async fn run(
     let mut vol_lines: Vec<String> = Vec::new();
     let mut applied_k: Option<f64> = None;
     if cfg.vol_target > 0.0 {
-        if let Some(vol) = book_vol_estimate(&panel, &weights, cfg.effective_leverage()) {
+        let effective_gross_lev = cfg.effective_leverage() * cfg.margin_buffer;
+        if let Some(vol) = book_vol_estimate(&panel, &weights, effective_gross_lev) {
             let mut k = (cfg.vol_target / vol).clamp(0.2, 3.0);
             let prev_k = state.vol_k;
             // 死区：跟【上次实际用的缩放系数】比 ✗ 不跟"当前杠杆"比 ✓
@@ -1270,8 +1295,22 @@ pub async fn run(
         }
     }
 
-    // ④ 单币目标权重上限（作用在 vol_target 缩放和止损归一化之后的最终目标权重上）
+    // ④a 总敞口硬上限（在单币上限、计划展示与调仓后中性化之前统一作用到 weights）
     let mut cap_lines: Vec<String> = Vec::new();
+    let hard_cap_lev = cfg.hard_gross_cap.clamp(0.5, 5.0);
+    if let Some((raw_lev, scale)) = trader::apply_hard_gross_cap(
+        &mut weights,
+        cfg.margin_buffer,
+        cfg.effective_leverage(),
+        hard_cap_lev,
+    ) {
+        cap_lines.push(format!(
+            "硬杠杆上限 {:.2}x：目标总敞口 {:.2}x 触发封顶，等比例缩放 ×{:.3}",
+            hard_cap_lev, raw_lev, scale
+        ));
+    }
+
+    // ④b 单币目标权重上限（作用在 vol_target 缩放、止损归一化与硬杠杆上限之后的最终目标权重上）
     if cfg.max_single_weight > 0.0 {
         let clipped = trader::cap_weights_same_side(
             &mut weights,
@@ -1303,14 +1342,6 @@ pub async fn run(
     plan_lines.extend(vol_lines.clone());
     plan_lines.extend(stop_lines.clone());
     plan_lines.extend(cap_lines.clone());
-    // 被止损的币 ✗ build_plan 一律标成"掉出名单平仓"✗ 这里改写成本来的原因 ✓
-    for coin in stopped_now.iter().map(|(c, _)| c.as_str()) {
-        for line in plan_lines.iter_mut() {
-            if line.contains(&format!(" {coin} ")) && line.contains("掉出名单平仓") {
-                *line = line.replace("掉出名单平仓", "单币止损平仓");
-            }
-        }
-    }
     // 腿的名单**按权重强弱排序**并显示权重值。
     //
     // 原来直接用 Vec 的插入顺序 —— 那是三因子合并后的任意顺序，看不出谁强谁弱。
@@ -1418,21 +1449,33 @@ pub async fn run(
     let aborted = outcome.aborted;
     let executed = outcome.orders;
 
-    // 三档错峰可能在调仓后留下暂时净敞口。立即按最终目标权重做中性化，
-    // 不再等后台任务用无目标、随机顺序的方式整笔砍仓。
+    // 调仓后拉取最新实时 mids，并用 maker_then_ioc（reduce_only=true）做目标感知中性化，
+    // 避免使用调仓前陈旧价格和 100% taker IOC。
     if live && !aborted {
         match exec.account().await {
             Ok(after) => {
+                let after_coins: Vec<String> = after.positions.keys().cloned().collect();
+                let mut neut_mids = mids.clone();
+                for (c, p) in trader::fetch_mids(&exec, &after_coins).await {
+                    if p.is_finite() && p > 0.0 {
+                        neut_mids.insert(c, p);
+                    }
+                }
+                let neut_equity = if after.equity.is_finite() && after.equity > 0.0 {
+                    after.equity
+                } else {
+                    plan.equity
+                };
                 let target_notionals: HashMap<String, f64> = weights
                     .iter()
                     .map(|(c, w)| {
-                        (c.clone(), w * plan.equity * cfg.margin_buffer * cfg.effective_leverage())
+                        (c.clone(), w * neut_equity * cfg.margin_buffer * cfg.effective_leverage())
                     })
                     .collect();
                 let neutral = trader::neutralize_orders_with_targets(
                     &after,
                     markets,
-                    &mids,
+                    &neut_mids,
                     0.02,
                     10.0,
                     Some(&target_notionals),
@@ -1440,10 +1483,10 @@ pub async fn run(
                 for o in neutral {
                     let entry_px = after.positions.get(&o.coin).map(|p| p.entry_px);
                     let result = match exec
-                        .ioc(&o.coin, o.buy, true, o.size, o.mid, cfg.slippage, o.sz_decimals)
+                        .maker_then_ioc(&o.coin, o.buy, true, o.size, o.mid, cfg.slippage, o.sz_decimals, 12)
                         .await
                     {
-                        Ok(st) => format!("{st:?}"),
+                        Ok(st) => st,
                         Err(e) => format!("中性化下单失败: {e}"),
                     };
                     plan_lines.push(format!(
@@ -1536,48 +1579,116 @@ pub fn current_book_vol(
     book_vol_estimate(panel, &scaled, total)
 }
 
-/// 用最近 20 个交易日的日收益估算「当前权重下」组合的日波动（已乘杠杆）。
+/// 用最近 20 个已收盘交易日的日收益估算「当前权重下」组合的日波动（已乘杠杆）。
 ///
-/// 不是用净值曲线（样本太短）✗ 而是直接用持仓币的历史日收益按权重加总 ✓
-/// 权重 Σ|w|=1 ✗ 所以加总得到的是【未加杠杆】的组合收益 ✗ 再乘杠杆 ✓
+/// - 剔除尚未收盘的当根日线（`c.t + 86_400_000 <= now_ms`）；
+/// - 严格按蜡烛时间戳 `c.t` 对齐各币日收益（绝不按数组倒序下标错位相加）；
+/// - `leverage` 应传入有效名义杠杆（即 `leverage * margin_buffer`）。
 fn book_vol_estimate(
     panel: &[crate::momentum::PanelEntry],
     weights: &[(String, f64)],
     leverage: f64,
 ) -> Option<f64> {
+    book_vol_estimate_at(panel, weights, leverage, now_ms_pub())
+}
+
+fn book_vol_estimate_at(
+    panel: &[crate::momentum::PanelEntry],
+    weights: &[(String, f64)],
+    leverage: f64,
+    now_ms: i64,
+) -> Option<f64> {
+    use std::collections::{BTreeMap, BTreeSet};
     const WINDOW: usize = 20;
-    let mut series: Vec<Vec<f64>> = Vec::new();
-    let mut wv: Vec<f64> = Vec::new();
+    const DAY: i64 = 86_400_000;
+
+    let mut coin_rets: Vec<(f64, HashMap<i64, f64>)> = Vec::new();
+    let mut all_ts: BTreeSet<i64> = BTreeSet::new();
+
     for (coin, w) in weights {
+        if !w.is_finite() || w.abs() <= 1e-12 {
+            continue;
+        }
         let Some(entry) = panel.iter().find(|e| &e.coin == coin) else {
             continue;
         };
-        let closes: Vec<f64> = entry.candles.iter().map(|c| c.c).filter(|c| *c > 0.0).collect();
-        if closes.len() < WINDOW + 2 {
+        let mut closed: BTreeMap<i64, f64> = BTreeMap::new();
+        for c in &entry.candles {
+            if c.c.is_finite() && c.c > 0.0 && c.t.saturating_add(DAY) <= now_ms {
+                closed.insert(c.t, c.c);
+            }
+        }
+        if closed.len() < 11 {
             continue;
         }
-        // 从最近往回取 20 个日收益
-        let mut rets: Vec<f64> = closes.windows(2).map(|p| p[1] / p[0] - 1.0).collect();
-        let take = rets.len().min(WINDOW);
-        rets = rets.split_off(rets.len() - take);
-        rets.reverse();
-        series.push(rets);
-        wv.push(*w);
-    }
-    if series.len() < 4 {
-        return None;
-    }
-    let days = series.iter().map(|s| s.len()).min().unwrap_or(0);
-    if days < 10 {
-        return None;
-    }
-    let mut daily: Vec<f64> = Vec::with_capacity(days);
-    for d in 0..days {
-        let mut r = 0.0;
-        for (i, s) in series.iter().enumerate() {
-            r += wv[i] * s[d];
+        let mut rets: HashMap<i64, f64> = HashMap::new();
+        let mut prev: Option<(i64, f64)> = None;
+        for (t, c) in closed {
+            if let Some((pt, pc)) = prev {
+                if t - pt == DAY && pc > 0.0 {
+                    rets.insert(t, c / pc - 1.0);
+                    all_ts.insert(t);
+                }
+            }
+            prev = Some((t, c));
         }
-        daily.push(r);
+        if rets.len() < 10 {
+            continue;
+        }
+        coin_rets.push((*w, rets));
+    }
+    if coin_rets.len() < 4 {
+        return None;
+    }
+
+    let total_gross: f64 = coin_rets.iter().map(|(w, _)| w.abs()).sum();
+    if total_gross <= 1e-12 {
+        return None;
+    }
+
+    // 优先取所有参与币种都有收益的严格时间戳交集；若不足 10 天（如个别新币），
+    // 放宽到当日覆盖 >= 80% 权重并按覆盖比例归一化。
+    let mut aligned: Vec<i64> = all_ts
+        .iter()
+        .copied()
+        .filter(|t| coin_rets.iter().all(|(_, rm)| rm.contains_key(t)))
+        .collect();
+    if aligned.len() < 10 {
+        aligned = all_ts
+            .iter()
+            .copied()
+            .filter(|t| {
+                let cov: f64 = coin_rets
+                    .iter()
+                    .filter(|(_, rm)| rm.contains_key(t))
+                    .map(|(w, _)| w.abs())
+                    .sum();
+                cov >= 0.8 * total_gross
+            })
+            .collect();
+    }
+    if aligned.len() < 10 {
+        return None;
+    }
+    let take = aligned.len().min(WINDOW);
+    let recent = &aligned[aligned.len() - take..];
+
+    let mut daily: Vec<f64> = Vec::with_capacity(recent.len());
+    for &t in recent {
+        let mut r = 0.0;
+        let mut cov = 0.0;
+        for (w, rm) in &coin_rets {
+            if let Some(&ret) = rm.get(&t) {
+                r += w * ret;
+                cov += w.abs();
+            }
+        }
+        if cov > 1e-12 {
+            daily.push(r * (total_gross / cov));
+        }
+    }
+    if daily.len() < 10 {
+        return None;
     }
     let mean = daily.iter().sum::<f64>() / daily.len() as f64;
     let var = daily.iter().map(|x| (x - mean).powi(2)).sum::<f64>() / (daily.len() - 1) as f64;
@@ -2233,7 +2344,12 @@ mod config_parity_tests {
             target_positions: 13,
             slippage: 0.007,
             margin_buffer: 0.77,
+            min_order_pct: 0.012,
             rebalance_slices: 4,
+            ema_alpha: 0.35,
+            rebal_band: 0.08,
+            hard_gross_cap: 2.5,
+            position_stop_pct: 0.22,
             momentum_weight: 0.7,
             dd_weight: 1.0,
             upfrac_weight: 0.8,
@@ -2249,7 +2365,12 @@ mod config_parity_tests {
         assert_eq!(tc.target_positions, 13, "target_positions 没传");
         assert_eq!(tc.slippage, 0.007, "slippage 没传");
         assert_eq!(tc.margin_buffer, 0.77, "margin_buffer 没传");
+        assert_eq!(tc.min_order_pct, 0.012, "min_order_pct 没传");
         assert_eq!(tc.rebalance_slices, 4, "rebalance_slices 没传（UI 会失效）");
+        assert_eq!(tc.ema_alpha, 0.35, "ema_alpha 没传");
+        assert_eq!(tc.rebal_band, 0.08, "rebal_band 没传");
+        assert_eq!(tc.hard_gross_cap, 2.5, "hard_gross_cap 没传");
+        assert_eq!(tc.position_stop_pct, 0.22, "position_stop_pct 没传");
         assert_eq!(tc.momentum_weight, 0.7, "momentum_weight 没传（UI 会失效）");
         assert_eq!(tc.dd_weight, 1.0, "dd_weight 没传（三因子 UI 会失效）");
         assert_eq!(tc.upfrac_weight, 0.8, "upfrac_weight 没传（三因子 UI 会失效）");
@@ -2275,15 +2396,113 @@ mod config_robustness {
         let cfg: LiveConfig = serde_json::from_str(json).expect("缺字段不应导致解析失败");
         assert_eq!(cfg.account, "0xABC", "account 被清空了");
         assert_eq!(cfg.key_path, "/tmp/k.key", "key_path 被清空了");
-        // 其余字段走默认值
+        // 其余字段走 Phase 2 C3 默认值
         assert_eq!(cfg.leverage, LiveConfig::default().leverage);
-        assert_eq!(cfg.rebalance_slices, 3);
+        assert_eq!(cfg.rebalance_slices, 1);
+        assert_eq!(cfg.top_frac, 0.30);
+        assert_eq!(cfg.ema_alpha, 0.50);
+        assert_eq!(cfg.rebal_band, 0.05);
+        assert_eq!(cfg.min_order_pct, 0.005);
+        assert_eq!(cfg.position_stop_pct, 0.0);
+        assert_eq!(cfg.hard_gross_cap, 2.8);
     }
 
     #[test]
     fn empty_object_still_parses() {
         let cfg: LiveConfig = serde_json::from_str("{}").expect("空对象也应能解析");
         assert_eq!(cfg.account, "");
+        assert_eq!(cfg.ema_alpha, 0.50);
+        assert_eq!(cfg.rebal_band, 0.05);
+        assert_eq!(cfg.hard_gross_cap, 2.8);
+    }
+
+    #[test]
+    fn live_server_config_snapshot_deserializes_without_loss() {
+        // 真实线上 live.json 的 config 快照（2026-11-27 审计导出），不含 Phase 2 新增 3 字段
+        let raw = r#"{
+            "account":"0x355764449D7d610d20fee736477e0728B0cd8821",
+            "armed":true,"auto_run":true,"dd_weight":1.0,
+            "key_path":"/etc/hyper-fly/api-wallet.key","leverage":3.0,"lookback":14,
+            "margin_buffer":0.9,"max_single_weight":0.2,"min_order_pct":0.005,
+            "min_vol_usd":10000000.0,"ml_dir":"/opt/stars/ml",
+            "ml_python":"/root/miniconda3/envs/ml/bin/python",
+            "ml_vault_address":"0x7aa0d75c9dadb1dc7c67963542069c4a577b7046",
+            "momentum_weight":1.0,"position_stop_pct":0.0,"rebalance_slices":3,
+            "slippage":0.005,"stop_cooldown_days":0,"take_profit_pct":0.0,
+            "target_positions":10,"top_frac":0.2,"upfrac_weight":1.0,
+            "vault_address":"0x14a8d29ae15be2937bb94e32adc90953a1ffad83",
+            "vol_band":0.2,"vol_target":0.032
+        }"#;
+        let cfg: LiveConfig = serde_json::from_str(raw).expect("真实线上配置必须无损反序列化");
+        assert_eq!(cfg.account, "0x355764449D7d610d20fee736477e0728B0cd8821");
+        assert_eq!(cfg.vault_address.as_deref(), Some("0x14a8d29ae15be2937bb94e32adc90953a1ffad83"));
+        assert_eq!(cfg.ml_vault_address.as_deref(), Some("0x7aa0d75c9dadb1dc7c67963542069c4a577b7046"));
+        assert!(cfg.armed && cfg.auto_run);
+        assert_eq!(cfg.top_frac, 0.2);
+        assert_eq!(cfg.rebalance_slices, 3);
+        assert_eq!(cfg.min_vol_usd, 10_000_000.0);
+        assert_eq!(cfg.vol_target, 0.032);
+        assert_eq!(cfg.target_positions, 10);
+        // 新增字段走安全默认值
+        assert_eq!(cfg.ema_alpha, 0.50);
+        assert_eq!(cfg.rebal_band, 0.05);
+        assert_eq!(cfg.hard_gross_cap, 2.8);
+    }
+
+    #[test]
+    fn book_vol_excludes_unclosed_bar_and_aligns_by_timestamp() {
+        const DAY: i64 = 86_400_000;
+        let t0 = 1_700_000_000_000i64;
+        // 造 4 个完全相同日收益序列的币：L1/L2 做多 +0.25，S1/S2 做空 -0.25。
+        // 因为多空完全抵消，按时间戳对齐后的组合日收益恒为 0（但给 L1 加微弱常数斜率让波动>1e-9）。
+        // 故意给 S1 多加一根「未收盘」异常暴涨蜡烛，并让 S2 尾部少 1 天（检验时间戳对齐而非倒序下标！）。
+        let mk_candles = |n: usize, extra_unclosed: Option<f64>, bump: f64| {
+            let mut px = 100.0;
+            let mut cs = Vec::new();
+            for d in 0..n {
+                let r = if d % 2 == 0 { 0.04 } else { -0.03 } + bump * (d as f64 % 3.0);
+                px *= 1.0 + r;
+                cs.push(crate::hl::Candle {
+                    t: t0 + d as i64 * DAY,
+                    o: px,
+                    h: px,
+                    l: px,
+                    c: px,
+                    v: 1_000_000.0,
+                });
+            }
+            if let Some(jump) = extra_unclosed {
+                cs.push(crate::hl::Candle {
+                    t: t0 + n as i64 * DAY,
+                    o: px,
+                    h: px * jump,
+                    l: px,
+                    c: px * jump,
+                    v: 1_000_000.0,
+                });
+            }
+            cs
+        };
+        // now_ms 落在第 24 天（t0 + 24*DAY）刚开盘不久，因此 d=24 未收盘，仅 d<=23 已收盘。
+        let now_ms = t0 + 24 * DAY + 3_600_000;
+        let panel = vec![
+            crate::momentum::PanelEntry { coin: "L1".into(), candles: mk_candles(24, Some(5.0), 0.001) },
+            crate::momentum::PanelEntry { coin: "L2".into(), candles: mk_candles(24, None, 0.0) },
+            crate::momentum::PanelEntry { coin: "S1".into(), candles: mk_candles(24, Some(9.0), 0.0) },
+            // S2 少一天（只到 d=22）：若按倒序下标对齐会与其它币错开 1 天，组合波动会爆增到 ~3%+
+            crate::momentum::PanelEntry { coin: "S2".into(), candles: mk_candles(23, None, 0.0) },
+        ];
+        let weights = vec![
+            ("L1".into(), 0.25),
+            ("L2".into(), 0.25),
+            ("S1".into(), -0.25),
+            ("S2".into(), -0.25),
+        ];
+        let v_buf = book_vol_estimate_at(&panel, &weights, 2.7, now_ms).expect("应算出有效波动");
+        let v_raw = book_vol_estimate_at(&panel, &weights, 3.0, now_ms).expect("应算出有效波动");
+        // 未收盘的 5x/9x 跳空被剔除，且时间戳严格对齐后多空几乎完全抵消，日波动应远小于 1%
+        assert!(v_buf < 0.005, "未收盘蜡烛或时间戳错位污染了组合波动: {v_buf}");
+        assert!(((v_buf / v_raw) - (2.7 / 3.0)).abs() < 1e-9, "应按有效杠杆 2.7 缩放");
     }
 }
 

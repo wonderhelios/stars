@@ -263,20 +263,23 @@ function lvConfigInto(d) {
   if ($("lv-ml-dir")) $("lv-ml-dir").value = c.ml_dir || "";
   $("lv-positions").value = c.target_positions ?? 8;
   $("lv-leverage").value = c.leverage ?? 3;
+  if ($("lv-hard-cap")) $("lv-hard-cap").value = c.hard_gross_cap ?? 2.8;
   $("lv-buffer").value = Math.round((c.margin_buffer ?? 0.9) * 100);
   $("lv-slippage").value = ((c.slippage ?? 0.005) * 100).toFixed(2);
-  $("lv-slices").value = c.rebalance_slices ?? 3;
-  $("lv-tp").value = Math.round((c.take_profit_pct ?? 0.1) * 100);
+  $("lv-slices").value = c.rebalance_slices ?? 1;
+  if ($("lv-ema-alpha")) $("lv-ema-alpha").value = c.ema_alpha ?? 0.5;
+  if ($("lv-rebal-band")) $("lv-rebal-band").value = Math.round((c.rebal_band ?? 0.05) * 100);
+  $("lv-tp").value = Math.round((c.take_profit_pct ?? 0) * 100);
   if ($("lv-momw")) $("lv-momw").value = Math.round((c.momentum_weight ?? 0.5) * 100);
   if ($("lv-ddw")) $("lv-ddw").value = c.dd_weight ?? 0;
   if ($("lv-upw")) $("lv-upw").value = c.upfrac_weight ?? 0;
   if ($("lv-voltarget")) $("lv-voltarget").value = Math.round((c.vol_target ?? 0) * 1000) / 10;
-  if ($("lv-stop")) $("lv-stop").value = Math.round((c.position_stop_pct ?? 0.25) * 100);
+  if ($("lv-stop")) $("lv-stop").value = Math.round((c.position_stop_pct ?? 0) * 100);
   if ($("lv-cool")) $("lv-cool").value = c.stop_cooldown_days ?? 5;
   $("lv-lookback").value = c.lookback ?? 14;
-  $("lv-top").value = c.top_frac ?? 0.2;
+  $("lv-top").value = c.top_frac ?? 0.3;
   $("lv-minvol").value = String(c.min_vol_usd ?? 5000000);
-  $("lv-minpct").value = String((c.min_order_pct ?? 0) * 100);
+  $("lv-minpct").value = String((c.min_order_pct ?? 0.005) * 100);
   $("lv-armed").value = String(!!c.armed);
   $("lv-auto").value = String(!!c.auto_run);
 }
@@ -297,15 +300,18 @@ $("lv-save").addEventListener("click", async () => {
     ml_dir: $("lv-ml-dir") ? $("lv-ml-dir").value : "",
     target_positions: Number($("lv-positions").value),
     leverage: Number($("lv-leverage").value),
+    hard_gross_cap: $("lv-hard-cap") ? Number($("lv-hard-cap").value) : 2.8,
     margin_buffer: Number($("lv-buffer").value) / 100,
     slippage: Number($("lv-slippage").value) / 100,
     rebalance_slices: Number($("lv-slices").value),
+    ema_alpha: $("lv-ema-alpha") ? Number($("lv-ema-alpha").value) : 0.5,
+    rebal_band: ($("lv-rebal-band") ? Number($("lv-rebal-band").value) : 5) / 100,
     take_profit_pct: Number($("lv-tp").value) / 100,
     momentum_weight: ($("lv-momw") ? Number($("lv-momw").value) : 50) / 100,
     dd_weight: $("lv-ddw") ? (Number($("lv-ddw").value) || 0) : 0,
     upfrac_weight: $("lv-upw") ? (Number($("lv-upw").value) || 0) : 0,
     vol_target: ($("lv-voltarget") ? Number($("lv-voltarget").value) : 0) / 100,
-    position_stop_pct: ($("lv-stop") ? Number($("lv-stop").value) : 25) / 100,
+    position_stop_pct: ($("lv-stop") ? Number($("lv-stop").value) : 0) / 100,
     stop_cooldown_days: Number($("lv-cool") ? $("lv-cool").value : 5) || 0,
     lookback: Number($("lv-lookback").value),
     top_frac: Number($("lv-top").value),

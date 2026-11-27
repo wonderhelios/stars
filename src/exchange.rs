@@ -542,9 +542,10 @@ impl Exec {
 
     /// 先挂被动限价单（Alo / Post-Only）吃 Maker 费率（~0.015%），超时未成交再撤单改用 IOC 补齐。
     ///
-    /// - 挂单价贴近 `mid`（买单向下取整到 tick，卖单向上取整到 tick），不穿越盘口；
-    /// - 若 Alo 因会立即吃单而被拒（Post-Only reject），直接回退到 `ioc`；
-    /// - 若等待 `wait_secs` 后仍有未成交残余，先撤单；若撤单返回 `Ok(0)` 说明刚巧成交（不再补单，防止双倍成交），否则对残余量下 `ioc`。
+    /// - 挂单价严格位于 `mid` 被动一侧至少 `max(1bp, 1 tick)`（买单 `< mid`，卖单 `> mid`），
+    ///   避免在 1-tick 价差盘口上直接挂在 `mid` 触发 Post-Only 立即拒单；
+    /// - 最多进行 1–2 次快速被动重挂（刷新实时 `mid` 或按 tick 退让），最后残余再回退到 `ioc`；
+    /// - 撤单返回 `Ok(0)` 说明刚巧成交，绝不重复补单。
     #[allow(clippy::too_many_arguments)]
     pub async fn maker_then_ioc(
         &self,
@@ -558,132 +559,274 @@ impl Exec {
         wait_secs: u64,
     ) -> Result<String> {
         let trading = self.trading.as_ref().context("not a signing client")?;
-        let px = order_price(mid, sz_decimals, !buy);
-        if px <= 0.0 || wait_secs == 0 {
+        if !mid.is_finite() || mid <= 0.0 || wait_secs == 0 {
             let st = self
                 .ioc(coin, buy, reduce_only, size, mid, slippage, sz_decimals)
                 .await?;
             return Ok(describe(&st));
         }
 
-        let cloid = Uuid::new_v4();
+        const MAX_ATTEMPTS: usize = 3; // 1 次初始挂单 + 最多 2 次快速被动重挂
+        let total_deadline = tokio::time::Instant::now() + Duration::from_secs(wait_secs);
         let coin_owned = coin.to_string();
-        let resp = sdk_retry(&format!("被动挂单 {coin}"), || {
-            let order = ClientOrderRequest {
-                asset: coin_owned.clone(),
-                is_buy: buy,
-                reduce_only,
-                limit_px: px,
-                sz: size,
-                cloid: Some(cloid),
-                order_type: ClientOrder::Limit(ClientLimit { tif: "Alo".into() }),
-            };
-            trading.order(order, None)
-        })
-        .await;
-
-        let status = match resp.and_then(one_status) {
-            Ok(st) => st,
-            Err(e) => {
-                let msg = format!("{e:#}");
-                let explicit_reject = msg.contains("exchange order error:")
-                    || msg.contains("exchange action rejected:");
-                if explicit_reject {
-                    // Alo 被交易所明确拒绝（例如 Post-Only 会立即吃单）→ 安全回退 IOC
-                    let st = self
-                        .ioc(coin, buy, reduce_only, size, mid, slippage, sz_decimals)
-                        .await?;
-                    return Ok(format!("IOC回退 · {}", describe(&st)));
-                }
-                // 网络超时或未知错误：先按 cloid 查交易所状态，确认未挂单/未成交才允许回退 IOC，防止双倍下单
-                let cloid_hex = format!("0x{}", cloid.simple());
-                let acct = self.account.context("missing account for orderStatus")?;
-                let st_resp = self
-                    .info_post(json!({
-                        "type": "orderStatus",
-                        "user": acct.to_string(),
-                        "oid": cloid_hex,
-                    }))
-                    .await
-                    .with_context(|| format!("Alo 状态未知且查询失败 ({coin}): {msg}"))?;
-                let order_status = st_resp["status"].as_str().unwrap_or("");
-                if order_status == "unknownOid" {
-                    let st = self
-                        .ioc(coin, buy, reduce_only, size, mid, slippage, sz_decimals)
-                        .await?;
-                    return Ok(format!("IOC回退(未落地) · {}", describe(&st)));
-                }
-                let inner_status = st_resp["order"]["status"].as_str().unwrap_or("");
-                match inner_status {
-                    "filled" => return Ok(format!("Maker成交 {size:.6}@{px}")),
-                    "open" => {
-                        let oid = st_resp["order"]["order"]["oid"]
-                            .as_u64()
-                            .context("orderStatus open 缺少 oid")?;
-                        ExchangeDataStatus::Resting(hyperliquid_rust_sdk::RestingOrder { oid })
-                    }
-                    "canceled" | "rejected" | "marginCanceled" => {
-                        let st = self
-                            .ioc(coin, buy, reduce_only, size, mid, slippage, sz_decimals)
-                            .await?;
-                        return Ok(format!("IOC回退({inner_status}) · {}", describe(&st)));
-                    }
-                    _ => {
-                        bail!("Alo 下单状态未确认 ({coin}, status={order_status}/{inner_status}): {msg}");
-                    }
-                }
-            }
-        };
-
-        let oid = match status {
-            ExchangeDataStatus::Filled(_) => {
-                return Ok(format!("Maker · {}", describe(&status)));
-            }
-            ExchangeDataStatus::Resting(r) => r.oid,
-            other => {
-                let st = self
-                    .ioc(coin, buy, reduce_only, size, mid, slippage, sz_decimals)
-                    .await?;
-                return Ok(format!("IOC({other:?}) · {}", describe(&st)));
-            }
-        };
-
-        let deadline = tokio::time::Instant::now() + Duration::from_secs(wait_secs);
-        let mut remaining = size;
-        while tokio::time::Instant::now() < deadline {
-            tokio::time::sleep(Duration::from_secs(2)).await;
-            if let Ok(open) = self.open_order_details().await {
-                if let Some(o) = open.iter().find(|x| x.oid == oid) {
-                    remaining = o.sz;
-                } else {
-                    // 不在未成交挂单列表里，说明已全部成交
-                    return Ok(format!("Maker成交 {size:.6}@{px}"));
-                }
-            }
+        let mut cur_mid = mid;
+        let mut remaining = round_size(size, sz_decimals);
+        if remaining <= 0.0 {
+            remaining = size;
         }
+        let mut extra_ticks: u32 = 0;
+        let mut last_px = 0.0f64;
+        let mut any_rejected = false;
 
-        // 超时撤单：Ok(0) 表示 MissingOrder（撤单前刚成交），绝不重复下 IOC
-        match self.cancel_orders(&[(coin_owned, oid)]).await {
-            Ok(0) => return Ok(format!("Maker成交 {size:.6}@{px}")),
-            Ok(_) => {}
-            Err(e) => {
-                return Err(e.context(format!("Maker 超时撤单失败 {coin} (oid={oid})")));
+        for attempt in 0..MAX_ATTEMPTS {
+            if remaining <= 0.0 {
+                return Ok(format!("Maker成交 {size:.6}@{last_px}"));
             }
+            if attempt > 0 && remaining * cur_mid < 10.0 {
+                let filled = (size - remaining).max(0.0);
+                return Ok(format!("Maker成交 {filled:.6}@{last_px}"));
+            }
+            let now = tokio::time::Instant::now();
+            if now >= total_deadline {
+                break;
+            }
+            let px = passive_alo_price(cur_mid, sz_decimals, buy, extra_ticks);
+            if px <= 0.0 {
+                break;
+            }
+            last_px = px;
+
+            let cloid = Uuid::new_v4();
+            let resp = sdk_retry(&format!("被动挂单 {coin}"), || {
+                let order = ClientOrderRequest {
+                    asset: coin_owned.clone(),
+                    is_buy: buy,
+                    reduce_only,
+                    limit_px: px,
+                    sz: remaining,
+                    cloid: Some(cloid),
+                    order_type: ClientOrder::Limit(ClientLimit { tif: "Alo".into() }),
+                };
+                trading.order(order, None)
+            })
+            .await;
+
+            let status = match resp.and_then(one_status) {
+                Ok(st) => st,
+                Err(e) => {
+                    let msg = format!("{e:#}");
+                    let explicit_reject = msg.contains("exchange order error:")
+                        || msg.contains("exchange action rejected:");
+                    if explicit_reject {
+                        any_rejected = true;
+                        if attempt + 1 < MAX_ATTEMPTS && tokio::time::Instant::now() < total_deadline {
+                            if let Ok(fresh) = self.all_mids().await {
+                                if let Some(&m) = fresh.get(coin) {
+                                    if m.is_finite() && m > 0.0 {
+                                        cur_mid = m;
+                                    }
+                                }
+                            }
+                            extra_ticks = extra_ticks.saturating_add(1);
+                            tokio::time::sleep(Duration::from_millis(150)).await;
+                            continue;
+                        }
+                        break;
+                    }
+                    // 网络超时或未知错误：先按 cloid 查交易所状态，确认未挂单/未成交才允许重试或回退 IOC
+                    let cloid_hex = format!("0x{}", cloid.simple());
+                    let acct = self.account.context("missing account for orderStatus")?;
+                    let st_resp = self
+                        .info_post(json!({
+                            "type": "orderStatus",
+                            "user": acct.to_string(),
+                            "oid": cloid_hex,
+                        }))
+                        .await
+                        .with_context(|| format!("Alo 状态未知且查询失败 ({coin}): {msg}"))?;
+                    match parse_order_status(&st_resp, sz_decimals) {
+                        OrderStatusCheck::UnknownOid => {
+                            any_rejected = true;
+                            break;
+                        }
+                        OrderStatusCheck::Filled => {
+                            return Ok(format!("Maker成交 {size:.6}@{px}"));
+                        }
+                        OrderStatusCheck::Open { oid, rem } => {
+                            if let Some(r) = rem {
+                                remaining = r;
+                            }
+                            ExchangeDataStatus::Resting(hyperliquid_rust_sdk::RestingOrder { oid })
+                        }
+                        OrderStatusCheck::TerminalUnfilled { rem } => {
+                            if let Some(r) = rem {
+                                remaining = r;
+                            }
+                            if remaining <= 0.0 {
+                                return Ok(format!("Maker成交 {size:.6}@{px}"));
+                            }
+                            any_rejected = true;
+                            if attempt + 1 < MAX_ATTEMPTS && tokio::time::Instant::now() < total_deadline {
+                                if let Ok(fresh) = self.all_mids().await {
+                                    if let Some(&m) = fresh.get(coin) {
+                                        if m.is_finite() && m > 0.0 {
+                                            cur_mid = m;
+                                        }
+                                    }
+                                }
+                                extra_ticks = extra_ticks.saturating_add(1);
+                                tokio::time::sleep(Duration::from_millis(150)).await;
+                                continue;
+                            }
+                            break;
+                        }
+                        OrderStatusCheck::Ambiguous(detail) => {
+                            bail!("Alo 下单状态未确认 ({coin}, {detail}): {msg}");
+                        }
+                    }
+                }
+            };
+
+            let oid = match status {
+                ExchangeDataStatus::Filled(_) => {
+                    return Ok(format!("Maker · {}", describe(&status)));
+                }
+                ExchangeDataStatus::Resting(r) => r.oid,
+                _ => {
+                    any_rejected = true;
+                    break;
+                }
+            };
+
+            let left_budget = total_deadline.saturating_duration_since(tokio::time::Instant::now());
+            let attempts_left = (MAX_ATTEMPTS - attempt) as u64;
+            let slice_dur = if attempt + 1 < MAX_ATTEMPTS {
+                let split = (left_budget.as_secs() / attempts_left).max(3);
+                Duration::from_secs(split).min(left_budget)
+            } else {
+                left_budget
+            };
+            let slice_deadline = tokio::time::Instant::now() + slice_dur;
+
+            while tokio::time::Instant::now() < slice_deadline {
+                let step = Duration::from_secs(2)
+                    .min(slice_deadline.saturating_duration_since(tokio::time::Instant::now()));
+                if step.is_zero() {
+                    break;
+                }
+                tokio::time::sleep(step).await;
+                if let Ok(open) = self.open_order_details().await {
+                    if !open.iter().any(|x| x.oid == oid) {
+                        // 不在未成交挂单列表里，说明已全部成交
+                        return Ok(format!("Maker成交 {size:.6}@{px}"));
+                    }
+                }
+            }
+
+            // 撤单：Ok(0) 表示 MissingOrder（撤单前刚成交），绝不重复下 IOC 或重挂
+            match self.cancel_orders(&[(coin_owned.clone(), oid)]).await {
+                Ok(0) => return Ok(format!("Maker成交 {size:.6}@{px}")),
+                Ok(_) => {
+                    // 撤单返回 Ok(n) 后必须查 orderStatus 确认最终剩余未成交量：
+                    // 若最后一次轮询与撤单之间发生部分成交，不查就会用过期 remaining 造成双倍下单！
+                    let acct = self.account.context("missing account for post-cancel orderStatus")?;
+                    let st_resp = self
+                        .info_post(json!({
+                            "type": "orderStatus",
+                            "user": acct.to_string(),
+                            "oid": oid,
+                        }))
+                        .await
+                        .with_context(|| format!("撤单后查询 orderStatus 失败 ({coin}, oid={oid})，中止补单防双倍成交"))?;
+                    match parse_order_status(&st_resp, sz_decimals) {
+                        OrderStatusCheck::Filled => {
+                            return Ok(format!("Maker成交 {size:.6}@{px}"));
+                        }
+                        OrderStatusCheck::TerminalUnfilled { rem: Some(r) } => {
+                            remaining = r;
+                            if remaining <= 0.0 {
+                                return Ok(format!("Maker成交 {size:.6}@{px}"));
+                            }
+                        }
+                        OrderStatusCheck::TerminalUnfilled { rem: None } => {
+                            bail!("撤单后 orderStatus 缺少剩余数量 sz ({coin}, oid={oid})，中止补单防双倍成交");
+                        }
+                        OrderStatusCheck::Open { .. }
+                        | OrderStatusCheck::UnknownOid
+                        | OrderStatusCheck::Ambiguous(_) => {
+                            bail!("撤单后订单状态异常 ({coin}, oid={oid}, resp={st_resp})，中止补单防双倍成交");
+                        }
+                    }
+                }
+                Err(e) => {
+                    return Err(e.context(format!("Maker 超时撤单失败 {coin} (oid={oid})")));
+                }
+            }
+
+            // 撤单后再刷新最新 mid 准备重挂或 IOC 回退
+            if let Ok(fresh) = self.all_mids().await {
+                if let Some(&m) = fresh.get(coin) {
+                    if m.is_finite() && m > 0.0 {
+                        cur_mid = m;
+                    }
+                }
+            }
+            // 上一笔成功挂上盘口（未被 Post-Only 拒单），重挂时回到最新 mid 的标准被动档位
+            extra_ticks = 0;
         }
 
         let rem = round_size(remaining, sz_decimals);
-        if rem <= 0.0 || rem * mid < 10.0 {
-            return Ok(format!("Maker成交 {:.6}@{px}", (size - rem).max(0.0)));
+        let filled_maker = (size - rem).max(0.0);
+        if rem <= 0.0 || (filled_maker > 1e-12 && rem * cur_mid < 10.0) {
+            return Ok(format!("Maker成交 {filled_maker:.6}@{last_px}"));
         }
         let st = self
-            .ioc(coin, buy, reduce_only, rem, mid, slippage, sz_decimals)
+            .ioc(coin, buy, reduce_only, rem, cur_mid, slippage, sz_decimals)
             .await?;
-        let filled_maker = (size - rem).max(0.0);
         if filled_maker > 1e-12 {
             Ok(format!("Maker {filled_maker:.6} + IOC {rem:.6} · {}", describe(&st)))
+        } else if any_rejected {
+            Ok(format!("IOC回退 · {}", describe(&st)))
         } else {
             Ok(format!("超时转IOC · {}", describe(&st)))
         }
+    }
+}
+
+#[derive(Debug, PartialEq)]
+enum OrderStatusCheck {
+    UnknownOid,
+    Filled,
+    Open { oid: u64, rem: Option<f64> },
+    TerminalUnfilled { rem: Option<f64> },
+    Ambiguous(String),
+}
+
+fn parse_order_status(st_resp: &Value, sz_decimals: i32) -> OrderStatusCheck {
+    let order_status = st_resp["status"].as_str().unwrap_or("");
+    if order_status == "unknownOid" {
+        return OrderStatusCheck::UnknownOid;
+    }
+    if order_status != "order" {
+        return OrderStatusCheck::Ambiguous(format!("status={order_status}"));
+    }
+    let inner_status = st_resp["order"]["status"].as_str().unwrap_or("");
+    let rem = st_resp["order"]["order"]["sz"]
+        .as_str()
+        .and_then(|s| s.parse::<f64>().ok())
+        .or_else(|| st_resp["order"]["order"]["sz"].as_f64())
+        .filter(|v| v.is_finite() && *v >= 0.0)
+        .map(|v| round_size(v, sz_decimals));
+    match inner_status {
+        "filled" => OrderStatusCheck::Filled,
+        "open" => match st_resp["order"]["order"]["oid"].as_u64() {
+            Some(oid) => OrderStatusCheck::Open { oid, rem },
+            None => OrderStatusCheck::Ambiguous("open missing oid".into()),
+        },
+        "canceled" | "rejected" | "marginCanceled" | "reduceOnlyCanceled" | "minTradeNtlRejected" => {
+            OrderStatusCheck::TerminalUnfilled { rem }
+        }
+        other => OrderStatusCheck::Ambiguous(format!("status={order_status}/{other}")),
     }
 }
 
@@ -709,6 +852,102 @@ pub fn order_price(px: f64, sz_decimals: i32, round_up: bool) -> f64 {
         scaled.ceil() / factor
     } else {
         scaled.floor() / factor
+    }
+}
+
+/// Hyperliquid 单档最小价格步进（遵循 5 位有效数字与 `6 - sz_decimals` 小数位规则）。
+pub fn price_tick(px: f64, sz_decimals: i32) -> f64 {
+    if !px.is_finite() || px <= 0.0 {
+        return 0.0;
+    }
+    let decimal_places = (4 - px.log10().floor() as i32).min(6 - sz_decimals);
+    10_f64.powi(-decimal_places)
+}
+
+/// 构造严格被动（Post-Only / Alo）挂单价：
+/// 至少相对 `mid` 退让 `max(1bp, 1 tick)`，并支持 `extra_ticks` 档额外退让。
+/// 保证买单严格 `< mid`、卖单严格 `> mid`，同时满足 HL tick/sig-fig 规则。
+pub fn passive_alo_price(mid: f64, sz_decimals: i32, buy: bool, extra_ticks: u32) -> f64 {
+    if !mid.is_finite() || mid <= 0.0 {
+        return 0.0;
+    }
+    let tick = price_tick(mid, sz_decimals);
+    if !tick.is_finite() || tick <= 0.0 {
+        return 0.0;
+    }
+    let base_offset = (mid * 0.0001).max(tick);
+    if buy {
+        let raw = mid - base_offset;
+        if raw <= 0.0 {
+            return 0.0;
+        }
+        let mut px = order_price(raw, sz_decimals, false);
+        while px >= mid && px > 0.0 {
+            let step = price_tick(px * (1.0 - 1e-9), sz_decimals).max(tick);
+            let next = order_price((px - step * 0.5).max(0.0), sz_decimals, false);
+            if next >= px {
+                let next2 = order_price((px - step).max(0.0), sz_decimals, false);
+                if next2 >= px {
+                    break;
+                }
+                px = next2;
+            } else {
+                px = next;
+            }
+        }
+        for _ in 0..extra_ticks {
+            if px <= 0.0 {
+                return 0.0;
+            }
+            let step = price_tick(px * (1.0 - 1e-9), sz_decimals);
+            if step <= 0.0 {
+                break;
+            }
+            let next = order_price((px - step * 0.5).max(0.0), sz_decimals, false);
+            px = if next < px {
+                next
+            } else {
+                order_price((px - step).max(0.0), sz_decimals, false)
+            };
+        }
+        if px > 0.0 && px < mid {
+            px
+        } else {
+            0.0
+        }
+    } else {
+        let raw = mid + base_offset;
+        let mut px = order_price(raw, sz_decimals, true);
+        while px <= mid {
+            let step = price_tick(px, sz_decimals).max(tick);
+            let next = order_price(px + step * 0.5, sz_decimals, true);
+            if next <= px {
+                let next2 = order_price(px + step, sz_decimals, true);
+                if next2 <= px {
+                    break;
+                }
+                px = next2;
+            } else {
+                px = next;
+            }
+        }
+        for _ in 0..extra_ticks {
+            let step = price_tick(px, sz_decimals);
+            if step <= 0.0 {
+                break;
+            }
+            let next = order_price(px + step * 0.5, sz_decimals, true);
+            px = if next > px {
+                next
+            } else {
+                order_price(px + step, sz_decimals, true)
+            };
+        }
+        if px > mid {
+            px
+        } else {
+            0.0
+        }
     }
 }
 
@@ -800,5 +1039,72 @@ mod account_value_tests {
         assert!(parse_perp_equity(&json!({"marginSummary":{}})).is_err());
         assert!(parse_perp_equity(&json!({"marginSummary":{"accountValue":"not-a-number"}})).is_err());
         assert!(parse_perp_equity(&json!({"marginSummary":{"accountValue":"-1"}})).is_err());
+    }
+
+    #[test]
+    fn passive_alo_price_is_strictly_passive_across_scales() {
+        let cases = [
+            (0.0000123, 0),
+            (0.000512, 0),
+            (0.084119, 1),
+            (1.0, 2),
+            (10.0, 2),
+            (100.0, 2),
+            (256.78, 3),
+            (3250.5, 4),
+            (85000.0, 5),
+            (99999.0, 5),
+        ];
+        for (mid, sz_dec) in cases {
+            let buy0 = passive_alo_price(mid, sz_dec, true, 0);
+            let sell0 = passive_alo_price(mid, sz_dec, false, 0);
+            assert!(
+                buy0 > 0.0 && buy0 < mid,
+                "mid={mid} sz_dec={sz_dec}: buy_px {buy0} 必须严格 < mid"
+            );
+            assert!(
+                sell0 > mid,
+                "mid={mid} sz_dec={sz_dec}: sell_px {sell0} 必须严格 > mid"
+            );
+            let tick = price_tick(mid, sz_dec);
+            let min_gap = (mid * 0.0001).max(tick) * (1.0 - 1e-9);
+            assert!(
+                mid - buy0 >= min_gap - tick * 1e-6,
+                "mid={mid} sz_dec={sz_dec}: buy_px={buy0} 退让不足 (gap={}, min={min_gap})",
+                mid - buy0
+            );
+            assert!(
+                sell0 - mid >= min_gap - tick * 1e-6,
+                "mid={mid} sz_dec={sz_dec}: sell_px={sell0} 退让不足 (gap={}, min={min_gap})",
+                sell0 - mid
+            );
+            let buy1 = passive_alo_price(mid, sz_dec, true, 1);
+            let sell1 = passive_alo_price(mid, sz_dec, false, 1);
+            assert!(buy1 < buy0, "mid={mid}: extra_ticks=1 买价 {buy1} 应 < {buy0}");
+            assert!(sell1 > sell0, "mid={mid}: extra_ticks=1 卖价 {sell1} 应 > {sell0}");
+        }
+        assert_eq!(passive_alo_price(0.0, 2, true, 0), 0.0);
+        assert_eq!(passive_alo_price(f64::NAN, 2, false, 0), 0.0);
+    }
+
+    #[test]
+    fn parse_order_status_extracts_remaining_after_partial_fill_cancel() {
+        let filled = json!({"status": "order", "order": {"status": "filled", "order": {"oid": 42, "sz": "0"}}});
+        assert_eq!(parse_order_status(&filled, 2), OrderStatusCheck::Filled);
+
+        let partial_canceled = json!({"status": "order", "order": {"status": "canceled", "order": {"oid": 42, "sz": "3.456"}}});
+        assert_eq!(
+            parse_order_status(&partial_canceled, 2),
+            OrderStatusCheck::TerminalUnfilled { rem: Some(3.45) }
+        );
+
+        let open = json!({"status": "order", "order": {"status": "open", "order": {"oid": 99, "sz": "1.2"}}});
+        assert_eq!(
+            parse_order_status(&open, 2),
+            OrderStatusCheck::Open { oid: 99, rem: Some(1.2) }
+        );
+
+        let unknown = json!({"status": "unknownOid"});
+        assert_eq!(parse_order_status(&unknown, 2), OrderStatusCheck::UnknownOid);
     }
 }

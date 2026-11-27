@@ -220,19 +220,21 @@ async fn main() -> anyhow::Result<()> {
                 if markets.is_empty() {
                     continue;
                 }
-                let orders = crate::trader::neutralize_orders(&acct, &markets, &mids, 0.02, 10.0);
+                // 5% 净敞口漂移死区（原 2% 过于敏感，会反复与日调仓 / EMA 漂移打架）
+                let orders = crate::trader::neutralize_orders(&acct, &markets, &mids, 0.05, 10.0);
                 for o in orders {
                     match exec
-                        .ioc(&o.coin, o.buy, true, o.size, o.mid, cfg.slippage, o.sz_decimals)
+                        .maker_then_ioc(&o.coin, o.buy, true, o.size, o.mid, cfg.slippage, o.sz_decimals, 12)
                         .await
                     {
-                        Ok(_) => {
+                        Ok(fill_msg) => {
                             info!(
-                                "净敞口中性化：{} {} {:.6}（{}）",
+                                "净敞口中性化：{} {} {:.6}（{} · {}）",
                                 if o.buy { "买" } else { "卖" },
                                 o.coin,
                                 o.size,
-                                o.reason
+                                o.reason,
+                                fill_msg
                             );
                             // 把中性化订单也写进记录 ✗ 否则对账时它们只会显示成
                             // "交易所补录 · 意图未确认"✗ 用户看不懂这几笔是怎么来的 ✓
@@ -245,7 +247,7 @@ async fn main() -> anyhow::Result<()> {
                                 size: o.size,
                                 price: o.mid,
                                 notional: o.size * o.mid,
-                                result: format!("按中间价 {:.6} 发送", o.mid),
+                                result: fill_msg,
                                 live: true,
                                 pnl: None,
                                 tid: None,

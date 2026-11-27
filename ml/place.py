@@ -26,6 +26,7 @@ import uuid
 
 # 签名依赖只在真实签名时加载；离线预测、dry-run 和订单计算不需要安装它们。
 from predict import latest_positions
+from strategy import load_config
 
 INFO_URL = "https://api.hyperliquid.xyz/info"
 EXCHANGE_URL = "https://api.hyperliquid.xyz/exchange"
@@ -207,23 +208,57 @@ def fmt_price(px: float, sz_decimals: int, round_up: bool) -> str:
     return f"{p:.{decimal_places}f}"
 
 
-def build_orders(target: dict, current: dict, idx: dict, decimals: dict, equity: float, mids=None):
-    """带符号目标权重 vs 当前持仓 → 下单列表。
+_ACTION_PRIORITY = {
+    "close": 0,
+    "reduce": 1,
+    "flip": 2,
+    "increase": 3,
+    "open": 4,
+}
 
-    target[coin] 是相对子账户净值的目标名义权重；目标外旧仓一律归零。
+
+def default_drift_band() -> float:
+    """从 strategy_config.json 读取默认同向持仓漂移死区（默认 0.25）。"""
+    try:
+        return float(load_config().get("drift_band", 0.25))
+    except Exception:
+        return 0.25
+
+
+def build_orders_with_meta(
+    target: dict,
+    current: dict,
+    idx: dict,
+    decimals: dict,
+    equity: float,
+    mids=None,
+    drift_band: float | None = None,
+) -> tuple[list[dict], list[dict]]:
+    """带符号目标权重 vs 当前持仓 → 先平后开的订单列表及执行元信息。
+
+    规则：
+      - target[coin] 是相对子账户净值的目标名义权重；目标外旧仓一律归零（全平）；
+      - 同向续持仓位若 |delta_usd| / max(target_usd, 1e-9) < drift_band，跳过微调；
+      - 新开仓（open）、全平仓（close）和反手（flip）绝不受 drift_band 拦截；
+      - 订单按 close → reduce → flip → increase → open 排序（同级按 coin 字母序），
+        且 close/reduce 严格标记 reduce_only (r=True)。
     """
     if not math.isfinite(equity) or equity <= 0:
         raise ValueError("子账户净值必须为正数")
     if not target or not all(math.isfinite(float(w)) for w in target.values()):
         raise ValueError("目标权重为空或含非有限值，拒绝下单")
-    orders = []
+    band = default_drift_band() if drift_band is None else float(drift_band)
+    if not math.isfinite(band) or band < 0.0 or band >= 1.0:
+        raise ValueError("drift_band 必须在 [0.0, 1.0) 内")
+
+    items = []
     mids = mids if mids is not None else info_post({"type": "allMids"})
     # 关键: 遍历【目标 ∪ 当前持仓】，确保被移出目标旧仓也会平仓。
     for coin in sorted(set(target) | set(current)):
         asset_idx = idx.get(coin)
         if asset_idx is None:
             raise ValueError("目标或当前持仓缺少资产序号: %s" % coin)
-        cur_size = current.get(coin, 0.0)
+        cur_size = float(current.get(coin, 0.0))
         dec = decimals.get(coin, 5)
         px = float(mids.get(coin, 0.0))
         if not math.isfinite(px) or px <= 0:
@@ -231,8 +266,34 @@ def build_orders(target: dict, current: dict, idx: dict, decimals: dict, equity:
         # 目标数量 = 带符号权重 × 净值 / 价格；不在目标里 = 0（平仓）。
         target_size = float(target.get(coin, 0.0)) * equity / px
         delta = target_size - cur_size
-        if abs(delta) * px < MIN_NOTIONAL_USD:  # 差额小于 $10 不调
+        delta_usd = abs(delta) * px
+        target_usd = abs(target_size) * px
+
+        same_side = (cur_size != 0.0) and (target_size != 0.0) and ((cur_size > 0.0) == (target_size > 0.0))
+        # 同向续持漂移死区：跳过微小再平衡，避免吃单磨损；新开/全平/反手始终放行。
+        if same_side and band > 0.0:
+            if delta_usd / max(target_usd, 1e-9) < band:
+                continue
+
+        if delta_usd < MIN_NOTIONAL_USD:  # 差额小于 $10 不调
             continue
+
+        if target_size == 0.0:
+            action = "close"
+            reduce_only = True
+        elif same_side and abs(target_size) < abs(cur_size):
+            action = "reduce"
+            reduce_only = True
+        elif cur_size != 0.0 and not same_side:
+            action = "flip"
+            reduce_only = False
+        elif same_side:
+            action = "increase"
+            reduce_only = False
+        else:
+            action = "open"
+            reduce_only = False
+
         buy = delta > 0  # 买 = 加多/减空
         # Ioc 吃单价：买单上浮、卖单下浮在 slippage 内；再按 tick size 格式化
         aggressive = px * (1.0 + SLIPPAGE) if buy else px * (1.0 - SLIPPAGE)
@@ -251,11 +312,39 @@ def build_orders(target: dict, current: dict, idx: dict, decimals: dict, equity:
             "b": buy,
             "p": price_str,
             "s": size_str,
-            "r": False,
+            "r": reduce_only,
             "t": {"limit": {"tif": "Ioc"}},
         }
-        # cloid 只在有值时加（Rust 里 skip_serializing_if = Option::is_none）
-        orders.append(order)
+        meta = {
+            "coin": coin,
+            "action": action,
+            "reduce_only": reduce_only,
+            "mid": px,
+            "cur_size": cur_size,
+            "target_size": target_size,
+            "delta_usd": delta_usd,
+        }
+        items.append((_ACTION_PRIORITY[action], coin, order, meta))
+
+    items.sort(key=lambda item: (item[0], item[1]))
+    orders = [item[2] for item in items]
+    metas = [item[3] for item in items]
+    return orders, metas
+
+
+def build_orders(
+    target: dict,
+    current: dict,
+    idx: dict,
+    decimals: dict,
+    equity: float,
+    mids=None,
+    drift_band: float | None = None,
+):
+    """带符号目标权重 vs 当前持仓 → 先平后开的 HL 下单列表。"""
+    orders, _ = build_orders_with_meta(
+        target, current, idx, decimals, equity, mids=mids, drift_band=drift_band,
+    )
     return orders
 
 
@@ -536,7 +625,7 @@ def main():
             print(f"[place] 推导 API wallet 地址失败: {e}", file=sys.stderr, flush=True)
 
     current = current_positions(vault)
-    # buffer11 必须基于真实旧仓方向和当前截面排名，不能使用无持仓预览。
+    # 持仓缓冲（exit_rank=13）必须基于真实旧仓方向和当前截面排名，不能使用无持仓预览。
     target = latest_positions(current_positions=current)
     if not getattr(args, 'json_out', False):
         print(f"目标持仓（{target['date']}）：做多 {target['long']} 做空 {target['short']}")
@@ -549,23 +638,31 @@ def main():
         print(f"子账户净值 ${equity:,.2f}")
 
     idx, decimals = meta_index()
-    # 只消费冻结三周期集成 + buffer11 给出的带符号固定权重。
     target_map = target.get("weights")
     if not isinstance(target_map, dict) or not target_map:
         raise ValueError("预测结果缺少带符号 weights，拒绝下单")
 
+    drift_band = target.get("drift_band")
     mids = info_post({"type": "allMids"})
-    orders = build_orders(target_map, current, idx, decimals, equity, mids=mids)
+    orders, order_metas = build_orders_with_meta(
+        target_map, current, idx, decimals, equity, mids=mids, drift_band=drift_band,
+    )
 
-    # 把 asset 序号换回币名（给前端/监控看）
+    # 把 asset 序号换回币名，并保留 close-first 顺序与 reduce_only/mid/action 字段给 Rust /api/ml/execute
     coin_of = {v: k for k, v in idx.items()}
     order_views = []
-    for o in orders:
+    for o, meta in zip(orders, order_metas):
         order_views.append({
             "coin": coin_of.get(o["a"], str(o["a"])),
             "buy": o["b"],
             "price": o["p"],
+            "mid": meta["mid"],
             "size": o["s"],
+            "reduce_only": bool(o.get("r", False)),
+            "action": meta["action"],
+            "cur_size": meta["cur_size"],
+            "target_size": meta["target_size"],
+            "delta_usd": round(meta["delta_usd"], 4),
         })
 
     def _exec():

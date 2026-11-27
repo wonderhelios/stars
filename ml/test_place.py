@@ -163,5 +163,66 @@ class TestPlaceMakerFirst(unittest.TestCase):
         self.assertEqual(calls[1]["orders"][0]["a"], 1)
 
 
+class TestDriftBandAndCloseFirst(unittest.TestCase):
+    def setUp(self):
+        self.idx = {"OPEN": 0, "CLOSE": 1, "FLIP_LS": 2, "FLIP_SL": 3, "KEEP_SMALL": 4, "KEEP_BIG": 5, "REDUCE": 6}
+        self.dec = {k: 3 for k in self.idx}
+        self.mids = {k: "100" for k in self.idx}
+
+    def test_drift_band_skips_small_same_side_but_allows_large_same_side(self):
+        # target notional = $200 (2.0 coins @ $100)
+        # KEEP_SMALL: cur=1.60 -> delta=+0.40 ($40), ratio=40/200=20% < 25% -> 跳过
+        # KEEP_BIG:   cur=1.40 -> delta=+0.60 ($60), ratio=60/200=30% >= 25% -> 执行
+        # REDUCE:     cur=-2.60 -> target=-2.00, delta=+0.60 ($60), ratio=30% >= 25% -> 执行且 reduce_only=True
+        target = {"KEEP_SMALL": 0.20, "KEEP_BIG": 0.20, "REDUCE": -0.20}
+        current = {"KEEP_SMALL": 1.60, "KEEP_BIG": 1.40, "REDUCE": -2.60}
+        orders, metas = place.build_orders_with_meta(
+            target, current, self.idx, self.dec, equity=1000.0, mids=self.mids, drift_band=0.25,
+        )
+        coins = [m["coin"] for m in metas]
+        self.assertNotIn("KEEP_SMALL", coins)
+        self.assertEqual(coins, ["REDUCE", "KEEP_BIG"])  # reduce 先于 increase
+        self.assertTrue(orders[0]["r"])
+        self.assertEqual(metas[0]["action"], "reduce")
+        self.assertFalse(orders[1]["r"])
+        self.assertEqual(metas[1]["action"], "increase")
+
+    def test_drift_band_never_blocks_opens_closes_or_flips_and_sorts_close_first(self):
+        # OPEN: 0 -> +2.0 (open, r=False)
+        # CLOSE: +0.5 -> 0 (close, r=True)
+        # FLIP_LS: +0.2 -> -2.0 (flip, r=False)
+        # FLIP_SL: -0.2 -> +2.0 (flip, r=False)
+        # REDUCE: +3.0 -> +2.0 (reduce, delta/target=50% >= 25%, r=True)
+        # KEEP_SMALL: +1.8 -> +2.0 (ratio=10% < 25%, skipped)
+        target = {
+            "OPEN": 0.20,
+            "FLIP_LS": -0.20,
+            "FLIP_SL": 0.20,
+            "REDUCE": 0.20,
+            "KEEP_SMALL": 0.20,
+        }
+        current = {
+            "CLOSE": 0.50,
+            "FLIP_LS": 0.20,
+            "FLIP_SL": -0.20,
+            "REDUCE": 3.00,
+            "KEEP_SMALL": 1.80,
+        }
+        orders, metas = place.build_orders_with_meta(
+            target, current, self.idx, self.dec, equity=1000.0, mids=self.mids, drift_band=0.25,
+        )
+        actions = [(m["coin"], m["action"], o["r"], o["b"], float(o["s"])) for o, m in zip(orders, metas)]
+        self.assertEqual(actions, [
+            ("CLOSE", "close", True, False, 0.5),
+            ("REDUCE", "reduce", True, False, 1.0),
+            ("FLIP_LS", "flip", False, False, 2.2),
+            ("FLIP_SL", "flip", False, True, 2.2),
+            ("OPEN", "open", False, True, 2.0),
+        ])
+        # 所有 reduce_only=True 订单严格排在 reduce_only=False 之前
+        ro_flags = [o["r"] for o in orders]
+        self.assertEqual(ro_flags, [True, True, False, False, False])
+
+
 if __name__ == "__main__":
     unittest.main()

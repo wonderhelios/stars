@@ -1296,7 +1296,7 @@
               <div class="setup-fields">
                 <div class="field"><label for="lv-positions">每侧持仓数</label><input id="lv-positions" type="number" value="8" min="1" max="30" /></div>
                 <div class="field"><label for="lv-lookback">动量回看（天）</label><input id="lv-lookback" type="number" value="14" min="2" max="120" /></div>
-                <div class="field"><label for="lv-top">选币比例</label><input id="lv-top" type="number" value="0.2" min="0.02" max="0.9" step="0.05" /></div>
+                <div class="field"><label for="lv-top">选币比例</label><input id="lv-top" type="number" value="0.3" min="0.02" max="0.5" step="0.05" /></div>
                 <div class="field"><label for="lv-minvol">最低日成交额</label>
                   <select id="lv-minvol">
                     <option value="2000000">$2M</option>
@@ -1304,24 +1304,27 @@
                     <option value="10000000">$10M</option>
                   </select>
                 </div>
-                <div class="field"><label for="lv-slices">错峰调仓档数</label><input id="lv-slices" type="number" value="3" min="1" max="10" step="1" /></div>
-                <div class="field"><label for="lv-tp">止盈比例（0 关闭）</label><input id="lv-tp" type="number" value="10" min="0" max="50" step="1" /></div>
+                <div class="field"><label for="lv-slices">错峰调仓档数</label><input id="lv-slices" type="number" value="1" min="1" max="10" step="1" /></div>
+                <div class="field"><label for="lv-ema-alpha">EMA 平滑系数（0.1~1）</label><input id="lv-ema-alpha" type="number" value="0.5" min="0.1" max="1" step="0.05" /></div>
+                <div class="field"><label for="lv-rebal-band">调仓死区（%）</label><input id="lv-rebal-band" type="number" value="5" min="0" max="50" step="1" /></div>
+                <div class="field"><label for="lv-tp">止盈比例（0 关闭）</label><input id="lv-tp" type="number" value="0" min="0" max="50" step="1" /></div>
                 <div class="field"><label for="lv-momw">动量权重（%）</label><input id="lv-momw" type="number" value="50" min="0" max="100" step="5" /></div>
                 <div class="field"><label for="lv-ddw">距 14 日高点权重（0 关闭）</label><input id="lv-ddw" type="number" value="0" min="0" max="2" step="0.1" /></div>
                 <div class="field"><label for="lv-upw">上涨天数占比权重（0 关闭）</label><input id="lv-upw" type="number" value="0" min="0" max="2" step="0.1" /></div>
                 <div class="field"><label for="lv-voltarget">目标日波动（0 关闭）</label><input id="lv-voltarget" type="number" value="0" min="0" max="10" step="0.5" /></div>
-                <div class="field"><label for="lv-stop">单币止损（0 关闭）</label><input id="lv-stop" type="number" value="25" min="0" max="90" step="1" /></div>
+                <div class="field"><label for="lv-stop">单币止损（0 关闭）</label><input id="lv-stop" type="number" value="0" min="0" max="90" step="1" /></div>
                 <div class="field"><label for="lv-cool">止损冷却（天）</label><input id="lv-cool" type="number" value="5" min="0" max="60" step="1" /></div>
               </div>
             </section>
 
             <section class="setup-card">
-              <header><span class="setup-number">03</span><div><h3>资金与成交约束</h3><p>控制目标杠杆、保证金缓冲与 IOC 回退滑点上限。</p></div></header>
+              <header><span class="setup-number">03</span><div><h3>资金与成交约束</h3><p>控制目标杠杆、硬杠杆上限、保证金缓冲与 IOC 回退滑点上限。</p></div></header>
               <div class="setup-fields">
                 <div class="field"><label for="lv-leverage">目标杠杆</label><input id="lv-leverage" type="number" value="3" min="1" max="20" step="0.5" /></div>
+                <div class="field"><label for="lv-hard-cap">硬杠杆上限（x）</label><input id="lv-hard-cap" type="number" value="2.8" min="0.5" max="5" step="0.1" /></div>
                 <div class="field"><label for="lv-buffer">保证金上限（%）</label><input id="lv-buffer" type="number" value="90" min="30" max="100" /></div>
                 <div class="field"><label for="lv-slippage">滑点上限（%）</label><input id="lv-slippage" type="number" value="0.5" min="0.05" max="5" step="0.05" /></div>
-                <div class="field"><label for="lv-minpct">最小订单 / 净值（%）</label><input id="lv-minpct" type="number" value="0" min="0" max="5" step="0.1" /></div>
+                <div class="field"><label for="lv-minpct">最小订单 / 净值（%）</label><input id="lv-minpct" type="number" value="0.5" min="0" max="5" step="0.1" /></div>
               </div>
             </section>
 
