@@ -73,9 +73,18 @@ pub struct RefreshStatus {
 pub fn router(state: AppState) -> Router {
     Router::new()
         .route("/", get(index_html))
-        .route("/app.js", get(app_js))
-        .route("/limitoco.css", get(limitoco_css))
-        .route("/limitoco.js", get(limitoco_js))
+        .route("/css/tokens.css", get(css_tokens))
+        .route("/css/base.css", get(css_base))
+        .route("/css/components.css", get(css_components))
+        .route("/js/main.js", get(js_main))
+        .route("/js/core/api.js", get(js_core_api))
+        .route("/js/core/fmt.js", get(js_core_fmt))
+        .route("/js/core/chart.js", get(js_core_chart))
+        .route("/js/core/router.js", get(js_core_router))
+        .route("/js/views/overview.js", get(js_view_overview))
+        .route("/js/views/live.js", get(js_view_live))
+        .route("/js/views/limitoco.js", get(js_view_limitoco))
+        .route("/js/views/archive.js", get(js_view_archive))
         .route("/api/health", get(health))
         .route("/api/status", get(status))
         .route("/api/live", get(live_status))
@@ -156,49 +165,42 @@ async fn require_auth(
 }
 
 const INDEX_HTML: &str = include_str!("../static/index.html");
-const APP_JS: &str = include_str!("../static/app.js");
-const LIMITOCO_CSS: &str = include_str!("../static/limitoco.css");
-const LIMITOCO_JS: &str = include_str!("../static/limitoco.js");
+const CSS_TOKENS: &str = include_str!("../static/css/tokens.css");
+const CSS_BASE: &str = include_str!("../static/css/base.css");
+const CSS_COMPONENTS: &str = include_str!("../static/css/components.css");
+const JS_MAIN: &str = include_str!("../static/js/main.js");
+const JS_CORE_API: &str = include_str!("../static/js/core/api.js");
+const JS_CORE_FMT: &str = include_str!("../static/js/core/fmt.js");
+const JS_CORE_CHART: &str = include_str!("../static/js/core/chart.js");
+const JS_CORE_ROUTER: &str = include_str!("../static/js/core/router.js");
+const JS_VIEW_OVERVIEW: &str = include_str!("../static/js/views/overview.js");
+const JS_VIEW_LIVE: &str = include_str!("../static/js/views/live.js");
+const JS_VIEW_LIMITOCO: &str = include_str!("../static/js/views/limitoco.js");
+const JS_VIEW_ARCHIVE: &str = include_str!("../static/js/views/archive.js");
 
-async fn index_html() -> impl IntoResponse {
+fn static_asset(content_type: &'static str, body: &'static str) -> impl IntoResponse {
     (
         [
-            (header::CONTENT_TYPE, "text/html; charset=utf-8"),
+            (header::CONTENT_TYPE, content_type),
             (header::CACHE_CONTROL, "no-cache, no-store, must-revalidate"),
         ],
-        INDEX_HTML,
+        body,
     )
 }
 
-async fn app_js() -> impl IntoResponse {
-    (
-        [
-            (header::CONTENT_TYPE, "text/javascript; charset=utf-8"),
-            (header::CACHE_CONTROL, "no-cache, no-store, must-revalidate"),
-        ],
-        APP_JS,
-    )
-}
-
-async fn limitoco_css() -> impl IntoResponse {
-    (
-        [
-            (header::CONTENT_TYPE, "text/css; charset=utf-8"),
-            (header::CACHE_CONTROL, "no-cache, no-store, must-revalidate"),
-        ],
-        LIMITOCO_CSS,
-    )
-}
-
-async fn limitoco_js() -> impl IntoResponse {
-    (
-        [
-            (header::CONTENT_TYPE, "text/javascript; charset=utf-8"),
-            (header::CACHE_CONTROL, "no-cache, no-store, must-revalidate"),
-        ],
-        LIMITOCO_JS,
-    )
-}
+async fn index_html() -> impl IntoResponse { static_asset("text/html; charset=utf-8", INDEX_HTML) }
+async fn css_tokens() -> impl IntoResponse { static_asset("text/css; charset=utf-8", CSS_TOKENS) }
+async fn css_base() -> impl IntoResponse { static_asset("text/css; charset=utf-8", CSS_BASE) }
+async fn css_components() -> impl IntoResponse { static_asset("text/css; charset=utf-8", CSS_COMPONENTS) }
+async fn js_main() -> impl IntoResponse { static_asset("text/javascript; charset=utf-8", JS_MAIN) }
+async fn js_core_api() -> impl IntoResponse { static_asset("text/javascript; charset=utf-8", JS_CORE_API) }
+async fn js_core_fmt() -> impl IntoResponse { static_asset("text/javascript; charset=utf-8", JS_CORE_FMT) }
+async fn js_core_chart() -> impl IntoResponse { static_asset("text/javascript; charset=utf-8", JS_CORE_CHART) }
+async fn js_core_router() -> impl IntoResponse { static_asset("text/javascript; charset=utf-8", JS_CORE_ROUTER) }
+async fn js_view_overview() -> impl IntoResponse { static_asset("text/javascript; charset=utf-8", JS_VIEW_OVERVIEW) }
+async fn js_view_live() -> impl IntoResponse { static_asset("text/javascript; charset=utf-8", JS_VIEW_LIVE) }
+async fn js_view_limitoco() -> impl IntoResponse { static_asset("text/javascript; charset=utf-8", JS_VIEW_LIMITOCO) }
+async fn js_view_archive() -> impl IntoResponse { static_asset("text/javascript; charset=utf-8", JS_VIEW_ARCHIVE) }
 
 async fn health() -> &'static str {
     "ok"
@@ -1009,13 +1011,14 @@ async fn strategy_health(State(state): State<AppState>) -> Json<serde_json::Valu
         .into_iter()
         .map(|(coin, candles)| PanelEntry { coin, candles })
         .collect();
-    let hist: Vec<(i64, f64)> = {
+    let (hist, params) = {
         let st = state.live.lock().await;
-        // 用【时间加权指数】（起点 1.0 ✗ 跳过出入金那一步 ✓）
-        // 不能用"扣除出入金后的盈亏"✗ 那个是负数 ✗ 回撤会算出 122% 这种假数字 ✓
-        crate::live::index_history(&st)
+        (
+            crate::live::index_history(&st),
+            crate::health::HealthParams::from_live_config(&st.config),
+        )
     };
-    let h = crate::health::compute(&panel, &hist);
+    let h = crate::health::compute_with_params(&panel, &hist, &params);
     Json(serde_json::json!(h))
 }
 
@@ -1496,6 +1499,7 @@ async fn ml_reset(State(state): State<AppState>) -> Response {
     let now = crate::live::now_ms_pub();
     let mut st = state.live.lock().await;
     st.ml_history.clear();
+    st.ml_capital_flows.clear();
     if snap.equity.is_finite() && snap.equity > 0.0 {
         st.ml_history.push(crate::live::EquityPoint { ts: now, equity: snap.equity, pnl: 0.0 });
     }
@@ -1578,8 +1582,16 @@ async fn live_status(State(state): State<AppState>) -> Response {
             }
         }
     }
-    // 五项健康指标（红黄绿）✗ 需要 IC/回撤 ✗ 从同一份面板和调整后净值算 ✓
-    let scorecard = {
+    {
+        let current = state.live.lock().await;
+        snap.ml_history = current.ml_history.clone();
+        snap.ml_capital_flows = current.ml_capital_flows.clone();
+        snap.ml_net_deposit = current.ml_capital_flows.iter().filter(|f| f.amount.is_finite()).map(|f| f.amount).sum();
+        snap.mom_index_history = crate::live::index_history(&current);
+        snap.ml_index_history = crate::live::ml_index_history(&current);
+    }
+    // 健康指标（红黄绿）：按实盘 3 因子 + TWR 净值指数计算
+    let (scorecard, health_summary) = {
         let panel: Vec<PanelEntry> = state
             .store
             .all_panels()
@@ -1588,12 +1600,14 @@ async fn live_status(State(state): State<AppState>) -> Response {
             .map(|(coin, candles)| PanelEntry { coin, candles })
             .collect();
         if panel.is_empty() {
-            Vec::new()
+            (Vec::new(), None)
         } else {
             let st2 = state.live.lock().await;
-            let hist = crate::live::adjusted_history(&st2);
-            let h = crate::health::compute(&panel, &hist);
-            crate::live::scorecard(&st2, &h)
+            let hist = crate::live::index_history(&st2);
+            let params = crate::health::HealthParams::from_live_config(&st2.config);
+            let h = crate::health::compute_with_params(&panel, &hist, &params);
+            let sc = crate::live::scorecard(&st2, &h);
+            (sc, Some(h))
         }
     };
     // 当前组合预估日波动（已含杠杆）✗ 就是波动目标看的那个数 ✓
@@ -1619,6 +1633,9 @@ async fn live_status(State(state): State<AppState>) -> Response {
     let mut v = json!(snap);
     if let Some(obj) = v.as_object_mut() {
         obj.insert("scorecard".into(), serde_json::Value::Array(scorecard));
+        if let Some(h) = health_summary {
+            obj.insert("health".into(), serde_json::json!(h));
+        }
         obj.insert(
             "vol_now".into(),
             serde_json::json!({
@@ -1635,6 +1652,9 @@ struct CapitalBody {
     amount: f64,
     effective_ts: Option<i64>,
     note: Option<String>,
+    /// "momentum"（默认）或 "ml"
+    #[serde(default)]
+    account_type: Option<String>,
 }
 
 #[derive(serde::Deserialize)]
@@ -1889,11 +1909,7 @@ async fn live_run(State(state): State<AppState>, body: Option<Json<LiveRunBody>>
                 g.last_live = live;
                 if live {
                     g.records.extend(records);
-                    g.history.push(crate::live::EquityPoint {
-                        ts: crate::live::now_ms_pub(),
-                        equity: result.equity,
-                        pnl: 0.0,
-                    });
+                    g.push_history_dedup(crate::live::now_ms_pub(), result.equity, 0.0);
                 }
                 let _ = g.save(&live_path);
             }
@@ -1917,8 +1933,38 @@ async fn live_capital(State(state): State<AppState>, Json(body): Json<CapitalBod
     if !amount.is_finite() || amount == 0.0 {
         return (StatusCode::BAD_REQUEST, Json(json!({"ok": false, "error": "金额必须是有限且非零的数"}))).into_response();
     }
+    let is_ml = body.account_type.as_deref() == Some("ml");
     let mut st = state.live.lock().await;
     let previous = st.clone();
+    if is_ml {
+        if let Some(ts) = body.effective_ts {
+            if ts <= 0 || ts > crate::live::now_ms_pub() {
+                return (StatusCode::BAD_REQUEST, Json(json!({"ok":false,"error":"ML 流水时间不合法"}))).into_response();
+            }
+        }
+        if st.ml_capital_flows.iter().any(|f| {
+            (f.amount - amount).abs() < 0.01
+                && f.effective_ts.or(Some(f.ts)) == body.effective_ts.or(Some(f.ts))
+        }) {
+            return (
+                StatusCode::CONFLICT,
+                Json(json!({"ok": false, "error": "ML 已存在相同金额与时间的流水"})),
+            )
+                .into_response();
+        }
+        st.ml_capital_flows.push(crate::live::CapitalFlow {
+            ts: crate::live::now_ms_pub(),
+            effective_ts: body.effective_ts,
+            amount,
+            note: body.note.unwrap_or_default(),
+        });
+        if let Err(e) = st.save(&state.live_path) {
+            *st = previous;
+            return (StatusCode::INTERNAL_SERVER_ERROR, Json(json!({"ok": false, "error": format!("保存失败: {e:#}")}))).into_response();
+        }
+        let ml_net: f64 = st.ml_capital_flows.iter().filter(|f| f.amount.is_finite()).map(|f| f.amount).sum();
+        return Json(json!({"ok": true, "account_type": "ml", "ml_net_deposit": ml_net})).into_response();
+    }
     if !(st.net_deposit + amount).is_finite() {
         return (StatusCode::BAD_REQUEST, Json(json!({"ok":false,"error":"累计金额超出范围"}))).into_response();
     }
@@ -1955,12 +2001,26 @@ async fn live_capital(State(state): State<AppState>, Json(body): Json<CapitalBod
 #[derive(serde::Deserialize)]
 struct FlowIndexBody {
     index: usize,
+    #[serde(default)]
+    account_type: Option<String>,
 }
 
 /// 删除一条资金流水（用于清理重复提交）。会同步修正 net_deposit。
 async fn live_capital_delete(State(state): State<AppState>, Json(body): Json<FlowIndexBody>) -> Response {
     let mut st = state.live.lock().await;
     let previous = st.clone();
+    if body.account_type.as_deref() == Some("ml") {
+        if body.index >= st.ml_capital_flows.len() {
+            return (StatusCode::BAD_REQUEST, Json(json!({"ok": false, "error": "ML 流水序号越界"}))).into_response();
+        }
+        let removed = st.ml_capital_flows.remove(body.index);
+        if let Err(e) = st.save(&state.live_path) {
+            *st = previous;
+            return (StatusCode::INTERNAL_SERVER_ERROR, Json(json!({"ok": false, "error": format!("保存失败: {e:#}")}))).into_response();
+        }
+        let ml_net: f64 = st.ml_capital_flows.iter().filter(|f| f.amount.is_finite()).map(|f| f.amount).sum();
+        return Json(json!({"ok": true, "removed": removed.amount, "ml_net_deposit": ml_net})).into_response();
+    }
     if body.index >= st.capital_flows.len() {
         return (StatusCode::BAD_REQUEST, Json(json!({"ok": false, "error": "流水序号越界"}))).into_response();
     }
@@ -2558,8 +2618,26 @@ mod live_routes_tests {
         assert_eq!(resp.status(), StatusCode::OK);
 
         // Serve artistic frontend assets
-        assert_eq!(app.clone().oneshot(Request::builder().uri("/limitoco.css").body(Body::empty()).unwrap()).await.unwrap().status(), StatusCode::OK);
-        assert_eq!(app.clone().oneshot(Request::builder().uri("/limitoco.js").body(Body::empty()).unwrap()).await.unwrap().status(), StatusCode::OK);
+        for uri in [
+            "/css/tokens.css",
+            "/css/base.css",
+            "/css/components.css",
+            "/js/main.js",
+            "/js/core/api.js",
+            "/js/core/fmt.js",
+            "/js/core/chart.js",
+            "/js/core/router.js",
+            "/js/views/overview.js",
+            "/js/views/live.js",
+            "/js/views/limitoco.js",
+            "/js/views/archive.js",
+        ] {
+            assert_eq!(
+                app.clone().oneshot(Request::builder().uri(uri).body(Body::empty()).unwrap()).await.unwrap().status(),
+                StatusCode::OK,
+                "static route failed: {uri}"
+            );
+        }
 
         drop(app); drop(base);
         std::fs::remove_dir_all(root).unwrap();

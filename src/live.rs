@@ -293,6 +293,9 @@ pub struct LiveState {
     /// ML 子账户 B 的净值历史（默认全部账户曲线 = 动量 + ML 合并）。
     #[serde(default)]
     pub ml_history: Vec<EquityPoint>,
+    /// ML 子账户出入金流水（用于计算 ML 真实 TWR 曲线，消除划转造成的假暴跌/假暴涨）。
+    #[serde(default)]
+    pub ml_capital_flows: Vec<CapitalFlow>,
     pub records: Vec<LiveRecord>,
     pub last_run_at: Option<i64>,
     pub last_plan: Vec<String>,
@@ -494,6 +497,25 @@ impl LiveState {
         std::fs::write(path,bytes)?;
         Ok(())
     }
+
+    /// 统一按小时去重追加动量净值点（同一小时覆盖最新点，避免曲线重复时间戳与毛刺）。
+    pub fn push_history_dedup(&mut self, ts: i64, equity: f64, pnl: f64) {
+        if !equity.is_finite() || equity <= 0.0 || !pnl.is_finite() {
+            return;
+        }
+        let hour = ts / 3_600_000;
+        if self.history.last().map(|p| p.ts / 3_600_000) == Some(hour) {
+            if let Some(last) = self.history.last_mut() {
+                *last = EquityPoint { ts, equity, pnl };
+            }
+        } else {
+            self.history.push(EquityPoint { ts, equity, pnl });
+        }
+        let len = self.history.len();
+        if len > 6000 {
+            self.history.drain(0..len - 6000);
+        }
+    }
 }
 
 #[derive(Serialize)]
@@ -578,6 +600,18 @@ pub struct LiveSnapshot {
     /// ML 子账户 B 的净值历史（默认全部账户曲线 = 动量 + ML 合并）。
     #[serde(default)]
     pub ml_history: Vec<EquityPoint>,
+    /// ML 子账户出入金流水（用于消除划转造成的假暴跌）。
+    #[serde(default)]
+    pub ml_capital_flows: Vec<CapitalFlow>,
+    /// ML 累计净入金（由 ml_capital_flows 汇总）。
+    #[serde(default)]
+    pub ml_net_deposit: f64,
+    /// 动量账户 TWR 净值指数（起点 = 1.0，跳过出入金阶跃）。
+    #[serde(default)]
+    pub mom_index_history: Vec<(i64, f64)>,
+    /// ML 账户 TWR 净值指数（起点 = 1.0，跳过已记录流水及未登记的瞬时大额划转阶跃）。
+    #[serde(default)]
+    pub ml_index_history: Vec<(i64, f64)>,
     pub records: Vec<LiveRecord>,
     pub last_run_at: Option<i64>,
     pub last_plan: Vec<String>,
@@ -686,6 +720,52 @@ pub fn index_history(state: &LiveState) -> Vec<(i64, f64)> {
 }
 
 
+/// ML 子账户时间加权收益指数（TWR，起点 = 1.0）。
+///
+/// 跳过所有已登记的 `ml_capital_flows` 时间点；同时对历史未补录的瞬时大额划转
+/// （间隔 ≤ 2 小时且单步净值突变超过 ±15%，如 11-16 划出 $630）自动视为资金划转步跳过，
+/// 避免曲线上出现虚假的 -26% 暴跌。
+pub fn ml_index_history(state: &LiveState) -> Vec<(i64, f64)> {
+    let mut flows: Vec<i64> = state
+        .ml_capital_flows
+        .iter()
+        .filter(|f| f.amount.is_finite() && f.amount != 0.0)
+        .map(|f| f.effective_ts.unwrap_or(f.ts))
+        .collect();
+    flows.sort_unstable();
+    let mut pts: Vec<_> = state
+        .ml_history
+        .iter()
+        .filter(|p| p.equity.is_finite() && p.equity > 0.0)
+        .collect();
+    pts.sort_by_key(|p| p.ts);
+    let mut out = Vec::with_capacity(pts.len());
+    let mut idx = 1.0f64;
+    let mut prev: Option<(i64, f64)> = None;
+    let mut fi = 0usize;
+    for p in pts {
+        let mut had_flow = false;
+        while fi < flows.len() && flows[fi] <= p.ts {
+            had_flow = true;
+            fi += 1;
+        }
+        if let Some((pts_prev, pe)) = prev {
+            if !had_flow && pe > 0.0 {
+                let ratio = p.equity / pe;
+                let dt_ms = (p.ts - pts_prev).max(0);
+                // 未补录的瞬时资金划转保护：<= 2 小时内单步变化超 ±15% 视作外部划转
+                let unrecorded_transfer = dt_ms <= 2 * 3_600_000 && (ratio - 1.0).abs() > 0.15;
+                if !unrecorded_transfer {
+                    idx *= ratio;
+                }
+            }
+        }
+        prev = Some((p.ts, p.equity));
+        out.push((p.ts, idx));
+    }
+    out
+}
+
 /// 五项健康指标（供前端红黄绿显示）。
 ///
 /// 每项都带 status: green / yellow / red / unknown（样本不足）。
@@ -760,8 +840,8 @@ pub fn scorecard(state: &LiveState, health: &crate::health::Health) -> Vec<serde
         None => (None, "unknown"),
     };
 
-    // ④ 回撤（在【指数】上算 ✗ 指数永远为正 ✓）
-    let (dd, s_dd) = {
+    // ④ 回撤（在 TWR 指数上分别算「当前回撤」与「历史最大回撤」，不再混淆！）
+    let (cur_dd, max_dd, s_dd) = {
         let mut peak = f64::NEG_INFINITY;
         let mut worst = 0.0f64;
         for (_, v) in idx.iter() {
@@ -771,11 +851,13 @@ pub fn scorecard(state: &LiveState, health: &crate::health::Health) -> Vec<serde
                 if cur > worst { worst = cur; }
             }
         }
-        if idx.len() < 2 {
-            (None, "unknown")
+        let last_v = idx.last().map(|(_, v)| *v).unwrap_or(0.0);
+        if idx.len() < 2 || peak <= 0.0 {
+            (None, None, "unknown")
         } else {
-            let s = if worst < 20.0 { "green" } else if worst < 34.0 { "yellow" } else { "red" };
-            (Some(worst), s)
+            let cur_now = ((peak - last_v) / peak * 100.0).max(0.0);
+            let s = if cur_now < 20.0 { "green" } else if cur_now < 34.0 { "yellow" } else { "red" };
+            (Some(cur_now), Some(worst.max(0.0)), s)
         }
     };
 
@@ -785,9 +867,9 @@ pub fn scorecard(state: &LiveState, health: &crate::health::Health) -> Vec<serde
         serde_json::json!({"key":"gross","name":"毛收益 / 手续费","value":gross30,"unit":"%","status":s_gross,
             "fee":fee30,"fee_pct":fee_pct_out,"net":ret30,
             "good":"毛收益 ≥ 手续费 2 倍","bad":"毛收益 < 手续费"}),
-        serde_json::json!({"key":"ic90","name":"90 日因子 IC","value":ic,"unit":"","status":s_ic,
+        serde_json::json!({"key":"ic90","name":format!("90 日 IC ({})", health.factor_label),"value":ic,"unit":"","status":s_ic,
             "good":"> 0.02","bad":"< 0.009"}),
-        serde_json::json!({"key":"dd","name":"当前回撤","value":dd,"unit":"%","status":s_dd,
+        serde_json::json!({"key":"dd","name":"当前回撤","value":cur_dd,"max_dd":max_dd,"unit":"%","status":s_dd,
             "good":"越小越好 · < 20% 为健康","bad":"> 34%"}),
     ]
 }
@@ -885,6 +967,10 @@ pub async fn snapshot(
         config: cfg.clone(),
         history: state.history.clone(),
         ml_history: state.ml_history.clone(),
+        ml_capital_flows: state.ml_capital_flows.clone(),
+        ml_net_deposit: state.ml_capital_flows.iter().filter(|f| f.amount.is_finite()).map(|f| f.amount).sum(),
+        mom_index_history: index_history(state),
+        ml_index_history: ml_index_history(state),
         records: state.records.clone(),
         last_run_at: state.last_run_at,
         last_plan: state.last_plan.clone(),

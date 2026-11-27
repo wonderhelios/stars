@@ -349,11 +349,7 @@ async fn main() -> anyhow::Result<()> {
                         if let Some(k) = result.vol_k {
                             guard.vol_k = k;
                         }
-                        guard.history.push(live::EquityPoint {
-                            pnl: 0.0,
-                            ts: now_ms(),
-                            equity: result.equity,
-                        });
+                        guard.push_history_dedup(now_ms(), result.equity, 0.0);
                         let _ = guard.save(&st.live_path);
                         info!("实盘自动调仓完成：{:?}", result.executed);
                     }
