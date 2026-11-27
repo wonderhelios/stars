@@ -87,6 +87,7 @@ pub fn router(state: AppState) -> Router {
         .route("/js/core/api.js", get(assets::js_core_api))
         .route("/js/core/fmt.js", get(assets::js_core_fmt))
         .route("/js/core/chart.js", get(assets::js_core_chart))
+        .route("/js/core/pager.js", get(assets::js_core_pager))
         .route("/js/core/router.js", get(assets::js_core_router))
         .route("/js/views/overview.js", get(assets::js_view_overview))
         .route("/js/views/live.js", get(assets::js_view_live))

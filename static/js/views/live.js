@@ -13,6 +13,7 @@ import {
   signCls,
 } from "../core/fmt.js";
 import { renderLineChart } from "../core/chart.js";
+import { bindPager, paginate, renderPagerHtml } from "../core/pager.js";
 
 function twrSummary(idxHist) {
   if (!Array.isArray(idxHist) || idxHist.length < 2) return { ret: null, curDd: null, maxDd: null };
@@ -69,6 +70,9 @@ export function createLiveView() {
   let showDust = false;
   let mlPlanOut = "";
   let busy = false;
+  let pgFills = 1;
+  let pgFlows = 1;
+  let pgDaily = 1;
 
   async function load() {
     data = await apiGet("/api/live");
@@ -165,7 +169,6 @@ export function createLiveView() {
             <div class="hero-value">${fmtUsd(totEq)}</div>
             <div class="hero-delta">
               <span class="pill ${signCls(combStratPnl)}">累计盈亏 ${fmtSignedUsd(combStratPnl)}</span>
-              <span class="muted" style="font-size:11.5px;font-weight:500">已剔除出入金</span>
             </div>
           </div>
           <div class="hero-cell">
@@ -288,10 +291,10 @@ export function createLiveView() {
     const planLines = Array.isArray(d.last_plan) ? d.last_plan : [];
     const chartTitle =
       scope === "all"
-        ? (chartUnit === "usd" ? "全部账户真实策略盈亏（± USD · 已剔除出入金）" : "全部账户加权 TWR 收益率（%）")
+        ? (chartUnit === "usd" ? "全部账户盈亏" : "全部账户 TWR")
         : scope === "mom"
-          ? (chartUnit === "usd" ? "动量策略真实盈亏（± USD · 已剔除出入金）" : "动量策略 TWR 累计收益率（%）")
-          : (chartUnit === "usd" ? "ML 策略真实盈亏（± USD · 已剔除划转）" : "ML 策略 TWR 累计收益率（%）");
+          ? (chartUnit === "usd" ? "动量策略盈亏" : "动量 TWR")
+          : (chartUnit === "usd" ? "ML 策略盈亏" : "ML TWR");
 
     body.innerHTML = `
       ${heroHtml}
@@ -299,11 +302,10 @@ export function createLiveView() {
       <div class="card">
         <div class="card-head">
           <div class="card-title-group">
-            <span class="eyebrow">${chartUnit === "usd" ? "CASHFLOW-ADJUSTED PNL" : "TIME-WEIGHTED RETURN"}</span>
+            <span class="eyebrow">${chartUnit === "usd" ? "STRATEGY PNL" : "TWR RETURN"}</span>
             <h2 class="card-title">${chartTitle}</h2>
             <div class="chart-headline">
               <span class="chart-big-num ${signCls(activeHeadline)}">${activeHeadlineTxt}</span>
-              <span class="muted mono" style="font-size:11.5px">零线之上为盈利 · 之下为亏损</span>
             </div>
           </div>
           <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
@@ -326,8 +328,8 @@ export function createLiveView() {
         <div class="card">
           <div class="card-head">
             <div class="card-title-group">
-              <span class="eyebrow">REAL-TIME HEALTH SCORECARD</span>
-              <h2 class="card-title">策略四维体检（实盘 3 因子 + TWR 回撤）</h2>
+              <span class="eyebrow">HEALTH</span>
+              <h2 class="card-title">策略体检</h2>
             </div>
             <span class="muted mono" style="font-size:11.5px">上次运行 ${fmtBj(d.last_run_at)}</span>
           </div>
@@ -338,8 +340,8 @@ export function createLiveView() {
       <div class="card">
         <div class="card-head">
           <div class="card-title-group">
-            <span class="eyebrow">LATEST EXECUTION LOG</span>
-            <h2 class="card-title">最近一次动量计划 / 调仓摘要</h2>
+            <span class="eyebrow">EXECUTION LOG</span>
+            <h2 class="card-title">最近调仓计划</h2>
           </div>
           <div style="display:flex;gap:8px">
             <button type="button" class="btn sm" id="lv-quick-mom-plan">预览动量计划</button>
@@ -523,18 +525,24 @@ export function createLiveView() {
     const flows = (scope === "mom" ? momFlows : scope === "ml" ? mlFlows : [...momFlows, ...mlFlows])
       .sort((a, b) => (b.effective_ts || b.ts) - (a.effective_ts || a.ts));
 
-    const daily = (d.exec_daily || []).slice().reverse().slice(0, 14);
-    const records = (d.records || []).slice().reverse().slice(0, 50);
+    const dailyAll = (d.exec_daily || []).slice().reverse();
+    const recordsAll = (d.records || []).slice().reverse();
+    const flowsPage = paginate(flows, pgFlows, 8);
+    pgFlows = flowsPage.page;
+    const dailyPage = paginate(dailyAll, pgDaily, 8);
+    pgDaily = dailyPage.page;
+    const fillsPage = paginate(recordsAll, pgFills, 8);
+    pgFills = fillsPage.page;
 
     body.innerHTML = `
       <div class="grid-2">
         <div class="card">
           <div class="card-head">
             <div class="card-title-group">
-              <span class="eyebrow">CAPITAL FLOWS · TWR CALIBRATION</span>
-              <h2 class="card-title">出入金流水登记（支持动量 &amp; ML）</h2>
+              <span class="eyebrow">CAPITAL FLOWS</span>
+              <h2 class="card-title">出入金流水</h2>
             </div>
-            <span class="mono muted" style="font-size:11px">动量净入金 ${fmtSignedUsd(d.net_deposit || 0, 0)} · ML ${fmtSignedUsd(d.ml_net_deposit || 0, 0)}</span>
+            <span class="mono muted" style="font-size:11px">动量 ${fmtSignedUsd(d.net_deposit || 0, 0)} · ML ${fmtSignedUsd(d.ml_net_deposit || 0, 0)}</span>
           </div>
           <div class="form-grid" style="grid-template-columns:repeat(auto-fill,minmax(130px,1fr));margin-bottom:10px">
             <div class="field">
@@ -546,7 +554,7 @@ export function createLiveView() {
             </div>
             <div class="field">
               <label>金额 (入+/出-)</label>
-              <input id="cf-amount" type="number" step="10" placeholder="如 -630 或 1000" />
+              <input id="cf-amount" type="number" step="10" placeholder="如 -630" />
             </div>
             <div class="field">
               <label>到账时间 (可选)</label>
@@ -554,18 +562,18 @@ export function createLiveView() {
             </div>
             <div class="field">
               <label>备注</label>
-              <input id="cf-note" type="text" placeholder="划转说明" />
+              <input id="cf-note" type="text" placeholder="备注" />
             </div>
           </div>
           <div style="display:flex;gap:8px;margin-bottom:12px">
             <button type="button" class="btn primary sm" id="cf-add">记录流水</button>
           </div>
-          ${flows.length ? `
+          ${flowsPage.rows.length ? `
             <div class="table-wrap">
               <table class="tbl">
-                <thead><tr><th>账户</th><th>到账时间</th><th class="num">金额</th><th>备注</th><th></th></tr></thead>
+                <thead><tr><th>账户</th><th>时间</th><th class="num">金额</th><th>备注</th><th></th></tr></thead>
                 <tbody>
-                  ${flows.map((f) => `
+                  ${flowsPage.rows.map((f) => `
                     <tr>
                       <td><span class="pill ${f._acct === "ml" ? "info" : ""}">${f._acct === "ml" ? "ML" : "动量"}</span></td>
                       <td class="mono muted">${fmtBj(f.effective_ts || f.ts)}</td>
@@ -577,22 +585,23 @@ export function createLiveView() {
                 </tbody>
               </table>
             </div>
-          ` : `<div class="empty">暂无出入金记录。若 ML 曾有划转（如 -\$630），可在此补录或由 TWR 自动跳过。</div>`}
+            ${renderPagerHtml("pg-flows", flowsPage.page, flowsPage.totalPages, flowsPage.total)}
+          ` : `<div class="empty">暂无出入金记录。</div>`}
         </div>
 
         <div class="card">
           <div class="card-head">
             <div class="card-title-group">
-              <span class="eyebrow">EXECUTION QUALITY</span>
-              <h2 class="card-title">每日执行与滑点统计（近 14 日）</h2>
+              <span class="eyebrow">EXECUTION</span>
+              <h2 class="card-title">每日执行统计</h2>
             </div>
           </div>
-          ${daily.length ? `
+          ${dailyPage.rows.length ? `
             <div class="table-wrap">
               <table class="tbl">
-                <thead><tr><th>UTC 日期</th><th class="num">笔数</th><th class="num">成交名义</th><th class="num">日换手</th><th class="num">平均滑点</th></tr></thead>
+                <thead><tr><th>日期</th><th class="num">笔数</th><th class="num">成交名义</th><th class="num">换手</th><th class="num">均滑点</th></tr></thead>
                 <tbody>
-                  ${daily.map((r) => `
+                  ${dailyPage.rows.map((r) => `
                     <tr>
                       <td class="mono">${fmtBj(r.day * 86_400_000).slice(0, 5)}</td>
                       <td class="num">${r.orders}</td>
@@ -604,6 +613,7 @@ export function createLiveView() {
                 </tbody>
               </table>
             </div>
+            ${renderPagerHtml("pg-daily", dailyPage.page, dailyPage.totalPages, dailyPage.total)}
           ` : `<div class="empty">暂无执行统计。</div>`}
         </div>
       </div>
@@ -611,17 +621,17 @@ export function createLiveView() {
       <div class="card">
         <div class="card-head">
           <div class="card-title-group">
-            <span class="eyebrow">RECENT FILLS · LAST 50</span>
-            <h2 class="card-title">动量成交回执流水</h2>
+            <span class="eyebrow">FILLS</span>
+            <h2 class="card-title">成交流水</h2>
           </div>
           <button type="button" class="btn danger sm" id="lv-clear-records">清空记录</button>
         </div>
-        ${records.length ? `
+        ${fillsPage.rows.length ? `
           <div class="table-wrap">
             <table class="tbl">
               <thead><tr><th>时间</th><th>标的</th><th>方向</th><th class="num">名义</th><th class="num">参考价</th><th class="num">已实现盈亏</th><th>执行结果</th></tr></thead>
               <tbody>
-                ${records.map((r) => {
+                ${fillsPage.rows.map((r) => {
                   const isMaker = /Maker成交/i.test(r.result || "");
                   return `
                     <tr>
@@ -638,9 +648,14 @@ export function createLiveView() {
               </tbody>
             </table>
           </div>
-        ` : `<div class="empty">暂无成交回执。</div>`}
+          ${renderPagerHtml("pg-fills", fillsPage.page, fillsPage.totalPages, fillsPage.total)}
+        ` : `<div class="empty">暂无成交流水。</div>`}
       </div>
     `;
+
+    bindPager(body, "pg-flows", (p) => { pgFlows = p; renderLedger(body, d); });
+    bindPager(body, "pg-daily", (p) => { pgDaily = p; renderLedger(body, d); });
+    bindPager(body, "pg-fills", (p) => { pgFills = p; renderLedger(body, d); });
 
     document.getElementById("cf-add")?.addEventListener("click", async () => {
       const amount = Number(document.getElementById("cf-amount")?.value);
@@ -931,8 +946,8 @@ export function createLiveView() {
   }
 
   return {
-    title: "实盘 · 动量 + ML",
-    subtitle: "Hyperliquid 实盘双策略监控、持仓、账务与风控设置",
+    title: "实盘",
+    subtitle: "动量 + ML",
     pollMs: 25_000,
     async mount(el) {
       root = el;

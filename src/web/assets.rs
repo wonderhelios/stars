@@ -10,6 +10,7 @@ const JS_MAIN: &str = include_str!("../../static/js/main.js");
 const JS_CORE_API: &str = include_str!("../../static/js/core/api.js");
 const JS_CORE_FMT: &str = include_str!("../../static/js/core/fmt.js");
 const JS_CORE_CHART: &str = include_str!("../../static/js/core/chart.js");
+const JS_CORE_PAGER: &str = include_str!("../../static/js/core/pager.js");
 const JS_CORE_ROUTER: &str = include_str!("../../static/js/core/router.js");
 const JS_VIEW_OVERVIEW: &str = include_str!("../../static/js/views/overview.js");
 const JS_VIEW_LIVE: &str = include_str!("../../static/js/views/live.js");
@@ -34,6 +35,7 @@ pub(super) async fn js_main() -> impl IntoResponse { static_asset("text/javascri
 pub(super) async fn js_core_api() -> impl IntoResponse { static_asset("text/javascript; charset=utf-8", JS_CORE_API) }
 pub(super) async fn js_core_fmt() -> impl IntoResponse { static_asset("text/javascript; charset=utf-8", JS_CORE_FMT) }
 pub(super) async fn js_core_chart() -> impl IntoResponse { static_asset("text/javascript; charset=utf-8", JS_CORE_CHART) }
+pub(super) async fn js_core_pager() -> impl IntoResponse { static_asset("text/javascript; charset=utf-8", JS_CORE_PAGER) }
 pub(super) async fn js_core_router() -> impl IntoResponse { static_asset("text/javascript; charset=utf-8", JS_CORE_ROUTER) }
 pub(super) async fn js_view_overview() -> impl IntoResponse { static_asset("text/javascript; charset=utf-8", JS_VIEW_OVERVIEW) }
 pub(super) async fn js_view_live() -> impl IntoResponse { static_asset("text/javascript; charset=utf-8", JS_VIEW_LIVE) }

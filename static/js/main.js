@@ -15,18 +15,25 @@ const routes = {
   "archive/fastswing": createArchiveView("fastswing", "快速波段"),
 };
 
+const sidebar = document.getElementById("sidebar");
+const backdrop = document.getElementById("sidebar-backdrop");
+const setDrawerOpen = (open) => {
+  if (sidebar) sidebar.classList.toggle("open", open);
+  if (backdrop) backdrop.hidden = !open;
+};
+
 const router = new Router(routes, (entry) => {
   const titleEl = document.getElementById("crumb-title");
   const metaEl = document.getElementById("crumb-meta");
   if (titleEl) titleEl.textContent = entry.title;
   if (metaEl) metaEl.textContent = entry.subtitle || "";
+  setDrawerOpen(false);
 });
 
-// Expose navigation helper for in-view jump buttons
 window.__starsNavigate = (key) => router.navigate(key, true);
 
-// Sidebar route buttons
-document.querySelectorAll(".nav-btn[data-route]").forEach((btn) => {
+// Sidebar + mobile bottom nav route buttons
+document.querySelectorAll("[data-route]").forEach((btn) => {
   btn.addEventListener("click", () => router.navigate(btn.dataset.route, true));
 });
 
@@ -41,20 +48,19 @@ if (archToggle && archList) {
   });
 }
 
-// Mobile sidebar drawer
-const mobileBtn = document.getElementById("btn-mobile-menu");
-const sidebar = document.getElementById("sidebar");
-if (mobileBtn && sidebar) {
-  mobileBtn.addEventListener("click", (e) => {
-    e.stopPropagation();
-    sidebar.classList.toggle("open");
-  });
-  document.addEventListener("click", (e) => {
-    if (sidebar.classList.contains("open") && !sidebar.contains(e.target) && e.target !== mobileBtn) {
-      sidebar.classList.remove("open");
-    }
-  });
-}
+// Mobile drawer toggles
+document.getElementById("btn-mobile-menu")?.addEventListener("click", (e) => {
+  e.stopPropagation();
+  setDrawerOpen(!sidebar?.classList.contains("open"));
+});
+document.getElementById("btn-mobile-more")?.addEventListener("click", () => {
+  if (archToggle && archList) {
+    archToggle.setAttribute("aria-expanded", "true");
+    archList.hidden = false;
+  }
+  setDrawerOpen(true);
+});
+backdrop?.addEventListener("click", () => setDrawerOpen(false));
 
 // Global refresh + auth modal
 const refreshBtn = document.getElementById("btn-global-refresh");
@@ -69,8 +75,10 @@ if (refreshBtn) {
   });
 }
 
-const authBtn = document.getElementById("btn-auth-open");
-if (authBtn) authBtn.addEventListener("click", () => openAuthModal(""));
+document.getElementById("btn-auth-open")?.addEventListener("click", () => {
+  setDrawerOpen(false);
+  openAuthModal("");
+});
 
 initAuthModal();
 setAuthSuccessHandler(() => router.refreshCurrent());

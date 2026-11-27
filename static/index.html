@@ -2,7 +2,7 @@
 <html lang="zh-CN">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>STARS · Quant Terminal</title>
     <link rel="stylesheet" href="/css/tokens.css" />
     <link rel="stylesheet" href="/css/base.css" />
@@ -10,6 +10,7 @@
   </head>
   <body>
     <div class="app-shell">
+      <div class="sidebar-backdrop" id="sidebar-backdrop" hidden></div>
       <aside class="sidebar" id="sidebar" aria-label="主导航">
         <div class="brand">
           <div class="brand-mark">S</div>
@@ -18,14 +19,14 @@
         </div>
 
         <nav class="nav-section" aria-label="主力系统">
-          <div class="nav-label">CORE WORKSPACES</div>
+          <div class="nav-label">CORE</div>
           <button type="button" class="nav-btn active" data-route="overview">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1.2"/><rect x="14" y="3" width="7" height="7" rx="1.2"/><rect x="3" y="14" width="7" height="7" rx="1.2"/><rect x="14" y="14" width="7" height="7" rx="1.2"/></svg>
             <span>总览</span>
           </button>
           <button type="button" class="nav-btn" data-route="live">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 17l5-5 4 3 9-9"/><path d="M15 6h6v6"/></svg>
-            <span>实盘 · 动量 + ML</span>
+            <span>实盘</span>
             <span class="nav-dot" id="dot-live"></span>
           </button>
           <button type="button" class="nav-btn" data-route="limitoco">
@@ -35,9 +36,9 @@
           </button>
         </nav>
 
-        <nav class="nav-section" aria-label="实验归档">
+        <nav class="nav-section" aria-label="归档">
           <button type="button" class="nav-toggle" id="nav-archive-toggle" aria-expanded="false">
-            <span>ARCHIVE · 老影子 (4)</span>
+            <span>归档 (4)</span>
             <span class="chev">▸</span>
           </button>
           <div id="nav-archive-list" hidden>
@@ -49,10 +50,10 @@
         </nav>
 
         <div class="sidebar-foot">
-          <div class="sidebar-foot-row"><span>REFRESH</span><span id="foot-updated">—</span></div>
+          <div class="sidebar-foot-row"><span>更新</span><span id="foot-updated">—</span></div>
           <div class="sidebar-foot-row">
-            <span>AUTH</span>
-            <button type="button" class="btn ghost sm" id="btn-auth-open" style="height:20px;padding:0 4px">令牌</button>
+            <span>鉴权</span>
+            <button type="button" class="btn ghost sm" id="btn-auth-open" style="height:22px;padding:0 6px">令牌</button>
           </div>
         </div>
       </aside>
@@ -74,12 +75,31 @@
       </div>
     </div>
 
+    <nav class="mobile-nav" id="mobile-nav" aria-label="底部导航">
+      <button type="button" class="mobile-nav-btn active" data-route="overview">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1.2"/><rect x="14" y="3" width="7" height="7" rx="1.2"/><rect x="3" y="14" width="7" height="7" rx="1.2"/><rect x="14" y="14" width="7" height="7" rx="1.2"/></svg>
+        <span>总览</span>
+      </button>
+      <button type="button" class="mobile-nav-btn" data-route="live">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 17l5-5 4 3 9-9"/><path d="M15 6h6v6"/></svg>
+        <span>实盘</span>
+      </button>
+      <button type="button" class="mobile-nav-btn" data-route="limitoco">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2.5"/></svg>
+        <span>限价 V2</span>
+      </button>
+      <button type="button" class="mobile-nav-btn" id="btn-mobile-more">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        <span>更多</span>
+      </button>
+    </nav>
+
     <div id="auth-overlay" class="auth-overlay" hidden>
       <div class="auth-card">
         <h3>访问鉴权</h3>
-        <p>服务端已开启 <code>STARS_TOKEN</code>。输入令牌后保存在本地浏览器。</p>
-        <input id="auth-token" type="password" placeholder="输入 Bearer Token" autocomplete="current-password" />
-        <button class="btn primary" id="auth-submit" type="button" style="height:36px">验证并进入</button>
+        <p>请输入 <code>STARS_TOKEN</code> 访问令牌。</p>
+        <input id="auth-token" type="password" placeholder="Bearer Token" autocomplete="current-password" />
+        <button class="btn primary" id="auth-submit" type="button" style="height:38px">验证并进入</button>
         <p id="auth-status" class="warn"></p>
       </div>
     </div>

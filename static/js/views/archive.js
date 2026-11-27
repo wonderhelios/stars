@@ -1,6 +1,7 @@
 import { apiGet, apiPost, showToast } from "../core/api.js";
 import { esc, filterRange, fmtBj, fmtNum, fmtPct, fmtPx, fmtSignedUsd, fmtUsd, signCls } from "../core/fmt.js";
 import { renderLineChart } from "../core/chart.js";
+import { bindPager, paginate, renderPagerHtml } from "../core/pager.js";
 
 function normalizeHistory(raw) {
   if (!Array.isArray(raw)) return [];
@@ -16,6 +17,7 @@ export function createArchiveView(kind, label) {
   let root = null;
   let data = null;
   let range = "all";
+  let pgList = 1;
   let extraOut = "";
 
   const endpoint = {
@@ -45,7 +47,8 @@ export function createArchiveView(kind, label) {
   function renderHlCarry(el, d) {
     const st = d.state || {};
     const legs = st.legs || [];
-    const logs = (st.log || []).slice().reverse().slice(0, 25);
+    const logsPage = paginate((st.log || []).slice().reverse(), pgList, 8);
+    pgList = logsPage.page;
     const startEq = Number(st.start_equity) || 3000;
     const eq = Number(d.equity) || startEq;
     const pnl = eq - startEq;
@@ -53,7 +56,7 @@ export function createArchiveView(kind, label) {
 
     el.innerHTML = `
       <div class="banner info">
-        <span>实验归档模块 · Hyperliquid 现货+永续资金费/基差收敛影子（仅按需加载）</span>
+        <span>基差影子</span>
         <div style="display:flex;gap:8px">
           <button type="button" class="btn sm" id="hc-step">手动步进</button>
           <button type="button" class="btn warn sm" id="hc-open">重置建仓 ($3,000)</button>
@@ -103,14 +106,17 @@ export function createArchiveView(kind, label) {
         </div>
         <div class="card">
           <div class="card-head"><div class="card-title-group"><span class="eyebrow">EVENT LOG</span><h2 class="card-title">最近事件</h2></div></div>
-          ${logs.length ? `
+          ${logsPage.rows.length ? `
             <div class="feed">
-              ${logs.map((x) => `<div class="feed-item"><span class="feed-ts">${fmtBj(x.ts)}</span><span class="pill">LOG</span><span>${esc(x.msg)}</span></div>`).join("")}
+              ${logsPage.rows.map((x) => `<div class="feed-item"><span class="feed-ts">${fmtBj(x.ts)}</span><span class="pill">LOG</span><span>${esc(x.msg)}</span></div>`).join("")}
             </div>
+            ${renderPagerHtml("ar-pg-log", logsPage.page, logsPage.totalPages, logsPage.total)}
           ` : `<div class="empty">暂无日志。</div>`}
         </div>
       </div>
     `;
+
+    bindPager(el, "ar-pg-log", (p) => { pgList = p; render(); });
 
     el.querySelectorAll("#ar-range button").forEach((b) => {
       b.addEventListener("click", () => {
@@ -153,20 +159,21 @@ export function createArchiveView(kind, label) {
     const pnlPct = cap > 0 ? (pnl / cap) * 100 : 0;
     const posObj = d.positions || {};
     const posList = Array.isArray(posObj) ? posObj : Object.entries(posObj).map(([sym, v]) => ({ symbol: sym, ...v }));
-    const trades = (d.trades || []).slice().reverse().slice(0, 40);
+    const tradesPage = paginate((d.trades || []).slice().reverse(), pgList, 8);
+    pgList = tradesPage.page;
 
     el.innerHTML = `
-      <div class="banner info">
-        <span>实验归档模块 · ${esc(label)}（已从主导航收纳，仅按需加载）</span>
-        ${kind === "tradfi" ? `
+      ${kind === "tradfi" ? `
+        <div class="banner info">
+          <span>${esc(label)}</span>
           <div style="display:flex;gap:6px;flex-wrap:wrap">
             <button type="button" class="btn sm" id="tf-rebal">影子调仓</button>
             <button type="button" class="btn sm" id="tf-plan">计划预览</button>
             <button type="button" class="btn danger sm" id="tf-exec">执行实盘</button>
             <button type="button" class="btn danger sm" id="tf-flat">一键平仓</button>
           </div>
-        ` : ""}
-      </div>
+        </div>
+      ` : ""}
       ${d.last_error ? `<div class="banner neg">${esc(d.last_error)}</div>` : ""}
 
       <div class="grid-4">
@@ -218,12 +225,12 @@ export function createArchiveView(kind, label) {
         </div>
 
         <div class="card">
-          <div class="card-head"><div class="card-title-group"><span class="eyebrow">RECENT TRADES</span><h2 class="card-title">最近平仓（${trades.length}）</h2></div></div>
-          ${trades.length ? `
+          <div class="card-head"><div class="card-title-group"><span class="eyebrow">TRADES</span><h2 class="card-title">平仓记录</h2></div></div>
+          ${tradesPage.rows.length ? `
             <div class="table-wrap"><table class="tbl">
               <thead><tr><th>时间</th><th>标的</th><th class="num">净盈亏</th><th>原因</th></tr></thead>
               <tbody>
-                ${trades.slice(0, 20).map((t) => {
+                ${tradesPage.rows.map((t) => {
                   const pnlV = Number(t.net_pnl ?? t.pnl ?? 0);
                   return `
                     <tr>
@@ -236,10 +243,13 @@ export function createArchiveView(kind, label) {
                 }).join("")}
               </tbody>
             </table></div>
+            ${renderPagerHtml("ar-pg-tr", tradesPage.page, tradesPage.totalPages, tradesPage.total)}
           ` : `<div class="empty">暂无平仓记录。</div>`}
         </div>
       </div>
     `;
+
+    bindPager(el, "ar-pg-tr", (p) => { pgList = p; render(); });
 
     el.querySelectorAll("#ar-range button").forEach((b) => {
       b.addEventListener("click", () => {
@@ -292,8 +302,8 @@ export function createArchiveView(kind, label) {
   }
 
   return {
-    title: `归档 · ${label}`,
-    subtitle: "已收纳老影子实验模块（按需加载）",
+    title: label,
+    subtitle: "",
     pollMs: 60_000,
     async mount(el) {
       root = el;

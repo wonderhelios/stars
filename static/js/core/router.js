@@ -30,10 +30,12 @@ export class Router {
     const entry = this.routes[target];
     this.currentView = entry;
 
-    // Highlight sidebar buttons
-    document.querySelectorAll(".nav-btn[data-route]").forEach((btn) => {
+    // Highlight sidebar & mobile bottom nav buttons
+    document.querySelectorAll("[data-route]").forEach((btn) => {
       btn.classList.toggle("active", btn.dataset.route === target);
     });
+    const moreBtn = document.getElementById("btn-mobile-more");
+    if (moreBtn) moreBtn.classList.toggle("active", target.startsWith("archive/"));
     if (target.startsWith("archive/")) {
       const archToggle = document.getElementById("nav-archive-toggle");
       const archList = document.getElementById("nav-archive-list");

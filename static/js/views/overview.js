@@ -130,8 +130,7 @@ export function createOverviewView() {
           <span class="hero-label">TOTAL LIVE PORTFOLIO · HYPERLIQUID</span>
           <div class="hero-value">${fmtUsd(totalLiveEq)}</div>
           <div class="hero-delta">
-            <span class="pill ${signCls(combPnl)}">策略累计盈亏 ${fmtSignedUsd(combPnl)}</span>
-            <span class="muted" style="font-size:11.5px;font-weight:500">已剔除全部出入金与划转</span>
+            <span class="pill ${signCls(combPnl)}">累计盈亏 ${fmtSignedUsd(combPnl)}</span>
           </div>
         </div>
 
@@ -168,8 +167,8 @@ export function createOverviewView() {
             <div class="bar-fill" style="width:${mlShare.toFixed(1)}%;background:linear-gradient(90deg,#0284c7,#38bdf8)"></div>
           </div>
           <div class="hero-alloc-legend">
-            <span>合并总杠杆 <b>${fmtNum(combLev, 2)}x</b> · 名义 ${fmtUsd(momGross + mlGross, 0)} · ${momPos.length + mlPos.length} 仓</span>
-            <span class="${opposeCount > 0 ? "warn" : ""}">跨策略交叉：反向 ${opposeCount} / 同向 ${sameCount}</span>
+            <span>杠杆 <b>${fmtNum(combLev, 2)}x</b> · 名义 ${fmtUsd(momGross + mlGross, 0)} · ${momPos.length + mlPos.length} 仓</span>
+            <span class="${opposeCount > 0 ? "warn" : ""}">交叉 · 反向 ${opposeCount} / 同向 ${sameCount}</span>
           </div>
         </div>
       </section>
@@ -178,8 +177,8 @@ export function createOverviewView() {
         <div class="card">
           <div class="card-head">
             <div class="card-title-group">
-              <span class="eyebrow">REAL STRATEGY PNL · ZERO DEPOSIT DISTORTION</span>
-              <h2 class="card-title">策略真实收益曲线（± 盈亏 / TWR）</h2>
+              <span class="eyebrow">STRATEGY PNL</span>
+              <h2 class="card-title">策略收益曲线</h2>
               <div class="chart-headline">
                 <span class="chart-big-num ${chartValCls}">${chartValText}</span>
               </div>
@@ -243,10 +242,9 @@ export function createOverviewView() {
       <section class="card">
         <div class="card-head">
           <div class="card-title-group">
-            <span class="eyebrow">ACTIVE ENGINES MATRIX</span>
-            <h2 class="card-title">主力引擎核心对比</h2>
+            <span class="eyebrow">ACTIVE ENGINES</span>
+            <h2 class="card-title">主力引擎</h2>
           </div>
-          <span class="muted mono" style="font-size:11.5px">4 个老影子实验已收纳至左侧「ARCHIVE」按需加载</span>
         </div>
         <div class="table-wrap">
           <table class="tbl">
@@ -256,7 +254,7 @@ export function createOverviewView() {
                 <th>类型 / 交易所</th>
                 <th>状态</th>
                 <th class="num">当前净值</th>
-                <th class="num">真实策略盈亏</th>
+                <th class="num">策略盈亏</th>
                 <th class="num">TWR 收益率</th>
                 <th class="num">当前 / 最大回撤</th>
                 <th class="num">活跃仓 / 杠杆</th>
@@ -361,7 +359,7 @@ export function createOverviewView() {
 
   return {
     title: "总览",
-    subtitle: "Hyperliquid 实盘双策略 + Binance 限价 V2 指挥台",
+    subtitle: "",
     pollMs: 30_000,
     async mount(el) {
       root = el;

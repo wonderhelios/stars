@@ -412,8 +412,28 @@
   .sim-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (max-width: 680px) {
-  .hero-banner { grid-template-columns: 1fr; padding: 18px; }
-  .hero-cell { padding-left: 0; border-left: none; border-top: 1px solid var(--border); padding-top: 12px; }
+  .hero-banner {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    padding: 15px;
+  }
+  .hero-primary { grid-column: 1 / -1; }
+  .hero-value { font-size: 26px; }
+  .hero-cell {
+    padding-left: 0;
+    border-left: none;
+    border-top: 1px solid var(--border);
+    padding-top: 10px;
+  }
+  .hero-banner > .hero-cell:nth-child(4) { grid-column: 1 / -1; }
+  .hero-alloc-legend { flex-wrap: wrap; gap: 4px 12px; }
+  .hero-alloc-legend > span { white-space: nowrap; }
+  .hero-cell-val { font-size: 18px; }
+  .chart-box { height: 210px; }
+  .chart-big-num { font-size: 19px; }
+  .kpi { padding: 12px 13px; }
+  .kpi-val { font-size: 19px; }
+  .oco-grid { grid-template-columns: 1fr; }
   .score-grid, .tier-grid, .funnel-grid { grid-template-columns: 1fr 1fr; }
   .feed-item { grid-template-columns: 1fr; gap: 3px; }
 }

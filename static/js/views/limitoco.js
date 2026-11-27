@@ -1,6 +1,7 @@
 import { apiGet, apiPost, showToast } from "../core/api.js";
 import { esc, filterRange, fmtBj, fmtNum, fmtPct, fmtPx, fmtSignedUsd, fmtUsd, signCls } from "../core/fmt.js";
 import { renderLineChart } from "../core/chart.js";
+import { bindPager, paginate, renderPagerHtml } from "../core/pager.js";
 
 export function createLimitOcoView() {
   let root = null;
@@ -8,6 +9,8 @@ export function createLimitOcoView() {
   let subtab = "monitor"; // monitor | settings
   let range = "all";
   let tradeFilter = "all";
+  let pgTrades = 1;
+  let pgEvents = 1;
   let cdTimer = null;
   let busy = false;
 
@@ -78,7 +81,10 @@ export function createLimitOcoView() {
 
     let trades = (d.trades || []).slice().reverse();
     if (tradeFilter !== "all") trades = trades.filter((t) => t.sleeve === tradeFilter);
-    const events = (d.events || []).slice().reverse().slice(0, 35);
+    const tradesPage = paginate(trades, pgTrades, 8);
+    pgTrades = tradesPage.page;
+    const eventsPage = paginate((d.events || []).slice().reverse(), pgEvents, 8);
+    pgEvents = eventsPage.page;
 
     body.innerHTML = `
       <div class="grid-4">
@@ -108,8 +114,12 @@ export function createLimitOcoView() {
         <div class="card">
           <div class="card-head">
             <div class="card-title-group">
-              <span class="eyebrow">EQUITY &amp; LEVERAGE RIBBON · V2 ULTRA-WR</span>
-              <h2 class="card-title">实时净值与杠杆双层曲线</h2>
+              <span class="eyebrow">STRATEGY PNL</span>
+              <h2 class="card-title">限价 V2 盈亏与杠杆</h2>
+              <div class="chart-headline">
+                <span class="chart-big-num ${signCls(d.pnl)}">${fmtSignedUsd(d.pnl)}</span>
+                <span class="mono ${signCls(d.pnl_pct)}" style="font-size:12.5px">${fmtPct(d.pnl_pct, 2, true)}</span>
+              </div>
             </div>
             <div class="seg" id="lo-range">
               <button type="button" data-r="24h" class="${range === "24h" ? "active" : ""}">24H</button>
@@ -265,13 +275,13 @@ export function createLimitOcoView() {
         <div class="card">
           <div class="card-head">
             <div class="card-title-group">
-              <span class="eyebrow">ACTIVITY STREAM</span>
-              <h2 class="card-title">引擎实时日志</h2>
+              <span class="eyebrow">EVENTS</span>
+              <h2 class="card-title">运行日志</h2>
             </div>
           </div>
-          ${events.length ? `
+          ${eventsPage.rows.length ? `
             <div class="feed">
-              ${events.map((e) => `
+              ${eventsPage.rows.map((e) => `
                 <div class="feed-item">
                   <span class="feed-ts">${fmtBj(e.ts)}</span>
                   <span><span class="pill ${e.kind === "TP" || e.kind === "FILL" ? "pos" : e.kind === "SL" ? "neg" : e.kind === "SIGNAL" ? "info" : ""}">${esc(e.kind)}</span></span>
@@ -279,6 +289,7 @@ export function createLimitOcoView() {
                 </div>
               `).join("")}
             </div>
+            ${renderPagerHtml("lo-pg-ev", eventsPage.page, eventsPage.totalPages, eventsPage.total)}
           ` : `<div class="empty">尚无运行事件。</div>`}
         </div>
       </div>
@@ -286,8 +297,8 @@ export function createLimitOcoView() {
       <div class="card">
         <div class="card-head">
           <div class="card-title-group">
-            <span class="eyebrow">REALIZED LEDGER</span>
-            <h2 class="card-title">已平仓成交记录（${trades.length} 笔）</h2>
+            <span class="eyebrow">TRADES</span>
+            <h2 class="card-title">已平仓成交</h2>
           </div>
           <div class="seg" id="lo-trade-filter">
             <button type="button" data-f="all" class="${tradeFilter === "all" ? "active" : ""}">全部</button>
@@ -295,12 +306,12 @@ export function createLimitOcoView() {
             <button type="button" data-f="B" class="${tradeFilter === "B" ? "active" : ""}">策略 B</button>
           </div>
         </div>
-        ${trades.length ? `
+        ${tradesPage.rows.length ? `
           <div class="table-wrap">
             <table class="tbl">
               <thead><tr><th>平仓时间</th><th>策略 / 标的</th><th>方向</th><th class="num">入场 → 平仓</th><th class="num">SL / TP</th><th class="num">持仓</th><th class="num">净盈亏</th><th class="num">R 倍数</th><th>退出</th></tr></thead>
               <tbody>
-                ${trades.slice(0, 60).map((t) => `
+                ${tradesPage.rows.map((t) => `
                   <tr>
                     <td class="mono muted">${fmtBj(t.exit_ts)}</td>
                     <td><span class="pill ${t.sleeve === "A" ? "warn" : "info"}">${esc(t.sleeve)}</span> <b>${esc(t.symbol)}</b></td>
@@ -316,10 +327,13 @@ export function createLimitOcoView() {
               </tbody>
             </table>
           </div>
-        ` : `<div class="empty">暂无已平仓落袋成交。</div>`}
+          ${renderPagerHtml("lo-pg-tr", tradesPage.page, tradesPage.totalPages, tradesPage.total)}
+        ` : `<div class="empty">暂无已平仓成交。</div>`}
       </div>
     `;
 
+    bindPager(body, "lo-pg-ev", (p) => { pgEvents = p; renderMonitor(body, d); });
+    bindPager(body, "lo-pg-tr", (p) => { pgTrades = p; renderMonitor(body, d); });
     body.querySelectorAll("#lo-range button").forEach((b) => {
       b.addEventListener("click", () => {
         range = b.dataset.r;
@@ -329,17 +343,19 @@ export function createLimitOcoView() {
     body.querySelectorAll("#lo-trade-filter button").forEach((b) => {
       b.addEventListener("click", () => {
         tradeFilter = b.dataset.f;
+        pgTrades = 1;
         renderMonitor(body, d);
       });
     });
 
-    const pts = filterRange((d.history || []).map(([ts, eq, lev]) => ({ ts, val: eq, val2: lev })), range);
+    const cap = Number(d.capital) || 10000;
+    const pts = filterRange((d.history || []).map(([ts, eq, lev]) => ({ ts, val: eq - cap, val2: lev })), range);
     renderLineChart(document.getElementById("lo-chart"), pts, {
-      zeroLine: Number(d.capital) || 10000,
+      zeroLine: 0,
       secondary: true,
       secondaryLabel: "总杠杆",
-      formatY: (v) => `$${Math.round(v).toLocaleString("en-US")}`,
-      formatTip: (v) => fmtUsd(v),
+      formatY: (v) => fmtSignedUsd(v, 0),
+      formatTip: (v) => `限价 V2 盈亏 ${fmtSignedUsd(v)}`,
     });
   }
 
@@ -525,7 +541,7 @@ export function createLimitOcoView() {
 
   return {
     title: "限价 V2",
-    subtitle: "Binance USD-M · V2 UltraWR (52.4% WR / 12h Hold · 纯 Rust 影子)",
+    subtitle: "Binance USD-M · V2 UltraWR",
     pollMs: 25_000,
     async mount(el) {
       root = el;

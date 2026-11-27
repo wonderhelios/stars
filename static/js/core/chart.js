@@ -16,13 +16,14 @@ export function renderLineChart(container, points, opts = {}) {
 
   const draw = () => {
     const rect = container.getBoundingClientRect();
-    const w = Math.max(Math.round(rect.width) || container.clientWidth || 720, 320);
-    const h = Math.max(Math.round(rect.height) || container.clientHeight || 250, 180);
-    const padL = 12;
-    const padR = 72;
-    const padT = 18;
-    const padB = 28;
-    const plotW = Math.max(100, w - padL - padR);
+    const w = Math.max(Math.round(rect.width) || container.clientWidth || 720, 260);
+    const h = Math.max(Math.round(rect.height) || container.clientHeight || 250, 170);
+    const compact = w < 480;
+    const padL = compact ? 6 : 12;
+    const padR = compact ? 58 : 72;
+    const padT = 16;
+    const padB = 26;
+    const plotW = Math.max(80, w - padL - padR);
     const plotH = Math.max(80, h - padT - padB);
 
     const minTs = data[0].ts;
@@ -131,7 +132,7 @@ export function renderLineChart(container, points, opts = {}) {
     }
 
     // X ticks
-    const xTicks = 4;
+    const xTicks = compact ? 2 : 4;
     let xSvg = "";
     for (let i = 0; i <= xTicks; i++) {
       const ts = minTs + (i / xTicks) * (maxTs - minTs);
@@ -179,9 +180,9 @@ export function renderLineChart(container, points, opts = {}) {
       return data[lo];
     };
 
-    hit.addEventListener("mousemove", (ev) => {
+    const showAtClientX = (clientX) => {
       const r = svg.getBoundingClientRect();
-      const rx = ev.clientX - r.left;
+      const rx = clientX - r.left;
       const clamped = Math.max(padL, Math.min(padL + plotW, rx));
       const ts = minTs + ((clamped - padL) / plotW) * (maxTs - minTs);
       const pt = nearest(ts);
@@ -209,13 +210,23 @@ export function renderLineChart(container, points, opts = {}) {
       const tipW = tip.offsetWidth || 130;
       tip.style.left = `${px + tipW + 18 > w ? Math.max(8, px - tipW - 14) : px + 14}px`;
       tip.style.top = `${Math.max(8, py - 48)}px`;
-    });
+    };
 
-    hit.addEventListener("mouseleave", () => {
+    const hideTip = () => {
       chX.style.display = "none";
       chDot.style.display = "none";
       tip.hidden = true;
-    });
+    };
+
+    hit.addEventListener("mousemove", (ev) => showAtClientX(ev.clientX));
+    hit.addEventListener("mouseleave", hideTip);
+    hit.addEventListener("touchstart", (ev) => {
+      if (ev.touches?.[0]) showAtClientX(ev.touches[0].clientX);
+    }, { passive: true });
+    hit.addEventListener("touchmove", (ev) => {
+      if (ev.touches?.[0]) showAtClientX(ev.touches[0].clientX);
+    }, { passive: true });
+    hit.addEventListener("touchend", hideTip, { passive: true });
   };
 
   draw();

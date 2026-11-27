@@ -216,6 +216,7 @@ mod live_routes_tests {
             "/js/core/api.js",
             "/js/core/fmt.js",
             "/js/core/chart.js",
+            "/js/core/pager.js",
             "/js/core/router.js",
             "/js/views/overview.js",
             "/js/views/live.js",
