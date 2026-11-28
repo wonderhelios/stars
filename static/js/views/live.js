@@ -63,7 +63,7 @@ function mergeTwrSeries(momIdx, mlIdx, momW, mlW) {
 export function createLiveView() {
   let root = null;
   let data = null;
-  let subtab = "monitor"; // monitor | positions | ledger | settings
+  let subtab = "board"; // board | ledger | settings
   let scope = "all"; // all | mom | ml
   let chartUnit = "usd"; // usd (+/- $) | pct (% TWR)
   let range = "all";
@@ -94,8 +94,7 @@ export function createLiveView() {
     root.innerHTML = `
       <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap">
         <div class="subtabs" id="lv-subtabs">
-          <button type="button" data-t="monitor" class="${subtab === "monitor" ? "active" : ""}">监控与健康</button>
-          <button type="button" data-t="positions" class="${subtab === "positions" ? "active" : ""}">持仓与挂单</button>
+          <button type="button" data-t="board" class="${subtab === "board" ? "active" : ""}">策略看板</button>
           <button type="button" data-t="ledger" class="${subtab === "ledger" ? "active" : ""}">账务与成交</button>
           <button type="button" data-t="settings" class="${subtab === "settings" ? "active" : ""}">参数与控制</button>
         </div>
@@ -129,13 +128,12 @@ export function createLiveView() {
     });
 
     const body = document.getElementById("lv-body");
-    if (subtab === "monitor") renderMonitor(body, d);
-    else if (subtab === "positions") renderPositions(body, d);
+    if (subtab === "board") renderBoard(body, d);
     else if (subtab === "ledger") renderLedger(body, d);
     else renderSettings(body, d);
   }
 
-  function renderMonitor(body, d) {
+  function renderBoard(body, d) {
     const momEq = Number(d.equity) || 0;
     const mlEq = Number(d.ml_account?.equity) || 0;
     const momPos = (d.positions || []).filter((p) => !isDustPosition(p));
@@ -288,13 +286,31 @@ export function createLiveView() {
       })
       .join("");
 
-    const planLines = Array.isArray(d.last_plan) ? d.last_plan : [];
     const chartTitle =
       scope === "all"
         ? (chartUnit === "usd" ? "全部账户盈亏" : "全部账户 TWR")
         : scope === "mom"
           ? (chartUnit === "usd" ? "动量策略盈亏" : "动量 TWR")
           : (chartUnit === "usd" ? "ML 策略盈亏" : "ML TWR");
+
+    const momAll = (d.positions || []).map((p) => ({ ...p, _src: "动量" }));
+    const mlAll = (d.ml_account?.positions || []).map((p) => ({ ...p, _src: "ML" }));
+    const combined = scope === "mom" ? momAll : scope === "ml" ? mlAll : [...momAll, ...mlAll];
+    const dust = combined.filter((p) => isDustPosition(p));
+    const active = combined.filter((p) => !isDustPosition(p));
+    const posRows = (showDust ? combined : active).sort((a, b) => Math.abs(b.notional) - Math.abs(a.notional));
+
+    const momSides = new Map(momAll.filter((p) => !isDustPosition(p)).map((p) => [p.coin, p.side]));
+    const oppose = [];
+    const same = [];
+    for (const p of mlAll.filter((x) => !isDustPosition(x))) {
+      const ms = momSides.get(p.coin);
+      if (ms) {
+        if (ms === p.side) same.push(p.coin);
+        else oppose.push(p.coin);
+      }
+    }
+    const tpOrders = d.tp_orders || [];
 
     body.innerHTML = `
       ${heroHtml}
@@ -337,32 +353,103 @@ export function createLiveView() {
         </div>
       ` : ""}
 
+      ${(oppose.length || same.length) ? `
+        <div class="banner ${oppose.length ? "warn" : "info"}">
+          <span>跨策略交叉：${oppose.length ? `反向 ${oppose.length} 币 (${esc(oppose.join(", "))})` : "无反向"}${same.length ? ` · 同向 ${same.length} 币 (${esc(same.join(", "))})` : ""}</span>
+          <span class="mono">动量 ${momPos.length} 仓 · ML ${mlPos.length} 仓</span>
+        </div>
+      ` : ""}
+
       <div class="card">
         <div class="card-head">
           <div class="card-title-group">
-            <span class="eyebrow">EXECUTION LOG</span>
-            <h2 class="card-title">最近调仓计划</h2>
+            <span class="eyebrow">OPEN POSITIONS</span>
+            <h2 class="card-title">当前持仓（${active.length} 仓）</h2>
           </div>
-          <div style="display:flex;gap:8px">
-            <button type="button" class="btn sm" id="lv-quick-mom-plan">预览动量计划</button>
-            <button type="button" class="btn sm" id="lv-quick-ml-plan">预览 ML 计划</button>
-          </div>
+          ${dust.length ? `
+            <button type="button" class="btn ghost sm" id="lv-toggle-dust">
+              ${showDust ? `隐藏 ${dust.length} 笔 <$1 碎仓` : `展开 ${dust.length} 笔 <$1 碎仓`}
+            </button>
+          ` : ""}
         </div>
-        <pre class="code-box">${planLines.length ? esc(planLines.join("\n")) : "尚无运行记录。"}</pre>
-        ${mlPlanOut ? `<pre class="code-box" style="margin-top:8px;border-color:var(--info-bd)">${esc(mlPlanOut)}</pre>` : ""}
+        ${posRows.length ? `
+          <div class="table-wrap">
+            <table class="tbl">
+              <thead>
+                <tr>
+                  <th>策略</th>
+                  <th>标的</th>
+                  <th>方向</th>
+                  <th class="num">数量</th>
+                  <th class="num">开仓均价</th>
+                  <th class="num">标记价</th>
+                  <th class="num">名义价值</th>
+                  <th class="num">未实现盈亏</th>
+                  <th class="num">距强平</th>
+                  <th>保证金</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${posRows.map((p) => `
+                  <tr style="${isDustPosition(p) ? "opacity:0.55" : ""}">
+                    <td><span class="pill ${p._src === "ML" ? "info" : ""}">${p._src}</span></td>
+                    <td><b>${esc(p.coin)}</b>${isDustPosition(p) ? ' <span class="muted" style="font-size:10px">碎仓</span>' : ""}</td>
+                    <td><span class="pill ${p.side === "long" ? "pos" : "neg"}">${p.side === "long" ? "LONG" : "SHORT"}</span></td>
+                    <td class="num">${fmtNum(Math.abs(p.size), 4)}</td>
+                    <td class="num">${fmtPx(p.entry_px)}</td>
+                    <td class="num">${fmtPx(p.mark_px)}</td>
+                    <td class="num">${fmtUsd(p.notional)}</td>
+                    <td class="num ${signCls(p.unrealized)}"><b>${fmtSignedUsd(p.unrealized)}</b></td>
+                    <td class="num ${p.dist_pct != null && p.dist_pct < 15 ? "warn" : "muted"}">${p.dist_pct != null ? fmtPct(p.dist_pct, 1) : "—"}</td>
+                    <td class="mono muted">${p.is_cross ? "全仓" : "逐仓"} ${p.leverage || ""}x</td>
+                  </tr>
+                `).join("")}
+              </tbody>
+            </table>
+          </div>
+        ` : `<div class="empty">当前暂无活跃持仓。</div>`}
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <div class="card-title-group">
+            <span class="eyebrow">RESTING ORDERS</span>
+            <h2 class="card-title">活跃挂单（${tpOrders.length} 笔）</h2>
+          </div>
+          <button type="button" class="btn sm" id="lv-btn-tp">刷新挂止盈</button>
+        </div>
+        ${tpOrders.length ? `
+          <div class="table-wrap">
+            <table class="tbl">
+              <thead><tr><th>标的</th><th>方向</th><th class="num">价格</th><th class="num">数量</th><th>类型</th><th>OID</th></tr></thead>
+              <tbody>
+                ${tpOrders.map((o) => `
+                  <tr>
+                    <td><b>${esc(o.coin)}</b></td>
+                    <td><span class="pill ${o.side === "B" ? "pos" : "neg"}">${o.side === "B" ? "买" : "卖"}</span></td>
+                    <td class="num">${fmtPx(o.limit_px || o.limitPx)}</td>
+                    <td class="num">${fmtNum(o.sz, 4)}</td>
+                    <td class="muted">${o.reduce_only || o.reduceOnly ? "只减仓" : "开仓"}</td>
+                    <td class="mono muted">${esc(o.oid)}</td>
+                  </tr>
+                `).join("")}
+              </tbody>
+            </table>
+          </div>
+        ` : `<div class="empty">当前无活跃挂单。</div>`}
       </div>
     `;
 
     body.querySelectorAll("#lv-unit button").forEach((b) => {
       b.addEventListener("click", () => {
         chartUnit = b.dataset.u;
-        renderMonitor(body, d);
+        renderBoard(body, d);
       });
     });
     body.querySelectorAll("#lv-range button").forEach((b) => {
       b.addEventListener("click", () => {
         range = b.dataset.r;
-        renderMonitor(body, d);
+        renderBoard(body, d);
       });
     });
 
@@ -389,124 +476,9 @@ export function createLiveView() {
       });
     }
 
-    document.getElementById("lv-quick-mom-plan")?.addEventListener("click", () => runMomAction(false));
-    document.getElementById("lv-quick-ml-plan")?.addEventListener("click", previewMlPlan);
-  }
-
-  function renderPositions(body, d) {
-    const momAll = (d.positions || []).map((p) => ({ ...p, _src: "动量" }));
-    const mlAll = (d.ml_account?.positions || []).map((p) => ({ ...p, _src: "ML" }));
-
-    let combined = scope === "mom" ? momAll : scope === "ml" ? mlAll : [...momAll, ...mlAll];
-    const dust = combined.filter((p) => isDustPosition(p));
-    const active = combined.filter((p) => !isDustPosition(p));
-    const rows = (showDust ? combined : active).sort((a, b) => Math.abs(b.notional) - Math.abs(a.notional));
-
-    // Overlap detection
-    const momSides = new Map(momAll.filter((p) => !isDustPosition(p)).map((p) => [p.coin, p.side]));
-    const oppose = [];
-    const same = [];
-    for (const p of mlAll.filter((x) => !isDustPosition(x))) {
-      const ms = momSides.get(p.coin);
-      if (ms) {
-        if (ms === p.side) same.push(p.coin);
-        else oppose.push(p.coin);
-      }
-    }
-
-    const tpOrders = d.tp_orders || [];
-
-    body.innerHTML = `
-      ${(oppose.length || same.length) ? `
-        <div class="banner ${oppose.length ? "warn" : "info"}">
-          <span>跨策略持仓交叉：${oppose.length ? `反向对冲 ${oppose.length} 币 (${esc(oppose.join(", "))})` : "无反向冲突"}${same.length ? ` · 同向共振 ${same.length} 币 (${esc(same.join(", "))})` : ""}</span>
-          <span class="mono">动量 ${momAll.filter((p) => !isDustPosition(p)).length} 仓 · ML ${mlAll.filter((p) => !isDustPosition(p)).length} 仓</span>
-        </div>
-      ` : ""}
-
-      <div class="card">
-        <div class="card-head">
-          <div class="card-title-group">
-            <span class="eyebrow">OPEN POSITIONS</span>
-            <h2 class="card-title">当前活跃持仓（${active.length} 仓）</h2>
-          </div>
-          ${dust.length ? `
-            <button type="button" class="btn ghost sm" id="lv-toggle-dust">
-              ${showDust ? `隐藏 ${dust.length} 笔 <$1 碎仓` : `展开 ${dust.length} 笔 <$1 碎仓`}
-            </button>
-          ` : ""}
-        </div>
-        ${rows.length ? `
-          <div class="table-wrap">
-            <table class="tbl">
-              <thead>
-                <tr>
-                  <th>策略</th>
-                  <th>标的</th>
-                  <th>方向</th>
-                  <th class="num">数量</th>
-                  <th class="num">开仓均价</th>
-                  <th class="num">标记价</th>
-                  <th class="num">名义价值</th>
-                  <th class="num">未实现盈亏</th>
-                  <th class="num">距强平</th>
-                  <th>保证金</th>
-                </tr>
-              </thead>
-              <tbody>
-                ${rows.map((p) => `
-                  <tr style="${isDustPosition(p) ? "opacity:0.55" : ""}">
-                    <td><span class="pill ${p._src === "ML" ? "info" : ""}">${p._src}</span></td>
-                    <td><b>${esc(p.coin)}</b>${isDustPosition(p) ? ' <span class="muted" style="font-size:10px">碎仓</span>' : ""}</td>
-                    <td><span class="pill ${p.side === "long" ? "pos" : "neg"}">${p.side === "long" ? "LONG" : "SHORT"}</span></td>
-                    <td class="num">${fmtNum(Math.abs(p.size), 4)}</td>
-                    <td class="num">${fmtPx(p.entry_px)}</td>
-                    <td class="num">${fmtPx(p.mark_px)}</td>
-                    <td class="num">${fmtUsd(p.notional)}</td>
-                    <td class="num ${signCls(p.unrealized)}"><b>${fmtSignedUsd(p.unrealized)}</b></td>
-                    <td class="num ${p.dist_pct != null && p.dist_pct < 15 ? "warn" : "muted"}">${p.dist_pct != null ? fmtPct(p.dist_pct, 1) : "—"}</td>
-                    <td class="mono muted">${p.is_cross ? "全仓" : "逐仓"} ${p.leverage || ""}x</td>
-                  </tr>
-                `).join("")}
-              </tbody>
-            </table>
-          </div>
-        ` : `<div class="empty">当前范围暂无活跃持仓。</div>`}
-      </div>
-
-      <div class="card">
-        <div class="card-head">
-          <div class="card-title-group">
-            <span class="eyebrow">RESTING ORDERS</span>
-            <h2 class="card-title">交易所活跃挂单 / 止盈单（${tpOrders.length} 笔）</h2>
-          </div>
-          <button type="button" class="btn sm" id="lv-btn-tp">刷新挂止盈</button>
-        </div>
-        ${tpOrders.length ? `
-          <div class="table-wrap">
-            <table class="tbl">
-              <thead><tr><th>标的</th><th>方向</th><th class="num">价格</th><th class="num">数量</th><th>类型</th><th>OID</th></tr></thead>
-              <tbody>
-                ${tpOrders.map((o) => `
-                  <tr>
-                    <td><b>${esc(o.coin)}</b></td>
-                    <td><span class="pill ${o.side === "B" ? "pos" : "neg"}">${o.side === "B" ? "买" : "卖"}</span></td>
-                    <td class="num">${fmtPx(o.limit_px || o.limitPx)}</td>
-                    <td class="num">${fmtNum(o.sz, 4)}</td>
-                    <td class="muted">${o.reduce_only || o.reduceOnly ? "只减仓" : "开仓"}</td>
-                    <td class="mono muted">${esc(o.oid)}</td>
-                  </tr>
-                `).join("")}
-              </tbody>
-            </table>
-          </div>
-        ` : `<div class="empty">当前盘口无活跃挂单。</div>`}
-      </div>
-    `;
-
     document.getElementById("lv-toggle-dust")?.addEventListener("click", () => {
       showDust = !showDust;
-      renderPositions(body, d);
+      renderBoard(body, d);
     });
     document.getElementById("lv-btn-tp")?.addEventListener("click", async () => {
       try {
